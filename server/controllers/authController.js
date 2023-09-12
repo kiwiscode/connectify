@@ -69,7 +69,7 @@ function emailProcess() {
   };
 }
 
-exports.signup = (req, res, next) => {
+const handleSignup = (req, res, next) => {
   let { fullname, username, email, password } = req.body;
   console.log(req.body);
   console.log(fullname, username, email, password);
@@ -127,7 +127,7 @@ exports.signup = (req, res, next) => {
     });
 };
 
-exports.verify = (req, res) => {
+const handleEmailverify = (req, res) => {
   const token = req.query.token;
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
@@ -146,10 +146,10 @@ exports.verify = (req, res) => {
   });
 };
 
-exports.login = (req, res, next) => {
-  const { username, email, password } = req.body;
+const handleLogin = (req, res, next) => {
+  const { username, password } = req.body;
 
-  if (username === "" || email === "" || password === "") {
+  if (username === "" || password === "") {
     res.status(403).json({
       errorMessage:
         "All fields are mandatory.Please provide username,email,and password",
@@ -163,7 +163,7 @@ exports.login = (req, res, next) => {
     });
   }
 
-  User.findOne({ email })
+  User.findOne({ username })
     .then((user) => {
       if (!user.verified) {
         res.status(400).json({
@@ -181,11 +181,7 @@ exports.login = (req, res, next) => {
       bcrypt
         .compare(password, user.password)
         .then((isSamePassword) => {
-          if (
-            !isSamePassword ||
-            user.username !== username ||
-            user.email !== email
-          ) {
+          if (!isSamePassword || user.username !== username) {
             res.status(401).json({
               errorMessage: "Wrong credentials.",
             });
@@ -233,3 +229,5 @@ exports.login = (req, res, next) => {
       next(err);
     });
 };
+
+module.exports = { handleSignup, handleLogin, handleEmailverify };

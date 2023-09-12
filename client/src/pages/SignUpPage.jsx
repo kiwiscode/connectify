@@ -30,16 +30,19 @@ function SignUpPage() {
         setError("");
       })
       .catch((err) => {
-        if (err.response.status === 403) {
-          setError(err.response.data.errorMessage);
+        const { status } = err.response;
+        const { errorMessage } = err.response.data;
+        if (status === 403) {
+          setError(errorMessage);
           setSuccess("");
         }
-        if (err.response.status === 402) {
-          setError(err.response.data.errorMessage);
+        if (status === 402) {
+          setError(errorMessage);
           setSuccess("");
         }
-        if (err.response.status === 501) {
-          setError(err.response.data.errorMessage);
+
+        if (status === 501) {
+          setError(errorMessage);
           setSuccess("");
         }
       });
