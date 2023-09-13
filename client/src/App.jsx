@@ -1,15 +1,14 @@
 import { UserProvider } from "./context/UserContext";
-import Navbar from "./components/Navbar/Navbar";
-import Footer from "./components/Footer/Footer";
+import IndexFooter from "./components/IndexFooter/IndexFooter";
 import HomePage from "./pages/HomePage";
+import "./index.css";
 
 function App() {
   return (
     <UserProvider>
       <div>
-        <Navbar />
         <HomePage />
-        <Footer />
+        <IndexFooter />
       </div>
     </UserProvider>
   );

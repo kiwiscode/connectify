@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
-
+import { Button, Form, InputGroup } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "../index.css";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -52,32 +54,48 @@ function SignUpPage() {
     <>
       <div>
         <div>
-          <input
-            type="text"
-            value={fullname}
-            placeholder="Fullname"
-            onChange={(e) => setFullname(e.target.value)}
-          />
-          <input
-            type="text"
-            value={username}
-            placeholder="Username"
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <input
-            type="email"
-            value={email}
-            placeholder="Email"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input
-            type="password"
-            value={password}
-            placeholder="Password"
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <InputGroup className="mb-2">
+            <Form.Control
+              aria-label="Default"
+              aria-describedby="inputGroup-sizing-default"
+              placeholder="Fullname"
+              type="text"
+              value={fullname}
+              onChange={(e) => setFullname(e.target.value)}
+            />
+          </InputGroup>
+          <InputGroup className="mb-2">
+            <Form.Control
+              aria-label="Default"
+              aria-describedby="inputGroup-sizing-default"
+              placeholder="Username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </InputGroup>
+          <InputGroup className="mb-2">
+            <Form.Control
+              aria-label="Default"
+              aria-describedby="inputGroup-sizing-default"
+              placeholder="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </InputGroup>
+          <InputGroup className="mb-2">
+            <Form.Control
+              aria-label="Default"
+              aria-describedby="inputGroup-sizing-default"
+              placeholder="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </InputGroup>
           <div>
-            <button onClick={() => handleSignUp()}>Create Account</button>
+            <Button onClick={() => handleSignUp()}>Create Account</Button>
           </div>
         </div>
         {error}
