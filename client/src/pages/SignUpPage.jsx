@@ -53,6 +53,14 @@ function SignUpPage() {
   return (
     <>
       <div>
+        <div className="header-container">
+          <p>
+            <span className="header-first header">Happening now</span>
+          </p>
+          <p>
+            <span className="header-second header">Join today.</span>
+          </p>
+        </div>
         <div>
           <InputGroup className="mb-2">
             <Form.Control
@@ -95,7 +103,29 @@ function SignUpPage() {
             />
           </InputGroup>
           <div>
-            <Button onClick={() => handleSignUp()}>Create Account</Button>
+            <Button onClick={() => handleSignUp()} className="create-btn">
+              Create account
+            </Button>
+            <p className="by-signing">
+              By signing up, you agree to the{" "}
+              <a href="">
+                {" "}
+                <span style={{ color: " rgb(29, 155, 240)" }}>
+                  Terms of Service{" "}
+                </span>
+              </a>
+              and{" "}
+              <a href="">
+                <span style={{ color: " rgb(29, 155, 240)" }}>
+                  Privacy Policy
+                </span>
+              </a>
+              ,including{" "}
+              <a href="">
+                <span style={{ color: " rgb(29, 155, 240)" }}>Cokkie Use</span>
+              </a>
+              .
+            </p>
           </div>
         </div>
         {error}

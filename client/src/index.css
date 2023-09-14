@@ -1,33 +1,205 @@
+:root {
+  --border-radius: 9999px;
+  --font-weight: 500;
+}
+
 body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.header-container {
+  margin-bottom: 32px;
+}
+
+.header-first {
+  font-size: 64px;
+}
+
+.header-second {
+  font-size: 31px;
+}
+
+.header-first,
+.header-second {
+  line-height: 84px;
+  font-weight: 700;
+  font-family: TwitterChirpExtendedHeavy, Verdana, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: rgba(15, 20, 25, 1);
+  letter-spacing: -1.2px;
 }
 
 .btn-primary {
-  background-color: #26a7de;
-  font-weight: 500;
+  background-color: rgb(29, 155, 240);
+  font-weight: 700;
+  outline-style: none;
+  border-style: solid;
+  border-color: rgb(207, 217, 222);
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-top-width: 1px;
+  border-radius: var(--border-radius);
+  width: 300px;
+  height: 40px;
+}
+
+.btn-dark {
+  font-weight: 700;
+  outline-style: none;
+  border-style: solid;
+  border-color: rgb(207, 217, 222);
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-top-width: 1px;
+  border-radius: var(--border-radius);
+  width: 300px;
+  height: 40px;
+}
+
+.create-btn:hover {
+  background-color: rgb(16, 128, 202);
+  outline-style: none;
+  border-style: solid;
+  border-color: rgb(207, 217, 222);
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-top-width: 1px;
+  border-radius: var(--border-radius);
 }
 
 .btn-light {
   color: #26a7de;
-  font-weight: 500;
+  font-weight: 700;
+  border-radius: var(--border-radius);
+  outline-style: none;
+  border-style: solid;
+  border-color: rgb(207, 217, 222);
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-top-width: 1px;
+  border-radius: var(--border-radius);
+  width: 300px;
+  height: 40px;
+  background-color: white;
+}
+
+.have-account {
+  font-weight: 700;
 }
 
 .btn-light:hover {
-  background-color: #26a7de;
-  color: white;
+  background-color: #dbe9f4;
+  color: #26a7de;
 }
 
 .hide {
   display: none;
 }
 
-.container {
+.parent-container {
+  position: relative;
   width: 100vh;
   height: 95vh;
 }
 
+.input {
+  position: relative;
+  top: 18vh;
+  left: 100vh;
+}
+
+.by-signing {
+  font-size: 11px;
+  width: 300px;
+  height: 32px;
+  line-height: 12px;
+  color: rgb(83, 100, 113);
+  font-weight: 400;
+  font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+}
+
+.by-signing a {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.by-signing a:hover {
+  text-decoration: underline;
+  text-decoration-color: rgb(29, 155, 240);
+}
+
+.input-group {
+  width: 300px;
+  height: 40px;
+}
+
+.form-control {
+  outline-style: none;
+  border-style: solid;
+  border-color: rgb(207, 217, 222);
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-top-width: 1px;
+  border-radius: var(--border-radius);
+}
+
 .footer-container {
-  width: 100vh;
-  height: fit-content;
+  width: 100%;
   height: auto;
+  position: absolute;
+  left: 0;
+  bottom: 20;
+  text-align: center;
+}
+
+.footer-container a {
+  text-decoration: none;
+}
+
+.footer-container a:hover {
+  text-decoration: underline;
+  text-decoration-color: rgb(83, 100, 113);
+}
+
+.footer-container a > span {
+  color: rgb(83, 100, 113);
+  font-size: 13px;
+  padding-right: 16px;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+span > a {
+  text-decoration: none;
+  color: rgb(29, 155, 240);
+}
+
+span > a:hover {
+  text-decoration: underline;
+  text-decoration-color: rgb(29, 155, 240);
+}
+
+.modal-body,
+.modal-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sign-in-header {
+  font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  line-height: 36px;
+  font-size: 31px;
+  font-weight: 700;
+  padding: 16px;
 }
