@@ -42,6 +42,7 @@ const UserProvider = ({ children }) => {
       followers: [],
       following: [],
     });
+    userInfo.active = false;
     localStorage.removeItem("userInfo");
     localStorage.removeItem("token");
   };

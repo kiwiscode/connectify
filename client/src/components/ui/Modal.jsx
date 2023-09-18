@@ -1,6 +1,14 @@
 import { useState, useContext } from "react";
 import { UserContext } from "../../context/UserContext";
-import { Button, Modal, Form, InputGroup } from "react-bootstrap";
+import {
+  Button,
+  Modal,
+  Form,
+  InputGroup,
+  Container,
+  Row,
+  Col,
+} from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../index.css";
@@ -81,49 +89,50 @@ function SigninModal() {
       <Button variant="light" onClick={handleShow}>
         Sign in
       </Button>
-
-      <Modal show={show} onHide={handleClose} size="lg" centered={true}>
-        <Modal.Header closeButton>
-          <Modal.Title>Connectify</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <span className="sign-in-header mt-4 mb-4">
-            Sign in to Connectify
-          </span>
-          <InputGroup className="mb-2">
-            <Form.Control
-              aria-label="Default"
-              aria-describedby="inputGroup-sizing-default"
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </InputGroup>{" "}
-          <InputGroup className="mb-2">
-            <Form.Control
-              aria-label="Default"
-              aria-describedby="inputGroup-sizing-default"
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </InputGroup>
-          {error}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="dark" onClick={handleLogin}>
-            Log in
-          </Button>
-          <span>
-            Don&apos;t have an account?
-            <a href="">
-              <span>Sign up</span>
-            </a>
-          </span>
-        </Modal.Footer>
-      </Modal>
+      <Container fluid>
+        <Modal show={show} onHide={handleClose} size="lg" centered={true}>
+          <Modal.Header closeButton>
+            <Modal.Title>Connectify</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <span className="sign-in-header mt-4 mb-4">
+              Sign in to Connectify
+            </span>
+            <InputGroup className="mb-2">
+              <Form.Control
+                aria-label="Default"
+                aria-describedby="inputGroup-sizing-default"
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </InputGroup>{" "}
+            <InputGroup className="mb-2">
+              <Form.Control
+                aria-label="Default"
+                aria-describedby="inputGroup-sizing-default"
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </InputGroup>
+            {error}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="dark" onClick={handleLogin}>
+              Log in
+            </Button>
+            <span>
+              Don&apos;t have an account?
+              <a href="">
+                <span>Sign up</span>
+              </a>
+            </span>
+          </Modal.Footer>
+        </Modal>
+      </Container>
     </>
   );
 }
