@@ -2,7 +2,6 @@ const User = require("../models/User.model");
 const jwt = require("jsonwebtoken");
 
 exports.logout = (req, res) => {
-  console.log("first line of console.log", req.header.authorization);
   const token = req.headers.authorization.split(" ")[1];
 
   console.log(token);

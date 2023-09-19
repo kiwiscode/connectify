@@ -203,3 +203,74 @@ span > a:hover {
   font-weight: 700;
   padding: 16px;
 }
+
+.nav-bar-home a {
+  font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  text-decoration: none;
+  color: rgba(15, 20, 25, 1);
+  font-weight: 400;
+  /* font-size: 20px; */
+  line-height: 50px;
+}
+
+.nav-bar-home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+  position: fixed;
+  top: 0;
+  left: 5%;
+  z-index: 1000;
+}
+
+.compose-tweet {
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 8px 28px;
+  min-width: 52px;
+  min-height: 52px;
+  transition-duration: 0.2s;
+  /* padding-left: 32px;
+  padding-right: 32px; */
+  margin-top: 50px;
+}
+
+.compose-tweet:hover {
+  background-color: rgb(16, 128, 202);
+  outline-style: none;
+  border-style: solid;
+  border-color: rgb(207, 217, 222);
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-top-width: 1px;
+  border-radius: var(--border-radius);
+}
+
+.username-nav {
+  margin-top: 100px;
+  margin-left: -153px;
+}
+
+.like-icon {
+  margin-bottom: 50px;
+  margin-right: 270px;
+}
+
+.nav-bar-home div > div:hover {
+  background-color: lightgray;
+  outline-style: none;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-top-width: 1px;
+  border-width: 4px 1.25em;
+  border-radius: var(--border-radius);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.side-bar-column {
+  position: sticky;
+  top: 0;
+}

@@ -1,14 +1,6 @@
 import { useState, useContext } from "react";
 import { UserContext } from "../../context/UserContext";
-import {
-  Button,
-  Modal,
-  Form,
-  InputGroup,
-  Container,
-  Row,
-  Col,
-} from "react-bootstrap";
+import { Button, Modal, Form, InputGroup, Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../index.css";
@@ -137,4 +129,79 @@ function SigninModal() {
   );
 }
 
-export default SigninModal;
+function LogoutModal() {
+  const [show, setShow] = useState(false);
+  const navigate = useNavigate();
+  const { getToken, logout } = useContext(UserContext);
+
+  const localeInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  const handleLogout = () => {
+    handleClose();
+    axios
+      .post(`${API_URL}/logout`, null, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then(() => {
+        navigate("/");
+        logout();
+      })
+      .catch((err) => {
+        err;
+      });
+  };
+
+  return (
+    <>
+      <Button variant="primary" onClick={handleShow}>
+        <a href="">
+          <div>
+            <div className="username-nav">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="25"
+                fill="currentColor"
+                className="bi bi-person-circle"
+                viewBox="0 0 20 20"
+              >
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
+              </svg>
+              <span>{localeInfo.username}</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="25"
+                fill="currentColor"
+                className="bi bi-three-dots"
+                viewBox="0 0 20 20"
+                style={{ marginLeft: "20px" }}
+                onClick={() => handleShow()}
+              >
+                <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
+              </svg>
+            </div>
+          </div>
+        </a>
+      </Button>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Modal heading</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Woohoo, you are reading this text in a modal!</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleLogout}>
+            Log out @{localeInfo.username}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+}
+
+export { SigninModal, LogoutModal };
