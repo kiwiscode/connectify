@@ -18,9 +18,14 @@ function UserProfile() {
 
   return (
     <>
-      <Container fluid>
+      <Container
+        fluid
+        style={{
+          justifyContent: "center",
+        }}
+      >
         <Row>
-          <Col ml="">
+          <Col xs={12} sm={12} md={6} lg={3} style={{ height: "100%" }}>
             <nav className="nav-bar-home">
               <a href="">
                 <div>
@@ -176,13 +181,19 @@ function UserProfile() {
                     </div>
                   </div>
                 </a>
-
-                <Button className="compose-tweet">Post</Button>
+                <Button className="compose-tweet">
+                  <span className="query-1">Post</span>
+                </Button>
               </div>
               <LogoutModal></LogoutModal>
             </nav>
           </Col>
+
           <Col
+            xs={12}
+            sm={12}
+            md={4}
+            lg={6}
             style={{
               className: "main-column",
               border: "1px solid rgba(0, 0, 0, 0.1)",
@@ -190,7 +201,6 @@ function UserProfile() {
               borderBottom: "none",
               height: "100%",
             }}
-            xs={6}
           >
             <ul>
               <li>1</li>
@@ -257,10 +267,14 @@ function UserProfile() {
               <li>1</li>
               <li>1</li>
             </ul>
-            2 of 3
           </Col>
+
           <Col
             className="side-bar-column"
+            xs={12}
+            sm={12}
+            md={3}
+            lg={3}
             style={{
               height: "100%",
             }}

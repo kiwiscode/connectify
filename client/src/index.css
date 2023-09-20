@@ -157,9 +157,8 @@ body {
 .footer-container {
   width: 100%;
   height: auto;
-  position: absolute;
   left: 0;
-  bottom: 20px;
+  margin-top: 150px;
   text-align: center;
 }
 
@@ -206,7 +205,7 @@ span > a:hover {
   padding: 16px;
 }
 
-/* user-profile page */
+/* user-profile page  */
 .nav-bar-home a {
   font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, Helvetica, Arial, sans-serif;
@@ -222,7 +221,6 @@ span > a:hover {
   flex-direction: column;
   align-items: center;
   margin-top: 50px;
-  position: fixed;
   top: 0;
   left: 5%;
   z-index: 1000;
@@ -299,10 +297,4 @@ span > a:hover {
   border-radius: var(--border-radius);
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
   transition: background-color 0.3s, box-shadow 0.3s;
-}
-
-@media (max-width < 1920px) {
-  body {
-    background-color: blue;
-  }
 }
