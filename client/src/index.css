@@ -103,7 +103,8 @@ body {
   display: none;
 }
 
-.parent-container {
+/* problem with this section */
+/* .parent-container {
   position: relative;
   width: 100vh;
   height: 95vh;
@@ -113,7 +114,8 @@ body {
   position: relative;
   top: 18vh;
   left: 100vh;
-}
+} */
+/* problem with this section */
 
 .by-signing {
   font-size: 11px;
@@ -157,7 +159,7 @@ body {
   height: auto;
   position: absolute;
   left: 0;
-  bottom: 20;
+  bottom: 20px;
   text-align: center;
 }
 
@@ -204,13 +206,14 @@ span > a:hover {
   padding: 16px;
 }
 
+/* user-profile page */
 .nav-bar-home a {
   font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, Helvetica, Arial, sans-serif;
   text-decoration: none;
   color: rgba(15, 20, 25, 1);
   font-weight: 400;
-  /* font-size: 20px; */
+  font-size: 20px;
   line-height: 50px;
 }
 
@@ -230,8 +233,6 @@ span > a:hover {
   min-width: 52px;
   min-height: 52px;
   transition-duration: 0.2s;
-  /* padding-left: 32px;
-  padding-right: 32px; */
   margin-top: 50px;
 }
 
@@ -273,4 +274,35 @@ span > a:hover {
 .side-bar-column {
   position: sticky;
   top: 0;
+}
+
+.logout-modal {
+  width: 500px;
+  height: 1410px;
+  left: -10px;
+}
+
+.logout-p {
+  font: 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.logout-p:hover {
+  background-color: rgba(0, 0, 0, 0.01);
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-top-width: 1px;
+  border-width: 4px 1.25em;
+  border-radius: var(--border-radius);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+@media (max-width < 1920px) {
+  body {
+    background-color: blue;
+  }
 }
