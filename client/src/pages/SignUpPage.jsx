@@ -34,15 +34,18 @@ function SignUpPage() {
       .catch((err) => {
         const { status } = err.response;
         const { errorMessage } = err.response.data;
-        if (status === 403) {
-          setError(errorMessage);
-          setSuccess("");
-        }
         if (status === 402) {
           setError(errorMessage);
           setSuccess("");
         }
-
+        if (status === 403) {
+          setError(errorMessage);
+          setSuccess("");
+        }
+        if (status === 405) {
+          setError(errorMessage);
+          setSuccess("");
+        }
         if (status === 501) {
           setError(errorMessage);
           setSuccess("");

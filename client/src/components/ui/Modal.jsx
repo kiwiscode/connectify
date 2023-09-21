@@ -36,7 +36,6 @@ function SigninModal() {
   };
 
   const handleLogin = () => {
-    setShow(false);
     axios
       .post(`${API_URL}/auth/login`, {
         username,
@@ -58,9 +57,7 @@ function SigninModal() {
         }
       })
       .catch((err) => {
-        console.log(err);
         if (err.response !== undefined) {
-          handleShow();
           const { status } = err.response;
           const { errorMessage } = err.response.data;
           if (status === 403) {
@@ -134,9 +131,7 @@ function SigninModal() {
                 </Button>
                 <span>
                   Don&apos;t have an account?
-                  <a href="">
-                    <span>Sign up</span>
-                  </a>
+                  <a href="">Sign up</a>
                 </span>
               </Modal.Footer>
             </Modal>
@@ -228,4 +223,59 @@ function LogoutModal() {
   );
 }
 
-export { SigninModal, LogoutModal };
+function PostModal() {
+  const [show, setShow] = useState(false);
+  const [text, setText] = useState("");
+  const [error, setError] = useState("");
+  const maxCharacters = 140;
+
+  const handleChange = (event) => {
+    const inputText = event.target.value;
+    if (inputText.length <= maxCharacters) {
+      setText(inputText);
+    } else {
+      setError("Tweet length to 140 characters");
+    }
+  };
+  const handleClose = () => {
+    setShow(false);
+  };
+  const handleShow = () => setShow(true);
+
+  return (
+    <>
+      <Button variant="primary" onClick={handleShow} className="compose-tweet">
+        Post
+      </Button>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton></Modal.Header>
+        <span style={{ marginLeft: "30px", marginTop: "15px" }}>
+          What is happening?!
+        </span>
+        <Modal.Body>
+          <textarea
+            rows="4"
+            cols="50"
+            value={text}
+            className="input-post"
+            onChange={handleChange}
+            maxLength={maxCharacters}
+            style={{ resize: "none", marginLeft: "30px", marginTop: "15px" }}
+          />
+        </Modal.Body>
+        <Modal.Footer className="post-modal-footer ml-1  ">
+          <Button
+            variant="primary"
+            onClick={handleClose}
+            className="post-btn float-sm-end "
+          >
+            Post
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+}
+
+export { SigninModal, LogoutModal, PostModal };

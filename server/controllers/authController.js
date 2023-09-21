@@ -91,6 +91,14 @@ const handleSignup = (req, res, next) => {
     return;
   }
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    res.status(405).json({
+      errorMessage: "Please provide a valid email address.",
+    });
+    return;
+  }
+
   bcrypt
     .genSalt(saltRounds)
     .then((salt) => bcrypt.hash(password, salt))

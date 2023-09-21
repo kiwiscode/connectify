@@ -1,7 +1,8 @@
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { Container, Row, Col, Button } from "react-bootstrap";
-import { LogoutModal } from "../components/ui/Modal";
+import { LogoutModal, PostModal } from "../components/ui/Modal";
+import axios from "axios";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -19,7 +20,7 @@ function UserProfile() {
   return (
     <>
       <Container
-        fluid
+        // fluid
         style={{
           justifyContent: "center",
         }}
@@ -181,9 +182,7 @@ function UserProfile() {
                     </div>
                   </div>
                 </a>
-                <Button className="compose-tweet">
-                  <span className="query-1">Post</span>
-                </Button>
+                <PostModal></PostModal>
               </div>
               <LogoutModal></LogoutModal>
             </nav>
@@ -203,21 +202,6 @@ function UserProfile() {
             }}
           >
             <ul>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
               <li>1</li>
               <li>1</li>
               <li>1</li>
