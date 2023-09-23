@@ -22,4 +22,7 @@ app.use("/auth", authRoutes);
 const logoutRoutes = require("./routes/logout.routes");
 app.use("/logout", logoutRoutes);
 
+const homeRoutes = require("./routes/home.routes");
+app.use("/home", homeRoutes);
+
 module.exports = app;

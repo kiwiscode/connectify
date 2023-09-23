@@ -205,11 +205,10 @@ function LogoutModal() {
       <Modal
         show={show}
         onHide={handleClose}
-        centered="true"
         className="logout-modal"
         size="sm"
       >
-        <Modal.Body className="logout-p2">
+        <Modal.Body>
           <p
             className="logout-p"
             onClick={handleLogout}
@@ -227,6 +226,7 @@ function PostModal() {
   const [show, setShow] = useState(false);
   const [text, setText] = useState("");
   const [error, setError] = useState("");
+
   const maxCharacters = 140;
 
   const handleChange = (event) => {
@@ -237,10 +237,35 @@ function PostModal() {
       setError("Tweet length to 140 characters");
     }
   };
+  console.log(text);
   const handleClose = () => {
     setShow(false);
   };
   const handleShow = () => setShow(true);
+
+  const handlePost = () => {
+    handleClose();
+
+    const token = localStorage.getItem("token");
+    axios
+      .post(
+        `${API_URL}/home/post`,
+        {
+          text,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <>
@@ -267,7 +292,7 @@ function PostModal() {
         <Modal.Footer className="post-modal-footer ml-1  ">
           <Button
             variant="primary"
-            onClick={handleClose}
+            onClick={handlePost}
             className="post-btn float-sm-end "
           >
             Post

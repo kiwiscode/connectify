@@ -201,6 +201,7 @@ function UserProfile() {
               height: "100%",
             }}
           >
+            {/* mainpage yani home rotasına tüm twitlerin gösterileceği column burası !  */}
             <ul>
               <li>1</li>
               <li>1</li>
@@ -251,6 +252,7 @@ function UserProfile() {
               <li>1</li>
               <li>1</li>
             </ul>
+            {/* mainpage yani home rotasına tüm twitlerin gösterileceği column burası !  */}
           </Col>
 
           <Col
