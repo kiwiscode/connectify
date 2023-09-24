@@ -1,26 +1,21 @@
 const User = require("../models/User.model");
 const Post = require("../models/Post.model");
-const { response } = require("../routes/home.routes");
-const capitalize = require("../utils/capitalize");
 
-const handleMainPage = (req, res, next) => {
-  res.send("Hello main page");
-};
-
-const handlePost = (req, res, next) => {
+const handlePost = (req, res) => {
   const { text } = req.body;
   const { userId } = req.user;
 
-  // Kullanıcıyı bul
   User.findById(userId)
     .then((user) => {
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       }
-
+      console.log(user);
       return Post.create({
         userId: userId,
         content: text,
+        authorFullName: user.fullname,
+        authorUserName: user.username,
       })
         .then((post) => {
           user.posts.push(post);
@@ -38,7 +33,17 @@ const handlePost = (req, res, next) => {
     });
 };
 
+const handleShowPosts = (req, res) => {
+  Post.find()
+    .then((postsFromDataBase) => {
+      res.json(postsFromDataBase);
+    })
+    .catch((err) => {
+      res.status(500).send("An error occured while fetching posts", err);
+    });
+};
+
 module.exports = {
-  handleMainPage,
   handlePost,
+  handleShowPosts,
 };

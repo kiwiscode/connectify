@@ -1,7 +1,8 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { UserContext } from "../context/UserContext";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { LogoutModal, PostModal } from "../components/ui/Modal";
+
 import axios from "axios";
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -9,14 +10,27 @@ const API_URL = "http://localhost:3000";
 // when working on deployment version
 // ?
 
-function UserProfile() {
-  const { userInfo } = useContext(UserContext);
-  console.log(userInfo);
-
+function MainPage() {
+  const { userInfo, getToken } = useContext(UserContext);
+  const [posts, setPosts] = useState([]);
   const localeInfo = JSON.parse(localStorage.getItem("userInfo"));
 
-  console.log(localeInfo);
+  const handleShowPosts = () => {
+    axios
+      .get(`${API_URL}/home`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
+  console.log(posts);
   return (
     <>
       <Container
@@ -202,6 +216,7 @@ function UserProfile() {
             }}
           >
             {/* mainpage yani home rotasına tüm twitlerin gösterileceği column burası !  */}
+            <button onClick={() => handleShowPosts()}></button>
             <ul>
               <li>1</li>
               <li>1</li>
@@ -273,4 +288,4 @@ function UserProfile() {
   );
 }
 
-export default UserProfile;
+export default MainPage;

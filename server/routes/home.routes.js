@@ -3,8 +3,6 @@ const router = express();
 const homeController = require("../controllers/homeController");
 const authenticateToken = require("../middleware/jwtMiddleware");
 
-router.get("/", homeController.handleMainPage);
-
 router.post("/post", authenticateToken, homeController.handlePost);
-
+router.get("/", authenticateToken, homeController.handleShowPosts);
 module.exports = router;
