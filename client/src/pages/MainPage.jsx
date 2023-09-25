@@ -1,6 +1,6 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserContext";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Container, Row, Col, Stack } from "react-bootstrap";
 import { LogoutModal, PostModal } from "../components/ui/Modal";
 
 import axios from "axios";
@@ -14,7 +14,7 @@ function MainPage() {
   const { userInfo, getToken } = useContext(UserContext);
   const [posts, setPosts] = useState([]);
   const localeInfo = JSON.parse(localStorage.getItem("userInfo"));
-
+  console.log(posts);
   const handleShowPosts = () => {
     axios
       .get(`${API_URL}/home`, {
@@ -23,12 +23,16 @@ function MainPage() {
         },
       })
       .then((response) => {
-        console.log(response);
+        setPosts(response.data);
       })
       .catch((err) => {
         console.log(err);
       });
   };
+
+  useEffect(() => {
+    handleShowPosts();
+  }, []);
 
   console.log(posts);
   return (
@@ -215,58 +219,68 @@ function MainPage() {
               height: "100%",
             }}
           >
+            <div
+              style={{ fontWeight: "700", fontSize: "20px", height: "100px" }}
+            >
+              Home
+            </div>
             {/* mainpage yani home rotasına tüm twitlerin gösterileceği column burası !  */}
-            <button onClick={() => handleShowPosts()}></button>
-            <ul>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
-            </ul>
+
+            <div className="all-posts">
+              {posts.map((post) => (
+                <div key={post._id}>
+                  <hr />
+                  <div className="posts-details">
+                    <div className="post-head">
+                      <Stack direction="horizontal" gap={1}>
+                        <div className="p-0">
+                          <span style={{ fontWeight: "700" }}>
+                            {post.authorFullName}{" "}
+                          </span>
+                        </div>
+                        <div className="p-0 verified-icon">
+                          {" "}
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            className="bi bi-patch-check-fill"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z" />
+                          </svg>
+                        </div>
+                        <div className="p-0">
+                          {" "}
+                          <span style={{ color: "rgba(0, 0, 0, 0.6)" }}>
+                            @{post.authorUserName}
+                          </span>
+                        </div>
+                      </Stack>
+                    </div>
+                    <div>{post.content}</div>
+                    <Stack direction="horizontal" gap={3}>
+                      <div className="p-0">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          className="bi bi-chat"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M2.678 11.894a1 1 0 0 1 .287.801 10.97 10.97 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8.06 8.06 0 0 0 8 14c3.996 0 7-2.807 7-6 0-3.192-3.004-6-7-6S1 4.808 1 8c0 1.468.617 2.83 1.678 3.894zm-.493 3.905a21.682 21.682 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a9.68 9.68 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105z" />
+                        </svg>
+                        <span>Num Of Comments?</span>
+                      </div>
+                      <div className="p-0">Second item</div>
+                      <div className="p-0">Third item</div>
+                    </Stack>
+                  </div>
+                </div>
+              ))}
+            </div>
             {/* mainpage yani home rotasına tüm twitlerin gösterileceği column burası !  */}
           </Col>
 

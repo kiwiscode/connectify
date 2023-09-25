@@ -2,7 +2,7 @@ const User = require("../models/User.model");
 const Post = require("../models/Post.model");
 
 const handlePost = (req, res) => {
-  const { text } = req.body;
+  const { content } = req.body;
   const { userId } = req.user;
 
   User.findById(userId)
@@ -13,7 +13,7 @@ const handlePost = (req, res) => {
       console.log(user);
       return Post.create({
         userId: userId,
-        content: text,
+        content: content,
         authorFullName: user.fullname,
         authorUserName: user.username,
       })

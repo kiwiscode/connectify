@@ -301,9 +301,6 @@ span > a:hover {
 
 .post-btn {
   width: 80px;
-
-  margin-left: 370px;
-  margin-top: 15px;
 }
 
 .input-post {
@@ -316,6 +313,29 @@ span > a:hover {
   border: none;
 }
 
-.logout-modal {
-  /* background-color: grey; */
+.bg-body-tertiary {
+  border: none;
+  background-color: white;
+}
+
+.emoji-modal {
+  margin-top: 160px;
+}
+
+.Flex.epr-preview.FlexRow {
+  display: none;
+}
+
+.post-head {
+  font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+}
+
+.r-rjixqe {
+  line-height: 20px;
+}
+
+.bi-patch-check-fill {
+  color: rgb(29, 155, 240);
+  margin-bottom: 5px;
 }
