@@ -3,6 +3,7 @@ import HomePage from "./pages/HomePage";
 import MainPage from "./pages/MainPage";
 import { Routes, Route } from "react-router-dom";
 import "./index.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   return (

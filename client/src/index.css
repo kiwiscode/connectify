@@ -339,3 +339,9 @@ span > a:hover {
   color: rgb(29, 155, 240);
   margin-bottom: 5px;
 }
+
+.bi-heart,
+.bi-recycle,
+.bi-chat {
+  cursor: pointer;
+}

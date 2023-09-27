@@ -32,7 +32,7 @@ function MainPage() {
 
   useEffect(() => {
     handleShowPosts();
-  }, []);
+  }, [posts]);
 
   console.log(posts);
   return (
@@ -229,7 +229,7 @@ function MainPage() {
             <div className="all-posts">
               {posts.map((post) => (
                 <div key={post._id}>
-                  <hr />
+                  <hr style={{ width: "100" }} />
                   <div className="posts-details">
                     <div className="post-head">
                       <Stack direction="horizontal" gap={1}>
@@ -274,8 +274,32 @@ function MainPage() {
                         </svg>
                         <span>Num Of Comments?</span>
                       </div>
-                      <div className="p-0">Second item</div>
-                      <div className="p-0">Third item</div>
+                      <div className="p-0">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          className="bi bi-recycle"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M9.302 1.256a1.5 1.5 0 0 0-2.604 0l-1.704 2.98a.5.5 0 0 0 .869.497l1.703-2.981a.5.5 0 0 1 .868 0l2.54 4.444-1.256-.337a.5.5 0 1 0-.26.966l2.415.647a.5.5 0 0 0 .613-.353l.647-2.415a.5.5 0 1 0-.966-.259l-.333 1.242-2.532-4.431zM2.973 7.773l-1.255.337a.5.5 0 1 1-.26-.966l2.416-.647a.5.5 0 0 1 .612.353l.647 2.415a.5.5 0 0 1-.966.259l-.333-1.242-2.545 4.454a.5.5 0 0 0 .434.748H5a.5.5 0 0 1 0 1H1.723A1.5 1.5 0 0 1 .421 12.24l2.552-4.467zm10.89 1.463a.5.5 0 1 0-.868.496l1.716 3.004a.5.5 0 0 1-.434.748h-5.57l.647-.646a.5.5 0 1 0-.708-.707l-1.5 1.5a.498.498 0 0 0 0 .707l1.5 1.5a.5.5 0 1 0 .708-.707l-.647-.647h5.57a1.5 1.5 0 0 0 1.302-2.244l-1.716-3.004z" />
+                        </svg>
+                        <span>Num Of Reposts?</span>
+                      </div>
+                      <div className="p-0">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          className="bi bi-heart"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
+                        </svg>
+                        <span>Num Of Likes?</span>
+                      </div>
                     </Stack>
                   </div>
                 </div>
