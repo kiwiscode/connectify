@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserContext";
-import { Container, Row, Col, Stack } from "react-bootstrap";
+import { Container, Row, Col, Stack, Form } from "react-bootstrap";
 import { LogoutModal, PostModal } from "../components/ui/Modal";
 
 import axios from "axios";
@@ -32,13 +32,12 @@ function MainPage() {
 
   useEffect(() => {
     handleShowPosts();
-  }, [posts]);
+  }, []);
 
   console.log(posts);
   return (
     <>
       <Container
-        // fluid
         style={{
           justifyContent: "center",
         }}
@@ -317,9 +316,7 @@ function MainPage() {
             style={{
               height: "100%",
             }}
-          >
-            3 of 3
-          </Col>
+          ></Col>
         </Row>
       </Container>
     </>

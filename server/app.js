@@ -25,4 +25,7 @@ app.use("/logout", logoutRoutes);
 const homeRoutes = require("./routes/home.routes");
 app.use("/home", homeRoutes);
 
+const profileRoutes = require("./routes/userProfile.routes");
+app.use("/userProfile", profileRoutes);
+
 module.exports = app;
