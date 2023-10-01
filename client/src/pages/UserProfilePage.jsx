@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserContext";
-
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -44,7 +43,7 @@ function UserProfile() {
       });
     handleShowPosts();
   }, []);
-  console.log(posts);
+
   console.log(userprofiledata);
   return (
     <>

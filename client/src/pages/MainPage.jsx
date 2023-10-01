@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserContext";
 import { Container, Row, Col, Stack, Form } from "react-bootstrap";
 import { LogoutModal, PostModal } from "../components/ui/Modal";
-
+import { Link } from "react-router-dom";
 import axios from "axios";
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -195,7 +195,9 @@ function MainPage() {
                       >
                         <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z" />
                       </svg>
-                      <span>Profile</span>
+                      <Link to="/profile">
+                        <span>Profile</span>
+                      </Link>
                     </div>
                   </div>
                 </a>
@@ -223,6 +225,19 @@ function MainPage() {
             >
               Home
             </div>
+            <textarea
+              rows="4"
+              cols="50"
+              className="input-post"
+              placeholder="What is happenig?!"
+              // value={content}
+              // onChange={handleChange}
+              // maxLength={maxCharacters}
+              style={{
+                resize: "none",
+                border: "solid",
+              }}
+            />
             {/* mainpage yani home rotasına tüm twitlerin gösterileceği column burası !  */}
 
             <div className="all-posts">

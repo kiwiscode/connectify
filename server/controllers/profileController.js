@@ -1,5 +1,7 @@
 const User = require("../models/User.model");
 const Post = require("../models/Post.model");
+const cloudinary = require("../config/cloudinary.config");
+
 const handleProfile = (req, res) => {
   const userId = req.user.userId;
 
@@ -19,6 +21,9 @@ const handleProfile = (req, res) => {
     });
 };
 
+const handleUploadMedia = async (req, res, next) => {};
+
 module.exports = {
   handleProfile,
+  handleUploadMedia,
 };
