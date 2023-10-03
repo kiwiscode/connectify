@@ -345,3 +345,12 @@ span > a:hover {
 .bi-chat {
   cursor: pointer;
 }
+
+.profile-paragraph {
+  color: rgb(83, 100, 113);
+  line-height: 16px;
+  font-size: 13px;
+  font-weight: 400;
+  font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+}

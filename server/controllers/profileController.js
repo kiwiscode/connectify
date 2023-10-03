@@ -21,7 +21,7 @@ const handleProfile = (req, res) => {
     });
 };
 
-const handleUploadMedia = async (req, res, next) => {};
+const handleUploadMedia = (req, res, next) => {};
 
 module.exports = {
   handleProfile,

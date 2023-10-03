@@ -14,7 +14,27 @@ function MainPage() {
   const { userInfo, getToken } = useContext(UserContext);
   const [posts, setPosts] = useState([]);
   const localeInfo = JSON.parse(localStorage.getItem("userInfo"));
-  console.log(posts);
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "June",
+    "July",
+    "Aug",
+    "Sept",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  const getCreatedDate = (date) => {
+    const createdAt = new Date(date);
+    const getMonth = createdAt.getMonth() + 1;
+    return `${months[getMonth]} ${createdAt.getDate()}`;
+  };
+
   const handleShowPosts = () => {
     axios
       .get(`${API_URL}/home`, {
@@ -34,7 +54,6 @@ function MainPage() {
     handleShowPosts();
   }, []);
 
-  console.log(posts);
   return (
     <>
       <Container
@@ -235,7 +254,8 @@ function MainPage() {
               // maxLength={maxCharacters}
               style={{
                 resize: "none",
-                border: "solid",
+                border: "1px solid rgba(0, 0, 0, 0.1)",
+                color: "rgba(0, 0, 0, 0.6)",
               }}
             />
             {/* mainpage yani home rotasına tüm twitlerin gösterileceği column burası !  */}
@@ -269,6 +289,10 @@ function MainPage() {
                           {" "}
                           <span style={{ color: "rgba(0, 0, 0, 0.6)" }}>
                             @{post.authorUserName}
+                          </span>
+                          <span style={{ color: "rgba(0,0,0,0.6)" }}>
+                            {" "}
+                            · {getCreatedDate(post.createdAt)}
                           </span>
                         </div>
                       </Stack>

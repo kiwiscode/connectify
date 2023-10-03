@@ -238,8 +238,7 @@ function PostModal() {
     setshowEmojisBar("");
     setShowSecondModal(true);
   };
-  console.log(showSecondModal);
-  console.log(showEmojisBar);
+
   const onEmojiClick = (emojiObject) => {
     setChosenEmoji(emojiObject);
     setContent((prevText) => prevText + emojiObject.emoji);
