@@ -208,6 +208,8 @@ const handleLogin = (req, res, next) => {
               posts,
               followers,
               following,
+              createdAt,
+              updatedAt,
             } = user;
 
             const token = jwt.sign({ userId: _id }, process.env.JWT_SECRET, {
@@ -225,6 +227,8 @@ const handleLogin = (req, res, next) => {
                 posts,
                 followers,
                 following,
+                createdAt,
+                updatedAt,
               },
             });
           });

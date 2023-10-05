@@ -46,10 +46,31 @@ function UserProfile() {
     "Dec",
   ];
 
+  const monthsProfile = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
   const getCreatedDate = (date) => {
     const createdAt = new Date(date);
-    const getMonth = createdAt.getMonth() + 1;
+    const getMonth = createdAt.getMonth();
     return `${months[getMonth]} ${createdAt.getDate()}`;
+  };
+
+  const getCreatedDateForProfile = (date) => {
+    const createdAt = new Date(date);
+    const getMonth = createdAt.getMonth();
+    return `${monthsProfile[getMonth]} ${createdAt.getDate()}`;
   };
 
   return (
@@ -91,7 +112,7 @@ function UserProfile() {
                       >
                         <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z" />
                       </svg>
-                      <span>{}</span>
+                      <span>Home</span>
                     </div>
                   </div>
                 </a>
@@ -269,6 +290,31 @@ function UserProfile() {
                     </div>
                   </div>
                 </Stack>
+                <div
+                  style={{
+                    fontWeight: "700",
+                    fontSize: "20px",
+                  }}
+                >
+                  {userInfo.username}
+                </div>
+                <div style={{ color: "rgb(83, 100, 113)" }}>
+                  @{userInfo.username}
+                </div>
+                <div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    className="bi bi-calendar4-week"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 2a1 1 0 0 0-1 1v1h14V3a1 1 0 0 0-1-1H2zm13 3H1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V5z" />
+                    <path d="M11 7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-2 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z" />
+                  </svg>{" "}
+                  Joined {getCreatedDateForProfile(userInfo.createdAt)}
+                </div>
               </Row>
             </Container>
 
