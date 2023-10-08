@@ -28,4 +28,7 @@ app.use("/home", homeRoutes);
 const profileRoutes = require("./routes/userProfile.routes");
 app.use("/userProfile", profileRoutes);
 
+const cloudinaryUpload = require("./routes/post-image.routes");
+app.use("/cloudinary", cloudinaryUpload);
+
 module.exports = app;

@@ -110,6 +110,7 @@ const handleSignup = (req, res, next) => {
         email,
         password: hashedPassword,
         verified: false,
+        imageUrl: "../assets/resume-pic.png",
       });
     })
     .then((user) => {

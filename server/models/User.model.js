@@ -9,7 +9,7 @@ const userSchema = new Schema(
     verified: { type: Boolean, default: false },
     active: { type: Boolean, default: false },
     bio: String,
-    avatarUrl: String,
+    imageUrl: String,
     posts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
     followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
     following: [{ type: Schema.Types.ObjectId, ref: "User" }],
