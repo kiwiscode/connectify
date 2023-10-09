@@ -11,7 +11,7 @@ router.get("/:id", (req, res) => {
   User.findById(profileId)
     .then((response) => {
       console.log(response);
-      res.status(200).json({ data: response });
+      res.status(200).json({ userInfo: response });
     })
     .catch(() => {
       res.status(404).json({ errorMessage: "User not found!" });

@@ -243,13 +243,11 @@ function MainPage() {
                     <div className="post-head">
                       <Stack direction="horizontal" gap={1}>
                         <div className="p-0">
-                          <Link to={`/profile/${post.userId}`}>
-                            <span
-                              style={{ fontWeight: "700" }}
-                              // onClick={() =>
-                              //   handleShowSpesificUserProfile(post.userId)
-                              // }
-                            >
+                          <Link
+                            to={`/profile/${post.userId}`}
+                            style={{ textDecoration: "none", color: "black" }}
+                          >
+                            <span style={{ fontWeight: "700" }}>
                               {post.authorFullName}
                             </span>
                           </Link>
