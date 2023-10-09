@@ -8,8 +8,8 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors());
 app.use(express.json());
+app.use(cors());
 
 require("./config")(app);
 
@@ -25,10 +25,10 @@ app.use("/logout", logoutRoutes);
 const homeRoutes = require("./routes/home.routes");
 app.use("/home", homeRoutes);
 
-const profileRoutes = require("./routes/userProfile.routes");
-app.use("/userProfile", profileRoutes);
+const profileRoutes = require("./routes/profile.routes");
+app.use("/profile", profileRoutes);
 
 const cloudinaryUpload = require("./routes/post-image.routes");
-app.use("/cloudinary", cloudinaryUpload);
+app.use("/upload", cloudinaryUpload);
 
 module.exports = app;
