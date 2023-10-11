@@ -20,6 +20,20 @@ const handleProfile = (req, res) => {
     });
 };
 
+const handleShowSpesificProfile = (req, res) => {
+  const profileId = req.params.id;
+
+  User.findById(profileId)
+    .populate("posts")
+    .then((response) => {
+      res.status(200).json(response);
+    })
+    .catch(() => {
+      res.status(404).json({ errorMessage: "User not found!" });
+    });
+};
+
 module.exports = {
   handleProfile,
+  handleShowSpesificProfile,
 };

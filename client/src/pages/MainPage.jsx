@@ -13,7 +13,9 @@ const API_URL = "http://localhost:3000";
 function MainPage() {
   const { userInfo, getToken } = useContext(UserContext);
   const [posts, setPosts] = useState([]);
+  const [postId, setpostId] = useState("");
   const localeInfo = JSON.parse(localStorage.getItem("userInfo"));
+
   const months = [
     "Jan",
     "Feb",
@@ -49,6 +51,29 @@ function MainPage() {
         console.log(err);
       });
   };
+
+  const handlePostLikes = (postId) => {
+    setpostId(postId);
+
+    axios
+      .post(
+        `${API_URL}/favorite`,
+        { postId },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  console.log("Current post Id : ", postId);
 
   useEffect(() => {
     // const interval = setInterval(() => {
@@ -307,6 +332,7 @@ function MainPage() {
                       </div>
                       <div className="p-0">
                         <svg
+                          onClick={() => handlePostLikes(post._id)}
                           xmlns="http://www.w3.org/2000/svg"
                           width="16"
                           height="16"

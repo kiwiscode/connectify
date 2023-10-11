@@ -13,6 +13,7 @@ const userSchema = new Schema(
     posts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
     followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
     following: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    favorites: [{ type: Schema.Types.ObjectId, ref: "Post" }],
   },
   {
     timestamps: true,

@@ -28,6 +28,9 @@ app.use("/home", homeRoutes);
 const profileRoutes = require("./routes/profile.routes");
 app.use("/profile", profileRoutes);
 
+const addFavoriteRoutes = require("./routes/favorite.routes");
+app.use("/favorite", addFavoriteRoutes);
+
 const cloudinaryUpload = require("./routes/post-image.routes");
 app.use("/upload", cloudinaryUpload);
 

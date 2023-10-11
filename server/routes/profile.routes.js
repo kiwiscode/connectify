@@ -5,16 +5,9 @@ const authenticateToken = require("../middleware/jwtMiddleware");
 const User = require("../models/User.model");
 
 router.get("/", authenticateToken, profileController.handleProfile);
-router.get("/:id", (req, res) => {
-  const profileId = req.params.id;
-
-  User.findById(profileId)
-    .then((response) => {
-      console.log(response);
-      res.status(200).json({ userInfo: response });
-    })
-    .catch(() => {
-      res.status(404).json({ errorMessage: "User not found!" });
-    });
-});
+router.get(
+  "/:id",
+  authenticateToken,
+  profileController.handleShowSpesificProfile
+);
 module.exports = router;

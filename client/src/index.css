@@ -354,3 +354,10 @@ span > a:hover {
   font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, Helvetica, Arial, sans-serif;
 }
+
+.spesific-profile-st1 {
+  height: 100px;
+  display: flex;
+  justify-content: right;
+  font-size: 15px;
+}
