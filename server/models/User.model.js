@@ -1,5 +1,5 @@
 const { Schema, model } = require("mongoose");
-
+const Message = require("../models/Message.model");
 const userSchema = new Schema(
   {
     fullname: { type: String, required: true },
@@ -14,6 +14,7 @@ const userSchema = new Schema(
     followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
     following: [{ type: Schema.Types.ObjectId, ref: "User" }],
     favorites: [{ type: Schema.Types.ObjectId, ref: "Post" }],
+    messages: [{ type: Schema.Types.ObjectId, ref: "Message" }],
   },
   {
     timestamps: true,

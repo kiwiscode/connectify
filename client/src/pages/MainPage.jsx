@@ -11,11 +11,12 @@ const API_URL = "http://localhost:3000";
 // ?
 
 function MainPage() {
-  const { userInfo, getToken } = useContext(UserContext);
+  const { userInfo, getToken, updateUser } = useContext(UserContext);
   const [posts, setPosts] = useState([]);
   const [postId, setpostId] = useState("");
   const localeInfo = JSON.parse(localStorage.getItem("userInfo"));
-
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const months = [
     "Jan",
     "Feb",
@@ -30,6 +31,7 @@ function MainPage() {
     "Nov",
     "Dec",
   ];
+  console.log(userInfo);
 
   const getCreatedDate = (date) => {
     const createdAt = new Date(date);
@@ -66,10 +68,13 @@ function MainPage() {
         }
       )
       .then((response) => {
+        setError("");
         console.log(response);
       })
       .catch((error) => {
-        console.log(error);
+        const { errorMessage } = error.response.data;
+        console.log("This is the error message:", errorMessage);
+        setError(errorMessage);
       });
   };
 
@@ -342,13 +347,26 @@ function MainPage() {
                         >
                           <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
                         </svg>
-                        <span>Num Of Likes?</span>
+                        {post.likes.length > 0 ? (
+                          <span>{post.likes.length}</span>
+                        ) : (
+                          ""
+                        )}
                       </div>
                     </Stack>
                   </div>
                 </div>
               ))}
             </div>
+            <span
+              style={{
+                color: "crimson",
+                fontWeight: "800",
+                textAlign: "center",
+              }}
+            >
+              {error}
+            </span>
             {/* mainpage yani home rotasına tüm twitlerin gösterileceği column burası !  */}
           </Col>
 

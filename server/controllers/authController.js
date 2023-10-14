@@ -173,6 +173,11 @@ const handleLogin = (req, res, next) => {
   }
 
   User.findOne({ username })
+    .populate("posts")
+    .populate("followers")
+    .populate("following")
+    .populate("favorites")
+    .populate("messages")
     .then((user) => {
       if (!user.verified) {
         res.status(400).json({
@@ -209,8 +214,10 @@ const handleLogin = (req, res, next) => {
               posts,
               followers,
               following,
+              messages,
               createdAt,
               updatedAt,
+              favorites,
             } = user;
 
             const token = jwt.sign({ userId: _id }, process.env.JWT_SECRET, {
@@ -228,8 +235,10 @@ const handleLogin = (req, res, next) => {
                 posts,
                 followers,
                 following,
+                messages,
                 createdAt,
                 updatedAt,
+                favorites,
               },
             });
           });

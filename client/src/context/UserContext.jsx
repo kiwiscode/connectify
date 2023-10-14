@@ -16,6 +16,7 @@ const UserProvider = ({ children }) => {
         posts: [],
         followers: [],
         following: [],
+        favorites: [],
       }
     );
   });
@@ -41,10 +42,14 @@ const UserProvider = ({ children }) => {
       posts: [],
       followers: [],
       following: [],
+      favorites: [],
     });
     userInfo.active = false;
     localStorage.removeItem("userInfo");
     localStorage.removeItem("token");
+    localStorage.removeItem("following");
+    localStorage.removeItem("followers");
+    localStorage.removeItem("posts");
   };
 
   const setToken = (token) => {
