@@ -8,7 +8,7 @@ const handleGetFavorites = (req, res) => {
   User.findById(userId)
     .populate("favorites")
     .then((favoritesFromDataBase) => {
-      res.json({ favorites: favoritesFromDataBase });
+      res.json({ favorites: favoritesFromDataBase.favorites });
     })
     .catch(() => {
       res.status(404).json({

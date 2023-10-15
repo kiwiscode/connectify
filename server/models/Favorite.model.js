@@ -12,11 +12,6 @@ const favoriteSchema = new Schema(
       ref: "Post",
       required: true,
     },
-    content: {
-      type: String,
-      required: true,
-      ref: "Post",
-    },
     createdAt: {
       type: Date,
       default: Date.now,

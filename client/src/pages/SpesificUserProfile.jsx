@@ -2,7 +2,14 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
-import { Container, Row, Col, Stack } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Stack,
+  Button,
+  ButtonGroup,
+} from "react-bootstrap";
 import { PostModal, LogoutModal } from "../components/ui/Modal";
 
 // when working on local version
@@ -13,10 +20,14 @@ const API_URL = "http://localhost:3000";
 
 function SpesificUserProfile() {
   const { id } = useParams();
-  const { getToken } = useContext(UserContext);
+  const { getToken, userInfo } = useContext(UserContext);
   const [profileInfo, setProfileInfo] = useState({});
   const [profileInfoPosts, setprofileInfoPosts] = useState([]);
-  const handleShowSpesificUserProfile = () => {
+  const [favoriteWindow, setFavoriteWindow] = useState("hide");
+  const [postsWindow, setPostWindow] = useState("");
+  const [favorites, setFavorites] = useState([]);
+
+  const handleShowSpesificUserPosts = () => {
     axios
       .get(`${API_URL}/profile/${id}`, {
         headers: {
@@ -24,17 +35,53 @@ function SpesificUserProfile() {
         },
       })
       .then((response) => {
-        console.log(response);
+        setPostWindow("");
+        setFavoriteWindow("hide");
         setProfileInfo(response.data);
         setprofileInfoPosts(response.data.posts);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((err) => {
+        return err;
+      });
+  };
+
+  const handleShowSpesificUserFavorites = () => {
+    axios
+      .get(`${API_URL}/profile/${id}`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        setFavoriteWindow("");
+        setPostWindow("hide");
+        setFavorites(response.data.favorites);
+      })
+      .catch((err) => {
+        return err;
+      });
+  };
+
+  const handleGetAllPosts = () => {
+    axios
+      .get(`${API_URL}/profile`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then(() => {
+        setFavoriteWindow("hide");
+        setPostWindow("");
+      })
+
+      .catch((err) => {
+        return err;
       });
   };
 
   useEffect(() => {
-    handleShowSpesificUserProfile();
+    handleShowSpesificUserFavorites();
+    handleShowSpesificUserPosts();
   }, []);
 
   const months = [
@@ -78,8 +125,6 @@ function SpesificUserProfile() {
     const getMonth = createdAt.getMonth();
     return `${months[getMonth]} ${createdAt.getDate()}`;
   };
-
-  console.log(profileInfo);
 
   return (
     <>
@@ -390,7 +435,38 @@ function SpesificUserProfile() {
                     </div>
                   </Row>
                 </Container>
-                <div className="all-posts">
+                {/* start */}
+                <ButtonGroup
+                  aria-label="Basic example"
+                  style={{
+                    display: "flex",
+                  }}
+                >
+                  <Button
+                    onClick={() => handleGetAllPosts()}
+                    variant="secondary"
+                    style={{
+                      backgroundColor: "white",
+                      color: "black",
+                      border: "none",
+                    }}
+                  >
+                    Posts
+                  </Button>
+                  <Button
+                    onClick={() => handleShowSpesificUserFavorites()}
+                    variant="secondary"
+                    style={{
+                      backgroundColor: "white",
+                      color: "black",
+                      border: "none",
+                    }}
+                  >
+                    Likes
+                  </Button>
+                </ButtonGroup>
+                {/* finish */}
+                <div className={`all-posts ${postsWindow}`}>
                   {profileInfoPosts.map((post) => (
                     <div key={post._id}>
                       <hr style={{ width: "100" }} />
@@ -440,7 +516,9 @@ function SpesificUserProfile() {
                             >
                               <path d="M2.678 11.894a1 1 0 0 1 .287.801 10.97 10.97 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8.06 8.06 0 0 0 8 14c3.996 0 7-2.807 7-6 0-3.192-3.004-6-7-6S1 4.808 1 8c0 1.468.617 2.83 1.678 3.894zm-.493 3.905a21.682 21.682 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a9.68 9.68 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105z" />
                             </svg>
-                            <span>Num Of Comments?</span>
+                            <span className="post-description">
+                              Num Of Comments?
+                            </span>
                           </div>
                           <div className="p-0">
                             <svg
@@ -453,7 +531,109 @@ function SpesificUserProfile() {
                             >
                               <path d="M9.302 1.256a1.5 1.5 0 0 0-2.604 0l-1.704 2.98a.5.5 0 0 0 .869.497l1.703-2.981a.5.5 0 0 1 .868 0l2.54 4.444-1.256-.337a.5.5 0 1 0-.26.966l2.415.647a.5.5 0 0 0 .613-.353l.647-2.415a.5.5 0 1 0-.966-.259l-.333 1.242-2.532-4.431zM2.973 7.773l-1.255.337a.5.5 0 1 1-.26-.966l2.416-.647a.5.5 0 0 1 .612.353l.647 2.415a.5.5 0 0 1-.966.259l-.333-1.242-2.545 4.454a.5.5 0 0 0 .434.748H5a.5.5 0 0 1 0 1H1.723A1.5 1.5 0 0 1 .421 12.24l2.552-4.467zm10.89 1.463a.5.5 0 1 0-.868.496l1.716 3.004a.5.5 0 0 1-.434.748h-5.57l.647-.646a.5.5 0 1 0-.708-.707l-1.5 1.5a.498.498 0 0 0 0 .707l1.5 1.5a.5.5 0 1 0 .708-.707l-.647-.647h5.57a1.5 1.5 0 0 0 1.302-2.244l-1.716-3.004z" />
                             </svg>
-                            <span>Num Of Reposts?</span>
+                            <span className="post-description">
+                              Num Of Reposts?
+                            </span>
+                          </div>
+
+                          {/* start */}
+                          <div className="p-0">
+                            {post.likes.includes(userInfo._id) ? (
+                              <span>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="16"
+                                  height="16"
+                                  fill="rgb(249, 24, 128)"
+                                  className={`bi bi-heart-fill`}
+                                  viewBox="0 0 16 16"
+                                >
+                                  <path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
+                                </svg>
+                                <span className="post-description">
+                                  {post.likes.length}
+                                </span>
+                              </span>
+                            ) : (
+                              <span>
+                                {" "}
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="16"
+                                  height="16"
+                                  fill="currentColor"
+                                  className={`bi bi-heart`}
+                                  viewBox="0 0 16 16"
+                                >
+                                  <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
+                                </svg>
+                                <span className="post-description">
+                                  {post.likes.length}
+                                </span>
+                              </span>
+                            )}
+                          </div>
+                          {/* finish */}
+                        </Stack>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* start */}
+                <div className={`${favoriteWindow} all-favorites`}>
+                  {favorites.map((favorite) => (
+                    <div key={favorite._id}>
+                      <hr style={{ width: "100" }} />
+                      <div className="favorite-details">
+                        <div className="favorite-head">
+                          <Stack direction="horizontal" gap={1}>
+                            <div className="p-0">
+                              <span style={{ fontWeight: "700" }}>
+                                {favorite.authorFullName}{" "}
+                              </span>
+                            </div>
+                            <div className="p-0 verified-icon">
+                              {" "}
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                fill="currentColor"
+                                className="bi bi-patch-check-fill"
+                                viewBox="0 0 16 16"
+                              >
+                                <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z" />
+                              </svg>
+                            </div>
+                            <div className="p-0">
+                              {" "}
+                              <span style={{ color: "rgba(0, 0, 0, 0.6)" }}>
+                                @{favorite.authorUserName}
+                              </span>
+                              <span style={{ color: "rgba(0,0,0,0.6)" }}>
+                                {" "}
+                                · {getCreatedDate(favorite.createdAt)}
+                              </span>
+                            </div>
+                          </Stack>
+                        </div>
+                        <div>{favorite.content}</div>
+                        <Stack direction="horizontal" gap={3}>
+                          <div className="p-0">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="currentColor"
+                              className="bi bi-chat"
+                              viewBox="0 0 16 16"
+                            >
+                              <path d="M2.678 11.894a1 1 0 0 1 .287.801 10.97 10.97 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8.06 8.06 0 0 0 8 14c3.996 0 7-2.807 7-6 0-3.192-3.004-6-7-6S1 4.808 1 8c0 1.468.617 2.83 1.678 3.894zm-.493 3.905a21.682 21.682 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a9.68 9.68 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105z" />
+                            </svg>
+                            <span className="post-description">
+                              Num Of Comments?
+                            </span>
                           </div>
                           <div className="p-0">
                             <svg
@@ -461,18 +641,61 @@ function SpesificUserProfile() {
                               width="16"
                               height="16"
                               fill="currentColor"
-                              className="bi bi-heart"
+                              className="bi bi-recycle"
                               viewBox="0 0 16 16"
                             >
-                              <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
+                              <path d="M9.302 1.256a1.5 1.5 0 0 0-2.604 0l-1.704 2.98a.5.5 0 0 0 .869.497l1.703-2.981a.5.5 0 0 1 .868 0l2.54 4.444-1.256-.337a.5.5 0 1 0-.26.966l2.415.647a.5.5 0 0 0 .613-.353l.647-2.415a.5.5 0 1 0-.966-.259l-.333 1.242-2.532-4.431zM2.973 7.773l-1.255.337a.5.5 0 1 1-.26-.966l2.416-.647a.5.5 0 0 1 .612.353l.647 2.415a.5.5 0 0 1-.966.259l-.333-1.242-2.545 4.454a.5.5 0 0 0 .434.748H5a.5.5 0 0 1 0 1H1.723A1.5 1.5 0 0 1 .421 12.24l2.552-4.467zm10.89 1.463a.5.5 0 1 0-.868.496l1.716 3.004a.5.5 0 0 1-.434.748h-5.57l.647-.646a.5.5 0 1 0-.708-.707l-1.5 1.5a.498.498 0 0 0 0 .707l1.5 1.5a.5.5 0 1 0 .708-.707l-.647-.647h5.57a1.5 1.5 0 0 0 1.302-2.244l-1.716-3.004z" />
                             </svg>
-                            <span>Num Of Likes?</span>
+                            <span className="post-description">
+                              Num Of Reposts?
+                            </span>
                           </div>
+                          {/* start  */}
+
+                          <div>
+                            {favorite.likes.includes(userInfo._id) ? (
+                              <span>
+                                <svg
+                                  // onClick={() => handleDeleteLike(post._id)}
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="16"
+                                  height="16"
+                                  fill="rgb(249, 24, 128)"
+                                  className={`bi bi-heart-fill`}
+                                  viewBox="0 0 16 16"
+                                >
+                                  <path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
+                                </svg>
+                                <span className="post-description">
+                                  {favorite.likes.length}
+                                </span>
+                              </span>
+                            ) : (
+                              <span>
+                                {" "}
+                                <svg
+                                  // onClick={() => handlePostLikes(post._id)}
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="16"
+                                  height="16"
+                                  fill="currentColor"
+                                  className={`bi bi-heart`}
+                                  viewBox="0 0 16 16"
+                                >
+                                  <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
+                                </svg>
+                              </span>
+                            )}
+                          </div>
+
+                          {/* finish */}
                         </Stack>
                       </div>
                     </div>
                   ))}
                 </div>
+
+                {/* finish */}
               </Col>
             </>
           )}

@@ -6,6 +6,8 @@ const handlePost = (req, res) => {
   const { userId } = req.user;
 
   User.findById(userId)
+    .populate("posts")
+    .populate("favorites")
     .then((user) => {
       if (!user) {
         return res.status(404).json({ error: "User not found" });
@@ -14,6 +16,7 @@ const handlePost = (req, res) => {
       return Post.create({
         userId: userId,
         content: content,
+
         authorFullName: user.fullname,
         authorUserName: user.username,
       })
@@ -35,6 +38,7 @@ const handlePost = (req, res) => {
 
 const handleShowPosts = (req, res) => {
   Post.find()
+    .populate("userId")
     .then((postsFromDataBase) => {
       res.json(postsFromDataBase);
     })
