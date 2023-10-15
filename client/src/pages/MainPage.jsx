@@ -13,7 +13,7 @@ const API_URL = "http://localhost:3000";
 function MainPage() {
   const { userInfo, getToken } = useContext(UserContext);
   const [posts, setPosts] = useState([]);
-  const [deleteLikedPost, setdeleteLikedPost] = useState("");
+  // const [deleteLikedPost, setdeleteLikedPost] = useState("");
   const [postId, setpostId] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -57,8 +57,25 @@ function MainPage() {
   };
 
   const handleDeleteLike = (postId) => {
-    console.log("This is the id of post that you want to delete ! ", postId);
-    setdeleteLikedPost(postId);
+    // console.log("This is the id of post that you want to delete ! ", postId);
+    // setdeleteLikedPost(postId);
+
+    axios
+      .post(
+        `${API_URL}/profile/delete-favorite`,
+        {
+          userId: userInfo._id,
+          postId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response);
+      });
   };
 
   const handlePostLikes = (postId) => {
