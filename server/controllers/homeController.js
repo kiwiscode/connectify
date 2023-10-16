@@ -4,7 +4,7 @@ const Post = require("../models/Post.model");
 const handlePost = (req, res) => {
   const { content } = req.body;
   const { userId } = req.user;
-
+  console.log(content);
   User.findById(userId)
     .populate("posts")
     .populate("favorites")

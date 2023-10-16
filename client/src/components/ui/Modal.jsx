@@ -27,7 +27,7 @@ function SigninModal() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { updatedUser } = useContext(UserContext);
+  const { updateUser, userInfo } = useContext(UserContext);
   const [show, setShow] = useState(false);
 
   const handleClose = () => {
@@ -44,19 +44,16 @@ function SigninModal() {
         password,
       })
       .then((response) => {
-        navigate("/home");
+        handleClose();
         const { token, user } = response.data;
-        console.log(response);
-        localStorage.setItem("token", token);
+        console.log("USER:", user);
         localStorage.setItem("userInfo", JSON.stringify(user));
-        localStorage.setItem("followers", JSON.stringify(user.followers));
-        localStorage.setItem("following", JSON.stringify(user.following));
-        localStorage.setItem("posts", JSON.stringify(user.posts));
-        if (response.status === 200) {
-          setError("");
-          updatedUser(user);
-          handleClose();
-        }
+        localStorage.setItem("token", token);
+        updateUser(user);
+        setError("");
+        console.log(4);
+        navigate("/home");
+        console.log(5);
       })
       .catch((err) => {
         if (err.response !== undefined) {
@@ -228,7 +225,7 @@ function PostModal() {
   const [show, setShow] = useState(false);
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
-  const { getToken } = useContext(UserContext);
+  const { getToken, updateUser } = useContext(UserContext);
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [showEmojisBar, setshowEmojisBar] = useState("hide");
   const [showSecondModal, setShowSecondModal] = useState(false);
@@ -259,6 +256,21 @@ function PostModal() {
   };
   const handleShow = () => setShow(true);
 
+  const handleGetAllPosts = () => {
+    axios
+      .get(`${API_URL}/home`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        console.log("RESPONSE ", response);
+      })
+      .catch((err) => {
+        return err;
+      });
+  };
+
   const handlePost = () => {
     handleClose();
 
@@ -274,11 +286,11 @@ function PostModal() {
           },
         }
       )
-      .then((response) => {
-        console.log(response);
+      .then(() => {
+        handleGetAllPosts();
       })
       .catch((err) => {
-        console.log(err);
+        return err;
       });
   };
 

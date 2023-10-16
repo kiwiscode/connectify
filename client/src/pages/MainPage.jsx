@@ -4,6 +4,8 @@ import { Container, Row, Col, Stack } from "react-bootstrap";
 import { LogoutModal, PostModal } from "../components/ui/Modal";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { useNavigate } from "react-router";
+
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -11,14 +13,12 @@ const API_URL = "http://localhost:3000";
 // ?
 
 function MainPage() {
-  const { userInfo, getToken } = useContext(UserContext);
+  const { userInfo, getToken, updateUser } = useContext(UserContext);
   const [posts, setPosts] = useState([]);
-  // const [deleteLikedPost, setdeleteLikedPost] = useState("");
   const [postId, setpostId] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
-  // setFavoriteExist("color: rgb(249, 24, 128)");
+  const navigate = useNavigate();
 
   const months = [
     "Jan",
@@ -49,6 +49,11 @@ function MainPage() {
         },
       })
       .then((response) => {
+        console.log(
+          "RESPONSE THAT WE ARE MANIPULATING POSTS ARRAY SHOWING IN THE HOME PAGE:",
+          response
+        );
+
         setPosts(response.data);
       })
       .catch((err) => {
@@ -74,7 +79,11 @@ function MainPage() {
         }
       )
       .then((response) => {
+        handleShowPosts();
         console.log(response);
+      })
+      .catch((err) => {
+        return err;
       });
   };
 
@@ -91,7 +100,8 @@ function MainPage() {
           },
         }
       )
-      .then((response) => {
+      .then(() => {
+        handleShowPosts();
         setError("");
       })
       .catch((error) => {
@@ -100,14 +110,11 @@ function MainPage() {
         setError(errorMessage);
       });
   };
-
-  console.log("Posts : ", posts);
-  console.log("User Info :", userInfo);
-
   useEffect(() => {
     handleShowPosts();
   }, []);
-
+  console.log(userInfo);
+  console.log(posts);
   return (
     <>
       <Container
@@ -135,21 +142,20 @@ function MainPage() {
             }}
           >
             <nav className="nav-bar-home">
-              <Link to={"/home"}>
-                <div>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="30"
-                    height="30"
-                    fill="currentColor"
-                    className="bi bi-chevron-double-left like-icon"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-                    <path d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-                  </svg>
-                </div>
-              </Link>
+              <div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="30"
+                  height="30"
+                  fill="currentColor"
+                  className="bi bi-chevron-double-left like-icon"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+                  <path d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+                </svg>
+              </div>
+
               <div className="inner-div">
                 <a href="">
                   <div>
