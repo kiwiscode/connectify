@@ -10,10 +10,4 @@ router.get(
   profileController.handleShowSpesificProfile
 );
 
-router.post(
-  "/delete-favorite",
-  authenticateToken,
-  profileController.handleDeleteFavorite
-);
-
 module.exports = router;

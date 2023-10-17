@@ -1,8 +1,13 @@
 const express = require("express");
 const router = express();
-const homeController = require("../controllers/homeController");
+const postController = require("../controllers/postController");
 const authenticateToken = require("../middleware/jwtMiddleware");
 
-router.post("/post", authenticateToken, homeController.handlePost);
-router.get("/", authenticateToken, homeController.handleShowPosts);
+router.get("/", authenticateToken, postController.handleShowPosts);
+router.post("/post", authenticateToken, postController.handlePost);
+router.post(
+  "/delete-post/:id",
+  authenticateToken,
+  postController.handleDeletePost
+);
 module.exports = router;

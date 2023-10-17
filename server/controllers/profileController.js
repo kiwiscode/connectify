@@ -33,55 +33,7 @@ const handleShowSpesificProfile = (req, res) => {
     });
 };
 
-const handleDeleteFavorite = (req, res) => {
-  const { userId, postId } = req.body;
-
-  User.findById(userId)
-    .then((user) => {
-      if (!user) {
-        return res.status(404).json({ errorMessage: "User not found" });
-      }
-
-      Post.findById(postId).then((postToDelete) => {
-        postToDelete.likes = postToDelete.likes.filter(
-          (postToDelete) => postToDelete._id.toString() !== userId
-        );
-        postToDelete.save();
-
-        Favorite.findOne({ userId: userId, postId: postId })
-          .then((foundItem) => {
-            if (foundItem) {
-              const mainId = foundItem._id;
-              Favorite.findByIdAndDelete(mainId).then(() => {
-                user.favorites = user.favorites.filter(
-                  (postId) =>
-                    postId._id.toString() !== postToDelete._id.toString()
-                );
-
-                return user.save().then(() => {
-                  res
-                    .status(200)
-                    .json({
-                      message:
-                        "Favorite deleted from favorites model,user favorites array and post likes...",
-                    });
-                });
-              });
-            }
-            return;
-          })
-          .catch(() => {
-            res.status(501).json({ errorMessage: "Search Error" });
-          });
-      });
-    })
-    .catch(() => {
-      res.status(404).json("User not found!");
-    });
-};
-
 module.exports = {
   handleProfile,
   handleShowSpesificProfile,
-  handleDeleteFavorite,
 };

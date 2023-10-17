@@ -13,9 +13,6 @@ app.use(cors());
 
 require("./config")(app);
 
-const indexRoutes = require("./routes/index.routes");
-app.use("/", indexRoutes);
-
 const authRoutes = require("./routes/auth.routes");
 app.use("/auth", authRoutes);
 
@@ -30,8 +27,5 @@ app.use("/profile", profileRoutes);
 
 const addFavoriteRoutes = require("./routes/favorite.routes");
 app.use("/favorite", addFavoriteRoutes);
-
-const cloudinaryUpload = require("./routes/post-image.routes");
-app.use("/upload", cloudinaryUpload);
 
 module.exports = app;

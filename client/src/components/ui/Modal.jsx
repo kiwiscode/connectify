@@ -51,9 +51,7 @@ function SigninModal() {
         localStorage.setItem("token", token);
         updateUser(user);
         setError("");
-        console.log(4);
         navigate("/home");
-        console.log(5);
       })
       .catch((err) => {
         if (err.response !== undefined) {
@@ -264,7 +262,7 @@ function PostModal() {
         },
       })
       .then((response) => {
-        console.log("RESPONSE ", response);
+        return response;
       })
       .catch((err) => {
         return err;

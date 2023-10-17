@@ -62,12 +62,9 @@ function MainPage() {
   };
 
   const handleDeleteLike = (postId) => {
-    // console.log("This is the id of post that you want to delete ! ", postId);
-    // setdeleteLikedPost(postId);
-
     axios
       .post(
-        `${API_URL}/profile/delete-favorite`,
+        `${API_URL}/favorite/delete-favorite`,
         {
           userId: userInfo._id,
           postId,
@@ -78,9 +75,8 @@ function MainPage() {
           },
         }
       )
-      .then((response) => {
+      .then(() => {
         handleShowPosts();
-        console.log(response);
       })
       .catch((err) => {
         return err;
@@ -329,6 +325,19 @@ function MainPage() {
                           <span style={{ color: "rgba(0,0,0,0.6)" }}>
                             {" "}
                             · {getCreatedDate(post.createdAt)}
+                          </span>
+                          <span>
+                            <svg
+                              // onClick={()=> handleDeletePost()}
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="20"
+                              height="25"
+                              fill="currentColor"
+                              className="bi bi-three-dots positioning-dots"
+                              viewBox="0 0 20 20"
+                            >
+                              <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"></path>
+                            </svg>
                           </span>
                         </div>
                       </Stack>

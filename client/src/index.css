@@ -394,3 +394,7 @@ span > a:hover {
   cursor: pointer;
   margin-left: 10px;
 }
+
+.positioning-dots {
+  background-color: blue;
+}
