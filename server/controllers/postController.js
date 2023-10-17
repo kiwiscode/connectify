@@ -67,8 +67,28 @@ const handleDeletePost = (req, res) => {
       );
       user.posts = filteredPostArr;
 
-      console.log("IS ARRAY FILTERED ? LET'S SEE:", filteredPostArr);
+      const successMessage = "successfully".toUpperCase();
+      console.log(
+        `SPESIFIC POST DELETED ${successMessage} FROM USER.POSTS ARRAY `
+      );
 
+      // STARTING WITH POST DELETING PROCESS
+      Post.findById(postId)
+        .then((post) => {
+          console.log("LET'S DELETE THIS POST FROM POST COLLECTION:", post);
+
+          Post.findByIdAndDelete(post._id)
+            .then(() => {
+              console.log("POST DELETED FROM POST COLLECTION");
+            })
+            .catch((err) => {
+              res.status(404).json({ errorMessage: "Post not found!" }, err);
+            });
+        })
+        .catch((err) => {
+          res.status(404).json({ errorMessage: "Post not found!" }, err);
+        });
+      // FINISHING WITH POST DELETE PROCESS
       return user.save().then(() => {
         console.log("3");
         res.status(200).json({
