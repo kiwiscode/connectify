@@ -43,8 +43,10 @@ const handleShowPosts = (req, res) => {
     .then((postsFromDataBase) => {
       res.json(postsFromDataBase);
     })
-    .catch((err) => {
-      res.status(500).send("An error occured while fetching posts", err);
+    .catch(() => {
+      res
+        .status(500)
+        .json({ errorMessage: "An error occured while fetching posts" });
     });
 };
 
@@ -59,8 +61,6 @@ const handleDeletePost = (req, res) => {
       if (!user) {
         return res.status(404).json({ errorMessage: "User not found" });
       }
-
-      // console.log("USER POSTS ID:", user.posts);
 
       const filteredPostArr = user.posts.filter(
         (post) => post._id.toString() !== postId
@@ -79,16 +79,44 @@ const handleDeletePost = (req, res) => {
 
           Post.findByIdAndDelete(post._id)
             .then(() => {
-              console.log("POST DELETED FROM POST COLLECTION");
+              const filteredFavoritesArr = user.favorites.filter(
+                (favorite) => favorite._id.toString() !== postId
+              );
+
+              console.log("HERE IS THE FILTERED ARRAY :", filteredFavoritesArr);
+
+              user.favorites = filteredFavoritesArr;
+              user.save();
+              console.log(
+                "POST DELETED FROM POST COLLECTION AND USER FAVORITES POSTS ARRAY"
+              );
             })
-            .catch((err) => {
-              res.status(404).json({ errorMessage: "Post not found!" }, err);
+            .catch(() => {
+              res.status(404).json("Post not found!");
             });
         })
-        .catch((err) => {
-          res.status(404).json({ errorMessage: "Post not found!" }, err);
+        .catch(() => {
+          res.status(404).json("Post not found!");
         });
       // FINISHING WITH POST DELETE PROCESS
+
+      // STARTING WITH FAVORITE DELETING PROCESS IF THE POST ALREADY IN FAVORITE COLLECTION
+
+      Favorite.findOne({ postId: postId })
+        .then((response) => {
+          console.log("Now we are inside favorite id process");
+          console.log("FAVORITE FOUND:", response);
+
+          Favorite.findByIdAndDelete(response._id).then(() => {
+            res.status(200);
+          });
+          return;
+        })
+        .catch(() => {
+          res.status(404).json("Favorite not found!");
+        });
+
+      // FINISHING WITH FAVORITE DELETING PROCESS IF THE POST ALREADY IN FAVORITE COLLECTION
       return user.save().then(() => {
         console.log("3");
         res.status(200).json({
@@ -98,7 +126,7 @@ const handleDeletePost = (req, res) => {
       });
     })
     .catch(() => {
-      res.status(404).json({ errorMessage: "User Not Found" });
+      res.status(404).json("User Not Found");
     });
 };
 
