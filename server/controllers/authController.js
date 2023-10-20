@@ -7,7 +7,7 @@ const User = require("../models/User.model");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const capitalize = require("../utils/capitalize");
-
+const Post = require("../models/Post.model");
 let sendVerificationEmail;
 emailProcess();
 
@@ -186,11 +186,22 @@ const handleLogin = (req, res, next) => {
         return;
       }
 
+      console.log("USER FAVORITES:", user.favorites);
       if (!user) {
         res.status(401).json({
           errorMessage: "Wrong credentials",
         });
       }
+
+      Post.find()
+        .then((post) => {
+          console.log("USER POSTS:", post);
+        })
+        .catch(() => {});
+
+      // const filteredUserFavorites =
+
+      // if(user.favorites._id)
 
       bcrypt
         .compare(password, user.password)

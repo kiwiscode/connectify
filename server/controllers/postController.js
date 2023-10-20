@@ -51,10 +51,51 @@ const handleShowPosts = (req, res) => {
 };
 
 const handleDeletePost = (req, res) => {
-  console.log("Hello World");
   const postId = req.params.id;
   const { userId } = req.body;
   console.log(postId, userId);
+
+  // this postId should filtered from all the users favorites array ! So then we can delete the post itself after delete from every user's favorites array
+
+  User.find({ favorites: postId })
+    .then((users) => {
+      console.log(
+        "FOUND USERS ACCORDING THEIR FAVORITES ARRAY IF INCLUDES THIS POSTID:",
+        users
+      );
+
+      for (let i = 0; i < users.length; i++) {
+        console.log("HERE ARE THE FIND USERS FAVORITES:", users[i].favorites);
+        console.log(users[i].favorites.toString().includes(postId));
+        if (users[i].favorites.toString().includes(postId)) {
+          users[i].favorites = users[i].favorites.filter((favoriteId) => {
+            return favoriteId.toString() !== postId;
+          });
+        }
+        console.log("LET'S SEE!");
+
+        return Promise.all(
+          users.map((user) =>
+            user
+              .save()
+              .then(() => {
+                console.log(
+                  "YOU DELETED THE POST FROM ALL THE USERS FAVORITES ARRAY IF EXIST"
+                );
+              })
+              .catch(() => {
+                console.log(
+                  "SOMETHING WENT WRONG WHILE YOU TRYING TO DELETE SPESIFIC POST IF THEY ARE EXIST SOME USERS FAVORITES ARRAY"
+                );
+              })
+          )
+        );
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
   User.findById(userId)
     .populate("posts")
     .then((user) => {
@@ -85,8 +126,8 @@ const handleDeletePost = (req, res) => {
 
               console.log("HERE IS THE FILTERED ARRAY :", filteredFavoritesArr);
 
-              user.favorites = filteredFavoritesArr;
-              user.save();
+              // user.favorites = filteredFavoritesArr;
+              // user.save();
               console.log(
                 "POST DELETED FROM POST COLLECTION AND USER FAVORITES POSTS ARRAY"
               );
@@ -118,7 +159,9 @@ const handleDeletePost = (req, res) => {
 
       // FINISHING WITH FAVORITE DELETING PROCESS IF THE POST ALREADY IN FAVORITE COLLECTION
       return user.save().then(() => {
-        console.log("3");
+        console.log(
+          "LAST STEP SUCCESS ALL THE PROMISES AND CALCULATIONS ARE WORKING ON THE ABOVE SECTIONS"
+        );
         res.status(200).json({
           message:
             "Post deleted from post model,user posts array (and favorites ?)",
