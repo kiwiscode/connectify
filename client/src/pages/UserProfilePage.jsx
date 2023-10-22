@@ -24,23 +24,13 @@ function UserProfile() {
   const [favoriteWindow, setFavoriteWindow] = useState("hide");
   const [postsWindow, setPostWindow] = useState("");
   const [favorites, setFavorites] = useState([]);
-
+  const [error, setError] = useState("");
+  const [postId, setpostId] = useState("");
   useEffect(() => {
-    axios
-      .get(`${API_URL}/profile`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        setUserprofiledata(response.data.posts);
-      })
-      .catch((err) => {
-        return err;
-      });
+    handleShowPostsProfilePage();
   }, []);
 
-  const handleGetAllPosts = () => {
+  const handleShowPostsProfilePage = () => {
     axios
       .get(`${API_URL}/profile`, {
         headers: {
@@ -51,6 +41,78 @@ function UserProfile() {
         setUserprofiledata(response.data.posts);
         setFavoriteWindow("hide");
         setPostWindow("");
+      })
+      .catch((err) => {
+        return err;
+      });
+  };
+
+  const handleDeletePostFromProfilePage = (postId) => {
+    console.log("Button clicked!");
+    console.log("POST ID TO DELETE =>", postId);
+    console.log("USER CURRENT ID => ", userInfo._id);
+
+    axios
+      .post(
+        `${API_URL}/home/delete-post`,
+        { userId: userInfo._id, postId },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then(() => {
+        handleShowPostsProfilePage();
+        setError("");
+      })
+      .catch((error) => {
+        const { errorMessage } = error.response.data;
+
+        setError(errorMessage);
+      });
+  };
+
+  const handlePostLikesFromProfilePage = (postId) => {
+    setpostId(postId);
+
+    axios
+      .post(
+        `${API_URL}/favorite`,
+        { postId },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then(() => {
+        handleShowPostsProfilePage();
+        setError("");
+      })
+      .catch((error) => {
+        const { errorMessage } = error.response.data;
+
+        setError(errorMessage);
+      });
+  };
+
+  const handleDeleteLikeFromProfilePage = (postId) => {
+    axios
+      .post(
+        `${API_URL}/favorite/delete-favorite`,
+        {
+          userId: userInfo._id,
+          postId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then(() => {
+        handleShowPostsProfilePage();
       })
       .catch((err) => {
         return err;
@@ -115,6 +177,8 @@ function UserProfile() {
     const getMonth = createdAt.getMonth();
     return `${monthsProfile[getMonth]} ${createdAt.getDate()}`;
   };
+
+  console.log("LET'S SEE THE FAVORITES AFTER LIKES TAB OPEN =>", favorites);
 
   return (
     <>
@@ -326,7 +390,7 @@ function UserProfile() {
               }}
             >
               <Button
-                onClick={() => handleGetAllPosts()}
+                onClick={() => handleShowPostsProfilePage()}
                 variant="secondary"
                 style={{
                   backgroundColor: "white",
@@ -384,6 +448,23 @@ function UserProfile() {
                             {" "}
                             · {getCreatedDate(post.createdAt)}
                           </span>
+                          <svg
+                            onClick={() =>
+                              handleDeletePostFromProfilePage(post._id)
+                            }
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="25"
+                            fill="currentColor"
+                            className="bi bi-three-dots positioning-dots"
+                            viewBox="0 0 20 20"
+                            style={{
+                              cursor: "pointer",
+                              backgroundColor: "crimson",
+                            }}
+                          >
+                            <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"></path>
+                          </svg>
                         </div>
                       </Stack>
                     </div>
@@ -424,7 +505,9 @@ function UserProfile() {
                           {post.likes.includes(userInfo._id) ? (
                             <span>
                               <svg
-                                // onClick={() => handleDeleteLike(post._id)}
+                                onClick={() =>
+                                  handleDeleteLikeFromProfilePage(post._id)
+                                }
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="16"
                                 height="16"
@@ -442,7 +525,9 @@ function UserProfile() {
                             <span>
                               {" "}
                               <svg
-                                // onClick={() => handlePostLikes(post._id)}
+                                onClick={() =>
+                                  handlePostLikesFromProfilePage(post._id)
+                                }
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="16"
                                 height="16"
@@ -499,6 +584,46 @@ function UserProfile() {
                             {" "}
                             · {getCreatedDate(favorite.createdAt)}
                           </span>
+                          <span>
+                            {/* show if post owner userId !equal currentUserId */}
+                            {favorite.userId !== userInfo._id ? (
+                              <svg
+                                // onClick={() =>
+                                //   handleShowDetailPostFromProfilePage(post._id)
+                                // }
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="25"
+                                fill="currentColor"
+                                className="bi bi-three-dots positioning-dots"
+                                viewBox="0 0 20 20"
+                                style={{
+                                  cursor: "pointer",
+                                  backgroundColor: "rgb(29, 155, 240)",
+                                }}
+                              >
+                                <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"></path>
+                              </svg>
+                            ) : (
+                              <svg
+                                onClick={() =>
+                                  handleDeletePostFromProfilePage(favorite._id)
+                                }
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="25"
+                                fill="currentColor"
+                                className="bi bi-three-dots positioning-dots"
+                                viewBox="0 0 20 20"
+                                style={{
+                                  cursor: "pointer",
+                                  backgroundColor: "crimson",
+                                }}
+                              >
+                                <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"></path>
+                              </svg>
+                            )}
+                          </span>
                         </div>
                       </Stack>
                     </div>
@@ -540,7 +665,9 @@ function UserProfile() {
                         {favorite.likes.includes(userInfo._id) ? (
                           <span>
                             <svg
-                              // onClick={() => handleDeleteLike(post._id)}
+                              onClick={() =>
+                                handleDeleteLikeFromProfilePage(favorite._id)
+                              }
                               xmlns="http://www.w3.org/2000/svg"
                               width="16"
                               height="16"

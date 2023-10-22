@@ -41,7 +41,7 @@ function MainPage() {
     return `${months[getMonth]} ${createdAt.getDate()}`;
   };
 
-  const handleShowPosts = () => {
+  const handleShowPostsHomePage = () => {
     axios
       .get(`${API_URL}/home`, {
         headers: {
@@ -76,7 +76,7 @@ function MainPage() {
         }
       )
       .then(() => {
-        handleShowPosts();
+        handleShowPostsHomePage();
       })
       .catch((err) => {
         return err;
@@ -97,7 +97,7 @@ function MainPage() {
         }
       )
       .then(() => {
-        handleShowPosts();
+        handleShowPostsHomePage();
         setError("");
       })
       .catch((error) => {
@@ -123,7 +123,7 @@ function MainPage() {
         }
       )
       .then(() => {
-        handleShowPosts();
+        handleShowPostsHomePage();
         setError("");
       })
       .catch((error) => {
@@ -138,7 +138,7 @@ function MainPage() {
   };
 
   useEffect(() => {
-    handleShowPosts();
+    handleShowPostsHomePage();
   }, []);
   console.log("CURRENT USER INFO => ", userInfo);
   console.log("POSTS => ", posts);
