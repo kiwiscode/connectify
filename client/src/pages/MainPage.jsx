@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserContext";
-import { Container, Row, Col, Stack } from "react-bootstrap";
+import { Container, Row, Col, Stack, Button } from "react-bootstrap";
 import { LogoutModal, PostModal } from "../components/ui/Modal";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -61,7 +61,7 @@ function MainPage() {
       });
   };
 
-  const handleDeleteLike = (postId) => {
+  const handleDeleteLikeFromHomePage = (postId) => {
     axios
       .post(
         `${API_URL}/favorite/delete-favorite`,
@@ -83,7 +83,7 @@ function MainPage() {
       });
   };
 
-  const handlePostLikes = (postId) => {
+  const handlePostLikesFromHomePage = (postId) => {
     setpostId(postId);
 
     axios
@@ -106,11 +106,42 @@ function MainPage() {
         setError(errorMessage);
       });
   };
+
+  const handleDeletePostFromHomePage = (postId) => {
+    console.log("Button clicked!");
+    console.log(postId);
+
+    setpostId(postId);
+    axios
+      .post(
+        `${API_URL}/home/delete-post`,
+        { userId: userInfo._id, postId },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then(() => {
+        handleShowPosts();
+        setError("");
+      })
+      .catch((error) => {
+        const { errorMessage } = error.response.data;
+
+        setError(errorMessage);
+      });
+  };
+
+  const handleShowDetailPostFromHomePage = (postId) => {
+    console.log(postId);
+  };
+
   useEffect(() => {
     handleShowPosts();
   }, []);
-  console.log(userInfo);
-  console.log(posts);
+  console.log("CURRENT USER INFO => ", userInfo);
+  console.log("POSTS => ", posts);
   return (
     <>
       <Container
@@ -327,17 +358,44 @@ function MainPage() {
                             · {getCreatedDate(post.createdAt)}
                           </span>
                           <span>
-                            <svg
-                              // onClick={()=> handleDeletePost()}
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="20"
-                              height="25"
-                              fill="currentColor"
-                              className="bi bi-three-dots positioning-dots"
-                              viewBox="0 0 20 20"
-                            >
-                              <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"></path>
-                            </svg>
+                            {/* show if post owner userId !equal currentUserId */}
+                            {post.userId._id !== userInfo._id ? (
+                              <svg
+                                onClick={() =>
+                                  handleShowDetailPostFromHomePage(post._id)
+                                }
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="25"
+                                fill="currentColor"
+                                className="bi bi-three-dots positioning-dots"
+                                viewBox="0 0 20 20"
+                                style={{
+                                  cursor: "pointer",
+                                  backgroundColor: "rgb(29, 155, 240)",
+                                }}
+                              >
+                                <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"></path>
+                              </svg>
+                            ) : (
+                              <svg
+                                onClick={() =>
+                                  handleDeletePostFromHomePage(post._id)
+                                }
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="25"
+                                fill="currentColor"
+                                className="bi bi-three-dots positioning-dots"
+                                viewBox="0 0 20 20"
+                                style={{
+                                  cursor: "pointer",
+                                  backgroundColor: "crimson",
+                                }}
+                              >
+                                <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"></path>
+                              </svg>
+                            )}
                           </span>
                         </div>
                       </Stack>
@@ -378,7 +436,9 @@ function MainPage() {
                         {post.likes.includes(userInfo._id) ? (
                           <span>
                             <svg
-                              onClick={() => handleDeleteLike(post._id)}
+                              onClick={() =>
+                                handleDeleteLikeFromHomePage(post._id)
+                              }
                               xmlns="http://www.w3.org/2000/svg"
                               width="16"
                               height="16"
@@ -396,7 +456,9 @@ function MainPage() {
                           <span>
                             {" "}
                             <svg
-                              onClick={() => handlePostLikes(post._id)}
+                              onClick={() =>
+                                handlePostLikesFromHomePage(post._id)
+                              }
                               xmlns="http://www.w3.org/2000/svg"
                               width="16"
                               height="16"

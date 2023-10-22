@@ -51,8 +51,7 @@ const handleShowPosts = (req, res) => {
 };
 
 const handleDeletePost = (req, res) => {
-  const postId = req.params.id;
-  const { userId } = req.body;
+  const { userId, postId } = req.body;
   console.log(postId, userId);
 
   User.findById(userId)
