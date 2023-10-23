@@ -26,8 +26,15 @@ function UserProfile() {
   const [favorites, setFavorites] = useState([]);
   const [error, setError] = useState("");
   const [postId, setpostId] = useState("");
+
   useEffect(() => {
-    handleShowPostsProfilePage();
+    if (postsWindow === "hide") {
+      handleGetFavorites();
+    } else if (favoriteWindow === "hide") {
+      handleShowPostsProfilePage();
+    } else {
+      return;
+    }
   }, []);
 
   const handleShowPostsProfilePage = () => {
@@ -63,7 +70,12 @@ function UserProfile() {
         }
       )
       .then(() => {
-        handleShowPostsProfilePage();
+        if (favoriteWindow === "") {
+          handleGetFavorites();
+        } else if (postsWindow === "") {
+          handleShowPostsProfilePage();
+        }
+
         setError("");
       })
       .catch((error) => {
@@ -87,7 +99,12 @@ function UserProfile() {
         }
       )
       .then(() => {
-        handleShowPostsProfilePage();
+        if (favoriteWindow === "") {
+          handleGetFavorites();
+        } else if (postsWindow === "") {
+          handleShowPostsProfilePage();
+        }
+
         setError("");
       })
       .catch((error) => {
@@ -112,7 +129,11 @@ function UserProfile() {
         }
       )
       .then(() => {
-        handleShowPostsProfilePage();
+        if (favoriteWindow === "") {
+          handleGetFavorites();
+        } else if (postsWindow === "") {
+          handleShowPostsProfilePage();
+        }
       })
       .catch((err) => {
         return err;
@@ -398,7 +419,11 @@ function UserProfile() {
                   border: "none",
                 }}
               >
-                Posts
+                {favoriteWindow === "" ? (
+                  <span>Posts</span>
+                ) : (
+                  <span style={{ color: "rgb(29, 155, 240)" }}>Posts</span>
+                )}
               </Button>
               <Button
                 onClick={() => handleGetFavorites()}
@@ -409,7 +434,11 @@ function UserProfile() {
                   border: "none",
                 }}
               >
-                Likes
+                {favoriteWindow === "" ? (
+                  <span style={{ color: "rgb(29, 155, 240)" }}>Likes</span>
+                ) : (
+                  <span>Likes </span>
+                )}
               </Button>
             </ButtonGroup>
             {/* mainpage yani home rotasına tüm twitlerin gösterileceği column burası !  */}
