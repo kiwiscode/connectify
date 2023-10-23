@@ -394,3 +394,7 @@ span > a:hover {
   cursor: pointer;
   margin-left: 10px;
 }
+
+.emptyContent {
+  opacity: 0.5;
+}

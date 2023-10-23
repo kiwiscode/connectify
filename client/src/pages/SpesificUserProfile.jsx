@@ -47,7 +47,6 @@ function SpesificUserProfile() {
       });
   };
 
-  console.log("HERE IS THE ACTIVE USER INFO  => ", userInfo);
   const handleShowSpesificUserProfilePageFavorites = () => {
     axios
       .get(`${API_URL}/favorite`, {
@@ -56,7 +55,6 @@ function SpesificUserProfile() {
         },
       })
       .then((response) => {
-        console.log(response.data.favorites);
         setFavoriteWindow("");
         setPostWindow("hide");
         setFavorites(response.data.favorites);
@@ -175,9 +173,6 @@ function SpesificUserProfile() {
   };
 
   const handleDeletePostFromSpesificUserProfilePage = (postId) => {
-    console.log("Button clicked!");
-    console.log(postId);
-
     setpostId(postId);
     axios
       .post(
@@ -207,10 +202,6 @@ function SpesificUserProfile() {
   const handleShowDetailPostFromSpesificUserProfilePage = () => {
     console.log("Button Clicked");
   };
-
-  console.log("USER INFO => ", userInfo);
-  console.log("PROFILE INFO POSTS =>", profileInfoPosts);
-  console.log("FAVORITES INFO LIKES TAB", favorites);
 
   return (
     <>

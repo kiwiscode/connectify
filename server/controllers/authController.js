@@ -71,8 +71,6 @@ function emailProcess() {
 
 const handleSignup = (req, res, next) => {
   let { fullname, username, email, password } = req.body;
-  console.log(req.body);
-  console.log(fullname, username, email, password);
 
   if (username === "" || fullname === "" || email === "" || password === "") {
     res.status(403).json({
@@ -186,7 +184,6 @@ const handleLogin = (req, res, next) => {
         return;
       }
 
-      console.log("USER FAVORITES:", user.favorites);
       if (!user) {
         res.status(401).json({
           errorMessage: "Wrong credentials",

@@ -46,7 +46,7 @@ function SigninModal() {
       .then((response) => {
         handleClose();
         const { token, user } = response.data;
-        console.log("USER:", user);
+
         localStorage.setItem("userInfo", JSON.stringify(user));
         localStorage.setItem("token", token);
         updateUser(user);
@@ -286,6 +286,7 @@ function PostModal() {
       )
       .then(() => {
         handleGetAllPosts();
+        setContent("");
       })
       .catch((err) => {
         return err;
@@ -316,7 +317,22 @@ function PostModal() {
         </Modal.Body>
         <Modal.Footer className="post-modal-footer ml-1  ">
           <Stack direction="horizontal" gap={0}>
-            <div className="p-2">Media?</div>
+            <div className="p-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                className="bi bi-image-fill"
+                viewBox="0 0 16 16"
+                style={{
+                  cursor: "pointer",
+                  color: "rgb(29, 155, 240)",
+                }}
+              >
+                <path d="M.002 3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-12a2 2 0 0 1-2-2V3zm1 9v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12zm5-6.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0z" />
+              </svg>
+            </div>
             <div className="p-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -347,24 +363,21 @@ function PostModal() {
             </div>
           </Stack>
         </Modal.Footer>
-      </Modal>
-
-      <Modal
-        show={showSecondModal}
-        onHide={() => setShowSecondModal(false)}
-        centered="true"
-        className="emoji-modal"
-      >
-        <Modal.Body>
-          <div className={`${showEmojisBar} emoji-picker`}>
-            <Picker
-              onEmojiClick={onEmojiClick}
-              emojiStyle="twitter"
-              width={"320px"}
-              height={"400px"}
-            />
-          </div>
-        </Modal.Body>
+        <div
+          className={`${showEmojisBar}`}
+          style={{
+            position: "fixed",
+            zIndex: 9999,
+            marginTop: "375px",
+          }}
+        >
+          <Picker
+            onEmojiClick={onEmojiClick}
+            emojiStyle="twitter"
+            width={"320px"}
+            height={"400px"}
+          />
+        </div>
       </Modal>
     </>
   );

@@ -55,10 +55,6 @@ function UserProfile() {
   };
 
   const handleDeletePostFromProfilePage = (postId) => {
-    console.log("Button clicked!");
-    console.log("POST ID TO DELETE =>", postId);
-    console.log("USER CURRENT ID => ", userInfo._id);
-
     axios
       .post(
         `${API_URL}/home/delete-post`,
@@ -198,8 +194,6 @@ function UserProfile() {
     const getMonth = createdAt.getMonth();
     return `${monthsProfile[getMonth]} ${createdAt.getDate()}`;
   };
-
-  console.log("LET'S SEE THE FAVORITES AFTER LIKES TAB OPEN =>", favorites);
 
   return (
     <>

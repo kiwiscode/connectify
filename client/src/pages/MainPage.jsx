@@ -5,6 +5,7 @@ import { LogoutModal, PostModal } from "../components/ui/Modal";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router";
+import Picker from "emoji-picker-react";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -17,8 +18,39 @@ function MainPage() {
   const [posts, setPosts] = useState([]);
   const [postId, setpostId] = useState("");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [content, setContent] = useState("");
+  const [chosenEmoji, setChosenEmoji] = useState(null);
+  const [showEmojisBar, setshowEmojisBar] = useState("hide");
+  const [showSecondModal, setShowSecondModal] = useState(false);
   const navigate = useNavigate();
+  const [postButtonStyle, setPostButtonStyle] = useState("emptyContent");
+  const maxCharacters = 140;
+  const toggleEmojis = () => {
+    setshowEmojisBar("");
+    if (showEmojisBar === "") {
+      setshowEmojisBar("hide");
+    } else if (showEmojisBar === "hide") {
+      setshowEmojisBar("");
+    }
+    setShowSecondModal(true);
+  };
+
+  const onEmojiClick = (emojiObject) => {
+    setChosenEmoji(emojiObject);
+    setContent((prevText) => prevText + emojiObject.emoji);
+  };
+
+  const handleChange = (event) => {
+    if (content.length >= 0) {
+      setPostButtonStyle("");
+    }
+    const inputText = event.target.value;
+    if (inputText.length <= maxCharacters) {
+      setContent(inputText);
+    } else {
+      setError("Tweet length to 140 characters");
+    }
+  };
 
   const months = [
     "Jan",
@@ -108,9 +140,6 @@ function MainPage() {
   };
 
   const handleDeletePostFromHomePage = (postId) => {
-    console.log("Button clicked!");
-    console.log(postId);
-
     setpostId(postId);
     axios
       .post(
@@ -137,11 +166,38 @@ function MainPage() {
     console.log(postId);
   };
 
+  const handlePost = () => {
+    if (content !== "" && postButtonStyle !== "emptyContent") {
+      axios
+        .post(
+          `${API_URL}/home/post`,
+          {
+            content,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
+          }
+        )
+        .then(() => {
+          handleShowPostsHomePage();
+          setContent("");
+          setPostButtonStyle("");
+        })
+        .catch((err) => {
+          return err;
+        });
+    } else {
+      setPostButtonStyle("emptyContent");
+      setContent("");
+    }
+  };
+
   useEffect(() => {
     handleShowPostsHomePage();
   }, []);
-  console.log("CURRENT USER INFO => ", userInfo);
-  console.log("POSTS => ", posts);
+
   return (
     <>
       <Container
@@ -295,36 +351,120 @@ function MainPage() {
             }}
           >
             <div
-              style={{ fontWeight: "700", fontSize: "20px", height: "100px" }}
+              style={{
+                fontWeight: "700",
+                fontSize: "20px",
+                height: "100px",
+                padding: "8px",
+              }}
             >
               Home
             </div>
+            <Row
+              style={{
+                border: "1px solid rgba(0, 0, 0, 0.1)",
+              }}
+            ></Row>
             <textarea
+              onChange={handleChange}
               rows="4"
               cols="50"
+              value={content}
+              maxLength={maxCharacters}
               className="input-post"
-              placeholder="What is happenig?!"
+              placeholder="What is happening?!"
               style={{
                 resize: "none",
-                border: "1px solid rgba(0, 0, 0, 0.1)",
-                color: "rgba(0, 0, 0, 0.6)",
+                padding: "8px",
+                color: "rgba(15,20,25,1.00)",
+                lineHeight: "24px",
+                fontWeight: "400",
               }}
             />
+            <Row
+              style={{
+                border: "1px solid rgba(0, 0, 0, 0.1)",
+              }}
+            ></Row>
+            <Stack direction="horizontal" gap={0}>
+              <div className="p-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  className="bi bi-image-fill"
+                  viewBox="0 0 16 16"
+                  style={{
+                    cursor: "pointer",
+                    color: "rgb(29, 155, 240)",
+                  }}
+                >
+                  <path d="M.002 3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-12a2 2 0 0 1-2-2V3zm1 9v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12zm5-6.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0z" />
+                </svg>
+              </div>
+              <div className="p-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  className="bi bi-emoji-smile"
+                  viewBox="0 0 16 16"
+                  style={{
+                    cursor: "pointer",
+                    color: "rgb(29, 155, 240)",
+                  }}
+                  onClick={() => toggleEmojis()}
+                >
+                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                  <path d="M4.285 9.567a.5.5 0 0 1 .683.183A3.498 3.498 0 0 0 8 11.5a3.498 3.498 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.498 4.498 0 0 1 8 12.5a4.498 4.498 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683zM7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z" />
+                </svg>
+                <div
+                  className={`${showEmojisBar}`}
+                  style={{
+                    position: "fixed",
+                    zIndex: 9999,
+                    marginTop: "5px",
+                  }}
+                >
+                  <Picker
+                    onEmojiClick={onEmojiClick}
+                    emojiStyle="twitter"
+                    width={"320px"}
+                    height={"400px"}
+                  />
+                </div>
+              </div>
+              <div className="p-2 ms-auto">
+                {" "}
+                <Button
+                  variant="primary"
+                  onClick={() => handlePost()}
+                  className={`${postButtonStyle} post-btn`}
+                >
+                  Post
+                </Button>
+              </div>
+            </Stack>
             {/* mainpage yani home rotasına tüm twitlerin gösterileceği column burası !  */}
 
             <div className="all-posts">
               {posts.map((post) => (
-                <div
-                  key={post._id}
-                  style={{
-                    border: "1px solid rgba(0, 0, 0, 0.1)",
-                    borderLeft: "none",
-                    borderRight: "none",
-                  }}
-                >
+                <div key={post._id}>
                   <div className="posts-details">
                     <div className="post-head">
-                      <Stack direction="horizontal" gap={1}>
+                      {/* FIXME */}
+                      <Row
+                        style={{
+                          border: "1px solid rgba(0, 0, 0, 0.1)",
+                        }}
+                      ></Row>
+                      <Stack
+                        direction="horizontal"
+                        gap={1}
+                        style={{ padding: "3px" }}
+                      >
                         <div className="p-0">
                           <Link
                             to={`/profile/${post.userId._id}`}
@@ -400,8 +540,12 @@ function MainPage() {
                         </div>
                       </Stack>
                     </div>
-                    <div>{post.content}</div>
-                    <Stack direction="horizontal" gap={3}>
+                    <div style={{ padding: "3px" }}>{post.content}</div>
+                    <Stack
+                      direction="horizontal"
+                      gap={3}
+                      style={{ padding: "3px" }}
+                    >
                       <div className="p-0">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -475,10 +619,12 @@ function MainPage() {
                         )}
                       </div>
                     </Stack>
+                    {/* FIXME */}
                   </div>
                 </div>
               ))}
             </div>
+
             <span
               style={{
                 color: "crimson",
@@ -488,6 +634,9 @@ function MainPage() {
             >
               {error}
             </span>
+            {/* NOTE */}
+
+            {/* NOTE */}
             {/* mainpage yani home rotasına tüm twitlerin gösterileceği column burası !  */}
           </Col>
 

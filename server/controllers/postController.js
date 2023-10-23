@@ -52,7 +52,6 @@ const handleShowPosts = (req, res) => {
 
 const handleDeletePost = (req, res) => {
   const { userId, postId } = req.body;
-  console.log(postId, userId);
 
   User.findById(userId)
     .populate("posts")
@@ -102,10 +101,6 @@ const handleDeletePost = (req, res) => {
 
       // FINISHING WITH FAVORITE DELETING PROCESS IF THE POST ALREADY IN FAVORITE COLLECTION
       return user.save().then(() => {
-        console.log(
-          "MESSAGE : 7",
-          "LAST STEP SUCCESS ALL THE PROMISES AND CALCULATIONS ARE WORKING ON THE ABOVE SECTIONS"
-        );
         res.status(200).json({
           message:
             "Post deleted from post model,user posts array (and favorites ?)",
@@ -120,13 +115,10 @@ const handleDeletePost = (req, res) => {
   // check if the active(current user who is deleting the post) exclude him/her from promise.all user.save combination
   User.find({ favorites: postId })
     .then((users) => {
-      console.log(users);
-
       for (let i = 0; i < users.length; i++) {
         if (users[i]._id.toString() === userId) {
           continue;
         } else if (users[i].favorites.toString().includes(postId)) {
-          console.log("DIFFERENT USER => ", users[i]);
           users[i].favorites = users[i].favorites.filter((favoriteId) => {
             return favoriteId.toString() !== postId;
           });
