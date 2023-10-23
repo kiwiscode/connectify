@@ -27,7 +27,9 @@ function SpesificUserProfile() {
   const [postsWindow, setPostWindow] = useState("");
   const [favorites, setFavorites] = useState([]);
 
-  const handleShowSpesificUserPosts = () => {
+  const [postId, setpostId] = useState("");
+  const [error, setError] = useState("");
+  const handleShowSpesificUserProfilePagePosts = () => {
     axios
       .get(`${API_URL}/profile/${id}`, {
         headers: {
@@ -45,14 +47,16 @@ function SpesificUserProfile() {
       });
   };
 
-  const handleShowSpesificUserFavorites = () => {
+  console.log("HERE IS THE ACTIVE USER INFO  => ", userInfo);
+  const handleShowSpesificUserProfilePageFavorites = () => {
     axios
-      .get(`${API_URL}/profile/${id}`, {
+      .get(`${API_URL}/favorite`, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
       })
       .then((response) => {
+        console.log(response.data.favorites);
         setFavoriteWindow("");
         setPostWindow("hide");
         setFavorites(response.data.favorites);
@@ -62,26 +66,14 @@ function SpesificUserProfile() {
       });
   };
 
-  const handleGetAllPosts = () => {
-    axios
-      .get(`${API_URL}/profile`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then(() => {
-        setFavoriteWindow("hide");
-        setPostWindow("");
-      })
-
-      .catch((err) => {
-        return err;
-      });
-  };
-
   useEffect(() => {
-    handleShowSpesificUserFavorites();
-    handleShowSpesificUserPosts();
+    if (postsWindow === "hide") {
+      handleShowSpesificUserProfilePageFavorites();
+    } else if (favoriteWindow === "hide") {
+      handleShowSpesificUserProfilePagePosts();
+    } else {
+      return;
+    }
   }, []);
 
   const months = [
@@ -114,17 +106,107 @@ function SpesificUserProfile() {
     "December",
   ];
 
-  const getCreatedDateForSpesificProfile = (date) => {
+  const getCreatedYearForSpesificUserProfilePage = (date) => {
     const createdAt = new Date(date);
     const getMonth = createdAt.getMonth();
     return `${monthsProfile[getMonth]} ${createdAt.getFullYear()}`;
   };
 
-  const getCreatedDate = (date) => {
+  const getCreatedDateForSpesificUserProfilePage = (date) => {
     const createdAt = new Date(date);
     const getMonth = createdAt.getMonth();
     return `${months[getMonth]} ${createdAt.getDate()}`;
   };
+
+  const handleDeleteLikeFromSpesificUserProfilePage = (postId) => {
+    axios
+      .post(
+        `${API_URL}/favorite/delete-favorite`,
+        {
+          userId: userInfo._id,
+          postId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+
+      .then(() => {
+        if (favoriteWindow === "") {
+          handleShowSpesificUserProfilePageFavorites();
+        } else if (postsWindow === "") {
+          handleShowSpesificUserProfilePagePosts();
+        }
+        setError("");
+      })
+      .catch((err) => {
+        return err;
+      });
+  };
+
+  const handlePostLikesFromSpesificUserProfilePage = (postId) => {
+    setpostId(postId);
+
+    axios
+      .post(
+        `${API_URL}/favorite`,
+        { postId },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then(() => {
+        if (favoriteWindow === "") {
+          handleShowSpesificUserProfilePageFavorites();
+        } else if (postsWindow === "") {
+          handleShowSpesificUserProfilePagePosts();
+        }
+        setError("");
+      })
+      .catch((error) => {
+        const { errorMessage } = error.response.data;
+
+        setError(errorMessage);
+      });
+  };
+
+  const handleDeletePostFromSpesificUserProfilePage = (postId) => {
+    console.log("Button clicked!");
+    console.log(postId);
+
+    setpostId(postId);
+    axios
+      .post(
+        `${API_URL}/home/delete-post`,
+        { userId: userInfo._id, postId },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then(() => {
+        handleShowSpesificUserProfilePagePosts();
+        setError("");
+      })
+      .catch((error) => {
+        const { errorMessage } = error.response.data;
+
+        setError(errorMessage);
+      });
+  };
+
+  const handleShowDetailPostFromSpesificUserProfilePage = () => {
+    console.log("Button Clicked");
+  };
+
+  console.log("USER INFO => ", userInfo);
+  console.log("PROFILE INFO POSTS =>", profileInfoPosts);
+  console.log("FAVORITES INFO LIKES TAB", favorites);
 
   return (
     <>
@@ -387,7 +469,9 @@ function SpesificUserProfile() {
                         <path d="M11 7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-2 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z" />
                       </svg>{" "}
                       Joined{" "}
-                      {getCreatedDateForSpesificProfile(profileInfo.createdAt)}
+                      {getCreatedYearForSpesificUserProfilePage(
+                        profileInfo.createdAt
+                      )}
                     </div>
                     <div>
                       <span
@@ -443,7 +527,7 @@ function SpesificUserProfile() {
                   }}
                 >
                   <Button
-                    onClick={() => handleGetAllPosts()}
+                    onClick={() => handleShowSpesificUserProfilePagePosts()}
                     variant="secondary"
                     style={{
                       backgroundColor: "white",
@@ -451,10 +535,15 @@ function SpesificUserProfile() {
                       border: "none",
                     }}
                   >
-                    Posts
+                    {favoriteWindow === "" ? (
+                      <span>Posts</span>
+                    ) : (
+                      <span style={{ color: "rgb(29, 155, 240)" }}>Posts</span>
+                    )}
                   </Button>
+
                   <Button
-                    onClick={() => handleShowSpesificUserFavorites()}
+                    onClick={() => handleShowSpesificUserProfilePageFavorites()}
                     variant="secondary"
                     style={{
                       backgroundColor: "white",
@@ -462,9 +551,14 @@ function SpesificUserProfile() {
                       border: "none",
                     }}
                   >
-                    Likes
+                    {favoriteWindow === "" ? (
+                      <span style={{ color: "rgb(29, 155, 240)" }}>Likes</span>
+                    ) : (
+                      <span>Likes </span>
+                    )}
                   </Button>
                 </ButtonGroup>
+
                 {/* finish */}
                 <div className={`all-posts ${postsWindow}`}>
                   {profileInfoPosts.map((post) => (
@@ -498,7 +592,53 @@ function SpesificUserProfile() {
                               </span>
                               <span style={{ color: "rgba(0,0,0,0.6)" }}>
                                 {" "}
-                                · {getCreatedDate(post.createdAt)}
+                                ·{" "}
+                                {getCreatedDateForSpesificUserProfilePage(
+                                  post.createdAt
+                                )}
+                              </span>
+                              <span>
+                                {post.userId !== userInfo._id ? (
+                                  <svg
+                                    onClick={() =>
+                                      handleShowDetailPostFromSpesificUserProfilePage(
+                                        post._id
+                                      )
+                                    }
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="20"
+                                    height="25"
+                                    fill="currentColor"
+                                    className="bi bi-three-dots positioning-dots"
+                                    viewBox="0 0 20 20"
+                                    style={{
+                                      cursor: "pointer",
+                                      backgroundColor: "rgb(29, 155, 240)",
+                                    }}
+                                  >
+                                    <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"></path>
+                                  </svg>
+                                ) : (
+                                  <svg
+                                    onClick={() =>
+                                      handleDeletePostFromSpesificUserProfilePage(
+                                        post._id
+                                      )
+                                    }
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="20"
+                                    height="25"
+                                    fill="currentColor"
+                                    className="bi bi-three-dots positioning-dots"
+                                    viewBox="0 0 20 20"
+                                    style={{
+                                      cursor: "pointer",
+                                      backgroundColor: "crimson",
+                                    }}
+                                  >
+                                    <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"></path>
+                                  </svg>
+                                )}
                               </span>
                             </div>
                           </Stack>
@@ -541,6 +681,11 @@ function SpesificUserProfile() {
                             {post.likes.includes(userInfo._id) ? (
                               <span>
                                 <svg
+                                  onClick={() =>
+                                    handleDeleteLikeFromSpesificUserProfilePage(
+                                      post._id
+                                    )
+                                  }
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="16"
                                   height="16"
@@ -558,6 +703,11 @@ function SpesificUserProfile() {
                               <span>
                                 {" "}
                                 <svg
+                                  onClick={() =>
+                                    handlePostLikesFromSpesificUserProfilePage(
+                                      post._id
+                                    )
+                                  }
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="16"
                                   height="16"
@@ -613,7 +763,10 @@ function SpesificUserProfile() {
                               </span>
                               <span style={{ color: "rgba(0,0,0,0.6)" }}>
                                 {" "}
-                                · {getCreatedDate(favorite.createdAt)}
+                                ·{" "}
+                                {getCreatedDateForSpesificUserProfilePage(
+                                  favorite.createdAt
+                                )}
                               </span>
                             </div>
                           </Stack>
@@ -653,10 +806,34 @@ function SpesificUserProfile() {
                           {/* start  */}
 
                           <div>
-                            {favorite.likes.includes(userInfo._id) ? (
+                            <span>
+                              <svg
+                                onClick={() =>
+                                  handleDeleteLikeFromSpesificUserProfilePage(
+                                    favorite._id
+                                  )
+                                }
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                fill="rgb(249, 24, 128)"
+                                className={`bi bi-heart-fill`}
+                                viewBox="0 0 16 16"
+                              >
+                                <path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
+                              </svg>
+                              <span className="post-description">
+                                {favorite.likes.length}
+                              </span>
+                            </span>
+                            {/* {favorite._id.includes(userInfo._id) ? (
                               <span>
                                 <svg
-                                  // onClick={() => handleDeleteLike(post._id)}
+                                  onClick={() =>
+                                    handleDeleteLikeFromSpesificUserProfilePage(
+                                      favorite._id
+                                    )
+                                  }
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="16"
                                   height="16"
@@ -674,7 +851,11 @@ function SpesificUserProfile() {
                               <span>
                                 {" "}
                                 <svg
-                                  // onClick={() => handlePostLikes(post._id)}
+                                  onClick={() =>
+                                    handlePostLikesFromSpesificUserProfilePage(
+                                      favorite._id
+                                    )
+                                  }
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="16"
                                   height="16"
@@ -684,8 +865,11 @@ function SpesificUserProfile() {
                                 >
                                   <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
                                 </svg>
+                                <span className="post-description">
+                                  {favorite.likes.length}
+                                </span>
                               </span>
-                            )}
+                            )} */}
                           </div>
 
                           {/* finish */}
