@@ -58,10 +58,15 @@ function SignUpPage() {
       <Container
         style={{
           justifyContent: "center",
-          marginTop: "120px",
         }}
       >
-        <Row style={{ justifyContent: "end" }}>
+        <Row
+          style={{
+            justifyContent: "end",
+            marginTop: "160px",
+            marginLeft: "80px",
+          }}
+        >
           <Col md={6}>
             <div>
               <div className="header-container">

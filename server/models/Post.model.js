@@ -18,6 +18,7 @@ const postSchema = new Schema(
       },
     ],
     likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    reposted: [{ type: Schema.Types.ObjectId, ref: "User" }],
     createdAt: { type: Date, default: Date.now },
   },
   {

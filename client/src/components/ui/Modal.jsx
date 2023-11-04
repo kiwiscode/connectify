@@ -83,13 +83,18 @@ function SigninModal() {
       <Container
         style={{
           justifyContent: "center",
-          marginTop: "50px",
+          marginTop: "40px",
         }}
       >
-        <Row style={{ justifyContent: "end" }}>
+        <Row
+          style={{
+            justifyContent: "end",
+            marginLeft: "80px",
+          }}
+        >
           <Col md={6}>
             <p className="have-account">Already have an account ?</p>
-            <Button variant="light" onClick={handleShow}>
+            <Button variant="light" onClick={handleShow} className="sign-in ">
               Sign in
             </Button>
             <Modal show={show} onHide={handleClose} size="lg" centered={true}>
@@ -218,8 +223,8 @@ function LogoutModal() {
     </>
   );
 }
-
-function PostModal() {
+// IMPORTANT => refreshPosts as a props !
+function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
   const [show, setShow] = useState(false);
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
@@ -254,21 +259,6 @@ function PostModal() {
   };
   const handleShow = () => setShow(true);
 
-  const handleGetAllPosts = () => {
-    axios
-      .get(`${API_URL}/home`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        return response;
-      })
-      .catch((err) => {
-        return err;
-      });
-  };
-
   const handlePost = () => {
     handleClose();
 
@@ -284,8 +274,16 @@ function PostModal() {
           },
         }
       )
+
       .then(() => {
-        handleGetAllPosts();
+        setLoadingTrue();
+
+        setTimeout(() => {
+          // IMPORTANT => we are using refreshPosts() it means we are using prop as a function !
+          setLoadingFalse();
+          refreshPosts();
+        }, 1500);
+        // handleGetAllPosts();
         setContent("");
       })
       .catch((err) => {

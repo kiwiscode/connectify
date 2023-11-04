@@ -17,7 +17,6 @@ const handlePost = (req, res) => {
       return Post.create({
         userId: userId,
         content: content,
-
         authorFullName: user.fullname,
         authorUserName: user.username,
       })

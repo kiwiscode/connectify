@@ -28,4 +28,7 @@ app.use("/profile", profileRoutes);
 const addFavoriteRoutes = require("./routes/favorite.routes");
 app.use("/favorite", addFavoriteRoutes);
 
+const postRepost = require("./routes/repost.routes");
+app.use("/repost", postRepost);
+
 module.exports = app;

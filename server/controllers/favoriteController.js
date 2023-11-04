@@ -8,6 +8,10 @@ const handleGetFavorites = (req, res) => {
   User.findById(userId)
     .populate("favorites")
     .then((favoritesFromDataBase) => {
+      console.log(
+        "All the favorites from data base for spesific user =>",
+        favoritesFromDataBase
+      );
       res.json({ favorites: favoritesFromDataBase.favorites });
     })
     .catch(() => {

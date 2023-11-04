@@ -4,6 +4,7 @@ function IndexFooter() {
   return (
     <>
       <Container
+        className="first-page"
         style={{
           justifyContent: "center",
         }}

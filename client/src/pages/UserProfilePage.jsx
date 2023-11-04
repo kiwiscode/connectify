@@ -26,6 +26,7 @@ function UserProfile() {
   const [favorites, setFavorites] = useState([]);
   const [error, setError] = useState("");
   const [postId, setpostId] = useState("");
+  console.log(userprofiledata);
 
   useEffect(() => {
     if (postsWindow === "hide") {
@@ -45,7 +46,13 @@ function UserProfile() {
         },
       })
       .then((response) => {
+        console.log(
+          "Here is the response that you asked for from server => user.posts array",
+          response
+        );
+
         setUserprofiledata(response.data.posts);
+
         setFavoriteWindow("hide");
         setPostWindow("");
       })
@@ -150,6 +157,39 @@ function UserProfile() {
       })
       .catch((err) => {
         return err;
+      });
+  };
+
+  const handleRepost = (postId) => {
+    console.log("Hello world");
+    console.log(postId);
+    axios
+      .post(
+        `${API_URL}/repost`,
+        {
+          postId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then(() => {
+        if (postsWindow === "hide") {
+          setTimeout(() => {
+            handleGetFavorites();
+          }, 1000);
+        } else if (favoriteWindow === "hide") {
+          setTimeout(() => {
+            handleShowPostsProfilePage();
+          }, 1000);
+        } else {
+          return;
+        }
+      })
+      .catch((error) => {
+        console.log(error);
       });
   };
 
@@ -440,10 +480,53 @@ function UserProfile() {
             <div className={`all-posts ${postsWindow}`}>
               {userprofiledata.map((post) => (
                 <div key={post._id}>
-                  <hr style={{ width: "100" }} />
+                  <Row
+                    style={{
+                      border: "1px solid rgba(0, 0, 0, 0.1)",
+                    }}
+                  ></Row>
+
+                  {post.reposted.includes(userInfo._id) ? (
+                    <svg
+                      style={{
+                        color: "rgb(83, 100, 113)",
+                        fontSize: "15px",
+                        marginLeft: "5px",
+                      }}
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      className="bi bi-repeat"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+                    </svg>
+                  ) : (
+                    <div>{""}</div>
+                  )}
+                  {post.reposted.includes(userInfo._id) ? (
+                    <span
+                      style={{
+                        fontSize: "13px",
+                        lineHeight: "20px",
+                        fontWeight: "700",
+                        color: "rgb(83, 100, 113)",
+                        marginLeft: "10px",
+                      }}
+                    >
+                      You reposted
+                    </span>
+                  ) : (
+                    <div>{""}</div>
+                  )}
                   <div className="posts-details">
                     <div className="post-head">
-                      <Stack direction="horizontal" gap={1}>
+                      <Stack
+                        direction="horizontal"
+                        gap={1}
+                        style={{ padding: "3px" }}
+                      >
                         <div className="p-0">
                           <span style={{ fontWeight: "700" }}>
                             {post.authorFullName}{" "}
@@ -471,28 +554,49 @@ function UserProfile() {
                             {" "}
                             · {getCreatedDate(post.createdAt)}
                           </span>
-                          <svg
-                            onClick={() =>
-                              handleDeletePostFromProfilePage(post._id)
-                            }
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="20"
-                            height="25"
-                            fill="currentColor"
-                            className="bi bi-three-dots positioning-dots"
-                            viewBox="0 0 20 20"
-                            style={{
-                              cursor: "pointer",
-                              backgroundColor: "crimson",
-                            }}
-                          >
-                            <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"></path>
-                          </svg>
+                          {userInfo._id === post.userId ? (
+                            <svg
+                              onClick={() =>
+                                handleDeletePostFromProfilePage(post._id)
+                              }
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="20"
+                              height="25"
+                              fill="currentColor"
+                              className="bi bi-three-dots positioning-dots"
+                              viewBox="0 0 20 20"
+                              style={{
+                                cursor: "pointer",
+                                backgroundColor: "crimson",
+                              }}
+                            >
+                              <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"></path>
+                            </svg>
+                          ) : (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="20"
+                              height="25"
+                              fill="currentColor"
+                              className="bi bi-three-dots positioning-dots"
+                              viewBox="0 0 20 20"
+                              style={{
+                                cursor: "pointer",
+                                backgroundColor: "rgb(29, 155, 240)",
+                              }}
+                            >
+                              <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"></path>
+                            </svg>
+                          )}
                         </div>
                       </Stack>
                     </div>
-                    <div>{post.content}</div>
-                    <Stack direction="horizontal" gap={3}>
+                    <div style={{ padding: "3px" }}>{post.content}</div>
+                    <Stack
+                      direction="horizontal"
+                      gap={3}
+                      style={{ padding: "3px" }}
+                    >
                       <div className="p-0">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -509,19 +613,43 @@ function UserProfile() {
                         </span>
                       </div>
                       <div className="p-0">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          className="bi bi-recycle"
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="M9.302 1.256a1.5 1.5 0 0 0-2.604 0l-1.704 2.98a.5.5 0 0 0 .869.497l1.703-2.981a.5.5 0 0 1 .868 0l2.54 4.444-1.256-.337a.5.5 0 1 0-.26.966l2.415.647a.5.5 0 0 0 .613-.353l.647-2.415a.5.5 0 1 0-.966-.259l-.333 1.242-2.532-4.431zM2.973 7.773l-1.255.337a.5.5 0 1 1-.26-.966l2.416-.647a.5.5 0 0 1 .612.353l.647 2.415a.5.5 0 0 1-.966.259l-.333-1.242-2.545 4.454a.5.5 0 0 0 .434.748H5a.5.5 0 0 1 0 1H1.723A1.5 1.5 0 0 1 .421 12.24l2.552-4.467zm10.89 1.463a.5.5 0 1 0-.868.496l1.716 3.004a.5.5 0 0 1-.434.748h-5.57l.647-.646a.5.5 0 1 0-.708-.707l-1.5 1.5a.498.498 0 0 0 0 .707l1.5 1.5a.5.5 0 1 0 .708-.707l-.647-.647h5.57a1.5 1.5 0 0 0 1.302-2.244l-1.716-3.004z" />
-                        </svg>
-                        <span className="post-description">
-                          Num Of Reposts?
-                        </span>
+                        {post.reposted.includes(userInfo._id) ? (
+                          <svg
+                            // onClick={() => handleDeleteRepost(post._id)}
+                            style={{ color: "rgb(0,186,124)" }}
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            className="bi bi-repeat"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+                          </svg>
+                        ) : (
+                          <svg
+                            onClick={() => handleRepost(post._id)}
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            className="bi bi-repeat"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+                          </svg>
+                        )}
+                        {post.reposted.includes(post._id) ? (
+                          <span className="post-description">
+                            <span style={{ color: "rgb(0,186,124)" }}>
+                              {post.reposted.length}
+                            </span>
+                          </span>
+                        ) : (
+                          <span className="post-description">
+                            {post.reposted.length}
+                          </span>
+                        )}
                       </div>
                       <div className="p-0">
                         <div>
@@ -576,10 +704,52 @@ function UserProfile() {
             <div className={`${favoriteWindow} all-favorites`}>
               {favorites.map((favorite) => (
                 <div key={favorite._id}>
-                  <hr style={{ width: "100" }} />
+                  <Row
+                    style={{
+                      border: "1px solid rgba(0, 0, 0, 0.1)",
+                    }}
+                  ></Row>
+                  {favorite.reposted.includes(userInfo._id) ? (
+                    <svg
+                      style={{
+                        color: "rgb(83, 100, 113)",
+                        fontSize: "15px",
+                        marginLeft: "5px",
+                      }}
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      className="bi bi-repeat"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+                    </svg>
+                  ) : (
+                    <div>{""}</div>
+                  )}
+                  {favorite.reposted.includes(userInfo._id) ? (
+                    <span
+                      style={{
+                        fontSize: "13px",
+                        lineHeight: "20px",
+                        fontWeight: "700",
+                        color: "rgb(83, 100, 113)",
+                        marginLeft: "10px",
+                      }}
+                    >
+                      You reposted
+                    </span>
+                  ) : (
+                    <div>{""}</div>
+                  )}
                   <div className="favorite-details">
                     <div className="favorite-head">
-                      <Stack direction="horizontal" gap={1}>
+                      <Stack
+                        direction="horizontal"
+                        gap={1}
+                        style={{ padding: "3px" }}
+                      >
                         <div className="p-0">
                           <span style={{ fontWeight: "700" }}>
                             {favorite.authorFullName}{" "}
@@ -650,8 +820,12 @@ function UserProfile() {
                         </div>
                       </Stack>
                     </div>
-                    <div>{favorite.content}</div>
-                    <Stack direction="horizontal" gap={3}>
+                    <div style={{ padding: "3px" }}>{favorite.content}</div>
+                    <Stack
+                      direction="horizontal"
+                      gap={3}
+                      style={{ padding: "3px" }}
+                    >
                       <div className="p-0">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -668,19 +842,43 @@ function UserProfile() {
                         </span>
                       </div>
                       <div className="p-0">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          className="bi bi-recycle"
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="M9.302 1.256a1.5 1.5 0 0 0-2.604 0l-1.704 2.98a.5.5 0 0 0 .869.497l1.703-2.981a.5.5 0 0 1 .868 0l2.54 4.444-1.256-.337a.5.5 0 1 0-.26.966l2.415.647a.5.5 0 0 0 .613-.353l.647-2.415a.5.5 0 1 0-.966-.259l-.333 1.242-2.532-4.431zM2.973 7.773l-1.255.337a.5.5 0 1 1-.26-.966l2.416-.647a.5.5 0 0 1 .612.353l.647 2.415a.5.5 0 0 1-.966.259l-.333-1.242-2.545 4.454a.5.5 0 0 0 .434.748H5a.5.5 0 0 1 0 1H1.723A1.5 1.5 0 0 1 .421 12.24l2.552-4.467zm10.89 1.463a.5.5 0 1 0-.868.496l1.716 3.004a.5.5 0 0 1-.434.748h-5.57l.647-.646a.5.5 0 1 0-.708-.707l-1.5 1.5a.498.498 0 0 0 0 .707l1.5 1.5a.5.5 0 1 0 .708-.707l-.647-.647h5.57a1.5 1.5 0 0 0 1.302-2.244l-1.716-3.004z" />
-                        </svg>
-                        <span className="post-description">
-                          Num Of Reposts?
-                        </span>
+                        {favorite.reposted.includes(userInfo._id) ? (
+                          <svg
+                            // onClick={() => handleDeleteRepost(post._id)}
+                            style={{ color: "rgb(0,186,124)" }}
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            className="bi bi-repeat"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+                          </svg>
+                        ) : (
+                          <svg
+                            onClick={() => handleRepost(favorite._id)}
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            className="bi bi-repeat"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+                          </svg>
+                        )}
+                        {favorite.reposted.includes(userInfo._id) ? (
+                          <span className="post-description">
+                            <span style={{ color: "rgb(0,186,124)" }}>
+                              {favorite.reposted.length}
+                            </span>
+                          </span>
+                        ) : (
+                          <span className="post-description">
+                            {favorite.reposted.length}
+                          </span>
+                        )}
                       </div>
                       {/* start  */}
 

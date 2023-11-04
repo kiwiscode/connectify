@@ -1,7 +1,4 @@
 const User = require("../models/User.model");
-const Post = require("../models/Post.model");
-const Favorite = require("../models/Favorite.model");
-const { post } = require("../routes/profile.routes");
 
 const handleProfile = (req, res) => {
   const userId = req.user.userId;
