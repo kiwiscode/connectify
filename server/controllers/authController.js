@@ -231,6 +231,8 @@ const handleLogin = (req, res, next) => {
             const token = jwt.sign({ userId: _id }, process.env.JWT_SECRET, {
               expiresIn: "24h",
             });
+
+            console.log(username);
             res.json({
               token,
               user: {

@@ -24,6 +24,8 @@ const handleShowSpesificProfile = (req, res) => {
     .populate("favorites")
     .then((response) => {
       res.status(200).json(response);
+
+      console.log(response);
     })
     .catch(() => {
       res.status(404).json({ errorMessage: "User not found!" });

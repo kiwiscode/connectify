@@ -431,3 +431,8 @@ span > a:hover {
 .emptyContent {
   opacity: 0.5;
 }
+
+.p-0 span {
+  font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+}

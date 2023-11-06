@@ -124,7 +124,7 @@ const handleDeletePost = (req, res) => {
         } else {
           console.log("HATA 404");
         }
-
+        // IMPORTANT
         return Promise.all(
           users.map((user) =>
             user

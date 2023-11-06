@@ -503,12 +503,12 @@ function MainPage() {
                 <div key={post._id}>
                   <div className="posts-details">
                     <div className="post-head">
-                      {/* FIXME */}
                       <Row
                         style={{
                           border: "1px solid rgba(0, 0, 0, 0.1)",
                         }}
                       ></Row>
+                      {/* FIXME */}
                       {post.reposted.includes(userInfo._id) ? (
                         <svg
                           style={{

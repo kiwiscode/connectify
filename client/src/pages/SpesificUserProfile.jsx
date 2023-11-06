@@ -11,7 +11,6 @@ import {
   ButtonGroup,
 } from "react-bootstrap";
 import { PostModal, LogoutModal } from "../components/ui/Modal";
-import { element } from "prop-types";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -27,9 +26,9 @@ function SpesificUserProfile() {
   const [favoriteWindow, setFavoriteWindow] = useState("hide");
   const [postsWindow, setPostWindow] = useState("");
   const [favorites, setFavorites] = useState([]);
-
   const [postId, setpostId] = useState("");
   const [error, setError] = useState("");
+  const [show, setShow] = useState("hide");
 
   const handleShowSpesificUserProfilePagePosts = () => {
     axios
@@ -39,13 +38,12 @@ function SpesificUserProfile() {
         },
       })
       .then((response) => {
-        console.log("Iam working!");
-
         setPostWindow("");
         setFavoriteWindow("hide");
         setProfileInfo(response.data);
         setprofileInfoPosts(response.data.posts);
       })
+
       .catch((err) => {
         return err;
       });
@@ -67,11 +65,14 @@ function SpesificUserProfile() {
         return err;
       });
   };
-  console.log(favorites);
+
   useEffect(() => {
     if (postsWindow === "hide") {
+      setShow("");
       handleShowSpesificUserProfilePageFavorites();
     } else if (favoriteWindow === "hide") {
+      setShow("");
+
       handleShowSpesificUserProfilePagePosts();
     } else {
       return;
@@ -204,8 +205,6 @@ function SpesificUserProfile() {
   };
 
   const handleRepost = (postId) => {
-    console.log("Hello world");
-    console.log(postId);
     axios
       .post(
         `${API_URL}/repost`,
@@ -218,20 +217,69 @@ function SpesificUserProfile() {
           },
         }
       )
-      .then(() => {
-        console.log("Reposted successfully");
+      .then((response) => {
+        console.log(
+          "RESPONSE AFTER YOU CLICKED FOR HANDLING REPOST =>",
+          response
+        );
+        console.log(
+          "AFTER YOU ADDED REPOST PROFILE INFO POSTS  =>",
+          profileInfoPosts
+        );
+        // start to check
+        // Tıklanan postun ID'si ile eşleşen postu bul
+        const clickedPost = profileInfoPosts.find(
+          (post) => post._id === postId
+        );
+        console.log(clickedPost);
 
-        // if (postsWindow === "hide") {
-        //   setTimeout(() => {
-        //     handleShowSpesificUserProfilePageFavorites();
-        //   }, 1000);
-        // } else if (favoriteWindow === "hide") {
-        //   setTimeout(() => {
-        //     handleShowSpesificUserProfilePagePosts();
-        //   }, 1000);
-        // } else {
-        //   return;
-        // }
+        // Eğer post bulunduysa ve içinde userInfo._id değeri yoksa ekle
+        if (clickedPost && !clickedPost.reposted.includes(userInfo._id)) {
+          clickedPost.reposted.push(userInfo._id);
+
+          // Postun reposted length'ini güncelle
+          const updatedPost = {
+            ...clickedPost,
+            reposted: clickedPost.reposted,
+          };
+          const updatedPosts = profileInfoPosts.map((post) =>
+            post._id === updatedPost._id ? updatedPost : post
+          );
+
+          // setState veya güncellenmiş verileri kullanacağınız bir yöntemle posts'u güncelleyin
+          // setProfileInfoPosts(updatedPosts); // Örnek bir state güncelleme fonksiyonu
+          setprofileInfoPosts(updatedPosts);
+          setShow("hide");
+        }
+
+        // Tıklanan postun ID'si ile eşleşen postu bul
+        const clickedFavorite = favorites.find(
+          (favorite) => favorite._id === postId
+        );
+        console.log(clickedFavorite);
+        // Eğer post bulunduysa ve içinde userInfo._id değeri yoksa ekle
+
+        if (
+          clickedFavorite &&
+          !clickedFavorite.reposted.includes(userInfo._id)
+        ) {
+          clickedFavorite.reposted.push(userInfo._id);
+
+          // Favorinin reposted lengthini güncelle
+          const updatedFavorite = {
+            ...clickedFavorite,
+            reposted: clickedFavorite.reposted,
+          };
+
+          const updatedFavorites = favorites.map((favorite) =>
+            favorite._id === updatedFavorite._id ? updatedFavorite : favorite
+          );
+
+          // setState veya güncellenmiş verileri kullanacağınız bir yöntemle posts'u güncelleyin
+          // setProfileInfoPosts(updatedPosts); // Örnek bir state güncelleme fonksiyonu
+          setFavorites(updatedFavorites);
+        }
+        // finish to check
       })
       .catch((error) => {
         console.log(error);
@@ -239,8 +287,7 @@ function SpesificUserProfile() {
   };
 
   const handleDeleteRepost = (postId) => {
-    console.log(postId);
-    console.log("hello world");
+    console.log("Button clicked");
     axios
       .post(
         `${API_URL}/repost/delete-repost`,
@@ -254,36 +301,79 @@ function SpesificUserProfile() {
         }
       )
       .then((response) => {
-        console.log(response);
+        console.log(
+          "RESPONSE AFTER YOU CLICKED FOR HANDLE DELETE REPOST =>",
+          response
+        );
+        console.log(
+          "AFTER YOU DELETED REPOST PROFILE INFO POSTS  =>",
+          profileInfoPosts
+        );
+        // start to check
+        // Tıklanan postun ID'si ile eşleşen postu bul
+        const clickedPost = profileInfoPosts.find(
+          (post) => post._id === postId
+        );
+        console.log(clickedPost);
+
+        // Eğer post bulunduysa ve içinde userInfo._id değeri yoksa ekle
+        if (clickedPost && !clickedPost.reposted.includes(userInfo._id)) {
+          clickedPost.reposted.push(userInfo._id);
+
+          // Postun reposted length'ini güncelle
+          const updatedPost = {
+            ...clickedPost,
+            reposted: clickedPost.reposted,
+          };
+          const updatedPosts = profileInfoPosts.map((post) =>
+            post._id === updatedPost._id ? updatedPost : post
+          );
+
+          // setState veya güncellenmiş verileri kullanacağınız bir yöntemle posts'u güncelleyin
+          // setProfileInfoPosts(updatedPosts); // Örnek bir state güncelleme fonksiyonu
+          setprofileInfoPosts(updatedPosts);
+          setShow("hide");
+        }
+
+        // Tıklanan postun ID'si ile eşleşen postu bul
+        const clickedFavorite = favorites.find(
+          (favorite) => favorite._id === postId
+        );
+        console.log(clickedFavorite);
+        // Eğer post bulunduysa ve içinde userInfo._id değeri yoksa ekle
+
+        if (
+          clickedFavorite &&
+          !clickedFavorite.reposted.includes(userInfo._id)
+        ) {
+          clickedFavorite.reposted.push(userInfo._id);
+
+          // Favorinin reposted lengthini güncelle
+          const updatedFavorite = {
+            ...clickedFavorite,
+            reposted: clickedFavorite.reposted,
+          };
+
+          const updatedFavorites = favorites.map((favorite) =>
+            favorite._id === updatedFavorite._id ? updatedFavorite : favorite
+          );
+
+          // setState veya güncellenmiş verileri kullanacağınız bir yöntemle posts'u güncelleyin
+          // setProfileInfoPosts(updatedPosts); // Örnek bir state güncelleme fonksiyonu
+          setFavorites(updatedFavorites);
+        }
+        // finish to check
       })
       .catch((error) => {
         console.log(error);
       });
   };
 
-  console.log(
-    "ACTIVE USER WHO IS CHECKING SOMEONES PROFILE RIGHT NOW => ",
-    userInfo
-  );
-  console.log("PROFILE THAT YOU ARE CHECKING RIGHT NOW => ", profileInfo);
-
-  console.log("PROFILE INFO POSTS => ", profileInfoPosts);
-
   const handleRepostedPostSeperation = (array, repostId) => {
     const firstOccurence = array.find((element) => element._id === repostId);
 
     return array.indexOf(firstOccurence);
   };
-
-  console.log(
-    handleRepostedPostSeperation(profileInfoPosts, "654599d93c8715e18f7b17ef")
-  );
-  console.log(
-    handleRepostedPostSeperation(profileInfoPosts, "6544c4ede5b17ddeb3ac07f1")
-  );
-  console.log(
-    handleRepostedPostSeperation(profileInfoPosts, "6544c4e6e5b17ddeb3ac07e9")
-  );
 
   const handleShowDetailPostFromSpesificUserProfilePage = () => {
     console.log("Button Clicked");
@@ -642,12 +732,22 @@ function SpesificUserProfile() {
                 </ButtonGroup>
 
                 {/* finish */}
+                {/* start to check */}
                 <div className={`all-posts ${postsWindow}`}>
                   {profileInfoPosts.map((post, index) => (
                     <div key={post._id}>
-                      <hr style={{ width: "100" }} />
                       <div className="posts-details">
                         <div className="post-head">
+                          <Row
+                            style={{
+                              border: "1px solid rgba(0, 0, 0, 0.1)",
+                            }}
+                          ></Row>
+                          <Stack
+                            direction="horizontal"
+                            gap={1}
+                            style={{ padding: "3px" }}
+                          ></Stack>
                           <div className="p-0">
                             {/* start to check */}
                             {/* NOTE eğer active user kendi profiline tıklayıp geziniyorsa ona "you reposted" göster eğer active user başka bir userın profilini geziyorsa ona "User full name reposted " göster */}
@@ -657,7 +757,7 @@ function SpesificUserProfile() {
                               profileInfoPosts,
                               post._id
                             ) === index ? (
-                              <div>
+                              <div className={`${show}`}>
                                 <svg
                                   style={{
                                     color: "rgb(83, 100, 113)",
@@ -724,7 +824,7 @@ function SpesificUserProfile() {
                                     marginLeft: "10px",
                                   }}
                                 >
-                                  Aykut Kav reposted
+                                  {profileInfo.fullname} reposted
                                 </span>{" "}
                               </div>
                             ) : (
@@ -732,8 +832,12 @@ function SpesificUserProfile() {
                             )}
                             {/* finish to check */}
                           </div>
-                          <Stack direction="horizontal" gap={1}>
-                            <div className="p-0 verified-icon">
+                          <Stack
+                            direction="horizontal"
+                            gap={1}
+                            style={{ padding: "3px" }}
+                          >
+                            {/* <div className="p-0 verified-icon">
                               {" "}
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -745,9 +849,11 @@ function SpesificUserProfile() {
                               >
                                 <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z" />
                               </svg>
-                            </div>
+                            </div> */}
                             <div className="p-0">
-                              {" "}
+                              <span style={{ fontWeight: 700 }}>
+                                {profileInfo.fullname}
+                              </span>{" "}
                               <span style={{ color: "rgba(0, 0, 0, 0.6)" }}>
                                 @{post.authorUserName}
                               </span>
@@ -804,8 +910,12 @@ function SpesificUserProfile() {
                             </div>
                           </Stack>
                         </div>
-                        <div>{post.content}</div>
-                        <Stack direction="horizontal" gap={3}>
+                        <div style={{ padding: "3px" }}>{post.content}</div>
+                        <Stack
+                          direction="horizontal"
+                          gap={3}
+                          style={{ padding: "3px" }}
+                        >
                           <div className="p-0">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -823,41 +933,43 @@ function SpesificUserProfile() {
                           </div>
                           <div className="p-0">
                             {post.reposted.includes(userInfo._id) ? (
-                              <svg
-                                onClick={() => handleDeleteRepost(post._id)}
-                                style={{ color: "rgb(0,186,124)" }}
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                fill="currentColor"
-                                className="bi bi-repeat"
-                                viewBox="0 0 16 16"
-                              >
-                                <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
-                              </svg>
-                            ) : (
-                              <svg
-                                onClick={() => handleRepost(post._id)}
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                fill="currentColor"
-                                className="bi bi-repeat"
-                                viewBox="0 0 16 16"
-                              >
-                                <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
-                              </svg>
-                            )}
-                            {post.reposted.includes(post._id) ? (
-                              <span className="post-description">
-                                <span style={{ color: "rgb(0,186,124)" }}>
+                              <div>
+                                <svg
+                                  onClick={() => handleDeleteRepost(post._id)}
+                                  style={{ color: "rgb(0,186,124)" }}
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="16"
+                                  height="16"
+                                  fill="currentColor"
+                                  className="bi bi-repeat"
+                                  viewBox="0 0 16 16"
+                                >
+                                  <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+                                </svg>
+                                <span
+                                  className="post-description"
+                                  style={{ color: "rgb(0,186,124)" }}
+                                >
                                   {post.reposted.length}
                                 </span>
-                              </span>
+                              </div>
                             ) : (
-                              <span className="post-description">
-                                {post.reposted.length}
-                              </span>
+                              <div>
+                                <svg
+                                  onClick={() => handleRepost(post._id)}
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="16"
+                                  height="16"
+                                  fill="currentColor"
+                                  className="bi bi-repeat"
+                                  viewBox="0 0 16 16"
+                                >
+                                  <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+                                </svg>
+                                <span className="post-description post-description-rest ">
+                                  {post.reposted.length}
+                                </span>
+                              </div>
                             )}
                           </div>
 
@@ -914,33 +1026,29 @@ function SpesificUserProfile() {
                     </div>
                   ))}
                 </div>
-
+                {/* finish to check */}
                 {/* start */}
                 <div className={`${favoriteWindow} all-favorites`}>
                   {favorites.map((favorite) => (
                     <div key={favorite._id}>
-                      <hr style={{ width: "100" }} />
+                      <Row
+                        style={{
+                          border: "1px solid rgba(0, 0, 0, 0.1)",
+                        }}
+                      ></Row>
                       <div className="favorite-details">
                         <div className="favorite-head">
-                          <Stack direction="horizontal" gap={1}>
+                          <Stack
+                            direction="horizontal"
+                            gap={1}
+                            style={{ padding: "3px" }}
+                          >
                             <div className="p-0">
                               <span style={{ fontWeight: "700" }}>
                                 {favorite.authorFullName}{" "}
                               </span>
                             </div>
-                            <div className="p-0 verified-icon">
-                              {" "}
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                fill="currentColor"
-                                className="bi bi-patch-check-fill"
-                                viewBox="0 0 16 16"
-                              >
-                                <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z" />
-                              </svg>
-                            </div>
+
                             <div className="p-0">
                               {" "}
                               <span style={{ color: "rgba(0, 0, 0, 0.6)" }}>
@@ -999,8 +1107,12 @@ function SpesificUserProfile() {
                             </div>
                           </Stack>
                         </div>
-                        <div>{favorite.content}</div>
-                        <Stack direction="horizontal" gap={3}>
+                        <div style={{ padding: "3px" }}>{favorite.content}</div>
+                        <Stack
+                          direction="horizontal"
+                          gap={3}
+                          style={{ padding: "3px" }}
+                        >
                           <div className="p-0">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -1016,45 +1128,52 @@ function SpesificUserProfile() {
                               Num Of Comments?
                             </span>
                           </div>
+                          {/* start to check */}
                           <div className="p-0">
                             {favorite.reposted.includes(userInfo._id) ? (
-                              <svg
-                                onClick={() => handleDeleteRepost(favorite._id)}
-                                style={{ color: "rgb(0,186,124)" }}
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                fill="currentColor"
-                                className="bi bi-repeat"
-                                viewBox="0 0 16 16"
-                              >
-                                <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
-                              </svg>
-                            ) : (
-                              <svg
-                                onClick={() => handleRepost(favorite._id)}
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                fill="currentColor"
-                                className="bi bi-repeat"
-                                viewBox="0 0 16 16"
-                              >
-                                <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
-                              </svg>
-                            )}
-                            {favorite.reposted.includes(favorite._id) ? (
-                              <span className="post-description">
-                                <span style={{ color: "rgb(0,186,124)" }}>
+                              <div>
+                                <svg
+                                  onClick={() =>
+                                    handleDeleteRepost(favorite._id)
+                                  }
+                                  style={{ color: "rgb(0,186,124)" }}
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="16"
+                                  height="16"
+                                  fill="currentColor"
+                                  className="bi bi-repeat"
+                                  viewBox="0 0 16 16"
+                                >
+                                  <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+                                </svg>
+                                <span
+                                  className="post-description"
+                                  style={{ color: "rgb(0,186,124)" }}
+                                >
                                   {favorite.reposted.length}
                                 </span>
-                              </span>
+                              </div>
                             ) : (
-                              <span className="post-description">
-                                {favorite.reposted.length}
-                              </span>
+                              <div>
+                                <svg
+                                  onClick={() => handleRepost(favorite._id)}
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="16"
+                                  height="16"
+                                  fill="currentColor"
+                                  className="bi bi-repeat"
+                                  viewBox="0 0 16 16"
+                                >
+                                  <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+                                </svg>
+                                <span className="post-description post-description-rest ">
+                                  {favorite.reposted.length}
+                                </span>
+                              </div>
                             )}
                           </div>
+
+                          {/* finish to check  */}
 
                           {/* start to check */}
                           <div className="p-0">

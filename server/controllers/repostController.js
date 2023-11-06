@@ -13,6 +13,8 @@ const handleRepost = (req, res) => {
   console.log("CURRENT USER WHO WANTS TO REPOST SOME POST => ", userId);
 
   User.findById(userId)
+    .populate("reposts")
+    .populate("posts")
     .then((user) => {
       if (!user.reposts.includes(postId)) {
         Repost.create({
@@ -22,12 +24,15 @@ const handleRepost = (req, res) => {
         console.log(
           "NEW REPOST MODEL CREATED IN DATABASE WITH REPOST ID , CURRENT USER ID , POST ID"
         );
-        user.posts.unshift(postId);
-        user.reposts.push(postId);
-        user.save();
+        // user.posts.unshift(postId);
+        // user.posts.push(postId);
+
         console.log("THE REPOSTED POST ADDED TO CURRENT USER.REPOSTS ARRAY");
         Post.findById(postId)
           .then((post) => {
+            user.posts.splice(0, 0, post);
+            user.reposts.splice(0, 0, post);
+            user.save();
             post.reposted.push(userId);
 
             post.save();
