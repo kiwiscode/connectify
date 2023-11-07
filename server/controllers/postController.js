@@ -35,17 +35,24 @@ const handlePost = (req, res) => {
       res.status(500).json({ errorMessage: "Error finding user", error });
     });
 };
-
 const handleShowPosts = (req, res) => {
+  const { userId } = req.user;
+
   Post.find()
+    // IMPORTANT
+    // start to check
+    .sort({ createdAt: -1 })
+    // finish to check
     .populate("userId")
     .then((postsFromDataBase) => {
+      console.log("ACTIVE USER => ", userId);
+      console.log("HELLO WORLD!");
       res.json(postsFromDataBase);
     })
-    .catch(() => {
+    .catch((error) => {
       res
         .status(500)
-        .json({ errorMessage: "An error occured while fetching posts" });
+        .json({ errorMessage: "An error occurred while fetching posts" });
     });
 };
 

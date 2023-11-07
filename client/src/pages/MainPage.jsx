@@ -190,12 +190,35 @@ function MainPage() {
           },
         }
       )
-      .then(() => {
+      .then((response) => {
         setIsLoading(true);
         setContent("");
-
+        console.log(response);
         setTimeout(() => {
-          handleShowPostsHomePage();
+          axios
+            .get(`${API_URL}/home`, {
+              headers: {
+                Authorization: `Bearer ${getToken()}`,
+              },
+            })
+            .then((response) => {
+              // Assuming userInfo is retrieved from localStorage
+              const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+              console.log("GET THIS RESPONSE =>", response);
+              // Assuming 'posts' is an array in userInfo
+              if (userInfo.posts.length) {
+                userInfo.posts.splice(0, 0, response.data[0]._id); // Assuming response contains the created post data
+              } else {
+                userInfo.posts.push(response.data[0]._id);
+              }
+              // Saving the updated userInfo back to localStorage
+              localStorage.setItem("userInfo", JSON.stringify(userInfo));
+              setPosts(response.data);
+            })
+            .catch((err) => {
+              return err;
+            });
+
           setIsLoading(false);
         }, 1200);
       })
@@ -203,6 +226,16 @@ function MainPage() {
         return err;
       });
   };
+
+  // if post.repostedFromThisPost === anyId inside user.posts array return true
+
+  // const isAnyIdInUserPosts = (post, userPosts) => {
+  //   return post.repostedFromThisPost.some((postId) =>
+  //     userPosts.includes(postId)
+  //   );
+  // };
+  console.log("POSTS =>", posts);
+  // console.log(isAnyIdInUserPosts(posts, userInfo.posts));
 
   const handleRepost = (postId) => {
     console.log("Hello world");
@@ -220,7 +253,42 @@ function MainPage() {
         }
       )
       .then(() => {
-        handleShowPostsHomePage();
+        // start to check
+
+        const repostElement = posts.find((element) => {
+          return element._id === postId;
+        });
+
+        repostElement.repostedFromThisPost.push(postId);
+
+        console.log("READY TO MANIPULATE =>", repostElement);
+
+        // finish to check
+
+        // start to check
+        // start to check
+        // Tıklanan postun ID'si ile eşleşen postu bul
+        const clickedPost = posts.find((post) => post._id === postId);
+        console.log(clickedPost);
+
+        // Eğer post bulunduysa ve içinde userInfo._id değeri yoksa ekle
+        if (clickedPost && !clickedPost.reposted.includes(userInfo._id)) {
+          clickedPost.reposted.push(userInfo._id);
+
+          // Postun reposted length'ini güncelle
+          const updatedPost = {
+            ...clickedPost,
+            reposted: clickedPost.reposted,
+          };
+          const updatedPosts = posts.map((post) =>
+            post._id === updatedPost._id ? updatedPost : post
+          );
+
+          // setState veya güncellenmiş verileri kullanacağınız bir yöntemle posts'u güncelleyin
+          // setProfileInfoPosts(updatedPosts); // Örnek bir state güncelleme fonksiyonu
+          setPosts(updatedPosts);
+        }
+        // finish to check
       })
       .catch((error) => {
         console.log(error);
@@ -228,7 +296,7 @@ function MainPage() {
   };
 
   useEffect(() => {
-    console.log(posts);
+    console.log("POSTS =>", posts);
     handleShowPostsHomePage();
   }, []);
 
@@ -499,7 +567,7 @@ function MainPage() {
             {/* mainpage yani home rotasına tüm twitlerin gösterileceği column burası !  */}
 
             <div className="all-posts">
-              {posts.map((post) => (
+              {posts.map((post, index) => (
                 <div key={post._id}>
                   <div className="posts-details">
                     <div className="post-head">
@@ -508,41 +576,8 @@ function MainPage() {
                           border: "1px solid rgba(0, 0, 0, 0.1)",
                         }}
                       ></Row>
-                      {/* FIXME */}
-                      {post.reposted.includes(userInfo._id) ? (
-                        <svg
-                          style={{
-                            color: "rgb(83, 100, 113)",
-                            fontSize: "15px",
-                            marginLeft: "4px",
-                          }}
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          className="bi bi-repeat"
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
-                        </svg>
-                      ) : (
-                        <div>{""}</div>
-                      )}
-                      {post.reposted.includes(userInfo._id) ? (
-                        <span
-                          style={{
-                            fontSize: "13px",
-                            lineHeight: "20px",
-                            fontWeight: "700",
-                            color: "rgb(83, 100, 113)",
-                            marginLeft: "10px",
-                          }}
-                        >
-                          You reposted
-                        </span>
-                      ) : (
-                        <div>{""}</div>
-                      )}
+                      {/* Typeof ={typeof index} , {index} */}
+
                       <Stack
                         direction="horizontal"
                         gap={1}
@@ -645,43 +680,50 @@ function MainPage() {
                         </span>
                       </div>
                       <div className="p-0">
-                        {post.reposted.includes(userInfo._id) ? (
-                          <svg
-                            style={{ color: "rgb(0,186,124)" }}
-                            // onClick={() => handleDeleteRepost(post._id)}
+                        {/* start to check */}
+                        {/* IMPORTANT this condition was crucial */}
+                        {post.reposted.includes(userInfo._id) &&
+                        userInfo.posts.some(
+                          (postId) => postId === post.repostedFromThisPost[0]
+                        ) ? (
+                          // finish to check
+                          <div>
+                            <svg
+                              style={{ color: "rgb(0,186,124)" }}
+                              // onClick={() => handleDeleteRepost(post._id)}
 
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            className="bi bi-repeat"
-                            viewBox="0 0 16 16"
-                          >
-                            <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
-                          </svg>
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="currentColor"
+                              className="bi bi-repeat"
+                              viewBox="0 0 16 16"
+                            >
+                              <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+                            </svg>
+                            <span className="post-description">
+                              <span style={{ color: "rgb(0,186,124)" }}>
+                                {post.reposted.length}
+                              </span>
+                            </span>
+                          </div>
                         ) : (
-                          <svg
-                            onClick={() => handleRepost(post._id)}
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            className="bi bi-repeat"
-                            viewBox="0 0 16 16"
-                          >
-                            <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
-                          </svg>
-                        )}
-                        {post.reposted.includes(userInfo._id) ? (
-                          <span className="post-description">
-                            <span style={{ color: "rgb(0,186,124)" }}>
+                          <div>
+                            <svg
+                              onClick={() => handleRepost(post._id)}
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="currentColor"
+                              className="bi bi-repeat"
+                              viewBox="0 0 16 16"
+                            >
+                              <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+                            </svg>
+                            <span className="post-description">
                               {post.reposted.length}
                             </span>
-                          </span>
-                        ) : (
-                          <span className="post-description">
-                            {post.reposted.length}
-                          </span>
+                          </div>
                         )}
                       </div>
                       <div className="p-0">

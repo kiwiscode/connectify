@@ -4,6 +4,12 @@ const handleProfile = (req, res) => {
   const userId = req.user.userId;
 
   User.findById(userId)
+    // start to check
+    // .populate({
+    //   path: "posts",
+    //   options: { sort: { createdAt: -1 } }, // createdAt tarihine göre tersten sıralama
+    // })
+    // finish to check
     .populate("posts")
     .then((response) => {
       res.status(200).json({ posts: response.posts, response });
@@ -20,6 +26,16 @@ const handleShowSpesificProfile = (req, res) => {
   const profileId = req.params.id;
 
   User.findById(profileId)
+    // start to check
+    // .populate({
+    //   path: "posts",
+    //   options: { sort: { createdAt: -1 } }, // createdAt tarihine göre tersten sıralama
+    // })
+    // .populate({
+    //   path: "favorites",
+    //   options: { sort: { createdAt: -1 } }, // Favorites için de createdAt tarihine göre tersten sıralama
+    // })
+    // finish to check
     .populate("posts")
     .populate("favorites")
     .then((response) => {

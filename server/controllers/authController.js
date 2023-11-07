@@ -171,7 +171,7 @@ const handleLogin = (req, res, next) => {
   }
 
   User.findOne({ username })
-    .populate("posts")
+    // .populate("posts")
     .populate("followers")
     .populate("following")
     .populate("favorites")

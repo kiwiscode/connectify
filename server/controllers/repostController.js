@@ -24,17 +24,27 @@ const handleRepost = (req, res) => {
         console.log(
           "NEW REPOST MODEL CREATED IN DATABASE WITH REPOST ID , CURRENT USER ID , POST ID"
         );
-        // user.posts.unshift(postId);
-        // user.posts.push(postId);
 
         console.log("THE REPOSTED POST ADDED TO CURRENT USER.REPOSTS ARRAY");
         Post.findById(postId)
           .then((post) => {
+            console.log(post);
+            // IMPORTANT this line can wait a bit more !
+            Post.create({
+              userId: userId,
+              content: post.content,
+              authorFullName: user.fullname,
+              authorUserName: user.username,
+              repostedFromThisPost: postId,
+              reposted: userId,
+            });
+            console.log(
+              "POST CREATED IN THE POST COLLECTION AFTER USER REPOSTED THE POST"
+            );
             user.posts.splice(0, 0, post);
             user.reposts.splice(0, 0, post);
+            post.reposted.splice(0, 0, userId);
             user.save();
-            post.reposted.push(userId);
-
             post.save();
             console.log(
               "THE POST CURRENT USER REPOSTED FINDED IN THE => POSTS COLLECTION AND USER ID ADDED TO POST.REPOSTED ARRAY"

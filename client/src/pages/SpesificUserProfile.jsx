@@ -227,6 +227,7 @@ function SpesificUserProfile() {
           profileInfoPosts
         );
         // start to check
+        // start to check
         // Tıklanan postun ID'si ile eşleşen postu bul
         const clickedPost = profileInfoPosts.find(
           (post) => post._id === postId
@@ -248,10 +249,12 @@ function SpesificUserProfile() {
 
           // setState veya güncellenmiş verileri kullanacağınız bir yöntemle posts'u güncelleyin
           // setProfileInfoPosts(updatedPosts); // Örnek bir state güncelleme fonksiyonu
+
           setprofileInfoPosts(updatedPosts);
           setShow("hide");
         }
-
+        // finish to check
+        // start to check
         // Tıklanan postun ID'si ile eşleşen postu bul
         const clickedFavorite = favorites.find(
           (favorite) => favorite._id === postId
@@ -278,7 +281,9 @@ function SpesificUserProfile() {
           // setState veya güncellenmiş verileri kullanacağınız bir yöntemle posts'u güncelleyin
           // setProfileInfoPosts(updatedPosts); // Örnek bir state güncelleme fonksiyonu
           setFavorites(updatedFavorites);
+          setShow("hide");
         }
+        // finish to check
         // finish to check
       })
       .catch((error) => {
@@ -310,6 +315,7 @@ function SpesificUserProfile() {
           profileInfoPosts
         );
         // start to check
+        // start to check
         // Tıklanan postun ID'si ile eşleşen postu bul
         const clickedPost = profileInfoPosts.find(
           (post) => post._id === postId
@@ -332,9 +338,10 @@ function SpesificUserProfile() {
           // setState veya güncellenmiş verileri kullanacağınız bir yöntemle posts'u güncelleyin
           // setProfileInfoPosts(updatedPosts); // Örnek bir state güncelleme fonksiyonu
           setprofileInfoPosts(updatedPosts);
+          // finish to check
           setShow("hide");
         }
-
+        // start to check
         // Tıklanan postun ID'si ile eşleşen postu bul
         const clickedFavorite = favorites.find(
           (favorite) => favorite._id === postId
@@ -360,6 +367,7 @@ function SpesificUserProfile() {
 
           // setState veya güncellenmiş verileri kullanacağınız bir yöntemle posts'u güncelleyin
           // setProfileInfoPosts(updatedPosts); // Örnek bir state güncelleme fonksiyonu
+          // finish to check
           setFavorites(updatedFavorites);
         }
         // finish to check
