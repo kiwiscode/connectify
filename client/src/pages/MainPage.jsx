@@ -227,73 +227,43 @@ function MainPage() {
       });
   };
 
-  // if post.repostedFromThisPost === anyId inside user.posts array return true
-
-  // const isAnyIdInUserPosts = (post, userPosts) => {
-  //   return post.repostedFromThisPost.some((postId) =>
-  //     userPosts.includes(postId)
-  //   );
-  // };
-  console.log("POSTS =>", posts);
-  // console.log(isAnyIdInUserPosts(posts, userInfo.posts));
-
   const handleRepost = (postId) => {
-    console.log("Hello world");
-    console.log(postId);
+    console.log("POST ID FOR HANDLEREPOST FUNCTION =>", postId);
     axios
       .post(
         `${API_URL}/repost`,
-        {
-          postId,
-        },
+        { postId: postId, userId: userInfo._id },
         {
           headers: {
             Authorization: `Bearer ${getToken()}`,
           },
         }
       )
-      .then(() => {
-        // start to check
-
-        const repostElement = posts.find((element) => {
-          return element._id === postId;
-        });
-
-        repostElement.repostedFromThisPost.push(postId);
-
-        console.log("READY TO MANIPULATE =>", repostElement);
-
-        // finish to check
-
-        // start to check
-        // start to check
-        // Tıklanan postun ID'si ile eşleşen postu bul
-        const clickedPost = posts.find((post) => post._id === postId);
-        console.log(clickedPost);
-
-        // Eğer post bulunduysa ve içinde userInfo._id değeri yoksa ekle
-        if (clickedPost && !clickedPost.reposted.includes(userInfo._id)) {
-          clickedPost.reposted.push(userInfo._id);
-
-          // Postun reposted length'ini güncelle
-          const updatedPost = {
-            ...clickedPost,
-            reposted: clickedPost.reposted,
-          };
-          const updatedPosts = posts.map((post) =>
-            post._id === updatedPost._id ? updatedPost : post
-          );
-
-          // setState veya güncellenmiş verileri kullanacağınız bir yöntemle posts'u güncelleyin
-          // setProfileInfoPosts(updatedPosts); // Örnek bir state güncelleme fonksiyonu
-          setPosts(updatedPosts);
-        }
-        // finish to check
+      .then((response) => {
+        console.log(response);
       })
       .catch((error) => {
         console.log(error);
       });
   };
+
+  console.log("POSTS =>", posts);
+
+  const repostSymbolHandler = (array) => {
+    const repostedIdsInitialize = array.map((element) => {
+      return element.reposted;
+    });
+
+    const ids = [];
+    for (let i = 0; i < repostedIdsInitialize.length; i++) {
+      for (let s = 0; s < repostedIdsInitialize[i].length; s++) {
+        ids.push(repostedIdsInitialize[i][s]._id);
+      }
+    }
+    return ids;
+  };
+
+  console.log(repostSymbolHandler(posts));
 
   useEffect(() => {
     console.log("POSTS =>", posts);
@@ -582,6 +552,45 @@ function MainPage() {
                         direction="horizontal"
                         gap={1}
                         style={{ padding: "3px" }}
+                      ></Stack>
+                      {/* start to check */}
+                      <div className="p-0">
+                        {post.reposted.length > 0 && post.isReposted ? (
+                          <div>
+                            <svg
+                              style={{
+                                color: "rgb(83, 100, 113)",
+                                fontSize: "15px",
+                                marginLeft: "4px",
+                              }}
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="currentColor"
+                              className="bi bi-repeat"
+                              viewBox="0 0 16 16"
+                            >
+                              <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+                            </svg>
+                            <span
+                              style={{
+                                fontSize: "13px",
+                                lineHeight: "20px",
+                                fontWeight: "700",
+                                color: "rgb(83, 100, 113)",
+                                marginLeft: "10px",
+                              }}
+                            >
+                              {post.reposted[0].fullname} reposted
+                            </span>{" "}
+                          </div>
+                        ) : null}
+                      </div>
+                      {/* finish to check */}
+                      <Stack
+                        direction="horizontal"
+                        gap={1}
+                        style={{ padding: "3px" }}
                       >
                         <div className="p-0">
                           <Link
@@ -606,6 +615,7 @@ function MainPage() {
                             <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z" />
                           </svg>
                         </div>
+
                         <div className="p-0">
                           {" "}
                           <span style={{ color: "rgba(0, 0, 0, 0.6)" }}>
@@ -680,31 +690,23 @@ function MainPage() {
                         </span>
                       </div>
                       <div className="p-0">
-                        {/* start to check */}
-                        {/* IMPORTANT this condition was crucial */}
-                        {post.reposted.includes(userInfo._id) &&
-                        userInfo.posts.some(
-                          (postId) => postId === post.repostedFromThisPost[0]
-                        ) ? (
-                          // finish to check
+                        {post.reposted.length > 0 &&
+                        repostSymbolHandler(posts).includes(userInfo._id) ? (
                           <div>
                             <svg
-                              style={{ color: "rgb(0,186,124)" }}
-                              // onClick={() => handleDeleteRepost(post._id)}
-
+                              // onClick={()=> handleDeleteRepost()}
+                              color="rgb(0, 186, 124)"
                               xmlns="http://www.w3.org/2000/svg"
                               width="16"
                               height="16"
-                              fill="currentColor"
+                              fill="rgb(0, 186, 124)"
                               className="bi bi-repeat"
                               viewBox="0 0 16 16"
                             >
                               <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
                             </svg>
                             <span className="post-description">
-                              <span style={{ color: "rgb(0,186,124)" }}>
-                                {post.reposted.length}
-                              </span>
+                              {post.reposted.length}
                             </span>
                           </div>
                         ) : (

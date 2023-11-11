@@ -30,6 +30,8 @@ function SpesificUserProfile() {
   const [error, setError] = useState("");
   const [show, setShow] = useState("hide");
 
+  // start to check
+  // NOTE must sorted
   const handleShowSpesificUserProfilePagePosts = () => {
     axios
       .get(`${API_URL}/profile/${id}`, {
@@ -78,7 +80,7 @@ function SpesificUserProfile() {
       return;
     }
   }, []);
-
+  // finish to check
   const months = [
     "Jan",
     "Feb",
@@ -202,185 +204,6 @@ function SpesificUserProfile() {
 
         setError(errorMessage);
       });
-  };
-
-  const handleRepost = (postId) => {
-    axios
-      .post(
-        `${API_URL}/repost`,
-        {
-          postId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then((response) => {
-        console.log(
-          "RESPONSE AFTER YOU CLICKED FOR HANDLING REPOST =>",
-          response
-        );
-        console.log(
-          "AFTER YOU ADDED REPOST PROFILE INFO POSTS  =>",
-          profileInfoPosts
-        );
-        // start to check
-        // start to check
-        // Tıklanan postun ID'si ile eşleşen postu bul
-        const clickedPost = profileInfoPosts.find(
-          (post) => post._id === postId
-        );
-        console.log(clickedPost);
-
-        // Eğer post bulunduysa ve içinde userInfo._id değeri yoksa ekle
-        if (clickedPost && !clickedPost.reposted.includes(userInfo._id)) {
-          clickedPost.reposted.push(userInfo._id);
-
-          // Postun reposted length'ini güncelle
-          const updatedPost = {
-            ...clickedPost,
-            reposted: clickedPost.reposted,
-          };
-          const updatedPosts = profileInfoPosts.map((post) =>
-            post._id === updatedPost._id ? updatedPost : post
-          );
-
-          // setState veya güncellenmiş verileri kullanacağınız bir yöntemle posts'u güncelleyin
-          // setProfileInfoPosts(updatedPosts); // Örnek bir state güncelleme fonksiyonu
-
-          setprofileInfoPosts(updatedPosts);
-          setShow("hide");
-        }
-        // finish to check
-        // start to check
-        // Tıklanan postun ID'si ile eşleşen postu bul
-        const clickedFavorite = favorites.find(
-          (favorite) => favorite._id === postId
-        );
-        console.log(clickedFavorite);
-        // Eğer post bulunduysa ve içinde userInfo._id değeri yoksa ekle
-
-        if (
-          clickedFavorite &&
-          !clickedFavorite.reposted.includes(userInfo._id)
-        ) {
-          clickedFavorite.reposted.push(userInfo._id);
-
-          // Favorinin reposted lengthini güncelle
-          const updatedFavorite = {
-            ...clickedFavorite,
-            reposted: clickedFavorite.reposted,
-          };
-
-          const updatedFavorites = favorites.map((favorite) =>
-            favorite._id === updatedFavorite._id ? updatedFavorite : favorite
-          );
-
-          // setState veya güncellenmiş verileri kullanacağınız bir yöntemle posts'u güncelleyin
-          // setProfileInfoPosts(updatedPosts); // Örnek bir state güncelleme fonksiyonu
-          setFavorites(updatedFavorites);
-          setShow("hide");
-        }
-        // finish to check
-        // finish to check
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const handleDeleteRepost = (postId) => {
-    console.log("Button clicked");
-    axios
-      .post(
-        `${API_URL}/repost/delete-repost`,
-        {
-          postId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then((response) => {
-        console.log(
-          "RESPONSE AFTER YOU CLICKED FOR HANDLE DELETE REPOST =>",
-          response
-        );
-        console.log(
-          "AFTER YOU DELETED REPOST PROFILE INFO POSTS  =>",
-          profileInfoPosts
-        );
-        // start to check
-        // start to check
-        // Tıklanan postun ID'si ile eşleşen postu bul
-        const clickedPost = profileInfoPosts.find(
-          (post) => post._id === postId
-        );
-        console.log(clickedPost);
-
-        // Eğer post bulunduysa ve içinde userInfo._id değeri yoksa ekle
-        if (clickedPost && !clickedPost.reposted.includes(userInfo._id)) {
-          clickedPost.reposted.push(userInfo._id);
-
-          // Postun reposted length'ini güncelle
-          const updatedPost = {
-            ...clickedPost,
-            reposted: clickedPost.reposted,
-          };
-          const updatedPosts = profileInfoPosts.map((post) =>
-            post._id === updatedPost._id ? updatedPost : post
-          );
-
-          // setState veya güncellenmiş verileri kullanacağınız bir yöntemle posts'u güncelleyin
-          // setProfileInfoPosts(updatedPosts); // Örnek bir state güncelleme fonksiyonu
-          setprofileInfoPosts(updatedPosts);
-          // finish to check
-          setShow("hide");
-        }
-        // start to check
-        // Tıklanan postun ID'si ile eşleşen postu bul
-        const clickedFavorite = favorites.find(
-          (favorite) => favorite._id === postId
-        );
-        console.log(clickedFavorite);
-        // Eğer post bulunduysa ve içinde userInfo._id değeri yoksa ekle
-
-        if (
-          clickedFavorite &&
-          !clickedFavorite.reposted.includes(userInfo._id)
-        ) {
-          clickedFavorite.reposted.push(userInfo._id);
-
-          // Favorinin reposted lengthini güncelle
-          const updatedFavorite = {
-            ...clickedFavorite,
-            reposted: clickedFavorite.reposted,
-          };
-
-          const updatedFavorites = favorites.map((favorite) =>
-            favorite._id === updatedFavorite._id ? updatedFavorite : favorite
-          );
-
-          // setState veya güncellenmiş verileri kullanacağınız bir yöntemle posts'u güncelleyin
-          // setProfileInfoPosts(updatedPosts); // Örnek bir state güncelleme fonksiyonu
-          // finish to check
-          setFavorites(updatedFavorites);
-        }
-        // finish to check
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const handleRepostedPostSeperation = (array, repostId) => {
-    const firstOccurence = array.find((element) => element._id === repostId);
-
-    return array.indexOf(firstOccurence);
   };
 
   const handleShowDetailPostFromSpesificUserProfilePage = () => {
@@ -793,9 +616,7 @@ function SpesificUserProfile() {
                                   You reposted
                                 </span>{" "}
                               </div>
-                            ) : (
-                              <div></div>
-                            )}
+                            ) : null}
 
                             {/* finish to check */}
 
@@ -835,9 +656,7 @@ function SpesificUserProfile() {
                                   {profileInfo.fullname} reposted
                                 </span>{" "}
                               </div>
-                            ) : (
-                              <div></div>
-                            )}
+                            ) : null}
                             {/* finish to check */}
                           </div>
                           <Stack
@@ -845,19 +664,6 @@ function SpesificUserProfile() {
                             gap={1}
                             style={{ padding: "3px" }}
                           >
-                            {/* <div className="p-0 verified-icon">
-                              {" "}
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                fill="currentColor"
-                                className="bi bi-patch-check-fill"
-                                viewBox="0 0 16 16"
-                              >
-                                <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z" />
-                              </svg>
-                            </div> */}
                             <div className="p-0">
                               <span style={{ fontWeight: 700 }}>
                                 {profileInfo.fullname}
@@ -943,7 +749,7 @@ function SpesificUserProfile() {
                             {post.reposted.includes(userInfo._id) ? (
                               <div>
                                 <svg
-                                  onClick={() => handleDeleteRepost(post._id)}
+                                  // onClick={() => handleDeleteRepost(post._id)}
                                   style={{ color: "rgb(0,186,124)" }}
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="16"
@@ -964,7 +770,7 @@ function SpesificUserProfile() {
                             ) : (
                               <div>
                                 <svg
-                                  onClick={() => handleRepost(post._id)}
+                                  // onClick={() => handleRepost(post._id)}
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="16"
                                   height="16"
@@ -1141,9 +947,9 @@ function SpesificUserProfile() {
                             {favorite.reposted.includes(userInfo._id) ? (
                               <div>
                                 <svg
-                                  onClick={() =>
-                                    handleDeleteRepost(favorite._id)
-                                  }
+                                  // onClick={() =>
+                                  //   handleDeleteRepost(favorite._id)
+                                  // }
                                   style={{ color: "rgb(0,186,124)" }}
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="16"
@@ -1164,7 +970,7 @@ function SpesificUserProfile() {
                             ) : (
                               <div>
                                 <svg
-                                  onClick={() => handleRepost(favorite._id)}
+                                  // onClick={() => handleRepost(favorite._id)}
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="16"
                                   height="16"
