@@ -5,11 +5,8 @@ const repostController = require("../controllers/repostController");
 const authenticateToken = require("../middleware/jwtMiddleware");
 
 router.post("/", authenticateToken, repostController.handleRepost);
-router.post(
-  "/delete-repost",
-  authenticateToken,
-  repostController.handleDeleteReposts
-);
-router.get("/", authenticateToken, repostController.handleGetReposts);
+router.get("/", (req, res) => {
+  res.send("Route and postman is working!");
+});
 
 module.exports = router;

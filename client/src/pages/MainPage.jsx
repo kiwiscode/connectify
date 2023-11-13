@@ -555,7 +555,44 @@ function MainPage() {
                       ></Stack>
                       {/* start to check */}
                       <div className="p-0">
-                        {post.reposted.length > 0 && post.isReposted ? (
+                        {/* start to check */}
+                        {post.reposted.length > 0 &&
+                        post.isReposted &&
+                        post.reposted[0].fullname === userInfo.fullname ? (
+                          <div>
+                            <svg
+                              style={{
+                                color: "rgb(83, 100, 113)",
+                                fontSize: "15px",
+                                marginLeft: "4px",
+                              }}
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="currentColor"
+                              className="bi bi-repeat"
+                              viewBox="0 0 16 16"
+                            >
+                              <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+                            </svg>
+                            <span
+                              style={{
+                                fontSize: "13px",
+                                lineHeight: "20px",
+                                fontWeight: "700",
+                                color: "rgb(83, 100, 113)",
+                                marginLeft: "10px",
+                              }}
+                            >
+                              You reposted
+                            </span>{" "}
+                          </div>
+                        ) : null}
+
+                        {/* start to check */}
+                        {post.reposted.length > 0 &&
+                        post.isReposted &&
+                        post.reposted[0].fullname !== userInfo.fullname ? (
                           <div>
                             <svg
                               style={{
@@ -586,7 +623,7 @@ function MainPage() {
                           </div>
                         ) : null}
                       </div>
-                      {/* finish to check */}
+
                       <Stack
                         direction="horizontal"
                         gap={1}
@@ -705,7 +742,10 @@ function MainPage() {
                             >
                               <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
                             </svg>
-                            <span className="post-description">
+                            <span
+                              style={{ color: "rgb(0, 186, 124)" }}
+                              className="post-description"
+                            >
                               {post.reposted.length}
                             </span>
                           </div>

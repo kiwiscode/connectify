@@ -21,7 +21,7 @@ const handlePost = (req, res) => {
         authorUserName: user.username,
       })
         .then((post) => {
-          user.posts.push(post);
+          user.posts.unshift(post);
 
           return user.save().then(() => {
             res.status(200).json({ message: "Post added successfully." });
@@ -44,6 +44,8 @@ const handleShowPosts = (req, res) => {
     .sort({ createdAt: -1 })
     // finish to check
     .populate("userId")
+    .populate("reposted")
+    .populate("repostedFromThisOriginalPost")
     .then((postsFromDataBase) => {
       console.log("ACTIVE USER => ", userId);
       console.log("HELLO WORLD!");
