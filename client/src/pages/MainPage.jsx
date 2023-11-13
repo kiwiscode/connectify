@@ -15,7 +15,7 @@ const API_URL = "http://localhost:3000";
 // ?
 
 function MainPage() {
-  const { userInfo, getToken, updateUser } = useContext(UserContext);
+  const { userInfo, getToken } = useContext(UserContext);
   const [posts, setPosts] = useState([]);
   const [postId, setpostId] = useState("");
   const [error, setError] = useState("");
@@ -23,11 +23,11 @@ function MainPage() {
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [showEmojisBar, setshowEmojisBar] = useState("hide");
   const [showSecondModal, setShowSecondModal] = useState(false);
-  const navigate = useNavigate();
+
   const maxCharacters = 140;
 
   const [isLoading, setIsLoading] = useState(false);
-
+  const [shouldHide, setshouldHide] = useState(true);
   const toggleEmojis = () => {
     setshowEmojisBar("");
     if (showEmojisBar === "") {
@@ -81,11 +81,10 @@ function MainPage() {
         },
       })
       .then((response) => {
-        console.log(
-          "RESPONSE THAT WE ARE MANIPULATING POSTS ARRAY SHOWING IN THE HOME PAGE:",
-          response
-        );
-
+        // NOTE UPDATING THE LOCALSTORAGE
+        // start to check
+        localStorage.setItem("posts", JSON.stringify(response.data));
+        // finish to check
         setPosts(response.data);
       })
       .catch((err) => {
@@ -191,9 +190,10 @@ function MainPage() {
         }
       )
       .then((response) => {
+        console.log("Response after posting a tweet =>", response);
+
         setIsLoading(true);
         setContent("");
-        console.log(response);
         setTimeout(() => {
           axios
             .get(`${API_URL}/home`, {
@@ -202,12 +202,13 @@ function MainPage() {
               },
             })
             .then((response) => {
+              console.log("I am working right now! ");
               // Assuming userInfo is retrieved from localStorage
               const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-              console.log("GET THIS RESPONSE =>", response);
+
               // Assuming 'posts' is an array in userInfo
               if (userInfo.posts.length) {
-                userInfo.posts.splice(0, 0, response.data[0]._id); // Assuming response contains the created post data
+                userInfo.posts.splice(0, 0, response.data[0]); // Assuming response contains the created post data
               } else {
                 userInfo.posts.push(response.data[0]._id);
               }
@@ -229,22 +230,52 @@ function MainPage() {
 
   const handleRepost = (postId) => {
     console.log("POST ID FOR HANDLEREPOST FUNCTION =>", postId);
-    axios
-      .post(
-        `${API_URL}/repost`,
-        { postId: postId, userId: userInfo._id },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+
+    const posts = JSON.parse(localStorage.getItem("posts"));
+
+    const findedPost = posts.find((element) => {
+      return element._id === postId;
+    });
+
+    const index = posts.indexOf(findedPost);
+    if (posts[index].reposted.length < 1) {
+      posts[index].reposted.unshift(userInfo._id);
+    } else {
+      return;
+    }
+    localStorage.setItem("posts", JSON.stringify(posts));
+    setshouldHide(false);
+    setPosts(posts);
+
+    // axios
+    //   .post(
+    //     `${API_URL}/repost`,
+    //     { postId: postId, userId: userInfo._id },
+    //     {
+    //       headers: {
+    //         Authorization: `Bearer ${getToken()}`,
+    //       },
+    //     }
+    //   )
+    //   .then(() => {
+    //     const posts = JSON.parse(localStorage.getItem("posts"));
+
+    //     const findedPost = posts.find((element) => {
+    //       return element._id === postId;
+    //     });
+
+    //     const index = posts.indexOf(findedPost);
+
+    //     posts[index].reposted.unshift(userInfo._id);
+
+    //     localStorage.setItem("posts", JSON.stringify(posts));
+
+    //     setPosts(posts);
+    //   })
+    //   .then(() => {})
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   };
 
   console.log("POSTS =>", posts);
@@ -267,11 +298,18 @@ function MainPage() {
 
   useEffect(() => {
     console.log("POSTS =>", posts);
+    setshouldHide(true);
     handleShowPostsHomePage();
   }, []);
 
   return (
     <>
+      {/* start to check */}
+      {/* NOTE Testing the localStorage */}
+      {/* <Button onClick={() => handleLocalStorageChanges()}>
+        Update the localStorage
+      </Button> */}
+      {/* finish to check */}
       <Container
         style={{
           justifyContent: "center",
@@ -751,12 +789,13 @@ function MainPage() {
                           </div>
                         ) : (
                           <div>
+                            {" "}
                             <svg
                               onClick={() => handleRepost(post._id)}
                               xmlns="http://www.w3.org/2000/svg"
                               width="16"
                               height="16"
-                              fill="currentColor"
+                              fill={"currentColor"}
                               className="bi bi-repeat"
                               viewBox="0 0 16 16"
                             >
@@ -768,6 +807,34 @@ function MainPage() {
                           </div>
                         )}
                       </div>
+
+                      {/* start to check */}
+                      {/* <div className={`p-0 ${shouldHide ? "hide" : ""}`}>
+                        {post.reposted.length > 0 ? (
+                          <div>
+                            <svg
+                              // onClick={()=> handleDeleteRepost()}
+                              color="rgb(0, 186, 124)"
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="rgb(0, 186, 124)"
+                              className="bi bi-repeat"
+                              viewBox="0 0 16 16"
+                            >
+                              <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+                            </svg>
+                            <span
+                              style={{ color: "rgb(0, 186, 124)" }}
+                              className="post-description"
+                            >
+                              {post.reposted.length}
+                            </span>
+                          </div>
+                        ) : null}
+                      </div> */}
+                      {/* finish to check */}
+
                       <div className="p-0">
                         {post.likes.includes(userInfo._id) ? (
                           <span>

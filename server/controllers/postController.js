@@ -22,7 +22,7 @@ const handlePost = (req, res) => {
       })
         .then((post) => {
           user.posts.unshift(post);
-
+          console.log(post);
           return user.save().then(() => {
             res.status(200).json({ message: "Post added successfully." });
           });
