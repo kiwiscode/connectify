@@ -210,6 +210,39 @@ function SpesificUserProfile() {
     console.log("Button Clicked");
   };
 
+  const handleRepost = (postId) => {
+    console.log("POST ID FOR HANDLEREPOST FUNCTION =>", postId);
+    const findedPost = profileInfoPosts.find((element) => {
+      return element._id === postId;
+    });
+
+    findedPost.reposted.push(userInfo._id);
+
+    console.log(findedPost);
+    console.log(userInfo._id);
+    console.log("PROFILE DATA ALL POSTS=>", profileInfoPosts);
+    // axios
+    //   .post(
+    //     `${API_URL}/repost`,
+    //     { postId: postId, userId: userInfo._id },
+    //     {
+    //       headers: {
+    //         Authorization: `Bearer ${getToken()}`,
+    //       },
+    //     }
+    //   )
+    //   .then(() => {
+    //     // setshouldHide(false);
+    //     console.log(
+    //       "THIS LINE IS WORKING IT MEANS REPOST PROCESS SUCCESSFULLY!"
+    //     );
+    //   })
+    //   .then(() => {})
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
+  };
+
   return (
     <>
       <Container
@@ -583,11 +616,13 @@ function SpesificUserProfile() {
                             {/* start to check */}
                             {/* NOTE eğer active user kendi profiline tıklayıp geziniyorsa ona "you reposted" göster eğer active user başka bir userın profilini geziyorsa ona "User full name reposted " göster */}
 
-                            {post.reposted.includes(userInfo._id) &&
-                            handleRepostedPostSeperation(
-                              profileInfoPosts,
-                              post._id
-                            ) === index ? (
+                            {post.isReposted &&
+                            userInfo._id === profileInfo._id ? (
+                              // &&
+                              // handleRepostedPostSeperation(
+                              //   profileInfoPosts,
+                              //   post._id
+                              // ) === index
                               <div className={`${show}`}>
                                 <svg
                                   style={{
@@ -621,13 +656,8 @@ function SpesificUserProfile() {
                             {/* finish to check */}
 
                             {/* start to check */}
-                            {userInfo._id !== profileInfo._id &&
-                            handleRepostedPostSeperation(
-                              profileInfoPosts,
-                              post._id
-                            ) === index &&
-                            post.reposted.includes(profileInfo._id) &&
-                            !post.reposted.includes(userInfo._id) ? (
+                            {post.isReposted &&
+                            userInfo._id !== profileInfo._id ? (
                               <div>
                                 <svg
                                   style={{
@@ -666,7 +696,7 @@ function SpesificUserProfile() {
                           >
                             <div className="p-0">
                               <span style={{ fontWeight: 700 }}>
-                                {profileInfo.fullname}
+                                {post.authorFullName}
                               </span>{" "}
                               <span style={{ color: "rgba(0, 0, 0, 0.6)" }}>
                                 @{post.authorUserName}
@@ -746,7 +776,7 @@ function SpesificUserProfile() {
                             </span>
                           </div>
                           <div className="p-0">
-                            {post.reposted.includes(userInfo._id) ? (
+                            {/* {post.reposted.includes(userInfo._id) ? (
                               <div>
                                 <svg
                                   // onClick={() => handleDeleteRepost(post._id)}
@@ -767,24 +797,38 @@ function SpesificUserProfile() {
                                   {post.reposted.length}
                                 </span>
                               </div>
-                            ) : (
-                              <div>
-                                <svg
-                                  // onClick={() => handleRepost(post._id)}
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="16"
-                                  height="16"
-                                  fill="currentColor"
-                                  className="bi bi-repeat"
-                                  viewBox="0 0 16 16"
-                                >
-                                  <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
-                                </svg>
-                                <span className="post-description post-description-rest ">
-                                  {post.reposted.length}
-                                </span>
-                              </div>
-                            )}
+                            ) : ( */}
+                            <div>
+                              <svg
+                                onClick={() => handleRepost(post._id)}
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                fill={
+                                  // !shouldHide &&
+                                  post.reposted.includes(userInfo._id)
+                                    ? "rgb(0, 186, 124)"
+                                    : "rgb(83, 100, 113)"
+                                }
+                                className="bi bi-repeat"
+                                viewBox="0 0 16 16"
+                              >
+                                <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+                              </svg>
+                              <span
+                                className="post-description post-description-rest "
+                                style={{
+                                  color:
+                                    // !shouldHide &&
+                                    post.reposted.includes(userInfo._id)
+                                      ? "rgb(0, 186, 124)"
+                                      : "rgb(83, 100, 113)",
+                                }}
+                              >
+                                {post.reposted.length}
+                              </span>
+                            </div>
+                            {/* )} */}
                           </div>
 
                           {/* start */}

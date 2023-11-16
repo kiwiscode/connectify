@@ -23,14 +23,15 @@ const handleRepost = (req, res) => {
             return element._id.toString();
           });
 
-          console.log(userPostsIds, userRepostIds);
           if (
             !post.reposted.length &&
             !post.isReposted &&
-            !post.repostedFromThisOriginalPost.length
+            !post.repostedFromThisOriginalPost.length &&
+            !reposterUserIds.includes(userId)
           ) {
             post.reposted.unshift(userId);
-            Post.create({
+            post.save();
+            return Post.create({
               userId: post.userId,
               authorFullName: post.authorFullName,
               authorUserName: post.authorUserName,
@@ -41,13 +42,27 @@ const handleRepost = (req, res) => {
               reposted: post.reposted,
               repostedFromThisOriginalPost: postId,
               likes: post.likes,
-            });
-            post.save();
-            // user.save();
-            res.status(200).json({ message: "Repost Created Successfully!" });
+            })
+              .then((createdPost) => {
+                console.log("CREATED POST AFTER REPOST =>", createdPost._id);
+
+                user.posts.unshift(createdPost._id);
+                user.save();
+                res
+                  .status(200)
+                  .json({ message: "Repost Created Successfully!" });
+              })
+              .catch((error) => {
+                res.status(500).json({
+                  errorMessage:
+                    "Error occured while trying to fetch created post after repost process.",
+                });
+              });
           } else if (post.isReposted === true) {
             post.reposted.unshift(userId);
             post.save();
+            user.posts.unshift(postId);
+            user.save();
             Post.findById(post.repostedFromThisOriginalPost[0].toString())
               .then((post) => {
                 post.reposted.unshift(userId);
@@ -59,18 +74,25 @@ const handleRepost = (req, res) => {
               .catch((error) => {
                 console.log(error);
               });
-          } else if (
+          }
+          // start to check
+          else if (
             post.isReposted === false &&
             !reposterUserIds.includes(userId)
           ) {
+            // INFO
             post.reposted.unshift(userId);
             post.save();
+
             Post.find({ repostedFromThisOriginalPost: postId })
               .then((post) => {
-                console.log("Iam here lets go");
+                console.log("I am here lets go => ", post[0]._id);
+                // INFO
                 post[0].reposted.unshift(userId);
                 post[0].save();
-                console.log(post);
+                user.posts.unshift(post[0]._id);
+                user.save();
+
                 res
                   .status(200)
                   .json({ message: "Repost Created Successfully!" });
@@ -78,7 +100,9 @@ const handleRepost = (req, res) => {
               .catch(() => {
                 console.log("ERROR");
               });
-          } else if (reposterUserIds.includes(userId)) {
+          }
+          // finish to check
+          else if (reposterUserIds.includes(userId)) {
             res
               .status(500)
               .json({ errorMessage: "You already reposted this post!" });

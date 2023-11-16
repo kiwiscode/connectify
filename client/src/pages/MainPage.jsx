@@ -231,51 +231,51 @@ function MainPage() {
   const handleRepost = (postId) => {
     console.log("POST ID FOR HANDLEREPOST FUNCTION =>", postId);
 
-    const posts = JSON.parse(localStorage.getItem("posts"));
+    // const posts = JSON.parse(localStorage.getItem("posts"));
 
-    const findedPost = posts.find((element) => {
-      return element._id === postId;
-    });
+    // const findedPost = posts.find((element) => {
+    //   return element._id === postId;
+    // });
 
-    const index = posts.indexOf(findedPost);
-    if (posts[index].reposted.length < 1) {
-      posts[index].reposted.unshift(userInfo._id);
-    } else {
-      return;
-    }
-    localStorage.setItem("posts", JSON.stringify(posts));
-    setshouldHide(false);
-    setPosts(posts);
+    // const index = posts.indexOf(findedPost);
+    // if (posts[index].reposted.length < 1) {
+    //   posts[index].reposted.unshift(userInfo._id);
+    // } else {
+    //   return;
+    // }
+    // localStorage.setItem("posts", JSON.stringify(posts));
+    // setshouldHide(false);
+    // setPosts(posts);
 
-    // axios
-    //   .post(
-    //     `${API_URL}/repost`,
-    //     { postId: postId, userId: userInfo._id },
-    //     {
-    //       headers: {
-    //         Authorization: `Bearer ${getToken()}`,
-    //       },
-    //     }
-    //   )
-    //   .then(() => {
-    //     const posts = JSON.parse(localStorage.getItem("posts"));
+    axios
+      .post(
+        `${API_URL}/repost`,
+        { postId: postId, userId: userInfo._id },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then(() => {
+        const posts = JSON.parse(localStorage.getItem("posts"));
 
-    //     const findedPost = posts.find((element) => {
-    //       return element._id === postId;
-    //     });
+        const findedPost = posts.find((element) => {
+          return element._id === postId;
+        });
 
-    //     const index = posts.indexOf(findedPost);
+        const index = posts.indexOf(findedPost);
 
-    //     posts[index].reposted.unshift(userInfo._id);
+        posts[index].reposted.unshift(userInfo._id);
 
-    //     localStorage.setItem("posts", JSON.stringify(posts));
-
-    //     setPosts(posts);
-    //   })
-    //   .then(() => {})
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
+        localStorage.setItem("posts", JSON.stringify(posts));
+        setshouldHide(false);
+        setPosts(posts);
+      })
+      .then(() => {})
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   console.log("POSTS =>", posts);
@@ -770,7 +770,7 @@ function MainPage() {
                           <div>
                             <svg
                               // onClick={()=> handleDeleteRepost()}
-                              color="rgb(0, 186, 124)"
+                              // color="rgb(0, 186, 124)"
                               xmlns="http://www.w3.org/2000/svg"
                               width="16"
                               height="16"
@@ -795,13 +795,28 @@ function MainPage() {
                               xmlns="http://www.w3.org/2000/svg"
                               width="16"
                               height="16"
-                              fill={"currentColor"}
+                              // color="rgb(0, 186, 124)"
+                              fill={
+                                !shouldHide &&
+                                post.reposted.includes(userInfo._id)
+                                  ? "rgb(0, 186, 124)"
+                                  : "rgb(83, 100, 113)"
+                              }
                               className="bi bi-repeat"
                               viewBox="0 0 16 16"
                             >
                               <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
                             </svg>
-                            <span className="post-description">
+                            <span
+                              className="post-description"
+                              style={{
+                                color:
+                                  !shouldHide &&
+                                  post.reposted.includes(userInfo._id)
+                                    ? "rgb(0, 186, 124)"
+                                    : "rgb(83, 100, 113)",
+                              }}
+                            >
                               {post.reposted.length}
                             </span>
                           </div>

@@ -26,7 +26,8 @@ function UserProfile() {
   const [favorites, setFavorites] = useState([]);
   const [error, setError] = useState("");
   const [postId, setpostId] = useState("");
-  console.log(userprofiledata);
+  const [allPostRepostedIds, setallPostRepostedIds] = useState([]);
+  const [shouldHide, setshouldHide] = useState(true);
 
   useEffect(() => {
     if (postsWindow === "hide") {
@@ -46,13 +47,12 @@ function UserProfile() {
         },
       })
       .then((response) => {
-        console.log(
-          "Here is the response that you asked for from server => user.posts array",
-          response
-        );
+        // const allRepostedIds = userprofiledata.reposted.map((element) => {
+        //   return element._id;
+        // });
+        // console.log(allRepostedIds);
 
         setUserprofiledata(response.data.posts);
-
         setFavoriteWindow("hide");
         setPostWindow("");
       })
@@ -200,6 +200,36 @@ function UserProfile() {
     const createdAt = new Date(date);
     const getMonth = createdAt.getMonth();
     return `${monthsProfile[getMonth]} ${createdAt.getDate()}`;
+  };
+
+  const handleRepost = (postId) => {
+    console.log("POST ID FOR HANDLEREPOST FUNCTION =>", postId);
+    const findedPost = userprofiledata.find((element) => {
+      return element._id === postId;
+    });
+
+    findedPost.reposted.push(userInfo._id);
+
+    console.log(findedPost);
+
+    console.log("PROFILE DATA ALL POSTS=>", userprofiledata);
+    axios
+      .post(
+        `${API_URL}/repost`,
+        { postId: postId, userId: userInfo._id },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then(() => {
+        setshouldHide(false);
+      })
+      .then(() => {})
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -453,7 +483,7 @@ function UserProfile() {
                     }}
                   ></Row>
 
-                  {post.reposted.includes(userInfo._id) ? (
+                  {post.reposted.includes(userInfo._id) && post.isReposted ? (
                     <svg
                       style={{
                         color: "rgb(83, 100, 113)",
@@ -472,7 +502,7 @@ function UserProfile() {
                   ) : (
                     <div>{""}</div>
                   )}
-                  {post.reposted.includes(userInfo._id) ? (
+                  {post.reposted.includes(userInfo._id) && post.isReposted ? (
                     <span
                       style={{
                         fontSize: "13px",
@@ -581,16 +611,31 @@ function UserProfile() {
                       </div>
                       <div className="p-0">
                         <svg
+                          onClick={() => handleRepost(post._id)}
                           xmlns="http://www.w3.org/2000/svg"
                           width="16"
                           height="16"
-                          fill="currentColor"
+                          fill={
+                            // !shouldHide &&
+                            post.reposted.includes(userInfo._id)
+                              ? "rgb(0, 186, 124)"
+                              : "rgb(83, 100, 113)"
+                          }
                           className="bi bi-repeat"
                           viewBox="0 0 16 16"
                         >
                           <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
                         </svg>
-                        <span className="post-description">
+                        <span
+                          className="post-description"
+                          style={{
+                            color:
+                              // !shouldHide &&
+                              post.reposted.includes(userInfo._id)
+                                ? "rgb(0, 186, 124)"
+                                : "rgb(83, 100, 113)",
+                          }}
+                        >
                           {post.reposted.length}
                         </span>
                       </div>
@@ -652,7 +697,7 @@ function UserProfile() {
                       border: "1px solid rgba(0, 0, 0, 0.1)",
                     }}
                   ></Row>
-                  {favorite.reposted.includes(userInfo._id) ? (
+                  {/* {favorite.reposted.includes(userInfo._id) ? (
                     <svg
                       style={{
                         color: "rgb(83, 100, 113)",
@@ -670,8 +715,8 @@ function UserProfile() {
                     </svg>
                   ) : (
                     <div>{""}</div>
-                  )}
-                  {favorite.reposted.includes(userInfo._id) ? (
+                  )} */}
+                  {/* {favorite.reposted.includes(userInfo._id) ? (
                     <span
                       style={{
                         fontSize: "13px",
@@ -685,7 +730,7 @@ function UserProfile() {
                     </span>
                   ) : (
                     <div>{""}</div>
-                  )}
+                  )} */}
                   <div className="favorite-details">
                     <div className="favorite-head">
                       <Stack
@@ -785,20 +830,58 @@ function UserProfile() {
                         </span>
                       </div>
                       <div className="p-0">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          className="bi bi-repeat"
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
-                        </svg>
+                        {favorite.reposted.includes(userInfo._id) ? (
+                          <svg
+                            style={{
+                              color: "rgb(0, 186, 124)",
+                              fontSize: "15px",
+                              marginLeft: "5px",
+                            }}
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            className="bi
+                            bi-repeat"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+                          </svg>
+                        ) : (
+                          <svg
+                            style={{
+                              color: "rgb(83, 100, 113)",
+                            }}
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            className="bi bi-repeat"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+                          </svg>
+                        )}
 
-                        <span className="post-description">
-                          {favorite.reposted.length}
-                        </span>
+                        {favorite.reposted.includes(userInfo._id) ? (
+                          <span
+                            className="post-description"
+                            style={{
+                              color: "rgb(0, 186, 124)",
+                            }}
+                          >
+                            {favorite.reposted.length}
+                          </span>
+                        ) : (
+                          <span
+                            className="post-description"
+                            style={{
+                              color: "rgb(83, 100, 113)",
+                            }}
+                          >
+                            {favorite.reposted.length}
+                          </span>
+                        )}
 
                         {/* start  */}
                       </div>

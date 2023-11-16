@@ -2,7 +2,7 @@ const User = require("../models/User.model");
 const Post = require("../models/Post.model");
 const handleProfile = (req, res) => {
   const userId = req.user.userId;
-  console.log(userId);
+
   User.findById(userId)
     // start to check
     .populate({
@@ -12,15 +12,19 @@ const handleProfile = (req, res) => {
     // finish to check
     // .populate("posts")
     .then((user) => {
-      Post.find({ reposted: userId })
+      console.log("PROFILE POSTS =>", user.posts.length);
+      Post.find({
+        $or: [
+          { userId: userId },
+          { reposted: { $elemMatch: { $eq: userId } } },
+        ],
+      })
         .then((responsePosts) => {
-          console.log("PROFILE OF USER =>", user);
-          console.log(
-            "ALL THE POSTS THAT ACTIVE USER REPOSTED =>",
-            responsePosts
-          );
+          console.log("PROFILE POSTS 2 => ", responsePosts);
         })
-        .catch(() => {});
+        .catch(() => {
+          console.log("Post not found");
+        });
       res.status(200).json({ posts: user.posts, user });
     })
     .catch((err) => {
