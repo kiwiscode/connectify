@@ -229,8 +229,6 @@ function MainPage() {
   };
 
   const handleRepost = (postId) => {
-    console.log("POST ID FOR HANDLEREPOST FUNCTION =>", postId);
-
     // const posts = JSON.parse(localStorage.getItem("posts"));
 
     // const findedPost = posts.find((element) => {
