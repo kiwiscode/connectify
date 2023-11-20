@@ -782,6 +782,7 @@ function MainPage() {
                               style={{ color: "rgb(0, 186, 124)" }}
                               className="post-description"
                             >
+                              {/* some test */}
                               {post.reposted.length}
                             </span>
                           </div>
