@@ -6,7 +6,11 @@ const handleGetFavorites = (req, res) => {
   const { userId } = req.user;
 
   User.findById(userId)
-    .populate("favorites")
+    // .populate("favorites")
+    .populate({
+      path: "favorites",
+      options: { sort: { createdAt: -1 } }, // createdAt tarihine göre tersten sıralama
+    })
     .then((favoritesFromDataBase) => {
       console.log(
         "All the favorites from data base for spesific user =>",

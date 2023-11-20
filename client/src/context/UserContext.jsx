@@ -52,6 +52,8 @@ const UserProvider = ({ children }) => {
     localStorage.removeItem("following");
     localStorage.removeItem("followers");
     localStorage.removeItem("posts");
+    localStorage.removeItem("profileInfoPosts");
+    localStorage.removeItem("profileInfoFavorites");
   };
 
   const setToken = (token) => {

@@ -26,8 +26,6 @@ function UserProfile() {
   const [favorites, setFavorites] = useState([]);
   const [error, setError] = useState("");
   const [postId, setpostId] = useState("");
-  const [allPostRepostedIds, setallPostRepostedIds] = useState([]);
-  const [shouldHide, setshouldHide] = useState(true);
 
   useEffect(() => {
     if (postsWindow === "hide") {
@@ -47,14 +45,15 @@ function UserProfile() {
         },
       })
       .then((response) => {
-        // const allRepostedIds = userprofiledata.reposted.map((element) => {
-        //   return element._id;
-        // });
-        // console.log(allRepostedIds);
-
-        setUserprofiledata(response.data.posts);
         setFavoriteWindow("hide");
         setPostWindow("");
+
+        localStorage.setItem(
+          "profilePosts",
+          JSON.stringify(response.data.posts)
+        );
+
+        setUserprofiledata(response.data.posts);
       })
       .catch((err) => {
         return err;
@@ -153,6 +152,12 @@ function UserProfile() {
       .then((response) => {
         setFavoriteWindow("");
         setPostWindow("hide");
+
+        localStorage.setItem(
+          "profileFavorites",
+          JSON.stringify(response.data.favorites)
+        );
+
         setFavorites(response.data.favorites);
       })
       .catch((err) => {
@@ -203,16 +208,8 @@ function UserProfile() {
   };
 
   const handleRepost = (postId) => {
-    console.log("POST ID FOR HANDLEREPOST FUNCTION =>", postId);
-    const findedPost = userprofiledata.find((element) => {
-      return element._id === postId;
-    });
+    console.log("ID =>", postId);
 
-    findedPost.reposted.push(userInfo._id);
-
-    console.log(findedPost);
-
-    console.log("PROFILE DATA ALL POSTS=>", userprofiledata);
     axios
       .post(
         `${API_URL}/repost`,
@@ -224,9 +221,52 @@ function UserProfile() {
         }
       )
       .then(() => {
-        setshouldHide(false);
+        // start to check
+        // repost process for spesific user profile posts
+
+        if (postsWindow === "hide") {
+          const profileFavorites = JSON.parse(
+            localStorage.getItem("profileFavorites")
+          );
+
+          const findedFavorite = favorites.find((element) => {
+            return element._id === postId;
+          });
+
+          const index2 = favorites.indexOf(findedFavorite);
+          console.log("LINE 1 WORKING");
+          profileFavorites[index2].reposted.unshift(userInfo._id);
+
+          console.log("LINE 2 WORKING");
+
+          localStorage.setItem(
+            "profileFavorites",
+            JSON.stringify(profileFavorites)
+          );
+          console.log("LINE 3 WORKING");
+
+          setFavorites(profileFavorites);
+          // finish to check
+          console.log("LINE 4 WORKING");
+        } else if (favoriteWindow === "hide") {
+          const profilePosts = JSON.parse(localStorage.getItem("profilePosts"));
+
+          const findedPost = profilePosts.find((element) => {
+            return element._id === postId;
+          });
+
+          console.log("Finded post => ", findedPost.reposted);
+          const index = profilePosts.indexOf(findedPost);
+
+          profilePosts[index].reposted.unshift(userInfo._id);
+
+          localStorage.setItem("profilePosts", JSON.stringify(profilePosts));
+
+          setUserprofiledata(profilePosts);
+        } else {
+          return;
+        }
       })
-      .then(() => {})
       .catch((error) => {
         console.log(error);
       });
@@ -832,6 +872,7 @@ function UserProfile() {
                       <div className="p-0">
                         {favorite.reposted.includes(userInfo._id) ? (
                           <svg
+                            // onClick={() => handleDeleteRepost(favorite._id)}
                             style={{
                               color: "rgb(0, 186, 124)",
                               fontSize: "15px",
@@ -849,6 +890,7 @@ function UserProfile() {
                           </svg>
                         ) : (
                           <svg
+                            onClick={() => handleRepost(favorite._id)}
                             style={{
                               color: "rgb(83, 100, 113)",
                             }}

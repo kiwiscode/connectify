@@ -40,17 +40,17 @@ const handleShowSpesificProfile = (req, res) => {
 
   User.findById(profileId)
     // start to check
-    // .populate({
-    //   path: "posts",
-    //   options: { sort: { createdAt: -1 } }, // createdAt tarihine göre tersten sıralama
-    // })
-    // .populate({
-    //   path: "favorites",
-    //   options: { sort: { createdAt: -1 } }, // Favorites için de createdAt tarihine göre tersten sıralama
-    // })
+    .populate({
+      path: "posts",
+      options: { sort: { createdAt: -1 } }, // createdAt tarihine göre tersten sıralama
+    })
+    .populate({
+      path: "favorites",
+      options: { sort: { createdAt: -1 } }, // Favorites için de createdAt tarihine göre tersten sıralama
+    })
     // finish to check
-    .populate("posts")
-    .populate("favorites")
+    // .populate("posts")
+    // .populate("favorites")
     .then((response) => {
       res.status(200).json(response);
 
