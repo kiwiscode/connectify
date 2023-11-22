@@ -230,31 +230,7 @@ function SpesificUserProfile() {
 
   const handleRepost = (postId) => {
     console.log("ID =>", postId);
-    // NOTE
-    // const spesificProfileInfoFavorites = JSON.parse(
-    //   localStorage.getItem("profileInfoFavorites")
-    // );
 
-    // const findedFavorite = favorites.find((element) => {
-    //   return element._id === postId;
-    // });
-
-    // const index2 = favorites.indexOf(findedFavorite);
-
-    // spesificProfileInfoFavorites[index2].reposted.unshift(userInfo._id);
-
-    // console.log("FINDED FAVORITE =>", spesificProfileInfoFavorites[index2]);
-    // console.log(
-    //   "LOCAL STORAGE FAVORITES AFTER REPOST =>",
-    //   spesificProfileInfoFavorites
-    // );
-
-    // localStorage.setItem(
-    //   "profileInfoFavorites",
-    //   JSON.stringify(spesificProfileInfoFavorites)
-    // );
-    // setFavorites(spesificProfileInfoFavorites);
-    // NOTE finish
     axios
       .post(
         `${API_URL}/repost`,
@@ -270,7 +246,7 @@ function SpesificUserProfile() {
         // repost process for spesific user profile posts
 
         if (postsWindow === "hide") {
-          const spesificProfileInfoFavorites = JSON.parse(
+          const profileInfoFavorites = JSON.parse(
             localStorage.getItem("profileInfoFavorites")
           );
 
@@ -280,21 +256,21 @@ function SpesificUserProfile() {
 
           const index2 = favorites.indexOf(findedFavorite);
           console.log("LINE 1 WORKING");
-          spesificProfileInfoFavorites[index2].reposted.unshift(userInfo._id);
+          profileInfoFavorites[index2].reposted.unshift(userInfo._id);
 
           console.log("LINE 2 WORKING");
 
           localStorage.setItem(
-            "profileInfoFavorites",
-            JSON.stringify(spesificProfileInfoFavorites)
+            "profileFavorites",
+            JSON.stringify(profileInfoFavorites)
           );
           console.log("LINE 3 WORKING");
 
-          setFavorites(spesificProfileInfoFavorites);
+          setFavorites(profileInfoFavorites);
           // finish to check
           console.log("LINE 4 WORKING");
         } else if (favoriteWindow === "hide") {
-          const spesificProfileInfoPosts = JSON.parse(
+          const profileInfoPosts = JSON.parse(
             localStorage.getItem("profileInfoPosts")
           );
 
@@ -302,20 +278,41 @@ function SpesificUserProfile() {
             return element._id === postId;
           });
 
+          console.log("Finded post => ", findedPost);
           const index = profileInfoPosts.indexOf(findedPost);
-          console.log("HERE IS THE ERROR =>", spesificProfileInfoPosts[index]);
-          spesificProfileInfoPosts[index].reposted.unshift(userInfo._id);
+
+          profileInfoPosts[index].reposted.unshift(userInfo._id);
 
           localStorage.setItem(
             "profileInfoPosts",
             JSON.stringify(profileInfoPosts)
           );
 
-          setprofileInfoPosts(spesificProfileInfoPosts);
+          setprofileInfoPosts(profileInfoPosts);
         } else {
           return;
         }
       })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleDeleteRepostSpesificProfilePage = (postId) => {
+    axios
+      .post(
+        `${API_URL}/repost/delete`,
+        { postId: postId, userId: userInfo._id },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then(() => {
+        console.log("You deleted repost!");
+      })
+      .then(() => {})
       .catch((error) => {
         console.log(error);
       });
@@ -853,7 +850,7 @@ function SpesificUserProfile() {
                               Num Of Comments?
                             </span>
                           </div>
-                          <div className="p-0">
+                          {/* <div className="p-0">
                             <div>
                               <svg
                                 onClick={() => handleRepost(post._id)}
@@ -882,9 +879,72 @@ function SpesificUserProfile() {
                               >
                                 {post.reposted.length}
                               </span>
-                            </div>
-                            {/* )} */}
+                            </div> */}
+                          {/* )} */}
+                          {/* </div> */}
+                          {/* start to check */}
+                          <div className="p-0">
+                            {post.reposted.includes(userInfo._id) ? (
+                              <svg
+                                onClick={() =>
+                                  handleDeleteRepostSpesificProfilePage(
+                                    post._id
+                                  )
+                                }
+                                style={{
+                                  color: "rgb(0, 186, 124)",
+                                  fontSize: "15px",
+                                  marginLeft: "5px",
+                                }}
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                fill="currentColor"
+                                className="bi
+                            bi-repeat"
+                                viewBox="0 0 16 16"
+                              >
+                                <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+                              </svg>
+                            ) : (
+                              <svg
+                                onClick={() => handleRepost(post._id)}
+                                style={{
+                                  color: "rgb(83, 100, 113)",
+                                }}
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                fill="currentColor"
+                                className="bi bi-repeat"
+                                viewBox="0 0 16 16"
+                              >
+                                <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+                              </svg>
+                            )}
+
+                            {post.reposted.includes(userInfo._id) ? (
+                              <span
+                                className="post-description"
+                                style={{
+                                  color: "rgb(0, 186, 124)",
+                                }}
+                              >
+                                {post.reposted.length}
+                              </span>
+                            ) : (
+                              <span
+                                className="post-description"
+                                style={{
+                                  color: "rgb(83, 100, 113)",
+                                }}
+                              >
+                                {post.reposted.length}
+                              </span>
+                            )}
                           </div>
+
+                          {/* finish to check */}
 
                           {/* start */}
                           <div className="p-0">
@@ -1046,9 +1106,11 @@ function SpesificUserProfile() {
                             {favorite.reposted.includes(userInfo._id) ? (
                               <div>
                                 <svg
-                                  // onClick={() =>
-                                  //   handleDeleteRepost(favorite._id)
-                                  // }
+                                  onClick={() =>
+                                    handleDeleteRepostSpesificProfilePage(
+                                      favorite._id
+                                    )
+                                  }
                                   style={{ color: "rgb(0,186,124)" }}
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="16"

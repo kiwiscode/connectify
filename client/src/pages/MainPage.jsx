@@ -229,6 +229,23 @@ function MainPage() {
   };
 
   const handleRepost = (postId) => {
+    console.log("I AM WORKING NOW BECAUSE I AM NOT ACTIVE AS A REPOST ");
+    // const posts = JSON.parse(localStorage.getItem("posts"));
+
+    // const findedPost = posts.find((element) => {
+    //   return element._id === postId;
+    // });
+
+    // const index = posts.indexOf(findedPost);
+    // if (posts[index].reposted.length < 1) {
+    //   posts[index].reposted.unshift(userInfo._id);
+    // } else {
+    //   return;
+    // }
+    // localStorage.setItem("posts", JSON.stringify(posts));
+    // setshouldHide(false);
+    // setPosts(posts);
+
     axios
       .post(
         `${API_URL}/repost`,
@@ -261,6 +278,7 @@ function MainPage() {
   };
 
   const handleDeleteRepostMainPage = (postId) => {
+    console.log("I AM WORKING BECAUSE NOW I AM ACTIVE AS A REPOST");
     axios
       .post(
         `${API_URL}/repost/delete`,
@@ -272,8 +290,7 @@ function MainPage() {
         }
       )
       .then(() => {
-        console.log("");
-        setshouldHide(false);
+        console.log("You deleted repost!");
       })
       .then(() => {})
       .catch((error) => {
@@ -282,22 +299,6 @@ function MainPage() {
   };
 
   console.log("POSTS =>", posts);
-
-  const repostSymbolHandler = (array) => {
-    const repostedIdsInitialize = array.map((element) => {
-      return element.reposted;
-    });
-
-    const ids = [];
-    for (let i = 0; i < repostedIdsInitialize.length; i++) {
-      for (let s = 0; s < repostedIdsInitialize[i].length; s++) {
-        ids.push(repostedIdsInitialize[i][s]._id);
-      }
-    }
-    return ids;
-  };
-
-  console.log(repostSymbolHandler(posts));
 
   useEffect(() => {
     console.log("POSTS =>", posts);
@@ -768,8 +769,7 @@ function MainPage() {
                         </span>
                       </div>
                       <div className="p-0">
-                        {post.reposted.length > 0 &&
-                        repostSymbolHandler(posts).includes(userInfo._id) ? (
+                        {post.reposted.length > 0 ? (
                           <div>
                             <svg
                               onClick={() =>
@@ -827,6 +827,33 @@ function MainPage() {
                           </div>
                         )}
                       </div>
+
+                      {/* start to check */}
+                      {/* <div className={`p-0 ${shouldHide ? "hide" : ""}`}>
+                        {post.reposted.length > 0 ? (
+                          <div>
+                            <svg
+                              // onClick={()=> handleDeleteRepost()}
+                              color="rgb(0, 186, 124)"
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="rgb(0, 186, 124)"
+                              className="bi bi-repeat"
+                              viewBox="0 0 16 16"
+                            >
+                              <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+                            </svg>
+                            <span
+                              style={{ color: "rgb(0, 186, 124)" }}
+                              className="post-description"
+                            >
+                              {post.reposted.length}
+                            </span>
+                          </div>
+                        ) : null}
+                      </div> */}
+                      {/* finish to check */}
 
                       <div className="p-0">
                         {post.likes.includes(userInfo._id) ? (

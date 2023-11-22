@@ -54,6 +54,8 @@ const UserProvider = ({ children }) => {
     localStorage.removeItem("posts");
     localStorage.removeItem("profileInfoPosts");
     localStorage.removeItem("profileInfoFavorites");
+    localStorage.removeItem("profileFavorites");
+    localStorage.removeItem("profilePosts");
   };
 
   const setToken = (token) => {
