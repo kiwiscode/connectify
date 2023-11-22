@@ -272,6 +272,26 @@ function UserProfile() {
       });
   };
 
+  const handleDeleteRepostProfilePage = (postId) => {
+    axios
+      .post(
+        `${API_URL}/repost/delete`,
+        { postId: postId, userId: userInfo._id },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then(() => {
+        console.log("You deleted repost!");
+      })
+      .then(() => {})
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <>
       <Container
@@ -649,7 +669,7 @@ function UserProfile() {
                           Num Of Comments?
                         </span>
                       </div>
-                      <div className="p-0">
+                      {/* <div className="p-0">
                         <svg
                           onClick={() => handleRepost(post._id)}
                           xmlns="http://www.w3.org/2000/svg"
@@ -667,6 +687,9 @@ function UserProfile() {
                           <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
                         </svg>
                         <span
+                          onClick={() =>
+                            handleDeleteRepostProfilePage(post._id)
+                          }
                           className="post-description"
                           style={{
                             color:
@@ -678,7 +701,70 @@ function UserProfile() {
                         >
                           {post.reposted.length}
                         </span>
+                      </div> */}
+                      {/* start to check */}
+                      <div className="p-0">
+                        {post.reposted.includes(userInfo._id) ? (
+                          <svg
+                            onClick={() =>
+                              handleDeleteRepostProfilePage(post._id)
+                            }
+                            style={{
+                              color: "rgb(0, 186, 124)",
+                              fontSize: "15px",
+                              marginLeft: "5px",
+                            }}
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            className="bi
+                            bi-repeat"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+                          </svg>
+                        ) : (
+                          <svg
+                            onClick={() => handleRepost(post._id)}
+                            style={{
+                              color: "rgb(83, 100, 113)",
+                            }}
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            className="bi bi-repeat"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+                          </svg>
+                        )}
+
+                        {post.reposted.includes(userInfo._id) ? (
+                          <span
+                            className="post-description"
+                            style={{
+                              color: "rgb(0, 186, 124)",
+                            }}
+                          >
+                            {post.reposted.length}
+                          </span>
+                        ) : (
+                          <span
+                            className="post-description"
+                            style={{
+                              color: "rgb(83, 100, 113)",
+                            }}
+                          >
+                            {post.reposted.length}
+                          </span>
+                        )}
+
+                        {/* start  */}
                       </div>
+
+                      {/* finish to check  */}
                       <div className="p-0">
                         <div>
                           {post.likes.includes(userInfo._id) ? (
@@ -872,7 +958,9 @@ function UserProfile() {
                       <div className="p-0">
                         {favorite.reposted.includes(userInfo._id) ? (
                           <svg
-                            // onClick={() => handleDeleteRepost(favorite._id)}
+                            onClick={() =>
+                              handleDeleteRepostProfilePage(favorite._id)
+                            }
                             style={{
                               color: "rgb(0, 186, 124)",
                               fontSize: "15px",
