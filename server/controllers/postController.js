@@ -1,9 +1,9 @@
 const User = require("../models/User.model");
 const Post = require("../models/Post.model");
 const Favorite = require("../models/Favorite.model");
-
+const cloudinary = require("../utils/cloudinary");
 const handlePost = (req, res) => {
-  const { content } = req.body;
+  const { content, image } = req.body;
   const { userId } = req.user;
 
   User.findById(userId)
@@ -13,23 +13,60 @@ const handlePost = (req, res) => {
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       }
+      console.log("THIS LINE IS WORKING 1 ", user);
 
-      return Post.create({
-        userId: userId,
-        content: content,
-        authorFullName: user.fullname,
-        authorUserName: user.username,
-      })
-        .then((post) => {
-          user.posts.unshift(post);
-          console.log(post);
-          return user.save().then(() => {
-            res.status(200).json({ message: "Post added successfully." });
+      // start to check
+
+      if (image) {
+        cloudinary.uploader
+          .upload(image, {
+            folder: "connectify",
+            // width: 300,
+            // crop: "scale"
+          })
+          .then((result) => {
+            // console.log("THIS LINE IS WORKING 2 ", image);
+
+            return Post.create({
+              userId: userId,
+              authorFullName: user.fullname,
+              authorUserName: user.username,
+              content,
+              image: {
+                public_id: result.public_id,
+                url: result.secure_url,
+              },
+            });
+          })
+          .then((post) => {
+            user.posts.unshift(post);
+            console.log("THIS LINE IS WORKING 2 ", post);
+            return user.save().then(() => {
+              res.status(200).json({ message: "Post added successfully." });
+            });
+          })
+          .catch((error) => {
+            console.log(error);
           });
+        // finish to check
+      } else if (!image) {
+        return Post.create({
+          userId: userId,
+          authorFullName: user.fullname,
+          authorUserName: user.username,
+          content,
         })
-        .catch((error) => {
-          res.status(500).json({ errorMessage: "Error creating post", error });
-        });
+          .then((post) => {
+            user.posts.unshift(post);
+            console.log("THIS LINE IS WORKING 2 ", post);
+            return user.save().then(() => {
+              res.status(200).json({ message: "Post added successfully." });
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     })
     .catch((error) => {
       res.status(500).json({ errorMessage: "Error finding user", error });

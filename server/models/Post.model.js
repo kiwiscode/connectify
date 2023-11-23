@@ -13,7 +13,16 @@ const postSchema = new Schema(
       type: String,
     },
     content: String,
-    media: [String],
+    image: {
+      public_id: {
+        type: String,
+        default: "image@url",
+      },
+      url: {
+        type: String,
+        default: "image@url",
+      },
+    },
     comments: [
       {
         type: Schema.Types.ObjectId,

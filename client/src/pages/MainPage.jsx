@@ -748,6 +748,28 @@ function MainPage() {
                       </Stack>
                     </div>
                     <div style={{ padding: "3px" }}>{post.content}</div>
+                    {post.image.url !== "image@url" ? (
+                      <div
+                        style={{
+                          maxWidth: "650px",
+                          maxHeight: "300px",
+                          overflow: "hidden",
+                          border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
+                          borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
+                          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                        }}
+                      >
+                        <img
+                          src={post.image.url}
+                          alt="Description"
+                          style={{
+                            width: "100%",
+                            height: "auto",
+                            display: "block",
+                          }}
+                        />
+                      </div>
+                    ) : null}
                     <Stack
                       direction="horizontal"
                       gap={3}
