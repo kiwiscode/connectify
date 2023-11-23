@@ -2,7 +2,6 @@ const User = require("../models/User.model");
 const Post = require("../models/Post.model");
 const Favorite = require("../models/Favorite.model");
 const cloudinary = require("../utils/cloudinary");
-
 const handlePost = (req, res) => {
   const { content, image } = req.body;
   const { userId } = req.user;
@@ -22,7 +21,8 @@ const handlePost = (req, res) => {
         cloudinary.uploader
           .upload(image, {
             folder: "connectify",
-            quality: "auto:best",
+            // width: 300,
+            // crop: "scale"
           })
           .then((result) => {
             // console.log("THIS LINE IS WORKING 2 ", image);

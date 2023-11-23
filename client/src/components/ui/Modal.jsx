@@ -234,6 +234,23 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
   const [showSecondModal, setShowSecondModal] = useState(false);
   const maxCharacters = 140;
 
+  const [image, setImage] = useState("");
+
+  //handle and convert it in base 64
+  const handleImage = (e) => {
+    const file = e.target.files[0];
+    setFileToBase(file);
+    console.log(file);
+  };
+
+  const setFileToBase = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setImage(reader.result);
+    };
+  };
+
   const toggleEmojis = () => {
     setshowEmojisBar("");
     setShowSecondModal(true);
@@ -261,12 +278,13 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
 
   const handlePost = () => {
     handleClose();
-
+    setImage("");
     axios
       .post(
         `${API_URL}/home/post`,
         {
           content,
+          image,
         },
         {
           headers: {
@@ -311,12 +329,12 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
             onChange={handleChange}
             maxLength={maxCharacters}
             style={{ resize: "none", marginLeft: "30px", marginTop: "15px" }}
-          />
+          />{" "}
         </Modal.Body>
         <Modal.Footer className="post-modal-footer ml-1  ">
           <Stack direction="horizontal" gap={0}>
-            <div className="p-2">
-              <svg
+            {/* <div className="p-2"> */}
+            {/* <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 height="16"
@@ -329,8 +347,38 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
                 }}
               >
                 <path d="M.002 3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-12a2 2 0 0 1-2-2V3zm1 9v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12zm5-6.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0z" />
+              </svg> */}
+
+            {/* INFO */}
+            <div className="p-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                className="bi bi-image-fill"
+                viewBox="0 0 16 16"
+                style={{
+                  cursor: "pointer",
+                  color: "rgb(29, 155, 240)",
+                }}
+                onClick={() => document.getElementById("formupload").click()}
+              >
+                <path d="M.002 3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-12a2 2 0 0 1-2-2V3zm1 9v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12zm5-6.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0z" />
               </svg>
+
+              <input
+                onChange={handleImage}
+                type="file"
+                id="formupload"
+                name="image"
+                className="form-control"
+                style={{ display: "none" }}
+              />
+
+              {image && <img className="img-fluid" src={image} alt="" />}
             </div>
+            {/* INFO */}
             <div className="p-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
