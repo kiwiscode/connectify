@@ -228,17 +228,18 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
   const [show, setShow] = useState(false);
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
-  const { getToken, updateUser } = useContext(UserContext);
+  const { getToken } = useContext(UserContext);
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [showEmojisBar, setshowEmojisBar] = useState("hide");
   const [showSecondModal, setShowSecondModal] = useState(false);
   const maxCharacters = 140;
-
-  const [image, setImage] = useState("");
+  console.log("POST MODAL IS WORKING => 1");
+  const [modalImage, setModalImage] = useState("");
 
   //handle and convert it in base 64
   const handleImage = (e) => {
     const file = e.target.files[0];
+    console.log("FILE FROM MODAL.JSX =>", file);
     setFileToBase(file);
     console.log(file);
   };
@@ -246,13 +247,20 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
   const setFileToBase = (file) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
+    console.log("SET FILE TO BASE FILE FROM MODAL.JSX =>", file);
+
     reader.onloadend = () => {
-      setImage(reader.result);
+      setModalImage(reader.result);
     };
   };
 
   const toggleEmojis = () => {
     setshowEmojisBar("");
+    if (showEmojisBar === "") {
+      setshowEmojisBar("hide");
+    } else if (showEmojisBar === "hide") {
+      setshowEmojisBar("");
+    }
     setShowSecondModal(true);
   };
 
@@ -278,13 +286,13 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
 
   const handlePost = () => {
     handleClose();
-    setImage("");
+
     axios
       .post(
         `${API_URL}/home/post`,
         {
           content,
-          image,
+          modalImage,
         },
         {
           headers: {
@@ -295,7 +303,7 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
 
       .then(() => {
         setLoadingTrue();
-
+        setModalImage("");
         setTimeout(() => {
           // IMPORTANT => we are using refreshPosts() it means we are using prop as a function !
           setLoadingFalse();
@@ -309,6 +317,30 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
       });
   };
 
+  const closeImage = () => {
+    setModalImage("");
+  };
+
+  const handleMouseOver = (e) => {
+    console.log("MOUSE OVER =>", e);
+    console.log(e.target.classList);
+    const shallowCopy = e.target.classList[0];
+    console.log(shallowCopy);
+    if (shallowCopy === "target") {
+      e.target.style.background = "#595b5b";
+    }
+  };
+
+  const handleMouseOut = (e) => {
+    console.log("MOUSE OVER =>", e);
+    console.log(e.target.classList);
+    const shallowCopy = e.target.classList[0];
+    console.log(shallowCopy);
+    if (shallowCopy === "target") {
+      e.target.style.background = "#47494a";
+    }
+  };
+
   return (
     <>
       <Button variant="primary" onClick={handleShow} className="compose-tweet">
@@ -317,38 +349,74 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton></Modal.Header>
-        <span style={{ marginLeft: "30px", marginTop: "15px" }}>
-          What is happening?!
-        </span>
+
         <Modal.Body>
           <textarea
+            onChange={handleChange}
             rows="4"
             cols="50"
             value={content}
-            className="input-post"
-            onChange={handleChange}
             maxLength={maxCharacters}
-            style={{ resize: "none", marginLeft: "30px", marginTop: "15px" }}
-          />{" "}
+            className="input-post"
+            placeholder="What is happening?!"
+            style={{
+              resize: "none",
+              padding: "8px",
+              color: "rgba(15,20,25,1.00)",
+              lineHeight: "24px",
+              fontWeight: "400",
+              fontSize: "20px",
+            }}
+          />
+          {modalImage && (
+            <div style={{ position: "relative" }}>
+              <div
+                className="target"
+                style={{
+                  position: "absolute",
+                  top: "10px",
+                  right: "10px",
+                  width: "30px",
+                  height: "30px",
+                  borderRadius: "50%",
+                  background: "rgba(71,73,74,255)",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer",
+                }}
+                onMouseOver={(e) => handleMouseOver(e)}
+                onMouseOut={(e) => handleMouseOut(e)}
+                onClick={closeImage}
+              >
+                <div
+                  style={{
+                    cursor: "pointer",
+                    color: "white",
+                    fontSize: "22px",
+                  }}
+                >
+                  &times;
+                </div>
+              </div>
+              <img
+                className="img-fluid"
+                style={{
+                  width: "100%",
+                  display: "block",
+                  overflow: "hidden",
+                  border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
+                  borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                }}
+                src={modalImage ? modalImage : ""}
+                alt=""
+              />
+            </div>
+          )}
         </Modal.Body>
         <Modal.Footer className="post-modal-footer ml-1  ">
           <Stack direction="horizontal" gap={0}>
-            {/* <div className="p-2"> */}
-            {/* <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                className="bi bi-image-fill"
-                viewBox="0 0 16 16"
-                style={{
-                  cursor: "pointer",
-                  color: "rgb(29, 155, 240)",
-                }}
-              >
-                <path d="M.002 3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-12a2 2 0 0 1-2-2V3zm1 9v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12zm5-6.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0z" />
-              </svg> */}
-
             {/* INFO */}
             <div className="p-2">
               <svg
@@ -362,7 +430,9 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
                   cursor: "pointer",
                   color: "rgb(29, 155, 240)",
                 }}
-                onClick={() => document.getElementById("formupload").click()}
+                onClick={() =>
+                  document.getElementById("formuploadModal").click()
+                }
               >
                 <path d="M.002 3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-12a2 2 0 0 1-2-2V3zm1 9v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12zm5-6.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0z" />
               </svg>
@@ -370,13 +440,11 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
               <input
                 onChange={handleImage}
                 type="file"
-                id="formupload"
-                name="image"
+                id="formuploadModal"
+                name="modalImage"
                 className="form-control"
                 style={{ display: "none" }}
               />
-
-              {image && <img className="img-fluid" src={image} alt="" />}
             </div>
             {/* INFO */}
             <div className="p-2">
@@ -399,13 +467,23 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
             </div>
             <div className="p-2 ms-auto">
               {" "}
-              <Button
-                variant="primary"
-                onClick={handlePost}
-                className="post-btn "
-              >
-                Post
-              </Button>
+              {content !== "" ? (
+                <Button
+                  variant="primary"
+                  onClick={() => handlePost()}
+                  className={`post-btn compose-tweet-textArea`}
+                >
+                  Post
+                </Button>
+              ) : (
+                <Button
+                  variant="primary"
+                  onClick={() => handlePost()}
+                  className={`emptyContent post-btn compose-tweet-textArea`}
+                >
+                  Post
+                </Button>
+              )}
             </div>
           </Stack>
         </Modal.Footer>

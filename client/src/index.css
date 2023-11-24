@@ -167,6 +167,14 @@ body {
   height: 45px;
 }
 
+.inner-div,
+.bi-chevron-double-left,
+.bi-person-circle {
+  @media (max-width: 1098px) {
+    margin-left: 8px;
+  }
+}
+
 .footer-container {
   /* position: fixed; */
   bottom: 0;
@@ -240,6 +248,16 @@ span > a:hover {
   top: 0;
   left: 5%;
   z-index: 1000;
+
+  /* 1400px ile 1200px arasında özel stil ayarları */
+  @media (max-width: 1400px) {
+    margin-right: 25px;
+  }
+
+  /* 1200px'den daha küçük ekranlarda stil ayarları  */
+  @media (max-width: 1199px) {
+    margin-right: 70px;
+  }
 }
 
 .compose-tweet {
@@ -247,7 +265,21 @@ span > a:hover {
   min-width: 52px;
   min-height: 52px;
   transition-duration: 0.2s;
-  margin-top: 50px;
+  margin-top: 50px; /* veya başka bir değer */
+
+  /* 1400px ile 1200px arasında özel stil ayarları */
+  /* @media (max-width: 1400px) {
+    margin-right: 25px;
+    .bi-chevron-double-left {
+      margin-right: 10px; /* veya başka bir değer */
+  /* max-width: 800px; */
+  /* }  */
+  /* } */
+
+  /* 1200px'den daha küçük ekranlarda stil ayarları */
+  /* @media (max-width: 1199px) {
+    margin-right: 70px;
+  } */
 }
 
 .compose-tweet:hover {
