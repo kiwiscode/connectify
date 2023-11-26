@@ -7,8 +7,8 @@ const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.json({ limit: "15mb" }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "15mb" }));
 app.use(cors());
 
 require("./config")(app);

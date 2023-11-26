@@ -3,7 +3,7 @@ const Post = require("../models/Post.model");
 const Favorite = require("../models/Favorite.model");
 const cloudinary = require("../utils/cloudinary");
 const handlePost = (req, res) => {
-  const { content, image } = req.body;
+  const { content, image, modalImage } = req.body;
   const { userId } = req.user;
 
   User.findById(userId)
@@ -17,12 +17,21 @@ const handlePost = (req, res) => {
 
       // start to check
 
-      if (image) {
+      if (image || modalImage) {
         cloudinary.uploader
-          .upload(image, {
+          .upload(image || modalImage, {
             folder: "connectify",
-            // width: 300,
-            // crop: "scale"
+            allowed_formats: [
+              "mp4",
+              "ogv",
+              "jpg",
+              "png",
+              "pdf",
+              "webm",
+              "webp",
+            ],
+            height: 1000,
+            crop: "limit",
           })
           .then((result) => {
             // console.log("THIS LINE IS WORKING 2 ", image);
@@ -49,7 +58,7 @@ const handlePost = (req, res) => {
             console.log(error);
           });
         // finish to check
-      } else if (!image) {
+      } else if (!image || !modalImage) {
         return Post.create({
           userId: userId,
           authorFullName: user.fullname,
