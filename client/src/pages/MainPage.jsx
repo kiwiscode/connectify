@@ -368,7 +368,6 @@ function MainPage() {
             borderBottom: "none",
           }}
         >
-          {/* start to check */}
           <Col
             className="left-column"
             xs={12}
@@ -382,7 +381,6 @@ function MainPage() {
               borderBottom: "none",
             }}
           >
-            {/* start to check */}
             <nav className="nav-bar-home">
               <div>
                 <svg
@@ -498,11 +496,11 @@ function MainPage() {
                   setLoadingFalse={() => setLoadingFalse()}
                 ></PostModal>
               </div>
+              {/* start to check */}
               <LogoutModal></LogoutModal>
+              {/* finish to check */}
             </nav>
-            {/* finish to check */}
           </Col>
-          {/* finish to check */}
 
           {/* start to check  main column */}
           <Col
