@@ -174,36 +174,137 @@ function LogoutModal() {
 
   return (
     <>
-      <a href="" onClick={handleShow}>
+      {/* <a
+        href=""
+        onClick={handleShow}
+        style={{
+          display: "block",
+          textDecoration: "none",
+        }}
+      >
         <div>
-          <div className="username-nav">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="25"
-              fill="currentColor"
-              className="bi bi-person-circle"
-              viewBox="0 0 20 20"
+          <div
+            className="username-nav"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginTop: "100px",
+              marginLeft: "-153px",
+            }}
+          >
+            <div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="40"
+                height="40"
+                fill="rgb(83, 100, 113)"
+                className="bi bi-person-circle"
+                viewBox="0 0 16 16"
+                style={{ padding: "3px" }}
+              >
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+              </svg>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                marginLeft: "5px",
+              }}
             >
-              <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
-              <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
-            </svg>
-            <span>{localeInfo.username}</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="25"
-              fill="currentColor"
-              className="bi bi-three-dots"
-              viewBox="0 0 20 20"
-              style={{ marginLeft: "20px" }}
-              onClick={() => handleShow()}
-            >
-              <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
-            </svg>
+              <span
+                style={{
+                  color: "rgb(15,20,25)",
+                  lineHeight: "20px",
+                  fontWeight: "700",
+                  fontSize: "15px",
+                }}
+              >
+                {localeInfo.username}
+              </span>
+              <span
+                style={{
+                  color: "rgb(83, 100, 113)",
+                  fontSize: "15px",
+                  lineHeight: "20px",
+                  fontWeight: "400",
+                }}
+              >
+                @{localeInfo.username}
+              </span>
+            </div>
+            <div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="25"
+                fill="currentColor"
+                className="bi bi-three-dots"
+                viewBox="0 0 20 20"
+                style={{
+                  position: "relative",
+                  left: "150",
+                }}
+                onClick={() => handleShow()}
+              >
+                <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
+              </svg>
+            </div>
           </div>
         </div>
-      </a>
+      </a> */}
+
+      {/* start to check  */}
+
+      <div className="logout-nav">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="40"
+          height="40"
+          fill="rgb(83, 100, 113)"
+          className="bi bi-person-circle"
+          viewBox="0 0 16 16"
+        >
+          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+          <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+        </svg>
+
+        <span
+          style={{
+            color: "rgb(15,20,25)",
+            lineHeight: "20px",
+            fontWeight: "700",
+            fontSize: "15px",
+          }}
+        >
+          {localeInfo.username}
+        </span>
+        <span
+          style={{
+            color: "rgb(83, 100, 113)",
+            fontSize: "15px",
+            lineHeight: "20px",
+            fontWeight: "400",
+          }}
+        >
+          @{localeInfo.username}
+        </span>
+
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="25"
+          fill="currentColor"
+          className="bi bi-three-dots logout-nav"
+          viewBox="0 0 20 20"
+          onClick={() => handleShow()}
+        >
+          <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
+        </svg>
+      </div>
+
+      {/* finish to check */}
       <Modal
         show={show}
         onHide={handleClose}
@@ -211,13 +312,11 @@ function LogoutModal() {
         size="sm"
       >
         <Modal.Body>
-          <p
-            className="logout-p"
-            onClick={handleLogout}
-            style={{ cursor: "pointer" }}
-          >
-            Log out @{localeInfo.username}
-          </p>
+          <div className="logout-body">
+            <p className="logout-p" onClick={handleLogout}>
+              Log out @{localeInfo.username}
+            </p>
+          </div>
         </Modal.Body>
       </Modal>
     </>
@@ -349,72 +448,90 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton></Modal.Header>
-
         <Modal.Body>
-          <textarea
-            onChange={handleChange}
-            rows="4"
-            cols="50"
-            value={content}
-            maxLength={maxCharacters}
-            className="input-post"
-            placeholder="What is happening?!"
-            style={{
-              resize: "none",
-              padding: "8px",
-              color: "rgba(15,20,25,1.00)",
-              lineHeight: "24px",
-              fontWeight: "400",
-              fontSize: "20px",
-            }}
-          />
-          {modalImage && (
-            <div style={{ position: "relative" }}>
-              <div
-                className="target"
-                style={{
-                  position: "absolute",
-                  top: "10px",
-                  right: "10px",
-                  width: "30px",
-                  height: "30px",
-                  borderRadius: "50%",
-                  background: "rgba(71,73,74,255)",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  cursor: "pointer",
-                }}
-                onMouseOver={(e) => handleMouseOver(e)}
-                onMouseOut={(e) => handleMouseOut(e)}
-                onClick={closeImage}
+          <div className="d-flex align-items-center">
+            <div className="p-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="35"
+                height="35"
+                fill="rgb(83, 100, 113)"
+                className="bi bi-person-circle"
+                viewBox="0 0 16 16"
+                style={{ marginBottom: "110px" }}
               >
-                <div
-                  style={{
-                    cursor: "pointer",
-                    color: "white",
-                    fontSize: "22px",
-                  }}
-                >
-                  &times;
-                </div>
-              </div>
-              <img
-                className="img-fluid"
-                style={{
-                  width: "100%",
-                  display: "block",
-                  overflow: "hidden",
-                  border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
-                  borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
-                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
-                }}
-                src={modalImage ? modalImage : ""}
-                alt=""
-              />
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+              </svg>
             </div>
-          )}
+            <div className="p-2">
+              <textarea
+                onChange={handleChange}
+                rows="4"
+                cols="50"
+                value={content}
+                maxLength={maxCharacters}
+                className="input-post"
+                placeholder="What is happening?!"
+                style={{
+                  resize: "none",
+                  padding: "8px",
+                  color: "rgba(15,20,25,1.00)",
+                  lineHeight: "24px",
+                  fontWeight: "400",
+                  fontSize: "20px",
+                }}
+              />
+              {modalImage && (
+                <div style={{ position: "relative" }}>
+                  <div
+                    className="target"
+                    style={{
+                      position: "absolute",
+                      top: "10px",
+                      right: "10px",
+                      width: "30px",
+                      height: "30px",
+                      borderRadius: "50%",
+                      background: "rgba(71,73,74,255)",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      cursor: "pointer",
+                    }}
+                    onMouseOver={(e) => handleMouseOver(e)}
+                    onMouseOut={(e) => handleMouseOut(e)}
+                    onClick={closeImage}
+                  >
+                    <div
+                      style={{
+                        cursor: "pointer",
+                        color: "white",
+                        fontSize: "22px",
+                      }}
+                    >
+                      &times;
+                    </div>
+                  </div>
+                  <img
+                    className="img-fluid"
+                    style={{
+                      width: "100%",
+                      display: "block",
+                      overflow: "hidden",
+                      border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
+                      borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
+                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                    }}
+                    src={modalImage ? modalImage : ""}
+                    alt=""
+                  />
+                </div>
+              )}
+            </div>
+          </div>
         </Modal.Body>
+
         <Modal.Footer className="post-modal-footer ml-1  ">
           <Stack direction="horizontal" gap={0}>
             {/* INFO */}
