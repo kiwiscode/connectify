@@ -4,7 +4,6 @@ import { Container, Row, Col, Stack, Button } from "react-bootstrap";
 import { LogoutModal, PostModal } from "../components/ui/Modal";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { useNavigate } from "react-router";
 import Picker from "emoji-picker-react";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 
@@ -28,6 +27,24 @@ function MainPage() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [shouldHide, setshouldHide] = useState(true);
+
+  const [image, setImage] = useState("");
+
+  //handle and convert it in base 64
+  const handleImage = (e) => {
+    const file = e.target.files[0];
+    setFileToBase(file);
+    console.log(file);
+  };
+
+  const setFileToBase = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setImage(reader.result);
+    };
+  };
+
   const toggleEmojis = () => {
     setshowEmojisBar("");
     if (showEmojisBar === "") {
@@ -182,6 +199,7 @@ function MainPage() {
         `${API_URL}/home/post`,
         {
           content,
+          image,
         },
         {
           headers: {
@@ -191,7 +209,7 @@ function MainPage() {
       )
       .then((response) => {
         console.log("Response after posting a tweet =>", response);
-
+        setImage("");
         setIsLoading(true);
         setContent("");
         setTimeout(() => {
@@ -300,6 +318,30 @@ function MainPage() {
 
   console.log("POSTS =>", posts);
 
+  const closeImage = () => {
+    setImage("");
+  };
+
+  const handleMouseOver = (e) => {
+    console.log("MOUSE OVER =>", e);
+    console.log(e.target.classList);
+    const shallowCopy = e.target.classList[0];
+    console.log(shallowCopy);
+    if (shallowCopy === "target") {
+      e.target.style.background = "#595b5b";
+    }
+  };
+
+  const handleMouseOut = (e) => {
+    console.log("MOUSE OVER =>", e);
+    console.log(e.target.classList);
+    const shallowCopy = e.target.classList[0];
+    console.log(shallowCopy);
+    if (shallowCopy === "target") {
+      e.target.style.background = "#47494a";
+    }
+  };
+
   useEffect(() => {
     console.log("POSTS =>", posts);
     setshouldHide(true);
@@ -327,6 +369,7 @@ function MainPage() {
           }}
         >
           <Col
+            className="left-column"
             xs={12}
             sm={12}
             md={6}
@@ -346,7 +389,7 @@ function MainPage() {
                   height="30"
                   fill="currentColor"
                   className="bi bi-chevron-double-left like-icon"
-                  viewBox="0 0 20 20"
+                  viewBox="1 0 20 20"
                 >
                   <path d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
                   <path d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
@@ -453,10 +496,13 @@ function MainPage() {
                   setLoadingFalse={() => setLoadingFalse()}
                 ></PostModal>
               </div>
+              {/* start to check */}
               <LogoutModal></LogoutModal>
+              {/* finish to check */}
             </nav>
           </Col>
 
+          {/* start to check  main column */}
           <Col
             xs={12}
             sm={12}
@@ -498,14 +544,62 @@ function MainPage() {
                 color: "rgba(15,20,25,1.00)",
                 lineHeight: "24px",
                 fontWeight: "400",
+                fontSize: "20px",
               }}
             />
+            {image && (
+              <div style={{ position: "relative" }}>
+                <div
+                  className="target"
+                  style={{
+                    position: "absolute",
+                    top: "10px",
+                    right: "10px",
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "50%",
+                    background: "#47494a",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    cursor: "pointer",
+                  }}
+                  onMouseOver={(e) => handleMouseOver(e)}
+                  onMouseOut={(e) => handleMouseOut(e)}
+                  onClick={closeImage}
+                >
+                  <div
+                    style={{
+                      cursor: "pointer",
+                      color: "white",
+                      fontSize: "25px",
+                    }}
+                  >
+                    &times;
+                  </div>
+                </div>
+                <img
+                  className="img-fluid"
+                  style={{
+                    width: "100%",
+                    display: "block",
+                    overflow: "hidden",
+                    border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
+                    borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                  }}
+                  src={image ? image : ""}
+                  alt=""
+                />
+              </div>
+            )}
             <Row
               style={{
                 border: "1px solid rgba(0, 0, 0, 0.1)",
               }}
             ></Row>
             <Stack direction="horizontal" gap={0}>
+              {/* INFO */}
               <div className="p-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -518,10 +612,22 @@ function MainPage() {
                     cursor: "pointer",
                     color: "rgb(29, 155, 240)",
                   }}
+                  onClick={() => document.getElementById("formupload").click()}
                 >
                   <path d="M.002 3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-12a2 2 0 0 1-2-2V3zm1 9v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12zm5-6.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0z" />
                 </svg>
+
+                <input
+                  onChange={handleImage}
+                  type="file"
+                  id="formupload"
+                  name="image"
+                  className="form-control"
+                  style={{ display: "none" }}
+                />
               </div>
+
+              {/* INFO  */}
               <div className="p-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -577,7 +683,7 @@ function MainPage() {
               </div>
             </Stack>
             {/* mainpage yani home rotasına tüm twitlerin gösterileceği column burası !  */}
-
+            <span>{isLoading ? <LoadingSpinner></LoadingSpinner> : ""}</span>
             <div className="all-posts">
               {posts.map((post, index) => (
                 <div key={post._id}>
@@ -751,8 +857,6 @@ function MainPage() {
                     {post.image.url !== "image@url" ? (
                       <div
                         style={{
-                          maxWidth: "650px",
-                          maxHeight: "300px",
                           overflow: "hidden",
                           border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
                           borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
@@ -764,7 +868,6 @@ function MainPage() {
                           alt="Description"
                           style={{
                             width: "100%",
-                            height: "auto",
                             display: "block",
                           }}
                         />
@@ -927,19 +1030,9 @@ function MainPage() {
               ))}
             </div>
 
-            <span
-              style={{
-                color: "crimson",
-                fontWeight: "800",
-                textAlign: "center",
-              }}
-            >
-              {isLoading ? <LoadingSpinner></LoadingSpinner> : ""}
-            </span>
-
             {/* mainpage yani home rotasına tüm twitlerin gösterileceği column burası !  */}
           </Col>
-
+          {/* finish to check */}
           <Col
             className="side-bar-column"
             xs={12}

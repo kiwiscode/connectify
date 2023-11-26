@@ -167,6 +167,14 @@ body {
   height: 45px;
 }
 
+.inner-div,
+.bi-chevron-double-left,
+.bi-person-circle {
+  @media (max-width: 1098px) {
+    margin-left: 8px;
+  }
+}
+
 .footer-container {
   /* position: fixed; */
   bottom: 0;
@@ -240,6 +248,16 @@ span > a:hover {
   top: 0;
   left: 5%;
   z-index: 1000;
+
+  /* 1400px ile 1200px arasında özel stil ayarları */
+  @media (max-width: 1400px) {
+    margin-right: 25px;
+  }
+
+  /* 1200px'den daha küçük ekranlarda stil ayarları  */
+  @media (max-width: 1199px) {
+    margin-right: 70px;
+  }
 }
 
 .compose-tweet {
@@ -247,7 +265,21 @@ span > a:hover {
   min-width: 52px;
   min-height: 52px;
   transition-duration: 0.2s;
-  margin-top: 50px;
+  margin-top: 50px; /* veya başka bir değer */
+
+  /* 1400px ile 1200px arasında özel stil ayarları */
+  /* @media (max-width: 1400px) {
+    margin-right: 25px;
+    .bi-chevron-double-left {
+      margin-right: 10px; /* veya başka bir değer */
+  /* max-width: 800px; */
+  /* }  */
+  /* } */
+
+  /* 1200px'den daha küçük ekranlarda stil ayarları */
+  /* @media (max-width: 1199px) {
+    margin-right: 70px;
+  } */
 }
 
 .compose-tweet:hover {
@@ -279,11 +311,6 @@ span > a:hover {
   border-radius: var(--border-radius);
 }
 
-.username-nav {
-  margin-top: 100px;
-  margin-left: -153px;
-}
-
 .like-icon {
   margin-bottom: 50px;
   margin-right: 270px;
@@ -306,30 +333,25 @@ span > a:hover {
   position: sticky;
   top: 0;
 }
-/* 
-.logout-modal {
-  width: 500px;
-  height: 1410px;
-  left: -10px;
-} */
+
+.logout-body {
+  width: 100%;
+  height: 30px;
+}
 
 .logout-p {
   font: 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
     Arial, sans-serif;
+  cursor: pointer;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 1rem;
+  position: relative;
+  padding: 5px;
+  margin: 0;
 }
 
-.logout-p:hover {
-  background-color: rgba(0, 0, 0, 0.01);
-  border-bottom-width: 1px;
-  border-left-width: 1px;
-  border-right-width: 1px;
-  border-top-width: 1px;
-  border-width: 4px 1.25em;
-  border-radius: var(--border-radius);
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-  transition: background-color 0.3s, box-shadow 0.3s;
+.logout-body:hover {
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .post-btn {
@@ -435,4 +457,27 @@ span > a:hover {
 .p-0 span {
   font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, Helvetica, Arial, sans-serif;
+}
+
+.logout-nav {
+  margin-top: 100px;
+  cursor: pointer;
+}
+
+.bi-three-dots.logout-nav {
+  margin-left: 85px;
+  margin-top: 0px;
+}
+
+.logout-nav:hover {
+  background-color: lightgray;
+  outline-style: none;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-top-width: 1px;
+  border-width: 4px 1.25em;
+  border-radius: var(--border-radius);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  transition: background-color 0.3s, box-shadow 0.3s;
 }

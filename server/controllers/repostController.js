@@ -31,12 +31,18 @@ const handleRepost = (req, res) => {
           ) {
             post.reposted.unshift(userId);
             post.save();
+
+            console.log("HERE IS THE POST =>", post);
+
             return Post.create({
               userId: post.userId,
               authorFullName: post.authorFullName,
               authorUserName: post.authorUserName,
               content: post.content,
-              media: post.media,
+              image: {
+                public_id: post.image.public_id,
+                url: post.image.url,
+              },
               comments: post.comments,
               isReposted: true,
               reposted: post.reposted,
@@ -44,7 +50,10 @@ const handleRepost = (req, res) => {
               likes: post.likes,
             })
               .then((createdPost) => {
-                console.log("CREATED POST AFTER REPOST =>", createdPost._id);
+                console.log(
+                  "HERE IS THE CREATED POST AFTER REPOST =>",
+                  createdPost
+                );
 
                 user.posts.unshift(createdPost._id);
                 user.save();
