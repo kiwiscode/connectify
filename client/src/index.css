@@ -316,7 +316,7 @@ span > a:hover {
   margin-right: 270px;
 }
 
-.nav-bar-home div > div:hover {
+.inner-div div:hover {
   background-color: lightgray;
   outline-style: none;
   border-bottom-width: 1px;
@@ -348,10 +348,6 @@ span > a:hover {
   position: relative;
   padding: 5px;
   margin: 0;
-}
-
-.logout-body:hover {
-  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .post-btn {
@@ -460,13 +456,9 @@ span > a:hover {
 }
 
 .logout-nav {
-  margin-top: 100px;
+  display: flex;
+  margin: 250px 0px 0px 0px;
   cursor: pointer;
-}
-
-.bi-three-dots.logout-nav {
-  margin-left: 85px;
-  margin-top: 0px;
 }
 
 .logout-nav:hover {
@@ -480,4 +472,27 @@ span > a:hover {
   border-radius: var(--border-radius);
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
   transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.logout-nav span {
+  display: flex;
+  flex-direction: column;
+  margin: 0px 150px 0px 10px;
+}
+
+@media (max-width: 367px) and (min-width: 310px) {
+  .nav-bar-home {
+    margin-right: 15px;
+  }
+}
+
+@media (min-width: 991px) and (max-width: 1200px) {
+  .nav-bar-home {
+    margin-left: 100px;
+  }
+
+  .compose-tweet {
+    max-width: 250px;
+    margin-right: 60px;
+  }
 }

@@ -468,10 +468,48 @@ function UserProfile() {
                     </div>
                   </div>
                 </Stack>
+                {/* start to check */}
+                <div
+                  className="profile"
+                  style={{
+                    display: "block",
+                    height: "200px",
+                    width: "100%",
+                    backgroundColor: "rgba(0, 0, 0, 0.2)",
+                    position: "relative",
+                  }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="133"
+                    height="133"
+                    fill="rgb(83, 100, 113)"
+                    className="bi bi-person-circle"
+                    viewBox="0 0 16 16"
+                    style={{ marginTop: "135", marginLeft: "0px", zIndex: "1" }}
+                  >
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                  </svg>
+                  <Button
+                    variant="light"
+                    size="sm"
+                    style={{
+                      color: "black",
+                      backgroundColor: "transparent",
+                      marginTop: "200px",
+                      width: "30%",
+                    }}
+                  >
+                    Set up profile
+                  </Button>{" "}
+                </div>{" "}
+                {/* finish to check */}
                 <div
                   style={{
                     fontWeight: "700",
                     fontSize: "20px",
+                    marginTop: "100px",
                   }}
                 >
                   {userInfo.username}
@@ -649,6 +687,25 @@ function UserProfile() {
                       </Stack>
                     </div>
                     <div style={{ padding: "3px" }}>{post.content}</div>
+                    {post.image.url !== "image@url" ? (
+                      <div
+                        style={{
+                          overflow: "hidden",
+                          border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
+                          borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
+                          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                        }}
+                      >
+                        <img
+                          src={post.image.url}
+                          alt="Description"
+                          style={{
+                            width: "100%",
+                            display: "block",
+                          }}
+                        />
+                      </div>
+                    ) : null}
                     <Stack
                       direction="horizontal"
                       gap={3}

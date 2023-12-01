@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserContext";
 import { Container, Row, Col, Stack, Button } from "react-bootstrap";
 import { LogoutModal, PostModal } from "../components/ui/Modal";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Picker from "emoji-picker-react";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
@@ -24,7 +24,7 @@ function MainPage() {
   const [showSecondModal, setShowSecondModal] = useState(false);
 
   const maxCharacters = 140;
-
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [shouldHide, setshouldHide] = useState(true);
 
@@ -351,11 +351,11 @@ function MainPage() {
   return (
     <>
       {/* start to check */}
-      {/* NOTE Testing the localStorage */}
-      {/* <Button onClick={() => handleLocalStorageChanges()}>
-        Update the localStorage
+      {/* <Button variant="primary" className="test-btn">
+        Test button for responsiveness
       </Button> */}
       {/* finish to check */}
+
       <Container
         style={{
           justifyContent: "center",
@@ -397,25 +397,26 @@ function MainPage() {
               </div>
 
               <div className="inner-div">
-                <a href="">
-                  <div>
+                <Link to="/home">
+                  <a href="">
                     <div>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="25"
-                        fill="currentColor"
-                        className="bi bi-house"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z" />
-                      </svg>
-                      <Link to="/home">
+                      <div>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="25"
+                          fill="currentColor"
+                          className="bi bi-house"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z" />
+                        </svg>
+
                         <span>Home</span>
-                      </Link>
+                      </div>
                     </div>
-                  </div>
-                </a>
+                  </a>
+                </Link>
 
                 <a href="">
                   <div>
@@ -497,8 +498,8 @@ function MainPage() {
                 ></PostModal>
               </div>
               {/* start to check */}
-              <LogoutModal></LogoutModal>
               {/* finish to check */}
+              <LogoutModal></LogoutModal>
             </nav>
           </Col>
 
@@ -954,33 +955,6 @@ function MainPage() {
                         )}
                       </div>
 
-                      {/* start to check */}
-                      {/* <div className={`p-0 ${shouldHide ? "hide" : ""}`}>
-                        {post.reposted.length > 0 ? (
-                          <div>
-                            <svg
-                              // onClick={()=> handleDeleteRepost()}
-                              color="rgb(0, 186, 124)"
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
-                              fill="rgb(0, 186, 124)"
-                              className="bi bi-repeat"
-                              viewBox="0 0 16 16"
-                            >
-                              <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
-                            </svg>
-                            <span
-                              style={{ color: "rgb(0, 186, 124)" }}
-                              className="post-description"
-                            >
-                              {post.reposted.length}
-                            </span>
-                          </div>
-                        ) : null}
-                      </div> */}
-                      {/* finish to check */}
-
                       <div className="p-0">
                         {post.likes.includes(userInfo._id) ? (
                           <span>
@@ -1024,7 +998,6 @@ function MainPage() {
                         )}
                       </div>
                     </Stack>
-                    {/* FIXME */}
                   </div>
                 </div>
               ))}
