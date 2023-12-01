@@ -61,7 +61,19 @@ const handleShowSpesificProfile = (req, res) => {
     });
 };
 
+const handleProfilePicture = (req, res) => {
+  const { userId } = req.user;
+  const { profileImage } = req.body;
+
+  console.log("Profile Image => ", profileImage);
+  console.log(
+    "Active user who is trying to change profile picture => ",
+    userId
+  );
+};
+
 module.exports = {
   handleProfile,
   handleShowSpesificProfile,
+  handleProfilePicture,
 };
