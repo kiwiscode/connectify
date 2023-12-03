@@ -630,6 +630,11 @@ function SpesificUserProfile() {
                   </Row>
                 </Container>
                 {/* start */}
+                <Row
+                  style={{
+                    border: "1px solid rgba(0, 0, 0, 0.1)",
+                  }}
+                ></Row>
                 <ButtonGroup
                   aria-label="Basic example"
                   style={{
@@ -644,6 +649,7 @@ function SpesificUserProfile() {
                       backgroundColor: "white",
                       color: "black",
                       border: "none",
+                      borderRight: "1px solid rgba(0,0,0,0.1)",
                     }}
                   >
                     {favoriteWindow === "" ? (
@@ -660,6 +666,7 @@ function SpesificUserProfile() {
                       backgroundColor: "white",
                       color: "black",
                       border: "none",
+                      borderLeft: "1px solid rgba(0,0,0,0.1)",
                     }}
                   >
                     {favoriteWindow === "" ? (
@@ -669,7 +676,13 @@ function SpesificUserProfile() {
                     )}
                   </Button>
                 </ButtonGroup>
-
+                {!userInfo.posts.length || !userInfo.favorites.length ? (
+                  <Row
+                    style={{
+                      border: "1px solid rgba(0, 0, 0, 0.1)",
+                    }}
+                  ></Row>
+                ) : null}
                 {/* finish */}
                 {/* start to check */}
                 <div className={`all-posts ${postsWindow}`}>

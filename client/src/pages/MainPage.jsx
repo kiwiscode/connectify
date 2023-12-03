@@ -531,23 +531,43 @@ function MainPage() {
                 border: "1px solid rgba(0, 0, 0, 0.1)",
               }}
             ></Row>
-            <textarea
-              onChange={handleChange}
-              rows="4"
-              cols="50"
-              value={content}
-              maxLength={maxCharacters}
-              className="input-post"
-              placeholder="What is happening?!"
-              style={{
-                resize: "none",
-                padding: "8px",
-                color: "rgba(15,20,25,1.00)",
-                lineHeight: "24px",
-                fontWeight: "400",
-                fontSize: "20px",
-              }}
-            />
+
+            <Stack direction="horizontal" gap={3}>
+              <div className="p-2">
+                {" "}
+                {userInfo.imageUrl.slice(0, 3) !== "../" ? (
+                  <img
+                    src={userInfo.imageUrl}
+                    width={35}
+                    height={35}
+                    alt=""
+                    style={{ position: "relative", bottom: "57px" }}
+                  />
+                ) : null}
+              </div>
+
+              <div className="p-2">
+                {" "}
+                <textarea
+                  onChange={handleChange}
+                  rows="4"
+                  cols="50"
+                  value={content}
+                  maxLength={maxCharacters}
+                  className="input-post"
+                  placeholder="What is happening?!"
+                  style={{
+                    resize: "none",
+                    padding: "8px",
+                    color: "rgba(15,20,25,1.00)",
+                    lineHeight: "24px",
+                    fontWeight: "400",
+                    fontSize: "20px",
+                  }}
+                />
+              </div>
+            </Stack>
+
             {image && (
               <div style={{ position: "relative" }}>
                 <div
@@ -779,14 +799,16 @@ function MainPage() {
                         style={{ padding: "3px" }}
                       >
                         <div className="p-0">
-                          <Link
-                            to={`/profile/${post.userId._id}`}
-                            style={{ textDecoration: "none", color: "black" }}
-                          >
-                            <span style={{ fontWeight: "700" }}>
-                              {post.authorFullName}
-                            </span>
-                          </Link>
+                          {post.userId ? (
+                            <Link
+                              to={`/profile/${post.userId._id}`}
+                              style={{ textDecoration: "none", color: "black" }}
+                            >
+                              <span style={{ fontWeight: "700" }}>
+                                {post.authorFullName}
+                              </span>
+                            </Link>
+                          ) : null}
                         </div>
                         <div className="p-0 verified-icon">
                           {" "}
@@ -813,7 +835,7 @@ function MainPage() {
                           </span>
                           <span>
                             {/* show if post owner userId !equal currentUserId */}
-                            {post.userId._id !== userInfo._id ? (
+                            {post.userId && post.userId._id !== userInfo._id ? (
                               <svg
                                 onClick={() =>
                                   handleShowDetailPostFromHomePage(post._id)

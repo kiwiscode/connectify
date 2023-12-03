@@ -107,6 +107,12 @@ function UserProfile() {
           handleShowPostsProfilePage();
         }
 
+        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+
+        userInfo.favorites.push(postId);
+
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+
         setError("");
       })
       .catch((error) => {
@@ -292,6 +298,70 @@ function UserProfile() {
       });
   };
 
+  const [profileImage, setprofileImage] = useState("");
+
+  const handleImage = (e) => {
+    const file = e.target.files[0];
+    console.log("FILE FROM PROFILE PICTURE PROCESS =>", file);
+    setFileToBase(file);
+    console.log(file);
+    console.log("PROFILE IMAGE CURRENT INSIDE HANDLEIMAGE=>", profileImage);
+  };
+
+  const setFileToBase = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    console.log("SET FILE TO BASE FILE =>", file);
+
+    reader.onloadend = () => {
+      setprofileImage(reader.result);
+
+      console.log(
+        "PROFILE IMAGE CURRENT INSIDE SETFILETOBASE=>",
+        reader.result.slice(0, 21)
+      );
+    };
+  };
+  console.log("PROFILE IMAGE CURRENT GLOBAL PAGE=>", profileImage.slice(0, 21));
+
+  const changeProfileImage = () => {
+    console.log("I AM WORKING FOR CHANGING PROFILE PICTURE");
+    axios
+      .post(
+        `${API_URL}/profile/add-profile-image`,
+        { profileImage },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log("RESPONSE AFTER POST PROFILE IMAGE =>", response);
+        console.log(
+          "WE SEND THIS PROFILE IMAGE FROM BODY TO SERVER =>",
+          profileImage.slice(0, 21)
+        );
+
+        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+        console.log(userInfo.imageUrl);
+
+        console.log(`"${response.data.url}"`);
+        userInfo.imageUrl = response.data.url;
+
+        const updatedUserInfo = userInfo;
+        console.log(updatedUserInfo);
+        localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    changeProfileImage();
+  }, [profileImage, userInfo.imageUrl]);
+
   return (
     <>
       <Container
@@ -469,70 +539,81 @@ function UserProfile() {
                   </div>
                 </Stack>
                 {/* start to check */}
-                <div
-                  className="profile"
-                  style={{
-                    display: "block",
-                    height: "200px",
-                    width: "100%",
-                    backgroundColor: "rgba(0, 0, 0, 0.2)",
-                    position: "relative",
-                  }}
+
+                <Stack
+                  direction="horizontal"
+                  gap={0}
+                  style={{ marginTop: "45px" }}
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="133"
-                    height="133"
-                    fill="rgb(83, 100, 113)"
-                    className="bi bi-person-circle"
-                    viewBox="0 0 16 16"
-                    style={{ marginTop: "135", marginLeft: "0px", zIndex: "1" }}
-                  >
-                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                  </svg>
-                  <Button
-                    variant="light"
-                    size="sm"
+                  <div className="p-2">
+                    {userInfo.imageUrl.slice(0, 3) !== "../" ? (
+                      <img src={userInfo.imageUrl} alt="" />
+                    ) : (
+                      <div>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="133"
+                          height="133"
+                          fill="rgb(83, 100, 113)"
+                          className="bi bi-person-circle"
+                          viewBox="0 0 16 16"
+                          style={{ cursor: "pointer" }}
+                          onClick={() =>
+                            document.getElementById("formuploadModal").click()
+                          }
+                        >
+                          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                          <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                        </svg>
+                        <input
+                          onChange={handleImage}
+                          type="file"
+                          id="formuploadModal"
+                          name="modalImage"
+                          className="form-control"
+                          style={{ display: "none" }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </Stack>
+
+                {/* finish to check */}
+                <div style={{ lineHeight: "30px", marginBottom: "20px" }}>
+                  <div
                     style={{
-                      color: "black",
-                      backgroundColor: "transparent",
-                      marginTop: "200px",
-                      width: "30%",
+                      fontWeight: "700",
+                      fontSize: "20px",
+                      marginTop: "100px",
                     }}
                   >
-                    Set up profile
-                  </Button>{" "}
-                </div>{" "}
-                {/* finish to check */}
-                <div
-                  style={{
-                    fontWeight: "700",
-                    fontSize: "20px",
-                    marginTop: "100px",
-                  }}
-                >
-                  {userInfo.username}
-                </div>
-                <div style={{ color: "rgb(83, 100, 113)" }}>
-                  @{userInfo.username}
-                </div>
-                <div>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    className="bi bi-calendar4-week"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 2a1 1 0 0 0-1 1v1h14V3a1 1 0 0 0-1-1H2zm13 3H1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V5z" />
-                    <path d="M11 7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-2 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z" />
-                  </svg>{" "}
-                  Joined {getCreatedDateForProfile(userInfo.createdAt)}
+                    {userInfo.username}
+                  </div>
+                  <div style={{ color: "rgb(83, 100, 113)" }}>
+                    @{userInfo.username}
+                  </div>
+                  <div>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      className="bi bi-calendar4-week"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 2a1 1 0 0 0-1 1v1h14V3a1 1 0 0 0-1-1H2zm13 3H1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V5z" />
+                      <path d="M11 7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-2 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z" />
+                    </svg>{" "}
+                    Joined {getCreatedDateForProfile(userInfo.createdAt)}
+                  </div>
                 </div>
               </Row>
             </Container>
+            <Row
+              style={{
+                border: "1px solid rgba(0, 0, 0, 0.1)",
+              }}
+            ></Row>
             <ButtonGroup
               aria-label="Basic example"
               style={{
@@ -546,6 +627,7 @@ function UserProfile() {
                   backgroundColor: "white",
                   color: "black",
                   border: "none",
+                  borderRight: "1px solid rgba(0,0,0,0.1)",
                 }}
               >
                 {favoriteWindow === "" ? (
@@ -561,17 +643,30 @@ function UserProfile() {
                   backgroundColor: "white",
                   color: "black",
                   border: "none",
+                  borderLeft: "1px solid rgba(0,0,0,0.1)",
                 }}
               >
                 {favoriteWindow === "" ? (
-                  <span style={{ color: "rgb(29, 155, 240)" }}>Likes</span>
+                  <span
+                    style={{
+                      color: "rgb(29, 155, 240)",
+                    }}
+                  >
+                    Likes
+                  </span>
                 ) : (
                   <span>Likes </span>
                 )}
               </Button>
             </ButtonGroup>
+            {!userInfo.posts.length || !userInfo.favorites.length ? (
+              <Row
+                style={{
+                  border: "1px solid rgba(0, 0, 0, 0.1)",
+                }}
+              ></Row>
+            ) : null}
             {/* mainpage yani home rotasına tüm twitlerin gösterileceği column burası !  */}
-
             <div className={`all-posts ${postsWindow}`}>
               {userprofiledata.map((post) => (
                 <div key={post._id}>
@@ -992,6 +1087,25 @@ function UserProfile() {
                       </Stack>
                     </div>
                     <div style={{ padding: "3px" }}>{favorite.content}</div>
+                    {favorite.image.url !== "image@url" ? (
+                      <div
+                        style={{
+                          overflow: "hidden",
+                          border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
+                          borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
+                          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                        }}
+                      >
+                        <img
+                          src={favorite.image.url}
+                          alt="Description"
+                          style={{
+                            width: "100%",
+                            display: "block",
+                          }}
+                        />
+                      </div>
+                    ) : null}
                     <Stack
                       direction="horizontal"
                       gap={3}
