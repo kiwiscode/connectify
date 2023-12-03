@@ -10,7 +10,7 @@ router.get(
   profileController.handleShowSpesificProfile
 );
 router.post(
-  "/add-profile-picture",
+  "/add-profile-image",
   authenticateToken,
   profileController.handleProfilePicture
 );

@@ -1,5 +1,7 @@
 const User = require("../models/User.model");
 const Post = require("../models/Post.model");
+const cloudinary = require("../utils/cloudinary");
+
 const handleProfile = (req, res) => {
   const userId = req.user.userId;
 
@@ -65,11 +67,51 @@ const handleProfilePicture = (req, res) => {
   const { userId } = req.user;
   const { profileImage } = req.body;
 
-  console.log("Profile Image => ", profileImage);
+  console.log(
+    "PROFILE IMAGE CURRENT RECEIVED FROM REQ.BODY=>",
+    profileImage.slice(0, 21)
+  );
+
   console.log(
     "Active user who is trying to change profile picture => ",
     userId
   );
+
+  User.findById(userId)
+    .then((user) => {
+      if (profileImage) {
+        cloudinary.uploader
+          .upload(profileImage, {
+            folder: "connectify",
+            allowed_formats: [
+              "mp4",
+              "ogv",
+              "jpg",
+              "png",
+              "pdf",
+              "webm",
+              "webp",
+            ],
+            width: 133,
+            height: 133,
+            radius: "max",
+            crop: "fill",
+          })
+          .then((imageInfo) => {
+            console.log("AFTER UPLOADING THE IMAGE =>", imageInfo);
+            user.imageUrl = imageInfo.url;
+            user.save();
+
+            res.status(200).json(imageInfo);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    })
+    .catch(() => {
+      res.status(404).json({ errorMessage: "USER NOT FOUND!" });
+    });
 };
 
 module.exports = {

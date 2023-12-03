@@ -149,7 +149,7 @@ function LogoutModal() {
   const navigate = useNavigate();
   const localeInfo = JSON.parse(localStorage.getItem("userInfo"));
   const [show, setShow] = useState(false);
-  const { getToken, logout } = useContext(UserContext);
+  const { getToken, logout, userInfo } = useContext(UserContext);
 
   const handleClose = () => setShow(false);
   const handleShow = (e) => {
@@ -178,17 +178,27 @@ function LogoutModal() {
       {/* start to check  */}
 
       <div className="logout-nav" onClick={handleShow}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="40"
-          height="40"
-          fill="rgb(83, 100, 113)"
-          className="bi bi-person-circle"
-          viewBox="0 0 16 16"
-        >
-          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-          <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-        </svg>
+        {/* start to check */}
+        {userInfo.imageUrl.slice(0, 3) !== "../" ? (
+          <img src={userInfo.imageUrl} width={40} height={40} alt="" />
+        ) : (
+          <div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="40"
+              height="40"
+              fill="rgb(83, 100, 113)"
+              className="bi bi-person-circle"
+              viewBox="0 0 16 16"
+            >
+              <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+              <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+            </svg>
+          </div>
+        )}
+
+        {/* finish to check */}
+
         <div className="info-logout">
           <span
             style={{
@@ -246,7 +256,7 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
   const [show, setShow] = useState(false);
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
-  const { getToken } = useContext(UserContext);
+  const { getToken, userInfo } = useContext(UserContext);
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [showEmojisBar, setshowEmojisBar] = useState("hide");
   const [showSecondModal, setShowSecondModal] = useState(false);
@@ -368,21 +378,34 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton></Modal.Header>
         <Modal.Body>
-          <div className="d-flex align-items-center">
+          <Stack direction="horizontal" gap={3}>
             <div className="p-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="35"
-                height="35"
-                fill="rgb(83, 100, 113)"
-                className="bi bi-person-circle"
-                viewBox="0 0 16 16"
-                style={{ marginBottom: "110px" }}
-              >
-                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-              </svg>
+              {" "}
+              {userInfo.imageUrl.slice(0, 3) !== "../" ? (
+                <img
+                  src={userInfo.imageUrl}
+                  width={35}
+                  height={35}
+                  alt=""
+                  style={{ position: "relative", bottom: "57px" }}
+                />
+              ) : (
+                <div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="35"
+                    height="35"
+                    fill="rgb(83, 100, 113)"
+                    className="bi bi-person-circle"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                  </svg>
+                </div>
+              )}
             </div>
+
             <div className="p-2">
               <textarea
                 onChange={handleChange}
@@ -401,6 +424,15 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
                   fontSize: "20px",
                 }}
               />
+            </div>
+          </Stack>
+          <div className="d-flex align-items-center">
+            <div className="p-2">
+              {/* start to check */}
+
+              {/* finish to check */}
+            </div>
+            <div className="p-2">
               {modalImage && (
                 <div style={{ position: "relative" }}>
                   <div
