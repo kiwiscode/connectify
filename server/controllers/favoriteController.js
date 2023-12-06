@@ -6,10 +6,9 @@ const handleGetFavorites = (req, res) => {
   const { userId } = req.user;
 
   User.findById(userId)
-    // .populate("favorites")
     .populate({
       path: "favorites",
-      options: { sort: { createdAt: -1 } }, // createdAt tarihine göre tersten sıralama
+      options: { sort: { createdAt: -1 } },
     })
     .then((favoritesFromDataBase) => {
       console.log(
@@ -55,6 +54,37 @@ const handleAddFavorite = (req, res) => {
             postId: postId,
             content: post,
           });
+
+          // NOTE start to check send notification after adding favorite
+          const checkingNotifications = user.notifications.filter(
+            (eachNotification) => {
+              return (
+                eachNotification.post.toString() === post._id.toString() &&
+                eachNotification.isFavorite.value
+              );
+            }
+          );
+
+          console.log(
+            "let's see all the notifications according to this post id =>",
+            checkingNotifications
+          );
+          if (!checkingNotifications.length) {
+            const newNotification = {
+              post: post._id,
+              notificationReceiver: post.userId,
+              isFavorite: {
+                value: true,
+                profileImageUrl: user.imageUrl,
+                userFullName: user.fullname,
+                favoritedPostContent: post.content,
+              },
+            };
+
+            user.notifications.push(newNotification);
+          }
+          // NOTE finish to check send notification after adding favorite
+
           return user.save().then(() => {
             res.status(200).json("Favorite added to your favorites");
           });
@@ -86,6 +116,33 @@ const handleDeleteFavorite = (req, res) => {
           (postToDelete) => postToDelete._id.toString() !== userId
         );
         postToDelete.save();
+
+        // NOTE start to check delete if favorite notification readed
+        const checkingNotifications = user.notifications.filter(
+          (eachNotification) => {
+            return (
+              eachNotification.post.toString() ===
+                postToDelete._id.toString() && eachNotification.isFavorite.value
+            );
+          }
+        );
+
+        console.log(
+          "let's see all the notifications according to this post id =>",
+          checkingNotifications
+        );
+
+        // let's find the index of this post and delete the notification
+        const findIndex = user.notifications.findIndex((notification) => {
+          return notification.post.toString() === postToDelete._id.toString();
+        });
+
+        console.log("THIS IS THE INDEX OF THE FAVORITE =>", findIndex);
+
+        if (findIndex) {
+          user.notifications.splice(findIndex, 1);
+        }
+        // NOTE finish to check delete if favorite notification readed
 
         Favorite.findOne({ userId: userId, postId: postId })
           .then((foundItem) => {

@@ -226,7 +226,7 @@ function LogoutModal() {
           width="25"
           height="35"
           fill="currentColor"
-          className="bi bi-three-dots none-backgroundColor"
+          className="bi bi-three-dots none-backgroundColor logout-three-dots"
           viewBox="0 0 20 20"
         >
           <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
@@ -261,6 +261,7 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
   const [showEmojisBar, setshowEmojisBar] = useState("hide");
   const [showSecondModal, setShowSecondModal] = useState(false);
   const maxCharacters = 140;
+
   console.log("POST MODAL IS WORKING => 1");
   const [modalImage, setModalImage] = useState("");
 
@@ -398,6 +399,7 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
                     fill="rgb(83, 100, 113)"
                     className="bi bi-person-circle"
                     viewBox="0 0 16 16"
+                    style={{ position: "relative", bottom: "57px" }}
                   >
                     <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
                     <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
@@ -535,7 +537,7 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
             </div>
             <div className="p-2 ms-auto">
               {" "}
-              {content !== "" ? (
+              {content !== "" || modalImage ? (
                 <Button
                   variant="primary"
                   onClick={() => handlePost()}

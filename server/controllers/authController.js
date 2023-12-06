@@ -230,6 +230,7 @@ const handleLogin = (req, res, next) => {
               updatedAt,
               favorites,
               imageUrl,
+              notifications,
             } = user;
 
             const token = jwt.sign({ userId: _id }, process.env.JWT_SECRET, {
@@ -254,6 +255,7 @@ const handleLogin = (req, res, next) => {
                 updatedAt,
                 favorites,
                 imageUrl,
+                notifications,
               },
             });
           });

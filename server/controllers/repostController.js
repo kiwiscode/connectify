@@ -54,6 +54,35 @@ const handleRepost = (req, res) => {
                   "HERE IS THE CREATED POST AFTER REPOST =>",
                   createdPost
                 );
+                // NOTE start to check send notification after reposting a post
+                const checkingNotifications = user.notifications.filter(
+                  (eachNotification) => {
+                    return (
+                      eachNotification.post.toString() ===
+                        post._id.toString() && eachNotification.isRepost.value
+                    );
+                  }
+                );
+
+                console.log(
+                  "let's see all the notifications according to this post id =>",
+                  checkingNotifications
+                );
+                if (!checkingNotifications.length) {
+                  const newNotification = {
+                    post: post._id,
+                    notificationReceiver: post.userId,
+                    isRepost: {
+                      value: true,
+                      profileImageUrl: user.imageUrl,
+                      userUsername: user.username,
+                      repostedPostContent: post.content,
+                    },
+                  };
+
+                  user.notifications.push(newNotification);
+                }
+                // NOTE finish to check send notification after reposting a post
 
                 user.posts.unshift(createdPost._id);
                 user.save();
@@ -71,6 +100,35 @@ const handleRepost = (req, res) => {
             post.reposted.unshift(userId);
             post.save();
             user.posts.unshift(postId);
+            // NOTE start to check send notification after reposting a post
+            const checkingNotifications = user.notifications.filter(
+              (eachNotification) => {
+                return (
+                  eachNotification.post.toString() === post._id.toString() &&
+                  eachNotification.isRepost.value
+                );
+              }
+            );
+
+            console.log(
+              "let's see all the notifications according to this post id =>",
+              checkingNotifications
+            );
+            if (!checkingNotifications.length) {
+              const newNotification = {
+                post: post._id,
+                notificationReceiver: post.userId,
+                isRepost: {
+                  value: true,
+                  profileImageUrl: user.imageUrl,
+                  userUsername: user.username,
+                  repostedPostContent: post.content,
+                },
+              };
+
+              user.notifications.push(newNotification);
+            }
+            // NOTE finish to check send notification after reposting a post
             user.save();
             Post.findById(post.repostedFromThisOriginalPost[0].toString())
               .then((post) => {
@@ -100,6 +158,35 @@ const handleRepost = (req, res) => {
                 post[0].reposted.unshift(userId);
                 post[0].save();
                 user.posts.unshift(post[0]._id);
+                // NOTE start to check send notification after reposting a post
+                const checkingNotifications = user.notifications.filter(
+                  (eachNotification) => {
+                    return (
+                      eachNotification.post.toString() ===
+                        post._id.toString() && eachNotification.isRepost.value
+                    );
+                  }
+                );
+
+                console.log(
+                  "let's see all the notifications according to this post id =>",
+                  checkingNotifications
+                );
+                if (!checkingNotifications.length) {
+                  const newNotification = {
+                    post: post._id,
+                    notificationReceiver: post.userId,
+                    isRepost: {
+                      value: true,
+                      profileImageUrl: user.imageUrl,
+                      userUsername: user.username,
+                      repostedPostContent: post.content,
+                    },
+                  };
+
+                  user.notifications.push(newNotification);
+                }
+                // NOTE finish to check send notification after reposting a post
                 user.save();
 
                 res
@@ -152,15 +239,27 @@ const handleDeleteReposts = (req, res) => {
             return findedPost;
           })
           .then((repostedPost) => {
-            console.log("THIS LINE IS WORKING 1 =>", repostedPost[0]._id);
-
             User.findById(userId)
               .then((user) => {
                 const filteredUserPostsArray = user.posts.filter((element) => {
                   return element.toString() !== repostedPost[0]._id.toString();
                 });
+
+                // NOTE start to check delete if repost notification readed
+                // let's find the index of this post and delete the notification
+                const findIndex = user.notifications.findIndex(
+                  (notification) => {
+                    return notification.post.toString() === post._id.toString();
+                  }
+                );
+
+                // if (findIndex) {
+                user.notifications.splice(findIndex, 1);
+                // }
+                // NOTE finish to check delete if repost notification readed
                 user.posts = filteredUserPostsArray;
                 user.save();
+                console.log("This line is working 1 =>");
               })
               .catch(() => {
                 res.status(404).json({ errorMessage: "User not found!" });
@@ -171,8 +270,7 @@ const handleDeleteReposts = (req, res) => {
                 return element.toString();
               }
             );
-
-            console.log("THIS LINE IS WORKING 2 =>", referencePostReposterIds);
+            console.log("This line is working 1.1 =>");
 
             if (
               referencePostReposterIds.includes(userId) &&
@@ -185,7 +283,8 @@ const handleDeleteReposts = (req, res) => {
               );
               repostedPost[0].reposted = filteredRepostedPost;
               repostedPost[0].save();
-              console.log("THIS LINE IS WORKING 3 =>", filteredRepostedPost);
+              console.log("This line is working 1.2 =>");
+
               res.status(200).json({
                 message: "Repost deleted from your profile successfully",
               });
@@ -194,8 +293,8 @@ const handleDeleteReposts = (req, res) => {
               referencePostReposterIds.length === 1
             ) {
               Post.findByIdAndDelete(repostedPost[0]._id.toString())
-                .then((result) => {
-                  console.log("THIS LINE IS WORKING 4 => ", result);
+                .then(() => {
+                  console.log("This line is working 1.3 =>");
                   res.status(200).json({
                     message:
                       "Repost deleted from your profile and posts collection successfully",
@@ -224,17 +323,8 @@ const handleDeleteReposts = (req, res) => {
           post.reposted[0].toString() === userId &&
           post.reposted.length === 1
         ) {
-          console.log(
-            "LINE IS WORKING 1 ",
-            post.repostedFromThisOriginalPost[0].toString()
-          );
-
           Post.find({ _id: post.repostedFromThisOriginalPost[0].toString() })
             .then((originalPost) => {
-              console.log(
-                "WE FOUND ORIGINAL POST FROM REFERENCE POST =>",
-                originalPost
-              );
               originalPost[0].reposted = filteredPostArray;
               originalPost[0].save();
             })
@@ -242,7 +332,6 @@ const handleDeleteReposts = (req, res) => {
               res.json("Original post not found!");
             });
 
-          console.log("POST THAT WE ARE DEALING => ", post);
           Post.findByIdAndDelete(post._id)
             .then(() => {
               User.findById(userId)
@@ -253,10 +342,23 @@ const handleDeleteReposts = (req, res) => {
                     }
                   );
 
+                  // NOTE start to check delete if repost notification readed
+                  // let's find the index of this post and delete the notification
+                  const findIndex = user.notifications.findIndex(
+                    (notification) => {
+                      return (
+                        notification.post.toString() === post._id.toString()
+                      );
+                    }
+                  );
+
+                  if (findIndex) {
+                    user.notifications.splice(findIndex, 1);
+                  }
+                  // NOTE finish to check delete if repost notification readed
                   user.posts = filteredUserPostsArray;
-
                   user.save();
-
+                  console.log("This line is working 2 =>");
                   res.status(200).json({
                     message:
                       "Repost deleted from your profile and posts collection successfully",
@@ -278,11 +380,35 @@ const handleDeleteReposts = (req, res) => {
                 return element.toString() !== postId;
               });
               post.reposted = filteredPostArray;
-              user.posts = filteredUserPostsArray;
+
               post.save();
+              // NOTE start to check delete if favorite notification readed
+              const checkingNotifications = user.notifications.filter(
+                (eachNotification) => {
+                  return (
+                    eachNotification.post.toString() === post._id.toString() &&
+                    eachNotification.isRepost.value
+                  );
+                }
+              );
+
+              console.log(
+                "let's see all the notifications according to this post id =>",
+                checkingNotifications
+              );
+
+              // let's find the index of this post and delete the notification
+              const findIndex = user.notifications.findIndex((notification) => {
+                return notification.post.toString() === post._id.toString();
+              });
+
+              if (findIndex) {
+                user.notifications.splice(findIndex, 1);
+              }
+              // NOTE finish to check delete if favorite notification readed
+              user.posts = filteredUserPostsArray;
               user.save();
-              console.log("LINE 3", post.reposted);
-              console.log("LINE 4", user.posts);
+              console.log("This line is working 3 =>");
 
               // let's find original array
               Post.find({
