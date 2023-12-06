@@ -418,7 +418,7 @@ function SpesificUserProfile() {
         >
           <Col xs={12} sm={12} md={6} lg={3}>
             <nav className="nav-bar-home">
-              <a href="/home">
+              <Link href="/home">
                 <div>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -432,7 +432,7 @@ function SpesificUserProfile() {
                     <path d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
                   </svg>
                 </div>
-              </a>
+              </Link>
               <div className="inner-div">
                 <Link to="/home">
                   <div>
