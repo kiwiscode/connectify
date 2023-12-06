@@ -1,5 +1,34 @@
 const { Schema, model } = require("mongoose");
 const Message = require("../models/Message.model");
+
+const notificationSchema = new Schema({
+  post: { type: Schema.Types.ObjectId, ref: "Post" },
+  notificationReceiver: { type: Schema.Types.ObjectId, ref: "User" },
+  isFavorite: {
+    value: { type: Boolean, default: false },
+    profileImageUrl: { type: String, default: "" },
+    userFullName: { type: String, default: "" },
+    favoritedPostContent: { type: String, default: "" },
+  },
+  isRepost: {
+    value: { type: Boolean, default: false },
+    profileImageUrl: { type: String, default: "" },
+    userUsername: { type: String, default: "" },
+    repostedPostContent: { type: String, default: "" },
+  },
+  isComment: {
+    value: { type: Boolean, default: false },
+    profileImageUrl: { type: String, default: "" },
+    userFullName: { type: String, default: "" },
+    userUsername: { type: String, default: "" },
+    comment: { type: String, default: "" },
+  },
+  isReaded: {
+    type: Boolean,
+    default: false,
+  },
+});
+
 const userSchema = new Schema(
   {
     fullname: { type: String, required: true },
@@ -11,11 +40,12 @@ const userSchema = new Schema(
     bio: String,
     imageUrl: String,
     posts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
-    followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
-    following: [{ type: Schema.Types.ObjectId, ref: "User" }],
     favorites: [{ type: Schema.Types.ObjectId, ref: "Post" }],
     reposts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
+    followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    following: [{ type: Schema.Types.ObjectId, ref: "User" }],
     messages: [{ type: Schema.Types.ObjectId, ref: "Message" }],
+    notifications: [notificationSchema],
   },
   {
     timestamps: true,
