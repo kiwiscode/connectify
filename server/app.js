@@ -31,4 +31,7 @@ app.use("/favorite", addFavoriteRoutes);
 const postRepost = require("./routes/repost.routes");
 app.use("/repost", postRepost);
 
+const notificationRoutes = require("./routes/notification.routes");
+app.use("/notifications", notificationRoutes);
+
 module.exports = app;

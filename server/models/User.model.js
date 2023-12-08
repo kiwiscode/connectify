@@ -1,33 +1,41 @@
 const { Schema, model } = require("mongoose");
 const Message = require("../models/Message.model");
 
-const notificationSchema = new Schema({
-  post: { type: Schema.Types.ObjectId, ref: "Post" },
-  notificationReceiver: { type: Schema.Types.ObjectId, ref: "User" },
-  isFavorite: {
-    value: { type: Boolean, default: false },
-    profileImageUrl: { type: String, default: "" },
-    userFullName: { type: String, default: "" },
-    favoritedPostContent: { type: String, default: "" },
+const notificationSchema = new Schema(
+  {
+    post: { type: Schema.Types.ObjectId, ref: "Post" },
+    notificationReceiver: { type: Schema.Types.ObjectId, ref: "User" },
+    isFavorite: {
+      value: { type: Boolean, default: false },
+      profileImageUrl: { type: String, default: "" },
+      userFullName: { type: String, default: "" },
+      favoritedPostContent: { type: String, default: "" },
+      senderId: { type: Schema.Types.ObjectId, ref: "User" },
+    },
+    isRepost: {
+      value: { type: Boolean, default: false },
+      profileImageUrl: { type: String, default: "" },
+      userUserName: { type: String, default: "" },
+      repostedPostContent: { type: String, default: "" },
+      senderId: { type: Schema.Types.ObjectId, ref: "User" },
+    },
+    isComment: {
+      value: { type: Boolean, default: false },
+      profileImageUrl: { type: String, default: "" },
+      userFullName: { type: String, default: "" },
+      userUsername: { type: String, default: "" },
+      comment: { type: String, default: "" },
+      senderId: { type: Schema.Types.ObjectId, ref: "User" },
+    },
+    isReaded: {
+      type: Boolean,
+      default: false,
+    },
   },
-  isRepost: {
-    value: { type: Boolean, default: false },
-    profileImageUrl: { type: String, default: "" },
-    userUsername: { type: String, default: "" },
-    repostedPostContent: { type: String, default: "" },
-  },
-  isComment: {
-    value: { type: Boolean, default: false },
-    profileImageUrl: { type: String, default: "" },
-    userFullName: { type: String, default: "" },
-    userUsername: { type: String, default: "" },
-    comment: { type: String, default: "" },
-  },
-  isReaded: {
-    type: Boolean,
-    default: false,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 const userSchema = new Schema(
   {
