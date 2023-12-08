@@ -102,6 +102,7 @@ function SpesificUserProfile() {
       handleShowSpesificUserProfilePagePosts();
     }
   }, []);
+  console.log("PROFILE INFO POSTS =>", profileInfoPosts);
 
   // finish to check
   const months = [
@@ -330,7 +331,7 @@ function SpesificUserProfile() {
   const setLoadingFalse = () => {
     setIsLoading(false);
   };
-
+  console.log(profileInfoPosts);
   //  NOTE start to check calculation the length according isReaded value
   const checkIfFavoriteNotitificationIsNotReaded = (array) => {
     const filter = array.map((eachNotificationItem) => {

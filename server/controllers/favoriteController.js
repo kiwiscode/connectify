@@ -78,6 +78,7 @@ const handleAddFavorite = (req, res) => {
                     profileImageUrl: user.imageUrl,
                     userFullName: user.fullname,
                     favoritedPostContent: post.content,
+                    senderId: userId,
                   },
                 };
 

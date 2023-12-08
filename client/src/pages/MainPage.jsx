@@ -425,23 +425,28 @@ function MainPage() {
         },
       })
       .then((response) => {
-        console.log(
-          "LET'S SEE THE NOTIFICATIONS =>",
-          response.data.notifications
-        );
-        // setNotifications(response.data.notifications);
+        setNotifications(response.data.notifications);
       })
       .catch(() => {
         console.log(error);
       });
   };
   // NOTE finish to check get all the notifications from backend api endpoint
+  console.log("POSTS =>", posts);
 
+  console.log("LET'S SEE THE NOTIFICATIONS =>", notifications);
   useEffect(() => {
     console.log("POSTS =>", posts);
+
     setshouldHide(true);
     handleShowPostsHomePage();
   }, []);
+
+  const getRepostedIds = (array) => {
+    return array.reposted.map((eachRepost) => {
+      return eachRepost._id;
+    });
+  };
 
   return (
     <>
@@ -1063,13 +1068,20 @@ function MainPage() {
                             Num Of Comments?
                           </span>
                         </div>
+                        {/* start to check */}
                         <div className="p-0">
-                          {post.reposted.length > 0 ? (
+                          {post.reposted.length > 0 &&
+                          getRepostedIds(post).includes(userInfo._id) ? (
                             <div>
                               <svg
                                 onClick={() =>
                                   handleDeleteRepostMainPage(post._id)
                                 }
+                                style={{
+                                  color: "rgb(0, 186, 124)",
+                                  fontSize: "15px",
+                                  marginLeft: "5px",
+                                }}
                                 color="rgb(0, 186, 124)"
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="16"
@@ -1100,7 +1112,6 @@ function MainPage() {
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="16"
                                 height="16"
-                                // color="rgb(0, 186, 124)"
                                 fill={
                                   !shouldHide &&
                                   post.reposted.includes(userInfo._id)
@@ -1131,6 +1142,7 @@ function MainPage() {
                             </div>
                           )}
                         </div>
+                        {/* finish to check */}
 
                         <div className="p-0">
                           {post.likes.includes(userInfo._id) ? (
@@ -1239,33 +1251,68 @@ function MainPage() {
                             {notification.isFavorite.value ? (
                               <div>
                                 {" "}
-                                <div className="p-0">
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="25"
-                                    height="22"
-                                    fill="rgb(249, 24, 128)"
-                                    className={`bi bi-heart-fill`}
-                                    viewBox="0 0 16 16"
-                                  >
-                                    <path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
-                                  </svg>
+                                <div className="flex-container">
+                                  <div className="p-0 ">
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      width="25"
+                                      height="32"
+                                      fill="rgba(249,24,128,1.00)"
+                                      className={`bi bi-heart-fill`}
+                                      viewBox="0 0 16 16"
+                                    >
+                                      <path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
+                                    </svg>
+                                  </div>
+                                  <div className="notification-margin">
+                                    <img
+                                      src={
+                                        notification.isFavorite.profileImageUrl
+                                      }
+                                      width={32}
+                                      height={32}
+                                      alt="image who liked the post"
+                                    />
+                                  </div>
                                 </div>
-                                <div className="p-0 verified-icon">
-                                  <img
-                                    src={
-                                      notification.isFavorite.profileImageUrl
-                                    }
-                                    width={30}
-                                    height={30}
-                                    alt="image who liked the post"
-                                  />
-                                </div>
-                                <div style={{ padding: "3px" }}>
-                                  who liked your post ?
-                                </div>
-                                <div style={{ padding: "3px" }}>
-                                  what is the content of post ?
+                                <div className="favorite-notification-body">
+                                  <div style={{ padding: "3px" }}>
+                                    <span
+                                      style={{
+                                        fontWeight: "700",
+                                        cursor: "pointer",
+                                      }}
+                                    >
+                                      <Link
+                                        style={{ color: " black" }}
+                                        to={`/profile/${notification.isFavorite.senderId}`}
+                                      >
+                                        <span className="from-notification-to-user">
+                                          {notification.isFavorite.userFullName}
+                                        </span>
+                                      </Link>
+                                      <span
+                                        style={{
+                                          fontWeight: "400",
+                                          lineHeight: "20px",
+                                          fontSize: "15px",
+                                        }}
+                                      >
+                                        {" "}
+                                        liked your post
+                                      </span>
+                                    </span>
+                                  </div>
+                                  <div style={{ padding: "3px" }}>
+                                    <span
+                                      style={{ color: " rgb(83, 100, 113)" }}
+                                    >
+                                      {
+                                        notification.isFavorite
+                                          .favoritedPostContent
+                                      }
+                                    </span>
+                                  </div>
                                 </div>
                               </div>
                             ) : null}
@@ -1273,7 +1320,7 @@ function MainPage() {
 
                             {/* NOTE INFO start to check If the notification is repost */}
 
-                            {notification.isFavorite.value ? (
+                            {notification.isRepost.value ? (
                               <div>
                                 {" "}
                                 <div className="p-0">
