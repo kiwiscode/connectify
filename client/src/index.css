@@ -564,3 +564,21 @@ path {
     margin-right: 330px;
   }
 }
+
+.flex-container {
+  display: flex;
+}
+
+.notification-margin {
+  position: relative;
+  margin-left: 10px;
+}
+
+.favorite-notification-body {
+  position: relative;
+  margin-left: 35px;
+}
+
+.from-notification-to-user:hover {
+  text-decoration: underline;
+}

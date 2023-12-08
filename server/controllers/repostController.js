@@ -55,33 +55,7 @@ const handleRepost = (req, res) => {
                   createdPost
                 );
                 // NOTE start to check send notification after reposting a post
-                const checkingNotifications = user.notifications.filter(
-                  (eachNotification) => {
-                    return (
-                      eachNotification.post.toString() ===
-                        post._id.toString() && eachNotification.isRepost.value
-                    );
-                  }
-                );
 
-                console.log(
-                  "let's see all the notifications according to this post id =>",
-                  checkingNotifications
-                );
-                if (!checkingNotifications.length) {
-                  const newNotification = {
-                    post: post._id,
-                    notificationReceiver: post.userId,
-                    isRepost: {
-                      value: true,
-                      profileImageUrl: user.imageUrl,
-                      userUsername: user.username,
-                      repostedPostContent: post.content,
-                    },
-                  };
-
-                  user.notifications.push(newNotification);
-                }
                 // NOTE finish to check send notification after reposting a post
 
                 user.posts.unshift(createdPost._id);
@@ -246,16 +220,7 @@ const handleDeleteReposts = (req, res) => {
                 });
 
                 // NOTE start to check delete if repost notification readed
-                // let's find the index of this post and delete the notification
-                const findIndex = user.notifications.findIndex(
-                  (notification) => {
-                    return notification.post.toString() === post._id.toString();
-                  }
-                );
 
-                // if (findIndex) {
-                user.notifications.splice(findIndex, 1);
-                // }
                 // NOTE finish to check delete if repost notification readed
                 user.posts = filteredUserPostsArray;
                 user.save();

@@ -10,12 +10,14 @@ const notificationSchema = new Schema(
       profileImageUrl: { type: String, default: "" },
       userFullName: { type: String, default: "" },
       favoritedPostContent: { type: String, default: "" },
+      senderId: { type: Schema.Types.ObjectId, ref: "User" },
     },
     isRepost: {
       value: { type: Boolean, default: false },
       profileImageUrl: { type: String, default: "" },
-      userUsername: { type: String, default: "" },
+      userUserName: { type: String, default: "" },
       repostedPostContent: { type: String, default: "" },
+      senderId: { type: Schema.Types.ObjectId, ref: "User" },
     },
     isComment: {
       value: { type: Boolean, default: false },
@@ -23,6 +25,7 @@ const notificationSchema = new Schema(
       userFullName: { type: String, default: "" },
       userUsername: { type: String, default: "" },
       comment: { type: String, default: "" },
+      senderId: { type: Schema.Types.ObjectId, ref: "User" },
     },
     isReaded: {
       type: Boolean,
