@@ -34,6 +34,7 @@ function SigninModal() {
     setShow(false);
   };
   const handleShow = () => {
+    console.log("BUTTON CLICKED");
     setShow(true);
   };
 
@@ -148,7 +149,7 @@ function LogoutModal() {
   const navigate = useNavigate();
   const localeInfo = JSON.parse(localStorage.getItem("userInfo"));
   const [show, setShow] = useState(false);
-  const { getToken, logout } = useContext(UserContext);
+  const { getToken, logout, userInfo } = useContext(UserContext);
 
   const handleClose = () => setShow(false);
   const handleShow = (e) => {
@@ -174,131 +175,59 @@ function LogoutModal() {
 
   return (
     <>
-      {/* <a
-        href=""
-        onClick={handleShow}
-        style={{
-          display: "block",
-          textDecoration: "none",
-        }}
-      >
-        <div>
-          <div
-            className="username-nav"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginTop: "100px",
-              marginLeft: "-153px",
-            }}
-          >
-            <div>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="40"
-                height="40"
-                fill="rgb(83, 100, 113)"
-                className="bi bi-person-circle"
-                viewBox="0 0 16 16"
-                style={{ padding: "3px" }}
-              >
-                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-              </svg>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                marginLeft: "5px",
-              }}
-            >
-              <span
-                style={{
-                  color: "rgb(15,20,25)",
-                  lineHeight: "20px",
-                  fontWeight: "700",
-                  fontSize: "15px",
-                }}
-              >
-                {localeInfo.username}
-              </span>
-              <span
-                style={{
-                  color: "rgb(83, 100, 113)",
-                  fontSize: "15px",
-                  lineHeight: "20px",
-                  fontWeight: "400",
-                }}
-              >
-                @{localeInfo.username}
-              </span>
-            </div>
-            <div>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="25"
-                fill="currentColor"
-                className="bi bi-three-dots"
-                viewBox="0 0 20 20"
-                style={{
-                  position: "relative",
-                  left: "150",
-                }}
-                onClick={() => handleShow()}
-              >
-                <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
-              </svg>
-            </div>
-          </div>
-        </div>
-      </a> */}
-
       {/* start to check  */}
 
-      <div className="logout-nav">
+      <div className="logout-nav" onClick={handleShow}>
+        {/* start to check */}
+        {userInfo.imageUrl.slice(0, 3) !== "../" ? (
+          <img src={userInfo.imageUrl} width={40} height={40} alt="" />
+        ) : (
+          <div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="40"
+              height="40"
+              fill="rgb(83, 100, 113)"
+              className="bi bi-person-circle"
+              viewBox="0 0 16 16"
+            >
+              <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+              <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+            </svg>
+          </div>
+        )}
+
+        {/* finish to check */}
+
+        <div className="info-logout">
+          <span
+            style={{
+              color: "rgb(15,20,25)",
+              lineHeight: "20px",
+              fontWeight: "700",
+              fontSize: "15px",
+            }}
+          >
+            {localeInfo.username}
+          </span>
+          <span
+            style={{
+              color: "rgb(83, 100, 113)",
+              fontSize: "15px",
+              lineHeight: "20px",
+              fontWeight: "400",
+            }}
+          >
+            @{localeInfo.username}
+          </span>
+        </div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="40"
-          height="40"
-          fill="rgb(83, 100, 113)"
-          className="bi bi-person-circle"
-          viewBox="0 0 16 16"
-        >
-          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-          <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-        </svg>
-
-        <span
-          style={{
-            color: "rgb(15,20,25)",
-            lineHeight: "20px",
-            fontWeight: "700",
-            fontSize: "15px",
-          }}
-        >
-          {localeInfo.username}
-        </span>
-        <span
-          style={{
-            color: "rgb(83, 100, 113)",
-            fontSize: "15px",
-            lineHeight: "20px",
-            fontWeight: "400",
-          }}
-        >
-          @{localeInfo.username}
-        </span>
-
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="25"
+          width="25"
+          height="35"
           fill="currentColor"
-          className="bi bi-three-dots logout-nav"
+          className="bi bi-three-dots none-backgroundColor logout-three-dots"
           viewBox="0 0 20 20"
-          onClick={() => handleShow()}
         >
           <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
         </svg>
@@ -327,11 +256,12 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
   const [show, setShow] = useState(false);
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
-  const { getToken } = useContext(UserContext);
+  const { getToken, userInfo } = useContext(UserContext);
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [showEmojisBar, setshowEmojisBar] = useState("hide");
   const [showSecondModal, setShowSecondModal] = useState(false);
   const maxCharacters = 140;
+
   console.log("POST MODAL IS WORKING => 1");
   const [modalImage, setModalImage] = useState("");
 
@@ -442,28 +372,42 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
 
   return (
     <>
-      <Button variant="primary" onClick={handleShow} className="compose-tweet">
+      <Button variant="primary" onClick={handleShow} className="compose-tweet ">
         Post
       </Button>
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton></Modal.Header>
         <Modal.Body>
-          <div className="d-flex align-items-center">
+          <Stack direction="horizontal" gap={3}>
             <div className="p-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="35"
-                height="35"
-                fill="rgb(83, 100, 113)"
-                className="bi bi-person-circle"
-                viewBox="0 0 16 16"
-                style={{ marginBottom: "110px" }}
-              >
-                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-              </svg>
+              {" "}
+              {userInfo.imageUrl.slice(0, 3) !== "../" ? (
+                <img
+                  src={userInfo.imageUrl}
+                  width={35}
+                  height={35}
+                  alt=""
+                  style={{ position: "relative", bottom: "57px" }}
+                />
+              ) : (
+                <div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="35"
+                    height="35"
+                    fill="rgb(83, 100, 113)"
+                    className="bi bi-person-circle"
+                    viewBox="0 0 16 16"
+                    style={{ position: "relative", bottom: "57px" }}
+                  >
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                  </svg>
+                </div>
+              )}
             </div>
+
             <div className="p-2">
               <textarea
                 onChange={handleChange}
@@ -482,6 +426,15 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
                   fontSize: "20px",
                 }}
               />
+            </div>
+          </Stack>
+          <div className="d-flex align-items-center">
+            <div className="p-2">
+              {/* start to check */}
+
+              {/* finish to check */}
+            </div>
+            <div className="p-2">
               {modalImage && (
                 <div style={{ position: "relative" }}>
                   <div
@@ -584,7 +537,7 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
             </div>
             <div className="p-2 ms-auto">
               {" "}
-              {content !== "" ? (
+              {content !== "" || modalImage ? (
                 <Button
                   variant="primary"
                   onClick={() => handlePost()}
@@ -609,7 +562,8 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
           style={{
             position: "fixed",
             zIndex: 9999,
-            marginTop: "375px",
+            marginTop: "315px",
+            marginLeft: "55px",
           }}
         >
           <Picker

@@ -9,5 +9,9 @@ router.get(
   authenticateToken,
   profileController.handleShowSpesificProfile
 );
-
+router.post(
+  "/add-profile-image",
+  authenticateToken,
+  profileController.handleProfilePicture
+);
 module.exports = router;
