@@ -4,8 +4,7 @@ const Post = require("../models/Post.model");
 const handleRepost = (req, res) => {
   const { postId } = req.body;
   const { userId } = req.body;
-  console.log(postId);
-  console.log(userId);
+
   User.findById(userId)
     .then((user) => {
       Post.findById(postId)
@@ -19,10 +18,11 @@ const handleRepost = (req, res) => {
             return element._id.toString();
           });
 
+          console.log("POST OWNER WHO WILL NOTIFY=>", post.userId.toString());
+          console.log("REPOSTER USER =>", user._id.toString());
           const userRepostIds = user.reposts.map((element) => {
             return element._id.toString();
           });
-
           if (
             !post.reposted.length &&
             !post.isReposted &&
@@ -31,9 +31,54 @@ const handleRepost = (req, res) => {
           ) {
             post.reposted.unshift(userId);
             post.save();
+            // NOTE start to check send notification after adding repost
+            if (post.userId.toString() !== userId) {
+              User.findById(post.userId.toString())
+                .then((notificationReceiver) => {
+                  const checkingNotifications =
+                    notificationReceiver.notifications.filter(
+                      (eachNotification) => {
+                        return (
+                          eachNotification.post.toString() ===
+                            post._id.toString() &&
+                          eachNotification.isRepost.value
+                        );
+                      }
+                    );
 
-            console.log("HERE IS THE POST =>", post);
+                  if (!checkingNotifications.length) {
+                    const newNotification = {
+                      post: post._id,
+                      notificationReceiver: post.userId,
+                      isRepost: {
+                        value: true,
+                        profileImageUrl: user.imageUrl,
+                        userUserName: user.username,
+                        repostedPostContent: post.content,
+                        senderId: userId,
+                      },
+                    };
 
+                    notificationReceiver.notifications.push(newNotification);
+                    notificationReceiver.save();
+
+                    console.log(
+                      "NOTIFICATION RECEIVER INFORMED ABOUT HIS POST GOT REPOST"
+                    );
+                  }
+                })
+                .catch(() => {
+                  res.status(404).json({
+                    errorMessage: "Notification receiver user not found!",
+                  });
+                });
+            } else {
+              console.log(
+                "NOTIFICATION RECEIVER NOT INFORMED ABOUT HIS POST GOT REPOST BECAUSE HE IS THE PERSON WHO REPOSTED HIS POST !"
+              );
+            }
+
+            // NOTE finish to check send notification after adding repost
             return Post.create({
               userId: post.userId,
               authorFullName: post.authorFullName,
@@ -50,40 +95,6 @@ const handleRepost = (req, res) => {
               likes: post.likes,
             })
               .then((createdPost) => {
-                console.log(
-                  "HERE IS THE CREATED POST AFTER REPOST =>",
-                  createdPost
-                );
-                // NOTE start to check send notification after reposting a post
-                const checkingNotifications = user.notifications.filter(
-                  (eachNotification) => {
-                    return (
-                      eachNotification.post.toString() ===
-                        post._id.toString() && eachNotification.isRepost.value
-                    );
-                  }
-                );
-
-                console.log(
-                  "let's see all the notifications according to this post id =>",
-                  checkingNotifications
-                );
-                if (!checkingNotifications.length) {
-                  const newNotification = {
-                    post: post._id,
-                    notificationReceiver: post.userId,
-                    isRepost: {
-                      value: true,
-                      profileImageUrl: user.imageUrl,
-                      userUsername: user.username,
-                      repostedPostContent: post.content,
-                    },
-                  };
-
-                  user.notifications.push(newNotification);
-                }
-                // NOTE finish to check send notification after reposting a post
-
                 user.posts.unshift(createdPost._id);
                 user.save();
                 res
@@ -101,33 +112,57 @@ const handleRepost = (req, res) => {
             post.save();
             user.posts.unshift(postId);
             // NOTE start to check send notification after reposting a post
-            const checkingNotifications = user.notifications.filter(
-              (eachNotification) => {
-                return (
-                  eachNotification.post.toString() === post._id.toString() &&
-                  eachNotification.isRepost.value
-                );
-              }
-            );
+            // eğer user kendi repostlanmış postunu repost etmiyorsa
+            if (post.userId.toString() !== userId) {
+              User.findById(post.userId.toString())
+                .then((notificationReceiver) => {
+                  const checkingNotifications =
+                    notificationReceiver.notifications.filter(
+                      (eachNotification) => {
+                        return (
+                          eachNotification.post.toString() ===
+                            post._id.toString() &&
+                          eachNotification.isRepost.value
+                        );
+                      }
+                    );
 
-            console.log(
-              "let's see all the notifications according to this post id =>",
-              checkingNotifications
-            );
-            if (!checkingNotifications.length) {
-              const newNotification = {
-                post: post._id,
-                notificationReceiver: post.userId,
-                isRepost: {
-                  value: true,
-                  profileImageUrl: user.imageUrl,
-                  userUsername: user.username,
-                  repostedPostContent: post.content,
-                },
-              };
+                  if (!checkingNotifications.length) {
+                    const newNotification = {
+                      post: post._id,
+                      notificationReceiver: post.userId,
+                      isRepost: {
+                        value: true,
+                        profileImageUrl: user.imageUrl,
+                        userUserName: user.username,
+                        repostedPostContent: post.content,
+                        senderId: userId,
+                      },
+                    };
 
-              user.notifications.push(newNotification);
+                    notificationReceiver.notifications.push(newNotification);
+                    notificationReceiver.save();
+
+                    console.log(
+                      "NOTIFICATION RECEIVER INFORMED ABOUT HIS POST GOT REPOST 2"
+                    );
+                  }
+                  // eğer user kendi repostlanmış postunu repost ediyorsa hiçbir şey yapma ve ona notification gönderme çünkü kendi repostlanan postunu repost ediyor
+                  else {
+                    console.log(
+                      "NOTIFICATION RECEIVER NOT INFORMED ABOUT HIS POST GOT REPOST BECAUSE HE IS THE PERSON WHO REPOSTED HIS POST !"
+                    );
+
+                    return;
+                  }
+                })
+                .catch(() => {
+                  res.status(404).json({
+                    errorMessage: "Notification receiver user not found!",
+                  });
+                });
             }
+
             // NOTE finish to check send notification after reposting a post
             user.save();
             Post.findById(post.repostedFromThisOriginalPost[0].toString())
@@ -151,6 +186,60 @@ const handleRepost = (req, res) => {
             post.reposted.unshift(userId);
             post.save();
 
+            console.log("THIS LINE IS WORKING !");
+            // NOTE start to check send notification after reposting a post
+
+            if (post.userId.toString() !== userId) {
+              User.findById(post.userId.toString())
+                .then((notificationReceiver) => {
+                  const checkingNotifications =
+                    notificationReceiver.notifications.filter(
+                      (eachNotification) => {
+                        return (
+                          eachNotification.post.toString() ===
+                            post._id.toString() &&
+                          eachNotification.isRepost.value
+                        );
+                      }
+                    );
+
+                  if (!checkingNotifications.length) {
+                    const newNotification = {
+                      post: post._id,
+                      notificationReceiver: post.userId,
+                      isRepost: {
+                        value: true,
+                        profileImageUrl: user.imageUrl,
+                        userUserName: user.username,
+                        repostedPostContent: post.content,
+                        senderId: userId,
+                      },
+                    };
+
+                    notificationReceiver.notifications.push(newNotification);
+                    notificationReceiver.save();
+
+                    console.log(
+                      "NOTIFICATION RECEIVER INFORMED ABOUT HIS POST GOT REPOST 3"
+                    );
+                  }
+                  // eğer user kendi postunu repost ediyorsa hiçbir şey yapma ve ona notification gönderme çünkü kendi repostlanan postunu repost ediyor
+                  else {
+                    console.log(
+                      "NOTIFICATION RECEIVER NOT INFORMED ABOUT HIS POST GOT REPOST BECAUSE HE IS THE PERSON WHO REPOSTED HIS POST 2 !"
+                    );
+
+                    return;
+                  }
+                })
+                .catch(() => {
+                  res.status(404).json({
+                    errorMessage: "Notification receiver user not found!",
+                  });
+                });
+            }
+
+            // NOTE finish to check send notification after reposting a post
             Post.find({ repostedFromThisOriginalPost: postId })
               .then((post) => {
                 console.log("I am here lets go => ", post[0]._id);
@@ -158,42 +247,14 @@ const handleRepost = (req, res) => {
                 post[0].reposted.unshift(userId);
                 post[0].save();
                 user.posts.unshift(post[0]._id);
-                // NOTE start to check send notification after reposting a post
-                const checkingNotifications = user.notifications.filter(
-                  (eachNotification) => {
-                    return (
-                      eachNotification.post.toString() ===
-                        post._id.toString() && eachNotification.isRepost.value
-                    );
-                  }
-                );
-
-                console.log(
-                  "let's see all the notifications according to this post id =>",
-                  checkingNotifications
-                );
-                if (!checkingNotifications.length) {
-                  const newNotification = {
-                    post: post._id,
-                    notificationReceiver: post.userId,
-                    isRepost: {
-                      value: true,
-                      profileImageUrl: user.imageUrl,
-                      userUsername: user.username,
-                      repostedPostContent: post.content,
-                    },
-                  };
-
-                  user.notifications.push(newNotification);
-                }
-                // NOTE finish to check send notification after reposting a post
                 user.save();
 
                 res
                   .status(200)
                   .json({ message: "Repost Created Successfully!" });
               })
-              .catch(() => {
+              .catch((error) => {
+                console.log(error);
                 console.log("ERROR");
               });
           }
@@ -246,16 +307,7 @@ const handleDeleteReposts = (req, res) => {
                 });
 
                 // NOTE start to check delete if repost notification readed
-                // let's find the index of this post and delete the notification
-                const findIndex = user.notifications.findIndex(
-                  (notification) => {
-                    return notification.post.toString() === post._id.toString();
-                  }
-                );
 
-                // if (findIndex) {
-                user.notifications.splice(findIndex, 1);
-                // }
                 // NOTE finish to check delete if repost notification readed
                 user.posts = filteredUserPostsArray;
                 user.save();
@@ -343,18 +395,7 @@ const handleDeleteReposts = (req, res) => {
                   );
 
                   // NOTE start to check delete if repost notification readed
-                  // let's find the index of this post and delete the notification
-                  const findIndex = user.notifications.findIndex(
-                    (notification) => {
-                      return (
-                        notification.post.toString() === post._id.toString()
-                      );
-                    }
-                  );
 
-                  if (findIndex) {
-                    user.notifications.splice(findIndex, 1);
-                  }
                   // NOTE finish to check delete if repost notification readed
                   user.posts = filteredUserPostsArray;
                   user.save();
@@ -382,30 +423,9 @@ const handleDeleteReposts = (req, res) => {
               post.reposted = filteredPostArray;
 
               post.save();
-              // NOTE start to check delete if favorite notification readed
-              const checkingNotifications = user.notifications.filter(
-                (eachNotification) => {
-                  return (
-                    eachNotification.post.toString() === post._id.toString() &&
-                    eachNotification.isRepost.value
-                  );
-                }
-              );
+              // NOTE start to check delete if repost notification readed
 
-              console.log(
-                "let's see all the notifications according to this post id =>",
-                checkingNotifications
-              );
-
-              // let's find the index of this post and delete the notification
-              const findIndex = user.notifications.findIndex((notification) => {
-                return notification.post.toString() === post._id.toString();
-              });
-
-              if (findIndex) {
-                user.notifications.splice(findIndex, 1);
-              }
-              // NOTE finish to check delete if favorite notification readed
+              // NOTE finish to check delete if repost notification readed
               user.posts = filteredUserPostsArray;
               user.save();
               console.log("This line is working 3 =>");
