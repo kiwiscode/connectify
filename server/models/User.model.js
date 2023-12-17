@@ -23,7 +23,7 @@ const notificationSchema = new Schema(
       value: { type: Boolean, default: false },
       profileImageUrl: { type: String, default: "" },
       userFullName: { type: String, default: "" },
-      userUsername: { type: String, default: "" },
+      userUserName: { type: String, default: "" },
       comment: { type: String, default: "" },
       senderId: { type: Schema.Types.ObjectId, ref: "User" },
     },
