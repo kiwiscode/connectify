@@ -54,6 +54,8 @@ const userSchema = new Schema(
     following: [{ type: Schema.Types.ObjectId, ref: "User" }],
     messages: [{ type: Schema.Types.ObjectId, ref: "Message" }],
     notifications: [notificationSchema],
+    // ChatEngine secret alanı
+    chatEngineInfos: { type: Object },
   },
   {
     timestamps: true,
