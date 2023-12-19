@@ -22,7 +22,7 @@ function MainPage() {
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [showEmojisBar, setshowEmojisBar] = useState("hide");
   const [showSecondModal, setShowSecondModal] = useState(false);
-
+  console.log("ACTIVE USER =>", userInfo);
   const maxCharacters = 140;
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -357,7 +357,6 @@ function MainPage() {
       }
     }
 
-    console.log("CONTROLLING THE NOTIFICATIONS ARRAY BY FAVORITES =>", filter);
     return count;
   };
 
@@ -374,7 +373,6 @@ function MainPage() {
       }
     }
 
-    console.log("CONTROLLING THE NOTIFICATIONS ARRAY BY REPOSTS =>", filter);
     return count;
   };
   const checkIfCommentNotitificationIsNotReaded = (array) => {
@@ -389,7 +387,6 @@ function MainPage() {
         count++;
       }
     }
-    console.log("CONTROLLING THE NOTIFICATIONS ARRAY BY COMMENTS =>", filter);
     return count;
   };
 
@@ -541,7 +538,9 @@ function MainPage() {
                     </div>
                   </div>
                 </Link>
-                <Link to="/messages">
+                {/* start to check redirect to the correct component for messages */}
+
+                <Link to="/chats">
                   <div>
                     <div>
                       <svg
@@ -562,6 +561,7 @@ function MainPage() {
                     </div>
                   </div>
                 </Link>
+                {/* finish to check redirect to the correct component for messages */}
 
                 <Link to="/communities">
                   <div>

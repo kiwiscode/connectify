@@ -737,6 +737,50 @@ function UserProfile() {
                       </svg>{" "}
                       Joined {getCreatedDateForProfile(userInfo.createdAt)}
                     </div>
+                    <div>
+                      <span
+                        style={{
+                          fontWeight: "700",
+                          fontSize: "15px",
+                          lineHeight: "20px",
+                        }}
+                      >
+                        {userInfo.following && (
+                          <span>{userInfo.following.length}</span>
+                        )}
+                      </span>{" "}
+                      <span
+                        style={{
+                          color: "rgb(83, 100, 113)",
+                          fontSize: "14px",
+                          lineHeight: "16px",
+                          fontWeight: "400",
+                        }}
+                      >
+                        Following
+                      </span>{" "}
+                      <span
+                        style={{
+                          fontWeight: "700",
+                          fontSize: "15px",
+                          lineHeight: "20px",
+                        }}
+                      >
+                        {userInfo.followers && (
+                          <span>{userInfo.followers.length}</span>
+                        )}
+                      </span>{" "}
+                      <span
+                        style={{
+                          color: "rgb(83, 100, 113)",
+                          fontSize: "14px",
+                          lineHeight: "16px",
+                          fontWeight: "400",
+                        }}
+                      >
+                        Followers
+                      </span>
+                    </div>
                   </div>
                 </Row>
               </Container>
