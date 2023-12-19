@@ -488,11 +488,6 @@ span > a:hover {
   border: 1px solid white;
 }
 
-/* NOTE can bu used */
-path {
-  /* fill: yellow; */
-}
-
 .logout-nav {
   display: flex;
   margin: 0px 0px 0px 0px;

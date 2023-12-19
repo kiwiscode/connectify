@@ -540,7 +540,7 @@ function MainPage() {
                 </Link>
                 {/* start to check redirect to the correct component for messages */}
 
-                <Link to="/chats">
+                <Link to="/messages">
                   <div>
                     <div>
                       <svg
