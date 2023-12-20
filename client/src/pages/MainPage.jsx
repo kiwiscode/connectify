@@ -30,7 +30,6 @@ function MainPage() {
   const [showNotificationColumn, setshowNotificationColumn] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [image, setImage] = useState("");
-
   //handle and convert it in base 64
   const handleImage = (e) => {
     const file = e.target.files[0];
