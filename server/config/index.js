@@ -141,43 +141,83 @@ module.exports = (app) => {
                 (message) => message.room === data.room
               );
 
-              // Şimdi, her iki kullanıcının messages array'indeki ilgili room'un içine chat'i ekleyebiliriz
-              user1Messages[user1RoomIndex].chat.push(
-                newCreatedChatBetween2User._id
+              console.log(
+                "User messages lobi index inside users messages array =>",
+                user1RoomIndex
               );
-              user2Messages[user2RoomIndex].chat.push(
-                newCreatedChatBetween2User._id
+              console.log(
+                "User messages lobi index inside users messages array =>",
+                user2RoomIndex
               );
+              // Kullanıcıların _id değerleri
+              const user1Id =
+                initiatingChatRoomBetweenTwoUsers[0]._id.toString();
+              const user2Id =
+                initiatingChatRoomBetweenTwoUsers[1]._id.toString();
 
-              // İlk kullanıcıyı kaydet
-              User.findOneAndUpdate(
-                {
-                  _id: initiatingChatRoomBetweenTwoUsers[0]._id,
-                  __v: initiatingChatRoomBetweenTwoUsers[0].__v,
+              console.log("Messager user 1 =>", user1Id);
+              console.log("Messager user 2 =>", user2Id);
+
+              User.find({
+                _id: {
+                  $in: [
+                    new mongoose.Types.ObjectId(activeUser._id),
+                    new mongoose.Types.ObjectId(selectedUser._id),
+                  ],
                 },
-                initiatingChatRoomBetweenTwoUsers[0],
-                { new: true }
-              )
-                .then(() => {
-                  // İkinci kullanıcıyı kaydet
-                  return User.findOneAndUpdate(
-                    {
-                      _id: initiatingChatRoomBetweenTwoUsers[1]._id,
-                      __v: initiatingChatRoomBetweenTwoUsers[1].__v,
-                    },
-                    initiatingChatRoomBetweenTwoUsers[1],
-                    { new: true }
-                  )
-                    .then((secondSavedUser) => {
-                      console.log("Users are saved:", secondSavedUser);
-                    })
-                    .catch((error) => {
-                      console.error("Error updating second user:", error);
-                    });
+              })
+                .then((users) => {
+                  // Şimdi, her iki kullanıcının messages array'indeki ilgili room'un içine chat'i ekleyebiliriz
+                  users[0].messages[user1RoomIndex].chat.push(
+                    newCreatedChatBetween2User._id
+                  );
+                  users[1].messages[user2RoomIndex].chat.push(
+                    newCreatedChatBetween2User._id
+                  );
+                  users[0].save();
+                  users[1].save();
+                  console.log(
+                    "Finded users.messages 1 =>",
+                    users[0].messages[user1RoomIndex]
+                  );
+                  console.log(
+                    "Finded users.messages 2 =>",
+                    users[1].messages[user2RoomIndex]
+                  );
                 })
                 .catch((error) => {
-                  console.error("Error updating first user:", error);
+                  console.log(error);
                 });
+
+              // İlk kullanıcıyı kaydet
+              // User.findOneAndUpdate(
+              //   {
+              //     _id: initiatingChatRoomBetweenTwoUsers[0]._id,
+              //     __v: initiatingChatRoomBetweenTwoUsers[0].__v,
+              //   },
+              //   initiatingChatRoomBetweenTwoUsers[0],
+              //   { new: true }
+              // )
+              //   .then(() => {
+              //     // İkinci kullanıcıyı kaydet
+              //     return User.findOneAndUpdate(
+              //       {
+              //         _id: initiatingChatRoomBetweenTwoUsers[1]._id,
+              //         __v: initiatingChatRoomBetweenTwoUsers[1].__v,
+              //       },
+              //       initiatingChatRoomBetweenTwoUsers[1],
+              //       { new: true }
+              //     )
+              //       .then((secondSavedUser) => {
+              //         console.log("Users are saved:", secondSavedUser);
+              //       })
+              //       .catch((error) => {
+              //         console.error("Error updating second user:", error);
+              //       });
+              //   })
+              //   .catch((error) => {
+              //     console.error("Error updating first user:", error);
+              //   });
 
               // finish to check find the room index inside users messages array
             })
