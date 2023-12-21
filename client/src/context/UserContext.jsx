@@ -18,7 +18,6 @@ const UserProvider = ({ children }) => {
         followers: [],
         following: [],
         favorites: [],
-        chatEngineInfos: {},
       }
     );
   });
