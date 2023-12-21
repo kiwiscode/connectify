@@ -1,5 +1,5 @@
 const { Schema, model } = require("mongoose");
-const Message = require("../models/Message.model");
+const Chat = require("../models/Chat.model");
 
 const notificationSchema = new Schema(
   {
@@ -52,10 +52,18 @@ const userSchema = new Schema(
     reposts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
     followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
     following: [{ type: Schema.Types.ObjectId, ref: "User" }],
-    messages: [{ type: Schema.Types.ObjectId, ref: "Message" }],
+    messages: [
+      {
+        room: String,
+        chat: [{ type: Schema.Types.ObjectId, ref: "Chat" }],
+        members: [{ type: Schema.Types.ObjectId, ref: "User" }],
+        readed: {
+          type: Boolean,
+          default: false,
+        },
+      },
+    ],
     notifications: [notificationSchema],
-    // ChatEngine secret alanı
-    chatEngineInfos: { type: Object },
   },
   {
     timestamps: true,

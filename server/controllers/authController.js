@@ -95,15 +95,6 @@ const handleSignup = async (req, res, next) => {
   try {
     console.log("THIS LINE IS WORKING 1");
 
-    const response = await axios.put(
-      `https://api.chatengine.io/users/
-        `,
-      { username: username, secret: username, first_name: username },
-      { headers: { "private-key": "09e71473-3844-4f5a-b4d1-765cf7745ea8" } }
-    );
-
-    console.log("RESPONSE FOR CONNECTING CHAT ENGINE =>", response.status);
-    console.log("RESPONSE FOR CONNECTING CHAT ENGINE 2 =>", response.data);
     bcrypt
       .genSalt(saltRounds)
       .then((salt) => bcrypt.hash(password, salt))
@@ -119,7 +110,6 @@ const handleSignup = async (req, res, next) => {
           password: hashedPassword,
           verified: false,
           imageUrl: "../assets/resume-pic.png",
-          chatEngineInfos: response.data,
         });
       })
       .then((user) => {
@@ -132,7 +122,7 @@ const handleSignup = async (req, res, next) => {
           .then((result) => {
             console.log("THIS LINE IS WORKING 6");
             console.log("RESULT AFTER EMAIL VERIFICATION SEND =>", result);
-            res.status(response.status).json(response.data);
+            res.status(201).json({ message: "Verification email sent" });
           })
           .catch((error) => {
             console.log("ERROR SENDING VERIFICATION EMAIL =>", error);
