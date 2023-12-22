@@ -255,21 +255,6 @@ function MainPage() {
 
   const handleRepost = (postId) => {
     console.log("I AM WORKING NOW BECAUSE I AM NOT ACTIVE AS A REPOST ");
-    // const posts = JSON.parse(localStorage.getItem("posts"));
-
-    // const findedPost = posts.find((element) => {
-    //   return element._id === postId;
-    // });
-
-    // const index = posts.indexOf(findedPost);
-    // if (posts[index].reposted.length < 1) {
-    //   posts[index].reposted.unshift(userInfo._id);
-    // } else {
-    //   return;
-    // }
-    // localStorage.setItem("posts", JSON.stringify(posts));
-    // setshouldHide(false);
-    // setPosts(posts);
 
     axios
       .post(
@@ -439,7 +424,7 @@ function MainPage() {
       .then((response) => {
         setNotifications(response.data.notifications);
       })
-      .catch(() => {
+      .catch((error) => {
         console.log(error);
       });
   };

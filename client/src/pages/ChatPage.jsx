@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ScrollToBottom from "react-scroll-to-bottom";
+import { UserContext } from "../context/UserContext";
 
 function Chat({ socket, username, room }) {
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState([]);
-
+  const { userInfo } = useContext(UserContext);
   // socket.on current exist messages in room =>
   // Emit the messages to the client
   // Odadaki mesajları dinle
@@ -52,7 +53,7 @@ function Chat({ socket, username, room }) {
   return (
     <div className="chat-window">
       <div className="chat-header">
-        <p>Live Chat</p>
+        <p>{username}</p>
       </div>
       <div className="chat-body">
         <ScrollToBottom className="message-container">
