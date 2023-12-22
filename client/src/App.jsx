@@ -7,6 +7,8 @@ import SpesificUserProfile from "./pages/SpesificUserProfile";
 import { Routes, Route } from "react-router-dom";
 import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import MessagesPage from "./pages/MessagesPage";
+// import ChatEnginePage from "./pages/ChatEnginePage";
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
         <Route path="/home" element={<MainPage />}></Route>
         <Route path="/profile" element={<UserProfile />}></Route>
         <Route path="/profile/:id" element={<SpesificUserProfile />}></Route>
+        <Route path="/messages" element={<MessagesPage />}></Route>
+        {/* <Route path="/chats" element={<ChatEnginePage />}></Route> */}
       </Routes>
     </UserProvider>
   );

@@ -26,14 +26,19 @@ function SignUpPage() {
         password,
       })
       .then((response) => {
-        if (response.status === 200) {
-          setSuccess(response.data.message);
+        if (response.status === 201) {
+          setSuccess("Verification email sent");
+          setFullname("");
+          setUsername("");
         }
         setError("");
       })
       .catch((err) => {
         const { status } = err.response;
         const { errorMessage } = err.response.data;
+        setFullname("");
+        setUsername("");
+
         if (status === 402) {
           setError(errorMessage);
           setSuccess("");

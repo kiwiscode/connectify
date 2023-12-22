@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
-
+const axios = require("axios");
 const saltRounds = 10;
 
 const User = require("../models/User.model");
@@ -28,48 +28,41 @@ function emailProcess() {
     }
   });
 
-  sendVerificationEmail = ({ email }, res, token) => {
-    // when working on locally
-    const baseURL = "http://localhost:3000";
-    // when working on deployment version
-    // const baseURL = "?"
+  sendVerificationEmail = ({ email }, token) => {
+    return new Promise((resolve, reject) => {
+      const baseURL = "http://localhost:3000";
 
-    const mailOptions = {
-      from: process.env.AUTH_EMAIL,
-      to: email,
-      subject: "Verify Your Email",
+      const mailOptions = {
+        from: process.env.AUTH_EMAIL,
+        to: email,
+        subject: "Verify Your Email",
+        html: `
+          <p>Verify your email adress to complete the signup and login into your account.</p>
+          <p>This link expires in <b>6 hours.</b></p>
+          <p>Press : <a href="${baseURL}/auth/verify?token=${token}"> here </a>to proceed.</p>
+        `,
+      };
 
-      html: `
-      <p>Verify your email adress to complete the signup and login into your account.</p>
-      <p>This link expires in <b>6 hours.</b></p>
-      <p>Press : <a href="${baseURL}/auth/verify?token=${token}"> here </a>to proceed.</p>
-      `,
-    };
-
-    transporter
-      .sendMail(mailOptions)
-      .then(() => {
-        res.json({
-          status: "PENDING",
-          message: "Verification email sent",
+      transporter
+        .sendMail(mailOptions)
+        .then(() => {
+          resolve({
+            status: "PENDING",
+            message: "Verification email sent",
+          });
+        })
+        .catch((error) => {
+          console.error("Error sending email:", error);
+          reject({
+            status: "FAILED",
+            message: "Verification email failed!",
+          });
         });
-      })
-      .catch(() => {
-        res.json({
-          status: "FAILED",
-          message: "Verification email failed!",
-        });
-      })
-      .catch(() => {
-        res.json({
-          status: "FAILED",
-          message: "Couldn't save verification email data!",
-        });
-      });
+    });
   };
 }
 
-const handleSignup = (req, res, next) => {
+const handleSignup = async (req, res, next) => {
   let { fullname, username, email, password } = req.body;
 
   if (username === "" || fullname === "" || email === "" || password === "") {
@@ -97,41 +90,73 @@ const handleSignup = (req, res, next) => {
     return;
   }
 
-  bcrypt
-    .genSalt(saltRounds)
-    .then((salt) => bcrypt.hash(password, salt))
-    .then((hashedPassword) => {
-      fullname = capitalize(fullname);
-      return User.create({
-        fullname,
-        username,
-        email,
-        password: hashedPassword,
-        verified: false,
-        imageUrl: "../assets/resume-pic.png",
-      });
-    })
-    .then((user) => {
-      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-        expiresIn: "24h",
-      });
-      sendVerificationEmail(user, res, token);
-    })
-    .catch((error) => {
-      if (error instanceof mongoose.Error.ValidationError) {
-        res.status(501).json({
-          errorMessage:
-            "Username and email need to be unique. Provide a valid username or email.",
+  // start to check trying to install chat engine (real time chatting engine)
+
+  try {
+    console.log("THIS LINE IS WORKING 1");
+
+    bcrypt
+      .genSalt(saltRounds)
+      .then((salt) => bcrypt.hash(password, salt))
+      .then((hashedPassword) => {
+        console.log("THIS LINE IS WORKING 2");
+
+        fullname = capitalize(fullname);
+        console.log("THIS LINE IS WORKING 3");
+        return User.create({
+          fullname,
+          username,
+          email,
+          password: hashedPassword,
+          verified: false,
+          imageUrl: "../assets/resume-pic.png",
         });
-      } else if (error.code === 11000) {
-        res.status(501).json({
-          errorMessage:
-            "Username and email need to be unique. Provide a valid username or email.",
+      })
+      .then((user) => {
+        console.log("THIS LINE IS WORKING 4");
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+          expiresIn: "24h",
         });
-      } else {
-        next(error);
-      }
-    });
+        console.log("THIS LINE IS WORKING 5");
+        sendVerificationEmail(user, token)
+          .then((result) => {
+            console.log("THIS LINE IS WORKING 6");
+            console.log("RESULT AFTER EMAIL VERIFICATION SEND =>", result);
+            res.status(201).json({ message: "Verification email sent" });
+          })
+          .catch((error) => {
+            console.log("ERROR SENDING VERIFICATION EMAIL =>", error);
+            res.status(500).json({
+              errorMessage: "Error sending verification email.",
+            });
+          });
+      })
+      .catch((error) => {
+        if (error instanceof mongoose.Error.ValidationError) {
+          console.log("ERROR LINE IS WORKING 1");
+          res.status(501).json({
+            errorMessage:
+              "Username and email need to be unique. Provide a valid username or email.",
+          });
+        } else if (error.code === 11000) {
+          console.log("ERROR LINE IS WORKING 2");
+
+          res.status(501).json({
+            errorMessage:
+              "Username and email need to be unique. Provide a valid username or email.",
+          });
+        } else {
+          console.log("ERROR LINE IS WORKING 3");
+
+          next(error);
+        }
+      });
+  } catch (error) {
+    console.log("ERROR LINE IS WORKING 4");
+
+    return res.status(error.response.status).json(error.response.data);
+  }
+  // finish to check trying to install chat engine (real time chatting engine)
 };
 
 const handleEmailverify = (req, res) => {
@@ -231,6 +256,7 @@ const handleLogin = (req, res, next) => {
               favorites,
               imageUrl,
               notifications,
+              chatEngineInfos,
             } = user;
 
             const token = jwt.sign({ userId: _id }, process.env.JWT_SECRET, {
@@ -256,6 +282,7 @@ const handleLogin = (req, res, next) => {
                 favorites,
                 imageUrl,
                 notifications,
+                chatEngineInfos,
               },
             });
           });

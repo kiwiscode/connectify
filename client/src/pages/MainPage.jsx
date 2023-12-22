@@ -14,6 +14,15 @@ const API_URL = "http://localhost:3000";
 // ?
 
 function MainPage() {
+  // rendering page after redirectiring for fetching data without problem ! if you need to fetch data after you redirect or navigate to user to the page (it can work pretty good on your navigation bar)this lines of code is pretty useful
+  // start to check
+  const navigate = useNavigate();
+  const redirectToMessages = () => {
+    navigate("/messages");
+    window.location.reload();
+  };
+  // finish to check
+
   const { userInfo, getToken } = useContext(UserContext);
   const [posts, setPosts] = useState([]);
   const [postId, setpostId] = useState("");
@@ -22,15 +31,13 @@ function MainPage() {
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [showEmojisBar, setshowEmojisBar] = useState("hide");
   const [showSecondModal, setShowSecondModal] = useState(false);
-
+  console.log("ACTIVE USER =>", userInfo);
   const maxCharacters = 140;
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [shouldHide, setshouldHide] = useState(true);
   const [showNotificationColumn, setshowNotificationColumn] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [image, setImage] = useState("");
-
   //handle and convert it in base 64
   const handleImage = (e) => {
     const file = e.target.files[0];
@@ -283,13 +290,14 @@ function MainPage() {
 
         const index = posts.indexOf(findedPost);
 
-        posts[index].reposted.unshift(userInfo._id);
+        posts[index].reposted.unshift(userInfo);
 
         localStorage.setItem("posts", JSON.stringify(posts));
         setshouldHide(false);
         setPosts(posts);
+
+        console.log("AFTER REPOST CURRENT STATE RENDERED POSTS =>", posts);
       })
-      .then(() => {})
       .catch((error) => {
         console.log(error);
       });
@@ -356,7 +364,6 @@ function MainPage() {
       }
     }
 
-    console.log("CONTROLLING THE NOTIFICATIONS ARRAY BY FAVORITES =>", filter);
     return count;
   };
 
@@ -373,7 +380,6 @@ function MainPage() {
       }
     }
 
-    console.log("CONTROLLING THE NOTIFICATIONS ARRAY BY REPOSTS =>", filter);
     return count;
   };
   const checkIfCommentNotitificationIsNotReaded = (array) => {
@@ -388,7 +394,6 @@ function MainPage() {
         count++;
       }
     }
-    console.log("CONTROLLING THE NOTIFICATIONS ARRAY BY COMMENTS =>", filter);
     return count;
   };
 
@@ -404,11 +409,19 @@ function MainPage() {
     const checkCommentsNotReadedYetInsideNotifications =
       checkIfCommentNotitificationIsNotReaded(userInfo.notifications);
 
-    return `${
-      checkFavoritesNotReadedYetInsideNotifications +
-      checkRepostsNotReadedYetInsideNotifications +
-      checkCommentsNotReadedYetInsideNotifications
-    }`;
+    if (
+      checkIfFavoriteNotitificationIsNotReaded(userInfo.notifications) ||
+      checkIfRepostNotitificationIsNotReaded(userInfo.notifications) ||
+      checkIfCommentNotitificationIsNotReaded(userInfo.notifications)
+    ) {
+      return `${
+        checkFavoritesNotReadedYetInsideNotifications +
+        checkRepostsNotReadedYetInsideNotifications +
+        checkCommentsNotReadedYetInsideNotifications
+      }`;
+    } else {
+      return "";
+    }
   };
   console.log(getTotalLengthOfNotifications());
   //  NOTE finish to check calculation the length according isReaded value
@@ -523,14 +536,18 @@ function MainPage() {
 
                       <span>
                         Notifications{" "}
-                        <span className="notification-num">
-                          {getTotalLengthOfNotifications()}
-                        </span>
+                        {getTotalLengthOfNotifications() !== "" ? (
+                          <span className="notification-num">
+                            {getTotalLengthOfNotifications()}
+                          </span>
+                        ) : null}
                       </span>
                     </div>
                   </div>
                 </Link>
-                <Link to="/messages">
+                {/* start to check redirect to the correct component for messages */}
+
+                <Link to="/messages" onClick={redirectToMessages}>
                   <div>
                     <div>
                       <svg
@@ -551,6 +568,7 @@ function MainPage() {
                     </div>
                   </div>
                 </Link>
+                {/* finish to check redirect to the correct component for messages */}
 
                 <Link to="/communities">
                   <div>
@@ -860,7 +878,7 @@ function MainPage() {
                           {/* start to check */}
                           {post.reposted.length > 0 &&
                           post.isReposted &&
-                          post.reposted[0].fullname === userInfo.fullname ? (
+                          post.reposted[0]._id === userInfo._id ? (
                             <div>
                               <svg
                                 style={{
@@ -898,7 +916,7 @@ function MainPage() {
                           {/* start to check */}
                           {post.reposted.length > 0 &&
                           post.isReposted &&
-                          post.reposted[0].fullname !== userInfo.fullname ? (
+                          post.reposted[0]._id !== userInfo._id ? (
                             <div>
                               <svg
                                 style={{
@@ -928,7 +946,11 @@ function MainPage() {
                                   marginLeft: "10px",
                                 }}
                               >
-                                {post.reposted[0].fullname} reposted
+                                {post.reposted[0].fullname ? (
+                                  <span>
+                                    {post.reposted[0].fullname} reposted
+                                  </span>
+                                ) : null}
                               </span>{" "}
                             </div>
                           ) : null}
@@ -1155,7 +1177,7 @@ function MainPage() {
                                 height="16"
                                 fill="rgb(249, 24, 128)"
                                 className={`bi bi-heart-fill`}
-                                viewBox="0 0 16 16"
+                                viewBox="0 0 17 16"
                               >
                                 <path
                                   stroke="black"
@@ -1179,7 +1201,7 @@ function MainPage() {
                                 height="16"
                                 fill="currentColor"
                                 className={`bi bi-heart`}
-                                viewBox="0 0 16 16"
+                                viewBox="0 0 17 16"
                               >
                                 <path
                                   stroke="black"
@@ -1258,7 +1280,7 @@ function MainPage() {
                                       height="32"
                                       fill="rgba(249,24,128,1.00)"
                                       className={`bi bi-heart-fill`}
-                                      viewBox="0 0 16 16"
+                                      viewBox="0 0 17 16"
                                     >
                                       <path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
                                     </svg>
@@ -1349,33 +1371,102 @@ function MainPage() {
                             {notification.isRepost.value ? (
                               <div>
                                 {" "}
-                                <div className="p-0">
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="25"
-                                    height="22"
-                                    fill="rgb(249, 24, 128)"
-                                    className={`bi bi-heart-fill`}
-                                    viewBox="0 0 16 16"
-                                  >
-                                    <path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
-                                  </svg>
+                                <div className="flex-container">
+                                  <div className="p-0 ">
+                                    <svg
+                                      style={{
+                                        color: "rgb(0, 186, 124)",
+                                      }}
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      width="30"
+                                      height="30"
+                                      fill="currentColor"
+                                      className="bi bi-repeat"
+                                      viewBox="0 0 16 16"
+                                    >
+                                      <path
+                                        stroke="rgb(0, 186, 124)"
+                                        strokeWidth="1"
+                                        d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z"
+                                      />
+                                    </svg>
+                                  </div>
+                                  <div className="notification-margin">
+                                    {notification.isRepost.profileImageUrl.slice(
+                                      0,
+                                      3
+                                    ) !== "../" ? (
+                                      <>
+                                        <img
+                                          src={
+                                            notification.isRepost.profileImageUrl.slice(
+                                              0,
+                                              3
+                                            ) === "../"
+                                              ? null
+                                              : notification.isRepost
+                                                  .profileImageUrl
+                                          }
+                                          width={32}
+                                          height={32}
+                                          alt="image who repost the post"
+                                        />
+                                      </>
+                                    ) : (
+                                      <div>
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          width="32"
+                                          height="32"
+                                          fill="rgb(83, 100, 113)"
+                                          className="bi bi-person-circle"
+                                          viewBox="0 0 16 16"
+                                        >
+                                          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                          <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                        </svg>
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
-                                <div className="p-0 verified-icon">
-                                  <img
-                                    src={
-                                      notification.isFavorite.profileImageUrl
-                                    }
-                                    width={30}
-                                    height={30}
-                                    alt="image who liked the post"
-                                  />
-                                </div>
-                                <div style={{ padding: "3px" }}>
-                                  who liked your post ?
-                                </div>
-                                <div style={{ padding: "3px" }}>
-                                  what is the content of post ?
+                                <div className="favorite-notification-body">
+                                  <div style={{ padding: "3px" }}>
+                                    <span
+                                      style={{
+                                        fontWeight: "700",
+                                        cursor: "pointer",
+                                      }}
+                                    >
+                                      <Link
+                                        style={{ color: " black" }}
+                                        to={`/profile/${notification.isRepost.senderId}`}
+                                      >
+                                        <span className="from-notification-to-user">
+                                          {notification.isRepost.userUserName}
+                                        </span>
+                                      </Link>
+                                      <span
+                                        style={{
+                                          fontWeight: "400",
+                                          lineHeight: "20px",
+                                          fontSize: "15px",
+                                        }}
+                                      >
+                                        {" "}
+                                        reposted your post
+                                      </span>
+                                    </span>
+                                  </div>
+                                  <div style={{ padding: "3px" }}>
+                                    <span
+                                      style={{ color: " rgb(83, 100, 113)" }}
+                                    >
+                                      {
+                                        notification.isRepost
+                                          .repostedPostContent
+                                      }
+                                    </span>
+                                  </div>
                                 </div>
                               </div>
                             ) : null}
