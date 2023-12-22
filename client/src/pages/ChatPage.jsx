@@ -5,16 +5,36 @@ function Chat({ socket, username, room }) {
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState([]);
 
+  // socket.on current exist messages in room =>
+  // Emit the messages to the client
+  // Odadaki mesajları dinle
+
+  socket.on("room_messages", (data) => {
+    const { room, messages } = data;
+    console.log(`Received messages for room ${room}:`, messages);
+
+    // Şimdi, bu mesajları kullanarak arayüzünüzü güncelleyebilirsiniz
+    // Örneğin, bir state'i güncelleyerek veya başka bir yöntemle
+    // Gelen mesajları messageList içindeki mevcut mesajlarla birleştirin
+
+    // Gelen mesajları uygun formata dönüştürerek messageList içindeki mevcut mesajlarla birleştirin
+
+    setMessageList((prevMessages) => [...prevMessages, ...messages]);
+  });
+
+  console.log("message list => ", messageList);
   const sendMessage = async () => {
     if (currentMessage !== "") {
       const messageData = {
         room: room,
-        author: username,
-        message: currentMessage,
-        time:
-          new Date(Date.now()).getHours() +
-          ":" +
-          new Date(Date.now()).getMinutes(),
+        sender: username,
+        text: currentMessage,
+        time: new Date().toLocaleString("en-US", {
+          weekday: "short",
+          hour: "numeric",
+          minute: "numeric",
+          hour12: true,
+        }),
       };
 
       await socket.emit("send_message", messageData);
@@ -36,20 +56,36 @@ function Chat({ socket, username, room }) {
       </div>
       <div className="chat-body">
         <ScrollToBottom className="message-container">
-          {messageList.map((messageContent) => {
+          {messageList.map((messageContent, index) => {
             return (
               <div
-                key={messageContent._id}
+                key={index}
                 className="message"
-                id={username === messageContent.author ? "you" : "other"}
+                id={username === messageContent.sender ? "you" : "other"}
               >
                 <div>
                   <div className="message-content">
-                    <p>{messageContent.message}</p>
+                    <p>{messageContent.text}</p>
                   </div>
                   <div className="message-meta">
-                    <p id="time">{messageContent.time}</p>
-                    <p id="author">{messageContent.author}</p>
+                    <p id="time">
+                      {messageContent.timestamp ? (
+                        <span>
+                          {new Date(messageContent.timestamp).toLocaleString(
+                            "en-US",
+                            {
+                              weekday: "short",
+                              hour: "numeric",
+                              minute: "numeric",
+                              hour12: true,
+                            }
+                          )}
+                        </span>
+                      ) : (
+                        <span>{messageContent.time}</span>
+                      )}
+                    </p>
+                    <p id="author">{messageContent.sender}</p>
                   </div>
                 </div>
               </div>
