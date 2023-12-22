@@ -10,6 +10,7 @@ const chatSchema = new Schema({
   room: String,
   messages: [messageSchema],
 });
+
 const Chat = model("Chat", chatSchema);
 
 module.exports = Chat;

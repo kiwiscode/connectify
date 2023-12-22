@@ -99,7 +99,66 @@ module.exports = (app) => {
               console.error("Error updating users:", error);
             });
         } else {
-          console.error("The room already exists between these two users.");
+          // NOTE INFO start to check show messages if the room exist between this two user
+          console.error(
+            "The room already exists between these two users.Show exist messages!"
+          );
+
+          User.find({
+            _id: {
+              $in: [new mongoose.Types.ObjectId(activeUser._id)],
+            },
+          })
+            .populate({
+              path: "messages.chat", // Populate işlemi
+              model: "Chat", // Chat modeli
+            })
+            .then((user) => {
+              const userMessages = user[0].messages || [];
+
+              const userRoomIndex = userMessages.findIndex(
+                (message) => message.room === room
+              );
+
+              if (userRoomIndex !== -1) {
+                console.log(
+                  "User Messages in the Room:",
+                  userMessages[userRoomIndex].chat
+                );
+
+                console.log(
+                  "userMessages[userRoomIndex].chat =>",
+                  userMessages[userRoomIndex].chat
+                );
+
+                const messages = userMessages[userRoomIndex].chat.map(
+                  (eachMessage) => {
+                    return eachMessage.messages;
+                  }
+                );
+                console.log("messages =>", messages);
+                const resultArrayOfMessages = [];
+                for (let i = 0; i < messages.length; i++) {
+                  for (s = 0; s < messages[i].length; s++) {
+                    resultArrayOfMessages.push(messages[i][s]);
+                  }
+                }
+
+                console.log("resultArrayOfMessages => ", resultArrayOfMessages);
+
+                // Emit the messages to the client
+                socket.emit("room_messages", {
+                  room,
+                  messages: resultArrayOfMessages,
+                });
+              } else {
+                console.error("Error fetching messages for the existing room.");
+              }
+            })
+            .catch((error) => {
+              console.error("Error fetching users:", error);
+            });
+          // NOTE INFO finish to check show messages if the room exist between this two user
         }
         // finish to check initiate a chat room between 2 user
 
@@ -108,8 +167,8 @@ module.exports = (app) => {
         socket.on("send_message", async (data) => {
           socket.to(data.room).emit("receive_message", data);
           const newChat = {
-            sender: data.author,
-            text: data.message,
+            sender: data.sender,
+            text: data.text,
             timeStamp: Date.now(),
           };
 

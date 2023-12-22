@@ -14,6 +14,15 @@ const API_URL = "http://localhost:3000";
 // ?
 
 function MainPage() {
+  // rendering page after redirectiring for fetching data without problem ! if you need to fetch data after you redirect or navigate to user to the page (it can work pretty good on your navigation bar)this lines of code is pretty useful
+  // start to check
+  const navigate = useNavigate();
+  const redirectToMessages = () => {
+    navigate("/messages");
+    window.location.reload();
+  };
+  // finish to check
+
   const { userInfo, getToken } = useContext(UserContext);
   const [posts, setPosts] = useState([]);
   const [postId, setpostId] = useState("");
@@ -24,7 +33,6 @@ function MainPage() {
   const [showSecondModal, setShowSecondModal] = useState(false);
   console.log("ACTIVE USER =>", userInfo);
   const maxCharacters = 140;
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [shouldHide, setshouldHide] = useState(true);
   const [showNotificationColumn, setshowNotificationColumn] = useState(false);
@@ -539,7 +547,7 @@ function MainPage() {
                 </Link>
                 {/* start to check redirect to the correct component for messages */}
 
-                <Link to="/messages">
+                <Link to="/messages" onClick={redirectToMessages}>
                   <div>
                     <div>
                       <svg
