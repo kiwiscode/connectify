@@ -17,6 +17,7 @@ function App() {
   const [searchString, setSearchString] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
   const { userInfo } = useContext(UserContext);
+
   useEffect(() => {
     // Server tarafından emit edilen "activeUsers" olayını dinle
     socket.on("activeUsers", (users) => {
@@ -28,6 +29,7 @@ function App() {
       }
     });
 
+    console.log("Gardasim burdasin :)");
     // Component unmount olduğunda temizlik yap
     return () => {
       socket.disconnect();
