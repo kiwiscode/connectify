@@ -9,7 +9,7 @@ import {
   Button,
   ButtonGroup,
 } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LogoutModal, PostModal } from "../components/ui/Modal";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 
@@ -20,6 +20,7 @@ const API_URL = "http://localhost:3000";
 // ?
 
 function UserProfile() {
+  const navigate = useNavigate();
   const [userprofiledata, setUserprofiledata] = useState([]);
   const { getToken, userInfo } = useContext(UserContext);
   const [favoriteWindow, setFavoriteWindow] = useState("hide");
@@ -347,6 +348,9 @@ function UserProfile() {
         console.log(updatedUserInfo);
         localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
         setcompletedProfileImage(true);
+
+        navigate("/profile");
+        window.location.reload();
       })
       .catch((error) => {
         console.log(error);
@@ -678,7 +682,30 @@ function UserProfile() {
                   >
                     <div className="p-2">
                       {userInfo.imageUrl.slice(0, 3) !== "../" ? (
-                        <img src={userInfo.imageUrl} alt="" />
+                        <>
+                          <div>
+                            <img
+                              style={{
+                                cursor: "pointer",
+                              }}
+                              src={userInfo.imageUrl}
+                              alt=""
+                              onClick={() =>
+                                document
+                                  .getElementById("formuploadModal")
+                                  .click()
+                              }
+                            />
+                            <input
+                              onChange={handleImage}
+                              type="file"
+                              id="formuploadModal"
+                              name="modalImage"
+                              className="form-control"
+                              style={{ display: "none" }}
+                            />
+                          </div>
+                        </>
                       ) : (
                         <div>
                           <svg
@@ -696,14 +723,6 @@ function UserProfile() {
                             <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
                             <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
                           </svg>
-                          <input
-                            onChange={handleImage}
-                            type="file"
-                            id="formuploadModal"
-                            name="modalImage"
-                            className="form-control"
-                            style={{ display: "none" }}
-                          />
                         </div>
                       )}
                     </div>
