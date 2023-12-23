@@ -36,6 +36,7 @@ function App() {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [content, setContent] = useState("");
+  const [messageRooms, setmessageRooms] = useState([]);
 
   useEffect(() => {
     // Server tarafından emit edilen "activeUsers" olayını dinle
@@ -47,6 +48,7 @@ function App() {
         filterUsers([], searchString);
       }
     });
+    socket.emit("get_spesific_user", userInfo);
 
     // Component unmount olduğunda temizlik yap
     return () => {
@@ -54,6 +56,13 @@ function App() {
     };
   }, []);
 
+  socket.on("receive_spesific_user_message_rooms", (data) => {
+    console.log("Received active user message rooms => ", data);
+
+    setmessageRooms(data);
+  });
+
+  console.log("Your message rooms =>", messageRooms);
   const filterUsers = (users, term) => {
     const filtered = users.filter((user) =>
       user.username.toLowerCase().startsWith(term.toLowerCase())
@@ -73,7 +82,7 @@ function App() {
       setFilteredUsers([]);
     }
   };
-  console.log(activeUsers);
+  console.log("Total active users inside your message room =>", activeUsers);
 
   const selectedUser = (user) => {
     console.log("selected user =>", user);
@@ -85,7 +94,24 @@ function App() {
     // Emit an event to join the room with the selected user
     socket.emit("join_user_room", { activeUser: userInfo, selectedUser: user });
   };
-  console.log(userInfo.username);
+
+  const handleReadMessageAndJoinRoom = (eachMessageRoom) => {
+    const spesificMember = eachMessageRoom.members.filter((eachMember) => {
+      return eachMember.username !== userInfo.username;
+    });
+
+    const room = [userInfo.username, eachMessageRoom.username].sort().join("_");
+
+    setRoom(room);
+    setShowChat(true);
+    // Emit an event to join the room with the selected user
+    socket.emit("keep_messaging", {
+      activeUser: userInfo,
+      selectedUser: spesificMember[0],
+    });
+
+    console.log("Did i get spesific user =>", spesificMember);
+  };
 
   // NOTE start to check get all the notifications from backend api endpoint
   const showNotifications = () => {
@@ -153,10 +179,6 @@ function App() {
     return count;
   };
 
-  console.log(checkIfFavoriteNotitificationIsNotReaded(userInfo.notifications));
-  console.log(checkIfRepostNotitificationIsNotReaded(userInfo.notifications));
-  console.log(checkIfCommentNotitificationIsNotReaded(userInfo.notifications));
-
   const getTotalLengthOfNotifications = () => {
     const checkFavoritesNotReadedYetInsideNotifications =
       checkIfFavoriteNotitificationIsNotReaded(userInfo.notifications);
@@ -179,7 +201,6 @@ function App() {
       return "";
     }
   };
-  console.log(getTotalLengthOfNotifications());
   //  NOTE finish to check calculation the length according isReaded value
 
   const handleShowPostsMessagePage = () => {
@@ -210,6 +231,17 @@ function App() {
     setIsLoading(false);
   };
 
+  const getCreatedRoomDate = (chatFirstMessageTimeStamp) => {
+    const timestamp = new Date(chatFirstMessageTimeStamp);
+
+    // Tarih bilgisini belirli bir formatta gösterme
+    const options = { month: "short", day: "numeric" };
+    const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
+      timestamp
+    );
+
+    return formattedDate;
+  };
   return (
     <>
       <Container
@@ -418,11 +450,12 @@ function App() {
                     position: "relative",
                     marginLeft: "10px",
                     marginRight: "10px",
+                    bottom: "40px",
                   }}
                 >
                   <input
                     type="text"
-                    placeholder="Search direct messages"
+                    placeholder="Search people"
                     value={searchString}
                     onChange={handleSearchTermChange}
                     style={{
@@ -473,6 +506,125 @@ function App() {
             {/* finish to check search user to chat with  */}
 
             {/* mainpage yani messages rotasına tüm messagelerin gösterileceği column burası !  */}
+
+            {messageRooms.messages ? (
+              <div>
+                {messageRooms.messages.map((eachMessageRoom) => {
+                  return (
+                    <div
+                      onClick={() =>
+                        handleReadMessageAndJoinRoom(eachMessageRoom)
+                      }
+                      key={eachMessageRoom._id}
+                      style={{
+                        backgroundColor: eachMessageRoom.readed
+                          ? "white"
+                          : "#F7F9F9",
+                        border: "1px solid #e1e8ed",
+                        borderRadius: "8px",
+                        position: "relative",
+                        bottom: "20px",
+                        margin: "5px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {eachMessageRoom.chat &&
+                        eachMessageRoom.chat.length > 0 && (
+                          <div>
+                            {eachMessageRoom.members[0].fullname !==
+                              userInfo.fullname &&
+                            eachMessageRoom.members[0].imageUrl.slice(0, 3) !==
+                              "../" ? (
+                              <img
+                                style={{
+                                  width: "40px",
+                                  height: "40px",
+                                  position: "relative",
+                                  top: "10px",
+                                  marginLeft: "10px",
+                                }}
+                                src={eachMessageRoom.members[0].imageUrl}
+                                alt=""
+                              />
+                            ) : (
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="40"
+                                height="40"
+                                fill="rgb(83, 100, 113)"
+                                className="bi bi-person-circle"
+                                viewBox="0 0 16 16"
+                                style={{
+                                  marginLeft: "10px",
+                                  position: "relative",
+                                  top: "10px",
+                                }}
+                              >
+                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                              </svg>
+                            )}
+
+                            <span
+                              style={{
+                                color: "rgb(15, 20, 25)",
+                                marginLeft: "10px",
+                                fontSize: "15px",
+                                fontWeight: "700",
+                                lineHeight: "20px",
+                              }}
+                            >
+                              {eachMessageRoom.members[1].fullname !==
+                              userInfo.fullname
+                                ? eachMessageRoom.members[1].fullname
+                                : eachMessageRoom.members[0].fullname}{" "}
+                            </span>
+                            <span
+                              style={{
+                                color: "rgb(83, 100, 113)",
+                              }}
+                            >
+                              @
+                              {eachMessageRoom.members[1].username !==
+                              userInfo.username
+                                ? eachMessageRoom.members[1].username
+                                : eachMessageRoom.members[0].username}{" "}
+                            </span>
+
+                            <span style={{ color: "rgba(0,0,0,0.6)" }}>
+                              {" "}
+                              ·{" "}
+                              {eachMessageRoom.chat[0]
+                                ? getCreatedRoomDate(
+                                    eachMessageRoom.chat[0].messages[0]
+                                      .timestamp
+                                  )
+                                : ""}
+                            </span>
+                            <div>
+                              <span
+                                style={{
+                                  color: "rgb(83, 100, 113)",
+                                  position: "relative",
+                                  left: "50px",
+                                  bottom: "13px",
+                                  marginLeft: "10px",
+                                }}
+                              >
+                                {
+                                  eachMessageRoom.chat[
+                                    eachMessageRoom.chat.length - 1
+                                  ].messages[0].text
+                                }
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : null}
           </Col>
           {/* finish to check main column  */}
 

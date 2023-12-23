@@ -29,9 +29,47 @@ module.exports = (app) => {
   io.on("connection", async (socket) => {
     console.log("A user connected:", socket.id);
 
-    // Tüm kullanıcıları bul ve istemcilere gönder
     const allUsers = await User.find();
     io.emit("activeUsers", allUsers);
+
+    socket.on("get_spesific_user", (data) => {
+      User.findById(data._id)
+        .populate({
+          path: "messages",
+          populate: {
+            path: "members",
+            model: "User",
+          },
+        })
+        .populate({
+          path: "messages",
+          populate: {
+            path: "chat",
+            model: "Chat",
+          },
+        })
+        .then((user) => {
+          console.log("User =>", user);
+          socket.emit("receive_spesific_user_message_rooms", user);
+        })
+        .catch((error) => {});
+    });
+
+    // keep_messaging start to check
+    socket.on("keep_messaging", async (data) => {
+      const { activeUser, selectedUser } = data;
+      // Create a unique room name using the usernames
+      const room = [activeUser.username, selectedUser.username]
+        .sort()
+        .join("_");
+      console.log(data);
+      // Join the room
+      socket.join(room);
+      console.log(
+        `User ${activeUser.username} with socket ID: ${socket.id} joined real time chat room with:${selectedUser.username} so they are ready to chat in real time by using socket.io package ${room}`
+      );
+    });
+    // keep_messaging finish to check
 
     socket.on("join_user_room", async (data) => {
       const { activeUser, selectedUser } = data;
@@ -56,6 +94,7 @@ module.exports = (app) => {
       }).then((initiatingChatRoomBetweenTwoUsers) => {
         // start to check initiate a chat room between 2 user
 
+        console.log(initiatingChatRoomBetweenTwoUsers[0].messages);
         // İki kullanıcıyı bul ve her birinin messages dizisine yeni bir room ekleyin
 
         // İki kullanıcının daha önce aynı room altında bir chat odası oluşturup oluşturmadığını kontrol et
@@ -247,36 +286,6 @@ module.exports = (app) => {
                 .catch((error) => {
                   console.log(error);
                 });
-
-              // İlk kullanıcıyı kaydet
-              // User.findOneAndUpdate(
-              //   {
-              //     _id: initiatingChatRoomBetweenTwoUsers[0]._id,
-              //     __v: initiatingChatRoomBetweenTwoUsers[0].__v,
-              //   },
-              //   initiatingChatRoomBetweenTwoUsers[0],
-              //   { new: true }
-              // )
-              //   .then(() => {
-              //     // İkinci kullanıcıyı kaydet
-              //     return User.findOneAndUpdate(
-              //       {
-              //         _id: initiatingChatRoomBetweenTwoUsers[1]._id,
-              //         __v: initiatingChatRoomBetweenTwoUsers[1].__v,
-              //       },
-              //       initiatingChatRoomBetweenTwoUsers[1],
-              //       { new: true }
-              //     )
-              //       .then((secondSavedUser) => {
-              //         console.log("Users are saved:", secondSavedUser);
-              //       })
-              //       .catch((error) => {
-              //         console.error("Error updating second user:", error);
-              //       });
-              //   })
-              //   .catch((error) => {
-              //     console.error("Error updating first user:", error);
-              //   });
 
               // finish to check find the room index inside users messages array
             })
