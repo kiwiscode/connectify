@@ -8,6 +8,7 @@ import { Routes, Route } from "react-router-dom";
 import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import MessagesPage from "./pages/MessagesPage";
+import ChatDetailsPage from "./pages/ChatDetailsPage";
 // import ChatEnginePage from "./pages/ChatEnginePage";
 
 function App() {
@@ -19,7 +20,10 @@ function App() {
         <Route path="/profile" element={<UserProfile />}></Route>
         <Route path="/profile/:id" element={<SpesificUserProfile />}></Route>
         <Route path="/messages" element={<MessagesPage />}></Route>
-        {/* <Route path="/chats" element={<ChatEnginePage />}></Route> */}
+        <Route
+          path="/messages/:chatRoomId"
+          element={<ChatDetailsPage />}
+        ></Route>
       </Routes>
     </UserProvider>
   );
