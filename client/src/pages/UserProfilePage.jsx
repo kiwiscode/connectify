@@ -9,7 +9,7 @@ import {
   Button,
   ButtonGroup,
 } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LogoutModal, PostModal } from "../components/ui/Modal";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 
@@ -20,6 +20,7 @@ const API_URL = "http://localhost:3000";
 // ?
 
 function UserProfile() {
+  const navigate = useNavigate();
   const [userprofiledata, setUserprofiledata] = useState([]);
   const { getToken, userInfo } = useContext(UserContext);
   const [favoriteWindow, setFavoriteWindow] = useState("hide");
@@ -347,6 +348,9 @@ function UserProfile() {
         console.log(updatedUserInfo);
         localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
         setcompletedProfileImage(true);
+
+        navigate("/profile");
+        window.location.reload();
       })
       .catch((error) => {
         console.log(error);
@@ -678,7 +682,30 @@ function UserProfile() {
                   >
                     <div className="p-2">
                       {userInfo.imageUrl.slice(0, 3) !== "../" ? (
-                        <img src={userInfo.imageUrl} alt="" />
+                        <>
+                          <div>
+                            <img
+                              style={{
+                                cursor: "pointer",
+                              }}
+                              src={userInfo.imageUrl}
+                              alt=""
+                              onClick={() =>
+                                document
+                                  .getElementById("formuploadModal")
+                                  .click()
+                              }
+                            />
+                            <input
+                              onChange={handleImage}
+                              type="file"
+                              id="formuploadModal"
+                              name="modalImage"
+                              className="form-control"
+                              style={{ display: "none" }}
+                            />
+                          </div>
+                        </>
                       ) : (
                         <div>
                           <svg

@@ -4,11 +4,11 @@ import ScrollToBottom from "react-scroll-to-bottom";
 function Chat({ socket, username, room }) {
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState([]);
-
+  const [keepMessagingRoom, setkeepMessagingRoom] = useState([]);
   // socket.on current exist messages in room =>
   // Emit the messages to the client
   // Odadaki mesajları dinle
-
+  console.log("This page is working !");
   socket.on("room_messages", (data) => {
     const { room, messages } = data;
     console.log(`Received messages for room ${room}:`, messages);
@@ -21,6 +21,15 @@ function Chat({ socket, username, room }) {
 
     setMessageList((prevMessages) => [...prevMessages, ...messages]);
   });
+
+  socket.on("keep_messaging_room_messages", (data) => {
+    const { room, messages } = data;
+    console.log(`Received messages for room ${room}:`, messages);
+
+    setkeepMessagingRoom((prevMessages) => [...prevMessages, ...messages]);
+  });
+
+  console.log("keep messaging room message list =>", keepMessagingRoom);
 
   console.log("message list => ", messageList);
   const sendMessage = async () => {
@@ -52,7 +61,7 @@ function Chat({ socket, username, room }) {
   return (
     <div className="chat-window">
       <div className="chat-header">
-        <p>Live Chat</p>
+        <p>{username}</p>
       </div>
       <div className="chat-body">
         <ScrollToBottom className="message-container">
@@ -105,7 +114,9 @@ function Chat({ socket, username, room }) {
             event.key === "Enter" && sendMessage();
           }}
         />
-        <button onClick={sendMessage}>&#9658;</button>
+        <button className="send-button" onClick={sendMessage}>
+          &#9658;
+        </button>
       </div>
     </div>
   );
