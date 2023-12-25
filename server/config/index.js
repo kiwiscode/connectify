@@ -29,17 +29,192 @@ module.exports = (app) => {
   io.on("connection", async (socket) => {
     console.log("A user connected:", socket.id);
 
-    // Tüm kullanıcıları bul ve istemcilere gönder
+    // start to check chat details page
+
+    socket.on("send_spesific_chatRoomId", (chatRoomId) => {
+      socket.on("send_spesific_userId", (userId) => {
+        User.findById(userId)
+          .populate({
+            path: "messages",
+            populate: {
+              path: "chat",
+              model: "Chat",
+            },
+          })
+          .populate({
+            path: "messages",
+            populate: {
+              path: "members",
+              model: "User",
+            },
+          })
+          .then((user) => {
+            const findChatRoomIdInsideMessages = user.messages.find(
+              (findedMessage) => {
+                return findedMessage._id.toString() === chatRoomId;
+              }
+            );
+
+            console.log(
+              "find selected user process =>",
+              findChatRoomIdInsideMessages.members
+            );
+
+            const filteredSelectedUser =
+              findChatRoomIdInsideMessages.members.filter((eachMember) => {
+                return eachMember._id.toString() !== user._id.toString();
+              });
+
+            socket.emit("receive_selectedUser", filteredSelectedUser);
+
+            console.log(
+              "Filtered user from members =>",
+              filteredSelectedUser[0]
+            );
+            socket.emit(
+              "send_spesific_chat_details",
+              findChatRoomIdInsideMessages
+            );
+          })
+          .then(() => {
+            // start to check make 2 users join in a room spesificly
+            socket.on("join_spesific_message_room", async (data) => {
+              const { activeUser, selectedUser } = data;
+              console.log(data);
+              // Create a unique room name using the usernames
+              const room = [activeUser.username, selectedUser.username]
+                .sort()
+                .join("_");
+              console.log(["xyz", "abc"].sort().join("_"));
+              // Join the room
+              socket.join(room);
+              console.log(
+                `Different Joined room message => User ${activeUser.username} with socket ID: ${socket.id} joined real time chat room with:${selectedUser.username} so they are ready to chat in real time by using socket.io package in a room => ${room}`
+              );
+              console.log("-----------------");
+              console.log("room => ", room);
+              // finish to check make 2 users join in a room spesificly
+
+              socket.on("send_spesific_room_message", async (data) => {
+                socket
+                  .to(data.room)
+                  .emit("receive_spesific_room_message", data);
+                const newChat = {
+                  sender: data.sender,
+                  text: data.text,
+                  timeStamp: Date.now(),
+                };
+              });
+            });
+          })
+          .catch((error) => {
+            console.log("error occured while fetching the user =>", error);
+          });
+      });
+    });
+
+    // finish to check chat details page
     const allUsers = await User.find();
     io.emit("activeUsers", allUsers);
+
+    socket.on("get_spesific_user", (data) => {
+      User.findById(data._id)
+        .populate({
+          path: "messages",
+          populate: {
+            path: "members",
+            model: "User",
+          },
+        })
+        .populate({
+          path: "messages",
+          populate: {
+            path: "chat",
+            model: "Chat",
+          },
+        })
+        .then((user) => {
+          socket.emit("receive_spesific_user_message_rooms", user);
+        })
+        .catch((error) => {});
+    });
+
+    // keep_messaging start to check
+    socket.on("keep_messaging", async (data) => {
+      // const { activeUser, selectedUser } = data;
+
+      // console.log("check data =>", data);
+      // Create a unique room name using the usernames
+      // const room = [activeUser.username, selectedUser.username]
+      //   .sort()
+      //   .join("_");
+      // console.log("Keep messaging =>", data);
+      // Join the room
+      // socket.join(room);
+      // console.log(
+      //   `User ${activeUser.username} with socket ID: ${socket.id} joined real time chat room with:${selectedUser.username} so they are ready to chat in real time by using socket.io package ${room}asdada`
+      // );
+
+      // start to check from existing room messages
+      User.find({
+        _id: {
+          $in: [new mongoose.Types.ObjectId(activeUser._id)],
+        },
+      })
+        .populate({
+          path: "messages.chat", // Populate işlemi
+          model: "Chat", // Chat modeli
+        })
+        .then((user) => {
+          const userMessages = user[0].messages || [];
+
+          const userRoomIndex = userMessages.findIndex(
+            (message) => message.room === room
+          );
+
+          if (userRoomIndex !== -1) {
+            const messages = userMessages[userRoomIndex].chat.map(
+              (eachMessage) => {
+                return eachMessage.messages;
+              }
+            );
+            const resultArrayOfMessages = [];
+            for (let i = 0; i < messages.length; i++) {
+              for (s = 0; s < messages[i].length; s++) {
+                resultArrayOfMessages.push(messages[i][s]);
+              }
+            }
+
+            // Emit the messages to the client
+            socket.emit("keep_messaging_room_messages", {
+              room,
+              messages: resultArrayOfMessages,
+            });
+          } else {
+            console.error("Error fetching messages for the existing room.");
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching users:", error);
+        });
+
+      // finish to check from existing room messages
+    });
+    // keep_messaging finish to check
 
     socket.on("join_user_room", async (data) => {
       const { activeUser, selectedUser } = data;
       // Create a unique room name using the usernames
+      console.log(
+        "active user =>",
+        activeUser,
+        "selected user =>",
+        selectedUser
+      );
       const room = [activeUser.username, selectedUser.username]
         .sort()
         .join("_");
-      console.log(data);
+
       // Join the room
       socket.join(room);
       console.log(
@@ -62,7 +237,6 @@ module.exports = (app) => {
         const roomExists = initiatingChatRoomBetweenTwoUsers.every((user) => {
           return user.messages.some((message) => message.room === room);
         });
-        console.log("Is their room already exist =>", roomExists);
 
         if (!roomExists) {
           const updatePromises = [
@@ -100,9 +274,6 @@ module.exports = (app) => {
             });
         } else {
           // NOTE INFO start to check show messages if the room exist between this two user
-          console.error(
-            "The room already exists between these two users.Show exist messages!"
-          );
 
           User.find({
             _id: {
@@ -121,30 +292,17 @@ module.exports = (app) => {
               );
 
               if (userRoomIndex !== -1) {
-                console.log(
-                  "User Messages in the Room:",
-                  userMessages[userRoomIndex].chat
-                );
-
-                console.log(
-                  "userMessages[userRoomIndex].chat =>",
-                  userMessages[userRoomIndex].chat
-                );
-
                 const messages = userMessages[userRoomIndex].chat.map(
                   (eachMessage) => {
                     return eachMessage.messages;
                   }
                 );
-                console.log("messages =>", messages);
                 const resultArrayOfMessages = [];
                 for (let i = 0; i < messages.length; i++) {
                   for (s = 0; s < messages[i].length; s++) {
                     resultArrayOfMessages.push(messages[i][s]);
                   }
                 }
-
-                console.log("resultArrayOfMessages => ", resultArrayOfMessages);
 
                 // Emit the messages to the client
                 socket.emit("room_messages", {
@@ -177,11 +335,6 @@ module.exports = (app) => {
             messages: [newChat],
           })
             .then((newCreatedChatBetween2User) => {
-              console.log(
-                "NEW CREATED CHAT BETWEEN 2 USER WHICH WILL BE THE PARENT CHAT FOR THE ALL MESAGES BETWEEN THIS 2 USER INSIDE USERS MESSAGES ARRAY =>",
-                newCreatedChatBetween2User._id
-              );
-
               // start to check find the room index inside users messages array
 
               // İki kullanıcının da messages array'ini alalım
@@ -200,22 +353,11 @@ module.exports = (app) => {
                 (message) => message.room === data.room
               );
 
-              console.log(
-                "User messages lobi index inside users messages array =>",
-                user1RoomIndex
-              );
-              console.log(
-                "User messages lobi index inside users messages array =>",
-                user2RoomIndex
-              );
               // Kullanıcıların _id değerleri
               const user1Id =
                 initiatingChatRoomBetweenTwoUsers[0]._id.toString();
               const user2Id =
                 initiatingChatRoomBetweenTwoUsers[1]._id.toString();
-
-              console.log("Messager user 1 =>", user1Id);
-              console.log("Messager user 2 =>", user2Id);
 
               User.find({
                 _id: {
@@ -235,48 +377,10 @@ module.exports = (app) => {
                   );
                   users[0].save();
                   users[1].save();
-                  console.log(
-                    "Finded users.messages 1 =>",
-                    users[0].messages[user1RoomIndex]
-                  );
-                  console.log(
-                    "Finded users.messages 2 =>",
-                    users[1].messages[user2RoomIndex]
-                  );
                 })
                 .catch((error) => {
                   console.log(error);
                 });
-
-              // İlk kullanıcıyı kaydet
-              // User.findOneAndUpdate(
-              //   {
-              //     _id: initiatingChatRoomBetweenTwoUsers[0]._id,
-              //     __v: initiatingChatRoomBetweenTwoUsers[0].__v,
-              //   },
-              //   initiatingChatRoomBetweenTwoUsers[0],
-              //   { new: true }
-              // )
-              //   .then(() => {
-              //     // İkinci kullanıcıyı kaydet
-              //     return User.findOneAndUpdate(
-              //       {
-              //         _id: initiatingChatRoomBetweenTwoUsers[1]._id,
-              //         __v: initiatingChatRoomBetweenTwoUsers[1].__v,
-              //       },
-              //       initiatingChatRoomBetweenTwoUsers[1],
-              //       { new: true }
-              //     )
-              //       .then((secondSavedUser) => {
-              //         console.log("Users are saved:", secondSavedUser);
-              //       })
-              //       .catch((error) => {
-              //         console.error("Error updating second user:", error);
-              //       });
-              //   })
-              //   .catch((error) => {
-              //     console.error("Error updating first user:", error);
-              //   });
 
               // finish to check find the room index inside users messages array
             })
