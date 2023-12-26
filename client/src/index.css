@@ -775,3 +775,69 @@ span > a:hover {
 .spesific-room-message-you-time {
   text-align: right;
 }
+
+/* footer chat details page style start to check  */
+.chat-footer-detail {
+  margin: 5px;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background-color: #f5f8fa;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+
+.message-input {
+  flex: 1;
+  padding: 8px;
+  margin-right: 8px;
+  border-style: none;
+  background-color: #f5f8fa;
+  outline: none;
+  font-size: 15px;
+}
+
+.send-button {
+  color: rgba(29, 155, 240);
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  background-color: #f5f8fa;
+  cursor: pointer;
+  outline: none;
+  font-size: 15px;
+  line-height: 20px;
+}
+/* footer chat details page style finish to check  */
+
+/* chat details page user information start to check  */
+
+.message-detail-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  height: 400px;
+  width: 100%;
+  background-color: #fff;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+}
+
+.message-detail-user-card {
+  text-align: center;
+  margin-top: 15px;
+  height: 330px;
+  padding: 20px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Hover effect */
+.message-detail-user-card:hover {
+  background-color: #f5f8fa; /* Twitter hover rengi */
+}
+
+/* chat details page user information finish to check  */
