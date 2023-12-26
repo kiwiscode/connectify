@@ -109,19 +109,19 @@ module.exports = (app) => {
               console.log(
                 `Different Joined room message => User ${activeUser.username} with socket ID: ${socket.id} joined real time chat room with:${selectedUser.username} so they are ready to chat in real time by using socket.io package in a room => ${room}`
               );
-              console.log("-----------------");
-              console.log("room => ", room);
-              // start to check receive send chat details
-              socket.on("send_spesific_room_message", (data) => {
-                console.log("This line is working => 8 _", data, socket.id);
-                socket
-                  .to(data.room)
-                  .emit("receive_spesific_room_message", data);
-                console.log("This line is working => 9 _");
-              });
-              // start to check receive send chat details
+              // socket.on("send_spesific_room_message", async (data) => {
+              //   console.log("This line is working => 1", data);
+
+              //   socket.to(data.room).emit("receive_spesific_room_message", data)}
             });
             // finish to check make 2 users join in a room spesificly and chat
+
+            // start to check receive send chat details
+            socket.on("send_spesific_room_message", async (data) => {
+              console.log("This line is working => 8 _", data);
+              socket.to(data.room).emit("receive_spesific_room_message", data);
+            });
+            // start to check receive send chat details
           })
           .catch((error) => {
             console.log("This line is working 10 ERROR !!! _", socket.id);
@@ -386,7 +386,7 @@ module.exports = (app) => {
                 initiatingChatRoomBetweenTwoUsers[0]._id.toString();
               const user2Id =
                 initiatingChatRoomBetweenTwoUsers[1]._id.toString();
-
+              //
               User.find({
                 _id: {
                   $in: [
