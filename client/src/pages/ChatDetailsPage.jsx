@@ -22,6 +22,7 @@ function ChatDetailsPage() {
   const [spesificRoom, setspesificRoom] = useState([]);
   const [selectedUser, setselectedUser] = useState([]);
   const [currentMessage, setCurrentMessage] = useState("");
+  const [room, setRoom] = useState("");
   // start to check
   const navigate = useNavigate();
   const redirectToMessages = () => {
@@ -30,36 +31,45 @@ function ChatDetailsPage() {
   };
   // finish to check
 
-  socket.on("send_spesific_chat_details", (data) => {
-    console.log("Data received =>", data);
-
-    setspesificRoom(data);
-  });
-
   useEffect(() => {
     socket.emit("send_spesific_chatRoomId", chatRoomId);
 
     socket.emit("send_spesific_userId", userInfo._id);
 
-    socket.on("receive_spesific_room_message", (data) => {
-      console.log("Received message =>", data);
-    });
-
     socket.on("receive_selectedUser", (data) => {
-      console.log("Received spesific selected user => ", data);
       setselectedUser(data);
     });
+
+    // start to check Mesajlar karşılıklı olarak receive ediliyor başarılı şekilde tek gereken render etmek kaldı !
+
+    socket.on("receive_spesific_room_message", (data) => {
+      console.log("Received message =>", data);
+      setspesificRoom((list) => [...list, data]);
+    });
+
+    // finish to check Mesajlar karşılıklı olarak receive ediliyor başarılı şekilde tek gereken render etmek kaldı !
+
+    // Component unmount olduğunda temizlik yap
+    return () => {
+      socket.disconnect();
+    };
   }, [socket]);
+
+  // mesajların render edildiği kısım start to check
+  socket.on("send_spesific_chat_details", (data) => {
+    const { room, messages } = data;
+    console.log(room, messages);
+    setRoom(room);
+    setspesificRoom(messages);
+  });
+  // mesajların render edildiği kısım finish to check
+
   // Emit an event to join the room with the selected user
-  socket.emit(
-    "join_spesific_message_room",
-    {
-      activeUser: userInfo,
-      selectedUser: selectedUser[0],
-    },
-    console.log("Inside join room selected user =>", selectedUser[0]),
-    console.log("Inside join room active user =>", userInfo)
-  );
+  socket.emit("join_spesific_message_room", {
+    activeUser: userInfo,
+    selectedUser: selectedUser[0],
+  });
+
   const messageDetails = (array) => {
     if (array.members) {
       const roomMemberFilter = array.members.filter((eachMember) => {
@@ -68,11 +78,10 @@ function ChatDetailsPage() {
       return roomMemberFilter;
     }
   };
-
   const sendMessage = async () => {
     if (currentMessage !== "") {
       const messageData = {
-        room: spesificRoom.room,
+        room: room,
         sender: userInfo.username,
         text: currentMessage,
         time: new Date().toLocaleString("en-US", {
@@ -82,24 +91,9 @@ function ChatDetailsPage() {
           hour12: true,
         }),
       };
-      console.log(messageData);
-      await socket.emit("send_spesific_room_message", messageData);
-      setspesificRoom((prevRoom) => {
-        const newChat = prevRoom.chat.map((chatItem) => {
-          if (chatItem.room === spesificRoom.room) {
-            return {
-              ...chatItem,
-              messages: [...chatItem.messages, messageData],
-            };
-          }
-          return chatItem;
-        });
 
-        return {
-          ...prevRoom,
-          chat: newChat,
-        };
-      });
+      await socket.emit("send_spesific_room_message", messageData);
+      setspesificRoom((list) => [...list, messageData]);
       setCurrentMessage("");
     }
   };
@@ -195,8 +189,6 @@ function ChatDetailsPage() {
   };
   //  NOTE finish to check calculation the length according isReaded value
 
-  console.log(messageDetails(spesificRoom));
-
   const monthsProfile = [
     "January",
     "February",
@@ -217,8 +209,6 @@ function ChatDetailsPage() {
     const getMonth = createdAt.getMonth();
     return `${monthsProfile[getMonth]} ${createdAt.getFullYear()}`;
   };
-
-  console.log("Chat room =>", spesificRoom);
 
   return (
     <>
@@ -530,73 +520,64 @@ function ChatDetailsPage() {
             {/* start to check render messages with spesific user  */}
 
             <div style={{ overflowY: "auto", width: "100%", height: "100vh" }}>
-              {spesificRoom && spesificRoom.chat ? (
-                <>
-                  {spesificRoom.chat.map((eachMessage, index) => (
-                    <div key={index}>
-                      {eachMessage.messages.map(
-                        (messageDetail, messageIndex) => (
-                          <>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent:
-                                  userInfo.username === messageDetail.sender
-                                    ? "flex-end"
-                                    : "flex-start",
-                              }}
-                              className="spesific-room-message-main-container"
-                              key={messageIndex}
-                            >
-                              <div
-                                className={
-                                  userInfo.username === messageDetail.sender
-                                    ? "spesific-room-message-you"
-                                    : "spesific-room-message-other"
-                                }
-                              >
-                                <div className="spesific-room-message-container">
-                                  <div className="spesific-room-message-content">
-                                    <span className="spesific-room-message-text">
-                                      {messageDetail.text}
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <div
-                              className={
-                                userInfo.username === messageDetail.sender
-                                  ? "spesific-room-message-you-time spesific-room-message-message-meta"
-                                  : "spesific-room-message-other-time spesific-room-message-meta"
-                              }
-                            >
-                              <p id="time">
-                                {messageDetail.timestamp ? (
-                                  <span>
-                                    {new Date(
-                                      messageDetail.timestamp
-                                    ).toLocaleString("en-US", {
-                                      weekday: "short",
-                                      hour: "numeric",
-                                      minute: "numeric",
-                                      hour12: true,
-                                    })}
-                                  </span>
-                                ) : (
-                                  <span>{messageDetail.time}</span>
-                                )}
-                              </p>
-                            </div>
-                          </>
-                        )
-                      )}
+              {spesificRoom.map((eachMessage, index) => (
+                <div key={index}>
+                  <div>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent:
+                          userInfo.username === eachMessage.sender
+                            ? "flex-end"
+                            : "flex-start",
+                      }}
+                      className="spesific-room-message-main-container"
+                      key={index}
+                    >
+                      <div
+                        className={
+                          userInfo.username === eachMessage.sender
+                            ? "spesific-room-message-you"
+                            : "spesific-room-message-other"
+                        }
+                      >
+                        <div className="spesific-room-message-container">
+                          <div className="spesific-room-message-content">
+                            <span className="spesific-room-message-text">
+                              {eachMessage.text}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  ))}
-                </>
-              ) : (
-                <div>There is no content!</div>
-              )}
+                    <div
+                      className={
+                        userInfo.username === eachMessage.sender
+                          ? "spesific-room-message-you-time spesific-room-message-message-meta"
+                          : "spesific-room-message-other-time spesific-room-message-meta"
+                      }
+                    >
+                      <p id="time">
+                        {eachMessage.timestamp ? (
+                          <span>
+                            {new Date(eachMessage.timestamp).toLocaleString(
+                              "en-US",
+                              {
+                                weekday: "short",
+                                hour: "numeric",
+                                minute: "numeric",
+                                hour12: true,
+                              }
+                            )}
+                          </span>
+                        ) : (
+                          <span>{eachMessage.time}</span>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
             <div className="chat-footer">
               <input
