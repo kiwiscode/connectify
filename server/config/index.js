@@ -32,7 +32,9 @@ module.exports = (app) => {
     // start to check chat details page
 
     socket.on("send_spesific_chatRoomId", (chatRoomId) => {
+      console.log("This line is working check chatRoomId =>", chatRoomId);
       socket.on("send_spesific_userId", (userId) => {
+        console.log("This line is working 1 _", socket.id);
         User.findById(userId)
           .populate({
             path: "messages",
@@ -49,15 +51,12 @@ module.exports = (app) => {
             },
           })
           .then((user) => {
+            console.log("This line is working 2 _", socket.id);
+
             const findChatRoomIdInsideMessages = user.messages.find(
               (findedMessage) => {
                 return findedMessage._id.toString() === chatRoomId;
               }
-            );
-
-            console.log(
-              "find selected user process =>",
-              findChatRoomIdInsideMessages.members
             );
 
             const filteredSelectedUser =
@@ -66,48 +65,67 @@ module.exports = (app) => {
               });
 
             socket.emit("receive_selectedUser", filteredSelectedUser);
+            console.log(findChatRoomIdInsideMessages.chat.length);
+            let resultArrayOfMessages = [];
 
+            for (let i = 0; i < findChatRoomIdInsideMessages.chat.length; i++) {
+              for (
+                let j = 0;
+                j < findChatRoomIdInsideMessages.chat[i].messages.length;
+                j++
+              ) {
+                // Her bir mesajı resultArrayOfMessages dizisine pushlayalım.
+                resultArrayOfMessages.push(
+                  findChatRoomIdInsideMessages.chat[i].messages[j]
+                );
+              }
+            }
+            console.log("get room name => ", findChatRoomIdInsideMessages.room);
             console.log(
-              "Filtered user from members =>",
-              filteredSelectedUser[0]
+              "Result array of messages chat details page => ",
+              resultArrayOfMessages
             );
-            socket.emit(
-              "send_spesific_chat_details",
-              findChatRoomIdInsideMessages
-            );
-          })
-          .then(() => {
-            // start to check make 2 users join in a room spesificly
-            socket.on("join_spesific_message_room", async (data) => {
+            // Emit the messages to the client
+            socket.emit("send_spesific_chat_details", {
+              room: findChatRoomIdInsideMessages.room,
+              messages: resultArrayOfMessages,
+            });
+
+            console.log("This line is working 4 _", socket.id);
+
+            // start to check make 2 users join in a room spesificly and chat
+            socket.on("join_spesific_message_room", (data) => {
+              console.log("This line is working 6 _", socket.id);
+
               const { activeUser, selectedUser } = data;
-              console.log(data);
               // Create a unique room name using the usernames
               const room = [activeUser.username, selectedUser.username]
                 .sort()
                 .join("_");
-              console.log(["xyz", "abc"].sort().join("_"));
               // Join the room
               socket.join(room);
+              console.log("This line is working 7 _", socket.id);
+
               console.log(
                 `Different Joined room message => User ${activeUser.username} with socket ID: ${socket.id} joined real time chat room with:${selectedUser.username} so they are ready to chat in real time by using socket.io package in a room => ${room}`
               );
               console.log("-----------------");
               console.log("room => ", room);
-              // finish to check make 2 users join in a room spesificly
-
-              socket.on("send_spesific_room_message", async (data) => {
+              // start to check receive send chat details
+              socket.on("send_spesific_room_message", (data) => {
+                console.log("This line is working => 8 _", data, socket.id);
                 socket
                   .to(data.room)
                   .emit("receive_spesific_room_message", data);
-                const newChat = {
-                  sender: data.sender,
-                  text: data.text,
-                  timeStamp: Date.now(),
-                };
+                console.log("This line is working => 9 _");
               });
+              // start to check receive send chat details
             });
+            // finish to check make 2 users join in a room spesificly and chat
           })
           .catch((error) => {
+            console.log("This line is working 10 ERROR !!! _", socket.id);
+
             console.log("error occured while fetching the user =>", error);
           });
       });
@@ -141,19 +159,19 @@ module.exports = (app) => {
 
     // keep_messaging start to check
     socket.on("keep_messaging", async (data) => {
-      // const { activeUser, selectedUser } = data;
+      const { activeUser, selectedUser } = data;
 
-      // console.log("check data =>", data);
+      console.log("check data =>", data);
       // Create a unique room name using the usernames
-      // const room = [activeUser.username, selectedUser.username]
-      //   .sort()
-      //   .join("_");
-      // console.log("Keep messaging =>", data);
+      const room = [activeUser.username, selectedUser.username]
+        .sort()
+        .join("_");
+      console.log("Keep messaging =>", data);
       // Join the room
-      // socket.join(room);
-      // console.log(
-      //   `User ${activeUser.username} with socket ID: ${socket.id} joined real time chat room with:${selectedUser.username} so they are ready to chat in real time by using socket.io package ${room}asdada`
-      // );
+      socket.join(room);
+      console.log(
+        `User ${activeUser.username} with socket ID: ${socket.id} joined real time chat room with:${selectedUser.username} so they are ready to chat in real time by using socket.io package ${room} keep messagin ! ! ! ! ! !`
+      );
 
       // start to check from existing room messages
       User.find({
@@ -303,7 +321,11 @@ module.exports = (app) => {
                     resultArrayOfMessages.push(messages[i][s]);
                   }
                 }
-
+                console.log(
+                  "room messages: resultArrayOfMessages",
+                  room,
+                  resultArrayOfMessages
+                );
                 // Emit the messages to the client
                 socket.emit("room_messages", {
                   room,
@@ -322,8 +344,14 @@ module.exports = (app) => {
 
         // start to check INFO NOTE chat starting
         console.log("They are ready to chat their => room created!");
+
+        // start to check receive send
         socket.on("send_message", async (data) => {
+          console.log("This line is working => 1", data);
+
           socket.to(data.room).emit("receive_message", data);
+
+          // finish to check receive send
           const newChat = {
             sender: data.sender,
             text: data.text,

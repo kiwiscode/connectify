@@ -15,7 +15,7 @@ const API_URL = "http://localhost:3000";
 
 const socket = io.connect(API_URL);
 
-function App() {
+function MessagesPage() {
   // rendering page after redirectiring for fetching data without problem ! if you need to fetch data after you redirect or navigate to user to the page (it can work pretty good on your navigation bar)this lines of code is pretty useful
   // start to check
   const navigate = useNavigate();
@@ -641,4 +641,4 @@ function App() {
   );
 }
 
-export default App;
+export default MessagesPage;
