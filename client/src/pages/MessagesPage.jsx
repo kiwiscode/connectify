@@ -225,6 +225,16 @@ function MessagesPage() {
 
     return formattedDate;
   };
+
+  const getMemberNotEqualActiveUser = (array) => {
+    const result = array.members.filter((eachMember) => {
+      return eachMember.username !== userInfo.username;
+    });
+
+    return result[0];
+  };
+
+  console.log(messageRooms.messages);
   return (
     <>
       <Container
@@ -511,23 +521,19 @@ function MessagesPage() {
                             backgroundColor: eachMessageRoom.readed
                               ? "white"
                               : "#F7F9F9",
-                            border: "1px solid #e1e8ed",
+                            border: eachMessageRoom.chat.length
+                              ? "1px solid #e1e8ed"
+                              : "",
                             borderRadius: "8px",
                           }}
                           key={eachMessageRoom._id}
                         >
-                          <span>
-                            Id of this chat room : {eachMessageRoom._id}
-                          </span>
                           {eachMessageRoom.chat &&
                             eachMessageRoom.chat.length > 0 && (
                               <div>
-                                {eachMessageRoom.members[0].fullname !==
-                                  userInfo.fullname &&
-                                eachMessageRoom.members[0].imageUrl.slice(
-                                  0,
-                                  3
-                                ) !== "../" ? (
+                                {getMemberNotEqualActiveUser(
+                                  eachMessageRoom
+                                ).imageUrl.slice(0, 3) !== "../" ? (
                                   <img
                                     style={{
                                       width: "40px",
@@ -536,7 +542,11 @@ function MessagesPage() {
                                       top: "10px",
                                       marginLeft: "10px",
                                     }}
-                                    src={eachMessageRoom.members[0].imageUrl}
+                                    src={
+                                      getMemberNotEqualActiveUser(
+                                        eachMessageRoom
+                                      ).imageUrl
+                                    }
                                     alt=""
                                   />
                                 ) : (

@@ -92,7 +92,8 @@ module.exports = (app) => {
             });
 
             console.log("This line is working 4 _", socket.id);
-
+            let chatDetailActiveUser;
+            let chatDetailSelectedUser;
             // start to check make 2 users join in a room spesificly and chat
             socket.on("join_spesific_message_room", (data) => {
               console.log("This line is working 6 _", socket.id);
@@ -103,16 +104,15 @@ module.exports = (app) => {
                 .sort()
                 .join("_");
               // Join the room
+
+              chatDetailActiveUser = activeUser;
+              chatDetailSelectedUser = selectedUser;
               socket.join(room);
               console.log("This line is working 7 _", socket.id);
 
               console.log(
                 `Different Joined room message => User ${activeUser.username} with socket ID: ${socket.id} joined real time chat room with:${selectedUser.username} so they are ready to chat in real time by using socket.io package in a room => ${room}`
               );
-              // socket.on("send_spesific_room_message", async (data) => {
-              //   console.log("This line is working => 1", data);
-
-              //   socket.to(data.room).emit("receive_spesific_room_message", data)}
             });
             // finish to check make 2 users join in a room spesificly and chat
 
@@ -120,8 +120,64 @@ module.exports = (app) => {
             socket.on("send_spesific_room_message", async (data) => {
               console.log("This line is working => 8 _", data);
               socket.to(data.room).emit("receive_spesific_room_message", data);
+
+              // finish to check receive send chat details
+              const newChat = {
+                sender: data.sender,
+                text: data.text,
+                timeStamp: Date.now(),
+              };
+
+              Chat.create({
+                room: data.room,
+                messages: [newChat],
+              })
+                .then((newCreatedChatBetween2User) => {
+                  // start to check find the room index inside users messages array
+
+                  // İki kullanıcının da messages array'ini alalım
+                  const user1Messages = chatDetailActiveUser.messages || [];
+                  const user2Messages = chatDetailSelectedUser.messages || [];
+
+                  // İlk kullanıcının messages array'indeki room'u bulalım
+                  const user1RoomIndex = user1Messages.findIndex(
+                    (message) => message.room === data.room
+                  );
+
+                  // İkinci kullanıcının messages array'indeki room'u bulalım
+                  const user2RoomIndex = user2Messages.findIndex(
+                    (message) => message.room === data.room
+                  );
+
+                  User.find({
+                    _id: {
+                      $in: [
+                        new mongoose.Types.ObjectId(chatDetailActiveUser._id),
+                        new mongoose.Types.ObjectId(chatDetailSelectedUser._id),
+                      ],
+                    },
+                  })
+                    .then((users) => {
+                      // Şimdi, her iki kullanıcının messages array'indeki ilgili room'un içine chat'i ekleyebiliriz
+                      users[0].messages[user1RoomIndex].chat.push(
+                        newCreatedChatBetween2User._id
+                      );
+                      users[1].messages[user2RoomIndex].chat.push(
+                        newCreatedChatBetween2User._id
+                      );
+                      users[0].save();
+                      users[1].save();
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                    });
+
+                  // finish to check find the room index inside users messages array
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
             });
-            // start to check receive send chat details
           })
           .catch((error) => {
             console.log("This line is working 10 ERROR !!! _", socket.id);
