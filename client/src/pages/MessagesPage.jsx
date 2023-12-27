@@ -26,11 +26,7 @@ function MessagesPage() {
   };
   // finish to check
 
-  const [room, setRoom] = useState("");
-  const [showChat, setShowChat] = useState(false);
-  const [activeUsers, setActiveUsers] = useState([]);
   const [searchString, setSearchString] = useState("");
-  const [filteredUsers, setFilteredUsers] = useState([]);
   const { userInfo, getToken } = useContext(UserContext);
   const [showNotificationColumn, setshowNotificationColumn] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -38,17 +34,9 @@ function MessagesPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [content, setContent] = useState("");
   const [messageRooms, setmessageRooms] = useState([]);
+  const [filteredRooms, setFilteredRooms] = useState([]);
 
   useEffect(() => {
-    // Server tarafından emit edilen "activeUsers" olayını dinle
-    socket.on("activeUsers", (users) => {
-      setActiveUsers(users);
-      if (searchString !== "") {
-        filterUsers(users, searchString);
-      } else {
-        filterUsers([], searchString);
-      }
-    });
     socket.emit("get_spesific_user", userInfo);
 
     // Component unmount olduğunda temizlik yap
@@ -60,42 +48,34 @@ function MessagesPage() {
 
   socket.on("receive_spesific_user_message_rooms", (data) => {
     console.log("Received active user message rooms => ", data);
-
     setmessageRooms(data);
   });
 
-  console.log("Your message rooms =>", messageRooms);
-  const filterUsers = (users, term) => {
-    const filtered = users.filter((user) =>
-      user.username.toLowerCase().startsWith(term.toLowerCase())
-    );
-    if (searchString !== []) {
-      setFilteredUsers(filtered);
-    } else {
-      setFilteredUsers([]);
-    }
-  };
-  const handleSearchTermChange = (e) => {
-    const term = e.target.value;
+  // start to check filtering rooms
+
+  const searchTerm = "jane";
+
+  if (messageRooms.messages) {
+    const getAllTheMessages = messageRooms.messages.filter((room) => {
+      // get rooms startswith or ends with with the same term you searching for
+      return (
+        room.room.startsWith(searchTerm) ||
+        room.room.split("_")[0].startsWith(searchTerm)
+      );
+    });
+
+    console.log("Filter mesaj alindi mi ?? => ", getAllTheMessages);
+  }
+
+  const handleFilteringRooms = (searchTerm) => {
+    const term = searchTerm.target.value.toLowerCase();
     setSearchString(term);
-    if (searchString !== "" && term !== "") {
-      filterUsers(activeUsers, term);
-    } else {
-      setFilteredUsers([]);
-    }
+    console.log(term);
   };
-  console.log("Total active users inside your message room =>", activeUsers);
 
-  const selectedUser = (user) => {
-    console.log("selected user =>", user);
+  // finish to check filtering rooms
 
-    const room = [userInfo.username, user.username].sort().join("_");
-
-    setRoom(room);
-    setShowChat(true);
-    // Emit an event to join the room with the selected user
-    socket.emit("join_user_room", { activeUser: userInfo, selectedUser: user });
-  };
+  console.log("Your message rooms =>", messageRooms.messages);
 
   // NOTE start to check get all the notifications from backend api endpoint
   const showNotifications = () => {
@@ -235,7 +215,6 @@ function MessagesPage() {
     return result[0];
   };
 
-  console.log(messageRooms.messages);
   return (
     <>
       <Container
@@ -462,8 +441,8 @@ function MessagesPage() {
                 border: "1px solid rgba(0, 0, 0, 0.1)",
               }}
             ></Row> */}
-            {/* start to check search user to chat with  */}
 
+            {/* start to check here we gonna render filtered rooms */}
             <div className="App">
               {/* test */}
 
@@ -473,99 +452,16 @@ function MessagesPage() {
                     type="text"
                     placeholder="Search direct messages"
                     value={searchString}
-                    onChange={handleSearchTermChange}
+                    onChange={(e) => handleFilteringRooms(e)}
                     style={{
                       fontSize: "14px",
                       width: "100%",
                     }}
                   />
                 </div>
-                {filteredUsers.map((user) => (
-                  <div
-                    className="selected-user-for-dm"
-                    onClick={() => selectedUser(user)}
-                    style={{
-                      position: "relative",
-                      top: "50px",
-                      transform: "translateY(-50%)",
-                      cursor: "pointer",
-                      textAlign: "left",
-                      height: "100%",
-                      width: "100%",
-                    }}
-                    key={user._id}
-                  >
-                    <div>
-                      {user.imageUrl.slice(0, 3) !== "../" ? (
-                        <img
-                          style={{
-                            position: "relative",
-                            top: "20px",
-                            left: "10px",
-                          }}
-                          width={40}
-                          height={40}
-                          src={user.imageUrl}
-                          alt=""
-                        />
-                      ) : (
-                        <div>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="40"
-                            height="40"
-                            fill="rgb(83, 100, 113)"
-                            className="bi bi-person-circle"
-                            viewBox="0 0 16 16"
-                          >
-                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                            <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                          </svg>
-                        </div>
-                      )}
-
-                      <div
-                        style={{
-                          position: "relative",
-                          left: "62%",
-                          top: "50%",
-                          transform: "translate(-50%, -50%)",
-                        }}
-                      >
-                        <div
-                          style={{
-                            color: "rgb(15, 20, 25)",
-                            fontSize: "15px",
-                            lineHeight: "20px",
-                            fontWeight: "700",
-                          }}
-                        >
-                          {user.fullname}
-                        </div>
-                        <div
-                          style={{
-                            color: "rgb(83, 100, 113)",
-                            lineHeight: "20px",
-                            fontSize: "15px",
-                            fontWeight: "400",
-                          }}
-                        >
-                          @{user.username}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
               </div>
-              {!showChat ? null : (
-                <Chat
-                  socket={socket}
-                  username={userInfo.username}
-                  room={room}
-                />
-              )}
             </div>
-            {/* finish to check search user to chat with  */}
+            {/* finish to check here we gonna render filtered rooms */}
 
             {/* mainpage yani messages rotasına tüm messagelerin gösterileceği column burası !  */}
 
