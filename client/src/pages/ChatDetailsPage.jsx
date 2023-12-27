@@ -50,6 +50,7 @@ function ChatDetailsPage() {
   };
 
   const onEmojiClick = (emojiObject) => {
+    console.log("This is the emoji that you pick => ", emojiObject);
     setChosenEmoji(emojiObject);
     setCurrentMessage((prevText) => prevText + emojiObject.emoji);
   };

@@ -841,3 +841,7 @@ span > a:hover {
 }
 
 /* chat details page user information finish to check  */
+
+.selected-user-for-dm:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}

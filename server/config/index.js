@@ -135,19 +135,36 @@ module.exports = (app) => {
                 .then((newCreatedChatBetween2User) => {
                   // start to check find the room index inside users messages array
 
+                  console.log(
+                    "Check new created chat =>",
+                    newCreatedChatBetween2User
+                  );
+
+                  console.log(
+                    "Not exist user => first user => active user =>",
+                    chatDetailActiveUser
+                  );
                   // İki kullanıcının da messages array'ini alalım
                   const user1Messages = chatDetailActiveUser.messages || [];
                   const user2Messages = chatDetailSelectedUser.messages || [];
-
+                  console.log(
+                    "Check user messages 1 =>",
+                    user1Messages,
+                    "Check user messages 2 =>",
+                    user2Messages
+                  );
                   // İlk kullanıcının messages array'indeki room'u bulalım
                   const user1RoomIndex = user1Messages.findIndex(
                     (message) => message.room === data.room
                   );
 
+                  console.log("Check room indexes =>", user1RoomIndex);
+
                   // İkinci kullanıcının messages array'indeki room'u bulalım
                   const user2RoomIndex = user2Messages.findIndex(
                     (message) => message.room === data.room
                   );
+                  console.log("Check room indexes 2=>", user2RoomIndex);
 
                   User.find({
                     _id: {
@@ -188,6 +205,8 @@ module.exports = (app) => {
     });
 
     // finish to check chat details page
+
+    // start to check create chat page
     const allUsers = await User.find();
     io.emit("activeUsers", allUsers);
 
@@ -332,15 +351,63 @@ module.exports = (app) => {
             );
           });
 
+          const findMessageRoomId = (user1, user2) => {
+            // Her iki kullanıcının messages alanındaki odaları alınır
+            const user1Rooms = user1.messages.map((message) => message.room);
+            const user2Rooms = user2.messages.map((message) => message.room);
+
+            // İki kullanıcının ait olduğu odalar bulunur
+            const commonRooms = user1Rooms.filter((room) =>
+              user2Rooms.includes(room)
+            );
+
+            console.log("This is the common room =>", commonRooms);
+            // Eğer ortak odalar bulunduysa, ilk ortak odayı döndür
+            if (commonRooms.length > 0) {
+              return commonRooms[0];
+            }
+
+            // Ortak oda bulunamadıysa null döndür
+            return null;
+          };
+
           Promise.all(updatePromises)
             .then((updatedUsers) => {
               // updatedUsers içinde güncellenmiş kullanıcılar var
 
-              initiatingChatRoomBetweenTwoUsers[0].messages =
-                updatedUsers[0].messages;
+              console.log(
+                "bu iki kullanicinin üye olduğu odayi bul =>",
+                updatedUsers
+              );
 
-              initiatingChatRoomBetweenTwoUsers[1].messages =
-                updatedUsers[1].messages;
+              const roomName = findMessageRoomId(
+                updatedUsers[0],
+                updatedUsers[1]
+              );
+              if (roomName) {
+                console.log("Mesaj odasi ID'si:", roomName);
+
+                // updatedUsers[0] ve updatedUsers[1] içindeki kullanıcı nesnelerini güncelle
+                initiatingChatRoomBetweenTwoUsers[0].messages =
+                  updatedUsers[0].messages;
+                initiatingChatRoomBetweenTwoUsers[1].messages =
+                  updatedUsers[1].messages;
+
+                const newIdOfMessageRoom = updatedUsers[0].messages.find(
+                  (messageRoom) => {
+                    return messageRoom.room === roomName;
+                  }
+                );
+                console.log("Id of new room =>", newIdOfMessageRoom);
+                // roomId'ı kullanarak bir şeyler yapabilirsiniz
+
+                socket.emit(
+                  "getmessageRoomId",
+                  newIdOfMessageRoom._id.toString()
+                );
+              } else {
+                console.log("Ortak mesaj odasi bulunamadi.");
+              }
             })
             .catch((error) => {
               // Hata işleme kodu burada
@@ -382,6 +449,18 @@ module.exports = (app) => {
                   room,
                   resultArrayOfMessages
                 );
+
+                const findedRoom = user[0].messages.find((eachMessage) => {
+                  return eachMessage.room === room;
+                });
+
+                console.log(
+                  "Varolan oda bulundu ve id si cliente gonderilmeye hazir =>",
+                  findedRoom
+                );
+
+                socket.emit("getmessageRoomId", findedRoom._id.toString());
+
                 // Emit the messages to the client
                 socket.emit("room_messages", {
                   room,
