@@ -5,6 +5,9 @@ import { UserContext } from "../context/UserContext";
 import { Col, Row, Container } from "react-bootstrap";
 import axios from "axios";
 import { LogoutModal, PostModal } from "../components/ui/Modal";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import Picker from "emoji-picker-react";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -23,6 +26,11 @@ function ChatDetailsPage() {
   const [selectedUser, setselectedUser] = useState([]);
   const [currentMessage, setCurrentMessage] = useState("");
   const [room, setRoom] = useState("");
+
+  const [chosenEmoji, setChosenEmoji] = useState(null);
+  const [showEmojisBar, setshowEmojisBar] = useState("hide");
+
+  const [showSecondModal, setShowSecondModal] = useState(false);
   // start to check
   const navigate = useNavigate();
   const redirectToMessages = () => {
@@ -30,6 +38,22 @@ function ChatDetailsPage() {
     window.location.reload();
   };
   // finish to check
+
+  const toggleEmojis = () => {
+    setshowEmojisBar("");
+    if (showEmojisBar === "") {
+      setshowEmojisBar("hide");
+    } else if (showEmojisBar === "hide") {
+      setshowEmojisBar("");
+    }
+    setShowSecondModal(true);
+  };
+
+  const onEmojiClick = (emojiObject) => {
+    console.log("This is the emoji that you pick => ", emojiObject);
+    setChosenEmoji(emojiObject);
+    setCurrentMessage((prevText) => prevText + emojiObject.emoji);
+  };
 
   useEffect(() => {
     socket.emit("send_spesific_chatRoomId", chatRoomId);
@@ -70,14 +94,6 @@ function ChatDetailsPage() {
     selectedUser: selectedUser[0],
   });
 
-  const messageDetails = (array) => {
-    if (array.members) {
-      const roomMemberFilter = array.members.filter((eachMember) => {
-        return eachMember.username !== userInfo.username;
-      });
-      return roomMemberFilter;
-    }
-  };
   const sendMessage = async () => {
     if (currentMessage !== "") {
       const messageData = {
@@ -98,7 +114,7 @@ function ChatDetailsPage() {
     }
   };
 
-  console.log("Spesific room output =>", spesificRoom);
+  console.log("Guest user =>", selectedUser);
 
   // NOTE start to check get all the notifications from backend api endpoint
   const showNotifications = () => {
@@ -390,136 +406,137 @@ function ChatDetailsPage() {
               borderBottom: "none",
             }}
           >
-            <div>
-              {spesificRoom && spesificRoom.members ? (
+            <div className="message-detail-container">
+              {selectedUser.length ? (
                 <>
-                  <span
-                    style={{
-                      lineHeight: "20px",
-                      fontWeight: "700",
-                      fontSize: "17px",
-                    }}
+                  <Link
+                    style={{ textDecoration: "none", color: "black" }}
+                    to={`/profile/${selectedUser[0]._id}`}
                   >
-                    {messageDetails(spesificRoom)[0].fullname}
-                  </span>
-                  <div className="message-detail-user-card">
-                    {messageDetails(spesificRoom)[0].imageUrl.slice(0, 3) !==
-                    "../" ? (
-                      <>
-                        <img
-                          width={64}
-                          height={64}
-                          src={
-                            messageDetails(spesificRoom)[0].imageUrl.slice(
-                              0,
-                              3
-                            ) !== "../"
-                              ? messageDetails(spesificRoom)[0].imageUrl
-                              : ""
-                          }
-                          alt=""
-                        />
-                      </>
-                    ) : (
-                      <div>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="64"
-                          height="64"
-                          fill="rgb(83, 100, 113)"
-                          className="bi bi-person-circle"
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                          <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                        </svg>
-                      </div>
-                    )}
-                    <div
+                    <span
                       style={{
                         lineHeight: "20px",
                         fontWeight: "700",
-                        fontSize: "15px",
+                        fontSize: "17px",
                       }}
                     >
-                      {messageDetails(spesificRoom)[0].fullname}
-                    </div>
-                    <div
-                      style={{
-                        lineHeight: "20px",
-                        fontWeight: "400",
-                        fontSize: "15px",
-                        color: "rgb(83, 100, 113)",
-                      }}
-                    >
-                      @{messageDetails(spesificRoom)[0].username}
-                    </div>
-                    <div
-                      style={{
-                        lineHeight: "16px",
-                        fontWeight: "400",
-                        fontSize: "14px",
-                        color: "rgb(83, 100, 113)",
-                      }}
-                    >
-                      Joined{" "}
-                      {getCreatedYearForSpesificUserProfilePage(
-                        messageDetails(spesificRoom)[0].createdAt
+                      {selectedUser[0].fullname}
+                    </span>
+                    <div className="message-detail-user-card">
+                      {selectedUser[0].imageUrl.slice(0, 3) !== "../" ? (
+                        <>
+                          <img
+                            width={64}
+                            height={64}
+                            src={
+                              selectedUser[0].imageUrl.slice(0, 3) !== "../"
+                                ? selectedUser[0].imageUrl
+                                : ""
+                            }
+                            alt=""
+                          />
+                        </>
+                      ) : (
+                        <div>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="64"
+                            height="64"
+                            fill="rgb(83, 100, 113)"
+                            className="bi bi-person-circle"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                            <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                          </svg>
+                        </div>
                       )}
-                      <span
+                      <div
                         style={{
-                          color: "rgba(0,0,0,0.6)",
-                          lineHeight: "16px",
-                          fontWeight: "400",
-                          fontSize: "14px",
+                          lineHeight: "20px",
+                          fontWeight: "700",
+                          fontSize: "15px",
                         }}
                       >
-                        ·
-                      </span>
-                      <span>
-                        {messageDetails(spesificRoom)[0].followers.length ? (
-                          <span
-                            style={{
-                              color: "rgba(0,0,0,0.6)",
-                              lineHeight: "16px",
-                              fontWeight: "400",
-                              fontSize: "14px",
-                            }}
-                          >
-                            {messageDetails(spesificRoom)[0].followers.length}{" "}
-                            follower
-                          </span>
-                        ) : (
-                          <span>There is no follower</span>
+                        {selectedUser[0].fullname}
+                      </div>
+                      <div
+                        style={{
+                          lineHeight: "20px",
+                          fontWeight: "400",
+                          fontSize: "15px",
+                          color: "rgb(83, 100, 113)",
+                        }}
+                      >
+                        @{selectedUser[0].username}
+                      </div>
+                      <div
+                        style={{
+                          lineHeight: "16px",
+                          margin: "15px 0px",
+                          fontWeight: "400",
+                          fontSize: "14px",
+                          color: "rgb(83, 100, 113)",
+                        }}
+                      >
+                        Joined{" "}
+                        {getCreatedYearForSpesificUserProfilePage(
+                          selectedUser[0].createdAt
                         )}
-                      </span>
+                        <span>
+                          {selectedUser[0].followers.length ? (
+                            <>
+                              <span
+                                style={{
+                                  color: "rgba(0,0,0,0.6)",
+                                  lineHeight: "16px",
+                                  fontWeight: "400",
+                                  fontSize: "14px",
+                                }}
+                              >
+                                {" "}
+                                ·{" "}
+                              </span>
+                              <span
+                                style={{
+                                  color: "rgba(0,0,0,0.6)",
+                                  lineHeight: "16px",
+                                  fontWeight: "400",
+                                  fontSize: "14px",
+                                }}
+                              >
+                                {selectedUser[0].followers.length} follower
+                              </span>
+                            </>
+                          ) : null}
+                        </span>
+                      </div>
+                      <div
+                        style={{
+                          color: "rgb(83, 100, 113)",
+                          fontSize: "13px",
+                          lineHeight: "16px",
+                          fontWeight: "400",
+                        }}
+                      >
+                        Not followed by anyone you&apos;re following =&gt; ??
+                        Check this part
+                      </div>
                     </div>
-                    <div
-                      style={{
-                        color: "rgb(83, 100, 113)",
-                        fontSize: "13px",
-                        lineHeight: "16px",
-                        fontWeight: "400",
-                      }}
-                    >
-                      Not followed by anyone you&apos;re following?????
-                    </div>
-                  </div>
+                  </Link>
                 </>
               ) : null}
             </div>
 
-            <Row
-              style={{
-                margin: "15px 5px 15px 5px",
-
-                border: "1px solid rgba(0, 0, 0, 0.1)",
-              }}
-            ></Row>
-
             {/* start to check render messages with spesific user  */}
-
-            <div style={{ overflowY: "auto", width: "100%", height: "100vh" }}>
+            <div
+              style={{
+                overflowY: "auto",
+                maxHeight: "500px",
+                width: "100%",
+                height: "100vh",
+              }}
+            >
               {spesificRoom.map((eachMessage, index) => (
                 <div key={index}>
                   <div>
@@ -579,11 +596,52 @@ function ChatDetailsPage() {
                 </div>
               ))}
             </div>
-            <div className="chat-footer">
+
+            <Row
+              style={{
+                border: "1px solid rgba(0, 0, 0, 0.1)",
+              }}
+            ></Row>
+            <div className="chat-footer-detail">
+              <div
+                className={`${showEmojisBar} date-picker-container`}
+                style={{
+                  position: "fixed",
+                  zIndex: 9999,
+                  marginBottom: "550px",
+                  marginLeft: "-150px",
+                }}
+              >
+                <Picker
+                  onEmojiClick={onEmojiClick}
+                  emojiStyle="twitter"
+                  width={"320px"}
+                  height={"400px"}
+                />
+              </div>
+              <div className="p-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  className="bi bi-emoji-smile"
+                  viewBox="0 0 16 16"
+                  style={{
+                    cursor: "pointer",
+                    color: "rgb(29, 155, 240)",
+                  }}
+                  onClick={() => toggleEmojis()}
+                >
+                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                  <path d="M4.285 9.567a.5.5 0 0 1 .683.183A3.498 3.498 0 0 0 8 11.5a3.498 3.498 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.498 4.498 0 0 1 8 12.5a4.498 4.498 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683zM7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z" />
+                </svg>
+              </div>
               <input
+                className="message-input"
                 type="text"
                 value={currentMessage}
-                placeholder="Hey..."
+                placeholder="Start a new message"
                 onChange={(event) => {
                   setCurrentMessage(event.target.value);
                 }}
@@ -591,8 +649,9 @@ function ChatDetailsPage() {
                   event.key === "Enter" && sendMessage();
                 }}
               />
+
               <button className="send-button" onClick={sendMessage}>
-                &#9658;
+                <FontAwesomeIcon icon={faPaperPlane} />
               </button>
             </div>
 
