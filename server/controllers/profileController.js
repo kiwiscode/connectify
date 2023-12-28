@@ -92,6 +92,7 @@ const handleProfilePicture = (req, res) => {
               "webm",
               "webp",
             ],
+            gravity: "face",
             width: 133,
             height: 133,
             radius: "max",

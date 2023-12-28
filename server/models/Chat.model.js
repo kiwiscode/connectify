@@ -5,7 +5,7 @@ const messageSchema = new Schema({
   text: String,
   timestamp: { type: Date, default: Date.now },
 });
-
+// test
 const chatSchema = new Schema({
   room: String,
   messages: [messageSchema],

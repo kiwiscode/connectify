@@ -92,7 +92,8 @@ module.exports = (app) => {
             });
 
             console.log("This line is working 4 _", socket.id);
-
+            let chatDetailActiveUser;
+            let chatDetailSelectedUser;
             // start to check make 2 users join in a room spesificly and chat
             socket.on("join_spesific_message_room", (data) => {
               console.log("This line is working 6 _", socket.id);
@@ -103,16 +104,15 @@ module.exports = (app) => {
                 .sort()
                 .join("_");
               // Join the room
+
+              chatDetailActiveUser = activeUser;
+              chatDetailSelectedUser = selectedUser;
               socket.join(room);
               console.log("This line is working 7 _", socket.id);
 
               console.log(
                 `Different Joined room message => User ${activeUser.username} with socket ID: ${socket.id} joined real time chat room with:${selectedUser.username} so they are ready to chat in real time by using socket.io package in a room => ${room}`
               );
-              // socket.on("send_spesific_room_message", async (data) => {
-              //   console.log("This line is working => 1", data);
-
-              //   socket.to(data.room).emit("receive_spesific_room_message", data)}
             });
             // finish to check make 2 users join in a room spesificly and chat
 
@@ -120,8 +120,81 @@ module.exports = (app) => {
             socket.on("send_spesific_room_message", async (data) => {
               console.log("This line is working => 8 _", data);
               socket.to(data.room).emit("receive_spesific_room_message", data);
+
+              // finish to check receive send chat details
+              const newChat = {
+                sender: data.sender,
+                text: data.text,
+                timeStamp: Date.now(),
+              };
+
+              Chat.create({
+                room: data.room,
+                messages: [newChat],
+              })
+                .then((newCreatedChatBetween2User) => {
+                  // start to check find the room index inside users messages array
+
+                  console.log(
+                    "Check new created chat =>",
+                    newCreatedChatBetween2User
+                  );
+
+                  console.log(
+                    "Not exist user => first user => active user =>",
+                    chatDetailActiveUser
+                  );
+                  // İki kullanıcının da messages array'ini alalım
+                  const user1Messages = chatDetailActiveUser.messages || [];
+                  const user2Messages = chatDetailSelectedUser.messages || [];
+                  console.log(
+                    "Check user messages 1 =>",
+                    user1Messages,
+                    "Check user messages 2 =>",
+                    user2Messages
+                  );
+                  // İlk kullanıcının messages array'indeki room'u bulalım
+                  const user1RoomIndex = user1Messages.findIndex(
+                    (message) => message.room === data.room
+                  );
+
+                  console.log("Check room indexes =>", user1RoomIndex);
+
+                  // İkinci kullanıcının messages array'indeki room'u bulalım
+                  const user2RoomIndex = user2Messages.findIndex(
+                    (message) => message.room === data.room
+                  );
+                  console.log("Check room indexes 2=>", user2RoomIndex);
+
+                  User.find({
+                    _id: {
+                      $in: [
+                        new mongoose.Types.ObjectId(chatDetailActiveUser._id),
+                        new mongoose.Types.ObjectId(chatDetailSelectedUser._id),
+                      ],
+                    },
+                  })
+                    .then((users) => {
+                      // Şimdi, her iki kullanıcının messages array'indeki ilgili room'un içine chat'i ekleyebiliriz
+                      users[0].messages[user1RoomIndex].chat.push(
+                        newCreatedChatBetween2User._id
+                      );
+                      users[1].messages[user2RoomIndex].chat.push(
+                        newCreatedChatBetween2User._id
+                      );
+                      users[0].save();
+                      users[1].save();
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                    });
+
+                  // finish to check find the room index inside users messages array
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
             });
-            // start to check receive send chat details
           })
           .catch((error) => {
             console.log("This line is working 10 ERROR !!! _", socket.id);
@@ -132,6 +205,8 @@ module.exports = (app) => {
     });
 
     // finish to check chat details page
+
+    // start to check create chat page
     const allUsers = await User.find();
     io.emit("activeUsers", allUsers);
 
@@ -276,15 +351,63 @@ module.exports = (app) => {
             );
           });
 
+          const findMessageRoomId = (user1, user2) => {
+            // Her iki kullanıcının messages alanındaki odaları alınır
+            const user1Rooms = user1.messages.map((message) => message.room);
+            const user2Rooms = user2.messages.map((message) => message.room);
+
+            // İki kullanıcının ait olduğu odalar bulunur
+            const commonRooms = user1Rooms.filter((room) =>
+              user2Rooms.includes(room)
+            );
+
+            console.log("This is the common room =>", commonRooms);
+            // Eğer ortak odalar bulunduysa, ilk ortak odayı döndür
+            if (commonRooms.length > 0) {
+              return commonRooms[0];
+            }
+
+            // Ortak oda bulunamadıysa null döndür
+            return null;
+          };
+
           Promise.all(updatePromises)
             .then((updatedUsers) => {
               // updatedUsers içinde güncellenmiş kullanıcılar var
 
-              initiatingChatRoomBetweenTwoUsers[0].messages =
-                updatedUsers[0].messages;
+              console.log(
+                "bu iki kullanicinin üye olduğu odayi bul =>",
+                updatedUsers
+              );
 
-              initiatingChatRoomBetweenTwoUsers[1].messages =
-                updatedUsers[1].messages;
+              const roomName = findMessageRoomId(
+                updatedUsers[0],
+                updatedUsers[1]
+              );
+              if (roomName) {
+                console.log("Mesaj odasi ID'si:", roomName);
+
+                // updatedUsers[0] ve updatedUsers[1] içindeki kullanıcı nesnelerini güncelle
+                initiatingChatRoomBetweenTwoUsers[0].messages =
+                  updatedUsers[0].messages;
+                initiatingChatRoomBetweenTwoUsers[1].messages =
+                  updatedUsers[1].messages;
+
+                const newIdOfMessageRoom = updatedUsers[0].messages.find(
+                  (messageRoom) => {
+                    return messageRoom.room === roomName;
+                  }
+                );
+                console.log("Id of new room =>", newIdOfMessageRoom);
+                // roomId'ı kullanarak bir şeyler yapabilirsiniz
+
+                socket.emit(
+                  "getmessageRoomId",
+                  newIdOfMessageRoom._id.toString()
+                );
+              } else {
+                console.log("Ortak mesaj odasi bulunamadi.");
+              }
             })
             .catch((error) => {
               // Hata işleme kodu burada
@@ -326,6 +449,18 @@ module.exports = (app) => {
                   room,
                   resultArrayOfMessages
                 );
+
+                const findedRoom = user[0].messages.find((eachMessage) => {
+                  return eachMessage.room === room;
+                });
+
+                console.log(
+                  "Varolan oda bulundu ve id si cliente gonderilmeye hazir =>",
+                  findedRoom
+                );
+
+                socket.emit("getmessageRoomId", findedRoom._id.toString());
+
                 // Emit the messages to the client
                 socket.emit("room_messages", {
                   room,
