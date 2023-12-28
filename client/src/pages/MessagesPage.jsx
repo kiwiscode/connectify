@@ -1,6 +1,5 @@
 import io from "socket.io-client";
 import { useContext, useEffect, useState } from "react";
-import Chat from "./ChatPage";
 import { UserContext } from "../context/UserContext";
 import { Col, Row, Container, Stack } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
@@ -26,7 +25,7 @@ function MessagesPage() {
   };
   // finish to check
 
-  const [searchString, setSearchString] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const { userInfo, getToken } = useContext(UserContext);
   const [showNotificationColumn, setshowNotificationColumn] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -34,7 +33,7 @@ function MessagesPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [content, setContent] = useState("");
   const [messageRooms, setmessageRooms] = useState([]);
-  const [filteredRooms, setFilteredRooms] = useState([]);
+  const [filteredRooms, setfilteredRooms] = useState([]);
 
   useEffect(() => {
     socket.emit("get_spesific_user", userInfo);
@@ -44,38 +43,45 @@ function MessagesPage() {
       socket.disconnect();
     };
   }, []);
-  console.log("This page is working !");
-
   socket.on("receive_spesific_user_message_rooms", (data) => {
     console.log("Received active user message rooms => ", data);
-    setmessageRooms(data);
+    setfilteredRooms(data.messages);
+    setmessageRooms(data.messages);
   });
-
   // start to check filtering rooms
-
-  const searchTerm = "jane";
-
-  if (messageRooms.messages) {
-    const getAllTheMessages = messageRooms.messages.filter((room) => {
-      // get rooms startswith or ends with with the same term you searching for
-      return (
-        room.room.startsWith(searchTerm) ||
-        room.room.split("_")[0].startsWith(searchTerm)
-      );
-    });
-
-    console.log("Filter mesaj alindi mi ?? => ", getAllTheMessages);
-  }
-
-  const handleFilteringRooms = (searchTerm) => {
-    const term = searchTerm.target.value.toLowerCase();
-    setSearchString(term);
-    console.log(term);
+  const filterRoom = (array, searchTerm) => {
+    if (searchTerm !== "") {
+      const filteredArray = array.filter((eachRoom) => {
+        return (
+          eachRoom.room.startsWith(searchTerm.toLowerCase()) ||
+          eachRoom.room.split("_")[1].startsWith(searchTerm.toLowerCase())
+        );
+      });
+      console.log("Filtered room =>", filteredArray);
+      setfilteredRooms(filteredArray);
+    } else {
+      console.log("This line is working !");
+      setfilteredRooms(messageRooms);
+    }
   };
 
+  const handleSearchTerm = (term) => {
+    const searchTerm = term.target.value.toLowerCase();
+    setSearchTerm(searchTerm);
+
+    if (term !== "" && searchTerm !== "") {
+      filterRoom(messageRooms, searchTerm);
+    } else {
+      setSearchTerm("");
+      setfilteredRooms(messageRooms);
+    }
+    console.log(searchTerm);
+  };
   // finish to check filtering rooms
 
-  console.log("Your message rooms =>", messageRooms.messages);
+  console.log("Your message rooms =>", messageRooms);
+
+  console.log("Your message rooms from filtered rooms =>", filteredRooms);
 
   // NOTE start to check get all the notifications from backend api endpoint
   const showNotifications = () => {
@@ -451,8 +457,8 @@ function MessagesPage() {
                   <input
                     type="text"
                     placeholder="Search direct messages"
-                    value={searchString}
-                    onChange={(e) => handleFilteringRooms(e)}
+                    value={searchTerm}
+                    onChange={handleSearchTerm}
                     style={{
                       fontSize: "14px",
                       width: "100%",
@@ -465,136 +471,133 @@ function MessagesPage() {
 
             {/* mainpage yani messages rotasına tüm messagelerin gösterileceği column burası !  */}
 
-            {messageRooms.messages ? (
+            {filteredRooms.length ? (
               <div>
-                {messageRooms.messages.map((eachMessageRoom) => {
-                  return (
-                    <>
-                      <Link
-                        style={{
-                          position: "relative",
-                          bottom: "20px",
-                          margin: "5px",
-                          cursor: "pointer",
-                          listStyleType: "none",
-                          textDecoration: "none",
-                        }}
-                        to={`/messages/${eachMessageRoom._id}`}
-                      >
-                        <div
-                          style={{
-                            backgroundColor: eachMessageRoom.readed
-                              ? "white"
-                              : "#F7F9F9",
-                            border: eachMessageRoom.chat.length
-                              ? "1px solid #e1e8ed"
-                              : "",
-                            borderRadius: "8px",
-                          }}
-                          key={eachMessageRoom._id}
-                        >
-                          {eachMessageRoom.chat &&
-                            eachMessageRoom.chat.length > 0 && (
-                              <div>
-                                {getMemberNotEqualActiveUser(
-                                  eachMessageRoom
-                                ).imageUrl.slice(0, 3) !== "../" ? (
-                                  <img
-                                    style={{
-                                      width: "40px",
-                                      height: "40px",
-                                      position: "relative",
-                                      top: "10px",
-                                      marginLeft: "10px",
-                                    }}
-                                    src={
-                                      getMemberNotEqualActiveUser(
-                                        eachMessageRoom
-                                      ).imageUrl
-                                    }
-                                    alt=""
-                                  />
-                                ) : (
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="40"
-                                    height="40"
-                                    fill="rgb(83, 100, 113)"
-                                    className="bi bi-person-circle"
-                                    viewBox="0 0 16 16"
-                                    style={{
-                                      marginLeft: "10px",
-                                      position: "relative",
-                                      top: "10px",
-                                    }}
-                                  >
-                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                  </svg>
-                                )}
-
-                                <span
-                                  style={{
-                                    color: "rgb(15, 20, 25)",
-                                    marginLeft: "10px",
-                                    fontSize: "15px",
-                                    fontWeight: "700",
-                                    lineHeight: "20px",
-                                  }}
-                                >
-                                  {eachMessageRoom.members[1].fullname !==
-                                  userInfo.fullname
-                                    ? eachMessageRoom.members[1].fullname
-                                    : eachMessageRoom.members[0].fullname}{" "}
-                                </span>
-                                <span
-                                  style={{
-                                    color: "rgb(83, 100, 113)",
-                                  }}
-                                >
-                                  @
-                                  {eachMessageRoom.members[1].username !==
-                                  userInfo.username
-                                    ? eachMessageRoom.members[1].username
-                                    : eachMessageRoom.members[0].username}{" "}
-                                </span>
-
-                                <span style={{ color: "rgba(0,0,0,0.6)" }}>
-                                  {" "}
-                                  ·{" "}
-                                  {eachMessageRoom.chat[0]
-                                    ? getCreatedRoomDate(
-                                        eachMessageRoom.chat[0].messages[0]
-                                          .timestamp
-                                      )
-                                    : ""}
-                                </span>
-                                <div>
-                                  <span
-                                    style={{
-                                      color: "rgb(83, 100, 113)",
-                                      position: "relative",
-                                      left: "50px",
-                                      bottom: "13px",
-                                      marginLeft: "10px",
-                                    }}
-                                  >
-                                    {
-                                      eachMessageRoom.chat[
-                                        eachMessageRoom.chat.length - 1
-                                      ].messages[0].text
-                                    }
-                                  </span>
-                                </div>
-                              </div>
+                {filteredRooms.map((eachMessageRoom) => (
+                  <Link
+                    key={eachMessageRoom._id}
+                    style={{
+                      position: "relative",
+                      bottom: "20px",
+                      margin: "5px",
+                      cursor: "pointer",
+                      listStyleType: "none",
+                      textDecoration: "none",
+                    }}
+                    to={`/messages/${eachMessageRoom._id}`}
+                  >
+                    <div
+                      style={{
+                        backgroundColor: eachMessageRoom.readed
+                          ? "white"
+                          : "#F7F9F9",
+                        border: eachMessageRoom.chat.length
+                          ? "1px solid #e1e8ed"
+                          : "",
+                        borderRadius: "8px",
+                      }}
+                    >
+                      {eachMessageRoom.chat &&
+                        eachMessageRoom.chat.length > 0 && (
+                          <div>
+                            {getMemberNotEqualActiveUser(
+                              eachMessageRoom
+                            ).imageUrl.slice(0, 3) !== "../" ? (
+                              <img
+                                style={{
+                                  width: "40px",
+                                  height: "40px",
+                                  position: "relative",
+                                  top: "10px",
+                                  marginLeft: "10px",
+                                }}
+                                src={
+                                  getMemberNotEqualActiveUser(eachMessageRoom)
+                                    .imageUrl
+                                }
+                                alt=""
+                              />
+                            ) : (
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="40"
+                                height="40"
+                                fill="rgb(83, 100, 113)"
+                                className="bi bi-person-circle"
+                                viewBox="0 0 16 16"
+                                style={{
+                                  marginLeft: "10px",
+                                  position: "relative",
+                                  top: "10px",
+                                }}
+                              >
+                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                              </svg>
                             )}
-                        </div>
-                      </Link>
-                    </>
-                  );
-                })}
+
+                            <span
+                              style={{
+                                color: "rgb(15, 20, 25)",
+                                marginLeft: "10px",
+                                fontSize: "15px",
+                                fontWeight: "700",
+                                lineHeight: "20px",
+                              }}
+                            >
+                              {eachMessageRoom.members[1].fullname !==
+                              userInfo.fullname
+                                ? eachMessageRoom.members[1].fullname
+                                : eachMessageRoom.members[0].fullname}{" "}
+                            </span>
+                            <span
+                              style={{
+                                color: "rgb(83, 100, 113)",
+                              }}
+                            >
+                              @
+                              {eachMessageRoom.members[1].username !==
+                              userInfo.username
+                                ? eachMessageRoom.members[1].username
+                                : eachMessageRoom.members[0].username}{" "}
+                            </span>
+
+                            <span style={{ color: "rgba(0,0,0,0.6)" }}>
+                              {" "}
+                              ·{" "}
+                              {eachMessageRoom.chat[0]
+                                ? getCreatedRoomDate(
+                                    eachMessageRoom.chat[0].messages[0]
+                                      .timestamp
+                                  )
+                                : ""}
+                            </span>
+                            <div>
+                              <span
+                                style={{
+                                  color: "rgb(83, 100, 113)",
+                                  position: "relative",
+                                  left: "50px",
+                                  bottom: "13px",
+                                  marginLeft: "10px",
+                                }}
+                              >
+                                {
+                                  eachMessageRoom.chat[
+                                    eachMessageRoom.chat.length - 1
+                                  ].messages[0].text
+                                }
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                    </div>
+                  </Link>
+                ))}
               </div>
-            ) : null}
+            ) : (
+              <span>Nothing to filter!</span>
+            )}
           </Col>
           {/* finish to check main column  */}
 
