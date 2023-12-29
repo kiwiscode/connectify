@@ -11,6 +11,10 @@ body {
   margin: 0;
   padding: 0;
 }
+
+img {
+  object-fit: cover;
+}
 .first-page {
   zoom: 83%;
 }
@@ -797,6 +801,7 @@ span > a:hover {
   background-color: #f5f8fa;
   outline: none;
   font-size: 15px;
+  width: 100%;
 }
 
 .send-button {

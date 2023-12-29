@@ -426,6 +426,7 @@ function ChatDetailsPage() {
                       {selectedUser[0].imageUrl.slice(0, 3) !== "../" ? (
                         <>
                           <img
+                            style={{ borderRadius: "50%" }}
                             width={64}
                             height={64}
                             src={
