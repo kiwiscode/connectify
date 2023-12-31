@@ -310,7 +310,7 @@ span > a:hover {
 /* start to check NOTE make it responsive */
 /* NOTE NOTE PROBABLY DONE WITH THOSE CODES */
 .inner-div div {
-  width: 250px;
+  width: 100%;
 }
 
 .compose-tweet {
@@ -513,12 +513,6 @@ span > a:hover {
     position: relative;
     margin-right: 330px;
   }
-}
-
-.spesific-profile-st1 {
-  position: relative;
-  display: flex;
-  left: 250px;
 }
 
 .bi-chevron-double-left {
@@ -849,4 +843,16 @@ span > a:hover {
 
 .selected-user-for-dm:hover {
   background-color: rgba(0, 0, 0, 0.1);
+}
+
+.close-button:hover {
+  background-color: #ccccce !important; /* veya istediğiniz gri rengini belirtin */
+}
+
+.hover-fullname:hover {
+  text-decoration: underline !important;
+}
+
+.date-post-detail:hover {
+  text-decoration: underline !important;
 }

@@ -12,9 +12,9 @@ import {
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../../index.css";
 import Picker from "emoji-picker-react";
 import axios from "axios";
+import "../../index.css";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -99,9 +99,31 @@ function SigninModal() {
               Sign in
             </Button>
             <Modal show={show} onHide={handleClose} size="lg" centered={true}>
-              <Modal.Header closeButton>
-                <Modal.Title>Connectify</Modal.Title>
+              <Modal.Header
+                closeButton={false} // closeButton'u devre dışı bırak
+                style={{
+                  border: "none",
+                }}
+              >
+                <button
+                  type="button"
+                  className="close-button"
+                  aria-label="Close"
+                  style={{
+                    backgroundColor: "white",
+                    border: "none",
+                    borderRadius: "50%",
+                    lineHeight: "20px",
+                    fontSize: "20px",
+                    paddingBottom: "3px",
+                  }}
+                  onClick={handleClose}
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <span>Connectify</span>
               </Modal.Header>
+
               <Modal.Body>
                 <span className="sign-in-header mt-4 mb-4">
                   Sign in to Connectify
@@ -128,7 +150,11 @@ function SigninModal() {
                 </InputGroup>
                 {error}
               </Modal.Body>
-              <Modal.Footer>
+              <Modal.Footer
+                style={{
+                  border: "none",
+                }}
+              >
                 <Button variant="dark" onClick={handleLogin}>
                   Log in
                 </Button>
@@ -180,7 +206,13 @@ function LogoutModal() {
       <div className="logout-nav" onClick={handleShow}>
         {/* start to check */}
         {userInfo.imageUrl.slice(0, 3) !== "../" ? (
-          <img src={userInfo.imageUrl} width={40} height={40} alt="" />
+          <img
+            src={userInfo.imageUrl}
+            width={40}
+            height={40}
+            alt=""
+            style={{ borderRadius: "50%" }}
+          />
         ) : (
           <div>
             <svg
@@ -377,7 +409,29 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
       </Button>
 
       <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton></Modal.Header>
+        <Modal.Header
+          closeButton={false} // closeButton'u devre dışı bırak
+          style={{
+            border: "none",
+          }}
+        >
+          <button
+            type="button"
+            className="close-button"
+            aria-label="Close"
+            style={{
+              backgroundColor: "white",
+              border: "none",
+              borderRadius: "50%",
+              lineHeight: "20px",
+              fontSize: "20px",
+              paddingBottom: "3px",
+            }}
+            onClick={handleClose}
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </Modal.Header>
         <Modal.Body>
           <Stack direction="horizontal" gap={3}>
             <div className="p-2">
@@ -603,8 +657,28 @@ function CommentModal() {
       </svg>
 
       <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
+        <Modal.Header
+          closeButton={false} // closeButton'u devre dışı bırak
+          style={{
+            border: "none",
+          }}
+        >
+          <button
+            type="button"
+            className="close-button"
+            aria-label="Close"
+            style={{
+              backgroundColor: "white",
+              border: "none",
+              borderRadius: "50%",
+              lineHeight: "20px",
+              fontSize: "20px",
+              paddingBottom: "3px",
+            }}
+            onClick={handleClose}
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
         </Modal.Header>
         <Modal.Body>Woohoo, you are reading this text in a modal!</Modal.Body>
         <Modal.Footer>

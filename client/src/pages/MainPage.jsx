@@ -946,9 +946,48 @@ function MainPage() {
                           gap={1}
                           style={{ padding: "3px" }}
                         >
+                          {/* start to check next to post profile image  */}
+
+                          <Link
+                            to={`/profile/${post.userId._id}`}
+                            style={{
+                              textDecoration: "none",
+                            }}
+                          >
+                            <div>
+                              {" "}
+                              {post.userId.imageUrl.slice(0, 3) !== "../" ? (
+                                <img
+                                  src={post.userId.imageUrl}
+                                  width={35}
+                                  height={35}
+                                  alt=""
+                                  style={{
+                                    borderRadius: "50%",
+                                  }}
+                                />
+                              ) : (
+                                <div>
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="35"
+                                    height="35"
+                                    fill="rgb(83, 100, 113)"
+                                    className="bi bi-person-circle"
+                                    viewBox="0 0 16 16"
+                                  >
+                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                  </svg>
+                                </div>
+                              )}
+                            </div>
+                          </Link>
+                          {/* finish to check next to post profile image  */}
                           <div className="p-0">
                             {post.userId ? (
                               <Link
+                                className="hover-fullname"
                                 to={`/profile/${post.userId._id}`}
                                 style={{
                                   textDecoration: "none",
@@ -977,13 +1016,32 @@ function MainPage() {
 
                           <div className="p-0">
                             {" "}
-                            <span style={{ color: "rgba(0, 0, 0, 0.6)" }}>
-                              @{post.authorUserName}
-                            </span>
-                            <span style={{ color: "rgba(0,0,0,0.6)" }}>
-                              {" "}
-                              · {getCreatedDate(post.createdAt)}
-                            </span>
+                            <Link
+                              to={`/profile/${post.userId._id}`}
+                              style={{
+                                textDecoration: "none",
+                                color: "rgba(0,0,0,0.6)",
+                              }}
+                            >
+                              <span>@{post.authorUserName}</span>
+                            </Link>
+                            <Link
+                              style={{
+                                textDecoration: "none",
+                              }}
+                              to={`/${post.userId.username}/status/${post._id}`}
+                            >
+                              <span style={{ color: "rgba(0,0,0,0.6)" }}>
+                                {" "}
+                                ·{" "}
+                                <span className="date-post-detail">
+                                  {getCreatedDate(post.createdAt)}
+                                </span>
+                              </span>
+                            </Link>
+                          </div>
+                          {/* start to check positioning the three dots =>  */}
+                          <div className="ps-2 ms-auto">
                             <span>
                               {/* show if post owner userId !equal currentUserId */}
                               {post.userId &&
@@ -1026,34 +1084,57 @@ function MainPage() {
                               )}
                             </span>
                           </div>
+                          {/* finish to check positioning the three dots =>  */}
                         </Stack>
                       </div>
-                      <div style={{ padding: "3px" }}>{post.content}</div>
+                      <Link
+                        to={`/${post.userId.username}/status/${post._id}`}
+                        style={{
+                          textDecoration: "none",
+                          color: "rgb(15, 20, 25)",
+                        }}
+                      >
+                        <div style={{ padding: "3px" }}>{post.content}</div>
+                      </Link>{" "}
                       {/* start to check NOTE if there is no internet connection images would be hidden because of 'cloudinary connection' */}
                       {post.image.url !== "image@url" ? (
-                        <div
-                          style={{
-                            overflow: "hidden",
-                            border: "2px solid #ddd",
-                            borderRadius: "8px",
-                            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                          }}
-                        >
-                          <img
-                            src={post.image.url}
-                            alt="Description"
+                        <>
+                          <Link
+                            to={`/${post.userId.username}/status/${
+                              post._id
+                            }/photo/${22}`}
                             style={{
-                              width: "100%",
-                              display: "block",
+                              textDecoration: "none",
                             }}
-                          />
-                        </div>
+                          >
+                            <div
+                              style={{
+                                overflow: "hidden",
+                                border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
+                                borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
+                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                              }}
+                            >
+                              <img
+                                src={post.image.url}
+                                alt="Description"
+                                style={{
+                                  width: "100%",
+                                  display: "block",
+                                }}
+                              />
+                            </div>
+                          </Link>
+                        </>
                       ) : null}
                       {/* finish to check NOTE if there is no internet connection images would be hidden because of 'cloudinary connection' */}
                       <Stack
                         direction="horizontal"
-                        gap={3}
-                        style={{ padding: "3px" }}
+                        style={{
+                          padding: "3px",
+                          justifyContent: "space-around",
+                          marginBottom: "10px",
+                        }}
                       >
                         <div className="p-0">
                           <CommentModal />
