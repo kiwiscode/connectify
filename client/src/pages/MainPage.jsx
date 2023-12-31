@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserContext";
 import { Container, Row, Col, Stack, Button } from "react-bootstrap";
-import { LogoutModal, PostModal } from "../components/ui/Modal";
+import { LogoutModal, PostModal, CommentModal } from "../components/ui/Modal";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Picker from "emoji-picker-react";
@@ -946,9 +946,48 @@ function MainPage() {
                           gap={1}
                           style={{ padding: "3px" }}
                         >
+                          {/* start to check next to post profile image  */}
+
+                          <Link
+                            to={`/profile/${post.userId._id}`}
+                            style={{
+                              textDecoration: "none",
+                            }}
+                          >
+                            <div>
+                              {" "}
+                              {post.userId.imageUrl.slice(0, 3) !== "../" ? (
+                                <img
+                                  src={post.userId.imageUrl}
+                                  width={35}
+                                  height={35}
+                                  alt=""
+                                  style={{
+                                    borderRadius: "50%",
+                                  }}
+                                />
+                              ) : (
+                                <div>
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="35"
+                                    height="35"
+                                    fill="rgb(83, 100, 113)"
+                                    className="bi bi-person-circle"
+                                    viewBox="0 0 16 16"
+                                  >
+                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                  </svg>
+                                </div>
+                              )}
+                            </div>
+                          </Link>
+                          {/* finish to check next to post profile image  */}
                           <div className="p-0">
                             {post.userId ? (
                               <Link
+                                className="hover-fullname"
                                 to={`/profile/${post.userId._id}`}
                                 style={{
                                   textDecoration: "none",
@@ -977,13 +1016,32 @@ function MainPage() {
 
                           <div className="p-0">
                             {" "}
-                            <span style={{ color: "rgba(0, 0, 0, 0.6)" }}>
-                              @{post.authorUserName}
-                            </span>
-                            <span style={{ color: "rgba(0,0,0,0.6)" }}>
-                              {" "}
-                              · {getCreatedDate(post.createdAt)}
-                            </span>
+                            <Link
+                              to={`/profile/${post.userId._id}`}
+                              style={{
+                                textDecoration: "none",
+                                color: "rgba(0,0,0,0.6)",
+                              }}
+                            >
+                              <span>@{post.authorUserName}</span>
+                            </Link>
+                            <Link
+                              style={{
+                                textDecoration: "none",
+                              }}
+                              to={`/${post.userId.username}/status/${post._id}`}
+                            >
+                              <span style={{ color: "rgba(0,0,0,0.6)" }}>
+                                {" "}
+                                ·{" "}
+                                <span className="date-post-detail">
+                                  {getCreatedDate(post.createdAt)}
+                                </span>
+                              </span>
+                            </Link>
+                          </div>
+                          {/* start to check positioning the three dots =>  */}
+                          <div className="ps-2 ms-auto">
                             <span>
                               {/* show if post owner userId !equal currentUserId */}
                               {post.userId &&
@@ -1026,53 +1084,60 @@ function MainPage() {
                               )}
                             </span>
                           </div>
+                          {/* finish to check positioning the three dots =>  */}
                         </Stack>
                       </div>
-                      <div style={{ padding: "3px" }}>{post.content}</div>
+                      <Link
+                        to={`/${post.userId.username}/status/${post._id}`}
+                        style={{
+                          textDecoration: "none",
+                          color: "rgb(15, 20, 25)",
+                        }}
+                      >
+                        <div style={{ padding: "3px" }}>{post.content}</div>
+                      </Link>{" "}
                       {/* start to check NOTE if there is no internet connection images would be hidden because of 'cloudinary connection' */}
                       {post.image.url !== "image@url" ? (
-                        <div
-                          style={{
-                            overflow: "hidden",
-                            border: "2px solid #ddd",
-                            borderRadius: "8px",
-                            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                          }}
-                        >
-                          <img
-                            src={post.image.url}
-                            alt="Description"
+                        <>
+                          <Link
+                            to={`/${post.userId.username}/status/${
+                              post._id
+                            }/photo/${22}`}
                             style={{
-                              width: "100%",
-                              display: "block",
+                              textDecoration: "none",
                             }}
-                          />
-                        </div>
+                          >
+                            <div
+                              style={{
+                                overflow: "hidden",
+                                border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
+                                borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
+                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                              }}
+                            >
+                              <img
+                                src={post.image.url}
+                                alt="Description"
+                                style={{
+                                  width: "100%",
+                                  display: "block",
+                                }}
+                              />
+                            </div>
+                          </Link>
+                        </>
                       ) : null}
                       {/* finish to check NOTE if there is no internet connection images would be hidden because of 'cloudinary connection' */}
                       <Stack
                         direction="horizontal"
-                        gap={3}
-                        style={{ padding: "3px" }}
+                        style={{
+                          padding: "3px",
+                          justifyContent: "space-around",
+                          marginBottom: "10px",
+                        }}
                       >
                         <div className="p-0">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            className="bi bi-chat"
-                            viewBox="0 0 16 16"
-                          >
-                            <path
-                              stroke="black"
-                              strokeWidth="0.2"
-                              d="M2.678 11.894a1 1 0 0 1 .287.801 10.97 10.97 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8.06 8.06 0 0 0 8 14c3.996 0 7-2.807 7-6 0-3.192-3.004-6-7-6S1 4.808 1 8c0 1.468.617 2.83 1.678 3.894zm-.493 3.905a21.682 21.682 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a9.68 9.68 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105z"
-                            />
-                          </svg>
-                          <span className="post-description">
-                            Num Of Comments?
-                          </span>
+                          <CommentModal />
                         </div>
                         {/* start to check */}
                         <div className="p-0">

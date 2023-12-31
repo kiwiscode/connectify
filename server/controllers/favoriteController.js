@@ -10,6 +10,13 @@ const handleGetFavorites = (req, res) => {
       path: "favorites",
       options: { sort: { createdAt: -1 } },
     })
+    .populate({
+      path: "favorites",
+      populate: {
+        path: "userId",
+        model: "User",
+      },
+    })
     .then((favoritesFromDataBase) => {
       console.log(
         "All the favorites from data base for spesific user =>",
