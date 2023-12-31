@@ -10,7 +10,7 @@ import {
   ButtonGroup,
 } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { LogoutModal, PostModal } from "../components/ui/Modal";
+import { LogoutModal, PostModal, CommentModal } from "../components/ui/Modal";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 
 // when working on local version
@@ -50,7 +50,7 @@ function UserProfile() {
           "profilePosts",
           JSON.stringify(response.data.posts)
         );
-
+        console.log("Profile posts =>", response);
         setUserprofiledata(response.data.posts);
       })
       .catch((err) => {
@@ -161,7 +161,7 @@ function UserProfile() {
           "profileFavorites",
           JSON.stringify(response.data.favorites)
         );
-
+        console.log("Profile favorites =>", response);
         setFavorites(response.data.favorites);
       })
       .catch((err) => {
@@ -933,10 +933,54 @@ function UserProfile() {
                           gap={1}
                           style={{ padding: "3px" }}
                         >
+                          {/* start to check next to post profile image  */}
+
+                          <Link to={`/profile/${post.userId._id}`}>
+                            <div className="p-0">
+                              {" "}
+                              {post.userId.imageUrl.slice(0, 3) !== "../" ? (
+                                <img
+                                  src={post.userId.imageUrl}
+                                  width={35}
+                                  height={35}
+                                  alt=""
+                                  style={{
+                                    borderRadius: "50%",
+                                  }}
+                                />
+                              ) : (
+                                <div>
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="35"
+                                    height="35"
+                                    fill="rgb(83, 100, 113)"
+                                    className="bi bi-person-circle"
+                                    viewBox="0 0 16 16"
+                                  >
+                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                  </svg>
+                                </div>
+                              )}
+                            </div>
+                          </Link>
+                          {/* finish to check next to post profile image  */}
                           <div className="p-0">
-                            <span style={{ fontWeight: "700" }}>
-                              {post.authorFullName}{" "}
-                            </span>
+                            <Link
+                              to={`/profile/${post.userId._id}`}
+                              className="hover-fullname"
+                              style={{
+                                textDecoration: "none",
+                                color: "black",
+                              }}
+                            >
+                              <div className="p-0">
+                                <span style={{ fontWeight: "700" }}>
+                                  {post.authorFullName}{" "}
+                                </span>
+                              </div>
+                            </Link>
                           </div>
                           <div className="p-0 verified-icon">
                             {" "}
@@ -953,13 +997,30 @@ function UserProfile() {
                           </div>
                           <div className="p-0">
                             {" "}
-                            <span style={{ color: "rgba(0, 0, 0, 0.6)" }}>
-                              @{post.authorUserName}
-                            </span>
-                            <span style={{ color: "rgba(0,0,0,0.6)" }}>
-                              {" "}
-                              · {getCreatedDate(post.createdAt)}
-                            </span>
+                            <Link
+                              to={`/profile/${post.userId._id}`}
+                              style={{ textDecoration: "none" }}
+                            >
+                              <span style={{ color: "rgba(0, 0, 0, 0.6)" }}>
+                                @{post.authorUserName}
+                              </span>
+                            </Link>
+                            <Link
+                              style={{
+                                textDecoration: "none",
+                              }}
+                              to={`/${post.userId.username}/status/${post._id}`}
+                            >
+                              <span style={{ color: "rgba(0,0,0,0.6)" }}>
+                                {" "}
+                                ·{" "}
+                                <span className="date-post-detail">
+                                  {getCreatedDate(post.createdAt)}
+                                </span>
+                              </span>
+                            </Link>
+                          </div>
+                          <div className="ps-2 ms-auto">
                             {userInfo._id === post.userId ? (
                               <svg
                                 onClick={() =>
@@ -997,83 +1058,58 @@ function UserProfile() {
                           </div>
                         </Stack>
                       </div>
-                      <div style={{ padding: "3px" }}>{post.content}</div>
+                      <Link
+                        to={`/${post.userId.username}/status/${post._id}`}
+                        style={{
+                          textDecoration: "none",
+                          color: "rgb(15, 20, 25)",
+                        }}
+                      >
+                        <div style={{ padding: "3px" }}>{post.content}</div>
+                      </Link>
                       {post.image.url !== "image@url" ? (
-                        <div
-                          style={{
-                            overflow: "hidden",
-                            border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
-                            borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
-                            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
-                          }}
-                        >
-                          <img
-                            src={post.image.url}
-                            alt="Description"
+                        <>
+                          <Link
+                            to={`/${post.userId.username}/status/${
+                              post._id
+                            }/photo/${22}`}
                             style={{
-                              width: "100%",
-                              display: "block",
+                              textDecoration: "none",
                             }}
-                          />
-                        </div>
+                          >
+                            <div
+                              style={{
+                                overflow: "hidden",
+                                border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
+                                borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
+                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                              }}
+                            >
+                              <img
+                                src={post.image.url}
+                                alt="Description"
+                                style={{
+                                  width: "100%",
+                                  display: "block",
+                                }}
+                              />
+                            </div>
+                          </Link>
+                        </>
                       ) : null}
                       <Stack
                         direction="horizontal"
                         gap={3}
-                        style={{ padding: "3px" }}
+                        style={{
+                          padding: "3px",
+                          justifyContent: "space-around",
+                          marginBottom: "10px",
+                        }}
                       >
                         <div className="p-0">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            className="bi bi-chat"
-                            viewBox="0 0 16 16"
-                          >
-                            <path
-                              stroke="black"
-                              strokeWidth="0.2"
-                              d="M2.678 11.894a1 1 0 0 1 .287.801 10.97 10.97 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8.06 8.06 0 0 0 8 14c3.996 0 7-2.807 7-6 0-3.192-3.004-6-7-6S1 4.808 1 8c0 1.468.617 2.83 1.678 3.894zm-.493 3.905a21.682 21.682 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a9.68 9.68 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105z"
-                            />
-                          </svg>
-                          <span className="post-description">
-                            Num Of Comments?
-                          </span>
+                          <CommentModal />
                         </div>
-                        {/* <div className="p-0">
-                        <svg
-                          onClick={() => handleRepost(post._id)}
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill={
-                            // !shouldHide &&
-                            post.reposted.includes(userInfo._id)
-                              ? "rgb(0, 186, 124)"
-                              : "rgb(83, 100, 113)"
-                          }
-                          className="bi bi-repeat"
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
-                        </svg>
-                        <span
-                          onClick={() =>
-                            handleDeleteRepostProfilePage(post._id)
-                          }
-                          className="post-description"
-                          style={{
-                            color:
-                              // !shouldHide &&
-                              post.reposted.includes(userInfo._id)
-                                ? "rgb(0, 186, 124)"
-                                : "rgb(83, 100, 113)",
-                          }}
-                        >
-                          {post.reposted.length}
-                        </span>
-                      </div> */}
+
                         {/* start to check */}
                         <div className="p-0">
                           {post.reposted.includes(userInfo._id) ? (
@@ -1211,40 +1247,7 @@ function UserProfile() {
                         border: "1px solid rgba(0, 0, 0, 0.1)",
                       }}
                     ></Row>
-                    {/* {favorite.reposted.includes(userInfo._id) ? (
-                    <svg
-                      style={{
-                        color: "rgb(83, 100, 113)",
-                        fontSize: "15px",
-                        marginLeft: "5px",
-                      }}
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      className="bi bi-repeat"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
-                    </svg>
-                  ) : (
-                    <div>{""}</div>
-                  )} */}
-                    {/* {favorite.reposted.includes(userInfo._id) ? (
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        lineHeight: "20px",
-                        fontWeight: "700",
-                        color: "rgb(83, 100, 113)",
-                        marginLeft: "10px",
-                      }}
-                    >
-                      You reposted
-                    </span>
-                  ) : (
-                    <div>{""}</div>
-                  )} */}
+
                     <div className="favorite-details">
                       <div className="favorite-head">
                         <Stack
@@ -1252,10 +1255,60 @@ function UserProfile() {
                           gap={1}
                           style={{ padding: "3px" }}
                         >
+                          {/* start to check next to post profile image  */}
+
+                          <Link
+                            to={`/profile/${favorite.userId._id}`}
+                            style={{
+                              textDecoration: "none",
+                            }}
+                          >
+                            <div>
+                              {" "}
+                              {favorite.userId.imageUrl.slice(0, 3) !==
+                              "../" ? (
+                                <img
+                                  src={favorite.userId.imageUrl}
+                                  width={35}
+                                  height={35}
+                                  alt=""
+                                  style={{
+                                    borderRadius: "50%",
+                                  }}
+                                />
+                              ) : (
+                                <div>
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="35"
+                                    height="35"
+                                    fill="rgb(83, 100, 113)"
+                                    className="bi bi-person-circle"
+                                    viewBox="0 0 16 16"
+                                  >
+                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                  </svg>
+                                </div>
+                              )}
+                            </div>
+                          </Link>
+                          {/* finish to check next to post profile image  */}
                           <div className="p-0">
-                            <span style={{ fontWeight: "700" }}>
-                              {favorite.authorFullName}{" "}
-                            </span>
+                            <Link
+                              to={`/profile/${favorite.userId._id}`}
+                              className="hover-fullname"
+                              style={{
+                                textDecoration: "none",
+                                color: "black",
+                              }}
+                            >
+                              <div className="p-0">
+                                <span style={{ fontWeight: "700" }}>
+                                  {favorite.authorFullName}{" "}
+                                </span>
+                              </div>
+                            </Link>
                           </div>
                           <div className="p-0 verified-icon">
                             {" "}
@@ -1272,13 +1325,31 @@ function UserProfile() {
                           </div>
                           <div className="p-0">
                             {" "}
-                            <span style={{ color: "rgba(0, 0, 0, 0.6)" }}>
-                              @{favorite.authorUserName}
-                            </span>
-                            <span style={{ color: "rgba(0,0,0,0.6)" }}>
-                              {" "}
-                              · {getCreatedDate(favorite.createdAt)}
-                            </span>
+                            <Link
+                              to={`/profile/${favorite.userId._id}`}
+                              style={{
+                                textDecoration: "none",
+                                color: "rgba(0,0,0,0.6)",
+                              }}
+                            >
+                              <span>@{favorite.authorUserName}</span>
+                            </Link>
+                            <Link
+                              style={{
+                                textDecoration: "none",
+                              }}
+                              to={`/${favorite.userId.username}/status/${favorite._id}`}
+                            >
+                              <span style={{ color: "rgba(0,0,0,0.6)" }}>
+                                {" "}
+                                ·{" "}
+                                <span className="date-post-detail">
+                                  {getCreatedDate(favorite.createdAt)}
+                                </span>
+                              </span>
+                            </Link>
+                          </div>
+                          <div className="ps-2 ms-auto">
                             <span>
                               {/* show if post owner userId !equal currentUserId */}
                               {favorite.userId !== userInfo._id ? (
@@ -1324,49 +1395,56 @@ function UserProfile() {
                           </div>
                         </Stack>
                       </div>
-                      <div style={{ padding: "3px" }}>{favorite.content}</div>
+                      <Link
+                        to={`/${favorite.userId.username}/status/${favorite._id}`}
+                        style={{
+                          textDecoration: "none",
+                          color: "rgb(15, 20, 25)",
+                        }}
+                      >
+                        <div style={{ padding: "3px" }}>{favorite.content}</div>
+                      </Link>{" "}
                       {favorite.image.url !== "image@url" ? (
-                        <div
-                          style={{
-                            overflow: "hidden",
-                            border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
-                            borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
-                            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
-                          }}
-                        >
-                          <img
-                            src={favorite.image.url}
-                            alt="Description"
+                        <>
+                          <Link
+                            to={`/${favorite.userId.username}/status/${
+                              favorite._id
+                            }/photo/${22}`}
                             style={{
-                              width: "100%",
-                              display: "block",
+                              textDecoration: "none",
                             }}
-                          />
-                        </div>
+                          >
+                            <div
+                              style={{
+                                overflow: "hidden",
+                                border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
+                                borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
+                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                              }}
+                            >
+                              <img
+                                src={favorite.image.url}
+                                alt="Description"
+                                style={{
+                                  width: "100%",
+                                  display: "block",
+                                }}
+                              />
+                            </div>
+                          </Link>
+                        </>
                       ) : null}
                       <Stack
                         direction="horizontal"
                         gap={3}
-                        style={{ padding: "3px" }}
+                        style={{
+                          padding: "3px",
+                          justifyContent: "space-around",
+                          marginBottom: "10px",
+                        }}
                       >
                         <div className="p-0">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            className="bi bi-chat"
-                            viewBox="0 0 16 16"
-                          >
-                            <path
-                              stroke="black"
-                              strokeWidth="0.2"
-                              d="M2.678 11.894a1 1 0 0 1 .287.801 10.97 10.97 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8.06 8.06 0 0 0 8 14c3.996 0 7-2.807 7-6 0-3.192-3.004-6-7-6S1 4.808 1 8c0 1.468.617 2.83 1.678 3.894zm-.493 3.905a21.682 21.682 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a9.68 9.68 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105z"
-                            />
-                          </svg>
-                          <span className="post-description">
-                            Num Of Comments?
-                          </span>
+                          <CommentModal />
                         </div>
                         <div className="p-0">
                           {favorite.reposted.includes(userInfo._id) ? (

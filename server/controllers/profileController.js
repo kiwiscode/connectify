@@ -11,6 +11,24 @@ const handleProfile = (req, res) => {
       path: "posts",
       options: { sort: { createdAt: -1 } }, // createdAt tarihine göre tersten sıralama
     })
+    .populate({
+      path: "favorites",
+      options: { sort: { createdAt: -1 } }, // Favorites için de createdAt tarihine göre tersten sıralama
+    })
+    .populate({
+      path: "posts",
+      populate: {
+        path: "userId",
+        model: "User",
+      },
+    })
+    .populate({
+      path: "favorites",
+      populate: {
+        path: "userId",
+        model: "User",
+      },
+    })
     // finish to check
     // .populate("posts")
     .then((user) => {
@@ -50,9 +68,22 @@ const handleShowSpesificProfile = (req, res) => {
       path: "favorites",
       options: { sort: { createdAt: -1 } }, // Favorites için de createdAt tarihine göre tersten sıralama
     })
+    .populate({
+      path: "posts",
+      populate: {
+        path: "userId",
+        model: "User",
+      },
+    })
+    .populate({
+      path: "favorites",
+      populate: {
+        path: "userId",
+        model: "User",
+      },
+    })
     // finish to check
     // .populate("posts")
-    // .populate("favorites")
     .then((response) => {
       res.status(200).json(response);
 
