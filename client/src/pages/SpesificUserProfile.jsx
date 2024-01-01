@@ -1131,7 +1131,7 @@ function SpesificUserProfile() {
                         style={{
                           padding: "3px",
                           justifyContent: "space-around",
-                          marginBottom: "10px",
+                          marginBottom: "5px",
                         }}
                       >
                         <div className="p-0">
@@ -1478,7 +1478,7 @@ function SpesificUserProfile() {
                           style={{
                             padding: "3px",
                             justifyContent: "space-around",
-                            marginBottom: "10px",
+                            marginBottom: "5px",
                           }}
                         >
                           <div className="p-0">
