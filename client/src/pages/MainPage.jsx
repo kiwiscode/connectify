@@ -127,6 +127,7 @@ function MainPage() {
   };
 
   const handleDeleteLikeFromHomePage = (postId) => {
+    console.log("clicked...");
     axios
       .post(
         `${API_URL}/favorite/delete-favorite`,
@@ -1133,7 +1134,7 @@ function MainPage() {
                         style={{
                           padding: "3px",
                           justifyContent: "space-around",
-                          marginBottom: "10px",
+                          marginBottom: "5px",
                         }}
                       >
                         <div className="p-0">

@@ -85,6 +85,10 @@ function UserProfile() {
       });
   };
 
+  const handleShowDetailPostFromProfilePage = (postId) => {
+    console.log(postId);
+  };
+
   const handlePostLikesFromProfilePage = (postId) => {
     setpostId(postId);
 
@@ -1021,40 +1025,49 @@ function UserProfile() {
                             </Link>
                           </div>
                           <div className="ps-2 ms-auto">
-                            {userInfo._id === post.userId ? (
-                              <svg
-                                onClick={() =>
-                                  handleDeletePostFromProfilePage(post._id)
-                                }
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="20"
-                                height="25"
-                                fill="currentColor"
-                                className="bi bi-three-dots positioning-dots"
-                                viewBox="0 0 20 20"
-                                style={{
-                                  cursor: "pointer",
-                                  backgroundColor: "crimson",
-                                }}
-                              >
-                                <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"></path>
-                              </svg>
-                            ) : (
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="20"
-                                height="25"
-                                fill="currentColor"
-                                className="bi bi-three-dots positioning-dots"
-                                viewBox="0 0 20 20"
-                                style={{
-                                  cursor: "pointer",
-                                  backgroundColor: "rgb(29, 155, 240)",
-                                }}
-                              >
-                                <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"></path>
-                              </svg>
-                            )}
+                            <span>
+                              {/* show if post owner userId !equal currentUserId */}
+                              {post.userId &&
+                              post.userId._id !== userInfo._id ? (
+                                <svg
+                                  onClick={() =>
+                                    handleShowDetailPostFromProfilePage(
+                                      post._id
+                                    )
+                                  }
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="20"
+                                  height="25"
+                                  fill="currentColor"
+                                  className="bi bi-three-dots positioning-dots"
+                                  viewBox="0 0 20 20"
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "rgb(29, 155, 240)",
+                                  }}
+                                >
+                                  <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"></path>
+                                </svg>
+                              ) : (
+                                <svg
+                                  onClick={() =>
+                                    handleDeletePostFromProfilePage(post._id)
+                                  }
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="20"
+                                  height="25"
+                                  fill="currentColor"
+                                  className="bi bi-three-dots positioning-dots"
+                                  viewBox="0 0 20 20"
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "crimson",
+                                  }}
+                                >
+                                  <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"></path>
+                                </svg>
+                              )}
+                            </span>
                           </div>
                         </Stack>
                       </div>
@@ -1103,7 +1116,7 @@ function UserProfile() {
                         style={{
                           padding: "3px",
                           justifyContent: "space-around",
-                          marginBottom: "10px",
+                          marginBottom: "5px",
                         }}
                       >
                         <div className="p-0">
@@ -1354,9 +1367,11 @@ function UserProfile() {
                               {/* show if post owner userId !equal currentUserId */}
                               {favorite.userId !== userInfo._id ? (
                                 <svg
-                                  // onClick={() =>
-                                  //   handleShowDetailPostFromProfilePage(post._id)
-                                  // }
+                                  onClick={() =>
+                                    handleShowDetailPostFromProfilePage(
+                                      favorite._id
+                                    )
+                                  }
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="20"
                                   height="25"
@@ -1440,7 +1455,7 @@ function UserProfile() {
                         style={{
                           padding: "3px",
                           justifyContent: "space-around",
-                          marginBottom: "10px",
+                          marginBottom: "5px",
                         }}
                       >
                         <div className="p-0">
