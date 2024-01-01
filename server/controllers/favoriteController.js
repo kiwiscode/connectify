@@ -1,6 +1,7 @@
 const User = require("../models/User.model");
 const Post = require("../models/Post.model");
 const Favorite = require("../models/Favorite.model");
+const ObjectId = require("mongoose").Types.ObjectId;
 
 const handleGetFavorites = (req, res) => {
   const { userId } = req.user;
@@ -34,25 +35,29 @@ const handleGetFavorites = (req, res) => {
 const handleAddFavorite = (req, res) => {
   const { postId } = req.body;
   const { userId } = req.user;
-
+  console.log("This line is working 1!");
   User.findById(userId)
     .populate("favorites")
     .then((user) => {
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       }
+      console.log("This line is working 2!");
 
       Post.findById(postId).then((post) => {
         if (!post) {
           return res.status(404).json({ error: "Post not found" });
         }
 
-        function findId(item) {
-          return item._id.toString() === post._id.toString();
-        }
-        const result = user.favorites.find(findId);
+        const userFavoriteIds = user.favorites.map((eachFavorite) => {
+          return eachFavorite._id.toString();
+        });
 
-        if (!result) {
+        if (
+          !post.isReposted &&
+          !post.reposted.length &&
+          !userFavoriteIds.includes(userId)
+        ) {
           post.likes.push(user);
           post.save();
           user.favorites.push(post);
@@ -61,6 +66,8 @@ const handleAddFavorite = (req, res) => {
             postId: postId,
             content: post,
           });
+
+          console.log("This line is working 4!");
 
           // NOTE start to check send notification after adding favorite
 
@@ -108,10 +115,152 @@ const handleAddFavorite = (req, res) => {
           return user.save().then(() => {
             res.status(200).json("Favorite added to your favorites");
           });
-        } else {
-          return res
-            .status(400)
-            .json({ errorMessage: "Post already exists in User's favorites" });
+        } else if (
+          post.reposted.length &&
+          !post.isReposted &&
+          !userFavoriteIds.includes(userId)
+        ) {
+          Post.find({
+            repostedFromThisOriginalPost: {
+              $elemMatch: {
+                $eq: post._id,
+              },
+            },
+          })
+            .then((repostedPost) => {
+              console.log("This then block is working!");
+              console.log(repostedPost);
+
+              repostedPost[0].likes.push(user);
+              repostedPost[0].save();
+              post.likes.push(user);
+              post.save();
+              user.favorites.push(post);
+              user.save();
+              Favorite.create({
+                userId: userId,
+                postId: postId,
+                content: post,
+              });
+
+              // NOTE start to check send notification after adding favorite
+
+              User.findById(post.userId.toString())
+                .then((notificationReceiver) => {
+                  const checkingNotifications =
+                    notificationReceiver.notifications.filter(
+                      (eachNotification) => {
+                        return (
+                          eachNotification.post.toString() ===
+                            post._id.toString() &&
+                          eachNotification.isFavorite.value
+                        );
+                      }
+                    );
+
+                  if (!checkingNotifications.length) {
+                    const newNotification = {
+                      post: post._id,
+                      notificationReceiver: post.userId,
+                      isFavorite: {
+                        value: true,
+                        profileImageUrl: user.imageUrl,
+                        userFullName: user.fullname,
+                        favoritedPostContent: post.content,
+                        senderId: userId,
+                      },
+                    };
+
+                    notificationReceiver.notifications.push(newNotification);
+                    notificationReceiver.save();
+
+                    console.log(
+                      "NOTIFICATION RECEIVER INFORMED ABOUT HIS POST GOT FAVORITE"
+                    );
+                  }
+                })
+                .catch(() => {
+                  res.status(404).json({
+                    errorMessage: "Notification receiver user not found!",
+                  });
+                });
+
+              // NOTE finish to check send notification after adding favorite
+            })
+            .catch((error) => {
+              console.log("error => Second post not found !", error);
+            });
+        } else if (
+          post.reposted.length &&
+          post.isReposted &&
+          !userFavoriteIds.includes(userId)
+        ) {
+          Post.find({
+            _id: post.repostedFromThisOriginalPost[0],
+          })
+            .then((originalPost) => {
+              console.log("Reposted post =>", post);
+              console.log("Original post =>", originalPost);
+
+              originalPost[0].likes.push(user);
+              originalPost[0].save();
+              post.likes.push(user);
+              post.save();
+              user.favorites.push(post);
+              user.save();
+              Favorite.create({
+                userId: userId,
+                postId: postId,
+                content: post,
+              });
+
+              // NOTE start to check send notification after adding favorite
+
+              User.findById(post.userId.toString())
+                .then((notificationReceiver) => {
+                  const checkingNotifications =
+                    notificationReceiver.notifications.filter(
+                      (eachNotification) => {
+                        return (
+                          eachNotification.post.toString() ===
+                            post._id.toString() &&
+                          eachNotification.isFavorite.value
+                        );
+                      }
+                    );
+
+                  if (!checkingNotifications.length) {
+                    const newNotification = {
+                      post: post._id,
+                      notificationReceiver: post.userId,
+                      isFavorite: {
+                        value: true,
+                        profileImageUrl: user.imageUrl,
+                        userFullName: user.fullname,
+                        favoritedPostContent: post.content,
+                        senderId: userId,
+                      },
+                    };
+
+                    notificationReceiver.notifications.push(newNotification);
+                    notificationReceiver.save();
+
+                    console.log(
+                      "NOTIFICATION RECEIVER INFORMED ABOUT HIS POST GOT FAVORITE"
+                    );
+                  }
+                })
+                .catch(() => {
+                  res.status(404).json({
+                    errorMessage: "Notification receiver user not found!",
+                  });
+                });
+
+              // NOTE finish to check send notification after adding favorite
+            })
+            .catch((error) => {
+              console.log("error => Original post not found !", error);
+            });
         }
       });
     })
@@ -131,105 +280,375 @@ const handleDeleteFavorite = (req, res) => {
         return res.status(404).json({ errorMessage: "User not found" });
       }
 
-      Post.findById(postId).then((postToDelete) => {
-        postToDelete.likes = postToDelete.likes.filter(
-          (postToDelete) => postToDelete._id.toString() !== userId
-        );
-        postToDelete.save();
+      Post.findById(postId).then((post) => {
+        // REVIEWED start to check
+        if (!post.isReposted && post.reposted.length) {
+          console.log("This line is working 1st conditional block");
 
-        // NOTE start to check delete if favorite notification readed
+          Post.find({
+            repostedFromThisOriginalPost: {
+              $elemMatch: {
+                $eq: post._id,
+              },
+            },
+          }).then((repostedPost) => {
+            console.log("Original post =>", post);
+            console.log("Reposted post =>", repostedPost);
+            console.log(post.likes);
+            const filterPostLikes = post.likes.filter((eachLike) => {
+              return eachLike._id.toString() !== userId;
+            });
+            console.log(filterPostLikes);
 
-        User.findById(postToDelete.userId.toString())
-          .then((notifiedUser) => {
-            // let's find the index of this post and delete the notification
-            const findIndex = notifiedUser.notifications.findIndex(
-              (notification) => {
-                return (
-                  notification.post.toString() === postToDelete._id.toString()
+            post.likes = filterPostLikes;
+            post.save();
+            repostedPost[0].likes = filterPostLikes;
+            repostedPost[0].save();
+
+            // NOTE start to check delete if favorite notification readed
+
+            User.findById(post.userId.toString())
+              .then((notifiedUser) => {
+                // let's find the index of this post and delete the notification
+
+                const findedPost = notifiedUser.notifications.find(
+                  (eachNotification) => {
+                    return (
+                      eachNotification.isFavorite.value &&
+                      post._id.toString() === post._id.toString()
+                    );
+                  }
                 );
-              }
-            );
+                console.log("Finded notification =>", findedPost);
+                const findIndex =
+                  notifiedUser.notifications.indexOf(findedPost);
 
-            if (
-              findIndex === 0 ||
-              (findIndex > 0 &&
-                notifiedUser.notifications[findIndex].isFavorite.value)
-            ) {
-              if (notifiedUser._id.toString() === user._id.toString()) {
-                console.log(
-                  "This line is working because the user who added their post to favorites."
-                );
-                const filteredFavoritesUserArray =
-                  notifiedUser.favorites.filter(
-                    (postId) =>
-                      postId._id.toString() !== postToDelete._id.toString()
-                  );
-                notifiedUser.favorites = filteredFavoritesUserArray;
-                notifiedUser.notifications.splice(findIndex, 1);
-                notifiedUser.save();
-                console.log("THIS LINE IS WORKING 1");
-              } else if (notifiedUser._id.toString() !== user._id.toString()) {
-                notifiedUser.notifications.splice(findIndex, 1);
-                notifiedUser.save();
-                const filteredFavoritesUserArray = user.favorites.filter(
-                  (postId) =>
-                    postId._id.toString() !== postToDelete._id.toString()
-                );
+                console.log("Index of notification =>", findIndex);
+                if (
+                  (findIndex === 0 &&
+                    notifiedUser.notifications[findIndex].isFavorite.value) ||
+                  (findIndex > 0 &&
+                    notifiedUser.notifications[findIndex].isFavorite.value)
+                ) {
+                  if (notifiedUser._id.toString() === user._id.toString()) {
+                    const filteredFavoritesUserArray = user.favorites.filter(
+                      (post) =>
+                        post._id.toString() !==
+                          repostedPost[0]._id.toString() &&
+                        post._id.toString() !== postId
+                    );
+                    notifiedUser.favorites = filteredFavoritesUserArray;
+                    notifiedUser.notifications.splice(findIndex, 1);
+                    notifiedUser.save();
+                    console.log("THIS LINE IS WORKING 1");
+                  } else if (
+                    notifiedUser._id.toString() !== user._id.toString()
+                  ) {
+                    console.log("Line 338 working");
 
-                user.favorites = filteredFavoritesUserArray;
-                user.save();
-                console.log("THIS LINE IS WORKING 1.1");
-              }
-            } else {
-              return;
-            }
-          })
-          .catch(() => {
-            res
-              .status(404)
-              .json({ erroMessage: "Notification receiver user not found!" });
-          });
+                    notifiedUser.notifications.splice(findIndex, 1);
+                    notifiedUser.save();
+                    console.log("POST ID =>", postId);
+                    console.log(
+                      "REPOSTED POST ID =>",
+                      repostedPost[0]._id.toString()
+                    );
 
-        // NOTE finish to check delete if favorite notification readed
+                    console.log("User favorites =>", user.favorites);
+                    const filteredFavoritesUserArray = user.favorites.filter(
+                      (post) =>
+                        post._id.toString() !==
+                          repostedPost[0]._id.toString() &&
+                        post._id.toString() !== postId
+                    );
+                    console.log(
+                      "User favorites after filtering=>",
+                      filteredFavoritesUserArray
+                    );
 
-        Favorite.findOne({ userId: userId, postId: postId })
-          .then((foundItem) => {
-            if (foundItem) {
-              const mainId = foundItem._id;
-              Favorite.findByIdAndDelete(mainId).then(() => {
-                console.log("THIS LINE IS WORKING 2");
-
-                res.status(200).json({
-                  message:
-                    "Favorite deleted from favorites model,user favorites array and post likes... and from notifications if exist",
+                    user.favorites = filteredFavoritesUserArray;
+                    user.save();
+                    console.log(
+                      "User favorites after filtering=>",
+                      user.favorites
+                    );
+                  }
+                } else {
+                  return;
+                }
+              })
+              .catch(() => {
+                res.status(404).json({
+                  erroMessage: "Notification receiver user not found!",
                 });
               });
 
-              // return user
-              // .save()
-              // .then(() => {
-              //   console.log("THIS LINE IS WORKING 3");
+            // NOTE finish to check delete if favorite notification readed
+            // NOTE start to check delete favorite collection
 
-              //   res.status(200).json({
-              //     message:
-              //       "Favorite deleted from favorites model,user favorites array and post likes...",
-              //   });
-              // })
-              // .catch((error) => {
-              //   console.log(error);
-              //   res
-              //     .status(500)
-              //     .json({
-              //       errorMessage:
-              //         "Error occured while you trying to delete favorite",
-              //     });
-              // });
-            }
-            // return;
-          })
-          .catch(() => {
-            res.status(501).json({ errorMessage: "Search Error" });
+            Favorite.findOne({
+              userId: userId,
+              $or: [
+                { postId: postId },
+                { postId: repostedPost[0]._id.toString() },
+              ],
+            })
+              .then((foundItem) => {
+                if (foundItem) {
+                  const mainId = foundItem._id;
+                  Favorite.findByIdAndDelete(mainId).then(() => {
+                    console.log("THIS LINE IS WORKING 2");
+
+                    res.status(200).json({
+                      message:
+                        "Favorite deleted from favorites model,user favorites array and post likes... and from notifications if exist",
+                    });
+                  });
+                }
+              })
+              .catch(() => {
+                res.status(501).json({ errorMessage: "Search Error" });
+              });
+            // NOTE finish to check delete favorite collection
           });
+        }
+        // REVIEWED finish to check
+        // REVIEWED 2 start to check
+        else if (post.isReposted && post.reposted.length) {
+          console.log("This line is working 2nd conditional block");
+
+          Post.find({
+            _id: post.repostedFromThisOriginalPost[0],
+          })
+            .then((originalPost) => {
+              console.log(post.likes);
+              const filterPostLikes = post.likes.filter((eachLike) => {
+                return eachLike._id.toString() !== userId;
+              });
+
+              post.likes = filterPostLikes;
+              post.save();
+              originalPost[0].likes = filterPostLikes;
+              originalPost[0].save();
+
+              // NOTE start to check delete if favorite notification readed
+
+              User.findById(post.userId.toString())
+                .then((notifiedUser) => {
+                  // let's find the index of this post and delete the notification
+                  console.log(
+                    "Notified user id =>",
+                    notifiedUser._id.toString()
+                  );
+
+                  console.log("Active user id =>", user._id.toString());
+
+                  const findedPost = notifiedUser.notifications.find(
+                    (eachNotification) => {
+                      return (
+                        eachNotification.isFavorite.value &&
+                        post._id.toString() === post._id.toString()
+                      );
+                    }
+                  );
+
+                  const findIndex =
+                    notifiedUser.notifications.indexOf(findedPost);
+
+                  console.log("We are here =>");
+
+                  console.log("First condition =>", findedPost);
+                  console.log("Second condition =>", findIndex);
+
+                  if (
+                    (findIndex === 0 &&
+                      notifiedUser.notifications[findIndex].isFavorite.value) ||
+                    (findIndex > 0 &&
+                      notifiedUser.notifications[findIndex].isFavorite.value)
+                  ) {
+                    console.log("We are here => 2");
+
+                    if (notifiedUser._id.toString() === user._id.toString()) {
+                      console.log("We are here => 3");
+
+                      const filteredFavoritesUserArray = user.favorites.filter(
+                        (post) =>
+                          post._id.toString() !==
+                            originalPost[0]._id.toString() &&
+                          post._id.toString() !== postId
+                      );
+                      notifiedUser.favorites = filteredFavoritesUserArray;
+                      notifiedUser.notifications.splice(findIndex, 1);
+                      notifiedUser.save();
+                    } else if (
+                      notifiedUser._id.toString() !== user._id.toString()
+                    ) {
+                      console.log("User favorites sss=>", user.favorites);
+
+                      Post.find({
+                        _id: post.repostedFromThisOriginalPost[0],
+                      }).then((originalPost) => {
+                        console.log("Original post =>", originalPost);
+
+                        console.log("User favorites =>", user.favorites);
+                        const filteredFavoritesUserArray =
+                          user.favorites.filter(
+                            (post) =>
+                              post._id.toString() !==
+                                originalPost[0]._id.toString() &&
+                              post._id.toString() !== postId
+                          );
+
+                        user.favorites = filteredFavoritesUserArray;
+                        user.save();
+
+                        notifiedUser.notifications.splice(findIndex, 1);
+                        notifiedUser.save();
+
+                        console.log(
+                          "User id for favorite collection delete =>",
+                          userId,
+                          "Post id for favorite collection delete =>",
+                          originalPost[0]._id,
+                          "||",
+                          new ObjectId(postId)
+                        );
+                      });
+                    }
+                  } else {
+                    console.log(
+                      "Error occured while deleting the notification !"
+                    );
+                  }
+                })
+                .catch(() => {
+                  res.status(404).json({
+                    erroMessage: "Notification receiver user not found!",
+                  });
+                });
+
+              // NOTE finish to check delete if favorite notification readed
+              // NOTE start to check delete favorite collection
+
+              Favorite.findOne({
+                userId: userId,
+                $or: [
+                  { postId: postId },
+                  { postId: originalPost[0]._id.toString() },
+                ],
+              })
+                .then((foundItem) => {
+                  if (foundItem) {
+                    const mainId = foundItem._id;
+                    Favorite.findByIdAndDelete(mainId).then(() => {
+                      console.log("THIS LINE IS WORKING 2");
+
+                      res.status(200).json({
+                        message:
+                          "Favorite deleted from favorites model,user favorites array and post likes... and from notifications if exist",
+                      });
+                    });
+                  }
+                })
+                .catch(() => {
+                  res.status(501).json({ errorMessage: "Search Error" });
+                });
+              // NOTE finish to check delete favorite collection
+            })
+            .catch(() => {
+              res.status(404).json({ errorMessage: "Post not found !" });
+            });
+        }
+        // REVIEWED 2 finish to check
+        // REVIEWED 2 start to check
+        else if (!post.isReposted && !post.reposted.length) {
+          console.log("This line is working 3th conditional block");
+
+          console.log(post.likes);
+          const filterPost = post.likes.filter((eachLike) => {
+            return eachLike._id.toString() !== userId;
+          });
+
+          post.likes = filterPost;
+          post.save();
+          console.log(filterPost);
+          // NOTE start to check delete if favorite notification readed
+
+          User.findById(post.userId.toString())
+            .then((notifiedUser) => {
+              // let's find the index of this post and delete the notification
+              const findIndex = notifiedUser.notifications.findIndex(
+                (notification) => {
+                  return notification.post.toString() === post._id.toString();
+                }
+              );
+
+              if (
+                findIndex === 0 ||
+                (findIndex > 0 &&
+                  notifiedUser.notifications[findIndex].isFavorite.value)
+              ) {
+                if (notifiedUser._id.toString() === user._id.toString()) {
+                  console.log(
+                    "This line is working because the user who added their post to favorites."
+                  );
+                  const filteredFavoritesUserArray =
+                    notifiedUser.favorites.filter(
+                      (postId) => postId._id.toString() !== post._id.toString()
+                    );
+                  notifiedUser.favorites = filteredFavoritesUserArray;
+                  notifiedUser.notifications.splice(findIndex, 1);
+                  notifiedUser.save();
+                  console.log("THIS LINE IS WORKING 1");
+                } else if (
+                  notifiedUser._id.toString() !== user._id.toString()
+                ) {
+                  notifiedUser.notifications.splice(findIndex, 1);
+                  notifiedUser.save();
+                  const filteredFavoritesUserArray = user.favorites.filter(
+                    (postId) => postId._id.toString() !== post._id.toString()
+                  );
+
+                  user.favorites = filteredFavoritesUserArray;
+                  user.save();
+                  console.log("THIS LINE IS WORKING 1.3");
+                }
+              } else {
+                return;
+              }
+            })
+            .catch(() => {
+              res.status(404).json({
+                erroMessage: "Notification receiver user not found!",
+              });
+            });
+
+          // NOTE finish to check delete if favorite notification readed
+          // NOTE start to check delete favorite collection
+
+          Favorite.findOne({ userId: userId, postId: postId })
+            .then((foundItem) => {
+              if (foundItem) {
+                const mainId = foundItem._id;
+                Favorite.findByIdAndDelete(mainId).then(() => {
+                  console.log("THIS LINE IS WORKING 2");
+
+                  res.status(200).json({
+                    message:
+                      "Favorite deleted from favorites model,user favorites array and post likes... and from notifications if exist",
+                  });
+                });
+              }
+            })
+            .catch(() => {
+              res.status(501).json({ errorMessage: "Search Error" });
+            });
+          // NOTE finish to check delete favorite collection
+        }
+        // REVIEWED finish to check
+        else {
+          res.status(404).json({ errorMessage: "Post not found!" });
+        }
       });
     })
     .catch(() => {
