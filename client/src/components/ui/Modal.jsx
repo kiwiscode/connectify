@@ -405,7 +405,20 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
   return (
     <>
       <Button variant="primary" onClick={handleShow} className="compose-tweet ">
-        Post
+        <span className="compose-tweet-text">Post</span>
+        <svg
+          width={24}
+          height={24}
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          className="compose-tweet-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1472mwg r-lrsllp"
+          fill="currentColor"
+          style={{ color: "rgb(255, 255, 255)" }}
+        >
+          <g>
+            <path d="M23 3c-6.62-.1-10.38 2.421-13.05 6.03C7.29 12.61 6 17.331 6 22h2c0-1.007.07-2.012.19-3H12c4.1 0 7.48-3.082 7.94-7.054C22.79 10.147 23.17 6.359 23 3zm-7 8h-1.5v2H16c.63-.016 1.2-.08 1.72-.188C16.95 15.24 14.68 17 12 17H8.55c.57-2.512 1.57-4.851 3-6.78 2.16-2.912 5.29-4.911 9.45-5.187C20.95 8.079 19.9 11 16 11zM4 9V6H1V4h3V1h2v3h3v2H6v3H4z"></path>
+          </g>
+        </svg>
       </Button>
 
       <Modal show={show} onHide={handleClose}>
@@ -642,18 +655,21 @@ function CommentModal() {
     <>
       <svg
         onClick={handleShow}
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
+        width={18}
+        height={18}
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+        className="bi bi-chat r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+        color="rgb(83, 100, 113)"
         fill="currentColor"
-        className="bi bi-chat"
-        viewBox="0 0 16 16"
       >
-        <path
-          stroke="black"
-          strokeWidth="0.2"
-          d="M2.678 11.894a1 1 0 0 1 .287.801 10.97 10.97 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8.06 8.06 0 0 0 8 14c3.996 0 7-2.807 7-6 0-3.192-3.004-6-7-6S1 4.808 1 8c0 1.468.617 2.83 1.678 3.894zm-.493 3.905a21.682 21.682 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a9.68 9.68 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105z"
-        />
+        <g>
+          <path
+            stroke="rgb(83, 100, 113)"
+            strokeWidth="0.1"
+            d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"
+          ></path>
+        </g>
       </svg>
 
       <Modal show={show} onHide={handleClose}>
