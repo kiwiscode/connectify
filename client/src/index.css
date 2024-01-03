@@ -324,7 +324,7 @@ span > a:hover {
 /* finish to check NOTE make it responsive */
 
 .side-bar-column {
-  position: sticky;
+  /* position: sticky; */
   top: 0;
 }
 
@@ -842,7 +842,8 @@ span > a:hover {
 /* chat details page user information finish to check  */
 
 .selected-user-for-dm:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+  /* background-color: rgba(0, 0, 0, 0.1); */
+  background-color: rgba(247, 249, 249, 255);
 }
 
 .close-button:hover {
@@ -855,4 +856,85 @@ span > a:hover {
 
 .date-post-detail:hover {
   text-decoration: underline !important;
+}
+
+.svg-repost,
+.svg-heart {
+  cursor: pointer;
+}
+
+@media (max-width: 1002px) {
+  .side-bar-column {
+    display: none;
+  }
+  .main-column {
+    width: 70%;
+    height: 100%;
+  }
+}
+
+.compose-tweet-svg {
+  display: none;
+}
+
+@media (max-width: 991px) and (min-width: 300px) {
+  .nav-bar-home span {
+    display: none;
+  }
+  .main-column {
+    position: absolute;
+    width: 100%;
+  }
+
+  .nav-bar-home {
+    position: absolute;
+    text-align: center;
+    left: -190px;
+    top: 50px;
+  }
+
+  .nav-bar-home svg {
+    text-align: center;
+    margin-left: 3px;
+  }
+
+  .like-icon {
+    display: none;
+  }
+
+  .compose-tweet {
+    margin-bottom: 15px;
+    width: 50px;
+    height: 50px;
+    padding: 5px;
+    margin-left: 3px;
+  }
+
+  .logout-nav:hover {
+    background-color: transparent;
+    outline-style: initial;
+    border-width: initial;
+    border-radius: initial;
+    box-shadow: none;
+    transition: none;
+  }
+
+  .compose-tweet-svg {
+    display: inline;
+  }
+
+  .compose-tweet-text {
+    display: none;
+  }
+  .none-backgroundColor {
+    display: none;
+  }
+
+  .logout-nav {
+    display: inline;
+    width: 250px;
+    position: relative;
+    top: 20px;
+    left: 3px;
+  }
 }

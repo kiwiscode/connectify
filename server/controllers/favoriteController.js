@@ -83,25 +83,33 @@ const handleAddFavorite = (req, res) => {
                   }
                 );
 
-              if (!checkingNotifications.length) {
-                const newNotification = {
-                  post: post._id,
-                  notificationReceiver: post.userId,
-                  isFavorite: {
-                    value: true,
-                    profileImageUrl: user.imageUrl,
-                    userFullName: user.fullname,
-                    favoritedPostContent: post.content,
-                    senderId: userId,
-                  },
-                };
-
+              const newNotification = {
+                post: post._id,
+                notificationReceiver: post.userId,
+                isFavorite: {
+                  value: true,
+                  profileImageUrl: user.imageUrl,
+                  userFullName: user.fullname,
+                  favoritedPostContent: post.content,
+                  senderId: userId,
+                },
+              };
+              console.log(checkingNotifications.length);
+              console.log(notificationReceiver._id, userId);
+              if (
+                !checkingNotifications.length &&
+                notificationReceiver._id.toString() !== userId
+              ) {
                 notificationReceiver.notifications.push(newNotification);
                 notificationReceiver.save();
-
                 console.log(
-                  "NOTIFICATION RECEIVER INFORMED ABOUT HIS POST GOT FAVORITE"
+                  "NOTIFICATION RECEIVER INFORMED ABOUT HIS POST GOT FAVORITE 1"
                 );
+              } else {
+                console.log(
+                  "This notification cannot send to this user because he is the owner!"
+                );
+                return;
               }
             })
             .catch(() => {
@@ -158,7 +166,10 @@ const handleAddFavorite = (req, res) => {
                       }
                     );
 
-                  if (!checkingNotifications.length) {
+                  if (
+                    !checkingNotifications.length &&
+                    notificationReceiver._id.toString() !== user._id.toString()
+                  ) {
                     const newNotification = {
                       post: post._id,
                       notificationReceiver: post.userId,
@@ -175,7 +186,11 @@ const handleAddFavorite = (req, res) => {
                     notificationReceiver.save();
 
                     console.log(
-                      "NOTIFICATION RECEIVER INFORMED ABOUT HIS POST GOT FAVORITE"
+                      "NOTIFICATION RECEIVER INFORMED ABOUT HIS POST GOT FAVORITE 2"
+                    );
+                  } else {
+                    console.log(
+                      "Here is working you cannot send notification to this user because he is the owner !"
                     );
                   }
                 })
@@ -229,7 +244,10 @@ const handleAddFavorite = (req, res) => {
                       }
                     );
 
-                  if (!checkingNotifications.length) {
+                  if (
+                    !checkingNotifications.length &&
+                    notificationReceiver._id.toString() !== user._id.toString()
+                  ) {
                     const newNotification = {
                       post: post._id,
                       notificationReceiver: post.userId,
@@ -246,7 +264,11 @@ const handleAddFavorite = (req, res) => {
                     notificationReceiver.save();
 
                     console.log(
-                      "NOTIFICATION RECEIVER INFORMED ABOUT HIS POST GOT FAVORITE"
+                      "NOTIFICATION RECEIVER INFORMED ABOUT HIS POST GOT FAVORITE 3"
+                    );
+                  } else {
+                    console.log(
+                      "Here is working you cannot send notification to this user because he is the owner !-2"
                     );
                   }
                 })
@@ -324,7 +346,27 @@ const handleDeleteFavorite = (req, res) => {
                   notifiedUser.notifications.indexOf(findedPost);
 
                 console.log("Index of notification =>", findIndex);
-                if (
+                if (!findIndex) {
+                  const filteredFavoritesUserArray = user.favorites.filter(
+                    (eachFavorite) => {
+                      return (
+                        eachFavorite._id.toString() !== post._id.toString()
+                      );
+                    }
+                  );
+                  console.log(
+                    "Bu kisim calisiyor !",
+                    user.favorites,
+                    filteredFavoritesUserArray
+                  );
+                  user.favorites = filteredFavoritesUserArray;
+                  user.save();
+
+                  console.log(
+                    "User favorites filtreledikten sonra kisim calisiyor !",
+                    user.favorites
+                  );
+                } else if (
                   (findIndex === 0 &&
                     notifiedUser.notifications[findIndex].isFavorite.value) ||
                   (findIndex > 0 &&
@@ -372,12 +414,63 @@ const handleDeleteFavorite = (req, res) => {
                       "User favorites after filtering=>",
                       user.favorites
                     );
+                  } else {
+                    return;
                   }
-                } else {
-                  return;
+                } else if (
+                  notifiedUser._id.toString() === user._id.toString()
+                ) {
+                  Post.findOne({ repostedFromThisOriginalPost: post._id })
+                    .then((originalPost) => {
+                      console.log("User favorites =>", user.favorites);
+                      console.log("ID 1 =>", post._id.toString());
+                      console.log("ID 2 =>", originalPost._id.toString());
+                      const userFavoriteIds = user.favorites.map(
+                        (eachFavorite) => {
+                          return eachFavorite._id.toString();
+                        }
+                      );
+
+                      console.log(userFavoriteIds);
+                      if (
+                        userFavoriteIds.includes(originalPost._id.toString())
+                      ) {
+                        const filteredFavoritesUserArray =
+                          user.favorites.filter((eachFavorite) => {
+                            return (
+                              eachFavorite._id.toString() !==
+                              originalPost._id.toString()
+                            );
+                          });
+                        user.favorites = filteredFavoritesUserArray;
+                        user.save();
+                        console.log("Check favorites array !");
+                        console.log("Original post =>", originalPost);
+                      } else if (
+                        userFavoriteIds.includes(post._id.toString())
+                      ) {
+                        const filteredFavoritesUserArray =
+                          user.favorites.filter((eachFavorite) => {
+                            return (
+                              eachFavorite._id.toString() !==
+                              post._id.toString()
+                            );
+                          });
+                        user.favorites = filteredFavoritesUserArray;
+                        user.save();
+                        console.log("Check favorites array 2!");
+                        console.log("Original post =>", originalPost);
+                      } else {
+                        return;
+                      }
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                    });
                 }
               })
-              .catch(() => {
+              .catch((error) => {
+                console.log(error);
                 res.status(404).json({
                   erroMessage: "Notification receiver user not found!",
                 });
@@ -413,7 +506,7 @@ const handleDeleteFavorite = (req, res) => {
           });
         }
         // REVIEWED finish to check
-        // REVIEWED 2 start to check
+        // REVIEWED 2 start to check ...
         else if (post.isReposted && post.reposted.length) {
           console.log("This line is working 2nd conditional block");
 
@@ -515,10 +608,25 @@ const handleDeleteFavorite = (req, res) => {
                         );
                       });
                     }
+                  } else if (
+                    notifiedUser._id.toString() === user._id.toString()
+                  ) {
+                    const filteredFavoritesUserArray = user.favorites.filter(
+                      (post) =>
+                        post._id.toString() !==
+                          originalPost[0]._id.toString() &&
+                        post._id.toString() !== postId
+                    );
+
+                    user.favorites = filteredFavoritesUserArray;
+                    user.save();
+
+                    console.log("Check user favorites array !2");
                   } else {
                     console.log(
                       "Error occured while deleting the notification !"
                     );
+                    return;
                   }
                 })
                 .catch(() => {
@@ -559,8 +667,8 @@ const handleDeleteFavorite = (req, res) => {
               res.status(404).json({ errorMessage: "Post not found !" });
             });
         }
-        // REVIEWED 2 finish to check
-        // REVIEWED 2 start to check
+        // REVIEWED 2 finish to check ...
+        // REVIEWED 3 start to check
         else if (!post.isReposted && !post.reposted.length) {
           console.log("This line is working 3th conditional block");
 
@@ -576,6 +684,7 @@ const handleDeleteFavorite = (req, res) => {
 
           User.findById(post.userId.toString())
             .then((notifiedUser) => {
+              console.log("We are here !");
               // let's find the index of this post and delete the notification
               const findIndex = notifiedUser.notifications.findIndex(
                 (notification) => {
@@ -583,11 +692,15 @@ const handleDeleteFavorite = (req, res) => {
                 }
               );
 
+              console.log("We are here 2", findIndex);
+
               if (
                 findIndex === 0 ||
                 (findIndex > 0 &&
                   notifiedUser.notifications[findIndex].isFavorite.value)
               ) {
+                console.log("We are here 3");
+
                 if (notifiedUser._id.toString() === user._id.toString()) {
                   console.log(
                     "This line is working because the user who added their post to favorites."
@@ -599,10 +712,10 @@ const handleDeleteFavorite = (req, res) => {
                   notifiedUser.favorites = filteredFavoritesUserArray;
                   notifiedUser.notifications.splice(findIndex, 1);
                   notifiedUser.save();
-                  console.log("THIS LINE IS WORKING 1");
                 } else if (
                   notifiedUser._id.toString() !== user._id.toString()
                 ) {
+                  console.log("We are here 4");
                   notifiedUser.notifications.splice(findIndex, 1);
                   notifiedUser.save();
                   const filteredFavoritesUserArray = user.favorites.filter(
@@ -611,10 +724,24 @@ const handleDeleteFavorite = (req, res) => {
 
                   user.favorites = filteredFavoritesUserArray;
                   user.save();
-                  console.log("THIS LINE IS WORKING 1.3");
                 }
-              } else {
+              } else if (notifiedUser._id.toString() && user._id.toString()) {
+                const filterFavoritesArray = user.favorites.filter(
+                  (eachFavorite) => {
+                    return eachFavorite._id.toString() !== post._id.toString();
+                  }
+                );
+
+                user.favorites = filterFavoritesArray;
+                user.save();
+                console.log("We are here 5");
+
                 return;
+              } else {
+                res.status(404).json({
+                  errorMessage:
+                    "Error occured while processing for deleting favorite and sending notifications",
+                });
               }
             })
             .catch(() => {
@@ -645,7 +772,7 @@ const handleDeleteFavorite = (req, res) => {
             });
           // NOTE finish to check delete favorite collection
         }
-        // REVIEWED finish to check
+        // REVIEWED 3 finish to check
         else {
           res.status(404).json({ errorMessage: "Post not found!" });
         }

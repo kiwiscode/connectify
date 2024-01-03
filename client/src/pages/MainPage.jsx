@@ -451,6 +451,7 @@ function MainPage() {
       <Container
         style={{
           justifyContent: "center",
+          position: "relative",
         }}
       >
         <Row
@@ -618,8 +619,8 @@ function MainPage() {
               sm={12}
               md={4}
               lg={6}
+              className={`main-column ${showNotificationColumn}`}
               style={{
-                className: `main-column ${showNotificationColumn}`,
                 border: "1px solid rgba(0, 0, 0, 0.1)",
                 borderTop: "none",
                 borderBottom: "none",
@@ -872,18 +873,21 @@ function MainPage() {
                                   fontSize: "15px",
                                   marginLeft: "4px",
                                 }}
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
+                                width={18}
+                                height={18}
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                color="rgb(83, 100, 113)"
                                 fill="currentColor"
-                                className="bi bi-repeat"
-                                viewBox="0 0 16 16"
                               >
-                                <path
-                                  stroke="black"
-                                  strokeWidth="0.2"
-                                  d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z"
-                                />
+                                <g>
+                                  <path
+                                    stroke="rgb(83, 100, 113)"
+                                    strokeWidth="0.1"
+                                    d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                                  ></path>
+                                </g>
                               </svg>
                               <span
                                 style={{
@@ -904,24 +908,26 @@ function MainPage() {
                           post.isReposted &&
                           post.reposted[0]._id !== userInfo._id ? (
                             <div>
+                              <div className="p-0 "></div>
                               <svg
                                 style={{
-                                  color: "rgb(83, 100, 113)",
-                                  fontSize: "15px",
-                                  marginLeft: "4px",
+                                  cursor: "pointer",
                                 }}
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
+                                width={18}
+                                height={18}
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                color="rgb(83, 100, 113)"
                                 fill="currentColor"
-                                className="bi bi-repeat"
-                                viewBox="0 0 16 16"
                               >
-                                <path
-                                  stroke="black"
-                                  strokeWidth="0.2"
-                                  d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z"
-                                />
+                                <g>
+                                  <path
+                                    stroke="rgb(83, 100, 113)"
+                                    strokeWidth="0.1"
+                                    d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                                  ></path>
+                                </g>
                               </svg>
                               <span
                                 style={{
@@ -1001,18 +1007,28 @@ function MainPage() {
                               </Link>
                             ) : null}
                           </div>
-                          <div className="p-0 verified-icon">
+                          <div
+                            dir="ltr"
+                            className="p-0 verified-icon css-1rynq56 r-bcqeeo r-qvutc0 r-37j5jr r-a023e6 r-rjixqe r-16dba41 r-xoduu5 r-18u37iz r-1q142lx"
+                          >
                             {" "}
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
-                              fill="currentColor"
-                              className="bi bi-patch-check-fill"
-                              viewBox="0 0 16 16"
-                            >
-                              <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z" />
-                            </svg>
+                            <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
+                              <svg
+                                width={18}
+                                height={18}
+                                viewBox="0 0 22 22"
+                                aria-label="Verified account"
+                                role="img"
+                                className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                                data-testid="icon-verified"
+                                color="rgba(29,155,240,1.00)"
+                                fill="currentColor"
+                              >
+                                <g>
+                                  <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                                </g>
+                              </svg>
+                            </span>
                           </div>
 
                           <div className="p-0">
@@ -1140,6 +1156,25 @@ function MainPage() {
                         <div className="p-0">
                           <CommentModal />
                         </div>
+
+                        {/* <svg
+                          width={18}
+                          height={18}
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                          color="rgb(83, 100, 113)"
+                          fill="currentColor"
+                        >
+                          <g>
+                            <path
+                              stroke="rgb(83, 100, 113)"
+                              strokeWidth="0.1"
+                              d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                            ></path>
+                          </g>
+                        </svg> */}
+
                         {/* start to check */}
                         <div className="p-0">
                           {post.reposted.length > 0 &&
@@ -1149,25 +1184,22 @@ function MainPage() {
                                 onClick={() =>
                                   handleDeleteRepostMainPage(post._id)
                                 }
-                                style={{
-                                  color: "rgb(0, 186, 124)",
-                                  fontSize: "15px",
-                                  marginLeft: "5px",
-                                }}
-                                color="rgb(0, 186, 124)"
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
+                                width={18}
+                                height={18}
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                                 fill="rgb(0, 186, 124)"
-                                className="bi bi-repeat"
-                                viewBox="0 0 16 16"
                               >
-                                <path
-                                  stroke="black"
-                                  strokeWidth="0.2"
-                                  d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z"
-                                />
+                                <g>
+                                  <path
+                                    stroke="rgb(83, 100, 113)"
+                                    strokeWidth="0.1"
+                                    d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                                  ></path>
+                                </g>
                               </svg>
+
                               <span
                                 style={{ color: "rgb(0, 186, 124)" }}
                                 className="post-description"
@@ -1180,24 +1212,29 @@ function MainPage() {
                             <div>
                               {" "}
                               <svg
+                                style={{
+                                  cursor: "pointer",
+                                }}
                                 onClick={() => handleRepost(post._id)}
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
+                                width={18}
+                                height={18}
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                                 fill={
                                   !shouldHide &&
                                   post.reposted.includes(userInfo._id)
                                     ? "rgb(0, 186, 124)"
                                     : "rgb(83, 100, 113)"
                                 }
-                                className="bi bi-repeat"
-                                viewBox="0 0 16 16"
                               >
-                                <path
-                                  stroke="black"
-                                  strokeWidth="0.2"
-                                  d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z"
-                                />
+                                <g>
+                                  <path
+                                    stroke="rgb(83, 100, 113)"
+                                    strokeWidth="0.1"
+                                    d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                                  ></path>
+                                </g>
                               </svg>
                               <span
                                 className="post-description"
@@ -1223,18 +1260,20 @@ function MainPage() {
                                 onClick={() =>
                                   handleDeleteLikeFromHomePage(post._id)
                                 }
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
+                                width={18}
+                                height={18}
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
                                 fill="rgb(249, 24, 128)"
-                                className={`bi bi-heart-fill`}
-                                viewBox="0 0 17 16"
+                                className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                               >
-                                <path
-                                  stroke="black"
-                                  strokeWidth="0.2"
-                                  d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"
-                                />
+                                <g>
+                                  <path
+                                    stroke="black"
+                                    strokeWidth="0.2"
+                                    d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"
+                                  ></path>
+                                </g>
                               </svg>
                               <span className="post-description">
                                 {post.likes.length}
@@ -1247,18 +1286,17 @@ function MainPage() {
                                 onClick={() =>
                                   handlePostLikesFromHomePage(post._id)
                                 }
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
+                                width={18}
+                                height={18}
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                color="rgb(83, 100, 113)"
                                 fill="currentColor"
-                                className={`bi bi-heart`}
-                                viewBox="0 0 17 16"
+                                className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                               >
-                                <path
-                                  stroke="black"
-                                  strokeWidth="0.2"
-                                  d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"
-                                />
+                                <g>
+                                  <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
+                                </g>
                               </svg>
                               <span className="post-description">
                                 {post.likes.length}
@@ -1278,8 +1316,8 @@ function MainPage() {
               sm={12}
               md={4}
               lg={6}
+              className={`main-column ${showNotificationColumn}`}
               style={{
-                className: `main-column ${showNotificationColumn}`,
                 border: "1px solid rgba(0, 0, 0, 0.1)",
                 borderTop: "none",
                 borderBottom: "none",
@@ -1326,14 +1364,16 @@ function MainPage() {
                                 <div className="flex-container">
                                   <div className="p-0 ">
                                     <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      width="25"
-                                      height="32"
+                                      width={30}
+                                      height={30}
+                                      viewBox="0 0 24 24"
+                                      aria-hidden="true"
                                       fill="rgba(249,24,128,1.00)"
-                                      className={`bi bi-heart-fill`}
-                                      viewBox="0 0 17 16"
+                                      className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-vkub15 r-yucp9h"
                                     >
-                                      <path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
+                                      <g>
+                                        <path d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
+                                      </g>
                                     </svg>
                                   </div>
                                   <div className="notification-margin">
@@ -1424,23 +1464,23 @@ function MainPage() {
                                 {" "}
                                 <div className="flex-container">
                                   <div className="p-0 ">
-                                    <svg
-                                      style={{
-                                        color: "rgb(0, 186, 124)",
-                                      }}
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      width="30"
-                                      height="30"
-                                      fill="currentColor"
-                                      className="bi bi-repeat"
-                                      viewBox="0 0 16 16"
-                                    >
-                                      <path
-                                        stroke="rgb(0, 186, 124)"
-                                        strokeWidth="1"
-                                        d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z"
-                                      />
-                                    </svg>
+                                    <div className="p-0 ">
+                                      <svg
+                                        style={{
+                                          color: "rgb(0, 186, 124)",
+                                        }}
+                                        width="30"
+                                        height="30"
+                                        fill="currentColor"
+                                        viewBox="0 0 24 24"
+                                        aria-hidden="true"
+                                        className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f r-yucp9h"
+                                      >
+                                        <g>
+                                          <path d="M4.75 3.79l4.603 4.3-1.706 1.82L6 8.38v7.37c0 .97.784 1.75 1.75 1.75H13V20H7.75c-2.347 0-4.25-1.9-4.25-4.25V8.38L1.853 9.91.147 8.09l4.603-4.3zm11.5 2.71H11V4h5.25c2.347 0 4.25 1.9 4.25 4.25v7.37l1.647-1.53 1.706 1.82-4.603 4.3-4.603-4.3 1.706-1.82L18 15.62V8.25c0-.97-.784-1.75-1.75-1.75z"></path>
+                                        </g>
+                                      </svg>
+                                    </div>
                                   </div>
                                   <div className="notification-margin">
                                     {notification.isRepost.profileImageUrl.slice(
@@ -1543,12 +1583,15 @@ function MainPage() {
             className="side-bar-column"
             xs={12}
             sm={12}
-            md={3}
+            md={2}
             lg={3}
             style={{
               height: "100%",
+              backgroundColor: "indianred",
             }}
-          ></Col>
+          >
+            Side bar column
+          </Col>
         </Row>
       </Container>
     </>
