@@ -12,14 +12,13 @@ body {
   padding: 0;
 }
 
-img {
-  object-fit: cover;
+.responsive-navigation-bar-bottom,
+.responsive-navigation-bar-top,
+.responsive-post-button {
+  display: none !important;
 }
-.first-page {
-  zoom: 83%;
-}
+
 .header-container {
-  margin-bottom: 35px;
   font-size: 64px;
   font-weight: 700;
 }
@@ -34,12 +33,11 @@ img {
 
 .header-first,
 .header-second {
-  line-height: 84px;
   font-weight: 700;
   font-family: TwitterChirpExtendedHeavy, Verdana, -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: rgba(15, 20, 25, 1);
-  letter-spacing: -1.2px;
+  letter-spacing: -2.2px;
 }
 
 .btn-primary {
@@ -116,11 +114,10 @@ img {
 .by-signing {
   font-size: 12px;
   color: rgb(83, 100, 113);
-  width: 300px;
   height: 32px;
   margin-top: 8px;
   font-weight: 400;
-  max-width: 380px;
+  max-width: 300px;
   line-height: 13px;
   font-weight: 400;
   font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -159,22 +156,10 @@ img {
   height: 45px;
 }
 
-.inner-div,
-.bi-chevron-double-left,
-.bi-person-circle {
-  @media (max-width: 1098px) {
-    margin-left: 8px;
-  }
-}
-
 .footer-container {
-  /* position: fixed; */
-  bottom: 0;
-  width: 100%;
-  height: auto;
-  left: 0;
-  margin-top: 249px;
   text-align: center;
+  margin-top: 40px;
+  width: 100%;
   padding: 12px 16px;
 }
 
@@ -192,7 +177,7 @@ img {
   padding-right: 16px;
   font-weight: 400;
   word-wrap: break-word;
-  font-size: 15px;
+  font-size: 12px;
 }
 
 span > a {
@@ -240,16 +225,6 @@ span > a:hover {
   top: 0;
   left: 5%;
   z-index: 1000;
-
-  /* 1400px ile 1200px arasında özel stil ayarları */
-  @media (max-width: 1400px) {
-    margin-right: 25px;
-  }
-
-  /* 1200px'den daha küçük ekranlarda stil ayarları  */
-  @media (max-width: 1199px) {
-    margin-right: 70px;
-  }
 }
 
 .compose-tweet {
@@ -258,6 +233,8 @@ span > a:hover {
   min-height: 52px;
   transition-duration: 0.2s;
   margin-top: 50px;
+  outline-style: none;
+  border: none;
 }
 
 .compose-tweet:hover {
@@ -294,8 +271,9 @@ span > a:hover {
   margin-right: 270px;
 }
 
-.inner-div div:hover {
-  background-color: lightgray;
+/* responsivenesste problem yaratıyor start to check  */
+/* .inner-div div:hover {
+  background-color: rgba(231, 231, 232, 255) !important;
   outline-style: none;
   border-bottom-width: 1px;
   border-left-width: 1px;
@@ -303,14 +281,20 @@ span > a:hover {
   border-top-width: 1px;
   border-width: 4px 1.25em;
   border-radius: var(--border-radius);
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
   transition: background-color 0.3s, box-shadow 0.3s;
-}
+} */
+/* responsivenesste problem yaratıyor finish to check  */
 
 /* start to check NOTE make it responsive */
 /* NOTE NOTE PROBABLY DONE WITH THOSE CODES */
-.inner-div div {
-  width: 100%;
+
+.inner-div-fonts span {
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 24px;
+  margin-left: 10px;
+  position: relative;
+  top: 2px;
 }
 
 .compose-tweet {
@@ -325,7 +309,7 @@ span > a:hover {
 
 .side-bar-column {
   /* position: sticky; */
-  top: 0;
+  /* top: 0; */
 }
 
 .logout-body {
@@ -443,7 +427,7 @@ span > a:hover {
 }
 
 .logout-nav:hover {
-  background-color: lightgray;
+  background-color: rgba(231, 231, 232, 255);
   outline-style: none;
   border-bottom-width: 1px;
   border-left-width: 1px;
@@ -451,7 +435,6 @@ span > a:hover {
   border-top-width: 1px;
   border-width: 4px 1.25em;
   border-radius: var(--border-radius);
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
   transition: background-color 0.3s, box-shadow 0.3s;
 }
 
@@ -459,23 +442,6 @@ span > a:hover {
   display: flex;
   flex-direction: column;
   margin: 0px 100px 0px 5px;
-}
-
-@media (max-width: 367px) and (min-width: 310px) {
-  .nav-bar-home {
-    margin-right: 15px;
-  }
-}
-
-@media (min-width: 991px) and (max-width: 1200px) {
-  .nav-bar-home {
-    margin-left: 100px;
-  }
-
-  .compose-tweet {
-    max-width: 250px;
-    margin-right: 60px;
-  }
 }
 
 .notification-num {
@@ -499,42 +465,10 @@ span > a:hover {
   cursor: pointer;
 }
 
-@media (max-width: 1200px) and (min-width: 1000px) {
-  .logout-nav {
-    position: relative;
-    margin-right: 50px;
-  }
-
-  .logout-three-dots {
-    position: relative;
-    right: 0px;
-  }
-  .bi-chevron-double-left {
-    position: relative;
-    margin-right: 330px;
-  }
-}
-
 .bi-chevron-double-left {
   position: relative;
   left: 25px;
   margin-bottom: 0px;
-}
-
-@media (max-width: 999px) and (min-width: 991px) {
-  .logout-nav {
-    position: relative;
-    margin-right: 50px;
-  }
-
-  .logout-three-dots {
-    position: relative;
-    right: 0px;
-  }
-  .bi-chevron-double-left {
-    position: relative;
-    margin-right: 330px;
-  }
 }
 
 .flex-container {
@@ -842,12 +776,11 @@ span > a:hover {
 /* chat details page user information finish to check  */
 
 .selected-user-for-dm:hover {
-  /* background-color: rgba(0, 0, 0, 0.1); */
   background-color: rgba(247, 249, 249, 255);
 }
 
 .close-button:hover {
-  background-color: #ccccce !important; /* veya istediğiniz gri rengini belirtin */
+  background-color: rgba(247, 249, 249, 255) !important;
 }
 
 .hover-fullname:hover {
@@ -863,78 +796,246 @@ span > a:hover {
   cursor: pointer;
 }
 
-@media (max-width: 1002px) {
-  .side-bar-column {
-    display: none;
-  }
-  .main-column {
-    width: 70%;
-    height: 100%;
-  }
-}
-
 .compose-tweet-svg {
   display: none;
 }
 
-@media (max-width: 991px) and (min-width: 300px) {
-  .nav-bar-home span {
-    display: none;
-  }
+.disabled {
+  opacity: 0.5;
+}
+
+/* start to check responsiveness implementation  */
+
+/* Navigation bar nav-bar-home ve left-bar-column responsive ayarları */
+
+@media (max-width: 991px) and (min-width: 768px) {
   .main-column {
-    position: absolute;
-    width: 100%;
+    width: 90% !important;
   }
 
   .nav-bar-home {
-    position: absolute;
-    text-align: center;
-    left: -190px;
-    top: 50px;
+    background-color: beige;
   }
 
-  .nav-bar-home svg {
-    text-align: center;
-    margin-left: 3px;
+  .left-column {
+    /* background-color: blue; */
+    width: 10% !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
-  .like-icon {
-    display: none;
+  .nav-bar-home div a div div span,
+  .logout-three-dots,
+  .info-logout span,
+  .compose-tweet-text,
+  .side-bar-column {
+    display: none !important;
+  }
+
+  .nav-bar-home div a div div svg,
+  .bi-chevron-double-left {
+    margin-left: 15px;
+  }
+
+  .bi-chevron-double-left,
+  .compose-tweet,
+  .logout-nav img,
+  .logout-nav svg {
+    position: initial !important;
   }
 
   .compose-tweet {
-    margin-bottom: 15px;
-    width: 50px;
-    height: 50px;
-    padding: 5px;
-    margin-left: 3px;
+    max-width: 50px !important;
+    max-height: 50px !important;
   }
 
-  .logout-nav:hover {
-    background-color: transparent;
-    outline-style: initial;
-    border-width: initial;
-    border-radius: initial;
-    box-shadow: none;
-    transition: none;
+  .nav-bar-home,
+  .bi-chevron-double-left {
+    display: inline !important;
+    /* width: 80%; */
+    /* text-align: center; */
   }
 
   .compose-tweet-svg {
-    display: inline;
-  }
-
-  .compose-tweet-text {
-    display: none;
-  }
-  .none-backgroundColor {
-    display: none;
+    display: inline !important;
+    width: 24px !important;
+    height: 24px !important;
   }
 
   .logout-nav {
-    display: inline;
-    width: 250px;
-    position: relative;
-    top: 20px;
-    left: 3px;
+    display: inline-block !important;
+    position: relative !important;
+    right: 8px !important;
   }
 }
+
+@media (max-width: 767px) and (min-width: 576px) {
+  .main-column {
+    width: 86% !important;
+  }
+
+  .nav-bar-home {
+    background-color: royalblue;
+  }
+
+  .left-column {
+    /* background-color: blue; */
+    width: 14% !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .nav-bar-home div a div div span,
+  .logout-three-dots,
+  .info-logout span,
+  .compose-tweet-text,
+  .side-bar-column {
+    display: none !important;
+  }
+
+  .nav-bar-home div a div div svg,
+  .bi-chevron-double-left {
+    margin-left: 15px;
+  }
+
+  .bi-chevron-double-left,
+  .compose-tweet,
+  .logout-nav img,
+  .logout-nav svg {
+    position: initial !important;
+  }
+
+  .compose-tweet {
+    max-width: 50px !important;
+    max-height: 50px !important;
+  }
+
+  .nav-bar-home,
+  .bi-chevron-double-left {
+    display: inline !important;
+    /* width: 80%; */
+    /* text-align: center; */
+  }
+
+  .compose-tweet-svg {
+    display: inline !important;
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  .logout-nav {
+    display: inline-block !important;
+    position: relative !important;
+    right: 8px !important;
+  }
+}
+
+@media (max-width: 575px) and (min-width: 465px) {
+  .main-column {
+    width: 82% !important;
+  }
+
+  .nav-bar-home {
+    background-color: rosybrown;
+  }
+
+  .left-column {
+    /* background-color: blue; */
+    width: 14% !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .nav-bar-home div a div div span,
+  .logout-three-dots,
+  .info-logout span,
+  .compose-tweet-text,
+  .side-bar-column {
+    display: none !important;
+  }
+
+  .nav-bar-home div a div div svg,
+  .bi-chevron-double-left {
+    margin-left: 15px;
+  }
+
+  .bi-chevron-double-left,
+  .compose-tweet,
+  .logout-nav img,
+  .logout-nav svg {
+    position: initial !important;
+  }
+
+  .compose-tweet {
+    max-width: 50px !important;
+    max-height: 50px !important;
+  }
+
+  .nav-bar-home,
+  .bi-chevron-double-left {
+    display: inline !important;
+  }
+
+  .compose-tweet-svg {
+    display: inline !important;
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  .logout-nav {
+    display: inline-block !important;
+    position: relative !important;
+    right: 8px !important;
+  }
+
+  .responsive-post-button {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) and (min-width: 281px) {
+  .header-first {
+    font-size: 40px;
+  }
+
+  .header-second {
+    font-size: 23px;
+  }
+
+  .header-container {
+    line-height: 28px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 280px) and (min-width: 0px) {
+  .header-first {
+    font-size: 40px;
+  }
+
+  .header-second {
+    font-size: 23px;
+  }
+
+  .header-container {
+    /* background: #26a7de; */
+    line-height: 28px;
+    width: 100%;
+  }
+
+  .responsive-input-group {
+    position: relative;
+    left: 15%;
+  }
+
+  .responsive-input-group-text {
+    position: relative !important;
+    left: 0;
+  }
+
+  .footer-container {
+    margin-left: 25px;
+    text-align: left;
+  }
+}
+/* finish to check responsiveness implementation  */

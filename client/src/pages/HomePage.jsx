@@ -1,29 +1,26 @@
 import LogInPage from "../pages/LogInPage";
 import SignUpPage from "../pages/SignUpPage";
 import IndexFooter from "../components/IndexFooter/IndexFooter";
+import { Container, Col, Row } from "react-bootstrap";
 
-import { Container, Col } from "react-bootstrap";
 function HomePage() {
   console.log("HELLO WORLD!");
 
   return (
     <>
-      {/* start  */}
-      {/* finish  */}
-
-      <Container className="first-page">
-        <Col>
-          {" "}
-          <SignUpPage />
-        </Col>
-
-        <Col className="mt-5">
-          {" "}
-          <LogInPage />
-        </Col>
+      <Container
+        style={{
+          marginTop: "243px",
+        }}
+      >
+        <Row>
+          <Col>
+            <SignUpPage />
+            <LogInPage />
+            <IndexFooter />
+          </Col>
+        </Row>
       </Container>
-
-      <IndexFooter />
     </>
   );
 }

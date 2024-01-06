@@ -32,12 +32,17 @@ function CreateChat() {
 
     // Server tarafından emit edilen "activeUsers" olayını dinle
     socket.on("activeUsers", (users) => {
-      setActiveUsers(users);
+      const spliceActiveUser = users.filter((eachUser) => {
+        return eachUser.username !== userInfo.username;
+      });
+      setActiveUsers(spliceActiveUser);
       if (searchString !== "") {
         filterUsers(users, searchString);
       } else {
         filterUsers([], searchString);
       }
+
+      console.log("Active users =>", users);
     });
     socket.emit("get_spesific_user", userInfo);
 
@@ -69,6 +74,7 @@ function CreateChat() {
     const filtered = users.filter((user) =>
       user.username.toLowerCase().startsWith(term.toLowerCase())
     );
+
     if (searchString !== []) {
       setFilteredUsers(filtered);
     } else {
@@ -162,7 +168,6 @@ function CreateChat() {
                   style={{
                     position: "relative",
                     bottom: "20px",
-                    margin: "5px",
                     cursor: "pointer",
                     listStyleType: "none",
                     textDecoration: "none",
