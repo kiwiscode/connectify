@@ -81,46 +81,72 @@ function SigninModal() {
 
   return (
     <>
-      <Container
-        style={{
-          justifyContent: "center",
-          marginTop: "40px",
-        }}
-      >
-        <Row
-          style={{
-            justifyContent: "end",
-            marginLeft: "80px",
-          }}
-        >
-          <Col md={6}>
-            <p className="have-account">Already have an account ?</p>
+      <Container className="text-end" fluid="true">
+        <Row>
+          <Col
+            xxl={12}
+            xl={12}
+            lg={12}
+            md={12}
+            sm={12}
+            xs={12}
+            style={
+              {
+                // backgroundColor: "grey",
+              }
+            }
+          >
+            <p
+              style={{
+                // backgroundColor: "purple",
+                width: "100%",
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+              className="have-account"
+            >
+              <span
+                className="  responsive-input-group-text 
+                "
+                style={{
+                  position: "relative",
+                  right: "98px",
+                }}
+              >
+                Already have an account ?
+              </span>
+            </p>
             <Button variant="light" onClick={handleShow} className="sign-in ">
               Sign in
             </Button>
             <Modal show={show} onHide={handleClose} size="lg" centered={true}>
               <Modal.Header
-                closeButton={false} // closeButton'u devre dışı bırak
                 style={{
                   border: "none",
                 }}
               >
-                <button
-                  type="button"
-                  className="close-button"
-                  aria-label="Close"
+                <svg
                   style={{
                     backgroundColor: "white",
                     border: "none",
                     borderRadius: "50%",
                     lineHeight: "20px",
                     fontSize: "20px",
-                    paddingBottom: "3px",
+                    padding: "3px",
                   }}
                   onClick={handleClose}
+                  width={20}
+                  height={20}
+                  color="rgb(15,20,25)"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="close-button r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
                 >
-                  <span aria-hidden="true">&times;</span>
-                </button>
+                  <g>
+                    <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                  </g>
+                </svg>{" "}
                 <span>Connectify</span>
               </Modal.Header>
 
@@ -207,11 +233,12 @@ function LogoutModal() {
         {/* start to check */}
         {userInfo.imageUrl.slice(0, 3) !== "../" ? (
           <img
+            className="profile-img"
             src={userInfo.imageUrl}
             width={40}
             height={40}
             alt=""
-            style={{ borderRadius: "50%" }}
+            style={{ borderRadius: "50%", marginLeft: "10px" }}
           />
         ) : (
           <div>
@@ -220,7 +247,7 @@ function LogoutModal() {
               width="40"
               height="40"
               fill="rgb(83, 100, 113)"
-              className="bi bi-person-circle"
+              className="profile-svg bi bi-person-circle"
               viewBox="0 0 16 16"
             >
               <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
@@ -254,14 +281,15 @@ function LogoutModal() {
           </span>
         </div>
         <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="25"
-          height="35"
-          fill="currentColor"
-          className="bi bi-three-dots none-backgroundColor logout-three-dots"
-          viewBox="0 0 20 20"
+          width={18}
+          height={18}
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          className="bi bi-three-dots none-backgroundColor logout-three-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
         >
-          <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
+          <g>
+            <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+          </g>
         </svg>
       </div>
 
@@ -284,7 +312,7 @@ function LogoutModal() {
   );
 }
 // IMPORTANT => refreshPosts as a props !
-function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
+function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
   const [show, setShow] = useState(false);
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
@@ -346,36 +374,41 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
   const handleShow = () => setShow(true);
 
   const handlePost = () => {
-    handleClose();
-
-    axios
-      .post(
-        `${API_URL}/home/post`,
-        {
-          content,
-          modalImage,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
+    if (content || chosenEmoji || modalImage) {
+      handleClose();
+      axios
+        .post(
+          `${API_URL}/home/post`,
+          {
+            content,
+            modalImage,
           },
-        }
-      )
+          {
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
+          }
+        )
 
-      .then(() => {
-        setLoadingTrue();
-        setModalImage("");
-        setTimeout(() => {
-          // IMPORTANT => we are using refreshPosts() it means we are using prop as a function !
-          setLoadingFalse();
-          refreshPosts();
-        }, 1500);
-        // handleGetAllPosts();
-        setContent("");
-      })
-      .catch((err) => {
-        return err;
-      });
+        .then(() => {
+          setLoadingTrue();
+          setModalImage("");
+          setTimeout(() => {
+            // IMPORTANT => we are using refreshPosts() it means we are using prop as a function !
+            setLoadingFalse();
+            refreshPosts();
+          }, 1500);
+          // handleGetAllPosts();
+          setContent("");
+        })
+        .catch((err) => {
+          return err;
+        });
+    } else {
+      handleShow();
+      console.log("No content !");
+      console.log("Nothing to share !");
+    }
   };
 
   const closeImage = () => {
@@ -404,14 +437,52 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
 
   return (
     <>
-      <Button variant="primary" onClick={handleShow} className="compose-tweet ">
-        <span className="compose-tweet-text">Post</span>
+      <Button
+        variant="primary"
+        onClick={handleShow}
+        className={`responsive-post-button ${visible ? "visible" : "hidden"}`}
+        size="sm"
+      >
         <svg
           width={24}
           height={24}
           viewBox="0 0 24 24"
           aria-hidden="true"
-          className="compose-tweet-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1472mwg r-lrsllp"
+          className=" compose-tweet-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1472mwg r-lrsllp"
+          fill="currentColor"
+          style={{ color: "rgb(255, 255, 255)" }}
+        >
+          <g>
+            <path d="M23 3c-6.62-.1-10.38 2.421-13.05 6.03C7.29 12.61 6 17.331 6 22h2c0-1.007.07-2.012.19-3H12c4.1 0 7.48-3.082 7.94-7.054C22.79 10.147 23.17 6.359 23 3zm-7 8h-1.5v2H16c.63-.016 1.2-.08 1.72-.188C16.95 15.24 14.68 17 12 17H8.55c.57-2.512 1.57-4.851 3-6.78 2.16-2.912 5.29-4.911 9.45-5.187C20.95 8.079 19.9 11 16 11zM4 9V6H1V4h3V1h2v3h3v2H6v3H4z"></path>
+          </g>
+        </svg>
+      </Button>
+
+      <Button
+        variant="primary"
+        onClick={handleShow}
+        className="compose-tweet compose-tweet-2"
+        size="sm"
+      >
+        <span
+          style={{
+            fontSize: "17px",
+            margin: "0",
+            padding: "0",
+            fontWeight: "700",
+            lineHeight: "20px",
+            top: "0",
+          }}
+          className="compose-tweet-text compose-tweet-2"
+        >
+          Post
+        </span>
+        <svg
+          width={24}
+          height={24}
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          className=" compose-tweet-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1472mwg r-lrsllp"
           fill="currentColor"
           style={{ color: "rgb(255, 255, 255)" }}
         >
@@ -423,27 +494,32 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header
-          closeButton={false} // closeButton'u devre dışı bırak
           style={{
             border: "none",
           }}
         >
-          <button
-            type="button"
-            className="close-button"
-            aria-label="Close"
+          <svg
             style={{
               backgroundColor: "white",
               border: "none",
               borderRadius: "50%",
               lineHeight: "20px",
               fontSize: "20px",
-              paddingBottom: "3px",
+              padding: "3px",
             }}
             onClick={handleClose}
+            width={20}
+            height={20}
+            color="rgb(15,20,25)"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            className="close-button r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
           >
-            <span aria-hidden="true">&times;</span>
-          </button>
+            <g>
+              <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+            </g>
+          </svg>{" "}
         </Modal.Header>
         <Modal.Body>
           <Stack direction="horizontal" gap={3}>
@@ -557,21 +633,23 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
             {/* INFO */}
             <div className="p-2">
               <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                className="bi bi-image-fill"
-                viewBox="0 0 16 16"
                 style={{
                   cursor: "pointer",
-                  color: "rgb(29, 155, 240)",
                 }}
                 onClick={() =>
                   document.getElementById("formuploadModal").click()
                 }
+                width={20}
+                height={20}
+                color="rgb(29,155,240)"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className="bi bi-image-fill r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
               >
-                <path d="M.002 3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-12a2 2 0 0 1-2-2V3zm1 9v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12zm5-6.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0z" />
+                <g>
+                  <path d="M3 5.5C3 4.119 4.119 3 5.5 3h13C19.881 3 21 4.119 21 5.5v13c0 1.381-1.119 2.5-2.5 2.5h-13C4.119 21 3 19.881 3 18.5v-13zM5.5 5c-.276 0-.5.224-.5.5v9.086l3-3 3 3 5-5 3 3V5.5c0-.276-.224-.5-.5-.5h-13zM19 15.414l-3-3-5 5-3-3-3 3V18.5c0 .276.224.5.5.5h13c.276 0 .5-.224.5-.5v-3.086zM9.75 7C8.784 7 8 7.784 8 8.75s.784 1.75 1.75 1.75 1.75-.784 1.75-1.75S10.716 7 9.75 7z"></path>
+                </g>
               </svg>
 
               <input
@@ -586,20 +664,21 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse }) {
             {/* INFO */}
             <div className="p-2">
               <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
+                onClick={() => toggleEmojis()}
+                color="rgb(29,155,240)"
                 fill="currentColor"
-                className="bi bi-emoji-smile"
-                viewBox="0 0 16 16"
+                width={20}
+                height={20}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
                 style={{
                   cursor: "pointer",
-                  color: "rgb(29, 155, 240)",
                 }}
-                onClick={() => toggleEmojis()}
               >
-                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                <path d="M4.285 9.567a.5.5 0 0 1 .683.183A3.498 3.498 0 0 0 8 11.5a3.498 3.498 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.498 4.498 0 0 1 8 12.5a4.498 4.498 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683zM7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z" />
+                <g>
+                  <path d="M8 9.5C8 8.119 8.672 7 9.5 7S11 8.119 11 9.5 10.328 12 9.5 12 8 10.881 8 9.5zm6.5 2.5c.828 0 1.5-1.119 1.5-2.5S15.328 7 14.5 7 13 8.119 13 9.5s.672 2.5 1.5 2.5zM12 16c-2.224 0-3.021-2.227-3.051-2.316l-1.897.633c.05.15 1.271 3.684 4.949 3.684s4.898-3.533 4.949-3.684l-1.896-.638c-.033.095-.83 2.322-3.053 2.322zm10.25-4.001c0 5.652-4.598 10.25-10.25 10.25S1.75 17.652 1.75 12 6.348 1.75 12 1.75 22.25 6.348 22.25 12zm-2 0c0-4.549-3.701-8.25-8.25-8.25S3.75 7.451 3.75 12s3.701 8.25 8.25 8.25 8.25-3.701 8.25-8.25z"></path>
+                </g>
               </svg>
             </div>
             <div className="p-2 ms-auto">
@@ -674,27 +753,32 @@ function CommentModal() {
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header
-          closeButton={false} // closeButton'u devre dışı bırak
           style={{
             border: "none",
           }}
         >
-          <button
-            type="button"
-            className="close-button"
-            aria-label="Close"
+          <svg
             style={{
               backgroundColor: "white",
               border: "none",
               borderRadius: "50%",
               lineHeight: "20px",
               fontSize: "20px",
-              paddingBottom: "3px",
+              padding: "3px",
             }}
             onClick={handleClose}
+            width={20}
+            height={20}
+            color="rgb(15,20,25)"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            className="close-button r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
           >
-            <span aria-hidden="true">&times;</span>
-          </button>
+            <g>
+              <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+            </g>
+          </svg>{" "}
         </Modal.Header>
         <Modal.Body>Woohoo, you are reading this text in a modal!</Modal.Body>
         <Modal.Footer>

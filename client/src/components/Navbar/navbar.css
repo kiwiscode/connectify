@@ -1,0 +1,100 @@
+/* responsive navigation bar bottom */
+
+@media (max-width: 465px) and (min-width: 0px) {
+  .main-column {
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
+  }
+
+  .nav-bar-home {
+    display: none !important;
+  }
+
+  .responsive-navigation-bar-bottom {
+    background-color: white !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.1) !important;
+    outline-style: none !important;
+    bottom: 0px !important;
+    display: flex !important;
+    width: 100% !important;
+    justify-content: space-around !important;
+    position: fixed !important;
+    z-index: 9999 !important;
+  }
+}
+
+/* responsive navigation bar top */
+
+@media (max-width: 465px) and (min-width: 0px) {
+  .responsive-navigation-bar-top {
+    display: flex !important;
+    justify-content: space-between !important;
+  }
+
+  .home-text {
+    display: none !important;
+  }
+
+  .responsive-top-border {
+    border: none !important;
+  }
+
+  .logout-nav {
+    position: initial !important;
+    display: initial !important;
+    width: initial !important;
+  }
+
+  .profile-img,
+  .profile-svg {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 30px;
+    height: 30px;
+  }
+
+  .responsive-stack-home-page,
+  .responsive-stack-home-page-2,
+  .responsive-stack-home-page-row,
+  .info-logout,
+  .logout-three-dots,
+  .compose-tweet-text {
+    display: none !important;
+  }
+
+  .compose-tweet-svg {
+    display: inline !important;
+  }
+
+  .compose-tweet {
+    display: none !important;
+  }
+
+  .responsive-post-button {
+    position: initial !important;
+    display: initial !important;
+    width: 56px !important;
+    height: 56px !important;
+    border: none !important;
+    border-radius: 50% !important;
+    outline-style: none !important;
+    transition-duration: 0.2s !important;
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 8px 28px !important;
+    position: absolute !important;
+    position: fixed !important;
+    z-index: 9999 !important;
+    bottom: 70px !important;
+    right: 10px !important;
+  }
+
+  .visible {
+    opacity: 1;
+    /* İlgili diğer stil ayarları */
+  }
+
+  .hidden {
+    opacity: 0.3;
+    /* İlgili diğer stil ayarları */
+  }
+}

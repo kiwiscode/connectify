@@ -6,6 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Picker from "emoji-picker-react";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
+import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
+import ResponsiveNavigationBarTop from "../components/Navbar/ResponsiveNavigationTop";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -203,55 +205,61 @@ function MainPage() {
   };
 
   const handlePost = () => {
-    axios
-      .post(
-        `${API_URL}/home/post`,
-        {
-          content,
-          image,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
+    if (content || chosenEmoji || image) {
+      axios
+        .post(
+          `${API_URL}/home/post`,
+          {
+            content,
+            image,
           },
-        }
-      )
-      .then((response) => {
-        console.log("Response after posting a tweet =>", response);
-        setImage("");
-        setLoadingTrue();
-        setTimeout(() => {
-          axios
-            .get(`${API_URL}/home`, {
-              headers: {
-                Authorization: `Bearer ${getToken()}`,
-              },
-            })
-            .then((response) => {
-              console.log("I am working right now! ");
-              // Assuming userInfo is retrieved from localStorage
-              const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+          {
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
+          }
+        )
+        .then((response) => {
+          console.log("Response after posting a tweet =>", response);
+          setImage("");
+          setLoadingTrue();
+          setTimeout(() => {
+            axios
+              .get(`${API_URL}/home`, {
+                headers: {
+                  Authorization: `Bearer ${getToken()}`,
+                },
+              })
+              .then((response) => {
+                console.log("I am working right now! ");
+                // Assuming userInfo is retrieved from localStorage
+                const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
-              // Assuming 'posts' is an array in userInfo
-              if (userInfo.posts.length) {
-                userInfo.posts.splice(0, 0, response.data[0]); // Assuming response contains the created post data
-              } else {
-                userInfo.posts.push(response.data[0]._id);
-              }
-              // Saving the updated userInfo back to localStorage
-              localStorage.setItem("userInfo", JSON.stringify(userInfo));
-              setPosts(response.data);
-            })
-            .catch((err) => {
-              return err;
-            });
+                // Assuming 'posts' is an array in userInfo
+                if (userInfo.posts.length) {
+                  userInfo.posts.splice(0, 0, response.data[0]); // Assuming response contains the created post data
+                } else {
+                  userInfo.posts.push(response.data[0]._id);
+                }
+                // Saving the updated userInfo back to localStorage
+                localStorage.setItem("userInfo", JSON.stringify(userInfo));
+                setPosts(response.data);
+              })
+              .catch((err) => {
+                return err;
+              });
 
-          setLoadingFalse();
-        }, 1200);
-      })
-      .catch((err) => {
-        return err;
-      });
+            setLoadingFalse();
+          }, 1200);
+        })
+        .catch((err) => {
+          return err;
+        });
+    } else {
+      console.log("No content !");
+
+      console.log("Nothing to share !");
+    }
   };
 
   const handleRepost = (postId) => {
@@ -448,6 +456,8 @@ function MainPage() {
 
   return (
     <>
+      <ResponsiveNavigationBarBottom />
+      <ResponsiveNavigationBarTop />
       <Container
         style={{
           justifyContent: "center",
@@ -461,8 +471,8 @@ function MainPage() {
             borderBottom: "none",
           }}
         >
-          <Col className="left-column" xs={12} sm={12} md={6} lg={3}>
-            <nav className="nav-bar-home">
+          <Col className="left-column" xs={12} sm={12} md={1} lg={3} xxl={3}>
+            <nav className="nav-bar-home" style={{}}>
               <Link href="/home">
                 <div>
                   <svg
@@ -479,23 +489,20 @@ function MainPage() {
                 </div>
               </Link>
 
-              <div className="inner-div">
+              <div className="inner-div-fonts inner-div ">
                 <Link to="/home">
                   <div>
                     <div>
                       <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        fill="currentColor"
-                        className="bi bi-house"
-                        viewBox="0 0 20 20"
+                        width={26}
+                        height={26}
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
                       >
-                        <path
-                          stroke="black"
-                          strokeWidth="0.5"
-                          d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z"
-                        />
+                        <g>
+                          <path d="M21.591 7.146L12.52 1.157c-.316-.21-.724-.21-1.04 0l-9.071 5.99c-.26.173-.409.456-.409.757v13.183c0 .502.418.913.929.913H9.14c.51 0 .929-.41.929-.913v-7.075h3.909v7.075c0 .502.417.913.928.913h6.165c.511 0 .929-.41.929-.913V7.904c0-.301-.158-.584-.408-.758z"></path>
+                        </g>
                       </svg>
 
                       <span>Home</span>
@@ -507,18 +514,15 @@ function MainPage() {
                   <div>
                     <div onClick={() => showNotifications()}>
                       <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        fill="currentColor"
-                        className="bi bi-bell"
-                        viewBox="0 0 20 20"
+                        width={26}
+                        height={26}
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
                       >
-                        <path
-                          stroke="black"
-                          strokeWidth="0.5"
-                          d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"
-                        />
+                        <g>
+                          <path d="M19.993 9.042C19.48 5.017 16.054 2 11.996 2s-7.49 3.021-7.999 7.051L2.866 18H7.1c.463 2.282 2.481 4 4.9 4s4.437-1.718 4.9-4h4.236l-1.143-8.958zM12 20c-1.306 0-2.417-.835-2.829-2h5.658c-.412 1.165-1.523 2-2.829 2zm-6.866-4l.847-6.698C6.364 6.272 8.941 4 11.996 4s5.627 2.268 6.013 5.295L18.864 16H5.134z"></path>
+                        </g>
                       </svg>
 
                       <span>
@@ -538,18 +542,15 @@ function MainPage() {
                   <div>
                     <div>
                       <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        fill="currentColor"
-                        className="bi bi-envelope"
-                        viewBox="0 0 20 20"
+                        width={26}
+                        height={26}
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
                       >
-                        <path
-                          stroke="black"
-                          strokeWidth="0.5"
-                          d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"
-                        />
+                        <g>
+                          <path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v2.764l8 3.638 8-3.636V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 5.463l-8 3.636-8-3.638V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-8.037z"></path>
+                        </g>
                       </svg>
                       <span>Messages</span>
                     </div>
@@ -557,68 +558,52 @@ function MainPage() {
                 </Link>
                 {/* finish to check redirect to the correct component for messages */}
 
-                <Link to="/communities">
-                  <div>
-                    <div>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        fill="currentColor"
-                        className="bi bi-people"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          stroke="black"
-                          strokeWidth="0.5"
-                          d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8Zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022ZM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816ZM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0Zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"
-                        />
-                      </svg>
-                      <span>Communities</span>
-                    </div>
-                  </div>
-                </Link>
-
                 <Link to="/profile">
                   <div>
                     <div>
                       <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        fill="currentColor"
-                        className="bi bi-person"
-                        viewBox="0 0 20 20"
+                        width={26}
+                        height={26}
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
                       >
-                        <path
-                          stroke="black"
-                          strokeWidth="0.5"
-                          d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"
-                        />
+                        <g>
+                          <path d="M5.651 19h12.698c-.337-1.8-1.023-3.21-1.945-4.19C15.318 13.65 13.838 13 12 13s-3.317.65-4.404 1.81c-.922.98-1.608 2.39-1.945 4.19zm.486-5.56C7.627 11.85 9.648 11 12 11s4.373.85 5.863 2.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H3.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46zM12 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM8 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4z"></path>
+                        </g>
                       </svg>
 
                       <span>Profile</span>
                     </div>
                   </div>
                 </Link>
-                <PostModal
-                  // IMPORTANT => calling the refreshPosts as a prop from PostModal component and refreshing the posts !
-                  refreshPosts={() => handleShowPostsHomePage()}
-                  setLoadingTrue={() => setLoadingTrue()}
-                  setLoadingFalse={() => setLoadingFalse()}
-                ></PostModal>
+                <div>
+                  <div>
+                    <PostModal
+                      // IMPORTANT => calling the refreshPosts as a prop from PostModal component and refreshing the posts !
+                      refreshPosts={() => handleShowPostsHomePage()}
+                      setLoadingTrue={() => setLoadingTrue()}
+                      setLoadingFalse={() => setLoadingFalse()}
+                    ></PostModal>
+                  </div>
+                </div>
               </div>
-              <LogoutModal></LogoutModal>
+              <div>
+                <div>
+                  <LogoutModal></LogoutModal>
+                </div>
+              </div>
             </nav>
           </Col>
 
           {/* start to check  main column */}
           {showNotificationColumn === false ? (
             <Col
-              xs={12}
-              sm={12}
-              md={4}
-              lg={6}
+              xs={12} // 0px - 576px aralığı
+              sm={12} // 576px - 768px aralığı
+              md={11} // 768px - 992px aralığı
+              lg={6} // 1200px - 1400px aralığı
+              xxl={6} // 1400px ve sonrası aralığı
               className={`main-column ${showNotificationColumn}`}
               style={{
                 border: "1px solid rgba(0, 0, 0, 0.1)",
@@ -627,6 +612,7 @@ function MainPage() {
               }}
             >
               <div
+                className="home-text"
                 style={{
                   fontWeight: "700",
                   fontSize: "20px",
@@ -637,12 +623,17 @@ function MainPage() {
                 Home
               </div>
               <Row
+                className="responsive-top-border"
                 style={{
                   border: "1px solid rgba(0, 0, 0, 0.1)",
                 }}
               ></Row>
 
-              <Stack direction="horizontal" gap={3}>
+              <Stack
+                direction="horizontal"
+                gap={3}
+                className="responsive-stack-home-page"
+              >
                 <div className="p-2">
                   {" "}
                   {userInfo.imageUrl.slice(0, 3) !== "../" ? (
@@ -682,7 +673,7 @@ function MainPage() {
                   )}
                 </div>
 
-                <div className="p-2">
+                <div className="p-2 input-text-area">
                   {" "}
                   <textarea
                     onChange={handleChange}
@@ -751,29 +742,36 @@ function MainPage() {
                 </div>
               )}
               <Row
+                className="responsive-stack-home-page-row"
                 style={{
                   border: "1px solid rgba(0, 0, 0, 0.1)",
                 }}
               ></Row>
-              <Stack direction="horizontal" gap={0}>
+              <Stack
+                direction="horizontal"
+                gap={0}
+                className="responsive-stack-home-page-2"
+              >
                 {/* INFO */}
                 <div className="p-2">
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    className="bi bi-image-fill"
-                    viewBox="0 0 16 16"
                     style={{
                       cursor: "pointer",
-                      color: "rgb(29, 155, 240)",
                     }}
                     onClick={() =>
                       document.getElementById("formupload").click()
                     }
+                    width={20}
+                    height={20}
+                    color="rgb(29,155,240)"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="bi bi-image-fill r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
                   >
-                    <path d="M.002 3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-12a2 2 0 0 1-2-2V3zm1 9v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12zm5-6.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0z" />
+                    <g>
+                      <path d="M3 5.5C3 4.119 4.119 3 5.5 3h13C19.881 3 21 4.119 21 5.5v13c0 1.381-1.119 2.5-2.5 2.5h-13C4.119 21 3 19.881 3 18.5v-13zM5.5 5c-.276 0-.5.224-.5.5v9.086l3-3 3 3 5-5 3 3V5.5c0-.276-.224-.5-.5-.5h-13zM19 15.414l-3-3-5 5-3-3-3 3V18.5c0 .276.224.5.5.5h13c.276 0 .5-.224.5-.5v-3.086zM9.75 7C8.784 7 8 7.784 8 8.75s.784 1.75 1.75 1.75 1.75-.784 1.75-1.75S10.716 7 9.75 7z"></path>
+                    </g>
                   </svg>
 
                   <input
@@ -789,21 +787,23 @@ function MainPage() {
                 {/* INFO  */}
                 <div className="p-2">
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
+                    onClick={() => toggleEmojis()}
+                    color="rgb(29,155,240)"
                     fill="currentColor"
-                    className="bi bi-emoji-smile"
-                    viewBox="0 0 16 16"
+                    width={20}
+                    height={20}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
                     style={{
                       cursor: "pointer",
-                      color: "rgb(29, 155, 240)",
                     }}
-                    onClick={() => toggleEmojis()}
                   >
-                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                    <path d="M4.285 9.567a.5.5 0 0 1 .683.183A3.498 3.498 0 0 0 8 11.5a3.498 3.498 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.498 4.498 0 0 1 8 12.5a4.498 4.498 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683zM7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z" />
+                    <g>
+                      <path d="M8 9.5C8 8.119 8.672 7 9.5 7S11 8.119 11 9.5 10.328 12 9.5 12 8 10.881 8 9.5zm6.5 2.5c.828 0 1.5-1.119 1.5-2.5S15.328 7 14.5 7 13 8.119 13 9.5s.672 2.5 1.5 2.5zM12 16c-2.224 0-3.021-2.227-3.051-2.316l-1.897.633c.05.15 1.271 3.684 4.949 3.684s4.898-3.533 4.949-3.684l-1.896-.638c-.033.095-.83 2.322-3.053 2.322zm10.25-4.001c0 5.652-4.598 10.25-10.25 10.25S1.75 17.652 1.75 12 6.348 1.75 12 1.75 22.25 6.348 22.25 12zm-2 0c0-4.549-3.701-8.25-8.25-8.25S3.75 7.451 3.75 12s3.701 8.25 8.25 8.25 8.25-3.701 8.25-8.25z"></path>
+                    </g>
                   </svg>
+
                   <div
                     className={`${showEmojisBar}`}
                     style={{
@@ -826,7 +826,7 @@ function MainPage() {
                     <Button
                       variant="primary"
                       onClick={() => handlePost()}
-                      className={`post-btn compose-tweet-textArea`}
+                      className={`post-btn compose-tweet-textArea compose-tweet-2`}
                     >
                       Post
                     </Button>
@@ -834,7 +834,7 @@ function MainPage() {
                     <Button
                       variant="primary"
                       onClick={() => handlePost()}
-                      className={`emptyContent post-btn compose-tweet-textArea`}
+                      className={`emptyContent post-btn compose-tweet-textArea `}
                     >
                       Post
                     </Button>
@@ -1064,39 +1064,41 @@ function MainPage() {
                               {post.userId &&
                               post.userId._id !== userInfo._id ? (
                                 <svg
-                                  onClick={() =>
-                                    handleShowDetailPostFromHomePage(post._id)
-                                  }
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="20"
-                                  height="25"
-                                  fill="currentColor"
-                                  className="bi bi-three-dots positioning-dots"
-                                  viewBox="0 0 20 20"
                                   style={{
                                     cursor: "pointer",
                                     backgroundColor: "rgb(29, 155, 240)",
                                   }}
+                                  onClick={() =>
+                                    handleShowDetailPostFromHomePage(post._id)
+                                  }
+                                  width={18}
+                                  height={18}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                                 >
-                                  <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"></path>
+                                  <g>
+                                    <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                                  </g>
                                 </svg>
                               ) : (
                                 <svg
-                                  onClick={() =>
-                                    handleDeletePostFromHomePage(post._id)
-                                  }
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="20"
-                                  height="25"
-                                  fill="currentColor"
-                                  className="bi bi-three-dots positioning-dots"
-                                  viewBox="0 0 20 20"
                                   style={{
                                     cursor: "pointer",
                                     backgroundColor: "crimson",
                                   }}
+                                  onClick={() =>
+                                    handleDeletePostFromHomePage(post._id)
+                                  }
+                                  width={18}
+                                  height={18}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                                 >
-                                  <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"></path>
+                                  <g>
+                                    <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                                  </g>
                                 </svg>
                               )}
                             </span>
@@ -1312,10 +1314,11 @@ function MainPage() {
             </Col>
           ) : (
             <Col
-              xs={12}
-              sm={12}
-              md={4}
-              lg={6}
+              xs={12} // 0px - 576px aralığı
+              sm={12} // 576px - 768px aralığı
+              md={4} // 768px - 992px aralığı
+              lg={6} // 1200px - 1400px aralığı
+              xxl={6} // 1400px ve sonrası aralığı
               className={`main-column ${showNotificationColumn}`}
               style={{
                 border: "1px solid rgba(0, 0, 0, 0.1)",
@@ -1580,11 +1583,12 @@ function MainPage() {
 
           {/* 3.column burası olucak */}
           <Col
-            className="side-bar-column"
-            xs={12}
-            sm={12}
-            md={2}
-            lg={3}
+            className="side-bar-column d-none d-lg-block d-xxl-block"
+            xs={12} // 0px - 576px aralığı
+            sm={12} // 576px - 768px aralığı
+            md={6} // 768px - 992px aralığı
+            lg={3} // 1200px - 1400px aralığı
+            xxl={3} // 1400px ve sonrası aralığı
             style={{
               height: "100%",
               backgroundColor: "indianred",

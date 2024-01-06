@@ -1,16 +1,22 @@
 import { Container, Col, Row } from "react-bootstrap";
-// import "bootstrap/dist/css/bootstrap.min.css";
 function IndexFooter() {
   return (
     <>
-      <Container
-        className="first-page"
-        style={{
-          justifyContent: "center",
-        }}
-      >
+      <Container className="text-center" fluid="true">
         <Row>
-          <Col>
+          <Col
+            style={
+              {
+                // backgroundColor: "rebeccapurple",
+              }
+            }
+            xxl={12}
+            xl={12}
+            lg={12}
+            md={12}
+            sm={12}
+            xs={12}
+          >
             <div className="footer-container">
               <a href="">
                 <span>About</span>

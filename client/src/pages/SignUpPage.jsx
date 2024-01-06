@@ -60,19 +60,21 @@ function SignUpPage() {
 
   return (
     <>
-      <Container
-        style={{
-          justifyContent: "center",
-        }}
-      >
-        <Row
-          style={{
-            justifyContent: "end",
-            marginTop: "160px",
-            marginLeft: "80px",
-          }}
-        >
-          <Col md={6}>
+      <Container className="text-end" fluid="true">
+        <Row>
+          <Col
+            style={
+              {
+                // backgroundColor: "blue",
+              }
+            }
+            xxl={12}
+            xl={12}
+            lg={12}
+            md={12}
+            sm={12}
+            xs={12}
+          >
             <div>
               <div className="header-container">
                 <p>
@@ -82,7 +84,13 @@ function SignUpPage() {
                   <span className="header-second header">Join today.</span>
                 </p>
               </div>
-              <div>
+
+              <div
+                className="responsive-input-group"
+                style={{
+                  float: "right",
+                }}
+              >
                 <InputGroup className="mb-2">
                   <Form.Control
                     aria-label="Default"
@@ -127,7 +135,13 @@ function SignUpPage() {
                   <Button onClick={() => handleSignUp()} className="create-btn">
                     Create account
                   </Button>
-                  <p className="by-signing">
+                  <p
+                    style={{
+                      // backgroundColor: "indianred",
+                      textAlign: "start",
+                    }}
+                    className="by-signing"
+                  >
                     By signing up, you agree to the{" "}
                     <a href="">
                       {" "}
