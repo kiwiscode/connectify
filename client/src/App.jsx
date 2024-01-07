@@ -8,6 +8,7 @@ import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import MessagesPage from "./pages/MessagesPage";
 import ChatDetailsPage from "./pages/ChatDetailsPage";
+import PostDetailPage from "./pages/PostDetailPage";
 
 function App() {
   return (
@@ -21,6 +22,10 @@ function App() {
         <Route
           path="/messages/:chatRoomId"
           element={<ChatDetailsPage />}
+        ></Route>
+        <Route
+          path="/:postOwner/status/:postId"
+          element={<PostDetailPage />}
         ></Route>
       </Routes>
     </UserProvider>

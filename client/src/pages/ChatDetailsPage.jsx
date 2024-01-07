@@ -2,11 +2,10 @@ import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import io from "socket.io-client";
 import { UserContext } from "../context/UserContext";
-import { Col, Row, Container } from "react-bootstrap";
+import { Col, Row, Container, Stack } from "react-bootstrap";
 import axios from "axios";
 import { LogoutModal, PostModal } from "../components/ui/Modal";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+
 import Picker from "emoji-picker-react";
 
 // when working on local version
@@ -79,7 +78,7 @@ function ChatDetailsPage() {
     return () => {
       socket.disconnect();
     };
-  }, [socket]);
+  }, [socket, room]);
 
   // mesajların render edildiği kısım start to check
   socket.on("send_spesific_chat_details", (data) => {
@@ -243,7 +242,7 @@ function ChatDetailsPage() {
             borderBottom: "none",
           }}
         >
-          <Col className="left-column" xs={12} sm={12} md={6} lg={3}>
+          <Col className="left-column" xs={12} sm={12} md={1} lg={3} xxl={3}>
             <nav className="nav-bar-home">
               <Link href="/home">
                 <div>
@@ -263,7 +262,7 @@ function ChatDetailsPage() {
 
               <div className="inner-div inner-div-fonts">
                 <Link to="/home">
-                  <div>
+                  <div className="home">
                     <div>
                       <svg
                         width={26}
@@ -283,7 +282,7 @@ function ChatDetailsPage() {
                 </Link>
 
                 <Link>
-                  <div>
+                  <div className="notifications">
                     <div onClick={() => showNotifications()}>
                       <svg
                         width={26}
@@ -311,7 +310,7 @@ function ChatDetailsPage() {
                 {/* start to check redirect to the correct component for messages */}
 
                 <Link to="/messages" onClick={redirectToMessages}>
-                  <div>
+                  <div className="messages">
                     <div>
                       <svg
                         width={26}
@@ -331,7 +330,7 @@ function ChatDetailsPage() {
                 {/* finish to check redirect to the correct component for messages */}
 
                 <Link to="/profile">
-                  <div>
+                  <div className="profile">
                     <div>
                       <svg
                         width={26}
@@ -364,10 +363,11 @@ function ChatDetailsPage() {
 
           {/* start to check  main column */}
           <Col
-            xs={12}
-            sm={12}
-            md={4}
-            lg={6}
+            xs={12} // 0px - 576px aralığı
+            sm={12} // 576px - 768px aralığı
+            md={11} // 768px - 992px aralığı
+            lg={6} // 1200px - 1400px aralığı
+            xxl={6} // 1400px ve sonrası aralığı
             className={`main-column ${showNotificationColumn}`}
             style={{
               border: "1px solid rgba(0, 0, 0, 0.1)",
@@ -378,19 +378,68 @@ function ChatDetailsPage() {
             <div className="message-detail-container">
               {selectedUser.length ? (
                 <>
+                  <Stack direction="horizontal" gap={3}>
+                    <div
+                      className="p-2 arrow"
+                      style={{
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {" "}
+                      <svg
+                        style={{
+                          display: "inline-block",
+                          marginBottom: "2px",
+                          border: "none",
+                          fontSize: "15px",
+                        }}
+                        onClick={redirectToMessages}
+                        width={20}
+                        height={20}
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className=" responsive-messages-arrow r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                      >
+                        <g>
+                          <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                        </g>
+                      </svg>
+                    </div>
+                    <div className="p-2">
+                      {" "}
+                      <span
+                        style={{
+                          lineHeight: "20px",
+                          fontWeight: "700",
+                          fontSize: "17px",
+                        }}
+                      >
+                        {selectedUser[0].fullname}
+                      </span>
+                    </div>
+                    <div className="p-2 ms-auto">
+                      {" "}
+                      <span>
+                        <svg
+                          width={20}
+                          height={20}
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                        >
+                          <g>
+                            <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                          </g>
+                        </svg>
+                      </span>
+                    </div>
+                  </Stack>
+
                   <Link
                     style={{ textDecoration: "none", color: "black" }}
                     to={`/profile/${selectedUser[0]._id}`}
                   >
-                    <span
-                      style={{
-                        lineHeight: "20px",
-                        fontWeight: "700",
-                        fontSize: "17px",
-                      }}
-                    >
-                      {selectedUser[0].fullname}
-                    </span>
                     <div className="message-detail-user-card">
                       {selectedUser[0].imageUrl.slice(0, 3) !== "../" ? (
                         <>
@@ -590,22 +639,32 @@ function ChatDetailsPage() {
                 />
               </div>
               <div className="p-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  className="bi bi-emoji-smile"
-                  viewBox="0 0 16 16"
+                <div
+                  className="svg-border-parent"
                   style={{
+                    // border: "1px solid black",
                     cursor: "pointer",
-                    color: "rgb(29, 155, 240)",
+                    borderRadius: "50%",
                   }}
-                  onClick={() => toggleEmojis()}
                 >
-                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                  <path d="M4.285 9.567a.5.5 0 0 1 .683.183A3.498 3.498 0 0 0 8 11.5a3.498 3.498 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.498 4.498 0 0 1 8 12.5a4.498 4.498 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683zM7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z" />
-                </svg>
+                  <svg
+                    onClick={() => toggleEmojis()}
+                    color="rgb(29,155,240)"
+                    fill="currentColor"
+                    width={20}
+                    height={20}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="post-modal-emoji-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                    style={{
+                      cursor: "pointer",
+                    }}
+                  >
+                    <g>
+                      <path d="M8 9.5C8 8.119 8.672 7 9.5 7S11 8.119 11 9.5 10.328 12 9.5 12 8 10.881 8 9.5zm6.5 2.5c.828 0 1.5-1.119 1.5-2.5S15.328 7 14.5 7 13 8.119 13 9.5s.672 2.5 1.5 2.5zM12 16c-2.224 0-3.021-2.227-3.051-2.316l-1.897.633c.05.15 1.271 3.684 4.949 3.684s4.898-3.533 4.949-3.684l-1.896-.638c-.033.095-.83 2.322-3.053 2.322zm10.25-4.001c0 5.652-4.598 10.25-10.25 10.25S1.75 17.652 1.75 12 6.348 1.75 12 1.75 22.25 6.348 22.25 12zm-2 0c0-4.549-3.701-8.25-8.25-8.25S3.75 7.451 3.75 12s3.701 8.25 8.25 8.25 8.25-3.701 8.25-8.25z"></path>
+                    </g>
+                  </svg>
+                </div>
               </div>
               <input
                 className="message-input"
@@ -621,22 +680,29 @@ function ChatDetailsPage() {
                 }}
               />
 
-              <button className="send-button" onClick={sendMessage}>
-                <svg
-                  color="rgb(29,155,204)"
-                  fill="currentColor"
-                  width={20}
-                  height={20}
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  className={`${
-                    disabled ? "disabled" : ""
-                  } r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03`}
-                >
-                  <g>
-                    <path d="M2.504 21.866l.526-2.108C3.04 19.719 4 15.823 4 12s-.96-7.719-.97-7.757l-.527-2.109L22.236 12 2.504 21.866zM5.981 13c-.072 1.962-.34 3.833-.583 5.183L17.764 12 5.398 5.818c.242 1.349.51 3.221.583 5.183H10v2H5.981z"></path>
-                  </g>
-                </svg>
+              <button
+                className={`${disabled ? "disabled-button" : "send-button"}`}
+                onClick={sendMessage}
+              >
+                <div>
+                  <svg
+                    color="rgb(29,155,204)"
+                    fill="currentColor"
+                    width={20}
+                    height={20}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className={`${
+                      disabled
+                        ? "disabled disabled-send-button-svg"
+                        : "send-button-svg"
+                    } r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03`}
+                  >
+                    <g>
+                      <path d="M2.504 21.866l.526-2.108C3.04 19.719 4 15.823 4 12s-.96-7.719-.97-7.757l-.527-2.109L22.236 12 2.504 21.866zM5.981 13c-.072 1.962-.34 3.833-.583 5.183L17.764 12 5.398 5.818c.242 1.349.51 3.221.583 5.183H10v2H5.981z"></path>
+                    </g>
+                  </svg>
+                </div>
               </button>
             </div>
 
@@ -647,11 +713,12 @@ function ChatDetailsPage() {
           {/* 3.column burası olucak */}
 
           <Col
-            className="side-bar-column"
-            xs={12}
-            sm={12}
-            md={2}
-            lg={3}
+            className="side-bar-column d-none d-lg-block d-xxl-block"
+            xs={12} // 0px - 576px aralığı
+            sm={12} // 576px - 768px aralığı
+            md={6} // 768px - 992px aralığı
+            lg={3} // 1200px - 1400px aralığı
+            xxl={3} // 1400px ve sonrası aralığı
             style={{
               height: "100%",
               backgroundColor: "indianred",

@@ -125,28 +125,38 @@ function SigninModal() {
                   border: "none",
                 }}
               >
-                <svg
+                <div
+                  className="close-button"
                   style={{
-                    backgroundColor: "white",
-                    border: "none",
                     borderRadius: "50%",
-                    lineHeight: "20px",
-                    fontSize: "20px",
-                    padding: "3px",
+                    cursor: "pointer",
                   }}
-                  onClick={handleClose}
-                  width={20}
-                  height={20}
-                  color="rgb(15,20,25)"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  className="close-button r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
                 >
-                  <g>
-                    <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
-                  </g>
-                </svg>{" "}
+                  <div>
+                    {/* create message icon start to check  */}
+                    <svg
+                      style={{
+                        border: "none",
+                        fontSize: "15px",
+                        margin: "5px",
+                      }}
+                      onClick={handleClose}
+                      width={20}
+                      height={20}
+                      color="rgb(15,20,25)"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                    >
+                      <g>
+                        <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                      </g>
+                    </svg>{" "}
+                    {/* create message icon finish to check  */}
+                  </div>
+                </div>
+
                 <span>Connectify</span>
               </Modal.Header>
 
@@ -181,7 +191,11 @@ function SigninModal() {
                   border: "none",
                 }}
               >
-                <Button variant="dark" onClick={handleLogin}>
+                <Button
+                  className="login-button"
+                  variant="dark"
+                  onClick={handleLogin}
+                >
                   Log in
                 </Button>
                 <span>
@@ -229,17 +243,27 @@ function LogoutModal() {
     <>
       {/* start to check  */}
 
-      <div className="logout-nav" onClick={handleShow}>
+      <div
+        style={{
+          marginLeft: "5px",
+        }}
+        className="logout-nav"
+        onClick={handleShow}
+      >
         {/* start to check */}
         {userInfo.imageUrl.slice(0, 3) !== "../" ? (
-          <img
-            className="profile-img"
-            src={userInfo.imageUrl}
-            width={40}
-            height={40}
-            alt=""
-            style={{ borderRadius: "50%", marginLeft: "10px" }}
-          />
+          <div>
+            <img
+              className="profile-img"
+              src={userInfo.imageUrl}
+              width={40}
+              height={40}
+              alt=""
+              style={{
+                borderRadius: "50%",
+              }}
+            />
+          </div>
         ) : (
           <div>
             <svg
@@ -322,7 +346,6 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
   const [showSecondModal, setShowSecondModal] = useState(false);
   const maxCharacters = 140;
 
-  console.log("POST MODAL IS WORKING => 1");
   const [modalImage, setModalImage] = useState("");
 
   //handle and convert it in base 64
@@ -498,28 +521,32 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
             border: "none",
           }}
         >
-          <svg
-            style={{
-              backgroundColor: "white",
-              border: "none",
-              borderRadius: "50%",
-              lineHeight: "20px",
-              fontSize: "20px",
-              padding: "3px",
-            }}
-            onClick={handleClose}
-            width={20}
-            height={20}
-            color="rgb(15,20,25)"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-            className="close-button r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+          <div
+            className="close-button"
+            style={{ borderRadius: "50%", cursor: "pointer" }}
           >
-            <g>
-              <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
-            </g>
-          </svg>{" "}
+            <div>
+              <svg
+                style={{
+                  border: "none",
+                  fontSize: "15px",
+                  margin: "5px",
+                }}
+                onClick={handleClose}
+                width={20}
+                height={20}
+                color="rgb(15,20,25)"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+              >
+                <g>
+                  <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                </g>
+              </svg>{" "}
+            </div>
+          </div>
         </Modal.Header>
         <Modal.Body>
           <Stack direction="horizontal" gap={3}>
@@ -632,25 +659,34 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
           <Stack direction="horizontal" gap={0}>
             {/* INFO */}
             <div className="p-2">
-              <svg
+              <div
                 style={{
+                  // border: "1px solid black",
                   cursor: "pointer",
+                  borderRadius: "50%",
                 }}
-                onClick={() =>
-                  document.getElementById("formuploadModal").click()
-                }
-                width={20}
-                height={20}
-                color="rgb(29,155,240)"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                className="bi bi-image-fill r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                className="svg-border-parent"
               >
-                <g>
-                  <path d="M3 5.5C3 4.119 4.119 3 5.5 3h13C19.881 3 21 4.119 21 5.5v13c0 1.381-1.119 2.5-2.5 2.5h-13C4.119 21 3 19.881 3 18.5v-13zM5.5 5c-.276 0-.5.224-.5.5v9.086l3-3 3 3 5-5 3 3V5.5c0-.276-.224-.5-.5-.5h-13zM19 15.414l-3-3-5 5-3-3-3 3V18.5c0 .276.224.5.5.5h13c.276 0 .5-.224.5-.5v-3.086zM9.75 7C8.784 7 8 7.784 8 8.75s.784 1.75 1.75 1.75 1.75-.784 1.75-1.75S10.716 7 9.75 7z"></path>
-                </g>
-              </svg>
+                <svg
+                  style={{
+                    cursor: "pointer",
+                  }}
+                  onClick={() =>
+                    document.getElementById("formuploadModal").click()
+                  }
+                  width={20}
+                  height={20}
+                  color="rgb(29,155,240)"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="bi bi-image-fill post-modal-image-fill r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                >
+                  <g>
+                    <path d="M3 5.5C3 4.119 4.119 3 5.5 3h13C19.881 3 21 4.119 21 5.5v13c0 1.381-1.119 2.5-2.5 2.5h-13C4.119 21 3 19.881 3 18.5v-13zM5.5 5c-.276 0-.5.224-.5.5v9.086l3-3 3 3 5-5 3 3V5.5c0-.276-.224-.5-.5-.5h-13zM19 15.414l-3-3-5 5-3-3-3 3V18.5c0 .276.224.5.5.5h13c.276 0 .5-.224.5-.5v-3.086zM9.75 7C8.784 7 8 7.784 8 8.75s.784 1.75 1.75 1.75 1.75-.784 1.75-1.75S10.716 7 9.75 7z"></path>
+                  </g>
+                </svg>
+              </div>
 
               <input
                 onChange={handleImage}
@@ -663,26 +699,35 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
             </div>
             {/* INFO */}
             <div className="p-2">
-              <svg
-                onClick={() => toggleEmojis()}
-                color="rgb(29,155,240)"
-                fill="currentColor"
-                width={20}
-                height={20}
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+              <div
+                className="svg-border-parent"
                 style={{
+                  // border: "1px solid black",
                   cursor: "pointer",
+                  borderRadius: "50%",
                 }}
               >
-                <g>
-                  <path d="M8 9.5C8 8.119 8.672 7 9.5 7S11 8.119 11 9.5 10.328 12 9.5 12 8 10.881 8 9.5zm6.5 2.5c.828 0 1.5-1.119 1.5-2.5S15.328 7 14.5 7 13 8.119 13 9.5s.672 2.5 1.5 2.5zM12 16c-2.224 0-3.021-2.227-3.051-2.316l-1.897.633c.05.15 1.271 3.684 4.949 3.684s4.898-3.533 4.949-3.684l-1.896-.638c-.033.095-.83 2.322-3.053 2.322zm10.25-4.001c0 5.652-4.598 10.25-10.25 10.25S1.75 17.652 1.75 12 6.348 1.75 12 1.75 22.25 6.348 22.25 12zm-2 0c0-4.549-3.701-8.25-8.25-8.25S3.75 7.451 3.75 12s3.701 8.25 8.25 8.25 8.25-3.701 8.25-8.25z"></path>
-                </g>
-              </svg>
+                <svg
+                  onClick={() => toggleEmojis()}
+                  color="rgb(29,155,240)"
+                  fill="currentColor"
+                  width={20}
+                  height={20}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="post-modal-emoji-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                  style={{
+                    cursor: "pointer",
+                  }}
+                >
+                  <g>
+                    <path d="M8 9.5C8 8.119 8.672 7 9.5 7S11 8.119 11 9.5 10.328 12 9.5 12 8 10.881 8 9.5zm6.5 2.5c.828 0 1.5-1.119 1.5-2.5S15.328 7 14.5 7 13 8.119 13 9.5s.672 2.5 1.5 2.5zM12 16c-2.224 0-3.021-2.227-3.051-2.316l-1.897.633c.05.15 1.271 3.684 4.949 3.684s4.898-3.533 4.949-3.684l-1.896-.638c-.033.095-.83 2.322-3.053 2.322zm10.25-4.001c0 5.652-4.598 10.25-10.25 10.25S1.75 17.652 1.75 12 6.348 1.75 12 1.75 22.25 6.348 22.25 12zm-2 0c0-4.549-3.701-8.25-8.25-8.25S3.75 7.451 3.75 12s3.701 8.25 8.25 8.25 8.25-3.701 8.25-8.25z"></path>
+                  </g>
+                </svg>
+              </div>
             </div>
             <div className="p-2 ms-auto">
-              {" "}
+              {/* <div className="p-2 "> */}{" "}
               {content !== "" || modalImage ? (
                 <Button
                   variant="primary"
@@ -724,7 +769,7 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
   );
 }
 
-function CommentModal() {
+function CommentModal({ post }) {
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -732,24 +777,34 @@ function CommentModal() {
 
   return (
     <>
-      <svg
-        onClick={handleShow}
-        width={18}
-        height={18}
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-        className="bi bi-chat r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-        color="rgb(83, 100, 113)"
-        fill="currentColor"
-      >
-        <g>
-          <path
-            stroke="rgb(83, 100, 113)"
-            strokeWidth="0.1"
-            d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"
-          ></path>
-        </g>
-      </svg>
+      <div>
+        <svg
+          onClick={handleShow}
+          width={18}
+          height={18}
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          className="bi bi-chat r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+          color="rgb(83, 100, 113)"
+          fill="currentColor"
+        >
+          <g>
+            <path
+              stroke="rgb(83, 100, 113)"
+              strokeWidth="0.1"
+              d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"
+            ></path>
+          </g>
+        </svg>
+        <span
+          className="post-description"
+          style={{ color: "rgb(83, 100, 113)" }}
+        >
+          {post.comments && post.comments.length ? (
+            <span>{post.comments.length}</span>
+          ) : null}
+        </span>
+      </div>
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header
