@@ -12,6 +12,17 @@ body {
   padding: 0;
 }
 
+.logout-three-dots {
+  position: relative;
+}
+
+.logout-nav {
+  display: flex;
+  /* margin: 0px 0px 0px 0px; */
+  margin: 80px 0px 0px 0px;
+  cursor: pointer;
+}
+
 .responsive-navigation-bar-bottom,
 .responsive-navigation-bar-top,
 .responsive-post-button {
@@ -227,6 +238,39 @@ span > a:hover {
   z-index: 1000;
 }
 
+/* navigation bar hover effect start to check */
+.inner-div {
+  display: flex;
+  flex-direction: column;
+}
+.inner-div div span {
+  /* background-color: blue; */
+  padding: 12px;
+}
+
+.inner-div svg {
+  margin-left: 10px;
+}
+.home,
+.notifications,
+.messages,
+.profile {
+  display: inline-block;
+  border-radius: 50%;
+  border-bottom-left-radius: 9999px;
+  border-bottom-right-radius: 9999px;
+  border-top-left-radius: 9999px;
+  border-top-right-radius: 9999px;
+}
+
+.home:hover,
+.notifications:hover,
+.messages:hover,
+.profile:hover {
+  background-color: #e7e7e8;
+}
+/* navigation bar hover effect finish to check */
+
 .compose-tweet {
   box-shadow: rgba(0, 0, 0, 0.08) 0px 8px 28px;
   min-width: 52px;
@@ -235,6 +279,7 @@ span > a:hover {
   margin-top: 50px;
   outline-style: none;
   border: none;
+  margin-left: 5px;
 }
 
 .compose-tweet:hover {
@@ -271,23 +316,6 @@ span > a:hover {
   margin-right: 270px;
 }
 
-/* responsivenesste problem yaratıyor start to check  */
-/* .inner-div div:hover {
-  background-color: rgba(231, 231, 232, 255) !important;
-  outline-style: none;
-  border-bottom-width: 1px;
-  border-left-width: 1px;
-  border-right-width: 1px;
-  border-top-width: 1px;
-  border-width: 4px 1.25em;
-  border-radius: var(--border-radius);
-  transition: background-color 0.3s, box-shadow 0.3s;
-} */
-/* responsivenesste problem yaratıyor finish to check  */
-
-/* start to check NOTE make it responsive */
-/* NOTE NOTE PROBABLY DONE WITH THOSE CODES */
-
 .inner-div-fonts span {
   font-size: 20px;
   font-weight: 400;
@@ -303,14 +331,23 @@ span > a:hover {
 
 .logout-nav {
   width: 250px;
+  margin-right: 10px !important;
 }
+
+.logout-nav:hover {
+  background-color: #e7e7e8;
+  outline-style: none;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-top-width: 1px;
+  border-width: 4px 1.25em;
+  border-radius: var(--border-radius);
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
 /* NOTE NOTE PROBABLY DONE WITH THOSE CODES */
 /* finish to check NOTE make it responsive */
-
-.side-bar-column {
-  /* position: sticky; */
-  /* top: 0; */
-}
 
 .logout-body {
   width: 100%;
@@ -405,6 +442,11 @@ span > a:hover {
   cursor: pointer;
 }
 
+.comment-svg:hover,
+.comment-svg-text {
+  background-color: #e4eef7;
+}
+
 .post-description {
   line-height: 16px;
   font-size: 13px;
@@ -424,18 +466,6 @@ span > a:hover {
 .p-0 span {
   font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, Helvetica, Arial, sans-serif;
-}
-
-.logout-nav:hover {
-  background-color: rgba(231, 231, 232, 255);
-  outline-style: none;
-  border-bottom-width: 1px;
-  border-left-width: 1px;
-  border-right-width: 1px;
-  border-top-width: 1px;
-  border-width: 4px 1.25em;
-  border-radius: var(--border-radius);
-  transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 .logout-nav span {
@@ -458,16 +488,9 @@ span > a:hover {
   border: 1px solid white;
 }
 
-.logout-nav {
-  display: flex;
-  margin: 0px 0px 0px 0px;
-  margin: 80px 0px 0px 0px;
-  cursor: pointer;
-}
-
 .bi-chevron-double-left {
   position: relative;
-  left: 25px;
+  left: 35px;
   margin-bottom: 0px;
 }
 
@@ -710,11 +733,12 @@ span > a:hover {
 
 /* footer chat details page style start to check  */
 .chat-footer-detail {
+  height: 50px;
   margin: 5px;
   display: flex;
   align-items: center;
   padding: 8px;
-  background-color: #f5f8fa;
+  background-color: rgba(239, 243, 244, 1);
   border-bottom-left-radius: 16px;
   border-bottom-right-radius: 16px;
   border-top-left-radius: 16px;
@@ -726,7 +750,7 @@ span > a:hover {
   padding: 8px;
   margin-right: 8px;
   border-style: none;
-  background-color: #f5f8fa;
+  background-color: rgba(239, 243, 244, 1);
   outline: none;
   font-size: 15px;
   width: 100%;
@@ -737,7 +761,7 @@ span > a:hover {
   border: none;
   border-radius: 20px;
   padding: 8px 16px;
-  background-color: #f5f8fa;
+  background-color: rgba(239, 243, 244, 1);
   cursor: pointer;
   outline: none;
   font-size: 15px;
@@ -779,8 +803,12 @@ span > a:hover {
   background-color: rgba(247, 249, 249, 255);
 }
 
-.close-button:hover {
-  background-color: rgba(247, 249, 249, 255) !important;
+.close-button:hover,
+.arrow:hover,
+.settings-icon:hover,
+.chat-create-icon:hover {
+  background-color: #e7e7e8 !important;
+  transition-duration: 0.2s !important;
 }
 
 .hover-fullname:hover {
@@ -802,6 +830,69 @@ span > a:hover {
 
 .disabled {
   opacity: 0.5;
+}
+
+.disabled-button {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background-color: rgba(239, 243, 244, 1);
+}
+
+.disabled-send-button-svg {
+  position: relative;
+
+  bottom: 1px;
+  left: 1px;
+}
+
+/* hover effect for svgs start to check  */
+/* start to check  */
+.send-button-svg {
+  position: relative;
+  right: 5px;
+}
+
+.send-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.svg-border-parent {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  margin: auto;
+}
+
+.login-button {
+  /* width: 40%; */
+}
+
+.svg-border-parent:hover,
+.send-button:hover {
+  background-color: #dceaf4;
+  transition-duration: 0.2s !important;
+}
+
+.post-modal-image-fill,
+.post-modal-emoji-picker {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
+
+/* finish to check */
+/* hover effect for svgs finish to check  */
+
+.spesific-room-message-main-container {
+  margin-top: 10px;
+}
+
+.responsive-home-arrow,
+.responsive-messages-arrow {
+  display: none;
 }
 
 /* start to check responsiveness implementation  */
@@ -842,6 +933,11 @@ span > a:hover {
   .logout-nav img,
   .logout-nav svg {
     position: initial !important;
+  }
+
+  .logout-nav img,
+  .logout-nav svg {
+    margin-left: 10px;
   }
 
   .compose-tweet {
@@ -905,6 +1001,11 @@ span > a:hover {
     position: initial !important;
   }
 
+  .logout-nav img,
+  .logout-nav svg {
+    margin-left: 10px;
+  }
+
   .compose-tweet {
     max-width: 50px !important;
     max-height: 50px !important;
@@ -964,6 +1065,11 @@ span > a:hover {
   .logout-nav img,
   .logout-nav svg {
     position: initial !important;
+  }
+
+  .logout-nav img,
+  .logout-nav svg {
+    margin-left: 10px;
   }
 
   .compose-tweet {
@@ -1038,4 +1144,73 @@ span > a:hover {
     text-align: left;
   }
 }
+
+@media (max-width: 1199px) and (min-width: 992px) {
+  .compose-tweet {
+    max-width: 90%;
+  }
+  .logout-nav {
+    margin-right: 30px;
+  }
+}
+
+@media (max-width: 465px) and (min-width: 0px) {
+  .responsive-home-arrow,
+  .responsive-messages-arrow {
+    display: block;
+  }
+}
+
+@media (max-width: 991px) and (min-width: 466px) {
+  .inner-div {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .inner-div div {
+    margin-left: 3px !important;
+    display: inline-block !important;
+    border-radius: 50% !important;
+    margin: 2px !important;
+  }
+
+  .inner-div svg {
+    position: relative !important;
+    right: 6px;
+  }
+
+  .inner-div div div:hover {
+    background-color: #e7e7e8 !important;
+  }
+
+  .compose-tweet-2 {
+    position: relative !important;
+    right: 5px !important;
+    border: initial !important;
+  }
+
+  .compose-tweet-2:hover {
+    border: none !important;
+  }
+
+  .logout-nav {
+    display: inline !important;
+    position: relative;
+    right: 5px !important;
+  }
+
+  .logout-nav:hover {
+    background-color: transparent;
+  }
+}
 /* finish to check responsiveness implementation  */
+
+.post-detail-underline-text-1:hover {
+  text-decoration: underline;
+  text-decoration-color: rgb(83, 100, 113);
+}
+
+.post-detail-underline-text-2:hover {
+  text-decoration: underline;
+  text-decoration-color: black;
+}

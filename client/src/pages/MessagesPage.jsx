@@ -6,7 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { LogoutModal, PostModal } from "../components/ui/Modal";
 import axios from "axios";
 import CreateChat from "../components/ui/CreateChat";
-
+import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
+import ResponsiveNavigationBarTop from "../components/Navbar/ResponsiveNavigationTop";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -223,6 +224,7 @@ function MessagesPage() {
 
   return (
     <>
+      <ResponsiveNavigationBarBottom />
       <Container
         style={{
           justifyContent: "center",
@@ -236,7 +238,7 @@ function MessagesPage() {
             borderBottom: "none",
           }}
         >
-          <Col className="left-column" xs={12} sm={12} md={6} lg={3}>
+          <Col className="left-column" xs={12} sm={12} md={1} lg={3} xxl={3}>
             <nav className="nav-bar-home">
               <Link href="/home">
                 <div>
@@ -256,7 +258,7 @@ function MessagesPage() {
 
               <div className="inner-div inner-div-fonts ">
                 <Link to="/home">
-                  <div>
+                  <div className="home">
                     <div>
                       <svg
                         width={26}
@@ -276,7 +278,7 @@ function MessagesPage() {
                 </Link>
 
                 <Link>
-                  <div>
+                  <div className="notifications">
                     <div onClick={() => showNotifications()}>
                       <svg
                         width={26}
@@ -304,7 +306,7 @@ function MessagesPage() {
                 {/* start to check redirect to the correct component for messages */}
 
                 <Link to="/messages" onClick={redirectToMessages}>
-                  <div>
+                  <div className="messages">
                     <div>
                       <svg
                         width={26}
@@ -324,7 +326,7 @@ function MessagesPage() {
                 {/* finish to check redirect to the correct component for messages */}
 
                 <Link to="/profile">
-                  <div>
+                  <div className="profile">
                     <div>
                       <svg
                         width={26}
@@ -357,10 +359,11 @@ function MessagesPage() {
 
           {/* start to check  main column */}
           <Col
-            xs={12}
-            sm={12}
-            md={4}
-            lg={6}
+            xs={12} // 0px - 576px aralığı
+            sm={12} // 576px - 768px aralığı
+            md={11} // 768px - 992px aralığı
+            lg={6} // 1200px - 1400px aralığı
+            xxl={6} // 1400px ve sonrası aralığı
             className={`main-column ${showNotificationColumn}`}
             style={{
               border: "1px solid rgba(0, 0, 0, 0.1)",
@@ -369,6 +372,19 @@ function MessagesPage() {
             }}
           >
             <Stack direction="horizontal" gap={3}>
+              <Link className="responsive-home-arrow" to={"/home"}>
+                <svg
+                  width={20}
+                  height={20}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                >
+                  <g>
+                    <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                  </g>
+                </svg>
+              </Link>
               <div
                 style={{
                   fontWeight: "700",
@@ -378,7 +394,12 @@ function MessagesPage() {
               >
                 Messages
               </div>
-              <div className="p-2 ms-auto">
+              <div
+                className="p-2 ms-auto  settings-icon"
+                style={{
+                  borderRadius: "50%",
+                }}
+              >
                 {/* settings icon start to check  */}
                 <svg
                   width={20}
@@ -392,7 +413,7 @@ function MessagesPage() {
                   }}
                   viewBox="0 0 24 24"
                   aria-hidden="true"
-                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                  className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
                 >
                   <g>
                     <path d="M10.54 1.75h2.92l1.57 2.36c.11.17.32.25.53.21l2.53-.59 2.17 2.17-.58 2.54c-.05.2.04.41.21.53l2.36 1.57v2.92l-2.36 1.57c-.17.12-.26.33-.21.53l.58 2.54-2.17 2.17-2.53-.59c-.21-.04-.42.04-.53.21l-1.57 2.36h-2.92l-1.58-2.36c-.11-.17-.32-.25-.52-.21l-2.54.59-2.17-2.17.58-2.54c.05-.2-.03-.41-.21-.53l-2.35-1.57v-2.92L4.1 8.97c.18-.12.26-.33.21-.53L3.73 5.9 5.9 3.73l2.54.59c.2.04.41-.04.52-.21l1.58-2.36zm1.07 2l-.98 1.47C10.05 6.08 9 6.5 7.99 6.27l-1.46-.34-.6.6.33 1.46c.24 1.01-.18 2.07-1.05 2.64l-1.46.98v.78l1.46.98c.87.57 1.29 1.63 1.05 2.64l-.33 1.46.6.6 1.46-.34c1.01-.23 2.06.19 2.64 1.05l.98 1.47h.78l.97-1.47c.58-.86 1.63-1.28 2.65-1.05l1.45.34.61-.6-.34-1.46c-.23-1.01.18-2.07 1.05-2.64l1.47-.98v-.78l-1.47-.98c-.87-.57-1.28-1.63-1.05-2.64l.34-1.46-.61-.6-1.45.34c-1.02.23-2.07-.19-2.65-1.05l-.97-1.47h-.78zM12 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5c.82 0 1.5-.67 1.5-1.5s-.68-1.5-1.5-1.5zM8.5 12c0-1.93 1.56-3.5 3.5-3.5 1.93 0 3.5 1.57 3.5 3.5s-1.57 3.5-3.5 3.5c-1.94 0-3.5-1.57-3.5-3.5z"></path>
@@ -400,7 +421,12 @@ function MessagesPage() {
                 </svg>
                 {/* settings icon finish to check  */}
               </div>
-              <div className="p-2">
+              <div
+                className="p-2 chat-create-icon"
+                style={{
+                  borderRadius: "50%",
+                }}
+              >
                 {/* create message icon start to check  */}
 
                 <CreateChat />
@@ -591,20 +617,19 @@ function MessagesPage() {
                   </>
                 ))}
               </div>
-            ) : (
-              <span>Nothing to filter!</span>
-            )}
+            ) : null}
           </Col>
           {/* finish to check main column  */}
 
           {/* 3.column burası olucak */}
 
           <Col
-            className="side-bar-column"
-            xs={12}
-            sm={12}
-            md={2}
-            lg={3}
+            className="side-bar-column d-none d-lg-block d-xxl-block"
+            xs={12} // 0px - 576px aralığı
+            sm={12} // 576px - 768px aralığı
+            md={6} // 768px - 992px aralığı
+            lg={3} // 1200px - 1400px aralığı
+            xxl={3} // 1400px ve sonrası aralığı
             style={{
               height: "100%",
               backgroundColor: "indianred",
