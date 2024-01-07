@@ -12,7 +12,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { LogoutModal, PostModal, CommentModal } from "../components/ui/Modal";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
-
+import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -472,6 +472,8 @@ function UserProfile() {
 
   return (
     <>
+      <ResponsiveNavigationBarBottom />
+
       <Container
         style={{
           justifyContent: "center",
@@ -485,9 +487,9 @@ function UserProfile() {
             borderBottom: "none",
           }}
         >
-          <Col xs={12} sm={12} md={6} lg={3}>
+          <Col className="left-column" xs={12} sm={12} md={1} lg={3} xxl={3}>
             <nav className="nav-bar-home ">
-              <a href="/home">
+              <Link to="/home">
                 <div>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -501,11 +503,11 @@ function UserProfile() {
                     <path d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
                   </svg>
                 </div>
-              </a>
+              </Link>
 
               <div className="inner-div inner-div-fonts">
                 <Link to="/home">
-                  <div>
+                  <div className="home">
                     <div>
                       <svg
                         width={26}
@@ -525,7 +527,7 @@ function UserProfile() {
                 </Link>
 
                 <Link>
-                  <div>
+                  <div className="notifications">
                     <div onClick={() => showNotifications()}>
                       <svg
                         width={26}
@@ -540,17 +542,17 @@ function UserProfile() {
                       </svg>
                       <span>
                         Notifications{" "}
-                        {getTotalLengthOfNotifications() !== "" ? (
+                        {/* {getTotalLengthOfNotifications() !== "" ? (
                           <span className="notification-num">
                             {getTotalLengthOfNotifications()}
                           </span>
-                        ) : null}
+                        ) : null} */}
                       </span>
                     </div>
                   </div>
                 </Link>
                 <Link to="/messages">
-                  <div>
+                  <div className="messages">
                     <div>
                       <svg
                         width={26}
@@ -569,7 +571,7 @@ function UserProfile() {
                 </Link>
 
                 <Link href="">
-                  <div>
+                  <div className="profile">
                     <div>
                       <svg
                         width={26}
@@ -593,6 +595,7 @@ function UserProfile() {
                   setLoadingFalse={() => setLoadingFalse()}
                 ></PostModal>
               </div>
+
               <LogoutModal></LogoutModal>
             </nav>
           </Col>
@@ -601,10 +604,11 @@ function UserProfile() {
 
           {showNotificationColumn === false ? (
             <Col
-              xs={12}
-              sm={12}
-              md={4}
-              lg={6}
+              xs={12} // 0px - 576px aralığı
+              sm={12} // 576px - 768px aralığı
+              md={11} // 768px - 992px aralığı
+              lg={6} // 1200px - 1400px aralığı
+              xxl={6} // 1400px ve sonrası aralığı
               className={`main-column ${showNotificationColumn}`}
               style={{
                 border: "1px solid rgba(0, 0, 0, 0.1)",
@@ -615,18 +619,30 @@ function UserProfile() {
               <Container>
                 <Row>
                   <Stack direction="horizontal" gap={0}>
-                    <div className="p-2">
-                      <Link style={{ color: "rgb(83, 100, 113)" }} to={"/home"}>
+                    <div
+                      className="p-2 arrow"
+                      style={{
+                        borderRadius: "50%",
+                        marginBottom: "28px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <Link to={"/home"}>
                         <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          className="bi bi-arrow-left"
-                          viewBox="1 0 16 16"
-                          style={{ marginBottom: "28px" }}
+                          style={{
+                            marginBottom: "2px",
+                            border: "none",
+                            fontSize: "15px",
+                          }}
+                          width={20}
+                          height={20}
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
                         >
-                          <path d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
+                          <g>
+                            <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                          </g>
                         </svg>
                       </Link>
                     </div>
@@ -899,114 +915,149 @@ function UserProfile() {
                     )}
                     <div className="posts-details">
                       <div className="post-head">
-                        <Stack
-                          direction="horizontal"
-                          gap={1}
-                          style={{ padding: "3px" }}
-                        >
-                          {/* start to check next to post profile image  */}
-
-                          <Link to={`/profile/${post.userId._id}`}>
-                            <div className="p-0">
-                              {" "}
-                              {post.userId.imageUrl.slice(0, 3) !== "../" ? (
+                        <Stack direction="horizontal" gap={1}>
+                          {/* profile image start to check */}
+                          <div className="p-0 mb-2">
+                            {" "}
+                            {post.userId.imageUrl.slice(0, 3) !== "../" ? (
+                              <Link to={`/profile/${post.userId._id}`}>
                                 <img
                                   src={post.userId.imageUrl}
-                                  width={35}
-                                  height={35}
+                                  width={40}
+                                  height={40}
                                   alt=""
                                   style={{
                                     borderRadius: "50%",
                                   }}
                                 />
-                              ) : (
-                                <div>
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="35"
-                                    height="35"
-                                    fill="rgb(83, 100, 113)"
-                                    className="bi bi-person-circle"
-                                    viewBox="0 0 16 16"
+                              </Link>
+                            ) : (
+                              <Link to={`/profile/${post.userId._id}`}>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="40"
+                                  height="40"
+                                  fill="rgb(83, 100, 113)"
+                                  className="bi bi-person-circle"
+                                  viewBox="0 0 16 16"
+                                >
+                                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                  <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                </svg>
+                              </Link>
+                            )}
+                          </div>
+                          {/* profile image finish to check  */}
+
+                          {/* post owner full name + verified account svg + post owner user name + post created date + post content start to check  */}
+                          <div className="p-0">
+                            {post.userId ? (
+                              <>
+                                <Link
+                                  to={`/profile/${post.userId._id}`}
+                                  style={{
+                                    textDecoration: "none",
+                                    color: "black",
+                                  }}
+                                >
+                                  <div
+                                    className="hover-fullname"
+                                    style={{
+                                      fontWeight: "700",
+                                      display: "inline",
+                                    }}
                                   >
-                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                  </svg>
-                                </div>
-                              )}
-                            </div>
-                          </Link>
-                          {/* finish to check next to post profile image  */}
-                          <div className="p-0">
-                            <Link
-                              to={`/profile/${post.userId._id}`}
-                              className="hover-fullname"
-                              style={{
-                                textDecoration: "none",
-                                color: "black",
-                              }}
-                            >
-                              <div className="p-0">
-                                <span style={{ fontWeight: "700" }}>
-                                  {post.authorFullName}{" "}
-                                </span>
-                              </div>
-                            </Link>
+                                    {post.authorFullName}
+                                  </div>
+                                  <span>
+                                    {/* start to check  */}{" "}
+                                    <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
+                                      <svg
+                                        width={18}
+                                        height={18}
+                                        viewBox="0 0 22 22"
+                                        aria-label="Verified account"
+                                        role="img"
+                                        className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                                        data-testid="icon-verified"
+                                        color="rgba(29,155,240,1.00)"
+                                        fill="currentColor"
+                                      >
+                                        <g>
+                                          <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                                        </g>
+                                      </svg>
+                                    </span>{" "}
+                                    <Link
+                                      to={`/profile/${post.userId._id}`}
+                                      style={{
+                                        textDecoration: "none",
+                                        color: "rgba(0,0,0,0.6)",
+                                      }}
+                                    >
+                                      <span>
+                                        <span>@{post.authorUserName}</span>
+                                      </span>
+                                    </Link>
+                                    <Link
+                                      style={{
+                                        textDecoration: "none",
+                                      }}
+                                      to={`/${post.userId.username}/status/${
+                                        !post.isReposted
+                                          ? post._id
+                                          : post.repostedFromThisOriginalPost[0]
+                                      }`}
+                                    >
+                                      <span
+                                        style={{ color: "rgba(0,0,0,0.6)" }}
+                                      >
+                                        {" "}
+                                        ·{" "}
+                                        <span className="date-post-detail">
+                                          {getCreatedDate(post.createdAt)}
+                                        </span>
+                                      </span>
+                                    </Link>
+                                    {/* finish to check  */}
+                                  </span>
+                                  <span></span>
+                                </Link>
+                                <Link
+                                  to={`/${post.userId.username}/status/${
+                                    !post.isReposted
+                                      ? post._id
+                                      : post.repostedFromThisOriginalPost[0]
+                                  }`}
+                                  style={{
+                                    textDecoration: "none",
+                                    color: "rgb(15, 20, 25)",
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      padding: "3px",
+                                    }}
+                                  >
+                                    {post.content}
+                                  </div>
+                                </Link>{" "}
+                              </>
+                            ) : null}
                           </div>
+                          {/* post owner full name + verified account svg + post owner user name + post created date + post content finish to check  */}
+
+                          {/* three dots svg start to check */}
                           <div
-                            dir="ltr"
-                            className="p-0 verified-icon css-1rynq56 r-bcqeeo r-qvutc0 r-37j5jr r-a023e6 r-rjixqe r-16dba41 r-xoduu5 r-18u37iz r-1q142lx"
+                            className="p-0 ms-auto"
+                            style={{
+                              marginBottom: "30px",
+                            }}
                           >
-                            {" "}
-                            <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
-                              <svg
-                                width={18}
-                                height={18}
-                                viewBox="0 0 22 22"
-                                aria-label="Verified account"
-                                role="img"
-                                className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
-                                data-testid="icon-verified"
-                                color="rgba(29,155,240,1.00)"
-                                fill="currentColor"
-                              >
-                                <g>
-                                  <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
-                                </g>
-                              </svg>
-                            </span>
-                          </div>
-                          <div className="p-0">
-                            {" "}
-                            <Link
-                              to={`/profile/${post.userId._id}`}
-                              style={{ textDecoration: "none" }}
-                            >
-                              <span style={{ color: "rgba(0, 0, 0, 0.6)" }}>
-                                @{post.authorUserName}
-                              </span>
-                            </Link>
-                            <Link
-                              style={{
-                                textDecoration: "none",
-                              }}
-                              to={`/${post.userId.username}/status/${post._id}`}
-                            >
-                              <span style={{ color: "rgba(0,0,0,0.6)" }}>
-                                {" "}
-                                ·{" "}
-                                <span className="date-post-detail">
-                                  {getCreatedDate(post.createdAt)}
-                                </span>
-                              </span>
-                            </Link>
-                          </div>
-                          <div className="ps-2 ms-auto">
                             <span>
                               {/* show if post owner userId !equal currentUserId */}
                               {post.userId &&
                               post.userId._id !== userInfo._id ? (
-                                // start to check
                                 <svg
                                   style={{
                                     cursor: "pointer",
@@ -1046,26 +1097,30 @@ function UserProfile() {
                                     <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
                                   </g>
                                 </svg>
-                                // finish to check
                               )}
                             </span>
                           </div>
+                          {/* three dots svg finish to check */}
                         </Stack>
                       </div>
                       <Link
-                        to={`/${post.userId.username}/status/${post._id}`}
+                        to={`/${post.userId.username}/status/${
+                          !post.isReposted
+                            ? post._id
+                            : post.repostedFromThisOriginalPost[0]
+                        }`}
                         style={{
                           textDecoration: "none",
                           color: "rgb(15, 20, 25)",
                         }}
-                      >
-                        <div style={{ padding: "3px" }}>{post.content}</div>
-                      </Link>
+                      ></Link>
                       {post.image.url !== "image@url" ? (
                         <>
                           <Link
                             to={`/${post.userId.username}/status/${
-                              post._id
+                              !post.isReposted
+                                ? post._id
+                                : post.repostedFromThisOriginalPost[0]
                             }/photo/${22}`}
                             style={{
                               textDecoration: "none",
@@ -1093,7 +1148,6 @@ function UserProfile() {
                       ) : null}
                       <Stack
                         direction="horizontal"
-                        gap={3}
                         style={{
                           padding: "3px",
                           justifyContent: "space-around",
@@ -1101,7 +1155,7 @@ function UserProfile() {
                         }}
                       >
                         <div className="p-0">
-                          <CommentModal />
+                          <CommentModal post={post} />
                         </div>
 
                         {/* start to check */}
@@ -1135,9 +1189,7 @@ function UserProfile() {
                               style={{
                                 cursor: "pointer",
                               }}
-                              onClick={() =>
-                                handleDeleteRepostProfilePage(post._id)
-                              }
+                              onClick={() => handleRepost(post._id)}
                               width={18}
                               height={18}
                               viewBox="0 0 24 24"
@@ -1172,7 +1224,9 @@ function UserProfile() {
                                 color: "rgb(83, 100, 113)",
                               }}
                             >
-                              {post.reposted.length}
+                              {post.reposted.length ? (
+                                <span>{post.reposted.length}</span>
+                              ) : null}
                             </span>
                           )}
 
@@ -1183,7 +1237,7 @@ function UserProfile() {
                         <div className="p-0">
                           <div>
                             {post.likes.includes(userInfo._id) ? (
-                              <span>
+                              <div>
                                 <svg
                                   onClick={() =>
                                     handleDeleteLikeFromProfilePage(post._id)
@@ -1205,11 +1259,19 @@ function UserProfile() {
                                 </svg>
 
                                 <span className="post-description">
-                                  {post.likes.length}
+                                  {post.likes.length ? (
+                                    <span
+                                      style={{
+                                        color: "rgb(249, 24, 128)",
+                                      }}
+                                    >
+                                      {post.likes.length}
+                                    </span>
+                                  ) : null}
                                 </span>
-                              </span>
+                              </div>
                             ) : (
-                              <span>
+                              <div>
                                 {" "}
                                 <svg
                                   onClick={() =>
@@ -1228,9 +1290,11 @@ function UserProfile() {
                                   </g>
                                 </svg>
                                 <span className="post-description">
-                                  {post.likes.length}
+                                  {post.likes.length ? (
+                                    <span>{post.likes.length}</span>
+                                  ) : null}
                                 </span>
-                              </span>
+                              </div>
                             )}
                           </div>
                         </div>
@@ -1251,116 +1315,148 @@ function UserProfile() {
 
                     <div className="favorite-details">
                       <div className="favorite-head">
-                        <Stack
-                          direction="horizontal"
-                          gap={1}
-                          style={{ padding: "3px" }}
-                        >
-                          {/* start to check next to post profile image  */}
-
-                          <Link
-                            to={`/profile/${favorite.userId._id}`}
-                            style={{
-                              textDecoration: "none",
-                            }}
-                          >
-                            <div>
-                              {" "}
-                              {favorite.userId.imageUrl.slice(0, 3) !==
-                              "../" ? (
+                        <Stack direction="horizontal" gap={1}>
+                          {/* profile image start to check */}
+                          <div className="p-0 mb-2">
+                            {" "}
+                            {favorite.userId.imageUrl.slice(0, 3) !== "../" ? (
+                              <Link to={`/profile/${favorite.userId._id}`}>
                                 <img
                                   src={favorite.userId.imageUrl}
-                                  width={35}
-                                  height={35}
+                                  width={40}
+                                  height={40}
                                   alt=""
                                   style={{
                                     borderRadius: "50%",
                                   }}
                                 />
-                              ) : (
-                                <div>
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="35"
-                                    height="35"
-                                    fill="rgb(83, 100, 113)"
-                                    className="bi bi-person-circle"
-                                    viewBox="0 0 16 16"
+                              </Link>
+                            ) : (
+                              <Link to={`/profile/${favorite.userId._id}`}>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="40"
+                                  height="40"
+                                  fill="rgb(83, 100, 113)"
+                                  className="bi bi-person-circle"
+                                  viewBox="0 0 16 16"
+                                >
+                                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                  <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                </svg>
+                              </Link>
+                            )}
+                          </div>
+                          {/* profile image finish to check  */}
+
+                          {/* post owner full name + verified account svg + post owner user name + post created date + post content start to check  */}
+                          <div className="p-0">
+                            {favorite.userId ? (
+                              <>
+                                <Link
+                                  to={`/profile/${favorite.userId._id}`}
+                                  style={{
+                                    textDecoration: "none",
+                                    color: "black",
+                                  }}
+                                >
+                                  <div
+                                    className="hover-fullname"
+                                    style={{
+                                      fontWeight: "700",
+                                      display: "inline",
+                                    }}
                                   >
-                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                  </svg>
-                                </div>
-                              )}
-                            </div>
-                          </Link>
-                          {/* finish to check next to post profile image  */}
-                          <div className="p-0">
-                            <Link
-                              to={`/profile/${favorite.userId._id}`}
-                              className="hover-fullname"
-                              style={{
-                                textDecoration: "none",
-                                color: "black",
-                              }}
-                            >
-                              <div className="p-0">
-                                <span style={{ fontWeight: "700" }}>
-                                  {favorite.authorFullName}{" "}
-                                </span>
-                              </div>
-                            </Link>
+                                    {favorite.authorFullName}
+                                  </div>
+                                  <span>
+                                    {/* start to check  */}{" "}
+                                    <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
+                                      <svg
+                                        width={18}
+                                        height={18}
+                                        viewBox="0 0 22 22"
+                                        aria-label="Verified account"
+                                        role="img"
+                                        className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                                        data-testid="icon-verified"
+                                        color="rgba(29,155,240,1.00)"
+                                        fill="currentColor"
+                                      >
+                                        <g>
+                                          <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                                        </g>
+                                      </svg>
+                                    </span>{" "}
+                                    <Link
+                                      to={`/profile/${favorite.userId._id}`}
+                                      style={{
+                                        textDecoration: "none",
+                                        color: "rgba(0,0,0,0.6)",
+                                      }}
+                                    >
+                                      <span>
+                                        <span>@{favorite.authorUserName}</span>
+                                      </span>
+                                    </Link>
+                                    <Link
+                                      style={{
+                                        textDecoration: "none",
+                                      }}
+                                      to={`/${
+                                        favorite.userId.username
+                                      }/status/${
+                                        !favorite.isReposted
+                                          ? favorite._id
+                                          : favorite
+                                              .repostedFromThisOriginalPost[0]
+                                      }`}
+                                    >
+                                      <span
+                                        style={{ color: "rgba(0,0,0,0.6)" }}
+                                      >
+                                        {" "}
+                                        ·{" "}
+                                        <span className="date-post-detail">
+                                          {getCreatedDate(favorite.createdAt)}
+                                        </span>
+                                      </span>
+                                    </Link>
+                                    {/* finish to check  */}
+                                  </span>
+                                  <span></span>
+                                </Link>
+                                <Link
+                                  to={`/${favorite.userId.username}/status/${
+                                    !favorite.isReposted
+                                      ? favorite._id
+                                      : favorite.repostedFromThisOriginalPost[0]
+                                  }`}
+                                  style={{
+                                    textDecoration: "none",
+                                    color: "rgb(15, 20, 25)",
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      padding: "3px",
+                                    }}
+                                  >
+                                    {favorite.content}
+                                  </div>
+                                </Link>{" "}
+                              </>
+                            ) : null}
                           </div>
+                          {/* post owner full name + verified account svg + post owner user name + post created date + post content finish to check  */}
+
+                          {/* three dots svg start to check */}
                           <div
-                            dir="ltr"
-                            className="p-0 verified-icon css-1rynq56 r-bcqeeo r-qvutc0 r-37j5jr r-a023e6 r-rjixqe r-16dba41 r-xoduu5 r-18u37iz r-1q142lx"
+                            className="p-0 ms-auto"
+                            style={{
+                              marginBottom: "30px",
+                            }}
                           >
-                            {" "}
-                            <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
-                              <svg
-                                width={18}
-                                height={18}
-                                viewBox="0 0 22 22"
-                                aria-label="Verified account"
-                                role="img"
-                                className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
-                                data-testid="icon-verified"
-                                color="rgba(29,155,240,1.00)"
-                                fill="currentColor"
-                              >
-                                <g>
-                                  <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
-                                </g>
-                              </svg>
-                            </span>
-                          </div>
-                          <div className="p-0">
-                            {" "}
-                            <Link
-                              to={`/profile/${favorite.userId._id}`}
-                              style={{
-                                textDecoration: "none",
-                                color: "rgba(0,0,0,0.6)",
-                              }}
-                            >
-                              <span>@{favorite.authorUserName}</span>
-                            </Link>
-                            <Link
-                              style={{
-                                textDecoration: "none",
-                              }}
-                              to={`/${favorite.userId.username}/status/${favorite._id}`}
-                            >
-                              <span style={{ color: "rgba(0,0,0,0.6)" }}>
-                                {" "}
-                                ·{" "}
-                                <span className="date-post-detail">
-                                  {getCreatedDate(favorite.createdAt)}
-                                </span>
-                              </span>
-                            </Link>
-                          </div>
-                          <div className="ps-2 ms-auto">
                             <span>
                               {/* show if post owner userId !equal currentUserId */}
                               {favorite.userId &&
@@ -1392,7 +1488,7 @@ function UserProfile() {
                                     backgroundColor: "crimson",
                                   }}
                                   onClick={() =>
-                                    handleDeletePostFromProfilePage(
+                                    handleDeleteLikeFromProfilePage(
                                       favorite._id
                                     )
                                   }
@@ -1409,22 +1505,27 @@ function UserProfile() {
                               )}
                             </span>
                           </div>
+                          {/* three dots svg finish to check */}
                         </Stack>
                       </div>
                       <Link
-                        to={`/${favorite.userId.username}/status/${favorite._id}`}
+                        to={`/${favorite.userId.username}/status/${
+                          !favorite.isReposted
+                            ? favorite._id
+                            : favorite.repostedFromThisOriginalPost[0]
+                        }`}
                         style={{
                           textDecoration: "none",
                           color: "rgb(15, 20, 25)",
                         }}
-                      >
-                        <div style={{ padding: "3px" }}>{favorite.content}</div>
-                      </Link>{" "}
+                      ></Link>{" "}
                       {favorite.image.url !== "image@url" ? (
                         <>
                           <Link
                             to={`/${favorite.userId.username}/status/${
-                              favorite._id
+                              !favorite.isReposted
+                                ? favorite._id
+                                : favorite.repostedFromThisOriginalPost[0]
                             }/photo/${22}`}
                             style={{
                               textDecoration: "none",
@@ -1452,7 +1553,6 @@ function UserProfile() {
                       ) : null}
                       <Stack
                         direction="horizontal"
-                        gap={3}
                         style={{
                           padding: "3px",
                           justifyContent: "space-around",
@@ -1460,7 +1560,7 @@ function UserProfile() {
                         }}
                       >
                         <div className="p-0">
-                          <CommentModal />
+                          <CommentModal post={favorite} />
                         </div>
                         <div className="p-0">
                           {favorite.reposted.includes(userInfo._id) ? (
@@ -1518,7 +1618,9 @@ function UserProfile() {
                                 color: "rgb(0, 186, 124)",
                               }}
                             >
-                              {favorite.reposted.length}
+                              {favorite.reposted.length ? (
+                                <span>{favorite.reposted.length}</span>
+                              ) : null}
                             </span>
                           ) : (
                             <span
@@ -1527,7 +1629,9 @@ function UserProfile() {
                                 color: "rgb(83, 100, 113)",
                               }}
                             >
-                              {favorite.reposted.length}
+                              {favorite.reposted.length ? (
+                                <span>{favorite.reposted.length}</span>
+                              ) : null}
                             </span>
                           )}
 
@@ -1535,7 +1639,7 @@ function UserProfile() {
                         </div>
                         <div>
                           {favorite.likes.includes(userInfo._id) ? (
-                            <span>
+                            <div>
                               <svg
                                 onClick={() =>
                                   handleDeleteLikeFromProfilePage(favorite._id)
@@ -1557,11 +1661,13 @@ function UserProfile() {
                               </svg>
 
                               <span className="post-description">
-                                {favorite.likes.length}
+                                {favorite.likes.length ? (
+                                  <span>{favorite.likes.length}</span>
+                                ) : null}
                               </span>
-                            </span>
+                            </div>
                           ) : (
-                            <span>
+                            <div>
                               {" "}
                               <svg
                                 onClick={() =>
@@ -1580,9 +1686,11 @@ function UserProfile() {
                                 </g>
                               </svg>
                               <span className="post-description">
-                                {favorite.likes.length}
+                                {favorite.likes.length ? (
+                                  <span>{favorite.likes.length}</span>
+                                ) : null}
                               </span>
-                            </span>
+                            </div>
                           )}
                         </div>
 
@@ -1597,10 +1705,11 @@ function UserProfile() {
             </Col>
           ) : (
             <Col
-              xs={12}
-              sm={12}
-              md={4}
-              lg={6}
+              xs={12} // 0px - 576px aralığı
+              sm={12} // 576px - 768px aralığı
+              md={4} // 768px - 992px aralığı
+              lg={6} // 1200px - 1400px aralığı
+              xxl={6} // 1400px ve sonrası aralığı
               className={`main-column ${showNotificationColumn}`}
               style={{
                 border: "1px solid rgba(0, 0, 0, 0.1)",
@@ -1627,7 +1736,7 @@ function UserProfile() {
               <div className="all-notifications">
                 {/* start to check with notification row for favorites  */}
                 <div className="all-posts">
-                  {notifications.map((notification, index) => (
+                  {notifications.map((notification) => (
                     <div key={notification._id}>
                       <div className="posts-details">
                         <div className="post-head">
@@ -1863,11 +1972,12 @@ function UserProfile() {
 
           {/* 3.column burası olucak  */}
           <Col
-            className="side-bar-column"
-            xs={12}
-            sm={12}
-            md={2}
-            lg={3}
+            className="side-bar-column d-none d-lg-block d-xxl-block"
+            xs={12} // 0px - 576px aralığı
+            sm={12} // 576px - 768px aralığı
+            md={6} // 768px - 992px aralığı
+            lg={3} // 1200px - 1400px aralığı
+            xxl={3} // 1400px ve sonrası aralığı
             style={{
               height: "100%",
               backgroundColor: "indianred",

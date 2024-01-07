@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import {
   Container,
@@ -20,6 +20,7 @@ const API_URL = "http://localhost:3000";
 // ?
 
 function SpesificUserProfile() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const { getToken, userInfo } = useContext(UserContext);
   const [profileInfo, setProfileInfo] = useState({});
@@ -61,6 +62,10 @@ function SpesificUserProfile() {
       .catch((err) => {
         return err;
       });
+  };
+
+  const handleGoBack = () => {
+    navigate(-1);
   };
 
   const handleShowSpesificUserProfilePageFavorites = () => {
@@ -424,7 +429,7 @@ function SpesificUserProfile() {
             borderBottom: "none",
           }}
         >
-          <Col xs={12} sm={12} md={6} lg={3}>
+          <Col className="left-column" xs={12} sm={12} md={1} lg={3} xxl={3}>
             <nav className="nav-bar-home">
               <Link href="/home">
                 <div>
@@ -443,7 +448,7 @@ function SpesificUserProfile() {
               </Link>
               <div className="inner-div inner-div-fonts">
                 <Link to="/home">
-                  <div>
+                  <div className="home">
                     <div>
                       <svg
                         width={26}
@@ -463,7 +468,7 @@ function SpesificUserProfile() {
                 </Link>
 
                 <Link>
-                  <div>
+                  <div className="notifications">
                     <div onClick={() => showNotifications()}>
                       <svg
                         width={26}
@@ -478,17 +483,17 @@ function SpesificUserProfile() {
                       </svg>
                       <span>
                         Notifications{" "}
-                        {getTotalLengthOfNotifications() !== "" ? (
+                        {/* {getTotalLengthOfNotifications() !== "" ? (
                           <span className="notification-num">
                             {getTotalLengthOfNotifications()}
                           </span>
-                        ) : null}
+                        ) : null} */}
                       </span>
                     </div>
                   </div>
                 </Link>
                 <Link to="/messages">
-                  <div>
+                  <div className="messages">
                     <div>
                       <svg
                         width={26}
@@ -507,7 +512,7 @@ function SpesificUserProfile() {
                 </Link>
 
                 <Link to="/profile">
-                  <div>
+                  <div className="profile">
                     <div>
                       <svg
                         width={26}
@@ -536,10 +541,11 @@ function SpesificUserProfile() {
           </Col>
           {profileInfo && showNotificationColumn === false ? (
             <Col
-              xs={12}
-              sm={12}
-              md={4}
-              lg={6}
+              xs={12} // 0px - 576px aralığı
+              sm={12} // 576px - 768px aralığı
+              md={11} // 768px - 992px aralığı
+              lg={6} // 1200px - 1400px aralığı
+              xxl={6} // 1400px ve sonrası aralığı
               className={`main-column ${showNotificationColumn}`}
               style={{
                 border: "1px solid rgba(0, 0, 0, 0.1)",
@@ -550,18 +556,30 @@ function SpesificUserProfile() {
               <Container>
                 <Row>
                   <Stack direction="horizontal" gap={0}>
-                    <div className="p-2">
-                      <Link style={{ color: "rgb(83, 100, 113)" }} to={"/home"}>
+                    <div
+                      className="p-2 arrow"
+                      style={{
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                        marginBottom: "28px",
+                      }}
+                    >
+                      <Link onClick={() => handleGoBack()}>
                         <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          className="bi bi-arrow-left"
-                          viewBox="1 0 16 16"
-                          style={{ marginBottom: "28px" }}
+                          style={{
+                            marginBottom: "2px",
+                            border: "none",
+                            fontSize: "15px",
+                          }}
+                          width={20}
+                          height={20}
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
                         >
-                          <path d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
+                          <g>
+                            <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                          </g>
                         </svg>
                       </Link>
                     </div>
@@ -1002,7 +1020,11 @@ function SpesificUserProfile() {
                               style={{
                                 textDecoration: "none",
                               }}
-                              to={`/${post.userId.username}/status/${post._id}`}
+                              to={`/${post.userId.username}/status/${
+                                !post.isReposted
+                                  ? post._id
+                                  : post.repostedFromThisOriginalPost[0]
+                              }`}
                             >
                               <span style={{ color: "rgba(0,0,0,0.6)" }}>
                                 {" "}
@@ -1018,7 +1040,7 @@ function SpesificUserProfile() {
 
                           <div className="ps-2 ms-auto">
                             <span>
-                              {post.userId !== userInfo._id ? (
+                              {post.userId._id !== userInfo._id ? (
                                 <svg
                                   onClick={() =>
                                     handleShowDetailPostFromSpesificUserProfilePage(
@@ -1064,7 +1086,11 @@ function SpesificUserProfile() {
                         </Stack>
                       </div>
                       <Link
-                        to={`/${post.userId.username}/status/${post._id}`}
+                        to={`/${post.userId.username}/status/${
+                          !post.isReposted
+                            ? post._id
+                            : post.repostedFromThisOriginalPost[0]
+                        }`}
                         style={{
                           textDecoration: "none",
                           color: "rgb(15, 20, 25)",
@@ -1076,7 +1102,9 @@ function SpesificUserProfile() {
                         <>
                           <Link
                             to={`/${post.userId.username}/status/${
-                              post._id
+                              !post.isReposted
+                                ? post._id
+                                : post.repostedFromThisOriginalPost[0]
                             }/photo/${22}`}
                             style={{
                               textDecoration: "none",
@@ -1104,7 +1132,6 @@ function SpesificUserProfile() {
                       ) : null}
                       <Stack
                         direction="horizontal"
-                        gap={3}
                         style={{
                           padding: "3px",
                           justifyContent: "space-around",
@@ -1112,74 +1139,79 @@ function SpesificUserProfile() {
                         }}
                       >
                         <div className="p-0">
-                          <CommentModal />
+                          <CommentModal post={post} />
                         </div>
 
                         {/* start to check */}
                         <div className="p-0">
                           {post.reposted.includes(userInfo._id) ? (
-                            <svg
-                              onClick={() =>
-                                handleDeleteRepostSpesificProfilePage(post._id)
-                              }
-                              style={{
-                                color: "rgb(0, 186, 124)",
-                                fontSize: "15px",
-                                marginLeft: "5px",
-                              }}
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
-                              fill="currentColor"
-                              className="bi
-                            bi-repeat"
-                              viewBox="0 0 16 16"
-                            >
-                              <path
-                                stroke="black"
-                                strokeWidth="0.2"
-                                d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z"
-                              />
-                            </svg>
+                            <div>
+                              <svg
+                                style={{
+                                  cursor: "pointer",
+                                }}
+                                onClick={() =>
+                                  handleDeleteRepostSpesificProfilePage(
+                                    post._id
+                                  )
+                                }
+                                width={18}
+                                height={18}
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                color="rgb(0, 186, 124)"
+                                fill="currentColor"
+                              >
+                                <g>
+                                  <path
+                                    stroke="rgb(83, 100, 113)"
+                                    strokeWidth="0.1"
+                                    d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                                  ></path>
+                                </g>
+                              </svg>
+                              <span
+                                className="post-description"
+                                style={{
+                                  color: "rgb(0, 186, 124)",
+                                }}
+                              >
+                                {post.reposted.length}
+                              </span>
+                            </div>
                           ) : (
-                            <svg
-                              onClick={() => handleRepost(post._id)}
-                              style={{
-                                color: "rgb(83, 100, 113)",
-                              }}
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
-                              fill="currentColor"
-                              className="bi bi-repeat"
-                              viewBox="0 0 16 16"
-                            >
-                              <path
-                                stroke="black"
-                                strokeWidth="0.2"
-                                d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z"
-                              />
-                            </svg>
-                          )}
-
-                          {post.reposted.includes(userInfo._id) ? (
-                            <span
-                              className="post-description"
-                              style={{
-                                color: "rgb(0, 186, 124)",
-                              }}
-                            >
-                              {post.reposted.length}
-                            </span>
-                          ) : (
-                            <span
-                              className="post-description"
-                              style={{
-                                color: "rgb(83, 100, 113)",
-                              }}
-                            >
-                              {post.reposted.length}
-                            </span>
+                            <div>
+                              <svg
+                                style={{
+                                  cursor: "pointer",
+                                  color: "rgb(83, 100, 113)",
+                                }}
+                                onClick={() => handleRepost(post._id)}
+                                width={18}
+                                height={18}
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                fill="currentColor"
+                              >
+                                <g>
+                                  <path
+                                    stroke="rgb(83, 100, 113)"
+                                    strokeWidth="0.1"
+                                    d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                                  ></path>
+                                </g>
+                              </svg>
+                              <span
+                                className="post-description"
+                                style={{
+                                  color: "rgb(83, 100, 113)",
+                                }}
+                              >
+                                {post.reposted.length}
+                              </span>
+                            </div>
                           )}
                         </div>
 
@@ -1188,7 +1220,7 @@ function SpesificUserProfile() {
                         {/* start */}
                         <div className="p-0">
                           {post.likes.includes(userInfo._id) ? (
-                            <span>
+                            <div>
                               <svg
                                 onClick={() =>
                                   handleDeleteLikeFromSpesificUserProfilePage(
@@ -1196,8 +1228,8 @@ function SpesificUserProfile() {
                                   )
                                 }
                                 xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
+                                width={16}
+                                height={16}
                                 fill="rgb(249, 24, 128)"
                                 className={`bi bi-heart-fill`}
                                 viewBox="0 0 17 16"
@@ -1211,9 +1243,9 @@ function SpesificUserProfile() {
                               <span className="post-description">
                                 {post.likes.length}
                               </span>
-                            </span>
+                            </div>
                           ) : (
-                            <span>
+                            <div>
                               {" "}
                               <svg
                                 onClick={() =>
@@ -1237,7 +1269,7 @@ function SpesificUserProfile() {
                               <span className="post-description">
                                 {post.likes.length}
                               </span>
-                            </span>
+                            </div>
                           )}
                         </div>
                         {/* finish */}
@@ -1356,7 +1388,11 @@ function SpesificUserProfile() {
                                 style={{
                                   textDecoration: "none",
                                 }}
-                                to={`/${favorite.userId.username}/status/${favorite._id}`}
+                                to={`/${favorite.userId.username}/status/${
+                                  !favorite.isReposted
+                                    ? favorite._id
+                                    : favorite.repostedFromThisOriginalPost[0]
+                                }`}
                               >
                                 <span style={{ color: "rgba(0,0,0,0.6)" }}>
                                   {" "}
@@ -1372,7 +1408,7 @@ function SpesificUserProfile() {
 
                             <div className="ps-2 ms-auto">
                               <span>
-                                {favorite.userId !== userInfo._id ? (
+                                {favorite.userId._id !== userInfo._id ? (
                                   <svg
                                     onClick={() =>
                                       handleShowDetailPostFromSpesificUserProfilePage(
@@ -1418,7 +1454,11 @@ function SpesificUserProfile() {
                           </Stack>
                         </div>
                         <Link
-                          to={`/${favorite.userId.username}/status/${favorite._id}`}
+                          to={`/${favorite.userId.username}/status/${
+                            !favorite.isReposted
+                              ? favorite._id
+                              : favorite.repostedFromThisOriginalPost[0]
+                          }`}
                           style={{
                             textDecoration: "none",
                             color: "rgb(15, 20, 25)",
@@ -1432,7 +1472,9 @@ function SpesificUserProfile() {
                           <>
                             <Link
                               to={`/${favorite.userId.username}/status/${
-                                favorite._id
+                                !favorite.isReposted
+                                  ? favorite._id
+                                  : favorite.repostedFromThisOriginalPost[0]
                               }/photo/${22}`}
                               style={{
                                 textDecoration: "none",
@@ -1461,7 +1503,6 @@ function SpesificUserProfile() {
 
                         <Stack
                           direction="horizontal"
-                          gap={3}
                           style={{
                             padding: "3px",
                             justifyContent: "space-around",
@@ -1469,31 +1510,36 @@ function SpesificUserProfile() {
                           }}
                         >
                           <div className="p-0">
-                            <CommentModal />
+                            <CommentModal post={favorite} />
                           </div>
                           {/* start to check */}
                           <div className="p-0">
                             {favorite.reposted.includes(userInfo._id) ? (
                               <div>
                                 <svg
+                                  style={{
+                                    cursor: "pointer",
+                                  }}
                                   onClick={() =>
                                     handleDeleteRepostSpesificProfilePage(
                                       favorite._id
                                     )
                                   }
-                                  style={{ color: "rgb(0,186,124)" }}
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="16"
-                                  height="16"
+                                  width={18}
+                                  height={18}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                  color="rgb(0, 186, 124)"
                                   fill="currentColor"
-                                  className="bi bi-repeat"
-                                  viewBox="0 0 16 16"
                                 >
-                                  <path
-                                    stroke="black"
-                                    strokeWidth="0.2"
-                                    d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z"
-                                  />
+                                  <g>
+                                    <path
+                                      stroke="rgb(83, 100, 113)"
+                                      strokeWidth="0.1"
+                                      d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                                    ></path>
+                                  </g>
                                 </svg>
                                 <span
                                   className="post-description"
@@ -1505,21 +1551,27 @@ function SpesificUserProfile() {
                             ) : (
                               <div>
                                 <svg
+                                  style={{
+                                    cursor: "pointer",
+                                    color: "rgb(83, 100, 113)",
+                                  }}
                                   onClick={() => handleRepost(favorite._id)}
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="16"
-                                  height="16"
+                                  width={18}
+                                  height={18}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                                   fill="currentColor"
-                                  className="bi bi-repeat"
-                                  viewBox="0 0 16 16"
                                 >
-                                  <path
-                                    stroke="black"
-                                    strokeWidth="0.2"
-                                    d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z"
-                                  />
+                                  <g>
+                                    <path
+                                      stroke="rgb(83, 100, 113)"
+                                      strokeWidth="0.1"
+                                      d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                                    ></path>
+                                  </g>
                                 </svg>
-                                <span className="post-description post-description-rest ">
+                                <span className="post-description">
                                   {favorite.reposted.length}
                                 </span>
                               </div>
@@ -1531,7 +1583,7 @@ function SpesificUserProfile() {
                           {/* start to check */}
                           <div className="p-0">
                             {favorite.likes.includes(userInfo._id) ? (
-                              <span>
+                              <div>
                                 <svg
                                   onClick={() =>
                                     handleDeleteLikeFromSpesificUserProfilePage(
@@ -1539,8 +1591,8 @@ function SpesificUserProfile() {
                                     )
                                   }
                                   xmlns="http://www.w3.org/2000/svg"
-                                  width="16"
-                                  height="16"
+                                  width={16}
+                                  height={16}
                                   fill="rgb(249, 24, 128)"
                                   className={`bi bi-heart-fill`}
                                   viewBox="0 0 17 16"
@@ -1554,9 +1606,9 @@ function SpesificUserProfile() {
                                 <span className="post-description">
                                   {favorite.likes.length}
                                 </span>
-                              </span>
+                              </div>
                             ) : (
-                              <span>
+                              <div>
                                 {" "}
                                 <svg
                                   onClick={() =>
@@ -1580,7 +1632,7 @@ function SpesificUserProfile() {
                                 <span className="post-description">
                                   {favorite.likes.length}
                                 </span>
-                              </span>
+                              </div>
                             )}
                           </div>
                           {/* finish to check */}
@@ -1593,10 +1645,11 @@ function SpesificUserProfile() {
             </Col>
           ) : (
             <Col
-              xs={12}
-              sm={12}
-              md={4}
-              lg={6}
+              xs={12} // 0px - 576px aralığı
+              sm={12} // 576px - 768px aralığı
+              md={4} // 768px - 992px aralığı
+              lg={6} // 1200px - 1400px aralığı
+              xxl={6} // 1400px ve sonrası aralığı
               className={`main-column ${showNotificationColumn}`}
               style={{
                 border: "1px solid rgba(0, 0, 0, 0.1)",
@@ -1860,11 +1913,12 @@ function SpesificUserProfile() {
           )}
           {/* 3.column burası olucak */}
           <Col
-            className="side-bar-column"
-            xs={12}
-            sm={12}
-            md={2}
-            lg={3}
+            className="side-bar-column d-none d-lg-block d-xxl-block"
+            xs={12} // 0px - 576px aralığı
+            sm={12} // 576px - 768px aralığı
+            md={6} // 768px - 992px aralığı
+            lg={3} // 1200px - 1400px aralığı
+            xxl={3} // 1400px ve sonrası aralığı
             style={{
               height: "100%",
               backgroundColor: "indianred",

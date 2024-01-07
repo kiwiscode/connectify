@@ -34,4 +34,6 @@ app.use("/repost", postRepost);
 const notificationRoutes = require("./routes/notification.routes");
 app.use("/notifications", notificationRoutes);
 
+const postDetailRoutes = require("./routes/postDetail.routes");
+app.use("/", postDetailRoutes);
 module.exports = app;

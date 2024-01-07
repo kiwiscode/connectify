@@ -15,8 +15,8 @@ function ResponsiveNavigationBarTop() {
         gap={5}
       >
         <div className="p-2">
-          {/* <LogoutModal></LogoutModal> */}{" "}
-          {userInfo.imageUrl.slice(0, 3) !== "../" ? (
+          <LogoutModal></LogoutModal>{" "}
+          {/* {userInfo.imageUrl.slice(0, 3) !== "../" ? (
             <>
               <Link to={"/profile"}>
                 <div>
@@ -49,7 +49,7 @@ function ResponsiveNavigationBarTop() {
                 </svg>
               </Link>
             </div>
-          )}
+          )} */}
         </div>
         <div className="p-2">
           {" "}
