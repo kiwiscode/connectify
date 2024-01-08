@@ -34,6 +34,14 @@ function SpesificUserProfile() {
   const [isLoading, setIsLoading] = useState(false);
   const [showNotificationColumn, setshowNotificationColumn] = useState(false);
   const [notifications, setNotifications] = useState([]);
+
+  // start to check
+  const redirectToMessages = () => {
+    navigate("/messages");
+    window.location.reload();
+  };
+  // finish to check
+
   // start to check
   // NOTE must sorted
   const handleShowSpesificUserProfilePagePosts = () => {
@@ -62,10 +70,6 @@ function SpesificUserProfile() {
       .catch((err) => {
         return err;
       });
-  };
-
-  const handleGoBack = () => {
-    navigate(-1);
   };
 
   const handleShowSpesificUserProfilePageFavorites = () => {
@@ -413,7 +417,12 @@ function SpesificUserProfile() {
         console.log(error);
       });
   };
+
   // NOTE finish to check get all the notifications from backend api endpoint
+
+  const handleGoBack = () => {
+    navigate(-1);
+  };
   return (
     <>
       <Container
@@ -492,7 +501,7 @@ function SpesificUserProfile() {
                     </div>
                   </div>
                 </Link>
-                <Link to="/messages">
+                <Link to="/messages" onClick={redirectToMessages}>
                   <div className="messages">
                     <div>
                       <svg
@@ -557,31 +566,36 @@ function SpesificUserProfile() {
                 <Row>
                   <Stack direction="horizontal" gap={0}>
                     <div
+                      onClick={handleGoBack}
                       className="p-2 arrow"
                       style={{
+                        position: "relative",
+                        width: "30px",
+                        height: " 30px",
+                        bottom: "15px",
+                        // border: "1px solid purple",
                         borderRadius: "50%",
                         cursor: "pointer",
-                        marginBottom: "28px",
                       }}
                     >
-                      <Link onClick={() => handleGoBack()}>
-                        <svg
-                          style={{
-                            marginBottom: "2px",
-                            border: "none",
-                            fontSize: "15px",
-                          }}
-                          width={20}
-                          height={20}
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                          className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                        >
-                          <g>
-                            <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
-                          </g>
-                        </svg>
-                      </Link>
+                      <svg
+                        style={{
+                          position: "absolute",
+                          bottom: "5px",
+                          border: "none",
+                          left: "5px",
+                          fontSize: "15px",
+                        }}
+                        width={20}
+                        height={20}
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                      >
+                        <g>
+                          <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                        </g>
+                      </svg>
                     </div>
                     <div
                       className="p-2"
@@ -609,7 +623,12 @@ function SpesificUserProfile() {
                       <div className="p-2">
                         {profileInfo.imageUrl.slice(0, 3) !== "../" ? (
                           <div>
-                            <img src={profileInfo.imageUrl} alt="" />
+                            <img
+                              width={133}
+                              height={133}
+                              src={profileInfo.imageUrl}
+                              alt=""
+                            />
                           </div>
                         ) : (
                           <div>
@@ -851,238 +870,291 @@ function SpesificUserProfile() {
                     ></Row>
                     <div className="posts-details">
                       <div className="post-head">
-                        <Stack direction="horizontal" gap={1}></Stack>
-                        <div className="p-0">
-                          {/* start to check */}
+                        {/* start to check */}
 
-                          {post.isReposted &&
-                          userInfo._id === profileInfo._id ? (
-                            <div className={`${show}`}>
-                              <svg
-                                style={{
-                                  color: "rgb(83, 100, 113)",
-                                  fontSize: "15px",
-                                  marginLeft: "4px",
-                                }}
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                fill="currentColor"
-                                className="bi bi-repeat"
-                                viewBox="0 0 16 16"
-                              >
+                        {post.isReposted && userInfo._id === profileInfo._id ? (
+                          <div className={`${show}`}>
+                            <svg
+                              style={{
+                                marginLeft: "20px",
+                              }}
+                              width={16}
+                              height={16}
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                              color="rgb(83, 100, 113)"
+                              fill="currentColor"
+                            >
+                              <g>
                                 <path
-                                  stroke="black"
-                                  strokeWidth="0.2"
-                                  d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z"
-                                />
-                              </svg>
-                              <span
-                                style={{
-                                  fontSize: "13px",
-                                  lineHeight: "20px",
-                                  fontWeight: "700",
-                                  color: "rgb(83, 100, 113)",
-                                  marginLeft: "10px",
-                                }}
-                              >
-                                You reposted
-                              </span>{" "}
-                            </div>
-                          ) : null}
+                                  stroke="rgb(83, 100, 113)"
+                                  strokeWidth="0.1"
+                                  d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                                ></path>
+                              </g>
+                            </svg>
+                            <span
+                              style={{
+                                fontSize: "13px",
+                                lineHeight: "20px",
+                                fontWeight: "700",
+                                color: "rgb(83, 100, 113)",
+                                marginLeft: "10px",
+                              }}
+                            >
+                              You reposted
+                            </span>{" "}
+                          </div>
+                        ) : null}
 
-                          {/* finish to check */}
+                        {/* finish to check */}
 
-                          {/* start to check */}
-                          {post.isReposted &&
-                          userInfo._id !== profileInfo._id ? (
-                            <div>
-                              <svg
-                                style={{
-                                  color: "rgb(83, 100, 113)",
-                                  fontSize: "15px",
-                                  marginLeft: "4px",
-                                }}
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                fill="currentColor"
-                                className="bi bi-repeat"
-                                viewBox="0 0 16 16"
-                              >
+                        {/* start to check */}
+                        {post.isReposted && userInfo._id !== profileInfo._id ? (
+                          <div>
+                            <svg
+                              width={`${1.25}em`}
+                              height={`${1.25}em`}
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                              color="rgb(83, 100, 113)"
+                              fill="currentColor"
+                            >
+                              <g>
                                 <path
-                                  stroke="black"
-                                  strokeWidth="0.2"
-                                  d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192Zm3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z"
-                                />
-                              </svg>
-                              <span
-                                style={{
-                                  fontSize: "13px",
-                                  lineHeight: "20px",
-                                  fontWeight: "700",
-                                  color: "rgb(83, 100, 113)",
-                                  marginLeft: "10px",
-                                }}
-                              >
-                                {profileInfo.fullname} reposted
-                              </span>{" "}
-                            </div>
-                          ) : null}
-                          {/* finish to check */}
-                        </div>
-                        <Stack
-                          direction="horizontal"
-                          gap={1}
-                          style={{ padding: "3px" }}
-                        >
-                          {/* start to check next to post profile image  */}
+                                  stroke="rgb(83, 100, 113)"
+                                  strokeWidth="0.1"
+                                  d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                                ></path>
+                              </g>
+                            </svg>
+                            <span
+                              style={{
+                                fontSize: "13px",
+                                lineHeight: "20px",
+                                fontWeight: "700",
+                                color: "rgb(83, 100, 113)",
+                                marginLeft: "10px",
+                              }}
+                            >
+                              {profileInfo.fullname} reposted
+                            </span>{" "}
+                          </div>
+                        ) : null}
+                        {/* finish to check */}
+                        <Stack direction="horizontal" gap={1}>
+                          {/* profile image start to check */}
 
-                          <Link to={`/profile/${post.userId._id}`}>
-                            <div className="p-0">
-                              {" "}
-                              {post.userId.imageUrl.slice(0, 3) !== "../" ? (
+                          <div className="p-0 mb-2">
+                            {post.userId.imageUrl.slice(0, 3) !== "../" ? (
+                              <Link to={`/profile/${post.userId._id}`}>
                                 <img
                                   src={post.userId.imageUrl}
-                                  width={35}
-                                  height={35}
+                                  width={40}
+                                  height={40}
                                   alt=""
                                   style={{
+                                    position: "relative",
                                     borderRadius: "50%",
+                                    top: "6px",
                                   }}
                                 />
-                              ) : (
-                                <div>
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="35"
-                                    height="35"
-                                    fill="rgb(83, 100, 113)"
-                                    className="bi bi-person-circle"
-                                    viewBox="0 0 16 16"
+                              </Link>
+                            ) : (
+                              <Link to={`/profile/${post.userId._id}`}>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="40"
+                                  height="40"
+                                  fill="rgb(83, 100, 113)"
+                                  className="bi bi-person-circle"
+                                  viewBox="0 0 16 16"
+                                >
+                                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                  <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                </svg>
+                              </Link>
+                            )}
+                          </div>
+
+                          {/* profile image finish to check  */}
+
+                          {/* post owner full name + verified account svg + post owner user name + post created date + post content start to check  */}
+
+                          <div className="p-0">
+                            {post.userId ? (
+                              <>
+                                <Link
+                                  to={`/profile/${post.userId._id}`}
+                                  style={{
+                                    textDecoration: "none",
+                                    color: "black",
+                                  }}
+                                >
+                                  <div
+                                    className="hover-fullname"
+                                    style={{
+                                      display: "inline",
+                                      fontWeight: "700",
+                                      fontSize: "15px",
+                                      lineHeight: "20px",
+                                    }}
                                   >
-                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                  </svg>
-                                </div>
-                              )}
-                            </div>
-                          </Link>
-                          {/* finish to check next to post profile image  */}
-                          <Link
-                            to={`/profile/${post.userId._id}`}
-                            className="hover-fullname"
+                                    {post.authorFullName}
+                                  </div>
+                                  <span>
+                                    {/* start to check  */}{" "}
+                                    <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
+                                      <svg
+                                        width={18}
+                                        height={18}
+                                        viewBox="0 0 22 22"
+                                        aria-label="Verified account"
+                                        role="img"
+                                        className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                                        data-testid="icon-verified"
+                                        color="rgba(29,155,240,1.00)"
+                                        fill="currentColor"
+                                      >
+                                        <g>
+                                          <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                                        </g>
+                                      </svg>
+                                    </span>{" "}
+                                    <Link
+                                      to={`/profile/${post.userId._id}`}
+                                      style={{
+                                        textDecoration: "none",
+                                        color: "rgb(83, 100, 113)",
+                                        lineHeight: "20px",
+                                        fontSize: "15px",
+                                        fontWeight: "400",
+                                      }}
+                                    >
+                                      <span>
+                                        <span>@{post.authorUserName}</span>
+                                      </span>
+                                    </Link>
+                                    <Link
+                                      style={{
+                                        textDecoration: "none",
+                                      }}
+                                      to={`/${post.userId.username}/status/${
+                                        !post.isReposted
+                                          ? post._id
+                                          : post.repostedFromThisOriginalPost[0]
+                                      }`}
+                                    >
+                                      <span
+                                        style={{
+                                          color: "rgb(83, 100, 113)",
+                                          lineHeight: "20px",
+                                          fontSize: "15px",
+                                          fontWeight: "400",
+                                        }}
+                                      >
+                                        {" "}
+                                        ·{" "}
+                                        <span className="date-post-detail">
+                                          {getCreatedDateForSpesificUserProfilePage(
+                                            post.createdAt
+                                          )}
+                                        </span>
+                                      </span>
+                                    </Link>
+                                    {/* finish to check  */}
+                                  </span>
+                                  <span></span>
+                                </Link>
+                                <Link
+                                  to={`/${post.userId.username}/status/${
+                                    !post.isReposted
+                                      ? post._id
+                                      : post.repostedFromThisOriginalPost[0]
+                                  }`}
+                                  style={{
+                                    textDecoration: "none",
+                                    color: "rgb(15, 20, 25)",
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      fontSize: "15px",
+                                      lineHeight: "20px",
+                                      fontWeight: "400",
+                                    }}
+                                  >
+                                    {post.content}
+                                  </div>
+                                </Link>{" "}
+                              </>
+                            ) : null}
+                          </div>
+
+                          {/* post owner full name + verified account svg + post owner user name + post created date + post content finish to check  */}
+
+                          {/* three dots svg start to check */}
+                          <div
+                            className="p-0 ms-auto"
                             style={{
-                              textDecoration: "none",
-                              color: "black",
+                              marginBottom: "30px",
                             }}
                           >
-                            <div className="p-0">
-                              <span style={{ fontWeight: "700" }}>
-                                {post.authorFullName}{" "}
-                              </span>
-                            </div>
-                          </Link>
-
-                          <div
-                            dir="ltr"
-                            className="p-0 verified-icon css-1rynq56 r-bcqeeo r-qvutc0 r-37j5jr r-a023e6 r-rjixqe r-16dba41 r-xoduu5 r-18u37iz r-1q142lx"
-                          >
-                            {" "}
-                            <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
-                              <svg
-                                width={18}
-                                height={18}
-                                viewBox="0 0 22 22"
-                                aria-label="Verified account"
-                                role="img"
-                                className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
-                                data-testid="icon-verified"
-                                color="rgba(29,155,240,1.00)"
-                                fill="currentColor"
-                              >
-                                <g>
-                                  <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
-                                </g>
-                              </svg>
-                            </span>
-                          </div>
-                          <div className="p-0">
-                            <Link
-                              to={`/profile/${post.userId._id}`}
-                              style={{ textDecoration: "none" }}
-                            >
-                              <span style={{ color: "rgba(0, 0, 0, 0.6)" }}>
-                                @{post.authorUserName}
-                              </span>
-                            </Link>
-                            <Link
-                              style={{
-                                textDecoration: "none",
-                              }}
-                              to={`/${post.userId.username}/status/${
-                                !post.isReposted
-                                  ? post._id
-                                  : post.repostedFromThisOriginalPost[0]
-                              }`}
-                            >
-                              <span style={{ color: "rgba(0,0,0,0.6)" }}>
-                                {" "}
-                                ·{" "}
-                                <span className="date-post-detail">
-                                  {getCreatedDateForSpesificUserProfilePage(
-                                    post.createdAt
-                                  )}
-                                </span>
-                              </span>
-                            </Link>
-                          </div>
-
-                          <div className="ps-2 ms-auto">
                             <span>
-                              {post.userId._id !== userInfo._id ? (
+                              {/* show if post owner userId !equal currentUserId */}
+                              {post.userId &&
+                              post.userId._id !== userInfo._id ? (
                                 <svg
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "rgb(29, 155, 240)",
+                                  }}
                                   onClick={() =>
                                     handleShowDetailPostFromSpesificUserProfilePage(
                                       post._id
                                     )
                                   }
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="20"
-                                  height="25"
+                                  color="rgb(83, 100, 113)"
                                   fill="currentColor"
-                                  className="bi bi-three-dots positioning-dots"
-                                  viewBox="0 0 20 20"
-                                  style={{
-                                    cursor: "pointer",
-                                    backgroundColor: "rgb(29, 155, 240)",
-                                  }}
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                                 >
-                                  <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"></path>
+                                  <g>
+                                    <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                                  </g>
                                 </svg>
                               ) : (
                                 <svg
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "crimson",
+                                  }}
                                   onClick={() =>
                                     handleDeletePostFromSpesificUserProfilePage(
                                       post._id
                                     )
                                   }
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="20"
-                                  height="25"
+                                  color="rgb(83, 100, 113)"
                                   fill="currentColor"
-                                  className="bi bi-three-dots positioning-dots"
-                                  viewBox="0 0 20 20"
-                                  style={{
-                                    cursor: "pointer",
-                                    backgroundColor: "crimson",
-                                  }}
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                                 >
-                                  <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"></path>
+                                  <g>
+                                    <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                                  </g>
                                 </svg>
                               )}
                             </span>
                           </div>
+                          {/* three dots svg finish to check */}
                         </Stack>
                       </div>
                       <Link
@@ -1095,9 +1167,7 @@ function SpesificUserProfile() {
                           textDecoration: "none",
                           color: "rgb(15, 20, 25)",
                         }}
-                      >
-                        <div style={{ padding: "3px" }}>{post.content}</div>
-                      </Link>
+                      ></Link>
                       {post.image.url !== "image@url" ? (
                         <>
                           <Link
@@ -1155,8 +1225,8 @@ function SpesificUserProfile() {
                                     post._id
                                   )
                                 }
-                                width={18}
-                                height={18}
+                                width={`${1.25}em`}
+                                height={`${1.25}em`}
                                 viewBox="0 0 24 24"
                                 aria-hidden="true"
                                 className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -1188,8 +1258,8 @@ function SpesificUserProfile() {
                                   color: "rgb(83, 100, 113)",
                                 }}
                                 onClick={() => handleRepost(post._id)}
-                                width={18}
-                                height={18}
+                                width={`${1.25}em`}
+                                height={`${1.25}em`}
                                 viewBox="0 0 24 24"
                                 aria-hidden="true"
                                 className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -1209,7 +1279,9 @@ function SpesificUserProfile() {
                                   color: "rgb(83, 100, 113)",
                                 }}
                               >
-                                {post.reposted.length}
+                                {post.reposted.length ? (
+                                  <span>{post.reposted.length}</span>
+                                ) : null}
                               </span>
                             </div>
                           )}
@@ -1228,8 +1300,8 @@ function SpesificUserProfile() {
                                   )
                                 }
                                 xmlns="http://www.w3.org/2000/svg"
-                                width={16}
-                                height={16}
+                                width={`${1.25}em`}
+                                height={`${1.25}em`}
                                 fill="rgb(249, 24, 128)"
                                 className={`bi bi-heart-fill`}
                                 viewBox="0 0 17 16"
@@ -1241,7 +1313,15 @@ function SpesificUserProfile() {
                                 />
                               </svg>
                               <span className="post-description">
-                                {post.likes.length}
+                                {post.likes.length ? (
+                                  <span
+                                    style={{
+                                      color: "rgb(249, 24, 128)",
+                                    }}
+                                  >
+                                    {post.likes.length}
+                                  </span>
+                                ) : null}
                               </span>
                             </div>
                           ) : (
@@ -1254,8 +1334,8 @@ function SpesificUserProfile() {
                                   )
                                 }
                                 xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
+                                width={`${1.25}em`}
+                                height={`${1.25}em`}
                                 fill="currentColor"
                                 className={`bi bi-heart`}
                                 viewBox="0 0 17 16"
@@ -1267,7 +1347,9 @@ function SpesificUserProfile() {
                                 />
                               </svg>
                               <span className="post-description">
-                                {post.likes.length}
+                                {post.likes.length ? (
+                                  <span>{post.likes.length}</span>
+                                ) : null}
                               </span>
                             </div>
                           )}
@@ -1291,166 +1373,217 @@ function SpesificUserProfile() {
                       ></Row>
                       <div className="favorite-details">
                         <div className="favorite-head">
-                          <Stack
-                            direction="horizontal"
-                            gap={1}
-                            style={{ padding: "3px" }}
-                          >
-                            {/* start to check next to post profile image  */}
-                            <Link
-                              to={`/profile/${favorite.userId._id}`}
-                              style={{
-                                textDecoration: "none",
-                              }}
-                            >
-                              <div>
-                                {" "}
-                                {favorite.userId.imageUrl.slice(0, 3) !==
-                                "../" ? (
+                          <Stack direction="horizontal" gap={1}>
+                            {/* profile image start to check */}
+                            <div className="p-0 mb-2">
+                              {" "}
+                              {favorite.userId.imageUrl.slice(0, 3) !==
+                              "../" ? (
+                                <Link to={`/profile/${favorite.userId._id}`}>
                                   <img
                                     src={favorite.userId.imageUrl}
-                                    width={35}
-                                    height={35}
+                                    width={40}
+                                    height={40}
                                     alt=""
                                     style={{
+                                      position: "relative",
                                       borderRadius: "50%",
+                                      top: "6px",
                                     }}
                                   />
-                                ) : (
-                                  <div>
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      width="35"
-                                      height="35"
-                                      fill="rgb(83, 100, 113)"
-                                      className="bi bi-person-circle"
-                                      viewBox="0 0 16 16"
-                                    >
-                                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                      <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                    </svg>
-                                  </div>
-                                )}
-                              </div>
-                            </Link>
-                            {/* finish to check next to post profile image  */}
-                            <div className="p-0">
-                              <Link
-                                to={`/profile/${favorite.userId._id}`}
-                                className="hover-fullname"
-                                style={{
-                                  textDecoration: "none",
-                                  color: "black",
-                                }}
-                              >
-                                <div className="p-0">
-                                  <span style={{ fontWeight: "700" }}>
-                                    {favorite.authorFullName}{" "}
-                                  </span>
-                                </div>
-                              </Link>
-                            </div>
-                            <div
-                              dir="ltr"
-                              className="p-0 verified-icon css-1rynq56 r-bcqeeo r-qvutc0 r-37j5jr r-a023e6 r-rjixqe r-16dba41 r-xoduu5 r-18u37iz r-1q142lx"
-                            >
-                              {" "}
-                              <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
-                                <svg
-                                  width={18}
-                                  height={18}
-                                  viewBox="0 0 22 22"
-                                  aria-label="Verified account"
-                                  role="img"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
-                                  data-testid="icon-verified"
-                                  color="rgba(29,155,240,1.00)"
-                                  fill="currentColor"
-                                >
-                                  <g>
-                                    <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
-                                  </g>
-                                </svg>
-                              </span>
-                            </div>
-                            <div className="p-0">
-                              {" "}
-                              <Link
-                                to={`/profile/${favorite.userId._id}`}
-                                style={{
-                                  textDecoration: "none",
-                                  color: "rgba(0,0,0,0.6)",
-                                }}
-                              >
-                                <span>@{favorite.authorUserName}</span>
-                              </Link>
-                              <Link
-                                style={{
-                                  textDecoration: "none",
-                                }}
-                                to={`/${favorite.userId.username}/status/${
-                                  !favorite.isReposted
-                                    ? favorite._id
-                                    : favorite.repostedFromThisOriginalPost[0]
-                                }`}
-                              >
-                                <span style={{ color: "rgba(0,0,0,0.6)" }}>
-                                  {" "}
-                                  ·{" "}
-                                  <span className="date-post-detail">
-                                    {getCreatedDateForSpesificUserProfilePage(
-                                      favorite.createdAt
-                                    )}
-                                  </span>
-                                </span>
-                              </Link>
-                            </div>
-
-                            <div className="ps-2 ms-auto">
-                              <span>
-                                {favorite.userId._id !== userInfo._id ? (
+                                </Link>
+                              ) : (
+                                <Link to={`/profile/${favorite.userId._id}`}>
                                   <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="40"
+                                    height="40"
+                                    fill="rgb(83, 100, 113)"
+                                    className="bi bi-person-circle"
+                                    viewBox="0 0 16 16"
+                                  >
+                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                  </svg>
+                                </Link>
+                              )}
+                            </div>
+                            {/* profile image finish to check  */}
+
+                            {/* post owner full name + verified account svg + post owner user name + post created date + post content start to check  */}
+                            <div className="p-0">
+                              {favorite.userId ? (
+                                <>
+                                  <Link
+                                    to={`/profile/${favorite.userId._id}`}
+                                    style={{
+                                      textDecoration: "none",
+                                      color: "black",
+                                    }}
+                                  >
+                                    <div
+                                      className="hover-fullname"
+                                      style={{
+                                        display: "inline",
+                                        fontWeight: "700",
+                                        fontSize: "15px",
+                                        lineHeight: "20px",
+                                      }}
+                                    >
+                                      {favorite.authorFullName}
+                                    </div>
+                                    <span>
+                                      {/* start to check  */}{" "}
+                                      <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
+                                        <svg
+                                          width={18}
+                                          height={18}
+                                          viewBox="0 0 22 22"
+                                          aria-label="Verified account"
+                                          role="img"
+                                          className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                                          data-testid="icon-verified"
+                                          color="rgba(29,155,240,1.00)"
+                                          fill="currentColor"
+                                        >
+                                          <g>
+                                            <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                                          </g>
+                                        </svg>
+                                      </span>{" "}
+                                      <Link
+                                        to={`/profile/${favorite.userId._id}`}
+                                        style={{
+                                          textDecoration: "none",
+                                          color: "rgb(83, 100, 113)",
+                                          lineHeight: "20px",
+                                          fontSize: "15px",
+                                          fontWeight: "400",
+                                        }}
+                                      >
+                                        <span>
+                                          <span>
+                                            @{favorite.authorUserName}
+                                          </span>
+                                        </span>
+                                      </Link>
+                                      <Link
+                                        style={{
+                                          textDecoration: "none",
+                                        }}
+                                        to={`/${
+                                          favorite.userId.username
+                                        }/status/${
+                                          !favorite.isReposted
+                                            ? favorite._id
+                                            : favorite
+                                                .repostedFromThisOriginalPost[0]
+                                        }`}
+                                      >
+                                        <span
+                                          style={{
+                                            color: "rgb(83, 100, 113)",
+                                            lineHeight: "20px",
+                                            fontSize: "15px",
+                                            fontWeight: "400",
+                                          }}
+                                        >
+                                          {" "}
+                                          ·{" "}
+                                          <span className="date-post-detail">
+                                            {getCreatedDateForSpesificUserProfilePage(
+                                              favorite.createdAt
+                                            )}
+                                          </span>
+                                        </span>
+                                      </Link>
+                                      {/* finish to check  */}
+                                    </span>
+                                    <span></span>
+                                  </Link>
+                                  <Link
+                                    to={`/${favorite.userId.username}/status/${
+                                      !favorite.isReposted
+                                        ? favorite._id
+                                        : favorite
+                                            .repostedFromThisOriginalPost[0]
+                                    }`}
+                                    style={{
+                                      textDecoration: "none",
+                                      color: "rgb(15, 20, 25)",
+                                    }}
+                                  >
+                                    <div
+                                      style={{
+                                        fontSize: "15px",
+                                        lineHeight: "20px",
+                                        fontWeight: "400",
+                                      }}
+                                    >
+                                      {favorite.content}
+                                    </div>
+                                  </Link>{" "}
+                                </>
+                              ) : null}
+                            </div>
+                            {/* post owner full name + verified account svg + post owner user name + post created date + post content finish to check  */}
+
+                            {/* three dots svg start to check */}
+                            <div
+                              className="p-0 ms-auto"
+                              style={{
+                                marginBottom: "30px",
+                              }}
+                            >
+                              <span>
+                                {/* show if post owner userId !equal currentUserId */}
+                                {favorite.userId &&
+                                favorite.userId._id !== userInfo._id ? (
+                                  <svg
+                                    style={{
+                                      cursor: "pointer",
+                                      backgroundColor: "rgb(29, 155, 240)",
+                                    }}
                                     onClick={() =>
                                       handleShowDetailPostFromSpesificUserProfilePage(
                                         favorite._id
                                       )
                                     }
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="20"
-                                    height="25"
-                                    fill="currentColor"
-                                    className="bi bi-three-dots positioning-dots"
-                                    viewBox="0 0 20 20"
-                                    style={{
-                                      cursor: "pointer",
-                                      backgroundColor: "rgb(29, 155, 240)",
-                                    }}
+                                    width={18}
+                                    height={18}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                                   >
-                                    <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"></path>
+                                    <g>
+                                      <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                                    </g>
                                   </svg>
                                 ) : (
                                   <svg
-                                    onClick={() =>
-                                      handleDeletePostFromSpesificUserProfilePage(
-                                        favorite._id
-                                      )
-                                    }
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="20"
-                                    height="25"
-                                    fill="currentColor"
-                                    className="bi bi-three-dots positioning-dots"
-                                    viewBox="0 0 20 20"
                                     style={{
                                       cursor: "pointer",
                                       backgroundColor: "crimson",
                                     }}
+                                    onClick={() =>
+                                      handleDeleteLikeFromSpesificUserProfilePage(
+                                        favorite._id
+                                      )
+                                    }
+                                    width={18}
+                                    height={18}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                                   >
-                                    <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"></path>
+                                    <g>
+                                      <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                                    </g>
                                   </svg>
                                 )}
                               </span>
                             </div>
+                            {/* three dots svg finish to check */}
                           </Stack>
                         </div>
                         <Link
@@ -1463,11 +1596,7 @@ function SpesificUserProfile() {
                             textDecoration: "none",
                             color: "rgb(15, 20, 25)",
                           }}
-                        >
-                          <div style={{ padding: "3px" }}>
-                            {favorite.content}
-                          </div>
-                        </Link>
+                        ></Link>
                         {favorite.image.url !== "image@url" ? (
                           <>
                             <Link
@@ -1525,8 +1654,8 @@ function SpesificUserProfile() {
                                       favorite._id
                                     )
                                   }
-                                  width={18}
-                                  height={18}
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
                                   viewBox="0 0 24 24"
                                   aria-hidden="true"
                                   className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -1556,8 +1685,8 @@ function SpesificUserProfile() {
                                     color: "rgb(83, 100, 113)",
                                   }}
                                   onClick={() => handleRepost(favorite._id)}
-                                  width={18}
-                                  height={18}
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
                                   viewBox="0 0 24 24"
                                   aria-hidden="true"
                                   className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -1571,8 +1700,15 @@ function SpesificUserProfile() {
                                     ></path>
                                   </g>
                                 </svg>
-                                <span className="post-description">
-                                  {favorite.reposted.length}
+                                <span
+                                  className="post-description"
+                                  style={{
+                                    color: "rgb(83, 100, 113)",
+                                  }}
+                                >
+                                  {favorite.reposted.length ? (
+                                    <span>{favorite.reposted.length}</span>
+                                  ) : null}
                                 </span>
                               </div>
                             )}
@@ -1591,8 +1727,8 @@ function SpesificUserProfile() {
                                     )
                                   }
                                   xmlns="http://www.w3.org/2000/svg"
-                                  width={16}
-                                  height={16}
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
                                   fill="rgb(249, 24, 128)"
                                   className={`bi bi-heart-fill`}
                                   viewBox="0 0 17 16"
@@ -1603,8 +1739,17 @@ function SpesificUserProfile() {
                                     d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"
                                   />
                                 </svg>
+
                                 <span className="post-description">
-                                  {favorite.likes.length}
+                                  {favorite.likes.length ? (
+                                    <span
+                                      style={{
+                                        color: "rgb(249, 24, 128)",
+                                      }}
+                                    >
+                                      {favorite.likes.length}
+                                    </span>
+                                  ) : null}
                                 </span>
                               </div>
                             ) : (
