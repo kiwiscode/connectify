@@ -780,8 +780,8 @@ function CommentModal({ post }) {
       <div>
         <svg
           onClick={handleShow}
-          width={18}
-          height={18}
+          width={`${1.25}em`}
+          height={`${1.25}em`}
           viewBox="0 0 24 24"
           aria-hidden="true"
           className="bi bi-chat r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"

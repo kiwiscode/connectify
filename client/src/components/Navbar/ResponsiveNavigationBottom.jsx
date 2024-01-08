@@ -46,10 +46,10 @@ function ResponsiveNavigationBarBottom() {
     <>
       <Stack
         direction="horizontal"
-        gap={5}
+        gap={4}
         className={`responsive-navigation-bar-bottom ${
           visible ? "visible" : "hidden"
-        }`}
+        } `}
       >
         <div className="p-2">
           <Link to="/home">

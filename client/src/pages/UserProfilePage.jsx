@@ -32,6 +32,18 @@ function UserProfile() {
   const [profileImage, setprofileImage] = useState("");
   const [completedProfileImage, setcompletedProfileImage] = useState(false);
 
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+
+  // rendering page after redirectiring for fetching data without problem ! if you need to fetch data after you redirect or navigate to user to the page (it can work pretty good on your navigation bar)this lines of code is pretty useful
+  // start to check
+  const redirectToMessages = () => {
+    navigate("/messages");
+    window.location.reload();
+  };
+  // finish to check
+
   const [showNotificationColumn, setshowNotificationColumn] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
@@ -551,7 +563,7 @@ function UserProfile() {
                     </div>
                   </div>
                 </Link>
-                <Link to="/messages">
+                <Link to="/messages" onClick={redirectToMessages}>
                   <div className="messages">
                     <div>
                       <svg
@@ -619,7 +631,43 @@ function UserProfile() {
               <Container>
                 <Row>
                   <Stack direction="horizontal" gap={0}>
+                    {/* start to check  */}
                     <div
+                      onClick={handleGoBack}
+                      className="p-2 arrow"
+                      style={{
+                        position: "relative",
+                        bottom: "15px",
+                        width: "30px",
+                        height: " 30px",
+                        // border: "1px solid purple",
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <svg
+                        style={{
+                          position: "absolute",
+                          bottom: "5px",
+                          border: "none",
+                          left: "5px",
+                          fontSize: "15px",
+                        }}
+                        width={20}
+                        height={20}
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                      >
+                        <g>
+                          <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                        </g>
+                      </svg>
+                    </div>
+
+                    {/* finish to check  */}
+
+                    {/* <div
                       className="p-2 arrow"
                       style={{
                         borderRadius: "50%",
@@ -645,7 +693,7 @@ function UserProfile() {
                           </g>
                         </svg>
                       </Link>
-                    </div>
+                    </div> */}
                     <div
                       className="p-2"
                       style={{
@@ -879,8 +927,11 @@ function UserProfile() {
 
                     {post.reposted.includes(userInfo._id) && post.isReposted ? (
                       <svg
-                        width={18}
-                        height={18}
+                        style={{
+                          marginLeft: "20px",
+                        }}
+                        width={16}
+                        height={16}
                         viewBox="0 0 24 24"
                         aria-hidden="true"
                         className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -895,9 +946,7 @@ function UserProfile() {
                           ></path>
                         </g>
                       </svg>
-                    ) : (
-                      <div>{""}</div>
-                    )}
+                    ) : null}
                     {post.reposted.includes(userInfo._id) && post.isReposted ? (
                       <span
                         style={{
@@ -910,15 +959,13 @@ function UserProfile() {
                       >
                         You reposted
                       </span>
-                    ) : (
-                      <div>{""}</div>
-                    )}
+                    ) : null}
                     <div className="posts-details">
                       <div className="post-head">
                         <Stack direction="horizontal" gap={1}>
                           {/* profile image start to check */}
+
                           <div className="p-0 mb-2">
-                            {" "}
                             {post.userId.imageUrl.slice(0, 3) !== "../" ? (
                               <Link to={`/profile/${post.userId._id}`}>
                                 <img
@@ -927,13 +974,18 @@ function UserProfile() {
                                   height={40}
                                   alt=""
                                   style={{
+                                    position: "relative",
                                     borderRadius: "50%",
+                                    top: "6px",
                                   }}
                                 />
                               </Link>
                             ) : (
                               <Link to={`/profile/${post.userId._id}`}>
                                 <svg
+                                  style={{
+                                    marginTop: "3px",
+                                  }}
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="40"
                                   height="40"
@@ -947,9 +999,11 @@ function UserProfile() {
                               </Link>
                             )}
                           </div>
+
                           {/* profile image finish to check  */}
 
                           {/* post owner full name + verified account svg + post owner user name + post created date + post content start to check  */}
+
                           <div className="p-0">
                             {post.userId ? (
                               <>
@@ -963,8 +1017,10 @@ function UserProfile() {
                                   <div
                                     className="hover-fullname"
                                     style={{
-                                      fontWeight: "700",
                                       display: "inline",
+                                      fontWeight: "700",
+                                      fontSize: "15px",
+                                      lineHeight: "20px",
                                     }}
                                   >
                                     {post.authorFullName}
@@ -992,7 +1048,10 @@ function UserProfile() {
                                       to={`/profile/${post.userId._id}`}
                                       style={{
                                         textDecoration: "none",
-                                        color: "rgba(0,0,0,0.6)",
+                                        color: "rgb(83, 100, 113)",
+                                        lineHeight: "20px",
+                                        fontSize: "15px",
+                                        fontWeight: "400",
                                       }}
                                     >
                                       <span>
@@ -1010,7 +1069,12 @@ function UserProfile() {
                                       }`}
                                     >
                                       <span
-                                        style={{ color: "rgba(0,0,0,0.6)" }}
+                                        style={{
+                                          color: "rgb(83, 100, 113)",
+                                          lineHeight: "20px",
+                                          fontSize: "15px",
+                                          fontWeight: "400",
+                                        }}
                                       >
                                         {" "}
                                         ·{" "}
@@ -1036,7 +1100,9 @@ function UserProfile() {
                                 >
                                   <div
                                     style={{
-                                      padding: "3px",
+                                      fontSize: "15px",
+                                      lineHeight: "20px",
+                                      fontWeight: "400",
                                     }}
                                   >
                                     {post.content}
@@ -1045,6 +1111,7 @@ function UserProfile() {
                               </>
                             ) : null}
                           </div>
+
                           {/* post owner full name + verified account svg + post owner user name + post created date + post content finish to check  */}
 
                           {/* three dots svg start to check */}
@@ -1068,8 +1135,10 @@ function UserProfile() {
                                       post._id
                                     )
                                   }
-                                  width={18}
-                                  height={18}
+                                  color="rgb(83, 100, 113)"
+                                  fill="currentColor"
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
                                   viewBox="0 0 24 24"
                                   aria-hidden="true"
                                   className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -1087,8 +1156,10 @@ function UserProfile() {
                                   onClick={() =>
                                     handleDeletePostFromProfilePage(post._id)
                                   }
-                                  width={18}
-                                  height={18}
+                                  color="rgb(83, 100, 113)"
+                                  fill="currentColor"
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
                                   viewBox="0 0 24 24"
                                   aria-hidden="true"
                                   className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -1149,9 +1220,8 @@ function UserProfile() {
                       <Stack
                         direction="horizontal"
                         style={{
-                          padding: "3px",
-                          justifyContent: "space-around",
-                          marginBottom: "5px",
+                          justifyContent: "space-evenly",
+                          margin: "5px 0px 5px 0px",
                         }}
                       >
                         <div className="p-0">
@@ -1168,8 +1238,8 @@ function UserProfile() {
                               onClick={() =>
                                 handleDeleteRepostProfilePage(post._id)
                               }
-                              width={18}
-                              height={18}
+                              width={`${1.25}em`}
+                              height={`${1.25}em`}
                               viewBox="0 0 24 24"
                               aria-hidden="true"
                               className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -1190,8 +1260,8 @@ function UserProfile() {
                                 cursor: "pointer",
                               }}
                               onClick={() => handleRepost(post._id)}
-                              width={18}
-                              height={18}
+                              width={`${1.25}em`}
+                              height={`${1.25}em`}
                               viewBox="0 0 24 24"
                               aria-hidden="true"
                               className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -1242,8 +1312,8 @@ function UserProfile() {
                                   onClick={() =>
                                     handleDeleteLikeFromProfilePage(post._id)
                                   }
-                                  width={18}
-                                  height={18}
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
                                   viewBox="0 0 24 24"
                                   aria-hidden="true"
                                   fill="rgb(249, 24, 128)"
@@ -1277,8 +1347,8 @@ function UserProfile() {
                                   onClick={() =>
                                     handlePostLikesFromProfilePage(post._id)
                                   }
-                                  width="18"
-                                  height="18"
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
                                   viewBox="0 0 24 24"
                                   aria-hidden="true"
                                   color="rgb(83, 100, 113)"
@@ -1327,7 +1397,9 @@ function UserProfile() {
                                   height={40}
                                   alt=""
                                   style={{
+                                    position: "relative",
                                     borderRadius: "50%",
+                                    top: "6px",
                                   }}
                                 />
                               </Link>
@@ -1363,8 +1435,10 @@ function UserProfile() {
                                   <div
                                     className="hover-fullname"
                                     style={{
-                                      fontWeight: "700",
                                       display: "inline",
+                                      fontWeight: "700",
+                                      fontSize: "15px",
+                                      lineHeight: "20px",
                                     }}
                                   >
                                     {favorite.authorFullName}
@@ -1392,7 +1466,10 @@ function UserProfile() {
                                       to={`/profile/${favorite.userId._id}`}
                                       style={{
                                         textDecoration: "none",
-                                        color: "rgba(0,0,0,0.6)",
+                                        color: "rgb(83, 100, 113)",
+                                        lineHeight: "20px",
+                                        fontSize: "15px",
+                                        fontWeight: "400",
                                       }}
                                     >
                                       <span>
@@ -1413,7 +1490,12 @@ function UserProfile() {
                                       }`}
                                     >
                                       <span
-                                        style={{ color: "rgba(0,0,0,0.6)" }}
+                                        style={{
+                                          color: "rgb(83, 100, 113)",
+                                          lineHeight: "20px",
+                                          fontSize: "15px",
+                                          fontWeight: "400",
+                                        }}
                                       >
                                         {" "}
                                         ·{" "}
@@ -1439,7 +1521,9 @@ function UserProfile() {
                                 >
                                   <div
                                     style={{
-                                      padding: "3px",
+                                      fontSize: "15px",
+                                      lineHeight: "20px",
+                                      fontWeight: "400",
                                     }}
                                   >
                                     {favorite.content}
@@ -1471,8 +1555,10 @@ function UserProfile() {
                                       favorite._id
                                     )
                                   }
-                                  width={18}
-                                  height={18}
+                                  color="rgb(83, 100, 113)"
+                                  fill="currentColor"
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
                                   viewBox="0 0 24 24"
                                   aria-hidden="true"
                                   className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -1492,8 +1578,10 @@ function UserProfile() {
                                       favorite._id
                                     )
                                   }
-                                  width={18}
-                                  height={18}
+                                  color="rgb(83, 100, 113)"
+                                  fill="currentColor"
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
                                   viewBox="0 0 24 24"
                                   aria-hidden="true"
                                   className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -1554,9 +1642,8 @@ function UserProfile() {
                       <Stack
                         direction="horizontal"
                         style={{
-                          padding: "3px",
-                          justifyContent: "space-around",
-                          marginBottom: "5px",
+                          justifyContent: "space-evenly",
+                          margin: "5px 0px 5px 0px",
                         }}
                       >
                         <div className="p-0">
@@ -1571,8 +1658,8 @@ function UserProfile() {
                               onClick={() =>
                                 handleDeleteRepostProfilePage(favorite._id)
                               }
-                              width={18}
-                              height={18}
+                              width={`${1.25}em`}
+                              height={`${1.25}em`}
                               viewBox="0 0 24 24"
                               aria-hidden="true"
                               className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -1593,8 +1680,8 @@ function UserProfile() {
                                 cursor: "pointer",
                               }}
                               onClick={() => handleRepost(favorite._id)}
-                              width={18}
-                              height={18}
+                              width={`${1.25}em`}
+                              height={`${1.25}em`}
                               viewBox="0 0 24 24"
                               aria-hidden="true"
                               className="svg-repeat r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -1644,8 +1731,8 @@ function UserProfile() {
                                 onClick={() =>
                                   handleDeleteLikeFromProfilePage(favorite._id)
                                 }
-                                width={18}
-                                height={18}
+                                width={`${1.25}em`}
+                                height={`${1.25}em`}
                                 viewBox="0 0 24 24"
                                 aria-hidden="true"
                                 fill="rgb(249, 24, 128)"
@@ -1662,7 +1749,13 @@ function UserProfile() {
 
                               <span className="post-description">
                                 {favorite.likes.length ? (
-                                  <span>{favorite.likes.length}</span>
+                                  <span
+                                    style={{
+                                      color: "rgb(249, 24, 128)",
+                                    }}
+                                  >
+                                    {favorite.likes.length}
+                                  </span>
                                 ) : null}
                               </span>
                             </div>
@@ -1673,8 +1766,8 @@ function UserProfile() {
                                 onClick={() =>
                                   handlePostLikesFromProfilePage(favorite._id)
                                 }
-                                width={18}
-                                height={18}
+                                width={`${1.25}em`}
+                                height={`${1.25}em`}
                                 viewBox="0 0 24 24"
                                 aria-hidden="true"
                                 color="rgb(83, 100, 113)"
