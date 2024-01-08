@@ -872,102 +872,102 @@ function MainPage() {
                         ></Row>
                         {/* Typeof ={typeof index} , {index} */}
 
-                        <Stack
-                          direction="horizontal"
-                          gap={1}
-                          style={{ padding: "3px" }}
-                        >
-                          <div className="p-0">
-                            {/* start to check */}
-                            {post.reposted.length > 0 &&
-                            post.isReposted &&
-                            post.reposted[0]._id === userInfo._id ? (
-                              <div>
-                                <svg
-                                  style={{
-                                    color: "rgb(83, 100, 113)",
-                                    fontSize: "15px",
-                                    marginLeft: "4px",
-                                  }}
-                                  width={18}
-                                  height={18}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                  color="rgb(83, 100, 113)"
-                                  fill="currentColor"
-                                >
-                                  <g>
-                                    <path
-                                      stroke="rgb(83, 100, 113)"
-                                      strokeWidth="0.1"
-                                      d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
-                                    ></path>
-                                  </g>
-                                </svg>
-                                <span
-                                  style={{
-                                    fontSize: "13px",
-                                    lineHeight: "20px",
-                                    fontWeight: "700",
-                                    color: "rgb(83, 100, 113)",
-                                    marginLeft: "10px",
-                                  }}
-                                >
-                                  You reposted
-                                </span>{" "}
-                              </div>
-                            ) : null}
-
-                            {/* start to check */}
-                            {post.reposted.length > 0 &&
-                            post.isReposted &&
-                            post.reposted[0]._id !== userInfo._id ? (
-                              <div>
-                                <div className="p-0 "></div>
-                                <svg
-                                  style={{
-                                    cursor: "pointer",
-                                  }}
-                                  width={18}
-                                  height={18}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                  color="rgb(83, 100, 113)"
-                                  fill="currentColor"
-                                >
-                                  <g>
-                                    <path
-                                      stroke="rgb(83, 100, 113)"
-                                      strokeWidth="0.1"
-                                      d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
-                                    ></path>
-                                  </g>
-                                </svg>
-                                <span
-                                  style={{
-                                    fontSize: "13px",
-                                    lineHeight: "20px",
-                                    fontWeight: "700",
-                                    color: "rgb(83, 100, 113)",
-                                    marginLeft: "10px",
-                                  }}
-                                >
-                                  {post.reposted[0].fullname ? (
-                                    <span>
-                                      {post.reposted[0].fullname} reposted
-                                    </span>
-                                  ) : null}
-                                </span>{" "}
-                              </div>
-                            ) : null}
+                        {/* start to check */}
+                        {post.reposted.length > 0 &&
+                        post.isReposted &&
+                        post.reposted[0]._id === userInfo._id ? (
+                          <div
+                            style={{
+                              position: "relative",
+                              right: "15px",
+                            }}
+                          >
+                            <svg
+                              style={{
+                                color: "rgb(83, 100, 113)",
+                                marginLeft: "20px",
+                              }}
+                              width={`${1.25}em`}
+                              height={`${1.25}em`}
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                              className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                              color="rgb(83, 100, 113)"
+                              fill="currentColor"
+                            >
+                              <g>
+                                <path
+                                  stroke="rgb(83, 100, 113)"
+                                  strokeWidth="0.1"
+                                  d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                                ></path>
+                              </g>
+                            </svg>
+                            <span
+                              style={{
+                                fontSize: "13px",
+                                lineHeight: "16px",
+                                fontWeight: "700",
+                                color: "rgb(83, 100, 113)",
+                                marginLeft: "10px",
+                              }}
+                            >
+                              You reposted
+                            </span>{" "}
                           </div>
-                        </Stack>
+                        ) : null}
+
+                        {/* start to check */}
+                        {post.reposted.length > 0 &&
+                        post.isReposted &&
+                        post.reposted[0]._id !== userInfo._id ? (
+                          <div
+                            style={{
+                              position: "relative",
+                              right: "16px",
+                            }}
+                          >
+                            <svg
+                              style={{
+                                marginLeft: "20px",
+                              }}
+                              width={`${1.25}em`}
+                              height={`${1.25}em`}
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                              className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                              color="rgb(83, 100, 113)"
+                              fill="currentColor"
+                            >
+                              <g>
+                                <path
+                                  stroke="rgb(83, 100, 113)"
+                                  strokeWidth="0.1"
+                                  d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                                ></path>
+                              </g>
+                            </svg>
+                            <span
+                              style={{
+                                fontSize: "13px",
+                                lineHeight: "20px",
+                                fontWeight: "700",
+                                color: "rgb(83, 100, 113)",
+                                marginLeft: "10px",
+                              }}
+                            >
+                              {post.reposted[0].fullname ? (
+                                <span>
+                                  {post.reposted[0].fullname} reposted
+                                </span>
+                              ) : null}
+                            </span>{" "}
+                          </div>
+                        ) : null}
 
                         <Stack direction="horizontal" gap={1}>
                           {/* profile image start to check */}
-                          <div className="p-0 mb-2">
+                          <div className="p-0">
                             {" "}
                             {post.userId.imageUrl.slice(0, 3) !== "../" ? (
                               <Link to={`/profile/${post.userId._id}`}>
@@ -978,12 +978,16 @@ function MainPage() {
                                   alt=""
                                   style={{
                                     borderRadius: "50%",
+                                    marginTop: "3px",
                                   }}
                                 />
                               </Link>
                             ) : (
                               <Link to={`/profile/${post.userId._id}`}>
                                 <svg
+                                  style={{
+                                    marginTop: "3px",
+                                  }}
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="40"
                                   height="40"
@@ -1013,8 +1017,10 @@ function MainPage() {
                                   <div
                                     className="hover-fullname"
                                     style={{
-                                      fontWeight: "700",
                                       display: "inline",
+                                      fontWeight: "700",
+                                      fontSize: "15px",
+                                      lineHeight: "20px",
                                     }}
                                   >
                                     {post.authorFullName}
@@ -1042,7 +1048,10 @@ function MainPage() {
                                       to={`/profile/${post.userId._id}`}
                                       style={{
                                         textDecoration: "none",
-                                        color: "rgba(0,0,0,0.6)",
+                                        color: "rgb(83, 100, 113)",
+                                        lineHeight: "20px",
+                                        fontSize: "15px",
+                                        fontWeight: "400",
                                       }}
                                     >
                                       <span>
@@ -1061,7 +1070,12 @@ function MainPage() {
                                       }`}
                                     >
                                       <span
-                                        style={{ color: "rgba(0,0,0,0.6)" }}
+                                        style={{
+                                          color: "rgb(83, 100, 113)",
+                                          lineHeight: "20px",
+                                          fontSize: "15px",
+                                          fontWeight: "400",
+                                        }}
                                       >
                                         {" "}
                                         ·{" "}
@@ -1087,7 +1101,9 @@ function MainPage() {
                                 >
                                   <div
                                     style={{
-                                      padding: "3px",
+                                      fontSize: "15px",
+                                      lineHeight: "20px",
+                                      fontWeight: "400",
                                     }}
                                   >
                                     {post.content}
@@ -1117,8 +1133,10 @@ function MainPage() {
                                   onClick={() =>
                                     handleShowDetailPostFromHomePage(post._id)
                                   }
-                                  width={18}
-                                  height={18}
+                                  color="rgb(83, 100, 113)"
+                                  fill="currentColor"
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
                                   viewBox="0 0 24 24"
                                   aria-hidden="true"
                                   className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -1136,8 +1154,10 @@ function MainPage() {
                                   onClick={() =>
                                     handleDeletePostFromHomePage(post._id)
                                   }
-                                  width={18}
-                                  height={18}
+                                  color="rgb(83, 100, 113)"
+                                  fill="currentColor"
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
                                   viewBox="0 0 24 24"
                                   aria-hidden="true"
                                   className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -1190,9 +1210,8 @@ function MainPage() {
                       <Stack
                         direction="horizontal"
                         style={{
-                          padding: "3px",
-                          justifyContent: "space-around",
-                          marginBottom: "5px",
+                          justifyContent: "space-evenly",
+                          margin: "5px 0px 5px 0px",
                         }}
                       >
                         <div className="p-0">
@@ -1208,8 +1227,8 @@ function MainPage() {
                                 onClick={() =>
                                   handleDeleteRepostMainPage(post._id)
                                 }
-                                width={18}
-                                height={18}
+                                width={`${1.25}em`}
+                                height={`${1.25}em`}
                                 viewBox="0 0 24 24"
                                 aria-hidden="true"
                                 className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -1242,8 +1261,8 @@ function MainPage() {
                                   cursor: "pointer",
                                 }}
                                 onClick={() => handleRepost(post._id)}
-                                width={18}
-                                height={18}
+                                width={`${1.25}em`}
+                                height={`${1.25}em`}
                                 viewBox="0 0 24 24"
                                 aria-hidden="true"
                                 className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -1288,8 +1307,8 @@ function MainPage() {
                                 onClick={() =>
                                   handleDeleteLikeFromHomePage(post._id)
                                 }
-                                width={18}
-                                height={18}
+                                width={`${1.25}em`}
+                                height={`${1.25}em`}
                                 viewBox="0 0 24 24"
                                 aria-hidden="true"
                                 fill="rgb(249, 24, 128)"
@@ -1322,8 +1341,8 @@ function MainPage() {
                                 onClick={() =>
                                   handlePostLikesFromHomePage(post._id)
                                 }
-                                width={18}
-                                height={18}
+                                width={`${1.25}em`}
+                                height={`${1.25}em`}
                                 viewBox="0 0 24 24"
                                 aria-hidden="true"
                                 color="rgb(83, 100, 113)"

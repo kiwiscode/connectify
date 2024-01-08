@@ -380,26 +380,30 @@ function ChatDetailsPage() {
                 <>
                   <Stack direction="horizontal" gap={3}>
                     <div
+                      onClick={redirectToMessages}
                       className="p-2 arrow"
                       style={{
+                        position: "relative",
+                        width: "30px",
+                        height: " 30px",
+                        // border: "1px solid purple",
                         borderRadius: "50%",
                         cursor: "pointer",
                       }}
                     >
-                      {" "}
                       <svg
                         style={{
-                          display: "inline-block",
-                          marginBottom: "2px",
+                          position: "absolute",
+                          bottom: "5px",
                           border: "none",
+                          left: "5px",
                           fontSize: "15px",
                         }}
-                        onClick={redirectToMessages}
                         width={20}
                         height={20}
                         viewBox="0 0 24 24"
                         aria-hidden="true"
-                        className=" responsive-messages-arrow r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                        className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
                       >
                         <g>
                           <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
@@ -621,7 +625,14 @@ function ChatDetailsPage() {
                 border: "1px solid rgba(0, 0, 0, 0.1)",
               }}
             ></Row>
-            <div className="chat-footer-detail">
+            <div
+              style={{
+                position: "relative",
+                top: "1%",
+                transform: "translateY(-20%)",
+              }}
+              className="chat-footer-detail"
+            >
               <div
                 className={`${showEmojisBar} date-picker-container`}
                 style={{
