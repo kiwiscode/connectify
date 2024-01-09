@@ -7,7 +7,6 @@ import { LogoutModal, PostModal } from "../components/ui/Modal";
 import axios from "axios";
 import CreateChat from "../components/ui/CreateChat";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
-import ResponsiveNavigationBarTop from "../components/Navbar/ResponsiveNavigationTop";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -184,7 +183,7 @@ function MessagesPage() {
       .then((response) => {
         // NOTE UPDATING THE LOCALSTORAGE
         // start to check
-        localStorage.setItem("posts", JSON.stringify(response.data));
+        localStorage.setItem("mainPagePosts", JSON.stringify(response.data));
         // finish to check
         setPosts(response.data);
       })

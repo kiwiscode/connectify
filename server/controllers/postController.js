@@ -34,8 +34,6 @@ const handlePost = (req, res) => {
             crop: "limit",
           })
           .then((result) => {
-            // console.log("THIS LINE IS WORKING 2 ", image);
-
             return Post.create({
               userId: userId,
               authorFullName: user.fullname,

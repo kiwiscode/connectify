@@ -420,6 +420,14 @@ function SpesificUserProfile() {
 
   // NOTE finish to check get all the notifications from backend api endpoint
 
+  const reposterIds = profileInfoPosts.map((eachPost) => {
+    return eachPost.reposted.map((eachPostDetail) => {
+      return eachPostDetail._id;
+    });
+  });
+  const flattedIds = reposterIds.flat();
+  console.log(flattedIds);
+
   const handleGoBack = () => {
     navigate(-1);
   };
@@ -1045,6 +1053,7 @@ function SpesificUserProfile() {
                                         !post.isReposted
                                           ? post._id
                                           : post.repostedFromThisOriginalPost[0]
+                                              ._id
                                       }`}
                                     >
                                       <span
@@ -1072,7 +1081,7 @@ function SpesificUserProfile() {
                                   to={`/${post.userId.username}/status/${
                                     !post.isReposted
                                       ? post._id
-                                      : post.repostedFromThisOriginalPost[0]
+                                      : post.repostedFromThisOriginalPost[0]._id
                                   }`}
                                   style={{
                                     textDecoration: "none",
@@ -1161,7 +1170,7 @@ function SpesificUserProfile() {
                         to={`/${post.userId.username}/status/${
                           !post.isReposted
                             ? post._id
-                            : post.repostedFromThisOriginalPost[0]
+                            : post.repostedFromThisOriginalPost[0]._id
                         }`}
                         style={{
                           textDecoration: "none",
@@ -1174,7 +1183,7 @@ function SpesificUserProfile() {
                             to={`/${post.userId.username}/status/${
                               !post.isReposted
                                 ? post._id
-                                : post.repostedFromThisOriginalPost[0]
+                                : post.repostedFromThisOriginalPost[0]._id
                             }/photo/${22}`}
                             style={{
                               textDecoration: "none",
@@ -1214,7 +1223,7 @@ function SpesificUserProfile() {
 
                         {/* start to check */}
                         <div className="p-0">
-                          {post.reposted.includes(userInfo._id) ? (
+                          {flattedIds.includes(userInfo._id) ? (
                             <div>
                               <svg
                                 style={{
@@ -1478,6 +1487,7 @@ function SpesificUserProfile() {
                                             ? favorite._id
                                             : favorite
                                                 .repostedFromThisOriginalPost[0]
+                                                ._id
                                         }`}
                                       >
                                         <span
@@ -1506,7 +1516,7 @@ function SpesificUserProfile() {
                                       !favorite.isReposted
                                         ? favorite._id
                                         : favorite
-                                            .repostedFromThisOriginalPost[0]
+                                            .repostedFromThisOriginalPost[0]._id
                                     }`}
                                     style={{
                                       textDecoration: "none",
@@ -1590,7 +1600,7 @@ function SpesificUserProfile() {
                           to={`/${favorite.userId.username}/status/${
                             !favorite.isReposted
                               ? favorite._id
-                              : favorite.repostedFromThisOriginalPost[0]
+                              : favorite.repostedFromThisOriginalPost[0]._id
                           }`}
                           style={{
                             textDecoration: "none",
@@ -1603,7 +1613,7 @@ function SpesificUserProfile() {
                               to={`/${favorite.userId.username}/status/${
                                 !favorite.isReposted
                                   ? favorite._id
-                                  : favorite.repostedFromThisOriginalPost[0]
+                                  : favorite.repostedFromThisOriginalPost[0]._id
                               }/photo/${22}`}
                               style={{
                                 textDecoration: "none",
@@ -1643,7 +1653,7 @@ function SpesificUserProfile() {
                           </div>
                           {/* start to check */}
                           <div className="p-0">
-                            {favorite.reposted.includes(userInfo._id) ? (
+                            {flattedIds.includes(userInfo._id) ? (
                               <div>
                                 <svg
                                   style={{

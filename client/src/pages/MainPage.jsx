@@ -8,7 +8,7 @@ import Picker from "emoji-picker-react";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import ResponsiveNavigationBarTop from "../components/Navbar/ResponsiveNavigationTop";
-
+import deleteRepost from "../utils/helperFunctions";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -24,10 +24,6 @@ function MainPage() {
     window.location.reload();
   };
   // finish to check
-
-  const handleGoBack = () => {
-    navigate(-1);
-  };
 
   const { userInfo, getToken } = useContext(UserContext);
   const [posts, setPosts] = useState([]);
@@ -115,7 +111,7 @@ function MainPage() {
       .then((response) => {
         // NOTE UPDATING THE LOCALSTORAGE
         // start to check
-        localStorage.setItem("posts", JSON.stringify(response.data));
+        localStorage.setItem("mainPagePosts", JSON.stringify(response.data));
         // finish to check
         setPosts(response.data);
       })
@@ -291,7 +287,7 @@ function MainPage() {
 
         posts[index].reposted.unshift(userInfo);
 
-        localStorage.setItem("posts", JSON.stringify(posts));
+        localStorage.setItem("mainPagePosts", JSON.stringify(posts));
         setshouldHide(false);
         setPosts(posts);
 
@@ -303,24 +299,7 @@ function MainPage() {
   };
 
   const handleDeleteRepostMainPage = (postId) => {
-    console.log("I AM WORKING BECAUSE NOW I AM ACTIVE AS A REPOST");
-    axios
-      .post(
-        `${API_URL}/repost/delete`,
-        { postId: postId, userId: userInfo._id },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        console.log("You deleted repost!");
-      })
-      .then(() => {})
-      .catch((error) => {
-        console.log(error);
-      });
+    deleteRepost(postId, userInfo, getToken, setPosts);
   };
 
   console.log("POSTS =>", posts);
