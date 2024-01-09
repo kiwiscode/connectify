@@ -293,6 +293,7 @@ function UserProfile() {
   };
 
   const handleDeleteRepostProfilePage = (postId) => {
+    console.log("Post id =>", postId);
     axios
       .post(
         `${API_URL}/repost/delete`,
@@ -306,10 +307,43 @@ function UserProfile() {
       .then(() => {
         console.log("You deleted repost!");
       })
-      .then(() => {})
       .catch((error) => {
         console.log(error);
       });
+    //   const profilePagePosts = JSON.parse(localStorage.getItem("profilePosts"));
+
+    // const findedPost = profilePagePosts.find((eachPost) => {
+    //   return eachPost._id === postId;
+    // });
+
+    // const findedPostIndex = profilePagePosts.indexOf(findedPost);
+
+    // console.log("Finded post index =>", findedPostIndex);
+    // const findedPostReposterIndex = findedPost.reposted.indexOf(userInfo._id);
+
+    // if (findedPost.userId._id !== userInfo._id) {
+    //   console.log("You reposted this post from another user !");
+
+    //   profilePagePosts[findedPostIndex].reposted.splice(
+    //     findedPostReposterIndex,
+    //     1
+    //   );
+    //   const updateProfilePosts = () => {
+    //     profilePagePosts[findedPostIndex].reposted.splice(
+    //       findedPostReposterIndex,
+    //       1
+    //     );
+
+    //     profilePagePosts.splice(findedPostIndex, 1);
+    //     localStorage.setItem("profilePosts", JSON.stringify(profilePagePosts));
+
+    //     setUserprofiledata(profilePagePosts);
+    //   };
+
+    //   setTimeout(updateProfilePosts, 500);
+    // } else {
+    //   console.log("This is your post that you reposted !");
+    // }
   };
 
   const handleImage = (e) => {
@@ -460,7 +494,7 @@ function UserProfile() {
       handleShowPostsProfilePage();
     }
     changeProfileImage();
-  }, [profileImage, postsWindow, favoriteWindow]);
+  }, [profileImage, postsWindow, favoriteWindow, userprofiledata]);
 
   console.log("NOTIFICATIONS =>", notifications);
   // NOTE start to check get all the notifications from backend api endpoint
@@ -1280,7 +1314,7 @@ function UserProfile() {
 
                           {post.reposted.includes(userInfo._id) ? (
                             <span
-                              className="post-description"
+                              className="post-description keyframetest"
                               style={{
                                 color: "rgb(0, 186, 124)",
                               }}

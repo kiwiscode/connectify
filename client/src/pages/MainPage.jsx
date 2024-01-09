@@ -8,7 +8,8 @@ import Picker from "emoji-picker-react";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import ResponsiveNavigationBarTop from "../components/Navbar/ResponsiveNavigationTop";
-import deleteRepost from "../utils/helperFunctions";
+import deleteRepost from "../utils/repostFunctions";
+
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -277,7 +278,7 @@ function MainPage() {
         }
       )
       .then(() => {
-        const posts = JSON.parse(localStorage.getItem("posts"));
+        const posts = JSON.parse(localStorage.getItem("mainPagePosts"));
 
         const findedPost = posts.find((element) => {
           return element._id === postId;
@@ -299,7 +300,13 @@ function MainPage() {
   };
 
   const handleDeleteRepostMainPage = (postId) => {
-    deleteRepost(postId, userInfo, getToken, setPosts);
+    deleteRepost(
+      JSON.parse(localStorage.getItem("mainPagePosts")),
+      postId,
+      userInfo,
+      getToken,
+      setPosts
+    );
   };
 
   console.log("POSTS =>", posts);
