@@ -72,7 +72,7 @@ function PostDetailPage() {
 
         posts[index].reposted.unshift(userInfo);
 
-        localStorage.setItem("posts", JSON.stringify(posts));
+        localStorage.setItem("mainPagePosts", JSON.stringify(posts));
 
         console.log("AFTER REPOST CURRENT STATE RENDERED POSTS =>", posts);
       })

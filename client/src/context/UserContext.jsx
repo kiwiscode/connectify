@@ -51,11 +51,11 @@ const UserProvider = ({ children }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("following");
     localStorage.removeItem("followers");
-    localStorage.removeItem("posts");
     localStorage.removeItem("profileInfoPosts");
     localStorage.removeItem("profileInfoFavorites");
     localStorage.removeItem("profileFavorites");
     localStorage.removeItem("profilePosts");
+    localStorage.removeItem("mainPagePosts");
   };
 
   const setToken = (token) => {
