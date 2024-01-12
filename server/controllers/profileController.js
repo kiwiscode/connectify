@@ -1,6 +1,7 @@
 const User = require("../models/User.model");
 const Post = require("../models/Post.model");
 const cloudinary = require("../utils/cloudinary");
+const { populate } = require("../models/Chat.model");
 
 const handleProfile = (req, res) => {
   const userId = req.user.userId;
@@ -23,6 +24,20 @@ const handleProfile = (req, res) => {
       },
     })
     .populate({
+      path: "posts",
+      populate: {
+        path: "reposted",
+        model: "User",
+      },
+    })
+    .populate({
+      path: "posts",
+      populate: {
+        path: "repostedFromThisOriginalPost",
+        model: "Post",
+      },
+    })
+    .populate({
       path: "favorites",
       populate: {
         path: "userId",
@@ -32,19 +47,7 @@ const handleProfile = (req, res) => {
     // finish to check
     // .populate("posts")
     .then((user) => {
-      console.log("PROFILE POSTS =>", user.posts.length);
-      Post.find({
-        $or: [
-          { userId: userId },
-          { reposted: { $elemMatch: { $eq: userId } } },
-        ],
-      })
-        .then((responsePosts) => {
-          console.log("PROFILE POSTS 2 => ", responsePosts);
-        })
-        .catch(() => {
-          console.log("Post not found");
-        });
+      console.log("Profile page active!");
       res.status(200).json({ posts: user.posts, user });
     })
     .catch((err) => {
@@ -76,9 +79,37 @@ const handleShowSpesificProfile = (req, res) => {
       },
     })
     .populate({
+      path: "posts",
+      populate: {
+        path: "repostedFromThisOriginalPost",
+        model: "Post",
+      },
+    })
+    .populate({
+      path: "posts",
+      populate: {
+        path: "reposted",
+        model: "User",
+      },
+    })
+    .populate({
       path: "favorites",
       populate: {
         path: "userId",
+        model: "User",
+      },
+    })
+    .populate({
+      path: "favorites",
+      populate: {
+        path: "repostedFromThisOriginalPost",
+        model: "Post",
+      },
+    })
+    .populate({
+      path: "favorites",
+      populate: {
+        path: "reposted",
         model: "User",
       },
     })
@@ -87,7 +118,7 @@ const handleShowSpesificProfile = (req, res) => {
     .then((response) => {
       res.status(200).json(response);
 
-      console.log(response);
+      console.log("Response =>", response.posts);
     })
     .catch(() => {
       res.status(404).json({ errorMessage: "User not found!" });
@@ -109,6 +140,7 @@ const handleProfilePicture = (req, res) => {
   );
 
   User.findById(userId)
+    .populate()
     .then((user) => {
       if (profileImage) {
         cloudinary.uploader

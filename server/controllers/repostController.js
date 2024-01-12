@@ -94,13 +94,25 @@ const handleRepost = (req, res) => {
               repostedFromThisOriginalPost: postId,
               likes: post.likes,
             })
+
               .then((createdPost) => {
-                user.posts.unshift(createdPost._id);
-                user.save();
-                res
-                  .status(200)
-                  .json({ message: "Repost Created Successfully!" });
+                return Post.populate(createdPost, [
+                  { path: "userId", model: "User" },
+                  { path: "reposted", model: "Post" },
+                  { path: "repostedFromThisOriginalPost", model: "Post" },
+                ]);
               })
+              .then((populatedPost) => {
+                console.log("Post reposted =>", post.reposted);
+                console.log("Is updated =>", [...post.reposted, userId]);
+                console.log(user._id);
+                // Popüle edilmiş post işlemleri
+                // populatedPost.reposted.unshift(userId);
+                user.posts.unshift(populatedPost._id);
+                user.save();
+                res.status(200).json({ newPost: populatedPost });
+              })
+
               .catch((error) => {
                 res.status(500).json({
                   errorMessage:
@@ -169,9 +181,7 @@ const handleRepost = (req, res) => {
               .then((post) => {
                 post.reposted.unshift(userId);
                 post.save();
-                res
-                  .status(200)
-                  .json({ message: "Repost Created Successfully!" });
+                res.status(200).json({ newPost: post });
               })
               .catch((error) => {
                 console.log(error);
@@ -180,13 +190,16 @@ const handleRepost = (req, res) => {
           // start to check
           else if (
             post.isReposted === false &&
-            !reposterUserIds.includes(userId)
+            !reposterUserIds.includes(userId) &&
+            reposterUserIds.length
           ) {
             // INFO
             post.reposted.unshift(userId);
             post.save();
 
-            console.log("THIS LINE IS WORKING !");
+            console.log(
+              "This line is working ! This post reposted from other users but not from active user"
+            );
             // NOTE start to check send notification after reposting a post
 
             if (post.userId.toString() !== userId) {
@@ -241,17 +254,32 @@ const handleRepost = (req, res) => {
 
             // NOTE finish to check send notification after reposting a post
             Post.find({ repostedFromThisOriginalPost: postId })
+              .populate("reposted")
+              .populate("userId")
+              .populate("repostedFromThisOriginalPost")
               .then((post) => {
-                console.log("I am here lets go => ", post[0]._id);
                 // INFO
-                post[0].reposted.unshift(userId);
+
+                console.log(
+                  "Here is the new post current reposted state =>",
+                  post[0].reposted[0]
+                );
+                console.log(
+                  "Here is the id that we are pushing in reposted array =>",
+                  userId
+                );
+
+                post[0].reposted.unshift(user);
                 post[0].save();
+                console.log(
+                  "Here is the updated post current reposted state =>",
+                  post[0].reposted[0]
+                );
+
                 user.posts.unshift(post[0]._id);
                 user.save();
 
-                res
-                  .status(200)
-                  .json({ message: "Repost Created Successfully!" });
+                res.status(200).json({ newPost: post[0] });
               })
               .catch((error) => {
                 console.log(error);
@@ -313,7 +341,9 @@ const handleDeleteReposts = (req, res) => {
                 user.save();
                 console.log("This line is working 1 =>");
               })
-              .catch(() => {
+              .catch((error) => {
+                console.log(error);
+
                 res.status(404).json({ errorMessage: "User not found!" });
               });
 
@@ -380,7 +410,8 @@ const handleDeleteReposts = (req, res) => {
               originalPost[0].reposted = filteredPostArray;
               originalPost[0].save();
             })
-            .catch(() => {
+            .catch((error) => {
+              console.log(error);
               res.json("Original post not found!");
             });
 
@@ -402,14 +433,17 @@ const handleDeleteReposts = (req, res) => {
                   console.log("This line is working 2 =>");
                   res.status(200).json({
                     message:
-                      "Repost deleted from your profile and posts collection successfully",
+                      "Reposted post and original post deleted from your profile and posts collection successfully",
                   });
                 })
-                .catch(() => {
+                .catch((error) => {
+                  console.log(error);
+
                   res.json("USER NOT FOUND!");
                 });
             })
-            .catch(() => {
+            .catch((error) => {
+              console.log(error);
               res.json("ERROR OCCURED WHILE DELETING THE POST FROM COLLECTION");
             });
         } else if (post.reposted.length > 1) {
@@ -444,15 +478,19 @@ const handleDeleteReposts = (req, res) => {
                   originalPost[0].reposted = filteredOriginalPostArray;
                   originalPost[0].save();
                 })
-                .catch(() => {
-                  console.log("Error occured while fetching the original post");
+                .catch((error) => {
+                  console.log(
+                    "Error occured while fetching the original post",
+                    error
+                  );
                 });
 
               res.status(200).json({
                 message: "Repost deleted from your profile successfully",
               });
             })
-            .catch(() => {
+            .catch((error) => {
+              console.log(error);
               res.json("USER NOT FOUND!");
             });
         }

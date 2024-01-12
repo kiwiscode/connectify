@@ -10,46 +10,15 @@ function ResponsiveNavigationBarTop() {
   return (
     <>
       <Stack
+        style={{
+          height: "50px",
+        }}
         className="responsive-navigation-bar-top"
         direction="horizontal"
         gap={5}
       >
         <div className="p-2">
           <LogoutModal></LogoutModal>{" "}
-          {/* {userInfo.imageUrl.slice(0, 3) !== "../" ? (
-            <>
-              <Link to={"/profile"}>
-                <div>
-                  <img
-                    width={30}
-                    height={30}
-                    style={{
-                      cursor: "pointer",
-                    }}
-                    src={userInfo.imageUrl}
-                    alt=""
-                  />
-                </div>
-              </Link>
-            </>
-          ) : (
-            <div>
-              <Link to={"/profile"}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="32"
-                  height="32"
-                  fill="rgb(83, 100, 113)"
-                  className="bi bi-person-circle"
-                  viewBox="0 0 16 16"
-                  style={{ cursor: "pointer" }}
-                >
-                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                  <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                </svg>
-              </Link>
-            </div>
-          )} */}
         </div>
         <div className="p-2">
           {" "}
@@ -79,7 +48,7 @@ function ResponsiveNavigationBarTop() {
             height={20}
             style={{
               color: "rgb(15, 20, 25)",
-              lineHeight: "20px",
+              lineHeight: "0px",
               fontSize: "15px",
               fontWeight: "700",
               cursor: "pointer",

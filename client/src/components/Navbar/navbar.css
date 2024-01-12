@@ -18,6 +18,7 @@
     bottom: 0px !important;
     display: flex !important;
     width: 100% !important;
+
     justify-content: space-around !important;
     position: fixed !important;
     z-index: 9999 !important;
