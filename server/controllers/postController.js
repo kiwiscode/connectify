@@ -87,6 +87,7 @@ const handleShowPosts = (req, res) => {
     // start to check
     .sort({ createdAt: -1 })
     // finish to check
+    .populate("likes")
     .populate("userId")
     .populate("reposted")
     .populate("repostedFromThisOriginalPost")
@@ -126,13 +127,55 @@ const handleDeletePost = (req, res) => {
       // STARTING WITH POST DELETING PROCESS
       Post.findById(postId)
         .then((post) => {
-          Post.findByIdAndDelete(post._id)
-            .then(() => {
-              console.log("MESSAGE ", "POST DELETED FROM POST COLLECTION ");
-            })
-            .catch(() => {
-              res.status(404).json("Post not found!");
-            });
+          if (post.isReposted) {
+            Post.findByIdAndDelete(post._id)
+              .then(() => {
+                Post.findByIdAndDelete(
+                  post.repostedFromThisOriginalPost[0]._id.toString()
+                )
+                  .then(() => {
+                    console.log("POSTS ARE DELETED FROM POST COLLECTION !");
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
+              })
+              .catch(() => {
+                res.status(404).json("Post not found!");
+              });
+          } else if (!post.isReposted) {
+            if (post.reposted.length !== 0) {
+              Post.findByIdAndDelete(post._id)
+                .then(() => {
+                  console.log("Original post =>", post);
+                  Post.findOne({
+                    _id: post.repostedFromThisOriginalPost[0]._id.toString(),
+                  })
+                    .then((referencePost) => {
+                      console.log("Reference post =>", referencePost);
+                      Post.findByIdAndDelete(referencePost._id)
+                        .then(() => {
+                          console.log(
+                            "POSTS ARE DELETED FROM POST COLLECTION !"
+                          );
+                        })
+                        .catch((error) => {
+                          console.log(error);
+                        });
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                    });
+                })
+                .catch(() => {
+                  res.status(404).json("Post not found!");
+                });
+            } else {
+              Post.findByIdAndDelete(post._id)
+                .then(() => {})
+                .catch(() => {});
+            }
+          }
         })
         .catch((error) => {
           console.log(error);

@@ -24,6 +24,20 @@ const handleProfile = (req, res) => {
       },
     })
     .populate({
+      path: "posts",
+      populate: {
+        path: "reposted",
+        model: "User",
+      },
+    })
+    .populate({
+      path: "posts",
+      populate: {
+        path: "repostedFromThisOriginalPost",
+        model: "Post",
+      },
+    })
+    .populate({
       path: "favorites",
       populate: {
         path: "userId",
@@ -33,25 +47,7 @@ const handleProfile = (req, res) => {
     // finish to check
     // .populate("posts")
     .then((user) => {
-      Post.find({
-        $or: [
-          { userId: userId },
-          { reposted: { $elemMatch: { $eq: userId } } },
-        ],
-      })
-        .populate("reposted")
-        .populate("repostedFromThisOriginalPost")
-        .then((responsePosts) => {
-          console.log("Reponse posts.length =>", responsePosts.length);
-
-          console.log(responsePosts[1].repostedFromThisOriginalPost);
-
-          console.log(responsePosts[0].reposted);
-          console.log(responsePosts[1].reposted);
-        })
-        .catch(() => {
-          console.log("Post not found");
-        });
+      console.log("Profile page active!");
       res.status(200).json({ posts: user.posts, user });
     })
     .catch((err) => {

@@ -205,7 +205,7 @@ const handleLogin = (req, res, next) => {
     .populate("favorites")
     .populate("messages")
     .then((user) => {
-      if (!user.verified) {
+      if (user ? !user.verified : null) {
         res.status(400).json({
           errorMessage: "Email hasn't been verified yet.Check your inbox.",
         });

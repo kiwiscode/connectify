@@ -1215,3 +1215,14 @@ span > a:hover {
   text-decoration: underline;
   text-decoration-color: black;
 }
+
+@keyframes fadeOut {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(10px); /* veya başka bir değer */
+    opacity: 0;
+  }
+}

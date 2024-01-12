@@ -45,6 +45,9 @@ function ResponsiveNavigationBarBottom() {
   return (
     <>
       <Stack
+        style={{
+          height: "50px",
+        }}
         direction="horizontal"
         gap={4}
         className={`responsive-navigation-bar-bottom ${
