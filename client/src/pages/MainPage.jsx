@@ -34,13 +34,18 @@ function MainPage() {
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [showEmojisBar, setshowEmojisBar] = useState("hide");
   const [showSecondModal, setShowSecondModal] = useState(false);
-  console.log("ACTIVE USER =>", userInfo);
   const maxCharacters = 140;
   const [isLoading, setIsLoading] = useState(false);
   const [shouldHide, setshouldHide] = useState(true);
   const [showNotificationColumn, setshowNotificationColumn] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [image, setImage] = useState("");
+  console.log("POSTS =>", posts);
+
+  useEffect(() => {
+    setshouldHide(true);
+    handleShowPostsHomePage();
+  }, []);
 
   //handle and convert it in base 64
   const handleImage = (e) => {
@@ -110,6 +115,7 @@ function MainPage() {
         },
       })
       .then((response) => {
+        console.log("Response =>", response);
         // NOTE UPDATING THE LOCALSTORAGE
         // start to check
         localStorage.setItem("mainPagePosts", JSON.stringify(response.data));
@@ -131,7 +137,8 @@ function MainPage() {
   };
 
   const handleDeleteLikeFromHomePage = (postId) => {
-    console.log("clicked...");
+    console.log("You deleted favorite");
+    setpostId(postId);
     axios
       .post(
         `${API_URL}/favorite/delete-favorite`,
@@ -146,16 +153,143 @@ function MainPage() {
         }
       )
       .then(() => {
-        handleShowPostsHomePage();
+        const mainPagePosts = JSON.parse(localStorage.getItem("mainPagePosts"));
+        const findedPost = mainPagePosts.find((eachPost) => {
+          return eachPost._id === postId;
+        });
+
+        const findedPostIndex = mainPagePosts.indexOf(findedPost);
+
+        console.log("Finded post =>", findedPost);
+        console.log("Finded post index =>", findedPostIndex);
+
+        if (findedPost.isReposted) {
+          console.log("Finded post isReposted =>", findedPost);
+          console.log("Finded post index =>", findedPostIndex);
+
+          const originalPostId =
+            mainPagePosts[findedPostIndex].repostedFromThisOriginalPost[0]._id;
+          const originalPost = mainPagePosts.find((eachPost) => {
+            return eachPost._id === originalPostId;
+          });
+          const originalPostIndex = mainPagePosts.indexOf(originalPost);
+
+          const liker = mainPagePosts[originalPostIndex].likes.find(
+            (eachLiker) => {
+              return eachLiker._id === userInfo._id;
+            }
+          );
+
+          const likerIndex =
+            mainPagePosts[originalPostIndex].likes.indexOf(liker);
+
+          console.log("Finded original post  =>", originalPost);
+
+          console.log("Finded original post index =>", originalPostIndex);
+
+          console.log("Liker =>", liker);
+          console.log("Liker index =>", likerIndex);
+          const updatePosts = () => {
+            mainPagePosts[findedPostIndex].likes.splice(likerIndex, 1);
+            mainPagePosts[originalPostIndex].likes.splice(likerIndex, 1);
+
+            localStorage.setItem(
+              "mainPagePosts",
+              JSON.stringify(mainPagePosts)
+            );
+            setPosts(mainPagePosts);
+          };
+
+          setTimeout(updatePosts, 500);
+        } else if (!findedPost.isReposted && findedPost.reposted.length > 0) {
+          console.log("Now here is working !");
+          console.log("Finded post !isReposted =>", findedPost);
+          console.log("Finded post index =>", findedPostIndex);
+          console.log(
+            "Finded post is not reposted and has reference post because of its length more than 0"
+          );
+
+          const referencePost = mainPagePosts.find((eachPost) => {
+            return eachPost.repostedFromThisOriginalPost[0]
+              ? eachPost.repostedFromThisOriginalPost[0]._id === postId
+              : null;
+          });
+          const referencePostIndex = mainPagePosts.indexOf(referencePost);
+
+          console.log("Reference post =>", referencePost);
+          console.log("Reference post index =>", referencePostIndex);
+
+          const liker = mainPagePosts[referencePostIndex].likes.find(
+            (eachLiker) => {
+              return eachLiker._id === userInfo._id;
+            }
+          );
+          const likerIndex =
+            mainPagePosts[referencePostIndex].likes.indexOf(liker);
+
+          console.log("Liker =>", liker);
+          console.log("Liker index =>", likerIndex);
+
+          const updatePosts = () => {
+            mainPagePosts[findedPostIndex].likes.splice(likerIndex);
+            mainPagePosts[referencePostIndex].likes.splice(likerIndex);
+
+            localStorage.setItem(
+              "mainPagePosts",
+              JSON.stringify(mainPagePosts)
+            );
+            console.log("Main page posts =>", mainPagePosts);
+            // setPosts(mainPagePosts);
+            setLoadingTrue();
+            setLoadingFalse();
+            setError("");
+            handleShowPostsHomePage();
+          };
+
+          setTimeout(updatePosts, 500);
+        } else if (!findedPost.isReposted && findedPost.reposted.length === 0) {
+          console.log("Finded post !isReposted =>", findedPost);
+          console.log("Finded post index =>", findedPostIndex);
+          console.log("Finded post is not reposted and has no reference post");
+
+          const liker = mainPagePosts[findedPostIndex].likes.find(
+            (eachLiker) => {
+              return eachLiker._id === userInfo._id;
+            }
+          );
+          const likerIndex =
+            mainPagePosts[findedPostIndex].likes.indexOf(liker);
+
+          console.log("Liker =>", liker);
+          console.log("Liker index =>", likerIndex);
+
+          const updatePosts = () => {
+            mainPagePosts[findedPostIndex].likes.splice(likerIndex, 1);
+
+            localStorage.setItem(
+              "mainPagePosts",
+              JSON.stringify(mainPagePosts)
+            );
+            setPosts(mainPagePosts);
+          };
+
+          setTimeout(updatePosts, 500);
+        }
       })
       .catch((err) => {
         return err;
       });
   };
 
-  const handlePostLikesFromHomePage = (postId) => {
-    setpostId(postId);
+  const getLikerIds = (array) => {
+    return array.likes.map((eachLiker) => {
+      return eachLiker._id;
+    });
+  };
 
+  const handlePostLikesFromHomePage = (postId) => {
+    console.log("You added to favorite");
+    setpostId(postId);
     axios
       .post(
         `${API_URL}/favorite`,
@@ -166,11 +300,94 @@ function MainPage() {
           },
         }
       )
-      .then(() => {
-        setLoadingTrue();
-        setLoadingFalse();
-        handleShowPostsHomePage();
-        setError("");
+      .then((response) => {
+        console.log("Response after adding favorite =>", response);
+        const mainPagePosts = JSON.parse(localStorage.getItem("mainPagePosts"));
+        const findedPost = mainPagePosts.find((eachPost) => {
+          return eachPost._id === postId;
+        });
+
+        const findedPostIndex = mainPagePosts.indexOf(findedPost);
+
+        console.log("Finded post =>", findedPost);
+        console.log("Finded post index =>", findedPostIndex);
+        if (findedPost.isReposted) {
+          console.log("Finded post isReposted =>", findedPost);
+          console.log("Finded post index =>", findedPostIndex);
+
+          const originalPostId =
+            mainPagePosts[findedPostIndex].repostedFromThisOriginalPost[0]._id;
+          const originalPost = mainPagePosts.find((eachPost) => {
+            return eachPost._id === originalPostId;
+          });
+          const originalPostIndex = mainPagePosts.indexOf(originalPost);
+
+          console.log("Finded original post  =>", originalPost);
+
+          console.log("Finded original post index =>", originalPostIndex);
+          const updatePosts = () => {
+            mainPagePosts[findedPostIndex].likes.unshift(userInfo);
+            mainPagePosts[originalPostIndex].likes.unshift(userInfo);
+
+            localStorage.setItem(
+              "mainPagePosts",
+              JSON.stringify(mainPagePosts)
+            );
+            setPosts(mainPagePosts);
+          };
+
+          setTimeout(updatePosts, 500);
+        } else if (!findedPost.isReposted && findedPost.reposted.length > 0) {
+          console.log("Here is working !");
+          console.log("Finded post !isReposted =>", findedPost);
+          console.log("Finded post index =>", findedPostIndex);
+          console.log(
+            "Finded post is not reposted and has reference post because of its length more than 0"
+          );
+
+          const referencePost = mainPagePosts.find((eachPost) => {
+            return eachPost.repostedFromThisOriginalPost[0]
+              ? eachPost.repostedFromThisOriginalPost[0]._id === postId
+              : null;
+          });
+          const referencePostIndex = mainPagePosts.indexOf(referencePost);
+
+          console.log("Reference post =>", referencePost);
+          console.log("Reference post index =>", referencePostIndex);
+
+          const updatePosts = () => {
+            mainPagePosts[findedPostIndex].likes.unshift(userInfo);
+            mainPagePosts[referencePostIndex].likes.unshift(userInfo);
+
+            localStorage.setItem(
+              "mainPagePosts",
+              JSON.stringify(mainPagePosts)
+            );
+            setPosts(mainPagePosts);
+          };
+
+          setTimeout(updatePosts, 500);
+        } else if (!findedPost.isReposted && findedPost.reposted.length === 0) {
+          console.log("Finded post !isReposted =>", findedPost);
+          console.log("Finded post index =>", findedPostIndex);
+          console.log("Finded post is not reposted and has no reference post");
+
+          const updatePosts = () => {
+            mainPagePosts[findedPostIndex].likes.unshift(userInfo);
+
+            localStorage.setItem(
+              "mainPagePosts",
+              JSON.stringify(mainPagePosts)
+            );
+            setPosts(mainPagePosts);
+          };
+
+          setTimeout(updatePosts, 500);
+        }
+        // setLoadingTrue();
+        // setLoadingFalse();
+        // setError("");
+        // handleShowPostsHomePage();
       })
       .catch((error) => {
         const { errorMessage } = error.response.data;
@@ -277,7 +494,8 @@ function MainPage() {
           },
         }
       )
-      .then(() => {
+      .then((response) => {
+        console.log("Am i getting created post =>", response);
         const posts = JSON.parse(localStorage.getItem("mainPagePosts"));
 
         const findedPost = posts.find((element) => {
@@ -286,11 +504,16 @@ function MainPage() {
 
         const index = posts.indexOf(findedPost);
 
-        posts[index].reposted.unshift(userInfo);
+        const updatePosts = () => {
+          setshouldHide(false);
+          setPosts(posts);
+          handleShowPostsHomePage();
+          posts[index].reposted.unshift(userInfo);
 
-        localStorage.setItem("mainPagePosts", JSON.stringify(posts));
-        setshouldHide(false);
-        setPosts(posts);
+          localStorage.setItem("mainPagePosts", JSON.stringify(posts));
+        };
+
+        setTimeout(updatePosts, 500);
 
         console.log("AFTER REPOST CURRENT STATE RENDERED POSTS =>", posts);
       })
@@ -308,8 +531,6 @@ function MainPage() {
       setPosts
     );
   };
-
-  console.log("POSTS =>", posts);
 
   const closeImage = () => {
     setImage("");
@@ -382,33 +603,33 @@ function MainPage() {
     return count;
   };
 
-  console.log(checkIfFavoriteNotitificationIsNotReaded(userInfo.notifications));
-  console.log(checkIfRepostNotitificationIsNotReaded(userInfo.notifications));
-  console.log(checkIfCommentNotitificationIsNotReaded(userInfo.notifications));
+  // console.log(checkIfFavoriteNotitificationIsNotReaded(userInfo.notifications));
+  // console.log(checkIfRepostNotitificationIsNotReaded(userInfo.notifications));
+  // console.log(checkIfCommentNotitificationIsNotReaded(userInfo.notifications));
 
-  const getTotalLengthOfNotifications = () => {
-    const checkFavoritesNotReadedYetInsideNotifications =
-      checkIfFavoriteNotitificationIsNotReaded(userInfo.notifications);
-    const checkRepostsNotReadedYetInsideNotifications =
-      checkIfRepostNotitificationIsNotReaded(userInfo.notifications);
-    const checkCommentsNotReadedYetInsideNotifications =
-      checkIfCommentNotitificationIsNotReaded(userInfo.notifications);
+  // const getTotalLengthOfNotifications = () => {
+  //   const checkFavoritesNotReadedYetInsideNotifications =
+  //     checkIfFavoriteNotitificationIsNotReaded(userInfo.notifications);
+  //   const checkRepostsNotReadedYetInsideNotifications =
+  //     checkIfRepostNotitificationIsNotReaded(userInfo.notifications);
+  //   const checkCommentsNotReadedYetInsideNotifications =
+  //     checkIfCommentNotitificationIsNotReaded(userInfo.notifications);
 
-    if (
-      checkIfFavoriteNotitificationIsNotReaded(userInfo.notifications) ||
-      checkIfRepostNotitificationIsNotReaded(userInfo.notifications) ||
-      checkIfCommentNotitificationIsNotReaded(userInfo.notifications)
-    ) {
-      return `${
-        checkFavoritesNotReadedYetInsideNotifications +
-        checkRepostsNotReadedYetInsideNotifications +
-        checkCommentsNotReadedYetInsideNotifications
-      }`;
-    } else {
-      return "";
-    }
-  };
-  console.log(getTotalLengthOfNotifications());
+  //   if (
+  //     checkIfFavoriteNotitificationIsNotReaded(userInfo.notifications) ||
+  //     checkIfRepostNotitificationIsNotReaded(userInfo.notifications) ||
+  //     checkIfCommentNotitificationIsNotReaded(userInfo.notifications)
+  //   ) {
+  //     return `${
+  //       checkFavoritesNotReadedYetInsideNotifications +
+  //       checkRepostsNotReadedYetInsideNotifications +
+  //       checkCommentsNotReadedYetInsideNotifications
+  //     }`;
+  //   } else {
+  //     return "";
+  //   }
+  // };
+  // console.log(getTotalLengthOfNotifications());
   //  NOTE finish to check calculation the length according isReaded value
 
   // NOTE start to check get all the notifications from backend api endpoint
@@ -429,15 +650,6 @@ function MainPage() {
       });
   };
   // NOTE finish to check get all the notifications from backend api endpoint
-  console.log("POSTS =>", posts);
-
-  console.log("LET'S SEE THE NOTIFICATIONS =>", notifications);
-  useEffect(() => {
-    console.log("POSTS =>", posts);
-
-    setshouldHide(true);
-    handleShowPostsHomePage();
-  }, []);
 
   const getRepostedIds = (array) => {
     return array.reposted.map((eachRepost) => {
@@ -1287,7 +1499,7 @@ function MainPage() {
                         {/* finish to check */}
 
                         <div className="p-0">
-                          {post.likes.includes(userInfo._id) ? (
+                          {getLikerIds(post).includes(userInfo._id) ? (
                             <div>
                               <svg
                                 onClick={() =>

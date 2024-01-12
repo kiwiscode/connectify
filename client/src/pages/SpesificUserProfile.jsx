@@ -85,18 +85,21 @@ function SpesificUserProfile() {
           JSON.stringify(response.data.favorites)
         );
 
-        const profileInfoFavorites = JSON.parse(
-          localStorage.getItem("profileInfoFavorites")
-        );
-        console.log("Favorites =>", response);
+        console.log("Favorites =>", response.data.favorites);
         setFavoriteWindow("");
         setPostWindow("hide");
-        setFavorites(profileInfoFavorites);
+        setFavorites(response.data.favorites);
         setProfileInfo(response.data);
       })
       .catch((err) => {
         return err;
       });
+  };
+
+  const getRepostedIds = (array) => {
+    return array.reposted.map((eachRepost) => {
+      return eachRepost._id;
+    });
   };
 
   useEffect(() => {
@@ -169,9 +172,13 @@ function SpesificUserProfile() {
 
       .then(() => {
         if (favoriteWindow === "") {
-          handleShowSpesificUserProfilePageFavorites();
+          setTimeout(() => {
+            handleShowSpesificUserProfilePageFavorites();
+          }, 500);
         } else if (postsWindow === "") {
-          handleShowSpesificUserProfilePagePosts();
+          setTimeout(() => {
+            handleShowSpesificUserProfilePagePosts();
+          }, 500);
         }
         setError("");
       })
@@ -195,9 +202,13 @@ function SpesificUserProfile() {
       )
       .then(() => {
         if (favoriteWindow === "") {
-          handleShowSpesificUserProfilePageFavorites();
+          setTimeout(() => {
+            handleShowSpesificUserProfilePageFavorites();
+          }, 500);
         } else if (postsWindow === "") {
-          handleShowSpesificUserProfilePagePosts();
+          setTimeout(() => {
+            handleShowSpesificUserProfilePagePosts();
+          }, 500);
         }
         setError("");
       })
@@ -240,6 +251,7 @@ function SpesificUserProfile() {
   };
 
   const handleRepost = (postId) => {
+    console.log("Clicked Post id =>", postId);
     axios
       .post(
         `${API_URL}/repost`,
@@ -250,11 +262,16 @@ function SpesificUserProfile() {
           },
         }
       )
-      .then(() => {
+      .then((response) => {
         // start to check
-        // repost process for spesific user profile posts
-
+        // start to check
+        // repost process for  user profile posts
         if (postsWindow === "hide") {
+          console.log(
+            "Am i seeing the new created reference post =>",
+            response
+          );
+
           const profileInfoFavorites = JSON.parse(
             localStorage.getItem("profileInfoFavorites")
           );
@@ -264,43 +281,237 @@ function SpesificUserProfile() {
           });
 
           const index2 = favorites.indexOf(findedFavorite);
-          profileInfoFavorites[index2].reposted.unshift(userInfo._id);
+          console.log("LINE 1 WORKING");
+          profileInfoFavorites[index2].reposted.unshift(userInfo);
+
+          console.log("LINE 2 WORKING");
 
           localStorage.setItem(
-            "profileFavorites",
+            "profileInfoFavorites",
             JSON.stringify(profileInfoFavorites)
           );
+          console.log("LINE 3 WORKING");
 
-          setFavorites(profileInfoFavorites);
+          setTimeout(() => {
+            setFavorites(profileInfoFavorites);
+          }, 500);
+
           // finish to check
-        } else if (favoriteWindow === "hide") {
-          const profileInfoPosts = JSON.parse(
+        } else if (
+          favoriteWindow === "hide" &&
+          profileInfo._id === userInfo._id
+        ) {
+          const updateSpesificProfilePosts = () => {
+            const specificProfilePosts = JSON.parse(
+              localStorage.getItem("profileInfoPosts")
+            );
+            console.log(
+              "All spesific user profile posts =>",
+              specificProfilePosts
+            );
+            const findClickedPost = specificProfilePosts.find((eachPost) => {
+              return eachPost._id === postId;
+            });
+
+            const findClickedPostIndex =
+              specificProfilePosts.indexOf(findClickedPost);
+
+            if (
+              findClickedPost
+                ? findClickedPost.reposted.length === 0 &&
+                  !findClickedPost.isReposted
+                : null
+            ) {
+              console.log("Now we are here first !!!");
+              specificProfilePosts[findClickedPostIndex].reposted.unshift(
+                userInfo
+              );
+              specificProfilePosts.unshift(response.data.newPost);
+
+              const newPostIndex = specificProfilePosts.indexOf(
+                response.data.newPost
+              );
+
+              specificProfilePosts[newPostIndex].reposted.unshift(userInfo);
+              console.log("New post index =>", newPostIndex);
+              console.log(
+                "Spesific profile posts updated =>",
+                specificProfilePosts
+              );
+
+              console.log("Clicked post =>", findClickedPost);
+              console.log("Clicked post index =>", findClickedPostIndex);
+
+              localStorage.setItem(
+                "profileInfoPosts",
+                JSON.stringify(specificProfilePosts)
+              );
+
+              setprofileInfoPosts(specificProfilePosts);
+            } else if (
+              findClickedPost
+                ? findClickedPost.reposted.length === 1 ||
+                  (findClickedPost.reposted.length > 1 &&
+                    !findClickedPost.isReposted)
+                : null
+            ) {
+              console.log("Now we are here second !!!");
+
+              specificProfilePosts[findClickedPostIndex].reposted.unshift(
+                userInfo
+              );
+              specificProfilePosts.unshift(response.data.newPost);
+
+              localStorage.setItem(
+                "profileInfoPosts",
+                JSON.stringify(specificProfilePosts)
+              );
+
+              setprofileInfoPosts(specificProfilePosts);
+            }
+          };
+
+          setTimeout(updateSpesificProfilePosts, 500);
+        } else if (
+          favoriteWindow === "hide" &&
+          profileInfo._id !== userInfo._id
+        ) {
+          console.log(
+            "Now we are here , you are checking someone elses spesific profile !!!"
+          );
+          // burada sadece reposted.lengthler ile ilgileniyoruz çünkü başkasının profilindeyiz ...
+          const spesificProfilePosts = JSON.parse(
             localStorage.getItem("profileInfoPosts")
           );
 
-          const findedPost = profileInfoPosts.find((element) => {
-            return element._id === postId;
+          const findedPost = spesificProfilePosts.find((eachPost) => {
+            return eachPost._id === postId;
           });
 
-          const index = profileInfoPosts.indexOf(findedPost);
+          const findedPostIndex = spesificProfilePosts.indexOf(findedPost);
 
-          profileInfoPosts[index].reposted.unshift(userInfo._id);
+          if (
+            findedPost.isReposted &&
+            findedPost.userId._id === profileInfo._id
+          ) {
+            console.log(
+              "This post reposted from user hisself from one of his posts"
+            );
 
-          localStorage.setItem(
-            "profileInfoPosts",
-            JSON.stringify(profileInfoPosts)
-          );
+            const originalPost = spesificProfilePosts.find((eachPost) => {
+              return (
+                eachPost._id === findedPost.repostedFromThisOriginalPost[0]._id
+              );
+            });
 
-          setprofileInfoPosts(profileInfoPosts);
-        } else {
-          return;
+            const originalPostIndex =
+              spesificProfilePosts.indexOf(originalPost);
+
+            const updateSpesificProfilePosts = () => {
+              spesificProfilePosts[findedPostIndex].reposted.unshift(userInfo);
+              spesificProfilePosts[originalPostIndex].reposted.unshift(
+                userInfo
+              );
+              localStorage.setItem(
+                "profileInfoPosts",
+                JSON.stringify(spesificProfilePosts)
+              );
+
+              setprofileInfoPosts(spesificProfilePosts);
+            };
+
+            setTimeout(updateSpesificProfilePosts, 500);
+          } else if (
+            findedPost.isReposted &&
+            findedPost.userId._id !== profileInfo._id &&
+            findedPost.reposted.length > 0
+          ) {
+            console.log(
+              "This post reposted from user itself from a different user"
+            );
+
+            const updateSpesificProfilePosts = () => {
+              spesificProfilePosts[findedPostIndex].reposted.unshift(userInfo);
+
+              localStorage.setItem(
+                "profileInfoPosts",
+                JSON.stringify(spesificProfilePosts)
+              );
+
+              setprofileInfoPosts(spesificProfilePosts);
+            };
+
+            setTimeout(updateSpesificProfilePosts, 500);
+          } else if (
+            !findedPost.isReposted &&
+            findedPost.userId._id === profileInfo._id &&
+            findedPost.reposted.length === 0
+          ) {
+            console.log(
+              "This post just a post from user itself has no repost..."
+            );
+            const updateSpesificProfilePosts = () => {
+              spesificProfilePosts[findedPostIndex].reposted.unshift(userInfo);
+
+              localStorage.setItem(
+                "profileInfoPosts",
+                JSON.stringify(spesificProfilePosts)
+              );
+
+              setprofileInfoPosts(spesificProfilePosts);
+            };
+
+            setTimeout(updateSpesificProfilePosts, 500);
+          } else if (
+            !findedPost.isReposted &&
+            findedPost.userId._id === profileInfo._id &&
+            findedPost.reposted.length > 0
+          ) {
+            console.log(
+              "This post just a post from user itself has a reference post because got reposted from user itself and repost.length greater than 0..."
+            );
+
+            console.log("original post Id =>", postId);
+            console.log(
+              "reference post Id =>",
+              spesificProfilePosts[2].repostedFromThisOriginalPost[0]._id
+            );
+
+            const referencePost = spesificProfilePosts.find((eachPost) => {
+              return eachPost.repostedFromThisOriginalPost[0]
+                ? eachPost.repostedFromThisOriginalPost[0]._id ===
+                    findedPost._id
+                : null;
+            });
+
+            const referencePostIndex =
+              spesificProfilePosts.indexOf(referencePost);
+            console.log("Reference post =>", referencePost);
+            console.log("Reference post index =>", referencePostIndex);
+
+            const updateSpesificProfilePosts = () => {
+              spesificProfilePosts[findedPostIndex].reposted.unshift(userInfo);
+              spesificProfilePosts[referencePostIndex].reposted.unshift(
+                userInfo
+              );
+
+              localStorage.setItem(
+                "profileInfoPosts",
+                JSON.stringify(spesificProfilePosts)
+              );
+
+              setprofileInfoPosts(spesificProfilePosts);
+            };
+
+            setTimeout(updateSpesificProfilePosts, 500);
+          }
         }
       })
       .catch((error) => {
         console.log(error);
       });
   };
-
+  console.log(profileInfo);
   const handleDeleteRepostSpesificProfilePage = (postId) => {
     axios
       .post(
@@ -313,9 +524,529 @@ function SpesificUserProfile() {
         }
       )
       .then(() => {
-        console.log("You deleted repost!");
+        console.log("You deleted repost !");
+
+        if (postsWindow !== "hide") {
+          const spesificProfilePosts = JSON.parse(
+            localStorage.getItem("profileInfoPosts")
+          );
+
+          const findedPost = spesificProfilePosts.find((eachPost) => {
+            return eachPost._id === postId;
+          });
+
+          const findedPostIndex = spesificProfilePosts.indexOf(findedPost);
+
+          console.log("Finded post index =>", findedPostIndex);
+          if (profileInfo._id === userInfo._id) {
+            if (findedPost ? findedPost.userId._id !== userInfo._id : null) {
+              console.log("You reposted this post from another user !");
+
+              const updateProfilePosts = () => {
+                spesificProfilePosts.splice(findedPostIndex, 1);
+                localStorage.setItem(
+                  "profileInfoPosts",
+                  JSON.stringify(spesificProfilePosts)
+                );
+
+                setprofileInfoPosts(spesificProfilePosts);
+              };
+
+              setTimeout(updateProfilePosts, 500);
+            } else if (
+              findedPost ? findedPost.userId._id === userInfo._id : null
+            ) {
+              if (findedPost.isReposted) {
+                console.log(
+                  "This is your post that you reposted from yourself and this is reference post!"
+                );
+                if (findedPost.reposted.length === 1) {
+                  const updateProfilePosts = () => {
+                    console.log("The length of reposted is only 1 ");
+
+                    const originalPost = spesificProfilePosts.find(
+                      (eachPost) => {
+                        return (
+                          eachPost._id ===
+                          findedPost.repostedFromThisOriginalPost[0]._id
+                        );
+                      }
+                    );
+
+                    console.log(
+                      "Reference post =>",
+                      findedPost,
+                      "Original post =>",
+                      originalPost
+                    );
+
+                    const originalPostIndex =
+                      spesificProfilePosts.indexOf(originalPost);
+
+                    console.log(
+                      "Reference post index =>",
+                      findedPostIndex,
+                      "Original post index =>",
+                      originalPostIndex
+                    );
+
+                    const originalPostReposter = spesificProfilePosts[
+                      originalPostIndex
+                    ].reposted.find((eachReposter) => {
+                      return eachReposter._id === userInfo._id;
+                    });
+                    const originalPostReposterIndex =
+                      spesificProfilePosts[originalPostIndex].reposted.indexOf(
+                        originalPostReposter
+                      );
+
+                    console.log(
+                      "Is correct reposter found it from original post ?",
+                      spesificProfilePosts[originalPostIndex].reposted[
+                        originalPostReposterIndex
+                      ]
+                    );
+                    spesificProfilePosts[originalPostIndex].reposted.splice(
+                      originalPostReposterIndex,
+                      1
+                    );
+                    spesificProfilePosts.splice(findedPostIndex, 1);
+
+                    localStorage.setItem(
+                      "profileInfoPosts",
+                      JSON.stringify(spesificProfilePosts)
+                    );
+                    setprofileInfoPosts(spesificProfilePosts);
+                  };
+
+                  setTimeout(updateProfilePosts, 500);
+                }
+                if (findedPost.reposted.length > 1) {
+                  console.log("The length of reposted is more than 1 ");
+
+                  const updateProfilePosts = () => {
+                    const originalPost = spesificProfilePosts.find(
+                      (eachPost) => {
+                        return (
+                          eachPost._id ===
+                          findedPost.repostedFromThisOriginalPost[0]._id
+                        );
+                      }
+                    );
+
+                    const originalPostIndex =
+                      spesificProfilePosts.indexOf(originalPost);
+
+                    console.log(
+                      "Original post =>",
+                      originalPost,
+                      "Original post index =>",
+                      originalPostIndex
+                    );
+
+                    const originalPostReposter = spesificProfilePosts[
+                      originalPostIndex
+                    ].reposted.find((eachReposter) => {
+                      return eachReposter._id === userInfo._id;
+                    });
+
+                    const reposterIndex =
+                      spesificProfilePosts[originalPostIndex].reposted.indexOf(
+                        originalPostReposter
+                      );
+
+                    console.log(
+                      "Original post reposter =>",
+                      originalPostReposter,
+                      "Original post reposter index =>",
+                      reposterIndex
+                    );
+
+                    spesificProfilePosts[originalPostIndex].reposted.splice(
+                      reposterIndex,
+                      1
+                    );
+                    spesificProfilePosts.splice(findedPostIndex, 1);
+
+                    localStorage.setItem(
+                      "profileInfoPosts",
+                      JSON.stringify(spesificProfilePosts)
+                    );
+                    setprofileInfoPosts(spesificProfilePosts);
+                  };
+
+                  setTimeout(updateProfilePosts, 500);
+                }
+              } else if (!findedPost.isReposted) {
+                console.log(
+                  "This is your post that you reposted this post has one reference post and this is original post!"
+                ); // find reference post
+
+                if (findedPost.reposted.length === 1) {
+                  console.log(
+                    "This line is working because reposted length is equal 1"
+                  );
+
+                  // start to check basit settimeout animation
+                  const updateProfilePosts = () => {
+                    const findOriginalPost = spesificProfilePosts.find(
+                      (eachPost) => {
+                        return (
+                          eachPost.repostedFromThisOriginalPost[0]._id ===
+                          postId
+                        );
+                      }
+                    );
+
+                    const findOriginalPostIndex =
+                      spesificProfilePosts.indexOf(findOriginalPost);
+
+                    console.log("Original post =>", findOriginalPost);
+
+                    console.log(
+                      "Original post index =>",
+                      findOriginalPostIndex
+                    );
+
+                    const reposter = findedPost.reposted.find(
+                      (eachReposter) => {
+                        return eachReposter._id === userInfo._id;
+                      }
+                    );
+
+                    const reposterIndex = findedPost.reposted.indexOf(reposter);
+                    console.log("Profile posts first", spesificProfilePosts);
+                    spesificProfilePosts[findedPostIndex].reposted.splice(
+                      reposterIndex,
+                      1
+                    );
+
+                    spesificProfilePosts.splice(findOriginalPostIndex, 1);
+                    localStorage.setItem(
+                      "profileInfoPosts",
+                      JSON.stringify(spesificProfilePosts)
+                    );
+                    console.log("Profile post updated", spesificProfilePosts);
+                    setprofileInfoPosts(spesificProfilePosts);
+                  };
+
+                  setTimeout(updateProfilePosts, 500);
+                  // finish to check basit settimeout animation
+                }
+                if (findedPost.reposted.length > 1) {
+                  console.log(
+                    "This line is working because reposted length is bigger than 1"
+                  );
+
+                  const referencePost = spesificProfilePosts.find(
+                    (eachPost) => {
+                      return (
+                        eachPost.repostedFromThisOriginalPost[0]._id === postId
+                      );
+                    }
+                  );
+                  const referecePostIndex =
+                    spesificProfilePosts.indexOf(referencePost);
+                  const reposterFromReferencePost = spesificProfilePosts[
+                    referecePostIndex
+                  ].reposted.find((eachReposter) => {
+                    return eachReposter._id === userInfo._id;
+                  });
+                  const reposterIndexFromReferencePost = spesificProfilePosts[
+                    referecePostIndex
+                  ].reposted.indexOf(reposterFromReferencePost);
+
+                  const originalPostReposter = spesificProfilePosts[
+                    findedPostIndex
+                  ].reposted.find((eachReposter) => {
+                    return eachReposter._id === userInfo._id;
+                  });
+                  const originalPostReposterIndex =
+                    spesificProfilePosts[findedPostIndex].reposted.indexOf(
+                      originalPostReposter
+                    );
+
+                  spesificProfilePosts[referecePostIndex].reposted.splice(
+                    reposterIndexFromReferencePost,
+                    1
+                  );
+                  spesificProfilePosts[findedPostIndex].reposted.splice(
+                    originalPostReposterIndex,
+                    1
+                  );
+
+                  spesificProfilePosts.splice(referecePostIndex, 1);
+
+                  // start to check basit settimeout animation
+                  const updateProfilePosts = () => {
+                    localStorage.setItem(
+                      "profileInfoPosts",
+                      JSON.stringify(spesificProfilePosts)
+                    );
+
+                    setprofileInfoPosts(spesificProfilePosts);
+                  };
+
+                  setTimeout(updateProfilePosts, 500);
+                  // finish to check basit settimeout animation
+                }
+              }
+            }
+          } else if (profileInfo._id !== userInfo._id) {
+            console.log(
+              "So now you are in a different spesific profile and want it to delete some reposts!"
+            );
+
+            const reposterIds = findedPost.reposted.map((eachReposter) => {
+              return eachReposter._id;
+            });
+
+            if (
+              findedPost
+                ? !findedPost.isReposted &&
+                  !reposterIds.includes(profileInfo._id)
+                : null
+            ) {
+              console.log("Now this line is working first ... ?");
+              const updateSpesificProfilePosts = () => {
+                const reposter = spesificProfilePosts[
+                  findedPostIndex
+                ].reposted.find((eachReposter) => {
+                  return eachReposter._id === userInfo._id;
+                });
+
+                const reposterIndex =
+                  spesificProfilePosts[findedPostIndex].reposted.indexOf(
+                    reposter
+                  );
+                spesificProfilePosts[findedPostIndex].reposted.splice(
+                  reposterIndex,
+                  1
+                );
+
+                localStorage.setItem(
+                  "profileInfoPosts",
+                  JSON.stringify(spesificProfilePosts)
+                );
+
+                setprofileInfoPosts(spesificProfilePosts);
+              };
+
+              setTimeout(updateSpesificProfilePosts, 500);
+            } else if (
+              findedPost
+                ? !findedPost.isReposted &&
+                  reposterIds.includes(profileInfo._id)
+                : null
+            ) {
+              console.log("Now this line is working second ...");
+
+              const referencePost = spesificProfilePosts.find((eachPost) => {
+                return eachPost.repostedFromThisOriginalPost[0]
+                  ? eachPost.repostedFromThisOriginalPost[0]._id === postId
+                  : null;
+              });
+
+              const referencePostIndex =
+                spesificProfilePosts.indexOf(referencePost);
+
+              console.log("Reference post =>", referencePost);
+              console.log("Reference post index =>", referencePostIndex);
+              const updateSpesificProfilePosts = () => {
+                const reposter = spesificProfilePosts[
+                  findedPostIndex
+                ].reposted.find((eachReposter) => {
+                  return eachReposter._id === userInfo._id;
+                });
+
+                const reposterIndex =
+                  spesificProfilePosts[findedPostIndex].reposted.indexOf(
+                    reposter
+                  );
+
+                spesificProfilePosts[findedPostIndex].reposted.splice(
+                  reposterIndex,
+                  1
+                );
+
+                spesificProfilePosts[referencePostIndex].reposted.splice(
+                  reposterIndex,
+                  1
+                );
+
+                localStorage.setItem(
+                  "profileInfoPosts",
+                  JSON.stringify(spesificProfilePosts)
+                );
+
+                setprofileInfoPosts(spesificProfilePosts);
+              };
+
+              setTimeout(updateSpesificProfilePosts, 500);
+            } else if (
+              findedPost.isReposted &&
+              findedPost.userId._id !== profileInfo._id
+            ) {
+              console.log(
+                "This line is working these are the posts profile owner reposted from another users !!!"
+              );
+
+              const updateSpesificProfilePosts = () => {
+                const reposter = spesificProfilePosts[
+                  findedPostIndex
+                ].reposted.find((eachReposter) => {
+                  return eachReposter._id === userInfo._id;
+                });
+
+                const reposterIndex =
+                  spesificProfilePosts[findedPostIndex].reposted.indexOf(
+                    reposter
+                  );
+
+                spesificProfilePosts[findedPostIndex].reposted.splice(
+                  reposterIndex,
+                  1
+                );
+
+                localStorage.setItem(
+                  "profileInfoPosts",
+                  JSON.stringify(spesificProfilePosts)
+                );
+
+                setprofileInfoPosts(spesificProfilePosts);
+              };
+
+              setTimeout(updateSpesificProfilePosts, 500);
+            } else if (
+              findedPost.isReposted &&
+              findedPost.userId._id === profileInfo._id
+            ) {
+              const updateSpesificProfilePosts = () => {
+                const originalPost = spesificProfilePosts.find((eachPost) => {
+                  return findedPost.repostedFromThisOriginalPost[0]
+                    ? findedPost.repostedFromThisOriginalPost[0]._id ===
+                        eachPost._id
+                    : null;
+                });
+                const originalPostIndex =
+                  spesificProfilePosts.indexOf(originalPost);
+
+                console.log("Original post =>", originalPost);
+                console.log("Original post index =>", originalPostIndex);
+                const reposter = spesificProfilePosts[
+                  findedPostIndex
+                ].reposted.find((eachReposter) => {
+                  return eachReposter._id === userInfo._id;
+                });
+
+                console.log("Reposter =>", reposter);
+                const reposterIndex =
+                  spesificProfilePosts[findedPostIndex].reposted.indexOf(
+                    reposter
+                  );
+                console.log("Reposter index =>", reposterIndex);
+
+                spesificProfilePosts[findedPostIndex].reposted.splice(
+                  reposterIndex,
+                  1
+                );
+                spesificProfilePosts[originalPostIndex].reposted.splice(
+                  reposterIndex,
+                  1
+                );
+
+                localStorage.setItem("profileInfoPosts", spesificProfilePosts);
+
+                setprofileInfoPosts(spesificProfilePosts);
+              };
+
+              setTimeout(updateSpesificProfilePosts, 500);
+              console.log(
+                "This line is working these are the posts profile owner reposted from hisself !!!"
+              );
+            }
+          }
+        }
+
+        if (favoriteWindow !== "hide") {
+          console.log(
+            "This line is working because now you are dealing with delete repost function inside favorites"
+          );
+          const profileInfoFavorites = JSON.parse(
+            localStorage.getItem("profileInfoFavorites")
+          );
+
+          const findedFavorite = profileInfoFavorites.find((eachPost) => {
+            return eachPost._id === postId;
+          });
+
+          const findedFavoriteIndex =
+            profileInfoFavorites.indexOf(findedFavorite);
+
+          console.log(
+            "Finded favorite reposted =>",
+            profileInfoFavorites[findedFavoriteIndex].reposted
+          );
+          console.log("Finded favorite index =>", findedFavoriteIndex);
+
+          const findReposter = profileInfoFavorites[
+            findedFavoriteIndex
+          ].reposted.find((eachReposter) => {
+            return eachReposter._id === userInfo._id;
+          });
+
+          const findedFavoriteReposterIndex =
+            profileInfoFavorites[findedFavoriteIndex].reposted.indexOf(
+              findReposter
+            );
+
+          if (findedFavorite ? findedFavorite.isReposted : null) {
+            console.log("This post is reposted");
+            console.log(
+              "Finded favorite reposter index =>",
+              findedFavoriteReposterIndex
+            );
+
+            const updateUserProfilePosts = () => {
+              profileInfoFavorites[findedFavoriteIndex].reposted.splice(
+                findedFavoriteReposterIndex,
+                1
+              );
+
+              localStorage.setItem(
+                "profileInfoFavorites",
+                JSON.stringify(profileInfoFavorites)
+              );
+
+              setFavorites(profileInfoFavorites);
+            };
+
+            setTimeout(updateUserProfilePosts, 500);
+          } else {
+            console.log("This post is not reposted");
+            console.log(
+              "Finded reposter index =>",
+              findedFavoriteReposterIndex
+            );
+            const updateUserProfilePosts = () => {
+              profileInfoFavorites[findedFavoriteIndex].reposted.splice(
+                findedFavoriteReposterIndex,
+                1
+              );
+
+              localStorage.setItem(
+                "profileInfoFavorites",
+                JSON.stringify(profileInfoFavorites)
+              );
+
+              setFavorites(profileInfoFavorites);
+            };
+
+            setTimeout(updateUserProfilePosts, 500);
+          }
+        }
       })
-      .then(() => {})
+
       .catch((error) => {
         console.log(error);
       });
@@ -328,6 +1059,8 @@ function SpesificUserProfile() {
   const setLoadingFalse = () => {
     setIsLoading(false);
   };
+
+  console.log("Profile info favorites =>", favorites);
   console.log("Profile info posts =>", profileInfoPosts);
   //  NOTE start to check calculation the length according isReaded value
   const checkIfFavoriteNotitificationIsNotReaded = (array) => {
@@ -420,17 +1153,10 @@ function SpesificUserProfile() {
 
   // NOTE finish to check get all the notifications from backend api endpoint
 
-  const reposterIds = profileInfoPosts.map((eachPost) => {
-    return eachPost.reposted.map((eachPostDetail) => {
-      return eachPostDetail._id;
-    });
-  });
-  const flattedIds = reposterIds.flat();
-  console.log(flattedIds);
-
   const handleGoBack = () => {
     navigate(-1);
   };
+
   return (
     <>
       <Container
@@ -661,41 +1387,43 @@ function SpesificUserProfile() {
                         )}
                       </div>
                     )}
-                    <div className="">
-                      <span style={{}}>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="25"
-                          fill="currentColor"
-                          className="bi bi-three-dots"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            stroke="black"
-                            strokeWidth="0.5"
-                            d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"
-                          />
-                        </svg>
-                      </span>
-                      <span style={{}}>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="25"
-                          fill="currentColor"
-                          className="bi bi-envelope"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            stroke="black"
-                            strokeWidth="0.5"
-                            d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"
-                          />
-                        </svg>
-                      </span>
-                      <span style={{}}>Follow</span>
-                    </div>
+                    {profileInfo._id !== userInfo._id ? (
+                      <div className="">
+                        <span style={{}}>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="25"
+                            fill="currentColor"
+                            className="bi bi-three-dots"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              stroke="black"
+                              strokeWidth="0.5"
+                              d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"
+                            />
+                          </svg>
+                        </span>
+                        <span style={{}}>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="25"
+                            fill="currentColor"
+                            className="bi bi-envelope"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              stroke="black"
+                              strokeWidth="0.5"
+                              d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"
+                            />
+                          </svg>
+                        </span>
+                        <span style={{}}>Follow</span>
+                      </div>
+                    ) : null}
                   </Stack>
 
                   {/* finish to check stack on the way  */}
@@ -712,23 +1440,25 @@ function SpesificUserProfile() {
                     <div style={{ color: "rgb(83, 100, 113)" }}>
                       @{profileInfo.username}
                       {""}{" "}
-                      <span
-                        style={{
-                          color: "rgb(83, 100, 113)",
-                          marginLeft: "4px",
-                          backgroundColor: "rgb(239, 243, 244)",
-                          fontWeight: "500",
-                          lineHeight: "12px",
-                          fontSize: "11px",
-                          paddingLeft: "4px",
-                          paddingRight: "4px",
-                          paddingBottom: "2px",
-                          paddingTop: "2px",
-                          borderRadius: "3px",
-                        }}
-                      >
-                        Follows you or not ?!
-                      </span>
+                      {profileInfo._id !== userInfo._id ? (
+                        <span
+                          style={{
+                            backgroundColor: "rgb(239, 243, 244)",
+                            color: "rgb(83, 100, 113)",
+                            marginLeft: "4px",
+                            fontWeight: "500",
+                            lineHeight: "12px",
+                            fontSize: "11px",
+                            paddingLeft: "4px",
+                            paddingRight: "4px",
+                            paddingBottom: "2px",
+                            paddingTop: "2px",
+                            borderRadius: "3px",
+                          }}
+                        >
+                          Follows you or not ?!
+                        </span>
+                      ) : null}
                     </div>
                     <div>
                       <svg
@@ -796,7 +1526,13 @@ function SpesificUserProfile() {
                           fontWeight: "400",
                         }}
                       >
-                        Followers
+                        <span>
+                          {profileInfo.followers
+                            ? profileInfo.followers.length > 1
+                              ? "Followers"
+                              : "Follower"
+                            : null}
+                        </span>
                       </span>
                     </div>
                   </div>
@@ -1223,7 +1959,7 @@ function SpesificUserProfile() {
 
                         {/* start to check */}
                         <div className="p-0">
-                          {flattedIds.includes(userInfo._id) ? (
+                          {getRepostedIds(post).includes(userInfo._id) ? (
                             <div>
                               <svg
                                 style={{
@@ -1653,7 +2389,7 @@ function SpesificUserProfile() {
                           </div>
                           {/* start to check */}
                           <div className="p-0">
-                            {flattedIds.includes(userInfo._id) ? (
+                            {getRepostedIds(favorite).includes(userInfo._id) ? (
                               <div>
                                 <svg
                                   style={{

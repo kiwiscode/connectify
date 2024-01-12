@@ -18,12 +18,12 @@ const handleGetFavorites = (req, res) => {
         model: "User",
       },
     })
-    .then((favoritesFromDataBase) => {
+    .then((userFromDataBase) => {
       console.log(
         "All the favorites from data base for spesific user =>",
-        favoritesFromDataBase
+        userFromDataBase.favorites[0]
       );
-      res.json({ favorites: favoritesFromDataBase.favorites });
+      res.json({ favorites: userFromDataBase.favorites });
     })
     .catch(() => {
       res.status(404).json({
@@ -144,12 +144,12 @@ const handleAddFavorite = (req, res) => {
               post.likes.push(user);
               post.save();
               user.favorites.push(post);
-              user.save();
               Favorite.create({
                 userId: userId,
                 postId: postId,
                 content: post,
               });
+              // user.save();
 
               // NOTE start to check send notification after adding favorite
 
@@ -201,6 +201,10 @@ const handleAddFavorite = (req, res) => {
                 });
 
               // NOTE finish to check send notification after adding favorite
+
+              return user.save().then(() => {
+                res.status(200).json("Favorite added to your favorites");
+              });
             })
             .catch((error) => {
               console.log("error => Second post not found !", error);
@@ -222,7 +226,7 @@ const handleAddFavorite = (req, res) => {
               post.likes.push(user);
               post.save();
               user.favorites.push(post);
-              user.save();
+              // user.save();
               Favorite.create({
                 userId: userId,
                 postId: postId,
@@ -279,6 +283,9 @@ const handleAddFavorite = (req, res) => {
                 });
 
               // NOTE finish to check send notification after adding favorite
+              return user.save().then(() => {
+                res.status(200).json("Favorite added to your favorites");
+              });
             })
             .catch((error) => {
               console.log("error => Original post not found !", error);

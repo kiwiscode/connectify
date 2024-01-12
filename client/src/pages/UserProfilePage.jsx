@@ -32,6 +32,29 @@ function UserProfile() {
   const [profileImage, setprofileImage] = useState("");
   const [completedProfileImage, setcompletedProfileImage] = useState(false);
 
+  const handleGetFavorites = () => {
+    axios
+      .get(`${API_URL}/favorite`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        setFavoriteWindow("");
+        setPostWindow("hide");
+
+        localStorage.setItem(
+          "profileFavorites",
+          JSON.stringify(response.data.favorites)
+        );
+        console.log("Profile favorites =>", response);
+        setFavorites(response.data.favorites);
+      })
+      .catch((err) => {
+        return err;
+      });
+  };
+
   const handleGoBack = () => {
     navigate(-1);
   };
@@ -59,7 +82,7 @@ function UserProfile() {
         setPostWindow("");
 
         localStorage.setItem(
-          "profilePosts",
+          "profilePagePosts",
           JSON.stringify(response.data.posts)
         );
         console.log("Profile posts =>", response);
@@ -116,14 +139,18 @@ function UserProfile() {
       )
       .then(() => {
         if (favoriteWindow === "") {
-          handleGetFavorites();
+          setTimeout(() => {
+            handleGetFavorites();
+          }, 500);
         } else if (postsWindow === "") {
-          handleShowPostsProfilePage();
+          setTimeout(() => {
+            handleShowPostsProfilePage();
+          }, 500);
         }
 
         const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
-        userInfo.favorites.push(postId);
+        userInfo.favorites.unshift(postId);
 
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
 
@@ -152,33 +179,14 @@ function UserProfile() {
       )
       .then(() => {
         if (favoriteWindow === "") {
-          handleGetFavorites();
+          setTimeout(() => {
+            handleGetFavorites();
+          }, 500);
         } else if (postsWindow === "") {
-          handleShowPostsProfilePage();
+          setTimeout(() => {
+            handleShowPostsProfilePage();
+          }, 500);
         }
-      })
-      .catch((err) => {
-        return err;
-      });
-  };
-
-  const handleGetFavorites = () => {
-    axios
-      .get(`${API_URL}/favorite`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        setFavoriteWindow("");
-        setPostWindow("hide");
-
-        localStorage.setItem(
-          "profileFavorites",
-          JSON.stringify(response.data.favorites)
-        );
-        console.log("Profile favorites =>", response);
-        setFavorites(response.data.favorites);
       })
       .catch((err) => {
         return err;
@@ -240,11 +248,15 @@ function UserProfile() {
           },
         }
       )
-      .then(() => {
+      .then((response) => {
         // start to check
-        // repost process for spesific user profile posts
-
+        // repost process for  user profile posts
         if (postsWindow === "hide") {
+          console.log(
+            "Am i seeing the new created reference post =>",
+            response
+          );
+
           const profileFavorites = JSON.parse(
             localStorage.getItem("profileFavorites")
           );
@@ -265,24 +277,63 @@ function UserProfile() {
           );
           console.log("LINE 3 WORKING");
 
-          setFavorites(profileFavorites);
+          setTimeout(() => {
+            setFavorites(profileFavorites);
+          }, 500);
+
           // finish to check
           console.log("LINE 4 WORKING");
         } else if (favoriteWindow === "hide") {
-          const profilePosts = JSON.parse(localStorage.getItem("profilePosts"));
+          const profilePosts = JSON.parse(
+            localStorage.getItem("profilePagePosts")
+          );
 
           const findedPost = profilePosts.find((element) => {
             return element._id === postId;
           });
 
-          console.log("Finded post => ", findedPost.reposted);
+          console.log("Finded post => ", findedPost);
           const index = profilePosts.indexOf(findedPost);
+          const updateUserProfilePosts = () => {
+            if (!findedPost.isReposted && !findedPost.reposted.length) {
+              console.log(
+                "Am i seeing the new created reference post =>",
+                response
+              );
+              profilePosts[index].reposted.unshift(userInfo);
+              profilePosts.unshift(response.data.newPost);
+              // profilePosts[0].reposted.unshift(userInfo);
+              const findedNewPost = profilePosts.find((eachPost) => {
+                return eachPost._id === response.data.newPost._id;
+              });
+              const findIndexNewPost = profilePosts.indexOf(findedNewPost);
+              profilePosts[findIndexNewPost].reposted.unshift(userInfo);
+              localStorage.setItem(
+                "profilePagePosts",
+                JSON.stringify(profilePosts)
+              );
 
-          profilePosts[index].reposted.unshift(userInfo._id);
+              setUserprofiledata(profilePosts);
+            } else if (!findedPost.isReposted && findedPost.reposted.length) {
+              console.log(
+                "Am i seeing the new created reference post 2 =>",
+                response
+              );
+              profilePosts[index].reposted.unshift(userInfo);
+              profilePosts.unshift(response.data.newPost);
 
-          localStorage.setItem("profilePosts", JSON.stringify(profilePosts));
+              localStorage.setItem(
+                "profilePagePosts",
+                JSON.stringify(profilePosts)
+              );
 
-          setUserprofiledata(profilePosts);
+              setUserprofiledata(profilePosts);
+            } else if (findedPost.isReposted && findedPost.reposted.length) {
+              console.log("Here is working right now !");
+            }
+          };
+
+          setTimeout(updateUserProfilePosts, 500);
         } else {
           return;
         }
@@ -293,7 +344,6 @@ function UserProfile() {
   };
 
   const handleDeleteRepostProfilePage = (postId) => {
-    console.log("Post id =>", postId);
     axios
       .post(
         `${API_URL}/repost/delete`,
@@ -305,45 +355,254 @@ function UserProfile() {
         }
       )
       .then(() => {
-        console.log("You deleted repost!");
+        if (postsWindow !== "hide") {
+          console.log(
+            "This line is working because now you are dealing with delete repost function inside posts"
+          );
+          console.log("You deleted repost !");
+
+          const profilePagePosts = JSON.parse(
+            localStorage.getItem("profilePagePosts")
+          );
+
+          const findedPost = profilePagePosts.find((eachPost) => {
+            return eachPost._id === postId;
+          });
+
+          const findedPostIndex = profilePagePosts.indexOf(findedPost);
+
+          console.log("Finded post index =>", findedPostIndex);
+          const findedPostReposterIndex = findedPost
+            ? findedPost.reposted.indexOf(userInfo._id)
+            : null;
+          if (findedPost ? findedPost.userId._id !== userInfo._id : null) {
+            console.log("You reposted this post from another user !");
+
+            profilePagePosts[findedPostIndex].reposted.splice(
+              findedPostReposterIndex,
+              1
+            );
+            const updateProfilePosts = () => {
+              profilePagePosts[findedPostIndex].reposted.splice(
+                findedPostReposterIndex,
+                1
+              );
+
+              profilePagePosts.splice(findedPostIndex, 1);
+              localStorage.setItem(
+                "profilePagePosts",
+                JSON.stringify(profilePagePosts)
+              );
+
+              setUserprofiledata(profilePagePosts);
+            };
+
+            setTimeout(updateProfilePosts, 500);
+          } else {
+            console.log("This is your post that you reposted !");
+            if (findedPost.isReposted) {
+              // delete reposter from original post
+              console.log(findedPost);
+
+              const originalPostId =
+                findedPost.repostedFromThisOriginalPost[0]._id;
+
+              const originalPost = profilePagePosts.find((eachPost) => {
+                return eachPost._id === originalPostId;
+              });
+
+              const originalPostIndex = profilePagePosts.indexOf(originalPost);
+
+              const reposter = profilePagePosts[
+                originalPostIndex
+              ].reposted.find((eachReposter) => {
+                return eachReposter._id === userInfo._id;
+              });
+
+              const reposterIndex =
+                profilePagePosts[originalPostIndex].reposted.indexOf(reposter);
+              console.log(
+                "Before =>",
+                profilePagePosts[originalPostIndex].reposted
+              );
+              profilePagePosts[originalPostIndex].reposted.splice(
+                reposterIndex,
+                1
+              );
+              console.log(
+                "After =>",
+                profilePagePosts[originalPostIndex].reposted
+              );
+
+              const referencePostIndex = profilePagePosts.indexOf(findedPost);
+              console.log("Reference post =>", referencePostIndex);
+
+              const referenceReposter = profilePagePosts[
+                referencePostIndex
+              ].reposted.find((eachReposter) => {
+                return eachReposter._id === userInfo._id;
+              });
+
+              const referenceReposterIndex =
+                profilePagePosts[referencePostIndex].reposted.indexOf(
+                  referenceReposter
+                );
+
+              console.log(referenceReposter);
+              console.log(referenceReposterIndex);
+
+              const updateProfilePosts = () => {
+                profilePagePosts[referencePostIndex].reposted.splice(
+                  referenceReposterIndex,
+                  1
+                );
+
+                profilePagePosts.splice(referencePostIndex, 1);
+
+                localStorage.setItem(
+                  "profilePagePosts",
+                  JSON.stringify(profilePagePosts)
+                );
+
+                setUserprofiledata(profilePagePosts);
+              };
+
+              setTimeout(updateProfilePosts, 500);
+              console.log(originalPostId);
+              console.log(originalPostIndex);
+              console.log(reposter);
+              console.log(reposterIndex);
+            } else if (!findedPost.isReposted) {
+              console.log("This post is original one");
+              // find reference post
+              const referencePost = profilePagePosts.find((eachPost) => {
+                return (
+                  eachPost.repostedFromThisOriginalPost[0]._id ===
+                  findedPost._id
+                );
+              });
+              const referencePostIndex =
+                profilePagePosts.indexOf(referencePost);
+
+              const findReposter = referencePost.reposted.find(
+                (eachReposter) => {
+                  return eachReposter._id === userInfo._id;
+                }
+              );
+
+              const reposterIndex =
+                profilePagePosts[referencePostIndex].reposted.indexOf(
+                  findReposter
+                );
+
+              console.log("Reference post =>", referencePost);
+              console.log("Reference post index =>", referencePostIndex);
+              console.log("Reposter =>", findReposter);
+              console.log("Reposter index =>", reposterIndex);
+
+              const findedPostIndex = profilePagePosts.indexOf(findedPost);
+
+              const reposter2 = profilePagePosts[findedPostIndex].reposted.find(
+                (eachReposter) => {
+                  return eachReposter._id === userInfo._id;
+                }
+              );
+
+              const reposterIndex2 =
+                profilePagePosts[findedPostIndex].reposted.indexOf(reposter2);
+
+              profilePagePosts[findedPostIndex].reposted.splice(
+                reposterIndex2,
+                1
+              );
+
+              localStorage.setItem(
+                "profilePagePosts",
+                JSON.stringify(profilePagePosts)
+              );
+              // start to check basit settimeout animation
+              const updateProfilePosts = () => {
+                profilePagePosts[referencePostIndex].reposted.splice(
+                  reposterIndex,
+                  1
+                );
+
+                profilePagePosts.splice(referencePostIndex, 1);
+
+                localStorage.setItem(
+                  "profilePagePosts",
+                  JSON.stringify(profilePagePosts)
+                );
+
+                setUserprofiledata(profilePagePosts);
+              };
+
+              setTimeout(updateProfilePosts, 500);
+              // finish to check basit settimeout animation
+            }
+          }
+        }
+
+        if (favoriteWindow !== "hide") {
+          console.log(
+            "This line is working because now you are dealing with delete repost function inside favorites"
+          );
+          const profilePageFavorites = JSON.parse(
+            localStorage.getItem("profileFavorites")
+          );
+
+          const findedFavorite = profilePageFavorites.find((eachPost) => {
+            return eachPost._id === postId;
+          });
+
+          const findedFavoriteIndex =
+            profilePageFavorites.indexOf(findedFavorite);
+
+          console.log("Finded favorite index =>", findedFavoriteIndex);
+          const findedFavoriteReposterIndex = findedFavorite
+            ? findedFavorite.reposted.indexOf(userInfo._id)
+            : null;
+          if (findedFavorite ? findedFavorite.isReposted : null) {
+            console.log("This post is reposted");
+
+            const updateUserProfilePosts = () => {
+              profilePageFavorites[findedFavoriteIndex].reposted.splice(
+                findedFavoriteReposterIndex,
+                1
+              );
+
+              localStorage.setItem(
+                "profileFavorites",
+                JSON.stringify(profilePageFavorites)
+              );
+
+              setFavorites(profilePageFavorites);
+            };
+
+            setTimeout(updateUserProfilePosts, 500);
+          } else {
+            console.log("This post is not reposted");
+            const updateUserProfilePosts = () => {
+              profilePageFavorites[findedFavoriteIndex].reposted.splice(
+                findedFavoriteReposterIndex,
+                1
+              );
+
+              localStorage.setItem(
+                "profileFavorites",
+                JSON.stringify(profilePageFavorites)
+              );
+
+              setFavorites(profilePageFavorites);
+            };
+
+            setTimeout(updateUserProfilePosts, 500);
+          }
+        }
       })
       .catch((error) => {
         console.log(error);
       });
-    //   const profilePagePosts = JSON.parse(localStorage.getItem("profilePosts"));
-
-    // const findedPost = profilePagePosts.find((eachPost) => {
-    //   return eachPost._id === postId;
-    // });
-
-    // const findedPostIndex = profilePagePosts.indexOf(findedPost);
-
-    // console.log("Finded post index =>", findedPostIndex);
-    // const findedPostReposterIndex = findedPost.reposted.indexOf(userInfo._id);
-
-    // if (findedPost.userId._id !== userInfo._id) {
-    //   console.log("You reposted this post from another user !");
-
-    //   profilePagePosts[findedPostIndex].reposted.splice(
-    //     findedPostReposterIndex,
-    //     1
-    //   );
-    //   const updateProfilePosts = () => {
-    //     profilePagePosts[findedPostIndex].reposted.splice(
-    //       findedPostReposterIndex,
-    //       1
-    //     );
-
-    //     profilePagePosts.splice(findedPostIndex, 1);
-    //     localStorage.setItem("profilePosts", JSON.stringify(profilePagePosts));
-
-    //     setUserprofiledata(profilePagePosts);
-    //   };
-
-    //   setTimeout(updateProfilePosts, 500);
-    // } else {
-    //   console.log("This is your post that you reposted !");
-    // }
   };
 
   const handleImage = (e) => {
@@ -485,6 +744,13 @@ function UserProfile() {
     }
   };
   console.log(getTotalLengthOfNotifications());
+
+  const getRepostedIds = (array) => {
+    return array.reposted.map((eachRepost) => {
+      return eachRepost._id;
+    });
+  };
+
   //  NOTE finish to check calculation the length according isReaded value
 
   useEffect(() => {
@@ -494,26 +760,26 @@ function UserProfile() {
       handleShowPostsProfilePage();
     }
     changeProfileImage();
-  }, [profileImage, postsWindow, favoriteWindow, userprofiledata]);
+  }, [profileImage, postsWindow, favoriteWindow]);
 
-  console.log("NOTIFICATIONS =>", notifications);
+  // console.log("NOTIFICATIONS =>", notifications);
   // NOTE start to check get all the notifications from backend api endpoint
-  const showNotifications = () => {
-    setshowNotificationColumn(true);
-    axios
-      .get(`${API_URL}/notifications`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        console.log(response.data.notifications);
-        setNotifications(response.data.notifications);
-      })
-      .catch(() => {
-        console.log(error);
-      });
-  };
+  // const showNotifications = () => {
+  //   setshowNotificationColumn(true);
+  //   axios
+  //     .get(`${API_URL}/notifications`, {
+  //       headers: {
+  //         Authorization: `Bearer ${getToken()}`,
+  //       },
+  //     })
+  //     .then((response) => {
+  //       console.log(response.data.notifications);
+  //       setNotifications(response.data.notifications);
+  //     })
+  //     .catch(() => {
+  //       console.log(error);
+  //     });
+  // };
   // NOTE finish to check get all the notifications from backend api endpoint
 
   return (
@@ -959,7 +1225,8 @@ function UserProfile() {
                       }}
                     ></Row>
 
-                    {post.reposted.includes(userInfo._id) && post.isReposted ? (
+                    {getRepostedIds(post).includes(userInfo._id) &&
+                    post.isReposted ? (
                       <svg
                         style={{
                           marginLeft: "20px",
@@ -981,7 +1248,8 @@ function UserProfile() {
                         </g>
                       </svg>
                     ) : null}
-                    {post.reposted.includes(userInfo._id) && post.isReposted ? (
+                    {getRepostedIds(post).includes(userInfo._id) &&
+                    post.isReposted ? (
                       <span
                         style={{
                           fontSize: "13px",
@@ -1264,7 +1532,7 @@ function UserProfile() {
 
                         {/* start to check */}
                         <div className="p-0">
-                          {post.reposted.includes(userInfo._id) ? (
+                          {getRepostedIds(post).includes(userInfo._id) ? (
                             <svg
                               style={{
                                 cursor: "pointer",
@@ -1312,9 +1580,9 @@ function UserProfile() {
                             </svg>
                           )}
 
-                          {post.reposted.includes(userInfo._id) ? (
+                          {getRepostedIds(post).includes(userInfo._id) ? (
                             <span
-                              className="post-description keyframetest"
+                              className="post-description"
                               style={{
                                 color: "rgb(0, 186, 124)",
                               }}

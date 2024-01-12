@@ -54,7 +54,7 @@ const UserProvider = ({ children }) => {
     localStorage.removeItem("profileInfoPosts");
     localStorage.removeItem("profileInfoFavorites");
     localStorage.removeItem("profileFavorites");
-    localStorage.removeItem("profilePosts");
+    localStorage.removeItem("profilePagePosts");
     localStorage.removeItem("mainPagePosts");
   };
 
