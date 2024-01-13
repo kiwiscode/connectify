@@ -10,6 +10,10 @@ import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNaviga
 import ResponsiveNavigationBarTop from "../components/Navbar/ResponsiveNavigationTop";
 import deleteRepost from "../utils/repostFunctions";
 
+// socket io 2 client start to check
+import { io } from "socket.io-client";
+// socket io 2 client finish to check
+
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -40,12 +44,44 @@ function MainPage() {
   const [showNotificationColumn, setshowNotificationColumn] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [image, setImage] = useState("");
+
+  // socket io 1 client start to check
+  const [socket, setSocket] = useState(null);
+  const [user, setUser] = useState("");
+  // socket io 1 client finish to check
+
   console.log("POSTS =>", posts);
 
   useEffect(() => {
     setshouldHide(true);
     handleShowPostsHomePage();
+
+    // socket io 3 client start to check
+    setSocket(io(`${API_URL}`));
+    // socket io 3 client finish to check
   }, []);
+
+  // socket io 4 client start to check
+  useEffect(() => {
+    socket?.emit("newUser", user);
+
+    socket.on("getNotification", (data) => {
+      console.log("Data =>", data);
+      setNotifications((prev) => [...prev, data]);
+    });
+  }, [socket, user]);
+  // socket io 4 client finish to check
+
+  // socket io 5 client start to check
+  const handleNotification = (post, socket, user, type) => {
+    type === 1 && setLiked(true);
+    socket.emit("sendNotification", {
+      senderName: userInfo.username,
+      receiverName: post.userId.username,
+      type: type,
+    });
+  };
+  // socket io 5 client finish to check
 
   //handle and convert it in base 64
   const handleImage = (e) => {
