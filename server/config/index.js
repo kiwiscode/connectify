@@ -5,6 +5,7 @@ const { Server } = require("socket.io");
 const cors = require("cors");
 const User = require("../models/User.model");
 const Chat = require("../models/Chat.model");
+const Post = require("../models/Post.model");
 const { default: mongoose } = require("mongoose");
 module.exports = (app) => {
   // socket io will be implement here !!!
@@ -554,6 +555,37 @@ module.exports = (app) => {
         // finish to check INFO NOTE chat starting
       });
     });
+
+    // start to check real time notification
+    let onlineUsers = [];
+
+    const addNewUser = (username, socketId) => {
+      !onlineUsers.some((user) => user.username === username) &&
+        onlineUsers.push({ username, socketId });
+    };
+
+    // IMPORTANT
+    //  const removeUser = (socketId) => {
+    //    onlineUsers = onlineUsers.filter((user) => user.socketId !== socketId);
+    //  };
+
+    const getUser = (username) => {
+      return onlineUsers.find((user) => user.username === username);
+    };
+
+    socket.on("newUser", (username) => {
+      addNewUser(username, socket.id);
+    });
+
+    socket.on("sendNotification", ({ senderName, receiverName, type }) => {
+      const receiver = getUser(receiverName);
+      io.to(receiver.socketId).emit("getNotification", {
+        senderName,
+        type,
+      });
+    });
+
+    // finish to check real time notification
 
     socket.on("disconnect", () => {
       console.log("User Disconnected", socket.id);
