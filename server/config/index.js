@@ -565,29 +565,43 @@ module.exports = (app) => {
     };
 
     // IMPORTANT
-    //  const removeUser = (socketId) => {
-    //    onlineUsers = onlineUsers.filter((user) => user.socketId !== socketId);
-    //  };
+    const removeUser = (socketId) => {
+      onlineUsers = onlineUsers.filter((user) => user.socketId !== socketId);
+    };
 
     const getUser = (username) => {
+      console.log("Did you get the correct user =>", username);
+      console.log("Online users =>", onlineUsers);
+      console.log(onlineUsers.find((user) => user.username === username));
       return onlineUsers.find((user) => user.username === username);
     };
 
-    socket.on("newUser", (username) => {
-      addNewUser(username, socket.id);
+    socket.on("newUser", (userInfo) => {
+      console.log("Username =>", userInfo.username);
+      addNewUser(userInfo.username, socket.id);
+
+      console.log("Online users =>", onlineUsers);
     });
 
     socket.on("sendNotification", ({ senderName, receiverName, type }) => {
       const receiver = getUser(receiverName);
-      io.to(receiver.socketId).emit("getNotification", {
-        senderName,
-        type,
-      });
+      console.log("Receiver =>", receiver);
+      if (receiver && receiver.socketId) {
+        console.log("Receiver =>", receiver);
+        io.to(receiver.socketId).emit("getNotification", {
+          senderName,
+          receiverName,
+          type,
+        });
+      } else {
+        console.error("User not found or offline.");
+      }
     });
 
     // finish to check real time notification
 
     socket.on("disconnect", () => {
+      // removeUser(socket.id);
       console.log("User Disconnected", socket.id);
     });
   });

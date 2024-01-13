@@ -11,7 +11,7 @@ import ResponsiveNavigationBarTop from "../components/Navbar/ResponsiveNavigatio
 import deleteRepost from "../utils/repostFunctions";
 
 // socket io 2 client start to check
-import { io } from "socket.io-client";
+import io from "socket.io-client";
 // socket io 2 client finish to check
 
 // when working on local version
@@ -19,6 +19,8 @@ const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
+
+const socket = io.connect(API_URL);
 
 function MainPage() {
   // rendering page after redirectiring for fetching data without problem ! if you need to fetch data after you redirect or navigate to user to the page (it can work pretty good on your navigation bar)this lines of code is pretty useful
@@ -46,35 +48,31 @@ function MainPage() {
   const [image, setImage] = useState("");
 
   // socket io 1 client start to check
-  const [socket, setSocket] = useState(null);
-  const [user, setUser] = useState("");
+  const [liked, setLiked] = useState("");
+  const [notificationTest, setnotificationTest] = useState([]);
   // socket io 1 client finish to check
 
   console.log("POSTS =>", posts);
 
+  // socket io 4 client start to check
+  useEffect(() => {
+    socket?.emit("newUser", userInfo);
+  }, [socket, userInfo]);
+  // socket io 4 client finish to check
+
   useEffect(() => {
     setshouldHide(true);
     handleShowPostsHomePage();
-
-    // socket io 3 client start to check
-    setSocket(io(`${API_URL}`));
-    // socket io 3 client finish to check
-  }, []);
-
-  // socket io 4 client start to check
-  useEffect(() => {
-    socket?.emit("newUser", user);
-
     socket.on("getNotification", (data) => {
       console.log("Data =>", data);
-      setNotifications((prev) => [...prev, data]);
+      setnotificationTest((prev) => [...prev, data]);
     });
-  }, [socket, user]);
-  // socket io 4 client finish to check
+  }, [socket]);
 
   // socket io 5 client start to check
-  const handleNotification = (post, socket, user, type) => {
-    type === 1 && setLiked(true);
+  const handleNotification = (post, userInfo, type) => {
+    console.log("Sending notification to:", post.userId.username);
+
     socket.emit("sendNotification", {
       senderName: userInfo.username,
       receiverName: post.userId.username,
@@ -326,6 +324,10 @@ function MainPage() {
   const handlePostLikesFromHomePage = (postId) => {
     console.log("You added to favorite");
     setpostId(postId);
+
+    // socket io test start to check
+    setLiked("liked");
+    // socket io test finish to check
     axios
       .post(
         `${API_URL}/favorite`,
@@ -342,6 +344,9 @@ function MainPage() {
         const findedPost = mainPagePosts.find((eachPost) => {
           return eachPost._id === postId;
         });
+        // socket io test start to check
+        handleNotification(findedPost, userInfo, liked);
+        // socket io test finish to check
 
         const findedPostIndex = mainPagePosts.indexOf(findedPost);
 
@@ -1572,9 +1577,12 @@ function MainPage() {
                             <div>
                               {" "}
                               <svg
+                                // real time notification start to check test
                                 onClick={() =>
                                   handlePostLikesFromHomePage(post._id)
                                 }
+                                // real time notification finish to check test
+
                                 width={`${1.25}em`}
                                 height={`${1.25}em`}
                                 viewBox="0 0 24 24"
