@@ -23,6 +23,7 @@ function MessagesPage() {
     navigate("/messages");
     window.location.reload();
   };
+
   // finish to check
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -36,13 +37,17 @@ function MessagesPage() {
   const [filteredRooms, setfilteredRooms] = useState([]);
 
   useEffect(() => {
+    console.log("Messages page working inside use effect 1!");
     socket.emit("get_spesific_user", userInfo);
 
     // Component unmount olduğunda temizlik yap
-    return () => {
-      socket.disconnect();
-    };
+    // return () => {
+    //   socket.disconnect();
+    // };
   }, []);
+
+  console.log("Messages page working outside use effect 2!");
+
   socket.on("receive_spesific_user_message_rooms", (data) => {
     console.log("Received active user message rooms => ", data);
     setfilteredRooms(data.messages);
