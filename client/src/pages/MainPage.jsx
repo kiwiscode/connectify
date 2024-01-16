@@ -50,13 +50,15 @@ function MainPage() {
   // socket io 1 client start to check
   const [liked, setLiked] = useState("");
   const [notificationTest, setnotificationTest] = useState([]);
+  const [notificationText, setnotificationText] = useState([]);
   // socket io 1 client finish to check
 
   console.log("POSTS =>", posts);
 
   // socket io 4 client start to check
   useEffect(() => {
-    socket?.emit("newUser", userInfo);
+    // socket?.emit("newUser", userInfo);
+    socket.emit("setUsername", userInfo.username);
   }, [socket, userInfo]);
   // socket io 4 client finish to check
 
@@ -67,8 +69,20 @@ function MainPage() {
       console.log("Data =>", data);
       setnotificationTest((prev) => [...prev, data]);
     });
+
+    socket.on("getText", (data) => {
+      console.log("Data get text =>", data);
+      setnotificationText(data);
+    });
+
+    return () => {
+      // Clean up event listeners
+      socket.off("getText");
+    };
   }, [socket]);
 
+  console.log("Notification test =>", notificationTest);
+  console.log("Notification text =>", notificationText);
   // socket io 5 client start to check
   const handleNotification = (post, userInfo, type) => {
     console.log("Sending notification to:", post.userId.username);

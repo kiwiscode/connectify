@@ -7,6 +7,10 @@ const User = require("../models/User.model");
 const Chat = require("../models/Chat.model");
 const Post = require("../models/Post.model");
 const { default: mongoose } = require("mongoose");
+
+// "Users connecting to the server with Socket.IO"
+let onlineUsers = [];
+
 module.exports = (app) => {
   // socket io will be implement here !!!
 
@@ -527,54 +531,78 @@ module.exports = (app) => {
         console.log("They are ready to chat their => room created!");
       });
     });
+    // finish to check create chat page
 
     // start to check real time notification
-    let onlineUsers = [];
-
-    const addNewUser = (username, socketId) => {
-      !onlineUsers.some((user) => user.username === username) &&
-        onlineUsers.push({ username, socketId });
-    };
 
     // IMPORTANT
-    const removeUser = (socketId) => {
-      onlineUsers = onlineUsers.filter((user) => user.socketId !== socketId);
-    };
+    // Kullanıcı adını güncelleme
+    socket.on("setUsername", (username) => {
+      const user = {
+        socketId: socket.id,
+        username: username, // Kullanıcı adını burada saklayabilirsiniz
+      };
+      user.username = username;
+      // Kullanıcı adının benzersiz olduğunu kontrol et
+      const existingUser = onlineUsers.find(
+        (u) => u.username === user.username
+      );
+      if (existingUser) {
+        // Aynı kullanıcı adına sahip başka bir kullanıcı var, bağlantıyı reddet
+        console.log(
+          `Kullanıcı adı "${user.username}" zaten kullanılıyor. Bağlantı reddedildi.`
+        );
+        socket.disconnect();
 
-    const getUser = (username) => {
-      console.log("Did you get the correct user =>", username);
-      console.log("Online users 1 =>", onlineUsers);
-
-      return onlineUsers.find((user) => user.username === username);
-    };
-
-    socket.on("newUser", (userInfo) => {
-      console.log("Username =>", userInfo.username);
-      addNewUser(userInfo.username, socket.id);
-      console.log("Online users 2 =>", onlineUsers);
+        console.log("Online users 2 => ", onlineUsers);
+        return;
+      } else {
+        onlineUsers.push(user);
+        console.log(
+          `${socket.id} kullanici adini "${username}" olarak ayarladi.`
+        );
+        console.log("Online users 3 =>", onlineUsers);
+      }
     });
-
     socket.on("sendNotification", ({ senderName, receiverName, type }) => {
-      const receiver = getUser(receiverName);
-      console.log("Receiver =>", receiver);
-      if (receiver && receiver.socketId) {
-        console.log("Receiver =>", receiver);
+      console.log("Receiver name =>", receiverName);
+      console.log("Online users 4 =>", onlineUsers);
+      const receiver = onlineUsers.find((eachUser) => {
+        return eachUser.username === receiverName;
+      });
+      console.log("Sender name =>", senderName);
+      console.log("Receiver  =>", receiver);
+      if (receiver) {
         io.to(receiver.socketId).emit("getNotification", {
           senderName,
           receiverName,
           type,
         });
-      } else {
-        console.error("User not found or offline.");
+
+        io.to(receiver.socketId).emit("getText", {
+          senderName,
+          type,
+        });
+      } else if (!receiver) {
+        // burada aktif olmayan userın notificationsına ekleme yapabiliriz !
+        console.log("Receiver is not found !");
       }
     });
 
     // finish to check real time notification
 
     socket.on("disconnect", () => {
-      // removeUser(socket.id);
-
       console.log("User Disconnected", socket.id);
+
+      // Kullanıcı ayrıldığında diziden kaldır
+      const findedUser = onlineUsers.find((eachUser) => {
+        return eachUser.socketId === socket.id;
+      });
+
+      const findedUserIndex = onlineUsers.indexOf(findedUser);
+      if (findedUserIndex !== -1) {
+        onlineUsers.splice(findedUserIndex, 1);
+      }
     });
   });
 
