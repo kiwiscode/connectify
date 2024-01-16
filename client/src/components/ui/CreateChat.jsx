@@ -48,8 +48,14 @@ function CreateChat() {
     socket.emit("get_spesific_user", userInfo);
 
     // Component unmount olduğunda temizlik yap
+    // return () => {
+    //   socket.off("getmessageRoomId", handleGetMessageRoomId);
+    //   // socket.disconnect();
+    // };
+  }, []);
+
+  useEffect(() => {
     return () => {
-      socket.off("getmessageRoomId", handleGetMessageRoomId);
       socket.disconnect();
     };
   }, []);

@@ -15,7 +15,6 @@ const API_URL = "http://localhost:3000";
 // ?
 
 const socket = io.connect(API_URL);
-
 function ChatDetailsPage() {
   const { chatRoomId } = useParams();
   const { userInfo, getToken } = useContext(UserContext);
@@ -39,30 +38,19 @@ function ChatDetailsPage() {
   };
   // finish to check
 
-  const toggleEmojis = () => {
-    setshowEmojisBar("");
-    if (showEmojisBar === "") {
-      setshowEmojisBar("hide");
-    } else if (showEmojisBar === "hide") {
-      setshowEmojisBar("");
-    }
-    setShowSecondModal(true);
-  };
-
-  const onEmojiClick = (emojiObject) => {
-    console.log("This is the emoji that you pick => ", emojiObject);
-    setChosenEmoji(emojiObject);
-    setCurrentMessage((prevText) => prevText + emojiObject.emoji);
-    setDisabled(false);
-  };
-
   useEffect(() => {
     socket.emit("send_spesific_chatRoomId", chatRoomId);
-
     socket.emit("send_spesific_userId", userInfo._id);
 
     socket.on("receive_selectedUser", (data) => {
+      console.log("Selected user =>", data);
       setselectedUser(data);
+    });
+
+    // Emit an event to join the room with the selected user
+    socket.emit("join_spesific_message_room", {
+      activeUser: userInfo,
+      selectedUser: selectedUser[0],
     });
 
     // start to check Mesajlar karşılıklı olarak receive ediliyor başarılı şekilde tek gereken render etmek kaldı !
@@ -70,15 +58,28 @@ function ChatDetailsPage() {
     socket.on("receive_spesific_room_message", (data) => {
       console.log("Received message =>", data);
       setspesificRoom((list) => [...list, data]);
+      console.log("spesific room inside use effect=>", spesificRoom);
     });
 
     // finish to check Mesajlar karşılıklı olarak receive ediliyor başarılı şekilde tek gereken render etmek kaldı !
 
-    // Component unmount olduğunda temizlik yap
+    // // Component unmount olduğunda temizlik yap
+    // return () => {
+    //   socket.disconnect();
+    // };
+    return () => {
+      // Clean up event listeners
+      socket.off("receive_selectedUser");
+      socket.off("receive_spesific_room_message");
+    };
+  }, [socket, room, chatRoomId, userInfo._id]);
+
+  useEffect(() => {
+    // Bileşen unmount temizliği
     return () => {
       socket.disconnect();
     };
-  }, [socket, room]);
+  }, []); // Boş dependency array
 
   // mesajların render edildiği kısım start to check
   socket.on("send_spesific_chat_details", (data) => {
@@ -86,14 +87,9 @@ function ChatDetailsPage() {
     console.log(room, messages);
     setRoom(room);
     setspesificRoom(messages);
+    console.log("spesific room outside use effect=>", spesificRoom);
   });
   // mesajların render edildiği kısım finish to check
-
-  // Emit an event to join the room with the selected user
-  socket.emit("join_spesific_message_room", {
-    activeUser: userInfo,
-    selectedUser: selectedUser[0],
-  });
 
   const sendMessage = async () => {
     if (currentMessage !== "") {
@@ -110,12 +106,30 @@ function ChatDetailsPage() {
       };
 
       await socket.emit("send_spesific_room_message", messageData);
+      console.log("Sended message =>", messageData);
       setspesificRoom((list) => [...list, messageData]);
       setCurrentMessage("");
     }
   };
 
   console.log("Guest user =>", selectedUser);
+
+  const toggleEmojis = () => {
+    setshowEmojisBar("");
+    if (showEmojisBar === "") {
+      setshowEmojisBar("hide");
+    } else if (showEmojisBar === "hide") {
+      setshowEmojisBar("");
+    }
+    setShowSecondModal(true);
+  };
+
+  const onEmojiClick = (emojiObject) => {
+    console.log("This is the emoji that you pick => ", emojiObject);
+    setChosenEmoji(emojiObject);
+    setCurrentMessage((prevText) => prevText + emojiObject.emoji);
+    setDisabled(false);
+  };
 
   // NOTE start to check get all the notifications from backend api endpoint
   const showNotifications = () => {
