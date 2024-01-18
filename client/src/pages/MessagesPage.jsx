@@ -13,21 +13,32 @@ const API_URL = "http://localhost:3000";
 // when working on deployment version
 // ?
 
-const socket = io.connect(API_URL);
+// const socket = io.connect(API_URL);
 
 function MessagesPage() {
   // rendering page after redirectiring for fetching data without problem ! if you need to fetch data after you redirect or navigate to user to the page (it can work pretty good on your navigation bar)this lines of code is pretty useful
   // start to check
   const navigate = useNavigate();
-  const redirectToMessages = () => {
-    navigate("/messages");
+
+  const redirectHomePage = () => {
+    navigate("/home");
+    window.location.reload();
+  };
+
+  const redirectProfilePage = () => {
+    navigate("/profile");
+    window.location.reload();
+  };
+
+  const redirectChatDetailPage = (roomId) => {
+    navigate(`/messages/${roomId}`);
     window.location.reload();
   };
 
   // finish to check
 
   const [searchTerm, setSearchTerm] = useState("");
-  const { userInfo, getToken } = useContext(UserContext);
+  const { userInfo, getToken, socket } = useContext(UserContext);
   const [showNotificationColumn, setshowNotificationColumn] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [posts, setPosts] = useState([]);
@@ -36,14 +47,34 @@ function MessagesPage() {
   const [messageRooms, setmessageRooms] = useState([]);
   const [filteredRooms, setfilteredRooms] = useState([]);
 
-  useEffect(() => {
-    console.log("Messages page working inside use effect 1!");
-    socket.emit("get_spesific_user", userInfo);
+  // socket io 1 client start to check
+  const [notificationText, setnotificationText] = useState([]);
+  // socket io 1 client finish to check
 
-    // Component unmount olduğunda temizlik yap
-    // return () => {
-    //   socket.disconnect();
-    // };
+  // socket io 4 client start to check
+  useEffect(() => {
+    console.log("Hello worldddddd");
+    socket.on("socket_id_for_user", (socketId) => {
+      console.log("socket id received from backend =>", socketId);
+
+      localStorage.setItem("socketId", socketId);
+    });
+
+    socket.emit("setUsername", userInfo.username);
+  }, []);
+  // socket io 4 client finish to check
+
+  useEffect(() => {
+    socket.on("getText", (data) => {
+      console.log("Data get text =>", data);
+      setnotificationText(data);
+    });
+  }, [socket]);
+
+  console.log("Notification text =>", notificationText);
+
+  useEffect(() => {
+    socket.emit("get_spesific_user", userInfo);
   }, []);
 
   console.log("Messages page working outside use effect 2!");
@@ -261,7 +292,7 @@ function MessagesPage() {
               </Link>
 
               <div className="inner-div inner-div-fonts ">
-                <Link to="/home">
+                <Link to="/home" onClick={redirectHomePage}>
                   <div className="home">
                     <div>
                       <svg
@@ -309,7 +340,7 @@ function MessagesPage() {
                 </Link>
                 {/* start to check redirect to the correct component for messages */}
 
-                <Link to="/messages" onClick={redirectToMessages}>
+                <Link to="/messages">
                   <div className="messages">
                     <div>
                       <svg
@@ -329,7 +360,7 @@ function MessagesPage() {
                 </Link>
                 {/* finish to check redirect to the correct component for messages */}
 
-                <Link to="/profile">
+                <Link onClick={redirectProfilePage} to="/profile">
                   <div className="profile">
                     <div>
                       <svg
@@ -473,6 +504,9 @@ function MessagesPage() {
                 {filteredRooms.map((eachMessageRoom) => (
                   <>
                     <Link
+                      onClick={() =>
+                        redirectChatDetailPage(eachMessageRoom._id)
+                      }
                       key={eachMessageRoom._id}
                       style={{
                         position: "relative",

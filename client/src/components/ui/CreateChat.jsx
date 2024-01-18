@@ -11,7 +11,7 @@ const API_URL = "http://localhost:3000";
 // when working on deployment version
 // ?
 
-const socket = io.connect(API_URL);
+// const socket = io.connect(API_URL);
 
 function CreateChat() {
   const [show, setShow] = useState(false);
@@ -20,7 +20,7 @@ function CreateChat() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const [searchString, setSearchString] = useState("");
-  const { userInfo } = useContext(UserContext);
+  const { userInfo, socket } = useContext(UserContext);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [activeUsers, setActiveUsers] = useState([]);
   const [messageRoomId, setmessageRoomId] = useState("");
