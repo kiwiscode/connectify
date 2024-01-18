@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { UserContext } from "../../context/UserContext";
 import {
   Button,
@@ -17,7 +17,7 @@ import axios from "axios";
 import "../../index.css";
 
 // socket io cleaning up socket.id after logout from online users client start to check
-import io from "socket.io-client";
+// import io from "socket.io-client";
 // socket io cleaning up socket.id after logout from online users client finish to check
 
 // when working on local version
@@ -26,14 +26,14 @@ const API_URL = "http://localhost:3000";
 // when working on deployment version
 // ?
 
-const socket = io.connect(API_URL);
+// const socket = io.connect(API_URL);
 
 function SigninModal() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { updateUser, userInfo } = useContext(UserContext);
+  const { updateUser } = useContext(UserContext);
   const [show, setShow] = useState(false);
 
   const handleClose = () => {
@@ -53,12 +53,14 @@ function SigninModal() {
       .then((response) => {
         handleClose();
         const { token, user } = response.data;
+        console.log("User =>", user);
 
         localStorage.setItem("userInfo", JSON.stringify(user));
         localStorage.setItem("token", token);
         updateUser(user);
         setError("");
         navigate("/home");
+        window.location.reload();
       })
       .catch((err) => {
         if (err.response !== undefined) {
@@ -229,13 +231,6 @@ function LogoutModal() {
     setShow(true);
   };
 
-  // A user connected: x-qtewM7_lmXP0ucAACE
-  // A user connected: dDUE2M2YWfohoiY2AACF
-  // A user connected: 52M-6e8cN3NsI1YrAACI
-  // A user connected: sF2Rald82GEa5W27AACJ
-  // A user connected: 64Lm5A0y2JA502SqAACM
-  // A user connected: Iw95ombMFRlUo-8VAACN
-
   const handleLogout = () => {
     axios
       .post(`${API_URL}/logout`, null, {
@@ -244,7 +239,6 @@ function LogoutModal() {
         },
       })
       .then(() => {
-        socket.disconnect();
         navigate("/");
         logout();
       })

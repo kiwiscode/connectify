@@ -20,9 +20,30 @@ const API_URL = "http://localhost:3000";
 // ?
 
 function SpesificUserProfile() {
-  const navigate = useNavigate();
   const { id } = useParams();
-  const { getToken, userInfo } = useContext(UserContext);
+  // start to check
+  const navigate = useNavigate();
+  const redirectToMessages = () => {
+    navigate("/messages");
+    window.location.reload();
+  };
+
+  const redirectProfilePage = () => {
+    navigate("/profile");
+    window.location.reload();
+  };
+
+  const redirectHomePage = () => {
+    navigate("/home");
+    window.location.reload();
+  };
+
+  const redirectSpesificProfilePage = (userId) => {
+    navigate(`/profile/${userId}`);
+    window.location.reload();
+  };
+  // finish to check
+  const { getToken, userInfo, socket } = useContext(UserContext);
   const [profileInfo, setProfileInfo] = useState({});
   const [profileInfoPosts, setprofileInfoPosts] = useState([]);
   const [favoriteWindow, setFavoriteWindow] = useState("hide");
@@ -35,12 +56,41 @@ function SpesificUserProfile() {
   const [showNotificationColumn, setshowNotificationColumn] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
-  // start to check
-  const redirectToMessages = () => {
-    navigate("/messages");
-    window.location.reload();
+  // socket io 1 client start to check
+  const [notificationText, setnotificationText] = useState([]);
+  // socket io 1 client finish to check
+
+  // socket io 4 client start to check
+  useEffect(() => {
+    console.log("Hello worldddddd");
+    socket.on("socket_id_for_user", (socketId) => {
+      console.log("socket id received from backend =>", socketId);
+
+      localStorage.setItem("socketId", socketId);
+    });
+
+    socket.emit("setUsername", userInfo.username);
+  }, []);
+  // socket io 4 client finish to check
+
+  useEffect(() => {
+    socket.on("getText", (data) => {
+      console.log("Data get text =>", data);
+      setnotificationText(data);
+    });
+  }, [socket]);
+
+  // socket io 5 client start to check
+  const handleNotification = (post, userInfo, type) => {
+    console.log("Sending notification to => ", post.userId.username);
+
+    socket.emit("sendNotification", {
+      senderName: userInfo.username,
+      receiverName: post.userId.username,
+      type: type,
+    });
   };
-  // finish to check
+  // socket io 5 client finish to check
 
   // start to check
   // NOTE must sorted
@@ -57,6 +107,7 @@ function SpesificUserProfile() {
           JSON.stringify(response.data.posts)
         );
 
+        console.log("Profile info posts => ", response.data.posts);
         const profileInfoPosts = JSON.parse(
           localStorage.getItem("profileInfoPosts")
         );
@@ -201,11 +252,25 @@ function SpesificUserProfile() {
         }
       )
       .then(() => {
+        const findedPost = profileInfoPosts.find((element) => {
+          return element._id === postId;
+        });
+
+        const findedFavorite = favorites.find((element) => {
+          return element._id === postId;
+        });
+
         if (favoriteWindow === "") {
+          // socket io test start to check
+          handleNotification(findedFavorite, userInfo, "liked");
+          // socket io test finish to check
           setTimeout(() => {
             handleShowSpesificUserProfilePageFavorites();
           }, 500);
         } else if (postsWindow === "") {
+          // socket io test start to check
+          handleNotification(findedPost, userInfo, "liked");
+          // socket io test finish to check
           setTimeout(() => {
             handleShowSpesificUserProfilePagePosts();
           }, 500);
@@ -213,9 +278,11 @@ function SpesificUserProfile() {
         setError("");
       })
       .catch((error) => {
-        const { errorMessage } = error.response.data;
-
-        setError(errorMessage);
+        console.log("ERROR =>", error);
+        if (error.response) {
+          const { errorMessage } = error.response.data;
+          setError(errorMessage);
+        }
       });
   };
 
@@ -263,8 +330,10 @@ function SpesificUserProfile() {
         }
       )
       .then((response) => {
-        // start to check
-        // start to check
+        const findedPost = profileInfoPosts.find((element) => {
+          return element._id === postId;
+        });
+
         // repost process for  user profile posts
         if (postsWindow === "hide") {
           console.log(
@@ -279,6 +348,10 @@ function SpesificUserProfile() {
           const findedFavorite = favorites.find((element) => {
             return element._id === postId;
           });
+
+          // socket io test start to check
+          handleNotification(findedFavorite, userInfo, "repost");
+          // socket io test finish to check
 
           const index2 = favorites.indexOf(findedFavorite);
           console.log("LINE 1 WORKING");
@@ -301,6 +374,9 @@ function SpesificUserProfile() {
           favoriteWindow === "hide" &&
           profileInfo._id === userInfo._id
         ) {
+          // socket io test start to check
+          handleNotification(findedPost, userInfo, "repost");
+          // socket io test finish to check
           const updateSpesificProfilePosts = () => {
             const specificProfilePosts = JSON.parse(
               localStorage.getItem("profileInfoPosts")
@@ -387,6 +463,10 @@ function SpesificUserProfile() {
           const findedPost = spesificProfilePosts.find((eachPost) => {
             return eachPost._id === postId;
           });
+
+          // socket io test start to check
+          handleNotification(findedPost, userInfo, "repost");
+          // socket io test finish to check
 
           const findedPostIndex = spesificProfilePosts.indexOf(findedPost);
 
@@ -491,9 +571,12 @@ function SpesificUserProfile() {
 
             const updateSpesificProfilePosts = () => {
               spesificProfilePosts[findedPostIndex].reposted.unshift(userInfo);
-              spesificProfilePosts[referencePostIndex].reposted.unshift(
-                userInfo
-              );
+
+              if (spesificProfilePosts[referencePostIndex]) {
+                spesificProfilePosts[referencePostIndex].reposted.unshift(
+                  userInfo
+                );
+              }
 
               localStorage.setItem(
                 "profileInfoPosts",
@@ -1152,7 +1235,6 @@ function SpesificUserProfile() {
   };
 
   // NOTE finish to check get all the notifications from backend api endpoint
-
   const handleGoBack = () => {
     navigate(-1);
   };
@@ -1190,7 +1272,7 @@ function SpesificUserProfile() {
                 </div>
               </Link>
               <div className="inner-div inner-div-fonts">
-                <Link to="/home">
+                <Link to="/home" onClick={redirectHomePage}>
                   <div className="home">
                     <div>
                       <svg
@@ -1254,7 +1336,7 @@ function SpesificUserProfile() {
                   </div>
                 </Link>
 
-                <Link to="/profile">
+                <Link to="/profile" onClick={redirectProfilePage}>
                   <div className="profile">
                     <div>
                       <svg
@@ -1300,7 +1382,7 @@ function SpesificUserProfile() {
                 <Row>
                   <Stack direction="horizontal" gap={0}>
                     <div
-                      onClick={handleGoBack}
+                      onClick={() => handleGoBack()}
                       className="p-2 arrow"
                       style={{
                         position: "relative",
@@ -1693,7 +1775,12 @@ function SpesificUserProfile() {
 
                           <div className="p-0 mb-2">
                             {post.userId.imageUrl.slice(0, 3) !== "../" ? (
-                              <Link to={`/profile/${post.userId._id}`}>
+                              <Link
+                                onClick={() =>
+                                  redirectSpesificProfilePage(post.userId._id)
+                                }
+                                to={`/profile/${post.userId._id}`}
+                              >
                                 <img
                                   src={post.userId.imageUrl}
                                   width={40}
@@ -1707,7 +1794,12 @@ function SpesificUserProfile() {
                                 />
                               </Link>
                             ) : (
-                              <Link to={`/profile/${post.userId._id}`}>
+                              <Link
+                                onClick={() =>
+                                  redirectSpesificProfilePage(post.userId._id)
+                                }
+                                to={`/profile/${post.userId._id}`}
+                              >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="40"
@@ -1731,6 +1823,9 @@ function SpesificUserProfile() {
                             {post.userId ? (
                               <>
                                 <Link
+                                  onClick={() =>
+                                    redirectSpesificProfilePage(post.userId._id)
+                                  }
                                   to={`/profile/${post.userId._id}`}
                                   style={{
                                     textDecoration: "none",
@@ -1768,6 +1863,11 @@ function SpesificUserProfile() {
                                       </svg>
                                     </span>{" "}
                                     <Link
+                                      onClick={() =>
+                                        redirectSpesificProfilePage(
+                                          post.userId._id
+                                        )
+                                      }
                                       to={`/profile/${post.userId._id}`}
                                       style={{
                                         textDecoration: "none",

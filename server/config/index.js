@@ -32,8 +32,14 @@ module.exports = (app) => {
 
   //NOTE INFO socket.io nun connection olayı istemci tarafında sunucuyla bağlantı kurulduğunda tetiklenir.Eğer bu olayı görmek istiyorsanız bir frontend uygulaması oluşturup bu uygulama üzerinden Socket.IO bağlantısı kurmalısınız.Örneğin React gibi bir kütüphane kullanarak veya basit bir HTML dosyası üzerinden JavaScript ile bir Socket.IO istemcisi oluşturarak bağlantı sağlayabilir ve "connection" olayını gözlemleyebilirsiniz.
   io.on("connection", async (socket) => {
-    console.log("A user connected:", socket.id);
+    const userSocketId = socket.id;
 
+    console.log("User connected with socket ID:", userSocketId);
+
+    // Bağlanan kullanıcıya socket.id bilgisini geri gönder
+    socket.emit("socket_id_for_user", socket.id);
+
+    console.log("Online users =>", onlineUsers);
     const allUsers = await User.find();
     socket.emit("activeUsers", allUsers);
 
@@ -138,9 +144,6 @@ module.exports = (app) => {
 
               chatDetailActiveUser = activeUser;
               chatDetailSelectedUser = selectedUser;
-
-              console.log("Active user =>", activeUser.username);
-              console.log("Selected user =>", selectedUser.username);
 
               console.log(
                 "Chat detail active user => ",
@@ -534,7 +537,6 @@ module.exports = (app) => {
     // finish to check create chat page
 
     // start to check real time notification
-
     // IMPORTANT
     // Kullanıcı adını güncelleme
     socket.on("setUsername", (username) => {
@@ -592,8 +594,7 @@ module.exports = (app) => {
     // finish to check real time notification
 
     socket.on("disconnect", () => {
-      console.log("User Disconnected", socket.id);
-
+      console.log("User disconnected =>", socket.id);
       // Kullanıcı ayrıldığında diziden kaldır
       const findedUser = onlineUsers.find((eachUser) => {
         return eachUser.socketId === socket.id;
@@ -601,7 +602,15 @@ module.exports = (app) => {
 
       const findedUserIndex = onlineUsers.indexOf(findedUser);
       if (findedUserIndex !== -1) {
-        onlineUsers.splice(findedUserIndex, 1);
+        const disconnectedUser = onlineUsers.splice(findedUserIndex, 1)[0];
+
+        console.log(
+          `User ${disconnectedUser.username} socket.id : ${disconnectedUser.socketId} disconnected `
+        );
+      } else {
+        console.log(
+          "User not found to disconnect with username and socket id "
+        );
       }
     });
   });

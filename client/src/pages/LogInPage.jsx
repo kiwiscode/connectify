@@ -7,7 +7,7 @@ function LogInPage() {
   return (
     <>
       <div>
-        <SigninModal></SigninModal>
+        <SigninModal />
       </div>
     </>
   );

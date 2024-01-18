@@ -13,6 +13,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { LogoutModal, PostModal, CommentModal } from "../components/ui/Modal";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
+
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -20,9 +21,27 @@ const API_URL = "http://localhost:3000";
 // ?
 
 function UserProfile() {
+  // rendering page after redirectiring for fetching data without problem ! if you need to fetch data after you redirect or navigate to user to the page (it can work pretty good on your navigation bar)this lines of code is pretty useful
+  // start to check
   const navigate = useNavigate();
+  const redirectToMessages = () => {
+    navigate("/messages");
+    window.location.reload();
+  };
+
+  const redirectHomePage = () => {
+    navigate("/home");
+    window.location.reload();
+  };
+
+  const redirectSpesificProfilePage = (userId) => {
+    navigate(`/profile/${userId}`);
+    window.location.reload();
+  };
+  // finish to check
+
   const [userprofiledata, setUserprofiledata] = useState([]);
-  const { getToken, userInfo } = useContext(UserContext);
+  const { getToken, userInfo, socket } = useContext(UserContext);
   const [favoriteWindow, setFavoriteWindow] = useState("hide");
   const [postsWindow, setPostWindow] = useState("");
   const [favorites, setFavorites] = useState([]);
@@ -31,6 +50,43 @@ function UserProfile() {
   const [isLoading, setIsLoading] = useState(false);
   const [profileImage, setprofileImage] = useState("");
   const [completedProfileImage, setcompletedProfileImage] = useState(false);
+  // socket io 1 client start to check
+  const [notificationText, setnotificationText] = useState([]);
+  // socket io 1 client finish to check
+
+  // socket io 4 client start to check
+  useEffect(() => {
+    console.log("Hello worldddddd");
+    socket.on("socket_id_for_user", (socketId) => {
+      console.log("socket id received from backend =>", socketId);
+
+      localStorage.setItem("socketId", socketId);
+    });
+
+    socket.emit("setUsername", userInfo.username);
+  }, []);
+  // socket io 4 client finish to check
+
+  useEffect(() => {
+    socket.on("getText", (data) => {
+      console.log("Data get text =>", data);
+      setnotificationText(data);
+    });
+  }, [socket]);
+
+  // socket io 5 client start to check
+  const handleNotification = (post, userInfo, type) => {
+    console.log("Sending notification to => ", post.userId.username);
+
+    socket.emit("sendNotification", {
+      senderName: userInfo.username,
+      receiverName: post.userId.username,
+      type: type,
+    });
+  };
+  // socket io 5 client finish to check
+
+  console.log("Notification text =>", notificationText);
 
   const handleGetFavorites = () => {
     axios
@@ -58,14 +114,6 @@ function UserProfile() {
   const handleGoBack = () => {
     navigate(-1);
   };
-
-  // rendering page after redirectiring for fetching data without problem ! if you need to fetch data after you redirect or navigate to user to the page (it can work pretty good on your navigation bar)this lines of code is pretty useful
-  // start to check
-  const redirectToMessages = () => {
-    navigate("/messages");
-    window.location.reload();
-  };
-  // finish to check
 
   const [showNotificationColumn, setshowNotificationColumn] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -148,18 +196,31 @@ function UserProfile() {
           }, 500);
         }
 
+        const profilePagePosts = JSON.parse(
+          localStorage.getItem("profilePagePosts")
+        );
+        const findedPost = profilePagePosts.find((eachPost) => {
+          return eachPost._id === postId;
+        });
         const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
         userInfo.favorites.unshift(postId);
+        // socket io test start to check
+        handleNotification(findedPost, userInfo, "liked");
+        // socket io test finish to check
 
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
 
         setError("");
       })
       .catch((error) => {
-        const { errorMessage } = error.response.data;
+        console.log("Error =>", error);
 
-        setError(errorMessage);
+        if (error) {
+          const { errorMessage } = error.response.data;
+
+          setError(errorMessage);
+        }
       });
   };
 
@@ -264,7 +325,9 @@ function UserProfile() {
           const findedFavorite = favorites.find((element) => {
             return element._id === postId;
           });
-
+          // socket io test start to check
+          handleNotification(findedFavorite, userInfo, "repost");
+          // socket io test finish to check
           const index2 = favorites.indexOf(findedFavorite);
           console.log("LINE 1 WORKING");
           profileFavorites[index2].reposted.unshift(userInfo._id);
@@ -818,7 +881,7 @@ function UserProfile() {
               </Link>
 
               <div className="inner-div inner-div-fonts">
-                <Link to="/home">
+                <Link to="/home" onClick={redirectHomePage}>
                   <div className="home">
                     <div>
                       <svg
@@ -940,7 +1003,6 @@ function UserProfile() {
                         bottom: "15px",
                         width: "30px",
                         height: " 30px",
-                        // border: "1px solid purple",
                         borderRadius: "50%",
                         cursor: "pointer",
                       }}
@@ -967,33 +1029,6 @@ function UserProfile() {
 
                     {/* finish to check  */}
 
-                    {/* <div
-                      className="p-2 arrow"
-                      style={{
-                        borderRadius: "50%",
-                        marginBottom: "28px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <Link to={"/home"}>
-                        <svg
-                          style={{
-                            marginBottom: "2px",
-                            border: "none",
-                            fontSize: "15px",
-                          }}
-                          width={20}
-                          height={20}
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                          className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                        >
-                          <g>
-                            <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
-                          </g>
-                        </svg>
-                      </Link>
-                    </div> */}
                     <div
                       className="p-2"
                       style={{
@@ -1269,7 +1304,12 @@ function UserProfile() {
 
                           <div className="p-0 mb-2">
                             {post.userId.imageUrl.slice(0, 3) !== "../" ? (
-                              <Link to={`/profile/${post.userId._id}`}>
+                              <Link
+                                onClick={() =>
+                                  redirectSpesificProfilePage(post.userId._id)
+                                }
+                                to={`/profile/${post.userId._id}`}
+                              >
                                 <img
                                   src={post.userId.imageUrl}
                                   width={40}
@@ -1283,7 +1323,12 @@ function UserProfile() {
                                 />
                               </Link>
                             ) : (
-                              <Link to={`/profile/${post.userId._id}`}>
+                              <Link
+                                onClick={() =>
+                                  redirectSpesificProfilePage(post.userId._id)
+                                }
+                                to={`/profile/${post.userId._id}`}
+                              >
                                 <svg
                                   style={{
                                     marginTop: "3px",
@@ -1310,6 +1355,9 @@ function UserProfile() {
                             {post.userId ? (
                               <>
                                 <Link
+                                  onClick={() =>
+                                    redirectSpesificProfilePage(post.userId._id)
+                                  }
                                   to={`/profile/${post.userId._id}`}
                                   style={{
                                     textDecoration: "none",
@@ -1347,6 +1395,11 @@ function UserProfile() {
                                       </svg>
                                     </span>{" "}
                                     <Link
+                                      onClick={() =>
+                                        redirectSpesificProfilePage(
+                                          post.userId._id
+                                        )
+                                      }
                                       to={`/profile/${post.userId._id}`}
                                       style={{
                                         textDecoration: "none",
