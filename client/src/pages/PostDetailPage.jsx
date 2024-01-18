@@ -12,9 +12,9 @@ const API_URL = "http://localhost:3000";
 // ?
 
 function PostDetailPage() {
-  const { postOwner, postId, socket } = useParams();
+  const { postOwner, postId } = useParams();
   const [detailedPost, setdetailedPost] = useState([]);
-  const { userInfo, getToken } = useContext(UserContext);
+  const { userInfo, getToken, socket } = useContext(UserContext);
 
   // socket io 1 client start to check
   const [notificationTest, setnotificationTest] = useState([]);
@@ -46,6 +46,18 @@ function PostDetailPage() {
 
   // finish to check
 
+  // socket io 5 client start to check
+  const handleNotification = (post, userInfo, type) => {
+    console.log("Sending notification to => ", post.userId.username);
+
+    socket.emit("sendNotification", {
+      senderName: userInfo.username,
+      receiverName: post.userId.username,
+      type: type,
+    });
+  };
+  // socket io 5 client finish to check
+
   const handleGoBack = () => {
     navigate(-1);
   };
@@ -63,6 +75,34 @@ function PostDetailPage() {
         }
       )
       .then(() => {
+        const posts = JSON.parse(localStorage.getItem("mainPagePosts"));
+
+        const findedPost = posts.find((element) => {
+          return element._id === postId;
+        });
+
+        const reposter = findedPost.reposted
+          ? findedPost.reposted.find((eachReposter) => {
+              return eachReposter._id === userInfo._id;
+            })
+          : null;
+
+        const reposterIndex = findedPost.reposted
+          ? findedPost.reposted.indexOf(reposter)
+          : null;
+
+        const updateDetailedPosts = () => {
+          findedPost.reposted.splice(reposterIndex, 1);
+
+          localStorage.setItem("mainPagePosts", JSON.stringify(posts));
+          setdetailedPost(findedPost);
+        };
+
+        setTimeout(updateDetailedPosts, 500);
+
+        console.log("Reposter =>", reposter);
+        console.log("Reposter index =>", reposterIndex);
+
         console.log("You deleted repost!");
       })
       .then(() => {})
@@ -85,7 +125,7 @@ function PostDetailPage() {
         }
       )
       .then(() => {
-        const posts = JSON.parse(localStorage.getItem("posts"));
+        const posts = JSON.parse(localStorage.getItem("mainPagePosts"));
 
         const findedPost = posts.find((element) => {
           return element._id === postId;
@@ -93,9 +133,19 @@ function PostDetailPage() {
 
         const index = posts.indexOf(findedPost);
 
-        posts[index].reposted.unshift(userInfo);
+        const updateDetailedPosts = () => {
+          // socket io test start to check
+          handleNotification(findedPost, userInfo, "repost");
+          // socket io test finish to check
 
-        localStorage.setItem("mainPagePosts", JSON.stringify(posts));
+          posts[index].reposted.unshift(userInfo);
+
+          localStorage.setItem("mainPagePosts", JSON.stringify(posts));
+
+          setdetailedPost(findedPost);
+        };
+
+        setTimeout(updateDetailedPosts, 500);
 
         console.log("AFTER REPOST CURRENT STATE RENDERED POSTS =>", posts);
       })
@@ -120,6 +170,29 @@ function PostDetailPage() {
         }
       )
       .then(() => {
+        const posts = JSON.parse(localStorage.getItem("mainPagePosts"));
+
+        const findedPost = posts.find((element) => {
+          return element._id === postId;
+        });
+
+        const liker = findedPost.likes
+          ? findedPost.likes.find((eachLiker) => eachLiker._id === userInfo._id)
+          : null;
+        console.log("Liker =>", liker);
+        const likerIndex = findedPost.likes.indexOf(liker);
+
+        console.log("Liker index =>", likerIndex);
+
+        const updateDetailedPosts = () => {
+          findedPost.likes.splice(likerIndex, 1);
+
+          localStorage.setItem("mainPagePosts", JSON.stringify(posts));
+          setdetailedPost(findedPost);
+        };
+
+        setTimeout(updateDetailedPosts, 500);
+
         console.log("Post like deleted !");
       })
       .catch((err) => {
@@ -140,11 +213,34 @@ function PostDetailPage() {
       )
       .then(() => {
         console.log("This post added to your favorite");
+
+        const posts = JSON.parse(localStorage.getItem("mainPagePosts"));
+
+        const findedPost = posts.find((element) => {
+          return element._id === postId;
+        });
+
+        const findedPostIndex = posts.indexOf(findedPost);
+
+        const updateDetailedPosts = () => {
+          // socket io test start to check
+          handleNotification(findedPost, userInfo, "liked");
+          // socket io test finish to check
+          posts[findedPostIndex].likes.unshift(userInfo);
+
+          localStorage.setItem("mainPagePosts", JSON.stringify(posts));
+          setdetailedPost(findedPost);
+        };
+
+        setTimeout(updateDetailedPosts, 500);
       })
       .catch((error) => {
-        const { errorMessage } = error.response.data;
+        console.log("Error =>", error);
+        if (error.response) {
+          const { errorMessage } = error.response.data;
 
-        console.log("Error =>", errorMessage);
+          console.log("Error =>", errorMessage);
+        }
       });
   };
 
@@ -153,6 +249,7 @@ function PostDetailPage() {
       .get(`${API_URL}/${postOwner}/status/${postId}`)
       .then((response) => {
         const { detailedPost } = response.data;
+
         setdetailedPost(detailedPost);
         console.log(response);
       })
