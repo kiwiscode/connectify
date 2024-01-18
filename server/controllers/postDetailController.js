@@ -11,7 +11,7 @@ const getPostDetail = (req, res) => {
     .populate("reposted")
     .populate("userId")
     .then((post) => {
-      console.log("Detailed post =>", post);
+      console.log("Detailed post =>", post.isReposted, post.content);
       res.status(202).json({ detailedPost: post });
     })
     .catch(() => {

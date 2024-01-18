@@ -23,6 +23,7 @@ const handleGetFavorites = (req, res) => {
         "All the favorites from data base for spesific user =>",
         userFromDataBase.favorites[0]
       );
+
       res.json({ favorites: userFromDataBase.favorites });
     })
     .catch(() => {
@@ -225,7 +226,7 @@ const handleAddFavorite = (req, res) => {
               originalPost[0].save();
               post.likes.push(user);
               post.save();
-              user.favorites.push(post);
+              user.favorites.push(originalPost[0]);
               // user.save();
               Favorite.create({
                 userId: userId,
