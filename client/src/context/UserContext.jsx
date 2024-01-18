@@ -1,5 +1,16 @@
 import { useState, useEffect, createContext } from "react";
 import PropTypes from "prop-types";
+
+import io from "socket.io-client";
+
+// when working on local version
+const API_URL = "http://localhost:3000";
+
+// when working on deployment version
+// ?
+
+const socket = io.connect(`${API_URL}`);
+
 const UserContext = createContext();
 
 const UserProvider = ({ children }) => {
@@ -24,6 +35,7 @@ const UserProvider = ({ children }) => {
 
   useEffect(() => {
     localStorage.setItem("userInfo", JSON.stringify(userInfo));
+    localStorage.setItem("socketId", userInfo.socketId);
   }, [userInfo]);
 
   const updateUser = (newUserInfo) => {
@@ -34,6 +46,9 @@ const UserProvider = ({ children }) => {
   };
 
   const logout = () => {
+    // Kullanıcının bağlantısını kapat
+    socket.disconnect();
+
     setUserInfo({
       username: "",
       email: "",
@@ -56,6 +71,7 @@ const UserProvider = ({ children }) => {
     localStorage.removeItem("profileFavorites");
     localStorage.removeItem("profilePagePosts");
     localStorage.removeItem("mainPagePosts");
+    localStorage.removeItem("socketId");
   };
 
   const setToken = (token) => {
@@ -74,6 +90,7 @@ const UserProvider = ({ children }) => {
         logout,
         setToken,
         getToken,
+        socket,
       }}
     >
       {children}

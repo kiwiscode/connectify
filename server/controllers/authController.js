@@ -220,7 +220,7 @@ const handleLogin = (req, res, next) => {
 
       Post.find()
         .then((post) => {
-          console.log("USER POSTS:", post);
+          console.log("USERS POSTS:", post.length);
         })
         .catch(() => {});
 
@@ -263,7 +263,7 @@ const handleLogin = (req, res, next) => {
               expiresIn: "24h",
             });
 
-            console.log(username);
+            console.log("Logged in user username =>", username);
             res.json({
               token,
               user: {

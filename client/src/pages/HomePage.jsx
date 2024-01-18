@@ -4,8 +4,6 @@ import IndexFooter from "../components/IndexFooter/IndexFooter";
 import { Container, Col, Row } from "react-bootstrap";
 
 function HomePage() {
-  console.log("HELLO WORLD!");
-
   return (
     <>
       <Container

@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { UserContext } from "../../context/UserContext";
 import {
   Button,
@@ -16,18 +16,24 @@ import Picker from "emoji-picker-react";
 import axios from "axios";
 import "../../index.css";
 
+// socket io cleaning up socket.id after logout from online users client start to check
+// import io from "socket.io-client";
+// socket io cleaning up socket.id after logout from online users client finish to check
+
 // when working on local version
 const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
 
+// const socket = io.connect(API_URL);
+
 function SigninModal() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { updateUser, userInfo } = useContext(UserContext);
+  const { updateUser } = useContext(UserContext);
   const [show, setShow] = useState(false);
 
   const handleClose = () => {
@@ -47,12 +53,14 @@ function SigninModal() {
       .then((response) => {
         handleClose();
         const { token, user } = response.data;
+        console.log("User =>", user);
 
         localStorage.setItem("userInfo", JSON.stringify(user));
         localStorage.setItem("token", token);
         updateUser(user);
         setError("");
         navigate("/home");
+        window.location.reload();
       })
       .catch((err) => {
         if (err.response !== undefined) {

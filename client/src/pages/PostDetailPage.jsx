@@ -12,15 +12,38 @@ const API_URL = "http://localhost:3000";
 // ?
 
 function PostDetailPage() {
-  const { postOwner, postId } = useParams();
+  const { postOwner, postId, socket } = useParams();
   const [detailedPost, setdetailedPost] = useState([]);
   const { userInfo, getToken } = useContext(UserContext);
+
+  // socket io 1 client start to check
+  const [notificationTest, setnotificationTest] = useState([]);
+  const [notificationText, setnotificationText] = useState([]);
+  // socket io 1 client finish to check
+
   // start to check
   const navigate = useNavigate();
+
+  const redirectHomePage = () => {
+    navigate("/home");
+    window.location.reload();
+  };
+
   const redirectToMessages = () => {
     navigate("/messages");
     window.location.reload();
   };
+
+  const redirectProfilePage = () => {
+    navigate("/profile");
+    window.location.reload();
+  };
+
+  const redirectSpesificProfilePage = (userId) => {
+    navigate(`/profile/${userId}`);
+    window.location.reload();
+  };
+
   // finish to check
 
   const handleGoBack = () => {
@@ -208,7 +231,7 @@ function PostDetailPage() {
               </Link>
 
               <div className="inner-div-fonts inner-div ">
-                <Link to="/home">
+                <Link onClick={redirectHomePage} to="/home">
                   <div className="home">
                     <div>
                       <svg
@@ -276,7 +299,7 @@ function PostDetailPage() {
                 </Link>
                 {/* finish to check redirect to the correct component for messages */}
 
-                <Link to="/profile">
+                <Link onClick={redirectProfilePage} to="/profile">
                   <div className="profile">
                     <div>
                       <svg
@@ -363,6 +386,9 @@ function PostDetailPage() {
               <div className="p-2">
                 {detailedPost.userId ? (
                   <Link
+                    onClick={() =>
+                      redirectSpesificProfilePage(detailedPost.userId._id)
+                    }
                     style={{ cursor: "pointer" }}
                     to={`/profile/${
                       detailedPost ? detailedPost.userId._id : null
@@ -377,6 +403,9 @@ function PostDetailPage() {
                   </Link>
                 ) : (
                   <Link
+                    onClick={() =>
+                      redirectSpesificProfilePage(detailedPost.userId._id)
+                    }
                     to={`/profile/${
                       detailedPost.userId ? detailedPost.userId._id : null
                     }`}
@@ -399,6 +428,9 @@ function PostDetailPage() {
               </div>
               <div className="p-2">
                 <Link
+                  onClick={() =>
+                    redirectSpesificProfilePage(detailedPost.userId._id)
+                  }
                   to={
                     detailedPost.userId
                       ? `/profile/${detailedPost.userId._id}`
@@ -421,6 +453,9 @@ function PostDetailPage() {
                   </div>
                 </Link>
                 <Link
+                  onClick={() =>
+                    redirectSpesificProfilePage(detailedPost.userId._id)
+                  }
                   to={
                     detailedPost.userId
                       ? `/profile/${detailedPost.userId._id}`

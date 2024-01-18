@@ -11,7 +11,7 @@ import ResponsiveNavigationBarTop from "../components/Navbar/ResponsiveNavigatio
 import deleteRepost from "../utils/repostFunctions";
 
 // socket io 2 client start to check
-import io from "socket.io-client";
+// import io from "socket.io-client";
 // socket io 2 client finish to check
 
 // when working on local version
@@ -20,7 +20,7 @@ const API_URL = "http://localhost:3000";
 // when working on deployment version
 // ?
 
-const socket = io.connect(API_URL);
+// const socket = io.connect(API_URL);
 
 function MainPage() {
   // rendering page after redirectiring for fetching data without problem ! if you need to fetch data after you redirect or navigate to user to the page (it can work pretty good on your navigation bar)this lines of code is pretty useful
@@ -30,9 +30,23 @@ function MainPage() {
     navigate("/messages");
     window.location.reload();
   };
-  // finish to check
 
-  const { userInfo, getToken } = useContext(UserContext);
+  const redirectProfilePage = () => {
+    navigate("/profile");
+    window.location.reload();
+  };
+
+  const redirectSpesificProfilePage = (userId) => {
+    navigate(`/profile/${userId}`);
+    window.location.reload();
+  };
+
+  // const redirectPostDetailPage = (postOwner, postId) => {
+  //   navigate(`/${postOwner}/status/${postId}`);
+  //   window.location.reload();
+  // };
+  // finish to check
+  const { userInfo, getToken, socket } = useContext(UserContext);
   const [posts, setPosts] = useState([]);
   const [postId, setpostId] = useState("");
   const [error, setError] = useState("");
@@ -48,30 +62,44 @@ function MainPage() {
   const [image, setImage] = useState("");
 
   // socket io 1 client start to check
-  const [liked, setLiked] = useState("");
   const [notificationTest, setnotificationTest] = useState([]);
+  const [notificationText, setnotificationText] = useState([]);
   // socket io 1 client finish to check
 
   console.log("POSTS =>", posts);
 
   // socket io 4 client start to check
   useEffect(() => {
-    socket?.emit("newUser", userInfo);
-  }, [socket, userInfo]);
+    setshouldHide(true);
+    handleShowPostsHomePage();
+    console.log("Hello worldddddd");
+    socket.on("socket_id_for_user", (socketId) => {
+      console.log("socket id received from backend =>", socketId);
+
+      localStorage.setItem("socketId", socketId);
+    });
+
+    socket.emit("setUsername", userInfo.username);
+  }, []);
   // socket io 4 client finish to check
 
   useEffect(() => {
-    setshouldHide(true);
-    handleShowPostsHomePage();
     socket.on("getNotification", (data) => {
       console.log("Data =>", data);
       setnotificationTest((prev) => [...prev, data]);
     });
+
+    socket.on("getText", (data) => {
+      console.log("Data get text =>", data);
+      setnotificationText(data);
+    });
   }, [socket]);
 
+  console.log("Notification test =>", notificationTest);
+  console.log("Notification text =>", notificationText);
   // socket io 5 client start to check
   const handleNotification = (post, userInfo, type) => {
-    console.log("Sending notification to:", post.userId.username);
+    console.log("Sending notification to => ", post.userId.username);
 
     socket.emit("sendNotification", {
       senderName: userInfo.username,
@@ -325,9 +353,6 @@ function MainPage() {
     console.log("You added to favorite");
     setpostId(postId);
 
-    // socket io test start to check
-    setLiked("liked");
-    // socket io test finish to check
     axios
       .post(
         `${API_URL}/favorite`,
@@ -345,7 +370,7 @@ function MainPage() {
           return eachPost._id === postId;
         });
         // socket io test start to check
-        handleNotification(findedPost, userInfo, liked);
+        handleNotification(findedPost, userInfo, "liked");
         // socket io test finish to check
 
         const findedPostIndex = mainPagePosts.indexOf(findedPost);
@@ -542,7 +567,9 @@ function MainPage() {
         const findedPost = posts.find((element) => {
           return element._id === postId;
         });
-
+        // socket io test start to check
+        handleNotification(findedPost, userInfo, "repost");
+        // socket io test finish to check
         const index = posts.indexOf(findedPost);
 
         const updatePosts = () => {
@@ -802,7 +829,7 @@ function MainPage() {
                 </Link>
                 {/* finish to check redirect to the correct component for messages */}
 
-                <Link to="/profile">
+                <Link to="/profile" onClick={redirectProfilePage}>
                   <div className="profile">
                     <div>
                       <svg
@@ -1209,7 +1236,12 @@ function MainPage() {
                           <div className="p-0">
                             {" "}
                             {post.userId.imageUrl.slice(0, 3) !== "../" ? (
-                              <Link to={`/profile/${post.userId._id}`}>
+                              <Link
+                                to={`/profile/${post.userId._id}`}
+                                onClick={() =>
+                                  redirectSpesificProfilePage(post.userId._id)
+                                }
+                              >
                                 <img
                                   src={post.userId.imageUrl}
                                   width={40}
@@ -1222,7 +1254,12 @@ function MainPage() {
                                 />
                               </Link>
                             ) : (
-                              <Link to={`/profile/${post.userId._id}`}>
+                              <Link
+                                onClick={() =>
+                                  redirectSpesificProfilePage(post.userId._id)
+                                }
+                                to={`/profile/${post.userId._id}`}
+                              >
                                 <svg
                                   style={{
                                     marginTop: "3px",
@@ -1247,6 +1284,9 @@ function MainPage() {
                             {post.userId ? (
                               <>
                                 <Link
+                                  onClick={() =>
+                                    redirectSpesificProfilePage(post.userId._id)
+                                  }
                                   to={`/profile/${post.userId._id}`}
                                   style={{
                                     textDecoration: "none",
@@ -1284,6 +1324,11 @@ function MainPage() {
                                       </svg>
                                     </span>{" "}
                                     <Link
+                                      onClick={() =>
+                                        redirectSpesificProfilePage(
+                                          post.userId._id
+                                        )
+                                      }
                                       to={`/profile/${post.userId._id}`}
                                       style={{
                                         textDecoration: "none",
@@ -1297,36 +1342,43 @@ function MainPage() {
                                         <span>@{post.authorUserName}</span>
                                       </span>
                                     </Link>
-                                    <Link
-                                      style={{
-                                        textDecoration: "none",
-                                      }}
-                                      to={`/${post.userId.username}/status/${
-                                        !post.isReposted
-                                          ? post._id
-                                          : post.repostedFromThisOriginalPost[0]
-                                              ._id
-                                      }`}
-                                    >
-                                      <span
-                                        style={{
-                                          color: "rgb(83, 100, 113)",
-                                          lineHeight: "20px",
-                                          fontSize: "15px",
-                                          fontWeight: "400",
-                                        }}
-                                      >
-                                        {" "}
-                                        ·{" "}
-                                        <span className="date-post-detail">
-                                          {getCreatedDate(post.createdAt)}
-                                        </span>
-                                      </span>
-                                    </Link>
-                                    {/* finish to check  */}
                                   </span>
-                                  <span></span>
                                 </Link>
+                                <Link
+                                  // onClick={() =>
+                                  //   redirectPostDetailPage(
+                                  //     post.userId.username,
+                                  //     !post.isReposted
+                                  //       ? post._id
+                                  //       : post.repostedFromThisOriginalPost[0]
+                                  //           ._id
+                                  //   )
+                                  // }
+                                  style={{
+                                    textDecoration: "none",
+                                  }}
+                                  to={`/${post.userId.username}/status/${
+                                    !post.isReposted
+                                      ? post._id
+                                      : post.repostedFromThisOriginalPost[0]._id
+                                  }`}
+                                >
+                                  <span
+                                    style={{
+                                      color: "rgb(83, 100, 113)",
+                                      lineHeight: "20px",
+                                      fontSize: "15px",
+                                      fontWeight: "400",
+                                    }}
+                                  >
+                                    {" "}
+                                    ·{" "}
+                                    <span className="date-post-detail">
+                                      {getCreatedDate(post.createdAt)}
+                                    </span>
+                                  </span>
+                                </Link>
+                                {/* finish to check  */}
                                 <Link
                                   to={`/${post.userId.username}/status/${
                                     !post.isReposted

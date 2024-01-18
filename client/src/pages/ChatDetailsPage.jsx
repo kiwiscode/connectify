@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import io from "socket.io-client";
 import { UserContext } from "../context/UserContext";
 import { Col, Row, Container, Stack } from "react-bootstrap";
 import axios from "axios";
@@ -14,10 +13,10 @@ const API_URL = "http://localhost:3000";
 // when working on deployment version
 // ?
 
-const socket = io.connect(API_URL);
+// const socket = io.connect(API_URL);
 function ChatDetailsPage() {
   const { chatRoomId } = useParams();
-  const { userInfo, getToken } = useContext(UserContext);
+  const { userInfo, getToken, socket } = useContext(UserContext);
   const [showNotificationColumn, setshowNotificationColumn] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [spesificRoom, setspesificRoom] = useState([]);
@@ -25,18 +24,62 @@ function ChatDetailsPage() {
   const [currentMessage, setCurrentMessage] = useState("");
   const [room, setRoom] = useState("");
   const [disabled, setDisabled] = useState(true);
-
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [showEmojisBar, setshowEmojisBar] = useState("hide");
-
   const [showSecondModal, setShowSecondModal] = useState(false);
+
+  // socket io 1 client start to check
+  const [notificationTest, setnotificationTest] = useState([]);
+  const [notificationText, setnotificationText] = useState([]);
+  // socket io 1 client finish to check
+
   // start to check
   const navigate = useNavigate();
   const redirectToMessages = () => {
     navigate("/messages");
     window.location.reload();
   };
+
+  const redirectProfilePage = () => {
+    navigate("/profile");
+    window.location.reload();
+  };
+
+  const redirectHomePage = () => {
+    navigate("/home");
+    window.location.reload();
+  };
+
+  const redirectSpesificProfilePage = (userId) => {
+    navigate(`/profile/${userId}`);
+    window.location.reload();
+  };
   // finish to check
+
+  // socket io 4 client start to check
+  useEffect(() => {
+    console.log("Hello worldddddd");
+    socket.on("socket_id_for_user", (socketId) => {
+      console.log("socket id received from backend =>", socketId);
+
+      localStorage.setItem("socketId", socketId);
+    });
+
+    socket.emit("setUsername", userInfo.username);
+  }, []);
+  // socket io 4 client finish to check
+
+  useEffect(() => {
+    socket.on("getNotification", (data) => {
+      console.log("Data =>", data);
+      setnotificationTest((prev) => [...prev, data]);
+    });
+
+    socket.on("getText", (data) => {
+      console.log("Data get text =>", data);
+      setnotificationText(data);
+    });
+  }, [socket]);
 
   useEffect(() => {
     socket.emit("send_spesific_chatRoomId", chatRoomId);
@@ -63,10 +106,6 @@ function ChatDetailsPage() {
 
     // finish to check Mesajlar karşılıklı olarak receive ediliyor başarılı şekilde tek gereken render etmek kaldı !
 
-    // // Component unmount olduğunda temizlik yap
-    // return () => {
-    //   socket.disconnect();
-    // };
     return () => {
       // Clean up event listeners
       socket.off("receive_selectedUser");
@@ -74,12 +113,12 @@ function ChatDetailsPage() {
     };
   }, [socket, room, chatRoomId, userInfo._id]);
 
-  useEffect(() => {
-    // Bileşen unmount temizliği
-    return () => {
-      socket.disconnect();
-    };
-  }, []); // Boş dependency array
+  // useEffect(() => {
+  //   // Bileşen unmount temizliği
+  //   return () => {
+  //     socket.disconnect();
+  //   };
+  // }, []); // Boş dependency array
 
   // mesajların render edildiği kısım start to check
   socket.on("send_spesific_chat_details", (data) => {
@@ -275,7 +314,7 @@ function ChatDetailsPage() {
               </Link>
 
               <div className="inner-div inner-div-fonts">
-                <Link to="/home">
+                <Link onClick={redirectHomePage} to="/home">
                   <div className="home">
                     <div>
                       <svg
@@ -343,7 +382,7 @@ function ChatDetailsPage() {
                 </Link>
                 {/* finish to check redirect to the correct component for messages */}
 
-                <Link to="/profile">
+                <Link onClick={redirectProfilePage} to="/profile">
                   <div className="profile">
                     <div>
                       <svg
@@ -456,6 +495,9 @@ function ChatDetailsPage() {
 
                   <Link
                     style={{ textDecoration: "none", color: "black" }}
+                    onClick={() =>
+                      redirectSpesificProfilePage(selectedUser[0]._id)
+                    }
                     to={`/profile/${selectedUser[0]._id}`}
                   >
                     <div className="message-detail-user-card">
