@@ -48,6 +48,7 @@ const handleProfile = (req, res) => {
     // .populate("posts")
     .then((user) => {
       console.log("Profile page active!");
+      console.log(user.posts.length, user.favorites.length);
       res.status(200).json({ posts: user.posts, user });
     })
     .catch((err) => {
