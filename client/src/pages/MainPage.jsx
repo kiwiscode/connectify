@@ -41,10 +41,10 @@ function MainPage() {
     window.location.reload();
   };
 
-  // const redirectPostDetailPage = (postOwner, postId) => {
-  //   navigate(`/${postOwner}/status/${postId}`);
-  //   window.location.reload();
-  // };
+  const redirectToPostDetailPage = (postOwnerName, postId) => {
+    navigate(`/${postOwnerName}/status/${postId}`);
+    window.location.reload();
+  };
   // finish to check
   const { userInfo, getToken, socket } = useContext(UserContext);
   const [posts, setPosts] = useState([]);
@@ -1345,23 +1345,18 @@ function MainPage() {
                                   </span>
                                 </Link>
                                 <Link
-                                  // onClick={() =>
-                                  //   redirectPostDetailPage(
-                                  //     post.userId.username,
-                                  //     !post.isReposted
-                                  //       ? post._id
-                                  //       : post.repostedFromThisOriginalPost[0]
-                                  //           ._id
-                                  //   )
-                                  // }
+                                  onClick={() =>
+                                    redirectToPostDetailPage(
+                                      post.userId.username,
+                                      !post.isReposted
+                                        ? post._id
+                                        : post.repostedFromThisOriginalPost[0]
+                                            ._id
+                                    )
+                                  }
                                   style={{
                                     textDecoration: "none",
                                   }}
-                                  to={`/${post.userId.username}/status/${
-                                    !post.isReposted
-                                      ? post._id
-                                      : post.repostedFromThisOriginalPost[0]._id
-                                  }`}
                                 >
                                   <span
                                     style={{
@@ -1380,11 +1375,15 @@ function MainPage() {
                                 </Link>
                                 {/* finish to check  */}
                                 <Link
-                                  to={`/${post.userId.username}/status/${
-                                    !post.isReposted
-                                      ? post._id
-                                      : post.repostedFromThisOriginalPost[0]._id
-                                  }`}
+                                  onClick={() =>
+                                    redirectToPostDetailPage(
+                                      post.userId.username,
+                                      !post.isReposted
+                                        ? post._id
+                                        : post.repostedFromThisOriginalPost[0]
+                                            ._id
+                                    )
+                                  }
                                   style={{
                                     textDecoration: "none",
                                     color: "rgb(15, 20, 25)",

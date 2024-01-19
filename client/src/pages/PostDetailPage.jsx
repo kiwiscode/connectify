@@ -17,9 +17,28 @@ function PostDetailPage() {
   const { userInfo, getToken, socket } = useContext(UserContext);
 
   // socket io 1 client start to check
-  const [notificationTest, setnotificationTest] = useState([]);
   const [notificationText, setnotificationText] = useState([]);
   // socket io 1 client finish to check
+
+  // socket io 4 client start to check
+  useEffect(() => {
+    console.log("Hello worldddddd");
+    socket.on("socket_id_for_user", (socketId) => {
+      console.log("socket id received from backend =>", socketId);
+
+      localStorage.setItem("socketId", socketId);
+    });
+
+    socket.emit("setUsername", userInfo.username);
+  }, []);
+  // socket io 4 client finish to check
+
+  useEffect(() => {
+    socket.on("getText", (data) => {
+      console.log("Data get text =>", data);
+      setnotificationText(data);
+    });
+  }, [socket]);
 
   // start to check
   const navigate = useNavigate();

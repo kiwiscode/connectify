@@ -42,6 +42,11 @@ function SpesificUserProfile() {
     navigate(`/profile/${userId}`);
     window.location.reload();
   };
+
+  const redirectToPostDetailPage = (postOwnerName, postId) => {
+    navigate(`/${postOwnerName}/status/${postId}`);
+    window.location.reload();
+  };
   // finish to check
   const { getToken, userInfo, socket } = useContext(UserContext);
   const [profileInfo, setProfileInfo] = useState({});
@@ -1881,44 +1886,51 @@ function SpesificUserProfile() {
                                         <span>@{post.authorUserName}</span>
                                       </span>
                                     </Link>
-                                    <Link
-                                      style={{
-                                        textDecoration: "none",
-                                      }}
-                                      to={`/${post.userId.username}/status/${
-                                        !post.isReposted
-                                          ? post._id
-                                          : post.repostedFromThisOriginalPost[0]
-                                              ._id
-                                      }`}
-                                    >
-                                      <span
-                                        style={{
-                                          color: "rgb(83, 100, 113)",
-                                          lineHeight: "20px",
-                                          fontSize: "15px",
-                                          fontWeight: "400",
-                                        }}
-                                      >
-                                        {" "}
-                                        ·{" "}
-                                        <span className="date-post-detail">
-                                          {getCreatedDateForSpesificUserProfilePage(
-                                            post.createdAt
-                                          )}
-                                        </span>
-                                      </span>
-                                    </Link>
                                     {/* finish to check  */}
                                   </span>
                                   <span></span>
                                 </Link>
                                 <Link
-                                  to={`/${post.userId.username}/status/${
-                                    !post.isReposted
-                                      ? post._id
-                                      : post.repostedFromThisOriginalPost[0]._id
-                                  }`}
+                                  style={{
+                                    textDecoration: "none",
+                                  }}
+                                  onClick={() =>
+                                    redirectToPostDetailPage(
+                                      post.userId.username,
+                                      !post.isReposted
+                                        ? post._id
+                                        : post.repostedFromThisOriginalPost[0]
+                                            ._id
+                                    )
+                                  }
+                                >
+                                  <span
+                                    style={{
+                                      color: "rgb(83, 100, 113)",
+                                      lineHeight: "20px",
+                                      fontSize: "15px",
+                                      fontWeight: "400",
+                                    }}
+                                  >
+                                    {" "}
+                                    ·{" "}
+                                    <span className="date-post-detail">
+                                      {getCreatedDateForSpesificUserProfilePage(
+                                        post.createdAt
+                                      )}
+                                    </span>
+                                  </span>
+                                </Link>
+                                <Link
+                                  onClick={() =>
+                                    redirectToPostDetailPage(
+                                      post.userId.username,
+                                      !post.isReposted
+                                        ? post._id
+                                        : post.repostedFromThisOriginalPost[0]
+                                            ._id
+                                    )
+                                  }
                                   style={{
                                     textDecoration: "none",
                                     color: "rgb(15, 20, 25)",
@@ -2002,17 +2014,7 @@ function SpesificUserProfile() {
                           {/* three dots svg finish to check */}
                         </Stack>
                       </div>
-                      <Link
-                        to={`/${post.userId.username}/status/${
-                          !post.isReposted
-                            ? post._id
-                            : post.repostedFromThisOriginalPost[0]._id
-                        }`}
-                        style={{
-                          textDecoration: "none",
-                          color: "rgb(15, 20, 25)",
-                        }}
-                      ></Link>
+
                       {post.image.url !== "image@url" ? (
                         <>
                           <Link
@@ -2316,15 +2318,16 @@ function SpesificUserProfile() {
                                         style={{
                                           textDecoration: "none",
                                         }}
-                                        to={`/${
-                                          favorite.userId.username
-                                        }/status/${
-                                          !favorite.isReposted
-                                            ? favorite._id
-                                            : favorite
-                                                .repostedFromThisOriginalPost[0]
-                                                ._id
-                                        }`}
+                                        onClick={() =>
+                                          redirectToPostDetailPage(
+                                            favorite.userId.username,
+                                            !favorite.isReposted
+                                              ? favorite._id
+                                              : favorite
+                                                  .repostedFromThisOriginalPost[0]
+                                                  ._id
+                                          )
+                                        }
                                       >
                                         <span
                                           style={{
@@ -2348,12 +2351,16 @@ function SpesificUserProfile() {
                                     <span></span>
                                   </Link>
                                   <Link
-                                    to={`/${favorite.userId.username}/status/${
-                                      !favorite.isReposted
-                                        ? favorite._id
-                                        : favorite
-                                            .repostedFromThisOriginalPost[0]._id
-                                    }`}
+                                    onClick={() =>
+                                      redirectToPostDetailPage(
+                                        favorite.userId.username,
+                                        !favorite.isReposted
+                                          ? favorite._id
+                                          : favorite
+                                              .repostedFromThisOriginalPost[0]
+                                              ._id
+                                      )
+                                    }
                                     style={{
                                       textDecoration: "none",
                                       color: "rgb(15, 20, 25)",
