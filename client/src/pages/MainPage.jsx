@@ -618,6 +618,8 @@ function MainPage() {
     }
   };
 
+  console.log("Ready to comment for this post =>", posts[0]);
+
   const getRepostedIds = (array) => {
     return array.reposted.map((eachRepost) => {
       return eachRepost._id;
@@ -791,29 +793,29 @@ function MainPage() {
 
             <Stack
               direction="horizontal"
-              gap={3}
+              gap={1}
               className="responsive-stack-home-page"
             >
-              <div className="p-2">
+              <div className="p-0 mt-2">
                 {" "}
                 {userInfo.imageUrl.slice(0, 3) !== "../" ? (
                   <img
                     src={userInfo.imageUrl}
-                    width={35}
-                    height={35}
+                    width={40}
+                    height={40}
                     alt=""
-                    style={{ position: "relative", bottom: "57px" }}
+                    style={{ position: "relative", bottom: "30px" }}
                   />
                 ) : (
                   <div>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="35"
-                      height="35"
+                      width="40"
+                      height="40"
                       fill="rgb(83, 100, 113)"
                       className="bi bi-person-circle"
                       viewBox="0 0 16 16"
-                      style={{ position: "relative", bottom: "57px" }}
+                      style={{ position: "relative", bottom: "30px" }}
                       onClick={() =>
                         document.getElementById("formuploadModal").click()
                       }
@@ -833,8 +835,7 @@ function MainPage() {
                 )}
               </div>
 
-              <div className="p-2 input-text-area">
-                {" "}
+              <div className="p-0 ">
                 <textarea
                   onChange={handleChange}
                   rows="4"
@@ -849,7 +850,9 @@ function MainPage() {
                     color: "rgba(15,20,25,1.00)",
                     lineHeight: "24px",
                     fontWeight: "400",
-                    fontSize: "20px",
+                    fontSize: `${content ? "15px" : "20px"}`,
+                    width: "100%",
+                    height: "100px",
                   }}
                 />
               </div>
@@ -1335,9 +1338,9 @@ function MainPage() {
                       >
                         <div
                           style={{
-                            fontSize: "17px",
+                            fontSize: "15px",
                             fontWeight: "400",
-                            lineHeight: "24px",
+                            lineHeight: "20px",
                             overflowWrap: "break-word",
                             maxWidth: "100%",
                           }}
@@ -1392,7 +1395,7 @@ function MainPage() {
                       }}
                     >
                       <div className="p-1">
-                        <CommentModal post={post} />
+                        <CommentModal post={post ? post : null} />
                       </div>
                       <div className="p-1">
                         {post.reposted.length > 0 &&

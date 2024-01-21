@@ -640,9 +640,9 @@ function PostDetailPage() {
             >
               <div
                 style={{
-                  fontSize: "17px",
+                  fontSize: "15px",
                   fontWeight: "400",
-                  lineHeight: "24px",
+                  lineHeight: "20px",
                   overflowWrap: "break-word",
                   maxWidth: "100%",
                 }}

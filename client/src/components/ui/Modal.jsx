@@ -559,27 +559,27 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
           </div>
         </Modal.Header>
         <Modal.Body>
-          <Stack direction="horizontal" gap={3}>
-            <div className="p-2">
+          <Stack direction="horizontal" gap={1}>
+            <div className="p-0">
               {" "}
               {userInfo.imageUrl.slice(0, 3) !== "../" ? (
                 <img
                   src={userInfo.imageUrl}
-                  width={35}
-                  height={35}
+                  width={40}
+                  height={40}
                   alt=""
-                  style={{ position: "relative", bottom: "57px" }}
+                  style={{ position: "relative", bottom: "30px" }}
                 />
               ) : (
                 <div>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="35"
-                    height="35"
+                    width="40"
+                    height="40"
                     fill="rgb(83, 100, 113)"
                     className="bi bi-person-circle"
                     viewBox="0 0 16 16"
-                    style={{ position: "relative", bottom: "57px" }}
+                    style={{ position: "relative", bottom: "30px" }}
                   >
                     <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
                     <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
@@ -588,7 +588,7 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
               )}
             </div>
 
-            <div className="p-2">
+            <div className="p-0 ">
               <textarea
                 onChange={handleChange}
                 rows="4"
@@ -603,7 +603,9 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
                   color: "rgba(15,20,25,1.00)",
                   lineHeight: "24px",
                   fontWeight: "400",
-                  fontSize: "20px",
+                  fontSize: `${content ? "15px" : "20px"}`,
+                  width: "100%",
+                  height: "100px",
                 }}
               />
             </div>
@@ -950,26 +952,52 @@ function CommentModal({ post }) {
 
         {/* start to check twitterdaki gibi post içeriği gelecek body içerisine  */}
         <Modal.Body>
-          <Stack
-            style={{
-              border: "1px solid rgba(0,0,0,0.1)",
-            }}
-            direction="horizontal"
-            gap={1}
-          >
-            {post.userId ? (
-              <div className="p-0">
-                {" "}
-                {post.userId?.imageUrl.slice(0, 3) !== "../" ? (
-                  <img
-                    src={post.userId.imageUrl}
-                    width={40}
-                    height={40}
-                    alt=""
-                    style={{ position: "relative", bottom: "57px" }}
-                  />
-                ) : (
-                  <div>
+          <Container>
+            <Row>
+              <Col
+                xs={2}
+                sm={2}
+                md={2}
+                lg={2}
+                xxl={2}
+                style={{
+                  border: "1px solid blue",
+                  textAlign: "center",
+                }}
+              >
+                {/* profile image start to check */}
+                <div>
+                  {post.userId ? (
+                    <>
+                      <img
+                        width={40}
+                        height={40}
+                        src={post.userId.imageUrl}
+                        alt=""
+                      />
+                      <div
+                        className="responsive-comment-line"
+                        style={{
+                          position: "relative",
+                          border: "1px solid rgba(0, 0, 0, 0.2)",
+                          left: "25px",
+                          margin: "5px 0px 5px 0px",
+                          width: "2px",
+                          height: `${
+                            post.content.length < 38
+                              ? "60px"
+                              : post.content.length >= 38 &&
+                                post.content.length < 75
+                              ? "80px"
+                              : post.content.length >= 75 &&
+                                post.content.length <= 140
+                              ? "100px"
+                              : "0px"
+                          }`,
+                        }}
+                      ></div>
+                    </>
+                  ) : (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="40"
@@ -977,52 +1005,63 @@ function CommentModal({ post }) {
                       fill="rgb(83, 100, 113)"
                       className="bi bi-person-circle"
                       viewBox="0 0 16 16"
-                      style={{ position: "relative", bottom: "57px" }}
                     >
                       <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
                       <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
                     </svg>
-                  </div>
-                )}
-              </div>
-            ) : null}
+                  )}
+                </div>
+                {/* profile image finish to check  */}
+              </Col>
+              <Col
+                xs={10}
+                sm={10}
+                md={10}
+                lg={10}
+                xxl={10}
+                style={{
+                  border: "1px solid yellow",
+                }}
+              >
+                {/* post owner full name + verified account svg + post owner user name + post created date and content start to check  */}
 
-            <div className="p-0">
-              {post.userId ? (
-                <>
-                  <div
-                    style={{
-                      display: "inline",
-                      fontWeight: "700",
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                    }}
-                  >
-                    {post.authorFullName}
-                  </div>
-                  <span>
-                    {/* start to check  */}{" "}
-                    <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
-                      <svg
-                        width={`${1.25}em`}
-                        height={`${1.25}em`}
-                        viewBox="0 0 22 22"
-                        aria-label="Verified account"
-                        role="img"
-                        className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
-                        data-testid="icon-verified"
-                        color="rgba(29,155,240,1.00)"
-                        fill="currentColor"
+                <div>
+                  {post.userId ? (
+                    <>
+                      <span
+                        className="hover-fullname"
+                        style={{
+                          fontWeight: "700",
+                          fontSize: "15px",
+                          lineHeight: "20px",
+                        }}
                       >
-                        <g>
-                          <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
-                        </g>
-                      </svg>
-                    </span>{" "}
-                    <span>
+                        {post.authorFullName}
+                      </span>
+
+                      <span>
+                        {/* start to check  */}{" "}
+                        <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
+                          <svg
+                            width={`${1.25}em`}
+                            height={`${1.25}em`}
+                            viewBox="0 0 22 22"
+                            aria-label="Verified account"
+                            role="img"
+                            className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                            data-testid="icon-verified"
+                            color="rgba(29,155,240,1.00)"
+                            fill="currentColor"
+                          >
+                            <g>
+                              <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                            </g>
+                          </svg>
+                        </span>{" "}
+                      </span>
+
                       <span
                         style={{
-                          textDecoration: "none",
                           color: "rgb(83, 100, 113)",
                           lineHeight: "20px",
                           fontSize: "15px",
@@ -1031,104 +1070,201 @@ function CommentModal({ post }) {
                       >
                         @{post.authorUserName}
                       </span>
-                    </span>
-                  </span>
 
-                  <span
-                    style={{
-                      color: "rgb(83, 100, 113)",
-                      lineHeight: "20px",
-                      fontSize: "15px",
-                      fontWeight: "400",
-                    }}
-                  >
-                    {" "}
-                    · <span>{getCreatedDate(post.createdAt)}</span>
-                  </span>
+                      <span
+                        style={{
+                          color: "rgb(83, 100, 113)",
+                          lineHeight: "20px",
+                          fontSize: "15px",
+                          fontWeight: "400",
+                        }}
+                      >
+                        {" "}
+                        ·{" "}
+                        <span className="date-post-detail">
+                          {getCreatedDate(post.createdAt)}
+                        </span>
+                      </span>
 
-                  {/* finish to check  */}
+                      {/* finish to check  */}
+                    </>
+                  ) : null}
+                </div>
 
+                <div
+                  style={{
+                    fontSize: "17px",
+                    fontWeight: "400",
+                    lineHeight: "24px",
+                    overflowWrap: "break-word",
+                    maxWidth: "100%",
+                  }}
+                >
                   <div
                     style={{
                       fontSize: "15px",
-                      lineHeight: "20px",
                       fontWeight: "400",
+                      lineHeight: "20px",
                     }}
                   >
-                    {post.content}
+                    <span>{post.content}</span>
+                    {post.image ? (
+                      <>
+                        {post.image.url.slice(0, 3) !== "ima" ? (
+                          <div>{post.image.url}</div>
+                        ) : null}
+                      </>
+                    ) : null}
                   </div>
-                </>
-              ) : null}
-            </div>
-          </Stack>
 
-          <div
-            className="horizontal-comment-line"
+                  {post.userId ? (
+                    <>
+                      {post.userId._id !== userInfo._id && post.isReposted ? (
+                        <>
+                          <div
+                            style={{
+                              marginTop: "10px",
+                            }}
+                          >
+                            <span
+                              style={{
+                                color: "rgb(83, 100, 113)",
+                                fontSize: "15px",
+                                fontWeight: "400",
+                                lineHeight: "20px",
+                              }}
+                            >
+                              Replying to
+                            </span>
+
+                            <span
+                              style={{
+                                color: "rgb(29, 155, 240)",
+                                fontSize: "15px",
+                                fontWeight: "400",
+                                lineHeight: "20px",
+                                marginLeft: "3px",
+                              }}
+                            >
+                              @{post.authorUserName}
+                            </span>
+                            <span
+                              style={{
+                                color: "rgb(29, 155, 240)",
+                                fontSize: "15px",
+                                fontWeight: "400",
+                                lineHeight: "20px",
+                                marginLeft: "3px",
+                              }}
+                            >
+                              and
+                            </span>
+                            <span
+                              style={{
+                                color: "rgb(29, 155, 240)",
+                                fontSize: "15px",
+                                fontWeight: "400",
+                                lineHeight: "20px",
+                                marginLeft: "3px",
+                              }}
+                            >
+                              @{post.reposted[0].username}
+                            </span>
+                          </div>
+                        </>
+                      ) : null}
+                    </>
+                  ) : null}
+                </div>
+
+                {/* post owner full name + verified account svg + post owner user name + post created date and content  finish to check  */}
+              </Col>
+            </Row>
+          </Container>
+
+          <Container
             style={{
-              color: "rgba(0,0,0,0.1)",
+              marginTop: "15px",
             }}
           >
-            <span>Horizontal line</span>
-          </div>
+            <Row>
+              <Col
+                xs={2}
+                sm={2}
+                md={2}
+                lg={2}
+                xxl={2}
+                style={{
+                  border: "1px solid blue",
+                  textAlign: "center",
+                }}
+              >
+                {/* profile image start to check */}
+                <div>
+                  {userInfo ? (
+                    <>
+                      <img
+                        width={40}
+                        height={40}
+                        src={userInfo.imageUrl}
+                        alt=""
+                      />
+                    </>
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="40"
+                      height="40"
+                      fill="rgb(83, 100, 113)"
+                      className="bi bi-person-circle"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                      <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                    </svg>
+                  )}
+                </div>
+                {/* profile image finish to check  */}
+              </Col>
+              <Col
+                xs={10}
+                sm={10}
+                md={10}
+                lg={10}
+                xxl={10}
+                style={{
+                  border: "1px solid yellow",
+                }}
+              >
+                <textarea
+                  onChange={handleChange}
+                  rows="4"
+                  cols="50"
+                  value={content}
+                  maxLength={maxCharacters}
+                  className="input-post"
+                  placeholder={
+                    post.userId
+                      ? userInfo._id === post.userId._id
+                        ? "Add another post"
+                        : "Post your reply"
+                      : null
+                  }
+                  style={{
+                    resize: "none",
+                    color: "rgba(15,20,25,1.00)",
+                    lineHeight: "24px",
+                    fontWeight: "400",
+                    fontSize: `${content ? "15px" : "20px"}`,
 
-          <Stack
-            style={{ border: "1px solid rgba(0,0,0,0.1)" }}
-            direction="horizontal"
-            gap={1}
-          >
-            {post.userId ? (
-              <div className="p-0">
-                {" "}
-                {post.userId.imageUrl.slice(0, 3) !== "../" ? (
-                  <img
-                    src={post.userId.imageUrl}
-                    width={40}
-                    height={40}
-                    alt=""
-                    style={{
-                      borderRadius: "50%",
-                      marginTop: "3px",
-                    }}
-                  />
-                ) : (
-                  <svg
-                    style={{
-                      marginTop: "3px",
-                    }}
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="40"
-                    height="40"
-                    fill="rgb(83, 100, 113)"
-                    className="bi bi-person-circle"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                  </svg>
-                )}
-              </div>
-            ) : null}
-          </Stack>
+                    width: "100%",
+                    height: "100px",
+                  }}
+                />
+              </Col>
+            </Row>
+          </Container>
 
-          {/* <div>
-            <textarea
-              onChange={handleChange}
-              rows="4"
-              cols="50"
-              value={content}
-              maxLength={maxCharacters}
-              className="input-post"
-              placeholder="What is happening?!"
-              style={{
-                resize: "none",
-                padding: "8px",
-                color: "rgba(15,20,25,1.00)",
-                lineHeight: "24px",
-                fontWeight: "400",
-                fontSize: "20px",
-              }}
-            />
-          </div> */}
           <div className="d-flex align-items-center">
             <div className="p-2">
               {/* start to check */}

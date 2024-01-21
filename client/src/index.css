@@ -1227,8 +1227,8 @@ span > a:hover {
   }
 }
 
-/* @media (min-width: 1400px) {
-  .responsive-threedots-post {
-    top: -15px;
+@media (max-width: 575px) {
+  .responsive-comment-line {
+    display: none;
   }
-} */
+}
