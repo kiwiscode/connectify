@@ -1198,8 +1198,8 @@ function MainPage() {
                               {/* start to check  */}{" "}
                               <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
                                 <svg
-                                  width={18}
-                                  height={18}
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
                                   viewBox="0 0 22 22"
                                   aria-label="Verified account"
                                   role="img"
@@ -1267,23 +1267,52 @@ function MainPage() {
 
                       {/* three dots svg start to check */}
                       <div className="p-1 ms-auto">
-                        <svg
-                          style={{
-                            color: "rgb(83, 100, 113)",
-                            fontSize: "15px",
-                            lineHeight: "20px",
-                          }}
-                          fill="currentColor"
-                          width={`${1.25}em`}
-                          height={`${1.25}em`}
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                          className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                        >
-                          <g>
-                            <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                          </g>
-                        </svg>
+                        <span>
+                          {/* show if post owner userId !equal currentUserId */}
+                          {post.userId && post.userId._id !== userInfo._id ? (
+                            <svg
+                              style={{
+                                cursor: "pointer",
+                                backgroundColor: "rgb(29, 155, 240)",
+                              }}
+                              onClick={() =>
+                                handleShowDetailPostFromHomePage(post._id)
+                              }
+                              color="rgb(83, 100, 113)"
+                              fill="currentColor"
+                              width={`${1.25}em`}
+                              height={`${1.25}em`}
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                              className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                            >
+                              <g>
+                                <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                              </g>
+                            </svg>
+                          ) : (
+                            <svg
+                              style={{
+                                cursor: "pointer",
+                                backgroundColor: "crimson",
+                              }}
+                              onClick={() =>
+                                handleDeletePostFromHomePage(post._id)
+                              }
+                              color="rgb(83, 100, 113)"
+                              fill="currentColor"
+                              width={`${1.25}em`}
+                              height={`${1.25}em`}
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                              className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                            >
+                              <g>
+                                <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                              </g>
+                            </svg>
+                          )}
+                        </span>
                       </div>
                       {/* three dots svg finish to check */}
                     </Stack>

@@ -1279,8 +1279,8 @@ function UserProfile() {
                                 {/* start to check  */}{" "}
                                 <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
                                   <svg
-                                    width={18}
-                                    height={18}
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
                                     viewBox="0 0 22 22"
                                     aria-label="Verified account"
                                     role="img"
@@ -1713,8 +1713,8 @@ function UserProfile() {
                                 {/* start to check  */}{" "}
                                 <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
                                   <svg
-                                    width={18}
-                                    height={18}
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
                                     viewBox="0 0 22 22"
                                     aria-label="Verified account"
                                     role="img"

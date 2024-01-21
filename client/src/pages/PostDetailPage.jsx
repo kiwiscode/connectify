@@ -694,8 +694,8 @@ function PostDetailPage() {
                         onClick={() =>
                           handleDeleteRepostPostDetailPage(detailedPost._id)
                         }
-                        width={18}
-                        height={18}
+                        width={`${1.25}em`}
+                        height={`${1.25}em`}
                         viewBox="0 0 24 24"
                         aria-hidden="true"
                         className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -727,8 +727,8 @@ function PostDetailPage() {
                           cursor: "pointer",
                         }}
                         onClick={() => handleRepost(detailedPost._id)}
-                        width={18}
-                        height={18}
+                        width={`${1.25}em`}
+                        height={`${1.25}em`}
                         viewBox="0 0 24 24"
                         aria-hidden="true"
                         className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -758,8 +758,8 @@ function PostDetailPage() {
                         cursor: "pointer",
                       }}
                       onClick={() => handleRepost(detailedPost._id)}
-                      width={18}
-                      height={18}
+                      width={`${1.25}em`}
+                      height={`${1.25}em`}
                       viewBox="0 0 24 24"
                       aria-hidden="true"
                       className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -796,8 +796,8 @@ function PostDetailPage() {
                         onClick={() =>
                           handleDeleteLikePostDetailPage(detailedPost._id)
                         }
-                        width={18}
-                        height={18}
+                        width={`${1.25}em`}
+                        height={`${1.25}em`}
                         viewBox="0 0 24 24"
                         aria-hidden="true"
                         fill="rgb(249, 24, 128)"
@@ -830,8 +830,8 @@ function PostDetailPage() {
                         onClick={() =>
                           handlePostLikesPostDetailPage(detailedPost._id)
                         }
-                        width={18}
-                        height={18}
+                        width={`${1.25}em`}
+                        height={`${1.25}em`}
                         viewBox="0 0 24 24"
                         aria-hidden="true"
                         color="rgb(83, 100, 113)"
@@ -856,8 +856,8 @@ function PostDetailPage() {
                       onClick={() =>
                         handlePostLikesPostDetailPage(detailedPost._id)
                       }
-                      width={18}
-                      height={18}
+                      width={`${1.25}em`}
+                      height={`${1.25}em`}
                       viewBox="0 0 24 24"
                       aria-hidden="true"
                       color="rgb(83, 100, 113)"
