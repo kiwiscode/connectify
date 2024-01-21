@@ -134,6 +134,7 @@ function SigninModal() {
                 }}
               >
                 <div
+                  onClick={handleClose}
                   className="close-button"
                   style={{
                     borderRadius: "50%",
@@ -313,8 +314,8 @@ function LogoutModal() {
           </span>
         </div>
         <svg
-          width={18}
-          height={18}
+          width={`${1.25}em`}
+          height={`${1.25}em`}
           viewBox="0 0 24 24"
           aria-hidden="true"
           className="bi bi-three-dots none-backgroundColor logout-three-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -530,6 +531,7 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
           }}
         >
           <div
+            onClick={handleClose}
             className="close-button"
             style={{ borderRadius: "50%", cursor: "pointer" }}
           >
@@ -663,7 +665,7 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
           </div>
         </Modal.Body>
 
-        <Modal.Footer className="post-modal-footer ml-1  ">
+        <Modal.Footer className="post-modal-footer ml-1">
           <Stack direction="horizontal" gap={0}>
             {/* INFO */}
             <div className="p-2">
@@ -779,9 +781,107 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
 
 function CommentModal({ post }) {
   const [show, setShow] = useState(false);
+  const [content, setContent] = useState("");
+  const [modalImage, setModalImage] = useState("");
+  const [error, setError] = useState("");
 
-  const handleClose = () => setShow(false);
+  const [chosenEmoji, setChosenEmoji] = useState(null);
+  const [showEmojisBar, setshowEmojisBar] = useState("hide");
+  const [showSecondModal, setShowSecondModal] = useState(false);
+
+  const { getToken, userInfo } = useContext(UserContext);
+  const maxCharacters = 140;
+  //handle and convert it in base 64
+  const handleImage = (e) => {
+    const file = e.target.files[0];
+    console.log("FILE FROM MODAL.JSX =>", file);
+    setFileToBase(file);
+    console.log(file);
+  };
+
+  const setFileToBase = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    console.log("SET FILE TO BASE FILE FROM MODAL.JSX =>", file);
+
+    reader.onloadend = () => {
+      setModalImage(reader.result);
+    };
+  };
+
+  const toggleEmojis = () => {
+    setshowEmojisBar("");
+    if (showEmojisBar === "") {
+      setshowEmojisBar("hide");
+    } else if (showEmojisBar === "hide") {
+      setshowEmojisBar("");
+    }
+    setShowSecondModal(true);
+  };
+  const onEmojiClick = (emojiObject) => {
+    setChosenEmoji(emojiObject);
+    setContent((prevText) => prevText + emojiObject.emoji);
+  };
+
+  const handleChange = (event) => {
+    const inputText = event.target.value;
+    if (inputText.length <= maxCharacters) {
+      setContent(inputText);
+    } else {
+      setError("Tweet length to 140 characters");
+    }
+  };
+
+  const handleClose = () => {
+    setShow(false);
+    setShowSecondModal(false);
+  };
+
   const handleShow = () => setShow(true);
+  const closeImage = () => {
+    setModalImage("");
+  };
+
+  const handleMouseOver = (e) => {
+    console.log("MOUSE OVER =>", e);
+    console.log(e.target.classList);
+    const shallowCopy = e.target.classList[0];
+    console.log(shallowCopy);
+    if (shallowCopy === "target") {
+      e.target.style.background = "#595b5b";
+    }
+  };
+
+  const handleMouseOut = (e) => {
+    console.log("MOUSE OVER =>", e);
+    console.log(e.target.classList);
+    const shallowCopy = e.target.classList[0];
+    console.log(shallowCopy);
+    if (shallowCopy === "target") {
+      e.target.style.background = "#47494a";
+    }
+  };
+
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "June",
+    "July",
+    "Aug",
+    "Sept",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  const getCreatedDate = (date) => {
+    const createdAt = new Date(date);
+    const getMonth = createdAt.getMonth();
+    return `${months[getMonth]} ${createdAt.getDate()}`;
+  };
 
   return (
     <>
@@ -820,35 +920,391 @@ function CommentModal({ post }) {
             border: "none",
           }}
         >
-          <svg
-            style={{
-              backgroundColor: "white",
-              border: "none",
-              borderRadius: "50%",
-              lineHeight: "20px",
-              fontSize: "20px",
-              padding: "3px",
-            }}
+          <div
             onClick={handleClose}
-            width={20}
-            height={20}
-            color="rgb(15,20,25)"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-            className="close-button r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+            className="close-button"
+            style={{ borderRadius: "50%", cursor: "pointer" }}
           >
-            <g>
-              <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
-            </g>
-          </svg>{" "}
+            <div>
+              <svg
+                style={{
+                  border: "none",
+                  fontSize: "15px",
+                  margin: "5px",
+                }}
+                width={20}
+                height={20}
+                color="rgb(15,20,25)"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+              >
+                <g>
+                  <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                </g>
+              </svg>{" "}
+            </div>
+          </div>
         </Modal.Header>
-        <Modal.Body>Woohoo, you are reading this text in a modal!</Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" onClick={handleClose}>
-            Reply
-          </Button>
+
+        {/* start to check twitterdaki gibi post içeriği gelecek body içerisine  */}
+        <Modal.Body>
+          <Stack
+            style={{
+              border: "1px solid rgba(0,0,0,0.1)",
+            }}
+            direction="horizontal"
+            gap={1}
+          >
+            {post.userId ? (
+              <div className="p-0">
+                {" "}
+                {post.userId?.imageUrl.slice(0, 3) !== "../" ? (
+                  <img
+                    src={post.userId.imageUrl}
+                    width={40}
+                    height={40}
+                    alt=""
+                    style={{ position: "relative", bottom: "57px" }}
+                  />
+                ) : (
+                  <div>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="40"
+                      height="40"
+                      fill="rgb(83, 100, 113)"
+                      className="bi bi-person-circle"
+                      viewBox="0 0 16 16"
+                      style={{ position: "relative", bottom: "57px" }}
+                    >
+                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                      <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+            ) : null}
+
+            <div className="p-0">
+              {post.userId ? (
+                <>
+                  <div
+                    style={{
+                      display: "inline",
+                      fontWeight: "700",
+                      fontSize: "15px",
+                      lineHeight: "20px",
+                    }}
+                  >
+                    {post.authorFullName}
+                  </div>
+                  <span>
+                    {/* start to check  */}{" "}
+                    <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
+                      <svg
+                        width={`${1.25}em`}
+                        height={`${1.25}em`}
+                        viewBox="0 0 22 22"
+                        aria-label="Verified account"
+                        role="img"
+                        className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                        data-testid="icon-verified"
+                        color="rgba(29,155,240,1.00)"
+                        fill="currentColor"
+                      >
+                        <g>
+                          <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                        </g>
+                      </svg>
+                    </span>{" "}
+                    <span>
+                      <span
+                        style={{
+                          textDecoration: "none",
+                          color: "rgb(83, 100, 113)",
+                          lineHeight: "20px",
+                          fontSize: "15px",
+                          fontWeight: "400",
+                        }}
+                      >
+                        @{post.authorUserName}
+                      </span>
+                    </span>
+                  </span>
+
+                  <span
+                    style={{
+                      color: "rgb(83, 100, 113)",
+                      lineHeight: "20px",
+                      fontSize: "15px",
+                      fontWeight: "400",
+                    }}
+                  >
+                    {" "}
+                    · <span>{getCreatedDate(post.createdAt)}</span>
+                  </span>
+
+                  {/* finish to check  */}
+
+                  <div
+                    style={{
+                      fontSize: "15px",
+                      lineHeight: "20px",
+                      fontWeight: "400",
+                    }}
+                  >
+                    {post.content}
+                  </div>
+                </>
+              ) : null}
+            </div>
+          </Stack>
+
+          <div
+            className="horizontal-comment-line"
+            style={{
+              color: "rgba(0,0,0,0.1)",
+            }}
+          >
+            <span>Horizontal line</span>
+          </div>
+
+          <Stack
+            style={{ border: "1px solid rgba(0,0,0,0.1)" }}
+            direction="horizontal"
+            gap={1}
+          >
+            {post.userId ? (
+              <div className="p-0">
+                {" "}
+                {post.userId.imageUrl.slice(0, 3) !== "../" ? (
+                  <img
+                    src={post.userId.imageUrl}
+                    width={40}
+                    height={40}
+                    alt=""
+                    style={{
+                      borderRadius: "50%",
+                      marginTop: "3px",
+                    }}
+                  />
+                ) : (
+                  <svg
+                    style={{
+                      marginTop: "3px",
+                    }}
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="40"
+                    height="40"
+                    fill="rgb(83, 100, 113)"
+                    className="bi bi-person-circle"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                  </svg>
+                )}
+              </div>
+            ) : null}
+          </Stack>
+
+          {/* <div>
+            <textarea
+              onChange={handleChange}
+              rows="4"
+              cols="50"
+              value={content}
+              maxLength={maxCharacters}
+              className="input-post"
+              placeholder="What is happening?!"
+              style={{
+                resize: "none",
+                padding: "8px",
+                color: "rgba(15,20,25,1.00)",
+                lineHeight: "24px",
+                fontWeight: "400",
+                fontSize: "20px",
+              }}
+            />
+          </div> */}
+          <div className="d-flex align-items-center">
+            <div className="p-2">
+              {/* start to check */}
+
+              {/* finish to check */}
+            </div>
+            <div className="p-2">
+              {modalImage && (
+                <div style={{ position: "relative" }}>
+                  <div
+                    className="target"
+                    style={{
+                      position: "absolute",
+                      top: "10px",
+                      right: "10px",
+                      width: "30px",
+                      height: "30px",
+                      borderRadius: "50%",
+                      background: "rgba(71,73,74,255)",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      cursor: "pointer",
+                    }}
+                    onMouseOver={(e) => handleMouseOver(e)}
+                    onMouseOut={(e) => handleMouseOut(e)}
+                    onClick={closeImage}
+                  >
+                    <div
+                      style={{
+                        cursor: "pointer",
+                        color: "white",
+                        fontSize: "22px",
+                      }}
+                    >
+                      &times;
+                    </div>
+                  </div>
+                  <img
+                    className="img-fluid"
+                    style={{
+                      width: "100%",
+                      display: "block",
+                      overflow: "hidden",
+                      border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
+                      borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
+                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                    }}
+                    src={modalImage ? modalImage : ""}
+                    alt=""
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </Modal.Body>
+        {/* finish to check twitterdaki gibi post içeriği gelecek body içerisine  */}
+
+        <Modal.Footer
+          style={{ border: "none" }}
+          className="post-modal-footer ml-1"
+        >
+          <Stack direction="horizontal" gap={0}>
+            {/* INFO */}
+            <div className="p-2">
+              <div
+                style={{
+                  // border: "1px solid black",
+                  cursor: "pointer",
+                  borderRadius: "50%",
+                }}
+                className="svg-border-parent"
+              >
+                <svg
+                  style={{
+                    cursor: "pointer",
+                  }}
+                  onClick={() =>
+                    document.getElementById("formuploadModal").click()
+                  }
+                  width={20}
+                  height={20}
+                  color="rgb(29,155,240)"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="bi bi-image-fill post-modal-image-fill r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                >
+                  <g>
+                    <path d="M3 5.5C3 4.119 4.119 3 5.5 3h13C19.881 3 21 4.119 21 5.5v13c0 1.381-1.119 2.5-2.5 2.5h-13C4.119 21 3 19.881 3 18.5v-13zM5.5 5c-.276 0-.5.224-.5.5v9.086l3-3 3 3 5-5 3 3V5.5c0-.276-.224-.5-.5-.5h-13zM19 15.414l-3-3-5 5-3-3-3 3V18.5c0 .276.224.5.5.5h13c.276 0 .5-.224.5-.5v-3.086zM9.75 7C8.784 7 8 7.784 8 8.75s.784 1.75 1.75 1.75 1.75-.784 1.75-1.75S10.716 7 9.75 7z"></path>
+                  </g>
+                </svg>
+              </div>
+
+              <input
+                onChange={handleImage}
+                type="file"
+                id="formuploadModal"
+                name="modalImage"
+                className="form-control"
+                style={{ display: "none" }}
+              />
+            </div>
+            {/* INFO */}
+            <div className="p-2">
+              <div
+                className="svg-border-parent"
+                style={{
+                  // border: "1px solid black",
+                  cursor: "pointer",
+                  borderRadius: "50%",
+                }}
+              >
+                <svg
+                  onClick={() => toggleEmojis()}
+                  color="rgb(29,155,240)"
+                  fill="currentColor"
+                  width={20}
+                  height={20}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="post-modal-emoji-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                  style={{
+                    cursor: "pointer",
+                  }}
+                >
+                  <g>
+                    <path d="M8 9.5C8 8.119 8.672 7 9.5 7S11 8.119 11 9.5 10.328 12 9.5 12 8 10.881 8 9.5zm6.5 2.5c.828 0 1.5-1.119 1.5-2.5S15.328 7 14.5 7 13 8.119 13 9.5s.672 2.5 1.5 2.5zM12 16c-2.224 0-3.021-2.227-3.051-2.316l-1.897.633c.05.15 1.271 3.684 4.949 3.684s4.898-3.533 4.949-3.684l-1.896-.638c-.033.095-.83 2.322-3.053 2.322zm10.25-4.001c0 5.652-4.598 10.25-10.25 10.25S1.75 17.652 1.75 12 6.348 1.75 12 1.75 22.25 6.348 22.25 12zm-2 0c0-4.549-3.701-8.25-8.25-8.25S3.75 7.451 3.75 12s3.701 8.25 8.25 8.25 8.25-3.701 8.25-8.25z"></path>
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <div className="p-2 ms-auto">
+              {/* <div className="p-2 "> */}{" "}
+              {content !== "" || modalImage ? (
+                <Button
+                  variant="primary"
+                  // onClick={() => handlePost()}
+                  className={`post-btn compose-tweet-textArea`}
+                >
+                  <span>
+                    {post.userId._id === userInfo._id ? "Post" : "Reply"}
+                  </span>
+                </Button>
+              ) : (
+                <Button
+                  variant="primary"
+                  // onClick={() => handleComment()}
+                  className={`emptyContent post-btn compose-tweet-textArea`}
+                >
+                  {post.userId ? (
+                    <span>
+                      {post.userId._id === userInfo._id ? "Post" : "Reply"}
+                    </span>
+                  ) : null}
+                </Button>
+              )}
+            </div>
+          </Stack>
         </Modal.Footer>
+        <div
+          className={`${showEmojisBar}`}
+          style={{
+            position: "fixed",
+            zIndex: 9999,
+            marginTop: "190px",
+            marginLeft: "55px",
+          }}
+        >
+          <Picker
+            onEmojiClick={onEmojiClick}
+            emojiStyle="twitter"
+            width={"320px"}
+            height={"400px"}
+          />
+        </div>
       </Modal>
     </>
   );

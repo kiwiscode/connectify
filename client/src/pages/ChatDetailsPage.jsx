@@ -17,8 +17,6 @@ const API_URL = "http://localhost:3000";
 function ChatDetailsPage() {
   const { chatRoomId } = useParams();
   const { userInfo, getToken, socket } = useContext(UserContext);
-  const [showNotificationColumn, setshowNotificationColumn] = useState(false);
-  const [notifications, setNotifications] = useState([]);
   const [spesificRoom, setspesificRoom] = useState([]);
   const [selectedUser, setselectedUser] = useState([]);
   const [currentMessage, setCurrentMessage] = useState("");
@@ -144,10 +142,33 @@ function ChatDetailsPage() {
         }),
       };
 
+      // socket io 5 client start to check
+      const handleNotification = (
+        messageReceiver,
+        messageSender,
+        notificationType,
+        messageContent
+      ) => {
+        socket.emit("sendNotification", {
+          receiverName: messageReceiver.username,
+          senderName: messageSender.username,
+          type: notificationType,
+          text: messageContent,
+        });
+      };
+      // socket io 5 client finish to check
+
       await socket.emit("send_spesific_room_message", messageData);
       console.log("Sended message =>", messageData);
       setspesificRoom((list) => [...list, messageData]);
       setCurrentMessage("");
+
+      handleNotification(selectedUser[0], userInfo, "message", currentMessage);
+
+      console.log("Receiver user =>", selectedUser[0].username);
+      console.log("Sender user =>", userInfo.username);
+      console.log("Type =>", "message");
+      console.log("Current message =>", currentMessage);
     }
   };
 
@@ -169,95 +190,6 @@ function ChatDetailsPage() {
     setCurrentMessage((prevText) => prevText + emojiObject.emoji);
     setDisabled(false);
   };
-
-  // NOTE start to check get all the notifications from backend api endpoint
-  const showNotifications = () => {
-    setshowNotificationColumn(true);
-
-    axios
-      .get(`${API_URL}/notifications`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        setNotifications(response.data.notifications);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-  // NOTE finish to check get all the notifications from backend api endpoint
-  //  NOTE start to check calculation the length according isReaded value
-  const checkIfFavoriteNotitificationIsNotReaded = (array) => {
-    const filter = array.map((eachNotificationItem) => {
-      return eachNotificationItem.isFavorite.value !== false;
-    });
-
-    let count = 0;
-
-    for (let i = 0; i < filter.length; i++) {
-      if (filter[i] === true) {
-        count++;
-      }
-    }
-
-    return count;
-  };
-
-  const checkIfRepostNotitificationIsNotReaded = (array) => {
-    const filter = array.map((eachNotificationItem) => {
-      return eachNotificationItem.isRepost.value !== false;
-    });
-
-    let count = 0;
-
-    for (let i = 0; i < filter.length; i++) {
-      if (filter[i] === true) {
-        count++;
-      }
-    }
-
-    return count;
-  };
-  const checkIfCommentNotitificationIsNotReaded = (array) => {
-    const filter = array.map((eachNotificationItem) => {
-      return eachNotificationItem.isComment.value !== false;
-    });
-
-    let count = 0;
-
-    for (let i = 0; i < filter.length; i++) {
-      if (filter[i] === true) {
-        count++;
-      }
-    }
-    return count;
-  };
-
-  const getTotalLengthOfNotifications = () => {
-    const checkFavoritesNotReadedYetInsideNotifications =
-      checkIfFavoriteNotitificationIsNotReaded(userInfo.notifications);
-    const checkRepostsNotReadedYetInsideNotifications =
-      checkIfRepostNotitificationIsNotReaded(userInfo.notifications);
-    const checkCommentsNotReadedYetInsideNotifications =
-      checkIfCommentNotitificationIsNotReaded(userInfo.notifications);
-
-    if (
-      checkIfFavoriteNotitificationIsNotReaded(userInfo.notifications) ||
-      checkIfRepostNotitificationIsNotReaded(userInfo.notifications) ||
-      checkIfCommentNotitificationIsNotReaded(userInfo.notifications)
-    ) {
-      return `${
-        checkFavoritesNotReadedYetInsideNotifications +
-        checkRepostsNotReadedYetInsideNotifications +
-        checkCommentsNotReadedYetInsideNotifications
-      }`;
-    } else {
-      return "";
-    }
-  };
-  //  NOTE finish to check calculation the length according isReaded value
 
   const monthsProfile = [
     "January",
@@ -333,10 +265,10 @@ function ChatDetailsPage() {
                     </div>
                   </div>
                 </Link>
-
+                {/* start to check notification component place  */}
                 <Link>
                   <div className="notifications">
-                    <div onClick={() => showNotifications()}>
+                    <div>
                       <svg
                         width={26}
                         height={26}
@@ -349,17 +281,12 @@ function ChatDetailsPage() {
                         </g>
                       </svg>
 
-                      <span>
-                        Notifications{" "}
-                        {getTotalLengthOfNotifications() !== "" ? (
-                          <span className="notification-num">
-                            {getTotalLengthOfNotifications()}
-                          </span>
-                        ) : null}
-                      </span>
+                      <span>Notifications </span>
                     </div>
                   </div>
                 </Link>
+                {/* finish to check notification component place  */}
+
                 {/* start to check redirect to the correct component for messages */}
 
                 <Link to="/messages" onClick={redirectToMessages}>
@@ -421,7 +348,7 @@ function ChatDetailsPage() {
             md={11} // 768px - 992px aralığı
             lg={6} // 1200px - 1400px aralığı
             xxl={6} // 1400px ve sonrası aralığı
-            className={`main-column ${showNotificationColumn}`}
+            className={`main-column`}
             style={{
               border: "1px solid rgba(0, 0, 0, 0.1)",
               borderTop: "none",
