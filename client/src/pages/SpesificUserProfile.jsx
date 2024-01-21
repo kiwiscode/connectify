@@ -556,16 +556,6 @@ function SpesificUserProfile() {
             findedPost.userId._id === profileInfo._id &&
             findedPost.reposted.length > 0
           ) {
-            console.log(
-              "This post just a post from user itself has a reference post because got reposted from user itself and repost.length greater than 0..."
-            );
-
-            console.log("original post Id =>", postId);
-            console.log(
-              "reference post Id =>",
-              spesificProfilePosts[2].repostedFromThisOriginalPost[0]._id
-            );
-
             const referencePost = spesificProfilePosts.find((eachPost) => {
               return eachPost.repostedFromThisOriginalPost[0]
                 ? eachPost.repostedFromThisOriginalPost[0]._id ===
@@ -1047,7 +1037,10 @@ function SpesificUserProfile() {
                   1
                 );
 
-                localStorage.setItem("profileInfoPosts", spesificProfilePosts);
+                localStorage.setItem(
+                  "profileInfoPosts",
+                  JSON.stringify(spesificProfilePosts)
+                );
 
                 setprofileInfoPosts(spesificProfilePosts);
               };

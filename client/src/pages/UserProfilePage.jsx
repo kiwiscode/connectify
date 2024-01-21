@@ -1920,7 +1920,7 @@ function UserProfile() {
 
                       {/* start to check */}
                       <div className="p-1">
-                        {getRepostedIds(favorite).includes(userInfo._id) ? (
+                        {favorite.reposted.includes(userInfo._id) ? (
                           <svg
                             style={{
                               cursor: "pointer",
@@ -1968,7 +1968,7 @@ function UserProfile() {
                           </svg>
                         )}
 
-                        {getRepostedIds(favorite).includes(userInfo._id) ? (
+                        {favorite.reposted.includes(userInfo._id) ? (
                           <span
                             className="post-description"
                             style={{
