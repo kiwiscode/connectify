@@ -167,7 +167,9 @@ module.exports = (app) => {
                 socket
                   .to(data.room)
                   .emit("receive_spesific_room_message", data);
+                console.log("Data =>", data);
                 console.log("Data.room =>", data.room);
+
                 // finish to check receive send chat details
                 const newChat = {
                   sender: data.sender,
@@ -312,15 +314,6 @@ module.exports = (app) => {
 
                         Promise.all([updateUser1, updateUser2])
                           .then((updatedUsers) => {
-                            console.log(
-                              "Updated users =>",
-                              updatedUsers[0].username,
-                              "'s messages =>",
-                              updatedUsers[0].messages[user1RoomIndex],
-                              updatedUsers[1].username,
-                              "'s messages =>",
-                              updatedUsers[1].messages[user2RoomIndex]
-                            );
                             console.log("Users updated successfully");
                           })
                           .catch((error) => {
@@ -566,30 +559,48 @@ module.exports = (app) => {
         console.log("Online users 3 =>", onlineUsers);
       }
     });
-    socket.on("sendNotification", ({ senderName, receiverName, type }) => {
-      console.log("Receiver name =>", receiverName);
-      console.log("Online users 4 =>", onlineUsers);
-      const receiver = onlineUsers.find((eachUser) => {
-        return eachUser.username === receiverName;
-      });
-      console.log("Sender name =>", senderName);
-      console.log("Receiver  =>", receiver);
-      if (receiver) {
-        io.to(receiver.socketId).emit("getNotification", {
-          senderName,
-          receiverName,
-          type,
+    socket.on(
+      "sendNotification",
+      ({ senderName, receiverName, type, text }) => {
+        console.log("Receiver name =>", receiverName);
+        console.log("Online users 4 =>", onlineUsers);
+        const receiver = onlineUsers.find((eachUser) => {
+          return eachUser.username === receiverName;
         });
 
-        io.to(receiver.socketId).emit("getText", {
-          senderName,
-          type,
-        });
-      } else if (!receiver) {
-        // burada aktif olmayan userın notificationsına ekleme yapabiliriz !
-        console.log("Receiver is not found !");
+        console.log("Sender name =>", senderName);
+        console.log("Receiver  =>", receiver);
+        if (receiver && type !== "message") {
+          io.to(receiver.socketId).emit("getNotification", {
+            senderName,
+            receiverName,
+            type,
+          });
+
+          io.to(receiver.socketId).emit("getText", {
+            senderName,
+            type,
+          });
+        } else if (receiver && type === "message") {
+          console.log("Text =>", text);
+
+          io.to(receiver.socketId).emit("getNotification", {
+            senderName,
+            receiverName,
+            type,
+            text,
+          });
+          io.to(receiver.socketId).emit("getText", {
+            senderName,
+            type,
+            text,
+          });
+        } else if (!receiver) {
+          // burada aktif olmayan userın notificationsına ekleme yapabiliriz !
+          console.log("Receiver is not found !");
+        }
       }
-    });
+    );
 
     // finish to check real time notification
 
