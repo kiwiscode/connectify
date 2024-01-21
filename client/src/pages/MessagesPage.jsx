@@ -1,4 +1,3 @@
-import io from "socket.io-client";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserContext";
 import { Col, Row, Container, Stack } from "react-bootstrap";
@@ -39,8 +38,6 @@ function MessagesPage() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const { userInfo, getToken, socket } = useContext(UserContext);
-  const [showNotificationColumn, setshowNotificationColumn] = useState(false);
-  const [notifications, setNotifications] = useState([]);
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [content, setContent] = useState("");
@@ -48,6 +45,7 @@ function MessagesPage() {
   const [filteredRooms, setfilteredRooms] = useState([]);
 
   // socket io 1 client start to check
+  const [notificationTest, setnotificationTest] = useState([]);
   const [notificationText, setnotificationText] = useState([]);
   // socket io 1 client finish to check
 
@@ -65,13 +63,16 @@ function MessagesPage() {
   // socket io 4 client finish to check
 
   useEffect(() => {
+    socket.on("getNotification", (data) => {
+      console.log("Data =>", data);
+      setnotificationTest((prev) => [...prev, data]);
+    });
+
     socket.on("getText", (data) => {
       console.log("Data get text =>", data);
       setnotificationText(data);
     });
   }, [socket]);
-
-  console.log("Notification text =>", notificationText);
 
   useEffect(() => {
     socket.emit("get_spesific_user", userInfo);
@@ -118,96 +119,6 @@ function MessagesPage() {
   console.log("Your message rooms =>", messageRooms);
 
   console.log("Your message rooms from filtered rooms =>", filteredRooms);
-
-  // NOTE start to check get all the notifications from backend api endpoint
-  const showNotifications = () => {
-    setshowNotificationColumn(true);
-
-    axios
-      .get(`${API_URL}/notifications`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        setNotifications(response.data.notifications);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-  // NOTE finish to check get all the notifications from backend api endpoint
-
-  //  NOTE start to check calculation the length according isReaded value
-  const checkIfFavoriteNotitificationIsNotReaded = (array) => {
-    const filter = array.map((eachNotificationItem) => {
-      return eachNotificationItem.isFavorite.value !== false;
-    });
-
-    let count = 0;
-
-    for (let i = 0; i < filter.length; i++) {
-      if (filter[i] === true) {
-        count++;
-      }
-    }
-
-    return count;
-  };
-
-  const checkIfRepostNotitificationIsNotReaded = (array) => {
-    const filter = array.map((eachNotificationItem) => {
-      return eachNotificationItem.isRepost.value !== false;
-    });
-
-    let count = 0;
-
-    for (let i = 0; i < filter.length; i++) {
-      if (filter[i] === true) {
-        count++;
-      }
-    }
-
-    return count;
-  };
-  const checkIfCommentNotitificationIsNotReaded = (array) => {
-    const filter = array.map((eachNotificationItem) => {
-      return eachNotificationItem.isComment.value !== false;
-    });
-
-    let count = 0;
-
-    for (let i = 0; i < filter.length; i++) {
-      if (filter[i] === true) {
-        count++;
-      }
-    }
-    return count;
-  };
-
-  const getTotalLengthOfNotifications = () => {
-    const checkFavoritesNotReadedYetInsideNotifications =
-      checkIfFavoriteNotitificationIsNotReaded(userInfo.notifications);
-    const checkRepostsNotReadedYetInsideNotifications =
-      checkIfRepostNotitificationIsNotReaded(userInfo.notifications);
-    const checkCommentsNotReadedYetInsideNotifications =
-      checkIfCommentNotitificationIsNotReaded(userInfo.notifications);
-
-    if (
-      checkIfFavoriteNotitificationIsNotReaded(userInfo.notifications) ||
-      checkIfRepostNotitificationIsNotReaded(userInfo.notifications) ||
-      checkIfCommentNotitificationIsNotReaded(userInfo.notifications)
-    ) {
-      return `${
-        checkFavoritesNotReadedYetInsideNotifications +
-        checkRepostsNotReadedYetInsideNotifications +
-        checkCommentsNotReadedYetInsideNotifications
-      }`;
-    } else {
-      return "";
-    }
-  };
-  //  NOTE finish to check calculation the length according isReaded value
 
   const handleShowPostsMessagePage = () => {
     axios
@@ -311,10 +222,10 @@ function MessagesPage() {
                     </div>
                   </div>
                 </Link>
-
+                {/* start to check notification component place  */}
                 <Link>
                   <div className="notifications">
-                    <div onClick={() => showNotifications()}>
+                    <div>
                       <svg
                         width={26}
                         height={26}
@@ -327,17 +238,12 @@ function MessagesPage() {
                         </g>
                       </svg>
 
-                      <span>
-                        Notifications{" "}
-                        {getTotalLengthOfNotifications() !== "" ? (
-                          <span className="notification-num">
-                            {getTotalLengthOfNotifications()}
-                          </span>
-                        ) : null}
-                      </span>
+                      <span>Notifications </span>
                     </div>
                   </div>
                 </Link>
+                {/* finish to check notification component place  */}
+
                 {/* start to check redirect to the correct component for messages */}
 
                 <Link to="/messages">
@@ -399,7 +305,7 @@ function MessagesPage() {
             md={11} // 768px - 992px aralığı
             lg={6} // 1200px - 1400px aralığı
             xxl={6} // 1400px ve sonrası aralığı
-            className={`main-column ${showNotificationColumn}`}
+            className={`main-column`}
             style={{
               border: "1px solid rgba(0, 0, 0, 0.1)",
               borderTop: "none",

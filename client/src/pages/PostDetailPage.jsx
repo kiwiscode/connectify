@@ -17,6 +17,7 @@ function PostDetailPage() {
   const { userInfo, getToken, socket } = useContext(UserContext);
 
   // socket io 1 client start to check
+  const [notificationTest, setnotificationTest] = useState([]);
   const [notificationText, setnotificationText] = useState([]);
   // socket io 1 client finish to check
 
@@ -34,6 +35,11 @@ function PostDetailPage() {
   // socket io 4 client finish to check
 
   useEffect(() => {
+    socket.on("getNotification", (data) => {
+      console.log("Data =>", data);
+      setnotificationTest((prev) => [...prev, data]);
+    });
+
     socket.on("getText", (data) => {
       console.log("Data get text =>", data);
       setnotificationText(data);
@@ -219,6 +225,8 @@ function PostDetailPage() {
       });
   };
 
+  console.log("Detailed post =>", detailedPost);
+
   const handlePostLikesPostDetailPage = (postId) => {
     axios
       .post(
@@ -366,10 +374,10 @@ function PostDetailPage() {
                     </div>
                   </div>
                 </Link>
-
+                {/* start to check notification component place  */}
                 <Link>
                   <div className="notifications">
-                    <div onClick={() => showNotifications()}>
+                    <div>
                       <svg
                         width={26}
                         height={26}
@@ -382,17 +390,12 @@ function PostDetailPage() {
                         </g>
                       </svg>
 
-                      <span>
-                        Notifications{" "}
-                        {/* {getTotalLengthOfNotifications() !== "" ? (
-                          <span className="notification-num">
-                            {getTotalLengthOfNotifications()}
-                          </span>
-                        ) : null} */}
-                      </span>
+                      <span>Notifications </span>
                     </div>
                   </div>
                 </Link>
+                {/* finish to check notification component place  */}
+
                 {/* start to check redirect to the correct component for messages */}
 
                 <Link to="/messages" onClick={redirectToMessages}>
@@ -498,7 +501,11 @@ function PostDetailPage() {
                 Post
               </div>
             </Stack>
+
+            {/* start to check  */}
             <Stack direction="horizontal" gap={3}>
+              {/* profile image start to check */}
+
               <div className="p-2">
                 {detailedPost.userId ? (
                   <Link
@@ -542,6 +549,9 @@ function PostDetailPage() {
                   </Link>
                 )}
               </div>
+              {/* profile image finish to check  */}
+
+              {/* start to check post owner full name + post owner user name  */}
               <div className="p-2">
                 <Link
                   onClick={() =>
@@ -593,6 +603,9 @@ function PostDetailPage() {
                   </div>
                 </Link>
               </div>
+              {/* finish to check post owner full name + post owner user name  */}
+
+              {/* three dots svg start to check */}
               <div className="p-2 ms-auto">
                 <svg
                   style={{
@@ -601,8 +614,8 @@ function PostDetailPage() {
                     lineHeight: "20px",
                   }}
                   fill="currentColor"
-                  width={18}
-                  height={18}
+                  width={`${1.25}em`}
+                  height={`${1.25}em`}
                   viewBox="0 0 24 24"
                   aria-hidden="true"
                   className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -612,8 +625,11 @@ function PostDetailPage() {
                   </g>
                 </svg>
               </div>
+              {/* three dots svg finish to check */}
             </Stack>
+            {/* finish to check  */}
 
+            {/* post content + post created date start to check */}
             <Stack
               direction="vertical"
               gap={0}
@@ -627,6 +643,8 @@ function PostDetailPage() {
                   fontSize: "17px",
                   fontWeight: "400",
                   lineHeight: "24px",
+                  overflowWrap: "break-word",
+                  maxWidth: "100%",
                 }}
                 className="p-2"
               >
@@ -655,11 +673,13 @@ function PostDetailPage() {
                 </div>
               </Link>
             </Stack>
+            {/* post content + post created date finish to check */}
 
+            {/* new version favorite repost comment start to check */}
             <Stack
               direction="horizontal"
               style={{
-                justifyContent: "space-around",
+                justifyContent: "space-between",
                 borderBottom: "1px solid rgba(0,0,0,0.1)",
               }}
             >
@@ -853,6 +873,7 @@ function PostDetailPage() {
                 )}
               </div>
             </Stack>
+            {/* new version favorite repost comment finish to check */}
           </Col>
           {/* 3.column burası olucak */}
           <Col
