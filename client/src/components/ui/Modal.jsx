@@ -781,7 +781,7 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
   );
 }
 
-function CommentModal({ post }) {
+function CommentModal({ post, width, height }) {
   const [show, setShow] = useState(false);
   const [content, setContent] = useState("");
   const [modalImage, setModalImage] = useState("");
@@ -791,7 +791,7 @@ function CommentModal({ post }) {
   const [showEmojisBar, setshowEmojisBar] = useState("hide");
   const [showSecondModal, setShowSecondModal] = useState(false);
 
-  const { getToken, userInfo } = useContext(UserContext);
+  const { userInfo } = useContext(UserContext);
   const maxCharacters = 140;
   //handle and convert it in base 64
   const handleImage = (e) => {
@@ -885,13 +885,34 @@ function CommentModal({ post }) {
     return `${months[getMonth]} ${createdAt.getDate()}`;
   };
 
+  const handleAddComment = (postId) => {
+    console.log("Post id =>", postId);
+    axios
+      .post(`${API_URL}/comment`, {
+        userId: userInfo._id,
+        postId,
+        commentPost: content,
+        modalImage,
+      })
+      .then((response) => {
+        console.log("Response =>", response);
+
+        setModalImage("");
+        setContent("");
+        handleClose();
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  };
+
   return (
     <>
       <div>
         <svg
           onClick={handleShow}
-          width={`${1.25}em`}
-          height={`${1.25}em`}
+          width={width}
+          height={height}
           viewBox="0 0 24 24"
           aria-hidden="true"
           className="bi bi-chat r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -961,7 +982,6 @@ function CommentModal({ post }) {
                 lg={2}
                 xxl={2}
                 style={{
-                  border: "1px solid blue",
                   textAlign: "center",
                 }}
               >
@@ -976,53 +996,86 @@ function CommentModal({ post }) {
                         alt=""
                       />
                       <div
-                        className="responsive-comment-line"
+                        className="responsive-comment-line-parent-div"
                         style={{
-                          position: "relative",
-                          border: "1px solid rgba(0, 0, 0, 0.2)",
-                          left: "25px",
-                          margin: "5px 0px 5px 0px",
-                          width: "2px",
-                          height: `${
-                            post.content.length < 38
-                              ? "60px"
-                              : post.content.length >= 38 &&
-                                post.content.length < 75
-                              ? "80px"
-                              : post.content.length >= 75 &&
-                                post.content.length <= 140
-                              ? "100px"
-                              : "0px"
-                          }`,
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
                         }}
-                      ></div>
+                      >
+                        <div
+                          className="responsive-comment-line "
+                          style={{
+                            border: "1px solid rgba(0, 0, 0, 0.2)",
+                            margin: "5px 0px 5px 0px",
+                            width: "2px",
+
+                            height: `${
+                              post.content.length < 38
+                                ? "60px"
+                                : post.content.length >= 38 &&
+                                  post.content.length < 75
+                                ? "80px"
+                                : post.content.length >= 75 &&
+                                  post.content.length <= 140
+                                ? "100px"
+                                : "0px"
+                            }`,
+                          }}
+                        ></div>
+                      </div>
                     </>
                   ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="40"
-                      height="40"
-                      fill="rgb(83, 100, 113)"
-                      className="bi bi-person-circle"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                      <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                    </svg>
+                    <>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="40"
+                        height="40"
+                        fill="rgb(83, 100, 113)"
+                        className="bi bi-person-circle"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                        <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                      </svg>
+                      <div
+                        className="responsive-comment-line-parent-div"
+                        style={{
+                          display: "flex",
+                          border: "1px solid black",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <div
+                          className="responsive-comment-line "
+                          style={{
+                            border: "1px solid rgba(0, 0, 0, 0.2)",
+                            margin: "5px 0px 5px 0px",
+                            width: "2px",
+
+                            height: `${
+                              post.content
+                                ? post.content.length < 38
+                                  ? "60px"
+                                  : post.content.length >= 38 &&
+                                    post.content.length < 75
+                                  ? "80px"
+                                  : post.content.length >= 75 &&
+                                    post.content.length <= 140
+                                  ? "100px"
+                                  : "0px"
+                                : null
+                            }:`,
+                          }}
+                        ></div>
+                      </div>
+                    </>
                   )}
                 </div>
                 {/* profile image finish to check  */}
               </Col>
-              <Col
-                xs={10}
-                sm={10}
-                md={10}
-                lg={10}
-                xxl={10}
-                style={{
-                  border: "1px solid yellow",
-                }}
-              >
+              <Col xs={10} sm={10} md={10} lg={10} xxl={10} style={{}}>
                 {/* post owner full name + verified account svg + post owner user name + post created date and content start to check  */}
 
                 <div>
@@ -1172,7 +1225,40 @@ function CommentModal({ post }) {
                             </span>
                           </div>
                         </>
-                      ) : null}
+                      ) : (
+                        <>
+                          {post.userId._id !== userInfo._id ? (
+                            <div
+                              style={{
+                                marginTop: "10px",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  color: "rgb(83, 100, 113)",
+                                  fontSize: "15px",
+                                  fontWeight: "400",
+                                  lineHeight: "20px",
+                                }}
+                              >
+                                Replying to
+                              </span>
+
+                              <span
+                                style={{
+                                  color: "rgb(29, 155, 240)",
+                                  fontSize: "15px",
+                                  fontWeight: "400",
+                                  lineHeight: "20px",
+                                  marginLeft: "3px",
+                                }}
+                              >
+                                @{post.authorUserName}
+                              </span>
+                            </div>
+                          ) : null}
+                        </>
+                      )}
                     </>
                   ) : null}
                 </div>
@@ -1184,7 +1270,7 @@ function CommentModal({ post }) {
 
           <Container
             style={{
-              marginTop: "15px",
+              marginTop: "0px",
             }}
           >
             <Row>
@@ -1195,7 +1281,6 @@ function CommentModal({ post }) {
                 lg={2}
                 xxl={2}
                 style={{
-                  border: "1px solid blue",
                   textAlign: "center",
                 }}
               >
@@ -1226,16 +1311,7 @@ function CommentModal({ post }) {
                 </div>
                 {/* profile image finish to check  */}
               </Col>
-              <Col
-                xs={10}
-                sm={10}
-                md={10}
-                lg={10}
-                xxl={10}
-                style={{
-                  border: "1px solid yellow",
-                }}
-              >
+              <Col xs={10} sm={10} md={10} lg={10} xxl={10} style={{}}>
                 <textarea
                   onChange={handleChange}
                   rows="4"
@@ -1398,11 +1474,10 @@ function CommentModal({ post }) {
               </div>
             </div>
             <div className="p-2 ms-auto">
-              {/* <div className="p-2 "> */}{" "}
               {content !== "" || modalImage ? (
                 <Button
                   variant="primary"
-                  // onClick={() => handlePost()}
+                  onClick={() => handleAddComment(post._id)}
                   className={`post-btn compose-tweet-textArea`}
                 >
                   <span>
@@ -1412,7 +1487,6 @@ function CommentModal({ post }) {
               ) : (
                 <Button
                   variant="primary"
-                  // onClick={() => handleComment()}
                   className={`emptyContent post-btn compose-tweet-textArea`}
                 >
                   {post.userId ? (

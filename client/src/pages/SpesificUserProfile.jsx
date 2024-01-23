@@ -1882,7 +1882,38 @@ function SpesificUserProfile() {
                     </div>
 
                     {/* post content start to check  */}
+
                     <Stack direction="vertical" gap={1}>
+                      {post.isComment ? (
+                        <div className="p-2">
+                          <span
+                            style={{
+                              color: "rgb(83, 100, 113)",
+                              fontSize: "15px",
+                              lineHeight: "20px",
+                              fontWeight: "400",
+                            }}
+                          >
+                            Replying to {""}
+                          </span>
+                          <span
+                            onClick={() =>
+                              redirectSpesificProfilePage(
+                                post.commentedForThisUsersPost._id
+                              )
+                            }
+                            style={{
+                              color: "rgb(29, 155, 240)",
+                              cursor: "pointer",
+                              fontSize: "15px",
+                              lineHeight: "20px",
+                              fontWeight: "400",
+                            }}
+                          >
+                            @{post.commentedForThisUsersPost.username}
+                          </span>
+                        </div>
+                      ) : null}
                       <Link
                         onClick={() =>
                           redirectToPostDetailPage(
@@ -1959,7 +1990,11 @@ function SpesificUserProfile() {
                       }}
                     >
                       <div className="p-1">
-                        <CommentModal post={post} />
+                        <CommentModal
+                          post={post}
+                          width={`${1.25}em`}
+                          height={`${1.25}em`}
+                        />
                       </div>
 
                       {/* start to check */}
@@ -2414,7 +2449,11 @@ function SpesificUserProfile() {
                         }}
                       >
                         <div className="p-1">
-                          <CommentModal post={favorite} />
+                          <CommentModal
+                            post={favorite}
+                            width={`${1.25}em`}
+                            height={`${1.25}em`}
+                          />
                         </div>
 
                         {/* start to check */}

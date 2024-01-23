@@ -1227,8 +1227,22 @@ span > a:hover {
   }
 }
 
-@media (max-width: 575px) {
-  .responsive-comment-line {
-    display: none;
+@media (max-width: 410px) {
+  .responsive-comment-line-parent-div {
+    width: 42px !important;
+    height: 72px !important;
   }
+}
+
+/* className="transition-gray-hover" */
+
+.transition-gray-hover {
+  transition: background-color 0.2s ease;
+}
+.transition-gray-hover:hover {
+  background-color: rgba(247, 247, 247, 255);
+}
+
+.view-post-engagements-section:hover {
+  background-color: rgba(247, 247, 247, 255);
 }

@@ -91,6 +91,8 @@ const handleShowPosts = (req, res) => {
     .populate("userId")
     .populate("reposted")
     .populate("repostedFromThisOriginalPost")
+    .populate("commentedForThisPost")
+    .populate("commentedForThisUsersPost")
     .then((postsFromDataBase) => {
       console.log("ACTIVE USER => ", userId);
       console.log("HELLO WORLD!");

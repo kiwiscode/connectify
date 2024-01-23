@@ -630,12 +630,7 @@ function MainPage() {
     <>
       <ResponsiveNavigationBarBottom />
       <ResponsiveNavigationBarTop />
-      <Container
-        style={{
-          justifyContent: "center",
-          position: "relative",
-        }}
-      >
+      <Container>
         <Row
           style={{
             height: "100vh",
@@ -1322,6 +1317,36 @@ function MainPage() {
 
                     {/* post content start to check  */}
                     <Stack direction="vertical" gap={1}>
+                      {post.isComment ? (
+                        <div className="p-2">
+                          <span
+                            style={{
+                              color: "rgb(83, 100, 113)",
+                              fontSize: "15px",
+                              lineHeight: "20px",
+                              fontWeight: "400",
+                            }}
+                          >
+                            Replying to {""}
+                          </span>
+                          <span
+                            onClick={() =>
+                              redirectSpesificProfilePage(
+                                post.commentedForThisUsersPost._id
+                              )
+                            }
+                            style={{
+                              color: "rgb(29, 155, 240)",
+                              cursor: "pointer",
+                              fontSize: "15px",
+                              lineHeight: "20px",
+                              fontWeight: "400",
+                            }}
+                          >
+                            @{post.commentedForThisUsersPost.username}
+                          </span>
+                        </div>
+                      ) : null}
                       <Link
                         onClick={() =>
                           redirectToPostDetailPage(
@@ -1395,7 +1420,11 @@ function MainPage() {
                       }}
                     >
                       <div className="p-1">
-                        <CommentModal post={post ? post : null} />
+                        <CommentModal
+                          post={post ? post : null}
+                          width={`${1.25}em`}
+                          height={`${1.25}em`}
+                        />
                       </div>
                       <div className="p-1">
                         {post.reposted.length > 0 &&
