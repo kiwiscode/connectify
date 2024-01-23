@@ -9,9 +9,6 @@ const postSchema = new Schema(
     authorUserName: {
       type: String,
     },
-    authorFullName: {
-      type: String,
-    },
     content: String,
     image: {
       public_id: {
@@ -29,16 +26,6 @@ const postSchema = new Schema(
         ref: "Comment",
       },
     ],
-    reposter: [
-      {
-        fullname: {
-          type: String,
-        },
-        username: {
-          type: String,
-        },
-      },
-    ],
     isReposted: {
       type: Boolean,
       default: false,
@@ -49,6 +36,18 @@ const postSchema = new Schema(
     reposted: [{ type: Schema.Types.ObjectId, ref: "User" }],
     likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
     createdAt: { type: Date, default: Date.now },
+    isComment: {
+      type: Boolean,
+      default: false,
+    },
+    commentedForThisPost: {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+    commentedForThisUsersPost: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   {
     timestamps: true,

@@ -10,6 +10,37 @@ const getPostDetail = (req, res) => {
     .populate("likes")
     .populate("reposted")
     .populate("userId")
+    .populate("comments")
+    .populate("commentedForThisPost")
+    .populate("commentedForThisUsersPost")
+    .populate({
+      path: "commentedForThisPost",
+      populate: {
+        path: "userId",
+        model: "User",
+      },
+    })
+    .populate({
+      path: "commentedForThisPost",
+      populate: {
+        path: "likes",
+        model: "User",
+      },
+    })
+    .populate({
+      path: "commentedForThisPost",
+      populate: {
+        path: "reposted",
+        model: "User",
+      },
+    })
+    .populate({
+      path: "commentedForThisPost",
+      populate: {
+        path: "comments",
+        model: "Comment",
+      },
+    })
     .then((post) => {
       console.log("Detailed post =>", post.isReposted, post.content);
       res.status(202).json({ detailedPost: post });

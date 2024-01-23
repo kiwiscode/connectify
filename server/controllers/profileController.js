@@ -1,13 +1,13 @@
 const User = require("../models/User.model");
 const Post = require("../models/Post.model");
 const cloudinary = require("../utils/cloudinary");
-const { populate } = require("../models/Chat.model");
 
 const handleProfile = (req, res) => {
   const userId = req.user.userId;
 
   User.findById(userId)
     // start to check
+
     .populate({
       path: "posts",
       options: { sort: { createdAt: -1 } }, // createdAt tarihine göre tersten sıralama
@@ -38,6 +38,20 @@ const handleProfile = (req, res) => {
       },
     })
     .populate({
+      path: "posts",
+      populate: {
+        path: "commentedForThisPost",
+        model: "Post",
+      },
+    })
+    .populate({
+      path: "posts",
+      populate: {
+        path: "commentedForThisUsersPost",
+        model: "User",
+      },
+    })
+    .populate({
       path: "favorites",
       populate: {
         path: "userId",
@@ -52,6 +66,7 @@ const handleProfile = (req, res) => {
       res.status(200).json({ posts: user.posts, user });
     })
     .catch((err) => {
+      console.log("Error =>", err);
       res.status(500).json({
         errorMessage: "An error occured while fetching the data",
         err,
@@ -84,6 +99,20 @@ const handleShowSpesificProfile = (req, res) => {
       populate: {
         path: "repostedFromThisOriginalPost",
         model: "Post",
+      },
+    })
+    .populate({
+      path: "posts",
+      populate: {
+        path: "commentedForThisPost",
+        model: "Post",
+      },
+    })
+    .populate({
+      path: "posts",
+      populate: {
+        path: "commentedForThisUsersPost",
+        model: "User",
       },
     })
     .populate({

@@ -1401,6 +1401,37 @@ function UserProfile() {
 
                     {/* post content start to check  */}
                     <Stack direction="vertical" gap={1}>
+                      {post.isComment ? (
+                        <div className="p-2">
+                          <span
+                            style={{
+                              color: "rgb(83, 100, 113)",
+                              fontSize: "15px",
+                              lineHeight: "20px",
+                              fontWeight: "400",
+                            }}
+                          >
+                            Replying to {""}
+                          </span>
+                          <span
+                            onClick={() =>
+                              redirectSpesificProfilePage(
+                                post.commentedForThisUsersPost._id
+                              )
+                            }
+                            style={{
+                              color: "rgb(29, 155, 240)",
+                              cursor: "pointer",
+                              fontSize: "15px",
+                              lineHeight: "20px",
+                              fontWeight: "400",
+                            }}
+                          >
+                            @{post.commentedForThisUsersPost.username}
+                          </span>
+                        </div>
+                      ) : null}
+
                       <Link
                         onClick={() =>
                           redirectToPostDetailPage(
@@ -1417,9 +1448,9 @@ function UserProfile() {
                       >
                         <div
                           style={{
-                            fontSize: "17px",
+                            fontSize: "15px",
                             fontWeight: "400",
-                            lineHeight: "24px",
+                            lineHeight: "20px",
                             overflowWrap: "break-word",
                             maxWidth: "100%",
                           }}
@@ -1474,7 +1505,11 @@ function UserProfile() {
                       }}
                     >
                       <div className="p-1">
-                        <CommentModal post={post} />
+                        <CommentModal
+                          post={post}
+                          width={`${1.25}em`}
+                          height={`${1.25}em`}
+                        />
                       </div>
 
                       {/* start to check */}
@@ -1856,9 +1891,9 @@ function UserProfile() {
                       >
                         <div
                           style={{
-                            fontSize: "17px",
+                            fontSize: "15px",
                             fontWeight: "400",
-                            lineHeight: "24px",
+                            lineHeight: "20px",
                             overflowWrap: "break-word",
                             maxWidth: "100%",
                           }}
@@ -1915,7 +1950,11 @@ function UserProfile() {
                       }}
                     >
                       <div className="p-1">
-                        <CommentModal post={favorite} />
+                        <CommentModal
+                          post={favorite}
+                          width={`${1.25}em`}
+                          height={`${1.25}em`}
+                        />
                       </div>
 
                       {/* start to check */}

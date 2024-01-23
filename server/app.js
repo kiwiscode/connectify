@@ -25,11 +25,14 @@ app.use("/home", homeRoutes);
 const profileRoutes = require("./routes/profile.routes");
 app.use("/profile", profileRoutes);
 
-const addFavoriteRoutes = require("./routes/favorite.routes");
-app.use("/favorite", addFavoriteRoutes);
+const commentRoutes = require("./routes/comment.routes");
+app.use("/comment", commentRoutes);
 
 const postRepost = require("./routes/repost.routes");
 app.use("/repost", postRepost);
+
+const favoriteRoutes = require("./routes/favorite.routes");
+app.use("/favorite", favoriteRoutes);
 
 const notificationRoutes = require("./routes/notification.routes");
 app.use("/notifications", notificationRoutes);
