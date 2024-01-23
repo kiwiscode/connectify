@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-import { Container, Row, Col, Stack } from "react-bootstrap";
+import { Container, Row, Col, Stack, Accordion } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { PostModal, LogoutModal, CommentModal } from "../components/ui/Modal";
 import { UserContext } from "../context/UserContext";
@@ -15,6 +15,11 @@ function PostDetailPage() {
   const { postOwner, postId } = useParams();
   const [detailedPost, setdetailedPost] = useState([]);
   const { userInfo, getToken, socket } = useContext(UserContext);
+
+  const [commentedForThisPost, setcommentedForThisPost] = useState([]);
+  const [commentedForThisUsersPost, setcommentedForThisUsersPost] = useState(
+    []
+  );
 
   // socket io 1 client start to check
   const [notificationTest, setnotificationTest] = useState([]);
@@ -69,6 +74,11 @@ function PostDetailPage() {
     window.location.reload();
   };
 
+  const redirectPostDetailPage = (postOwnerName, postId) => {
+    navigate(`/${postOwnerName}/status/${postId}`);
+    window.location.reload();
+  };
+
   // finish to check
 
   // socket io 5 client start to check
@@ -120,7 +130,17 @@ function PostDetailPage() {
           findedPost.reposted.splice(reposterIndex, 1);
 
           localStorage.setItem("mainPagePosts", JSON.stringify(posts));
-          setdetailedPost(findedPost);
+
+          if (findedPost.isComment) {
+            console.log("This line is working !");
+            setdetailedPost(findedPost);
+          } else {
+            console.log("What !!!");
+            setcommentedForThisPost(findedPost);
+            setcommentedForThisUsersPost(
+              detailedPost.commentedForThisUsersPost
+            );
+          }
         };
 
         setTimeout(updateDetailedPosts, 500);
@@ -167,7 +187,16 @@ function PostDetailPage() {
 
           localStorage.setItem("mainPagePosts", JSON.stringify(posts));
 
-          setdetailedPost(findedPost);
+          if (findedPost.isComment) {
+            console.log("This line is working !");
+            setdetailedPost(findedPost);
+          } else {
+            console.log("What !!!");
+            setcommentedForThisPost(findedPost);
+            setcommentedForThisUsersPost(
+              detailedPost.commentedForThisUsersPost
+            );
+          }
         };
 
         setTimeout(updateDetailedPosts, 500);
@@ -201,6 +230,8 @@ function PostDetailPage() {
           return element._id === postId;
         });
 
+        console.log("finded post ", findedPost);
+
         const liker = findedPost.likes
           ? findedPost.likes.find((eachLiker) => eachLiker._id === userInfo._id)
           : null;
@@ -213,7 +244,17 @@ function PostDetailPage() {
           findedPost.likes.splice(likerIndex, 1);
 
           localStorage.setItem("mainPagePosts", JSON.stringify(posts));
-          setdetailedPost(findedPost);
+
+          if (findedPost.isComment) {
+            console.log("This line is working !");
+            setdetailedPost(findedPost);
+          } else {
+            console.log("What !!!");
+            setcommentedForThisPost(findedPost);
+            setcommentedForThisUsersPost(
+              detailedPost.commentedForThisUsersPost
+            );
+          }
         };
 
         setTimeout(updateDetailedPosts, 500);
@@ -239,8 +280,6 @@ function PostDetailPage() {
         }
       )
       .then(() => {
-        console.log("This post added to your favorite");
-
         const posts = JSON.parse(localStorage.getItem("mainPagePosts"));
 
         const findedPost = posts.find((element) => {
@@ -249,6 +288,8 @@ function PostDetailPage() {
 
         const findedPostIndex = posts.indexOf(findedPost);
 
+        console.log("Finded post =>", findedPost);
+
         const updateDetailedPosts = () => {
           // socket io test start to check
           handleNotification(findedPost, userInfo, "liked");
@@ -256,7 +297,17 @@ function PostDetailPage() {
           posts[findedPostIndex].likes.unshift(userInfo);
 
           localStorage.setItem("mainPagePosts", JSON.stringify(posts));
-          setdetailedPost(findedPost);
+
+          if (findedPost.isComment) {
+            console.log("This line is working !");
+            setdetailedPost(findedPost);
+          } else {
+            console.log("What !!!");
+            setcommentedForThisPost(findedPost);
+            setcommentedForThisUsersPost(
+              detailedPost.commentedForThisUsersPost
+            );
+          }
         };
 
         setTimeout(updateDetailedPosts, 500);
@@ -276,7 +327,10 @@ function PostDetailPage() {
       .get(`${API_URL}/${postOwner}/status/${postId}`)
       .then((response) => {
         const { detailedPost } = response.data;
-
+        if (detailedPost.isComment) {
+          setcommentedForThisPost(detailedPost.commentedForThisPost);
+          setcommentedForThisUsersPost(detailedPost.commentedForThisUsersPost);
+        }
         setdetailedPost(detailedPost);
         console.log(response);
       })
@@ -284,13 +338,36 @@ function PostDetailPage() {
         console.log(error);
       });
   }, []);
+  console.log("Commented for this post =>", commentedForThisPost);
 
+  console.log("Commented for this users post =>", commentedForThisUsersPost);
   const checkIds = (arr) => {
     if (arr.length) {
       return arr.map((eachItem) => {
         return eachItem._id;
       });
     }
+  };
+
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  const getCreatedDate = (date) => {
+    const createdAt = new Date(date);
+    const getMonth = createdAt.getMonth();
+    return `${months[getMonth]} ${createdAt.getDate()}`;
   };
 
   function formatDateString(inputDateString) {
@@ -320,14 +397,15 @@ function PostDetailPage() {
     } ${inputDate.getDate()}, ${inputDate.getFullYear()}`;
   }
 
-  console.log(detailedPost);
   return (
     <>
       <Container
-        style={{
-          justifyContent: "center",
-          position: "relative",
-        }}
+        style={
+          {
+            // justifyContent: "center",
+            // position: "relative",
+          }
+        }
       >
         <Row
           style={{
@@ -461,6 +539,7 @@ function PostDetailPage() {
               border: "1px solid rgba(0, 0, 0, 0.1)",
               borderTop: "none",
               borderBottom: "none",
+              justify: "left",
             }}
           >
             <Stack direction="horizontal" gap={3}>
@@ -501,154 +580,842 @@ function PostDetailPage() {
                 Post
               </div>
             </Stack>
-
-            {/* start to check  */}
-            <Stack direction="horizontal" gap={3}>
-              {/* profile image start to check */}
-
-              <div className="p-2">
-                {detailedPost.userId ? (
-                  <Link
-                    onClick={() =>
-                      redirectSpesificProfilePage(detailedPost.userId._id)
-                    }
-                    style={{ cursor: "pointer" }}
-                    to={`/profile/${
-                      detailedPost ? detailedPost.userId._id : null
-                    }`}
-                  >
-                    <img
-                      width={40}
-                      height={40}
-                      src={detailedPost.userId.imageUrl}
-                      alt=""
-                    />
-                  </Link>
-                ) : (
-                  <Link
-                    onClick={() =>
-                      redirectSpesificProfilePage(detailedPost.userId._id)
-                    }
-                    to={`/profile/${
-                      detailedPost.userId ? detailedPost.userId._id : null
-                    }`}
-                    style={{ cursor: "pointer" }}
-                  >
-                    {" "}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="40"
-                      height="40"
-                      fill="rgb(83, 100, 113)"
-                      className="bi bi-person-circle"
-                      viewBox="0 0 16 16"
+            {/* eğer post comment ise comment edildiği postu göster tepesinde göster start to check */}
+            {commentedForThisPost._id && commentedForThisUsersPost._id ? (
+              <>
+                <Container
+                  style={{
+                    cursor: "pointer",
+                  }}
+                  className="mt-3  transition-gray-hover"
+                >
+                  <Row>
+                    <Col
+                      xs={2}
+                      sm={2}
+                      md={2}
+                      lg={2}
+                      xxl={2}
+                      style={{
+                        textAlign: "center",
+                      }}
                     >
-                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                      <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                    </svg>
+                      {/* profile image start to check */}
+                      <div>
+                        {commentedForThisUsersPost._id ? (
+                          <>
+                            <Link
+                              onClick={() =>
+                                redirectSpesificProfilePage(
+                                  commentedForThisUsersPost._id
+                                )
+                              }
+                              style={{ cursor: "pointer" }}
+                            >
+                              <img
+                                width={40}
+                                height={40}
+                                src={commentedForThisUsersPost.imageUrl}
+                                alt=""
+                                style={{
+                                  borderRadius: "50%",
+                                }}
+                              />
+                            </Link>
+                            <div
+                              className="responsive-comment-line-parent-div"
+                              style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                              }}
+                            >
+                              <div
+                                className="responsive-comment-line"
+                                style={{
+                                  border: "1px solid rgba(0, 0, 0, 0.2)",
+                                  margin: "5px 0px 5px 0px",
+                                  width: "2px",
+                                  height: `${
+                                    commentedForThisPost.content.length < 38
+                                      ? "60px"
+                                      : commentedForThisPost.content.length >=
+                                          38 &&
+                                        commentedForThisPost.content.length < 75
+                                      ? "80px"
+                                      : commentedForThisPost.content.length >=
+                                          75 &&
+                                        commentedForThisPost.content.length <=
+                                          140
+                                      ? "100px"
+                                      : "0px"
+                                  }`,
+                                }}
+                              ></div>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <Link
+                              onClick={() =>
+                                redirectSpesificProfilePage(
+                                  commentedForThisUsersPost._id
+                                )
+                              }
+                              style={{ cursor: "pointer" }}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="40"
+                                height="40"
+                                fill="rgb(83, 100, 113)"
+                                className="bi bi-person-circle"
+                                viewBox="0 0 16 16"
+                              >
+                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                              </svg>
+                            </Link>
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                              }}
+                            >
+                              <div
+                                className="responsive-comment-line "
+                                style={{
+                                  border: "1px solid rgba(0, 0, 0, 0.2)",
+                                  margin: "5px 0px 5px 0px",
+                                  width: "2px",
+
+                                  height: `${
+                                    commentedForThisPost.content.length < 38
+                                      ? "60px"
+                                      : commentedForThisPost.content.length >=
+                                          38 &&
+                                        commentedForThisPost.content.length < 75
+                                      ? "80px"
+                                      : commentedForThisPost.content.length >=
+                                          75 &&
+                                        commentedForThisPost.content.length <=
+                                          140
+                                      ? "100px"
+                                      : "0px"
+                                  }`,
+                                }}
+                              ></div>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      {/* profile image finish to check  */}
+                    </Col>
+                    <Col xs={10} sm={10} md={10} lg={10} xxl={10}>
+                      {/* post owner full name + verified account svg + post owner user name + post created date and content start to check  */}
+
+                      <div>
+                        {commentedForThisPost._id ? (
+                          <>
+                            <Link
+                              onClick={() =>
+                                redirectSpesificProfilePage(
+                                  commentedForThisUsersPost._id
+                                )
+                              }
+                              style={{
+                                textDecoration: "none",
+                              }}
+                            >
+                              <span
+                                className="hover-fullname"
+                                style={{
+                                  color: "black",
+                                  fontWeight: "700",
+                                  fontSize: "15px",
+                                  lineHeight: "20px",
+                                }}
+                              >
+                                {commentedForThisPost.authorFullName}
+                              </span>
+                            </Link>
+
+                            <span>
+                              {/* start to check  */}{" "}
+                              <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
+                                <svg
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  viewBox="0 0 22 22"
+                                  aria-label="Verified account"
+                                  role="img"
+                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                                  data-testid="icon-verified"
+                                  color="rgba(29,155,240,1.00)"
+                                  fill="currentColor"
+                                >
+                                  <g>
+                                    <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                                  </g>
+                                </svg>
+                              </span>{" "}
+                            </span>
+
+                            <Link
+                              onClick={() =>
+                                redirectSpesificProfilePage(
+                                  commentedForThisUsersPost._id
+                                )
+                              }
+                              style={{
+                                textDecoration: "none",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  color: "rgb(83, 100, 113)",
+                                  lineHeight: "20px",
+                                  fontSize: "15px",
+                                  fontWeight: "400",
+                                }}
+                              >
+                                @{commentedForThisPost.authorUserName}
+                              </span>
+                            </Link>
+
+                            <Link
+                              onClick={() =>
+                                redirectPostDetailPage(
+                                  commentedForThisPost.authorUserName,
+                                  commentedForThisPost._id
+                                )
+                              }
+                              style={{
+                                textDecoration: "none",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  color: "rgb(83, 100, 113)",
+                                  lineHeight: "20px",
+                                  fontSize: "15px",
+                                  fontWeight: "400",
+                                }}
+                              >
+                                {" "}
+                                ·{" "}
+                                <span className="date-post-detail">
+                                  {getCreatedDate(
+                                    commentedForThisPost.createdAt
+                                  )}
+                                </span>
+                              </span>
+                            </Link>
+                            {/* three dots svg start to check */}
+                            <span
+                              style={{
+                                float: "right",
+                              }}
+                            >
+                              <svg
+                                style={{
+                                  color: "rgb(83, 100, 113)",
+                                  fontSize: "15px",
+                                  lineHeight: "20px",
+                                }}
+                                fill="currentColor"
+                                width={`${1.25}em`}
+                                height={`${1.25}em`}
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                              >
+                                <g>
+                                  <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                                </g>
+                              </svg>
+                            </span>
+                            {/* three dots svg finish to check */}
+
+                            {/* finish to check  */}
+                          </>
+                        ) : null}
+                      </div>
+
+                      <div
+                        style={{
+                          fontSize: "17px",
+                          fontWeight: "400",
+                          lineHeight: "24px",
+                          overflowWrap: "break-word",
+                          maxWidth: "100%",
+                        }}
+                      >
+                        <Link
+                          onClick={() =>
+                            redirectPostDetailPage(
+                              commentedForThisPost.authorUserName,
+                              commentedForThisPost._id
+                            )
+                          }
+                          style={{
+                            textDecoration: "none",
+                            color: "black",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: "15px",
+                              fontWeight: "400",
+                              lineHeight: "20px",
+                            }}
+                          >
+                            <span>{commentedForThisPost.content}</span>
+                            {commentedForThisPost.image ? (
+                              <>
+                                {commentedForThisPost.image.url.slice(0, 3) !==
+                                "ima" ? (
+                                  <div>{commentedForThisPost.image.url}</div>
+                                ) : null}
+                              </>
+                            ) : null}
+                          </div>
+                        </Link>
+                        {commentedForThisUsersPost._id ? (
+                          <>
+                            {commentedForThisUsersPost._id !== userInfo._id &&
+                            commentedForThisUsersPost.isReposted ? (
+                              <>
+                                <div
+                                  style={{
+                                    marginTop: "10px",
+                                  }}
+                                >
+                                  <span
+                                    style={{
+                                      color: "rgb(83, 100, 113)",
+                                      fontSize: "15px",
+                                      fontWeight: "400",
+                                      lineHeight: "20px",
+                                    }}
+                                  >
+                                    Replying to
+                                  </span>
+
+                                  <span
+                                    style={{
+                                      color: "rgb(29, 155, 240)",
+                                      fontSize: "15px",
+                                      fontWeight: "400",
+                                      lineHeight: "20px",
+                                      marginLeft: "3px",
+                                    }}
+                                  >
+                                    @{commentedForThisPost.authorUserName}
+                                  </span>
+                                  <span
+                                    style={{
+                                      color: "rgb(29, 155, 240)",
+                                      fontSize: "15px",
+                                      fontWeight: "400",
+                                      lineHeight: "20px",
+                                      marginLeft: "3px",
+                                    }}
+                                  >
+                                    and
+                                  </span>
+                                  <span
+                                    style={{
+                                      color: "rgb(29, 155, 240)",
+                                      fontSize: "15px",
+                                      fontWeight: "400",
+                                      lineHeight: "20px",
+                                      marginLeft: "3px",
+                                    }}
+                                  >
+                                    @{commentedForThisPost.reposted[0].username}
+                                  </span>
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                {commentedForThisUsersPost._id !==
+                                userInfo._id ? (
+                                  <div
+                                    style={{
+                                      marginTop: "10px",
+                                    }}
+                                  >
+                                    <span
+                                      style={{
+                                        color: "rgb(83, 100, 113)",
+                                        fontSize: "15px",
+                                        fontWeight: "400",
+                                        lineHeight: "20px",
+                                      }}
+                                    >
+                                      Replying to
+                                    </span>
+
+                                    <span
+                                      style={{
+                                        color: "rgb(29, 155, 240)",
+                                        fontSize: "15px",
+                                        fontWeight: "400",
+                                        lineHeight: "20px",
+                                        marginLeft: "3px",
+                                      }}
+                                    >
+                                      @{commentedForThisPost.authorUserName}
+                                    </span>
+                                  </div>
+                                ) : null}
+                              </>
+                            )}
+                          </>
+                        ) : null}
+                      </div>
+
+                      {/* new version favorite repost comment start to check */}
+                      <Stack
+                        direction="horizontal"
+                        className="mt-2"
+                        style={{
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div className="">
+                          <CommentModal
+                            post={commentedForThisPost}
+                            width={`${1.25}em`}
+                            height={`${1.25}em`}
+                          />
+                        </div>
+                        <div className="">
+                          {commentedForThisPost.reposted &&
+                          commentedForThisPost.reposted.length ? (
+                            checkIds(commentedForThisPost.reposted).includes(
+                              userInfo._id
+                            ) ? (
+                              <div>
+                                <svg
+                                  onClick={() =>
+                                    handleDeleteRepostPostDetailPage(
+                                      commentedForThisPost._id
+                                    )
+                                  }
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                  fill="rgb(0, 186, 124)"
+                                >
+                                  <g>
+                                    <path
+                                      stroke="rgb(83, 100, 113)"
+                                      strokeWidth="0.1"
+                                      d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                                    ></path>
+                                  </g>
+                                </svg>
+                                <span
+                                  className="post-description"
+                                  style={{
+                                    color: "rgb(0, 186, 124)",
+                                    //   : "rgb(83, 100, 113)",
+                                  }}
+                                >
+                                  <span>
+                                    {commentedForThisPost.reposted.length}
+                                  </span>
+                                </span>
+                              </div>
+                            ) : (
+                              <div>
+                                {" "}
+                                <svg
+                                  style={{
+                                    cursor: "pointer",
+                                  }}
+                                  onClick={() =>
+                                    handleRepost(commentedForThisPost._id)
+                                  }
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                  fill={"rgb(83, 100, 113)"}
+                                >
+                                  <g>
+                                    <path
+                                      stroke="rgb(83, 100, 113)"
+                                      strokeWidth="0.1"
+                                      d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                                    ></path>
+                                  </g>
+                                </svg>
+                                <span
+                                  className="post-description"
+                                  style={{ color: "rgb(83, 100, 113)" }}
+                                >
+                                  <span>
+                                    {commentedForThisPost.reposted.length}
+                                  </span>
+                                </span>
+                              </div>
+                            )
+                          ) : (
+                            <div>
+                              {" "}
+                              <svg
+                                style={{
+                                  cursor: "pointer",
+                                }}
+                                onClick={() =>
+                                  handleRepost(commentedForThisPost._id)
+                                }
+                                width={`${1.25}em`}
+                                height={`${1.25}em`}
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                fill={"rgb(83, 100, 113)"}
+                              >
+                                <g>
+                                  <path
+                                    stroke="rgb(83, 100, 113)"
+                                    strokeWidth="0.1"
+                                    d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                                  ></path>
+                                </g>
+                              </svg>
+                              <span
+                                className="post-description"
+                                style={{
+                                  color: "rgb(83, 100, 113)",
+                                }}
+                              >
+                                <span>
+                                  {commentedForThisPost.reposted &&
+                                  commentedForThisPost.reposted.length
+                                    ? commentedForThisPost.reposted.length
+                                    : null}
+                                </span>
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="">
+                          {commentedForThisPost.likes &&
+                          commentedForThisPost.likes.length ? (
+                            checkIds(commentedForThisPost.likes).includes(
+                              userInfo._id
+                            ) ? (
+                              <div>
+                                <svg
+                                  onClick={() =>
+                                    handleDeleteLikePostDetailPage(
+                                      commentedForThisPost._id
+                                    )
+                                  }
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  fill="rgb(249, 24, 128)"
+                                  className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                >
+                                  <g>
+                                    <path
+                                      stroke="black"
+                                      strokeWidth="0.2"
+                                      d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"
+                                    ></path>
+                                  </g>
+                                </svg>
+                                <span className="post-description">
+                                  {commentedForThisPost.likes.length ? (
+                                    <span
+                                      style={{
+                                        color: "rgb(249, 24, 128)",
+                                      }}
+                                    >
+                                      {commentedForThisPost.likes.length}
+                                    </span>
+                                  ) : null}
+                                </span>
+                              </div>
+                            ) : (
+                              <div>
+                                {" "}
+                                <svg
+                                  onClick={() =>
+                                    handlePostLikesPostDetailPage(
+                                      commentedForThisPost._id
+                                    )
+                                  }
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  color="rgb(83, 100, 113)"
+                                  fill="currentColor"
+                                  className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                >
+                                  <g>
+                                    <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
+                                  </g>
+                                </svg>
+                                <span className="post-description">
+                                  {commentedForThisPost.likes.length ? (
+                                    <span>
+                                      {commentedForThisPost.likes.length}
+                                    </span>
+                                  ) : null}
+                                </span>
+                              </div>
+                            )
+                          ) : (
+                            <div>
+                              {" "}
+                              <svg
+                                onClick={() =>
+                                  handlePostLikesPostDetailPage(
+                                    commentedForThisPost._id
+                                  )
+                                }
+                                width={`${1.25}em`}
+                                height={`${1.25}em`}
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                color="rgb(83, 100, 113)"
+                                fill="currentColor"
+                                className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                              >
+                                <g>
+                                  <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
+                                </g>
+                              </svg>
+                              <span className="post-description">{null}</span>
+                            </div>
+                          )}
+                        </div>
+                      </Stack>
+
+                      {/* new version favorite repost comment finish to check */}
+
+                      {/* post owner full name + verified account svg + post owner user name + post created date and content  finish to check  */}
+                    </Col>
+                  </Row>
+                </Container>
+              </>
+            ) : null}
+            {/* eğer post comment ise comment edildiği postu göster tepesinde göster finish to check */}
+
+            <Container>
+              <Row>
+                <Col
+                  xs={2}
+                  sm={2}
+                  md={2}
+                  lg={2}
+                  xxl={2}
+                  style={{
+                    textAlign: "center",
+                  }}
+                >
+                  {/* profile image start to check */}
+
+                  <div>
+                    {detailedPost.userId ? (
+                      <Link
+                        onClick={() =>
+                          redirectSpesificProfilePage(detailedPost.userId._id)
+                        }
+                        style={{ cursor: "pointer" }}
+                      >
+                        <img
+                          width={40}
+                          height={40}
+                          src={detailedPost.userId.imageUrl}
+                          alt=""
+                          style={{
+                            borderRadius: "50%",
+                          }}
+                        />
+                      </Link>
+                    ) : (
+                      <Link
+                        onClick={() =>
+                          redirectSpesificProfilePage(detailedPost.userId._id)
+                        }
+                        to={`/profile/${
+                          detailedPost.userId ? detailedPost.userId._id : null
+                        }`}
+                        style={{ cursor: "pointer" }}
+                      >
+                        {" "}
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="40"
+                          height="40"
+                          fill="rgb(83, 100, 113)"
+                          className="bi bi-person-circle"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                          <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                        </svg>
+                      </Link>
+                    )}
+                  </div>
+                  {/* profile image finish to check  */}
+                </Col>
+                <Col xs={10} sm={10} md={10} lg={10} xxl={10}>
+                  {/* start to check post owner full name + post owner user name  */}
+                  <div>
+                    <Link
+                      onClick={() =>
+                        redirectSpesificProfilePage(detailedPost.userId._id)
+                      }
+                      to={
+                        detailedPost.userId
+                          ? `/profile/${detailedPost.userId._id}`
+                          : ""
+                      }
+                      style={{
+                        textDecoration: "none",
+                      }}
+                    >
+                      <span
+                        className="post-detail-underline-text-2"
+                        style={{
+                          color: "black",
+                          lineHeight: "20px",
+                          fontWeight: "700",
+                          fontSize: "15px",
+                        }}
+                      >
+                        {detailedPost.authorFullName}
+                      </span>
+                    </Link>
+
+                    {/* three dots svg start to check */}
+                    <span
+                      style={{
+                        float: "right",
+                      }}
+                    >
+                      <svg
+                        style={{
+                          color: "rgb(83, 100, 113)",
+                          fontSize: "15px",
+                          lineHeight: "20px",
+                        }}
+                        fill="currentColor"
+                        width={`${1.25}em`}
+                        height={`${1.25}em`}
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                      >
+                        <g>
+                          <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                        </g>
+                      </svg>
+                    </span>
+                    {/* three dots svg finish to check */}
+                  </div>
+                  <Link
+                    onClick={() =>
+                      redirectSpesificProfilePage(detailedPost.userId._id)
+                    }
+                    to={
+                      detailedPost.userId
+                        ? `/profile/${detailedPost.userId._id}`
+                        : ""
+                    }
+                    style={{
+                      textDecoration: "none",
+                    }}
+                  >
+                    <span
+                      style={{
+                        color: "rgb(83,100,113)",
+                        lineHeight: "20px",
+                        fontSize: "15px",
+                        fontWeight: "400",
+                      }}
+                    >
+                      @{detailedPost.authorUserName}
+                    </span>
                   </Link>
-                )}
-              </div>
-              {/* profile image finish to check  */}
-
-              {/* start to check post owner full name + post owner user name  */}
-              <div className="p-2">
-                <Link
-                  onClick={() =>
-                    redirectSpesificProfilePage(detailedPost.userId._id)
-                  }
-                  to={
-                    detailedPost.userId
-                      ? `/profile/${detailedPost.userId._id}`
-                      : ""
-                  }
-                  style={{
-                    textDecoration: "none",
-                  }}
-                >
-                  <div
-                    className="post-detail-underline-text-2"
-                    style={{
-                      color: "black",
-                      lineHeight: "20px",
-                      fontWeight: "700",
-                      fontSize: "15px",
-                    }}
-                  >
-                    {detailedPost.authorFullName}
-                  </div>
-                </Link>
-                <Link
-                  onClick={() =>
-                    redirectSpesificProfilePage(detailedPost.userId._id)
-                  }
-                  to={
-                    detailedPost.userId
-                      ? `/profile/${detailedPost.userId._id}`
-                      : ""
-                  }
-                  style={{
-                    textDecoration: "none",
-                  }}
-                >
-                  <div
-                    style={{
-                      color: "rgb(83,100,113)",
-                      lineHeight: "20px",
-                      fontSize: "15px",
-                      fontWeight: "400",
-                    }}
-                  >
-                    @{detailedPost.authorUserName}
-                  </div>
-                </Link>
-              </div>
-              {/* finish to check post owner full name + post owner user name  */}
-
-              {/* three dots svg start to check */}
-              <div className="p-2 ms-auto">
-                <svg
-                  style={{
-                    color: "rgb(83, 100, 113)",
-                    fontSize: "15px",
-                    lineHeight: "20px",
-                  }}
-                  fill="currentColor"
-                  width={`${1.25}em`}
-                  height={`${1.25}em`}
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                >
-                  <g>
-                    <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                  </g>
-                </svg>
-              </div>
-              {/* three dots svg finish to check */}
-            </Stack>
-            {/* finish to check  */}
+                  {/* finish to check post owner full name + post owner user name  */}
+                </Col>
+              </Row>
+            </Container>
 
             {/* post content + post created date start to check */}
             <Stack
               direction="vertical"
               gap={0}
-              className="mt-3"
               style={{
                 borderBottom: "1px solid rgba(0,0,0,0.1)",
               }}
             >
               <div
                 style={{
+                  marginLeft: "10px",
                   fontSize: "17px",
                   fontWeight: "400",
                   lineHeight: "24px",
                   overflowWrap: "break-word",
                   maxWidth: "100%",
                 }}
-                className="p-2"
+                className="p-1"
               >
-                {detailedPost.content}
+                <span>{detailedPost.content}</span>
+                <span>
+                  {detailedPost.image ? (
+                    detailedPost.image.url.slice(0, 3) !== "ima" ? (
+                      <>
+                        <Link
+                          to={`/${
+                            detailedPost.commentedForThisUsersPost.username
+                          }/status/${
+                            !detailedPost.isReposted
+                              ? detailedPost._id
+                              : detailedPost.repostedFromThisOriginalPost[0]._id
+                          }/photo/${22}`}
+                          style={{
+                            textDecoration: "none",
+                          }}
+                        >
+                          <div
+                            style={{
+                              overflow: "hidden",
+                              border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
+                              borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
+                              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                            }}
+                          >
+                            <img
+                              src={detailedPost.image.url}
+                              alt="Description"
+                              style={{
+                                width: "100%",
+                                display: "block",
+                              }}
+                            />
+                          </div>
+                        </Link>
+                      </>
+                    ) : null
+                  ) : null}
+                </span>
               </div>
               <Link
                 to={
@@ -667,7 +1434,7 @@ function PostDetailPage() {
                     fontWeight: "400",
                     lineHeight: "20px",
                   }}
-                  className="p-2 post-detail-underline-text-1"
+                  className="p-0 mt-3 mb-3 post-detail-underline-text-1"
                 >
                   {formatDateString(detailedPost.createdAt)}
                 </div>
@@ -675,6 +1442,50 @@ function PostDetailPage() {
             </Stack>
             {/* post content + post created date finish to check */}
 
+            {/* view post engagements section start to check */}
+            <Stack
+              className="view-post-engagements-section transition-gray-hover"
+              direction="horizontal"
+              style={{
+                cursor: "pointer",
+                justifyContent: "left",
+                borderBottom: "1px solid rgba(0,0,0,0.1)",
+              }}
+              gap={0}
+            >
+              <div className="p-2">
+                <svg
+                  style={{
+                    paddingRight: "4px",
+                    color: "rgba(83,100,113,1.00)",
+                  }}
+                  width={`${1.25}em`}
+                  height={`${1.25}em`}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1hvjb8t"
+                  fill="currentColor"
+                >
+                  <g>
+                    <path d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"></path>
+                  </g>
+                </svg>
+              </div>
+              <div
+                className="p-0"
+                style={{
+                  position: "relative",
+                  top: "1px",
+                  fontSize: "15px",
+                  lineHeight: "20px",
+                  fontWeight: "400",
+                  color: "rgba(83,100,113,1.00)",
+                }}
+              >
+                View post engagements
+              </div>
+            </Stack>
+            {/* view post engagements section finish to check
             {/* new version favorite repost comment start to check */}
             <Stack
               direction="horizontal"
@@ -684,7 +1495,11 @@ function PostDetailPage() {
               }}
             >
               <div className="p-2">
-                <CommentModal post={detailedPost} />
+                <CommentModal
+                  post={detailedPost}
+                  width={`${1.5}em`}
+                  height={`${1.5}em`}
+                />
               </div>
               <div className="p-2">
                 {detailedPost.reposted && detailedPost.reposted.length ? (
@@ -694,8 +1509,8 @@ function PostDetailPage() {
                         onClick={() =>
                           handleDeleteRepostPostDetailPage(detailedPost._id)
                         }
-                        width={`${1.25}em`}
-                        height={`${1.25}em`}
+                        width={`${1.5}em`}
+                        height={`${1.5}em`}
                         viewBox="0 0 24 24"
                         aria-hidden="true"
                         className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -727,8 +1542,8 @@ function PostDetailPage() {
                           cursor: "pointer",
                         }}
                         onClick={() => handleRepost(detailedPost._id)}
-                        width={`${1.25}em`}
-                        height={`${1.25}em`}
+                        width={`${1.5}em`}
+                        height={`${1.5}em`}
                         viewBox="0 0 24 24"
                         aria-hidden="true"
                         className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -758,8 +1573,8 @@ function PostDetailPage() {
                         cursor: "pointer",
                       }}
                       onClick={() => handleRepost(detailedPost._id)}
-                      width={`${1.25}em`}
-                      height={`${1.25}em`}
+                      width={`${1.5}em`}
+                      height={`${1.5}em`}
                       viewBox="0 0 24 24"
                       aria-hidden="true"
                       className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -796,8 +1611,8 @@ function PostDetailPage() {
                         onClick={() =>
                           handleDeleteLikePostDetailPage(detailedPost._id)
                         }
-                        width={`${1.25}em`}
-                        height={`${1.25}em`}
+                        width={`${1.5}em`}
+                        height={`${1.5}em`}
                         viewBox="0 0 24 24"
                         aria-hidden="true"
                         fill="rgb(249, 24, 128)"
@@ -830,8 +1645,8 @@ function PostDetailPage() {
                         onClick={() =>
                           handlePostLikesPostDetailPage(detailedPost._id)
                         }
-                        width={`${1.25}em`}
-                        height={`${1.25}em`}
+                        width={`${1.5}em`}
+                        height={`${1.5}em`}
                         viewBox="0 0 24 24"
                         aria-hidden="true"
                         color="rgb(83, 100, 113)"
@@ -856,8 +1671,8 @@ function PostDetailPage() {
                       onClick={() =>
                         handlePostLikesPostDetailPage(detailedPost._id)
                       }
-                      width={`${1.25}em`}
-                      height={`${1.25}em`}
+                      width={`${1.5}em`}
+                      height={`${1.5}em`}
                       viewBox="0 0 24 24"
                       aria-hidden="true"
                       color="rgb(83, 100, 113)"
@@ -873,7 +1688,43 @@ function PostDetailPage() {
                 )}
               </div>
             </Stack>
+
             {/* new version favorite repost comment finish to check */}
+
+            {/* accordion implementation for comments when it is more than 0 start to check  */}
+            <Accordion defaultActiveKey="0">
+              <Accordion.Item style={{ border: "none" }} eventKey="1">
+                <Accordion.Header>
+                  <div
+                    style={{
+                      width: "100%",
+                      textAlign: "center",
+                      color: "rgb(29, 155, 240)",
+                      fontSize: "15px",
+                      fontWeight: "400",
+                      lineHeight: "24px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Show this thread
+                  </div>
+                </Accordion.Header>
+                <Accordion.Body>
+                  {detailedPost.comments ? (
+                    <>
+                      {detailedPost.comments.map((eachComment) => {
+                        return (
+                          <>
+                            <div>{eachComment.content}</div>
+                          </>
+                        );
+                      })}
+                    </>
+                  ) : null}
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+            {/* accordion implementation for comments when it is more than 0 finish to check  */}
           </Col>
           {/* 3.column burası olucak */}
           <Col
