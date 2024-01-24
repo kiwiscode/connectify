@@ -60,6 +60,7 @@ const addComment = (req, res) => {
                   });
                 })
                 .then((newCreatedPost) => {
+                  console.log("New created post =>", newCreatedPost);
                   Comment.create({
                     userId: userId,
                     authorFullName: user.fullname,
@@ -72,6 +73,7 @@ const addComment = (req, res) => {
                     isComment: true,
                     commentedForThisPost: postId,
                     commentedForThisUsersPost: post.userId._id.toString(),
+                    postId: newCreatedPost._id.toString(),
                   }).then((newCreatedComment) => {
                     user.posts.unshift(newCreatedPost);
                     post.comments.unshift(newCreatedComment._id.toString());
@@ -112,6 +114,7 @@ const addComment = (req, res) => {
                     isComment: true,
                     commentedForThisPost: postId,
                     commentedForThisUsersPost: post.userId._id.toString(),
+                    postId: newCreatedPost._id.toString(),
                   }).then((newCreatedComment) => {
                     user.posts.unshift(newCreatedPost);
                     post.comments.unshift(newCreatedComment._id.toString());
@@ -182,6 +185,7 @@ const addComment = (req, res) => {
                     isComment: true,
                     commentedForThisPost: postId,
                     commentedForThisUsersPost: post.userId._id.toString(),
+                    postId: newCreatedPost._id.toString(),
                   }).then((newCreatedComment) => {
                     user.posts.unshift(newCreatedPost);
                     post.comments.unshift(newCreatedComment._id.toString());
@@ -250,6 +254,7 @@ const addComment = (req, res) => {
                     isComment: true,
                     commentedForThisPost: postId,
                     commentedForThisUsersPost: post.userId._id.toString(),
+                    postId: newCreatedPost._id.toString(),
                   }).then((newCreatedComment) => {
                     user.posts.unshift(newCreatedPost);
                     post.comments.unshift(newCreatedComment._id.toString());
@@ -353,6 +358,7 @@ const addComment = (req, res) => {
                     isComment: true,
                     commentedForThisPost: postId,
                     commentedForThisUsersPost: post.userId._id.toString(),
+                    postId: newCreatedPost._id.toString(),
                   }).then((newCreatedComment) => {
                     user.posts.unshift(newCreatedPost);
                     post.comments.unshift(newCreatedComment._id.toString());
@@ -421,6 +427,7 @@ const addComment = (req, res) => {
                     isComment: true,
                     commentedForThisPost: postId,
                     commentedForThisUsersPost: post.userId._id.toString(),
+                    postId: newCreatedPost._id.toString(),
                   }).then((newCreatedComment) => {
                     user.posts.unshift(newCreatedPost);
                     post.comments.unshift(newCreatedComment._id.toString());
@@ -495,6 +502,7 @@ const addComment = (req, res) => {
                     isComment: true,
                     commentedForThisPost: postId,
                     commentedForThisUsersPost: post.userId._id.toString(),
+                    postId: newCreatedPost._id.toString(),
                   }).then((newCreatedComment) => {
                     user.posts.unshift(newCreatedPost);
                     post.comments.unshift(newCreatedComment._id.toString());
@@ -563,6 +571,7 @@ const addComment = (req, res) => {
                     isComment: true,
                     commentedForThisPost: postId,
                     commentedForThisUsersPost: post.userId._id.toString(),
+                    postId: newCreatedPost._id.toString(),
                   }).then((newCreatedComment) => {
                     user.posts.unshift(newCreatedPost);
                     post.comments.unshift(newCreatedComment._id.toString());
