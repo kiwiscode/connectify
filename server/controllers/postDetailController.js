@@ -14,6 +14,41 @@ const getPostDetail = (req, res) => {
     .populate("commentedForThisPost")
     .populate("commentedForThisUsersPost")
     .populate({
+      path: "comments",
+      populate: {
+        path: "commentedForThisPost",
+        model: "Post",
+      },
+    })
+    .populate({
+      path: "comments",
+      populate: {
+        path: "commentedForThisUsersPost",
+        model: "User",
+      },
+    })
+    .populate({
+      path: "comments",
+      populate: {
+        path: "userId",
+        model: "User",
+      },
+    })
+    .populate({
+      path: "comments",
+      populate: {
+        path: "likes",
+        model: "User",
+      },
+    })
+    .populate({
+      path: "comments",
+      populate: {
+        path: "reposted",
+        model: "User",
+      },
+    })
+    .populate({
       path: "commentedForThisPost",
       populate: {
         path: "userId",

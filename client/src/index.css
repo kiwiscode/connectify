@@ -1246,3 +1246,18 @@ span > a:hover {
 .view-post-engagements-section:hover {
   background-color: rgba(247, 247, 247, 255);
 }
+
+.accordion-button {
+  border: none !important;
+  background-color: white !important;
+}
+
+.accordion-button:focus {
+  border: none !important;
+  box-shadow: none;
+}
+
+.accordion-button:not(.collapsed) {
+  border: none !important;
+  color: #212529;
+}
