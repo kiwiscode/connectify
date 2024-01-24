@@ -1238,6 +1238,11 @@ function MainPage() {
                                     : post.repostedFromThisOriginalPost[0]._id
                                 )
                               }
+                              to={`/${post.userId.username}/status/${
+                                !post.isReposted
+                                  ? post._id
+                                  : post.repostedFromThisOriginalPost[0]._id
+                              }`}
                               style={{
                                 textDecoration: "none",
                               }}
@@ -1329,25 +1334,37 @@ function MainPage() {
                           >
                             Replying to {""}
                           </span>
-                          <span
-                            onClick={() =>
-                              redirectSpesificProfilePage(
-                                post.commentedForThisUsersPost._id
-                              )
-                            }
+                          <Link
+                            to={`/profile/${post.commentedForThisUsersPost._id}`}
                             style={{
-                              color: "rgb(29, 155, 240)",
-                              cursor: "pointer",
-                              fontSize: "15px",
-                              lineHeight: "20px",
-                              fontWeight: "400",
+                              textDecoration: "none",
                             }}
                           >
-                            @{post.commentedForThisUsersPost.username}
-                          </span>
+                            <span
+                              onClick={() =>
+                                redirectSpesificProfilePage(
+                                  post.commentedForThisUsersPost._id
+                                )
+                              }
+                              style={{
+                                color: "rgb(29, 155, 240)",
+                                cursor: "pointer",
+                                fontSize: "15px",
+                                lineHeight: "20px",
+                                fontWeight: "400",
+                              }}
+                            >
+                              @{post.commentedForThisUsersPost.username}
+                            </span>
+                          </Link>
                         </div>
                       ) : null}
                       <Link
+                        to={`/${post.userId.username}/status/${
+                          !post.isReposted
+                            ? post._id
+                            : post.repostedFromThisOriginalPost[0]._id
+                        }`}
                         onClick={() =>
                           redirectToPostDetailPage(
                             post.userId.username,
@@ -1576,6 +1593,7 @@ function MainPage() {
               ))}
             </div>
           </Col>
+          {/* finish to check  main column */}
 
           {/* 3.column burası olucak */}
           <Col

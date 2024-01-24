@@ -1324,6 +1324,11 @@ function UserProfile() {
                                 style={{
                                   textDecoration: "none",
                                 }}
+                                to={`/${post.userId.username}/status/${
+                                  !post.isReposted
+                                    ? post._id
+                                    : post.repostedFromThisOriginalPost[0]._id
+                                }`}
                               >
                                 <span
                                   style={{
@@ -1413,22 +1418,29 @@ function UserProfile() {
                           >
                             Replying to {""}
                           </span>
-                          <span
-                            onClick={() =>
-                              redirectSpesificProfilePage(
-                                post.commentedForThisUsersPost._id
-                              )
-                            }
+                          <Link
                             style={{
-                              color: "rgb(29, 155, 240)",
-                              cursor: "pointer",
-                              fontSize: "15px",
-                              lineHeight: "20px",
-                              fontWeight: "400",
+                              textDecoration: "none",
                             }}
+                            to={`/profile/${post.commentedForThisUsersPost._id}`}
                           >
-                            @{post.commentedForThisUsersPost.username}
-                          </span>
+                            <span
+                              onClick={() =>
+                                redirectSpesificProfilePage(
+                                  post.commentedForThisUsersPost._id
+                                )
+                              }
+                              style={{
+                                color: "rgb(29, 155, 240)",
+                                cursor: "pointer",
+                                fontSize: "15px",
+                                lineHeight: "20px",
+                                fontWeight: "400",
+                              }}
+                            >
+                              @{post.commentedForThisUsersPost.username}
+                            </span>
+                          </Link>
                         </div>
                       ) : null}
 
@@ -1445,6 +1457,11 @@ function UserProfile() {
                           textDecoration: "none",
                           color: "rgb(15, 20, 25)",
                         }}
+                        to={`/${post.userId.username}/status/${
+                          !post.isReposted
+                            ? post._id
+                            : post.repostedFromThisOriginalPost[0]._id
+                        }`}
                       >
                         <div
                           style={{
@@ -1796,6 +1813,12 @@ function UserProfile() {
                                 style={{
                                   textDecoration: "none",
                                 }}
+                                to={`/${favorite.userId.username}/status/${
+                                  !favorite.isReposted
+                                    ? favorite._id
+                                    : favorite.repostedFromThisOriginalPost[0]
+                                        ._id
+                                }`}
                               >
                                 <span
                                   style={{
@@ -1888,6 +1911,11 @@ function UserProfile() {
                           textDecoration: "none",
                           color: "rgb(15, 20, 25)",
                         }}
+                        to={`/${favorite.userId.username}/status/${
+                          !favorite.isReposted
+                            ? favorite._id
+                            : favorite.repostedFromThisOriginalPost[0]._id
+                        }`}
                       >
                         <div
                           style={{
