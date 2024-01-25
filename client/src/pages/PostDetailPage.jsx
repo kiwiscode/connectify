@@ -19,6 +19,8 @@ function PostDetailPage() {
   const [commentedForThisUsersPost, setcommentedForThisUsersPost] = useState(
     []
   );
+  const [postDetailPostId, setpostDetailPostId] = useState("");
+
   const [shouldHide, setshouldHide] = useState(true);
 
   // socket io 1 client start to check
@@ -405,6 +407,32 @@ function PostDetailPage() {
     } ${inputDate.getDate()}, ${inputDate.getFullYear()}`;
   }
 
+  const handleShowDetailPostFromPostDetailPage = (postId) => {
+    console.log(postId);
+  };
+
+  const handleDeletePostPostDetailPage = (postId) => {
+    setpostDetailPostId(postId);
+    axios
+      .post(
+        `${API_URL}/home/delete-post`,
+        { userId: userInfo._id, postId },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then(() => {
+        console.log("Post deleted !");
+      })
+      .catch((error) => {
+        const { errorMessage } = error.response.data;
+
+        console.log("Error =>", errorMessage);
+      });
+  };
+
   return (
     <>
       <Container
@@ -589,7 +617,10 @@ function PostDetailPage() {
               </div>
             </Stack>
             {/* eğer post comment ise comment edildiği postu göster tepesinde göster start to check */}
-            {commentedForThisPost._id && commentedForThisUsersPost._id ? (
+
+            {commentedForThisPost &&
+            commentedForThisPost._id &&
+            commentedForThisUsersPost._id ? (
               <>
                 <Container
                   style={{
@@ -831,24 +862,58 @@ function PostDetailPage() {
                                 float: "right",
                               }}
                             >
-                              <svg
-                                style={{
-                                  color: "rgb(83, 100, 113)",
-                                  fontSize: "15px",
-                                  lineHeight: "20px",
-                                }}
-                                fill="currentColor"
-                                width={`${1.25}em`}
-                                height={`${1.25}em`}
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                                className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                              >
-                                <g>
-                                  <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                </g>
-                              </svg>
+                              {/* show if post owner userId !equal currentUserId */}
+                              {commentedForThisPost.userId &&
+                              commentedForThisPost.userId._id !==
+                                userInfo._id ? (
+                                <svg
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "rgb(29, 155, 240)",
+                                  }}
+                                  onClick={() =>
+                                    handleShowDetailPostFromPostDetailPage(
+                                      commentedForThisPost._id
+                                    )
+                                  }
+                                  color="rgb(83, 100, 113)"
+                                  fill="currentColor"
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                >
+                                  <g>
+                                    <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                                  </g>
+                                </svg>
+                              ) : (
+                                <svg
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "crimson",
+                                  }}
+                                  onClick={() =>
+                                    handleDeletePostPostDetailPage(
+                                      commentedForThisPost._id
+                                    )
+                                  }
+                                  color="rgb(83, 100, 113)"
+                                  fill="currentColor"
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                >
+                                  <g>
+                                    <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                                  </g>
+                                </svg>
+                              )}
                             </span>
+
                             {/* three dots svg finish to check */}
 
                             {/* finish to check  */}
@@ -1136,6 +1201,70 @@ function PostDetailPage() {
             ) : null}
             {/* eğer post comment ise comment edildiği postu göster tepesinde göster finish to check */}
 
+            {!commentedForThisPost && (
+              /* eğer comment yazılan ana post silindiyse start to check */
+              <div
+                style={{
+                  marginBottom: "5px",
+                  backgroundColor: "rgba(247,249,249,1.00)",
+                  wordWrap: "break-word",
+                  padding: "12px 4px 12px 4px",
+                  borderStyle: "solid",
+                  borderWidth: "1px",
+                  borderColor: "rgba(239,243,244,1.00)",
+                  borderRadius: "16px",
+                  fontSize: "15px",
+                }}
+              >
+                <span
+                  style={{
+                    marginLeft: "15px",
+                    color: "rgba(83,100,113)",
+                    fontSize: "15px",
+                    lineHeight: "20px",
+                    fontWeight: "400",
+                  }}
+                >
+                  This Post was deleted by the Post author.
+                </span>{" "}
+                <span
+                  className="learn-more-post-detail"
+                  style={{
+                    cursor: "pointer",
+                    color: "rgba(29,155,240)",
+                    fontSize: "15px",
+                    lineHeight: "20px",
+                    fontWeight: "400",
+                  }}
+                >
+                  Learn more
+                </span>
+              </div>
+              /* eğer comment yazılan ana post silindiyse finish to check */
+            )}
+
+            {!commentedForThisPost ? (
+              <div
+                className="responsive-comment-line-parent-div-second"
+                style={{
+                  display: "flex",
+                  width: "17%",
+                  heigh: "auto",
+                  justifyContent: "center",
+                }}
+              >
+                <div
+                  className="responsive-comment-line"
+                  style={{
+                    border: "1px solid rgba(0, 0, 0, 0.2)",
+                    margin: "5px 0px 5px 0px",
+                    width: "2px",
+                    height: `8px`,
+                  }}
+                ></div>
+              </div>
+            ) : null}
+
             <Container>
               <Row>
                 <Col
@@ -1196,6 +1325,7 @@ function PostDetailPage() {
                       </Link>
                     )}
                   </div>
+
                   {/* profile image finish to check  */}
                 </Col>
                 <Col xs={10} sm={10} md={10} lg={10} xxl={10}>
@@ -1233,24 +1363,55 @@ function PostDetailPage() {
                         float: "right",
                       }}
                     >
-                      <svg
-                        style={{
-                          color: "rgb(83, 100, 113)",
-                          fontSize: "15px",
-                          lineHeight: "20px",
-                        }}
-                        fill="currentColor"
-                        width={`${1.25}em`}
-                        height={`${1.25}em`}
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                        className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                      >
-                        <g>
-                          <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                        </g>
-                      </svg>
+                      {/* show if post owner userId !equal currentUserId */}
+                      {detailedPost.userId &&
+                      detailedPost.userId._id !== userInfo._id ? (
+                        <svg
+                          style={{
+                            cursor: "pointer",
+                            backgroundColor: "rgb(29, 155, 240)",
+                          }}
+                          onClick={() =>
+                            handleShowDetailPostFromPostDetailPage(
+                              detailedPost._id
+                            )
+                          }
+                          color="rgb(83, 100, 113)"
+                          fill="currentColor"
+                          width={`${1.25}em`}
+                          height={`${1.25}em`}
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                        >
+                          <g>
+                            <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                          </g>
+                        </svg>
+                      ) : (
+                        <svg
+                          style={{
+                            cursor: "pointer",
+                            backgroundColor: "crimson",
+                          }}
+                          onClick={() =>
+                            handleDeletePostPostDetailPage(detailedPost._id)
+                          }
+                          color="rgb(83, 100, 113)"
+                          fill="currentColor"
+                          width={`${1.25}em`}
+                          height={`${1.25}em`}
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                        >
+                          <g>
+                            <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                          </g>
+                        </svg>
+                      )}
                     </span>
+
                     {/* three dots svg finish to check */}
                   </div>
                   <Link
@@ -1851,11 +2012,11 @@ function PostDetailPage() {
                                                 backgroundColor:
                                                   "rgb(29, 155, 240)",
                                               }}
-                                              // onClick={() =>
-                                              //   handleShowDetailPostFromHomePage(
-                                              //     eachComment._id
-                                              //   )
-                                              // }
+                                              onClick={() =>
+                                                handleShowDetailPostFromPostDetailPage(
+                                                  eachComment.postId
+                                                )
+                                              }
                                               color="rgb(83, 100, 113)"
                                               fill="currentColor"
                                               width={`${1.25}em`}
@@ -1874,11 +2035,11 @@ function PostDetailPage() {
                                                 cursor: "pointer",
                                                 backgroundColor: "crimson",
                                               }}
-                                              // onClick={() =>
-                                              //   handledele(
-                                              //     eachComment._id
-                                              //   )
-                                              // }
+                                              onClick={() =>
+                                                handleDeletePostPostDetailPage(
+                                                  eachComment.postId
+                                                )
+                                              }
                                               color="rgb(83, 100, 113)"
                                               fill="currentColor"
                                               width={`${1.25}em`}
