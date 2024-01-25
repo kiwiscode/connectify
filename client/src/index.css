@@ -1234,6 +1234,59 @@ span > a:hover {
   }
 }
 
+@media (max-width: 400px) {
+  .responsive-comment-line-parent-div-second {
+    width: 18% !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .responsive-comment-line-parent-div-second {
+    width: 19% !important;
+  }
+}
+
+@media (max-width: 340px) {
+  .responsive-comment-line-parent-div-second {
+    width: 20% !important;
+  }
+}
+
+@media (max-width: 330px) {
+  .responsive-comment-line-parent-div-second {
+    width: 21% !important;
+  }
+}
+
+@media (max-width: 320px) {
+  .responsive-comment-line-parent-div-second {
+    width: 22% !important;
+  }
+}
+
+@media (max-width: 310px) {
+  .responsive-comment-line-parent-div-second {
+    width: 23% !important;
+  }
+}
+
+@media (max-width: 300px) {
+  .responsive-comment-line-parent-div-second {
+    width: 24% !important;
+  }
+}
+
+@media (max-width: 290px) {
+  .responsive-comment-line-parent-div-second {
+    width: 25% !important;
+  }
+}
+
+@media (max-width: 280px) {
+  .responsive-comment-line-parent-div-second {
+    width: 26% !important;
+  }
+}
 /* className="transition-gray-hover" */
 
 .transition-gray-hover {
@@ -1260,4 +1313,9 @@ span > a:hover {
 .accordion-button:not(.collapsed) {
   border: none !important;
   color: #212529;
+}
+
+.learn-more-post-detail:hover {
+  text-decoration: underline;
+  text-decoration-color: rgba(29, 155, 240);
 }
