@@ -115,17 +115,6 @@ const handleDeletePost = (req, res) => {
         return res.status(404).json({ errorMessage: "User not found" });
       }
 
-      const filteredPostArr = user.posts.filter(
-        (post) => post._id.toString() !== postId
-      );
-
-      const filteredFavoriteArr = user.favorites.filter(
-        (favorite) => favorite._id.toString() !== postId
-      );
-
-      user.posts = filteredPostArr;
-      user.favorites = filteredFavoriteArr;
-      // user.save();
       // STARTING WITH POST DELETING PROCESS
       Post.findById(postId)
         .then((post) => {
@@ -136,7 +125,53 @@ const handleDeletePost = (req, res) => {
                   post.repostedFromThisOriginalPost[0]._id.toString()
                 )
                   .then(() => {
+                    // STARTING WITH FAVORITE DELETING PROCESS IF THE POST ALREADY IN FAVORITE COLLECTION
+
+                    Favorite.deleteMany({
+                      $or: [
+                        { postId: postId },
+                        {
+                          postId:
+                            post.repostedFromThisOriginalPost[0]._id.toString(),
+                        },
+                      ],
+                    })
+                      .then((response) => {
+                        console.log(response);
+                        // burada findOne hatalı olabilir
+                        res.status(200);
+                      })
+                      .catch((error) => {
+                        console.log(error);
+                      });
+                    // FINISHING WITH FAVORITE DELETING PROCESS IF THE POST ALREADY IN FAVORITE COLLECTION
+
                     console.log("POSTS ARE DELETED FROM POST COLLECTION !");
+
+                    console.log(
+                      "Orjinal post id =>",
+                      post.repostedFromThisOriginalPost[0]._id.toString()
+                    );
+                    console.log("Reference post id =>", post._id.toString());
+                    console.log("Users post array =>", user.posts);
+                    const filteredPostArr = user.posts.filter(
+                      (eachPost) =>
+                        eachPost._id.toString() !== postId &&
+                        eachPost._id.toString() !==
+                          post.repostedFromThisOriginalPost[0]._id.toString()
+                    );
+                    const filteredFavoriteArr = user.favorites.filter(
+                      (eachFavorite) =>
+                        eachFavorite._id.toString() !==
+                        post.repostedFromThisOriginalPost[0]._id.toString()
+                    );
+
+                    if (filteredFavoriteArr) {
+                      user.favorites = filteredFavoriteArr;
+                    }
+                    user.posts = filteredPostArr;
+                    user.save();
+                    console.log("Users post array =>", user.posts);
                   })
                   .catch((error) => {
                     console.log(error);
@@ -148,14 +183,49 @@ const handleDeletePost = (req, res) => {
           } else if (!post.isReposted) {
             if (post.reposted.length !== 0) {
               Post.findByIdAndDelete(post._id)
-                .then(() => {
-                  console.log("Original post =>", post);
-                  Post.findOne({
-                    _id: post.repostedFromThisOriginalPost[0]._id.toString(),
-                  })
+                .then((response) => {
+                  console.log("Response =>", response);
+                  console.log("Here is working 1");
+                  Post.find({ repostedFromThisOriginalPost: postId })
                     .then((referencePost) => {
-                      console.log("Reference post =>", referencePost);
-                      Post.findByIdAndDelete(referencePost._id)
+                      console.log("Reference post =>", referencePost[0]);
+                      // STARTING WITH FAVORITE DELETING PROCESS IF THE POST ALREADY IN FAVORITE COLLECTION
+                      Favorite.deleteMany({
+                        $or: [
+                          { postId: postId },
+                          { postId: referencePost[0]._id.toString() },
+                        ],
+                      })
+                        .then((response) => {
+                          console.log(response);
+                          // burada findOne hatalı olabilir
+                          res.status(200);
+                        })
+                        .catch((error) => {
+                          console.log(error);
+                        });
+                      // FINISHING WITH FAVORITE DELETING PROCESS IF THE POST ALREADY IN FAVORITE COLLECTION
+                      const filteredPostArr = user.posts.filter(
+                        (eachPost) =>
+                          eachPost._id.toString() !== postId &&
+                          eachPost._id.toString() !==
+                            referencePost[0]._id.toString()
+                      );
+                      const filteredFavoriteArr = user.favorites.filter(
+                        (eachFavorite) =>
+                          eachFavorite._id.toString() !==
+                            referencePost[0]._id.toString() &&
+                          eachFavorite._id.toString() !== postId
+                      );
+                      user.posts = filteredPostArr;
+                      if (filteredFavoriteArr) {
+                        user.favorites = filteredFavoriteArr;
+                      }
+                      user.save();
+                      console.log("Here is working 2");
+
+                      console.log("Reference post =>", referencePost[0]);
+                      Post.findByIdAndDelete(referencePost[0]._id)
                         .then(() => {
                           console.log(
                             "POSTS ARE DELETED FROM POST COLLECTION !"
@@ -169,12 +239,39 @@ const handleDeletePost = (req, res) => {
                       console.log(error);
                     });
                 })
-                .catch(() => {
+                .catch((error) => {
+                  console.log("Error =>", error);
                   res.status(404).json("Post not found!");
                 });
             } else {
               Post.findByIdAndDelete(post._id)
-                .then(() => {})
+                .then(() => {
+                  // STARTING WITH FAVORITE DELETING PROCESS IF THE POST ALREADY IN FAVORITE COLLECTION
+                  Favorite.deleteOne({
+                    postId: post._id,
+                  })
+                    .then((response) => {
+                      console.log(response);
+                      // burada findOne hatalı olabilir
+                      res.status(200);
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                    });
+                  // FINISHING WITH FAVORITE DELETING PROCESS IF THE POST ALREADY IN FAVORITE COLLECTION
+
+                  const filteredPostArr = user.posts.filter(
+                    (eachPost) => eachPost._id.toString() !== postId
+                  );
+                  const filteredFavoriteArr = user.favorites.filter(
+                    (eachFavorite) => eachFavorite._id.toString() !== postId
+                  );
+                  user.posts = filteredPostArr;
+                  if (filteredFavoriteArr) {
+                    user.favorites = filteredFavoriteArr;
+                  }
+                  user.save();
+                })
                 .catch(() => {});
             }
           }
@@ -183,21 +280,11 @@ const handleDeletePost = (req, res) => {
           console.log(error);
         });
       // FINISHING WITH POST DELETE PROCESS
+      console.log("This line is working 3 ");
 
-      // STARTING WITH FAVORITE DELETING PROCESS IF THE POST ALREADY IN FAVORITE COLLECTION
-
-      Favorite.deleteMany({ postId: postId })
-        .then((response) => {
-          console.log(response);
-          // burada findOne hatalı olabilir
-          res.status(200);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-
-      // FINISHING WITH FAVORITE DELETING PROCESS IF THE POST ALREADY IN FAVORITE COLLECTION
       return user.save().then(() => {
+        console.log("This line is working 4 ");
+
         res.status(200).json({
           message:
             "Post deleted from post model,user posts array (and favorites ?)",
