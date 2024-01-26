@@ -309,9 +309,13 @@ function SpesificUserProfile() {
       )
       .then(() => {
         if (favoriteWindow === "") {
-          handleShowSpesificUserProfilePageFavorites();
+          setTimeout(() => {
+            handleShowSpesificUserProfilePageFavorites();
+          }, 500);
         } else if (postsWindow === "") {
-          handleShowSpesificUserProfilePagePosts();
+          setTimeout(() => {
+            handleShowSpesificUserProfilePagePosts();
+          }, 500);
         }
         setError("");
       })
@@ -2011,6 +2015,7 @@ function SpesificUserProfile() {
                           post={post}
                           width={`${1.25}em`}
                           height={`${1.25}em`}
+                          refreshPosts={handleShowSpesificUserProfilePagePosts}
                         />
                       </div>
 
@@ -2481,6 +2486,9 @@ function SpesificUserProfile() {
                             post={favorite}
                             width={`${1.25}em`}
                             height={`${1.25}em`}
+                            refreshPosts={
+                              handleShowSpesificUserProfilePageFavorites
+                            }
                           />
                         </div>
 
