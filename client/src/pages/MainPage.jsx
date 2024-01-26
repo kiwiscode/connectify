@@ -467,8 +467,12 @@ function MainPage() {
         }
       )
       .then(() => {
-        handleShowPostsHomePage();
-        setError("");
+        console.log("Deleted post !");
+
+        setTimeout(() => {
+          handleShowPostsHomePage();
+          setError("");
+        }, 500);
       })
       .catch((error) => {
         const { errorMessage } = error.response.data;
@@ -624,7 +628,34 @@ function MainPage() {
       return eachRepost._id;
     });
   };
+  const [activeTab, setActiveTab] = useState("forYou");
+  const handleHover = (tab) => {
+    setHoveredTab(tab);
+  };
 
+  const handleLeave = () => {
+    setHoveredTab(null);
+  };
+
+  const handleClick = (tab) => {
+    setActiveTab(tab);
+  };
+  const [hoveredTab, setHoveredTab] = useState(null);
+
+  const getTabStyle = (tab) => {
+    return {
+      // textDecoration: activeTab === tab ? "underline" : "none",
+      // background: hoveredTab === tab ? "purple" : "none",
+      color: activeTab === tab ? "rgb(29, 155, 240" : "rgb(83,100,113)",
+      fontWeight: activeTab === tab ? "700" : "400",
+      lineHeight: "20px",
+      fontSize: "15px",
+      cursor: "pointer",
+      flex: 1,
+      textAlign: "center",
+      transition: "background 0.3s", // Hover efekti için geçiş efekti
+    };
+  };
   return (
     <>
       <ResponsiveNavigationBarBottom />
@@ -767,7 +798,7 @@ function MainPage() {
               borderBottom: "none",
             }}
           >
-            <div
+            {/* <div
               className="home-text"
               style={{
                 fontWeight: "700",
@@ -777,7 +808,33 @@ function MainPage() {
               }}
             >
               Home
+            </div> */}
+
+            <div
+              style={{
+                // border: "1px solid black",
+                display: "flex",
+                padding: "16px 0px 16px 0px",
+              }}
+            >
+              <span
+                onMouseEnter={() => handleHover("forYou")}
+                onMouseLeave={handleLeave}
+                onClick={() => handleClick("forYou")}
+                style={getTabStyle("forYou")}
+              >
+                For you
+              </span>
+              <span
+                onMouseEnter={() => handleHover("following")}
+                onMouseLeave={handleLeave}
+                onClick={() => handleClick("following")}
+                style={getTabStyle("following")}
+              >
+                Following
+              </span>
             </div>
+
             <Row
               className="responsive-top-border"
               style={{
@@ -1440,6 +1497,7 @@ function MainPage() {
                           post={post ? post : null}
                           width={`${1.25}em`}
                           height={`${1.25}em`}
+                          refreshPosts={handleShowPostsHomePage}
                         />
                       </div>
                       <div className="p-1">

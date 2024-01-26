@@ -781,7 +781,7 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
   );
 }
 
-function CommentModal({ post, width, height }) {
+function CommentModal({ post, width, height, refreshPosts }) {
   const [show, setShow] = useState(false);
   const [content, setContent] = useState("");
   const [modalImage, setModalImage] = useState("");
@@ -897,9 +897,12 @@ function CommentModal({ post, width, height }) {
       .then((response) => {
         console.log("Response =>", response);
 
+        setTimeout(() => {
+          refreshPosts();
+          handleClose();
+        }, 500);
         setModalImage("");
         setContent("");
-        handleClose();
       })
       .catch((error) => {
         console.log("Error =>", error);
