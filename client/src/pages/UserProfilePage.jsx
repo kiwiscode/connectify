@@ -160,9 +160,13 @@ function UserProfile() {
       )
       .then(() => {
         if (favoriteWindow === "") {
-          handleGetFavorites();
+          setTimeout(() => {
+            handleGetFavorites();
+          }, 500);
         } else if (postsWindow === "") {
-          handleShowPostsProfilePage();
+          setTimeout(() => {
+            handleShowPostsProfilePage();
+          }, 500);
         }
 
         setError("");
@@ -1526,6 +1530,7 @@ function UserProfile() {
                           post={post}
                           width={`${1.25}em`}
                           height={`${1.25}em`}
+                          refreshPosts={handleShowPostsProfilePage}
                         />
                       </div>
 
@@ -1982,6 +1987,7 @@ function UserProfile() {
                           post={favorite}
                           width={`${1.25}em`}
                           height={`${1.25}em`}
+                          refreshPosts={handleGetFavorites}
                         />
                       </div>
 
