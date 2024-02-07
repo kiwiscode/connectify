@@ -195,7 +195,7 @@ function MainPage() {
         },
       })
       .then((response) => {
-        console.log("Response =>", response);
+        console.log("Response from handle show posts home page =>", response);
         // NOTE UPDATING THE LOCALSTORAGE
         // start to check
         localStorage.setItem("mainPagePosts", JSON.stringify(response.data));

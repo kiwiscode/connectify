@@ -1,5 +1,6 @@
 const User = require("../models/User.model");
 const Post = require("../models/Post.model");
+const Comment = require("../models/Comment.model");
 
 const handleRepost = (req, res) => {
   const { postId } = req.body;
@@ -10,6 +11,21 @@ const handleRepost = (req, res) => {
       Post.findById(postId)
         .populate("reposted")
         .then((post) => {
+          // eğer repost edilen post comment ise onu comment collectionunda bul ve ayrıca repostlarına userı ekle start to check
+
+          if (post.isComment) {
+            Comment.find({ postId: post._id.toString() })
+              .then((commentFromDataBase) => {
+                console.log("Comment from data base =>", commentFromDataBase);
+
+                commentFromDataBase[0].reposted.push(userId);
+                commentFromDataBase[0].save();
+              })
+              .catch((error) => {
+                console.log("Error =>", error);
+              });
+          }
+          // eğer repost edilen post comment ise onu comment collectionunda bul ve ayrıca repostlarına userı ekle finish to check
           const reposterUserIds = post.reposted.map((element) => {
             return element._id.toString();
           });
@@ -317,6 +333,30 @@ const handleDeleteReposts = (req, res) => {
 
   Post.findById(postId)
     .then((post) => {
+      if (post.isComment) {
+        console.log("This post is comment =>", post);
+        Comment.find({ postId: post._id })
+          .then((commentFromDataBase) => {
+            console.log("Comment from data base =>", commentFromDataBase);
+
+            // splice the user id from comment start to check
+
+            const newRepostedArray = commentFromDataBase[0].reposted.filter(
+              (eachLiker) => {
+                return eachLiker._id.toString() !== userId;
+              }
+            );
+
+            commentFromDataBase[0].reposted = newRepostedArray;
+            commentFromDataBase[0].save();
+
+            // splice the user id from comment finish to check
+          })
+          .catch((error) => {
+            console.log("Error =>", error);
+          });
+      }
+
       if (!post.isReposted) {
         const filteredPostArray = post.reposted.filter((element) => {
           return element.toString() !== userId;
