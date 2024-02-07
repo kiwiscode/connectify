@@ -1,6 +1,7 @@
 const User = require("../models/User.model");
 const Post = require("../models/Post.model");
 const Favorite = require("../models/Favorite.model");
+const Comment = require("../models/Comment.model");
 const cloudinary = require("../utils/cloudinary");
 const handlePost = (req, res) => {
   const { content, image, modalImage } = req.body;
@@ -119,12 +120,135 @@ const handleDeletePost = (req, res) => {
       Post.findById(postId)
         .then((post) => {
           if (post.isReposted) {
+            // this postId should filtered from all the users favorites array ! So then we can delete the post itself after delete from every user's favorites array
+            // check if the active(current user who is deleting the post) exclude him/her from promise.all user.save combination
+            User.find({
+              $or: [
+                {
+                  favorites: {
+                    $in: [
+                      postId,
+                      post.repostedFromThisOriginalPost[0]._id.toString(),
+                    ],
+                  },
+                },
+                {
+                  "posts._id": {
+                    $in: [
+                      postId,
+                      post.repostedFromThisOriginalPost[0]._id.toString(),
+                    ],
+                  },
+                },
+              ],
+            })
+              .then((users) => {
+                const promises = [];
+
+                for (let i = 0; i < users.length; i++) {
+                  if (users[i]._id.toString() !== userId) {
+                    // favorites array'inden postId veya repostedId'ye eşit olanları filtrele
+                    users[i].favorites = users[i].favorites.filter(
+                      (favoriteId) => {
+                        return (
+                          favoriteId.toString() !== postId &&
+                          favoriteId.toString() !==
+                            post.repostedFromThisOriginalPost[0]._id.toString()
+                        );
+                      }
+                    );
+
+                    // posts array'inden postId veya repostedId'ye eşit olanları filtrele
+                    users[i].posts = users[i].posts.filter((postItem) => {
+                      return (
+                        postItem._id.toString() !== postId &&
+                        postItem._id.toString() !==
+                          post.repostedFromThisOriginalPost[0]._id.toString()
+                      );
+                    });
+
+                    // Kullanıcının favori ve post listelerini güncelle ve save metoduyla kaydet
+                    promises.push(
+                      users[i]
+                        .save()
+                        .then(() => {
+                          console.log(
+                            `Favorites and posts updated for user ${users[i]._id}`
+                          );
+                        })
+                        .catch((error) => {
+                          console.log(
+                            `Error updating favorites and posts for user ${users[i]._id}: ${error}`
+                          );
+                        })
+                    );
+                  }
+                }
+
+                // Tüm kullanıcıların favori ve post listelerini güncelledikten sonra Promise.all ile bekleyelim
+                return Promise.all(promises);
+              })
+              .then(() => {
+                console.log(
+                  "Favorites and posts deleted from all users except the active user."
+                );
+              })
+              .catch((error) => {
+                console.log(
+                  `Error finding users with the specified favorites and posts: ${error}`
+                );
+              });
+
+            // this postId should filtered from all the users favorites and posts array ! So then we can delete the post itself after delete from every user's favorites array
+            // check if the active(current user who is deleting the post) exclude him/her from promise.all user.save combination
+
             Post.findByIdAndDelete(post._id)
               .then(() => {
                 Post.findByIdAndDelete(
                   post.repostedFromThisOriginalPost[0]._id.toString()
                 )
-                  .then(() => {
+                  .then((deletedOriginalPost) => {
+                    // start to check
+                    if (deletedOriginalPost.isComment) {
+                      console.log("Post id =>", postId);
+                      Comment.findOneAndDelete({
+                        postId: deletedOriginalPost._id.toString(),
+                      })
+                        .then((deletedComment) => {
+                          if (deletedComment) {
+                            Post.findById(
+                              deletedComment.commentedForThisPost._id.toString()
+                            )
+                              .then((commentedForThisPost) => {
+                                const filteredCommentsArray =
+                                  commentedForThisPost.comments.filter(
+                                    (eachComment) => {
+                                      return (
+                                        eachComment._id.toString() !==
+                                        deletedComment._id.toString()
+                                      );
+                                    }
+                                  );
+                                console.log(
+                                  "Deleted comment id =>",
+                                  deletedComment._id.toString()
+                                );
+                                commentedForThisPost.comments =
+                                  filteredCommentsArray;
+                                commentedForThisPost.save();
+                              })
+                              .catch((error) => {
+                                console.log(error);
+                              });
+                          } else {
+                            console.log("Comment not found");
+                          }
+                        })
+                        .catch((error) => {
+                          console.log("Error =>", error);
+                        });
+                    }
+                    // finish to check
                     // STARTING WITH FAVORITE DELETING PROCESS IF THE POST ALREADY IN FAVORITE COLLECTION
 
                     Favorite.deleteMany({
@@ -182,13 +306,137 @@ const handleDeletePost = (req, res) => {
               });
           } else if (!post.isReposted) {
             if (post.reposted.length !== 0) {
+              if (post.isComment) {
+                console.log("Post id =>", postId);
+                Comment.findOneAndDelete({ postId: postId })
+                  .then((deletedComment) => {
+                    if (deletedComment) {
+                      Post.findById(
+                        deletedComment.commentedForThisPost._id.toString()
+                      )
+                        .then((commentedForThisPost) => {
+                          const filteredCommentsArray =
+                            commentedForThisPost.comments.filter(
+                              (eachComment) => {
+                                return (
+                                  eachComment._id.toString() !==
+                                  deletedComment._id.toString()
+                                );
+                              }
+                            );
+                          console.log(
+                            "Deleted comment id =>",
+                            deletedComment._id.toString()
+                          );
+                          commentedForThisPost.comments = filteredCommentsArray;
+                          commentedForThisPost.save();
+                        })
+                        .catch((error) => {
+                          console.log(error);
+                        });
+                    } else {
+                      console.log("Comment not found");
+                    }
+                  })
+                  .catch((error) => {
+                    console.log("Error =>", error);
+                  });
+              }
+
               Post.findByIdAndDelete(post._id)
                 .then((response) => {
-                  console.log("Response =>", response);
                   console.log("Here is working 1");
-                  Post.find({ repostedFromThisOriginalPost: postId })
+
+                  console.log("Response line 294 =>", response);
+                  Post.find({
+                    repostedFromThisOriginalPost: {
+                      $elemMatch: {
+                        $eq: post._id,
+                      },
+                    },
+                  })
                     .then((referencePost) => {
-                      console.log("Reference post =>", referencePost[0]);
+                      console.log("Here is working 2", referencePost);
+
+                      // this postId should filtered from all the users favorites array ! So then we can delete the post itself after delete from every user's favorites array
+                      // check if the active(current user who is deleting the post) exclude him/her from promise.all user.save combination
+                      User.find({
+                        $or: [
+                          {
+                            favorites: {
+                              $in: [postId, referencePost[0]._id.toString()],
+                            },
+                          },
+                          {
+                            "posts._id": {
+                              $in: [postId, referencePost[0]._id.toString()],
+                            },
+                          },
+                        ],
+                      })
+                        .then((users) => {
+                          const promises = [];
+
+                          for (let i = 0; i < users.length; i++) {
+                            if (users[i]._id.toString() !== userId) {
+                              // favorites array'inden postId veya repostedId'ye eşit olanları filtrele
+                              users[i].favorites = users[i].favorites.filter(
+                                (favoriteId) => {
+                                  return (
+                                    favoriteId.toString() !== postId &&
+                                    favoriteId.toString() !==
+                                      referencePost[0]._id.toString()
+                                  );
+                                }
+                              );
+
+                              // posts array'inden postId veya repostedId'ye eşit olanları filtrele
+                              users[i].posts = users[i].posts.filter(
+                                (postItem) => {
+                                  return (
+                                    postItem._id.toString() !== postId &&
+                                    postItem._id.toString() !==
+                                      referencePost[0]._id.toString()
+                                  );
+                                }
+                              );
+
+                              // Kullanıcının favori ve post listelerini güncelle ve save metoduyla kaydet
+                              promises.push(
+                                users[i]
+                                  .save()
+                                  .then(() => {
+                                    console.log(
+                                      `Favorites and posts updated for user ${users[i]._id}`
+                                    );
+                                  })
+                                  .catch((error) => {
+                                    console.log(
+                                      `Error updating favorites and posts for user ${users[i]._id}: ${error}`
+                                    );
+                                  })
+                              );
+                            }
+                          }
+                          console.log("Here is working 3");
+
+                          // Tüm kullanıcıların favori ve post listelerini güncelledikten sonra Promise.all ile bekleyelim
+                          return Promise.all(promises);
+                        })
+                        .then(() => {
+                          console.log(
+                            "Favorites and posts deleted from all users except the active user."
+                          );
+                        })
+                        .catch((error) => {
+                          console.log(
+                            `Error finding users with the specified favorites and posts: ${error}`
+                          );
+                        });
+
+                      // this postId should filtered from all the users favorites array ! So then we can delete the post itself after delete from every user's favorites array
+                      // check if the active(current user who is deleting the post) exclude him/her from promise.all user.save combination
+
                       // STARTING WITH FAVORITE DELETING PROCESS IF THE POST ALREADY IN FAVORITE COLLECTION
                       Favorite.deleteMany({
                         $or: [
@@ -196,10 +444,8 @@ const handleDeletePost = (req, res) => {
                           { postId: referencePost[0]._id.toString() },
                         ],
                       })
-                        .then((response) => {
-                          console.log(response);
-                          // burada findOne hatalı olabilir
-                          res.status(200);
+                        .then(() => {
+                          console.log("Here is working 4");
                         })
                         .catch((error) => {
                           console.log(error);
@@ -222,9 +468,8 @@ const handleDeletePost = (req, res) => {
                         user.favorites = filteredFavoriteArr;
                       }
                       user.save();
-                      console.log("Here is working 2");
+                      console.log("Here is working 5");
 
-                      console.log("Reference post =>", referencePost[0]);
                       Post.findByIdAndDelete(referencePost[0]._id)
                         .then(() => {
                           console.log(
@@ -244,6 +489,117 @@ const handleDeletePost = (req, res) => {
                   res.status(404).json("Post not found!");
                 });
             } else {
+              if (post.isComment) {
+                console.log("Post id =>", postId);
+                Comment.findOneAndDelete({ postId: postId })
+                  .then((deletedComment) => {
+                    if (deletedComment) {
+                      Post.findById(
+                        deletedComment.commentedForThisPost._id.toString()
+                      )
+                        .then((commentedForThisPost) => {
+                          const filteredCommentsArray =
+                            commentedForThisPost.comments.filter(
+                              (eachComment) => {
+                                return (
+                                  eachComment._id.toString() !==
+                                  deletedComment._id.toString()
+                                );
+                              }
+                            );
+                          console.log(
+                            "Deleted comment id =>",
+                            deletedComment._id.toString()
+                          );
+                          commentedForThisPost.comments = filteredCommentsArray;
+                          commentedForThisPost.save();
+                        })
+                        .catch((error) => {
+                          console.log(error);
+                        });
+                    } else {
+                      console.log("Comment not found");
+                    }
+                  })
+                  .catch((error) => {
+                    console.log("Error =>", error);
+                  });
+              }
+              // this postId should filtered from all the users favorites array ! So then we can delete the post itself after delete from every user's favorites array
+              // check if the active(current user who is deleting the post) exclude him/her from promise.all user.save combination
+              User.find({
+                $or: [
+                  {
+                    favorites: {
+                      $in: [postId, post._id.toString()],
+                    },
+                  },
+                  {
+                    "posts._id": {
+                      $in: [postId, post._id.toString()],
+                    },
+                  },
+                ],
+              })
+                .then((users) => {
+                  const promises = [];
+
+                  for (let i = 0; i < users.length; i++) {
+                    if (users[i]._id.toString() !== userId) {
+                      // favorites array'inden postId veya repostedId'ye eşit olanları filtrele
+                      users[i].favorites = users[i].favorites.filter(
+                        (favoriteId) => {
+                          return (
+                            favoriteId.toString() !== postId &&
+                            favoriteId.toString() !== post._id.toString()
+                          );
+                        }
+                      );
+
+                      // posts array'inden postId veya repostedId'ye eşit olanları filtrele
+                      users[i].posts = users[i].posts.filter((postItem) => {
+                        return (
+                          postItem._id.toString() !== postId &&
+                          postItem._id.toString() !== post._id.toString()
+                        );
+                      });
+
+                      // Kullanıcının favori ve post listelerini güncelle ve save metoduyla kaydet
+                      promises.push(
+                        users[i]
+                          .save()
+                          .then(() => {
+                            console.log(
+                              `Favorites and posts updated for user ${users[i]._id}`
+                            );
+                          })
+                          .catch((error) => {
+                            console.log(
+                              `Error updating favorites and posts for user ${users[i]._id}: ${error}`
+                            );
+                          })
+                      );
+                    }
+                  }
+                  console.log("Here is working 3");
+
+                  // Tüm kullanıcıların favori ve post listelerini güncelledikten sonra Promise.all ile bekleyelim
+                  return Promise.all(promises);
+                })
+                .then(() => {
+                  console.log(
+                    "Favorites and posts deleted from all users except the active user."
+                  );
+                })
+                .catch((error) => {
+                  console.log(
+                    `Error finding users with the specified favorites and posts: ${error}`
+                  );
+                });
+
+              // this postId should filtered from all the users favorites array ! So then we can delete the post itself after delete from every user's favorites array
+              // check if the active(current user who is deleting the post) exclude him/her from promise.all user.save combination
+
               Post.findByIdAndDelete(post._id)
                 .then(() => {
                   // STARTING WITH FAVORITE DELETING PROCESS IF THE POST ALREADY IN FAVORITE COLLECTION
@@ -293,44 +649,6 @@ const handleDeletePost = (req, res) => {
     })
     .catch(() => {
       res.status(404).json("User Not Found");
-    });
-
-  // this postId should filtered from all the users favorites array ! So then we can delete the post itself after delete from every user's favorites array
-  // check if the active(current user who is deleting the post) exclude him/her from promise.all user.save combination
-  User.find({ favorites: postId })
-    .then((users) => {
-      for (let i = 0; i < users.length; i++) {
-        if (users[i]._id.toString() === userId) {
-          continue;
-        } else if (users[i].favorites.toString().includes(postId)) {
-          users[i].favorites = users[i].favorites.filter((favoriteId) => {
-            return favoriteId.toString() !== postId;
-          });
-        } else {
-          console.log("HATA 404");
-        }
-        // IMPORTANT
-        return Promise.all(
-          users.map((user) =>
-            user
-              .save()
-              .then(() => {
-                console.log(
-                  "MESSAGE : ",
-                  "YOU DELETED THE POST FROM ALL THE USERS FAVORITES ARRAY IF EXIST"
-                );
-              })
-              .catch(() => {
-                console.log(
-                  "SOMETHING WENT WRONG WHILE YOU TRYING TO DELETE SPESIFIC POST IF THEY ARE EXIST SOME USERS FAVORITES ARRAY"
-                );
-              })
-          )
-        );
-      }
-    })
-    .catch((err) => {
-      console.log(err);
     });
 };
 

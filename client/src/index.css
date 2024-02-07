@@ -1319,3 +1319,30 @@ span > a:hover {
   text-decoration: underline;
   text-decoration-color: rgba(29, 155, 240);
 }
+
+.three-dots-spesific-profile:hover,
+.message-box-spesific-profile:hover,
+.follow-following-section-spesific-profile:hover {
+  background-color: #e7e7e8;
+  transition-duration: 0.2s;
+}
+
+.hover-unfollow-cancel:hover {
+  background-color: #e7e7e8;
+}
+
+.modal-content {
+  border-radius: 16px;
+}
+
+.following-followers-link:hover {
+  text-decoration: underline !important;
+  text-decoration-color: black;
+}
+
+.selected {
+  text-shadow: 1px 0px 3px white;
+  color: #fff;
+  border-bottom: rgba(255, 255, 255, 0.639) solid 2px;
+  padding-bottom: 5px;
+}

@@ -1199,6 +1199,7 @@ function PostDetailPage() {
                 </Container>
               </>
             ) : null}
+
             {/* eğer post comment ise comment edildiği postu göster tepesinde göster finish to check */}
 
             {!commentedForThisPost && (

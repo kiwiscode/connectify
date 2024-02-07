@@ -9,6 +9,7 @@ import {
   Stack,
   Button,
   ButtonGroup,
+  Modal,
 } from "react-bootstrap";
 import { PostModal, LogoutModal, CommentModal } from "../components/ui/Modal";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
@@ -47,6 +48,16 @@ function SpesificUserProfile() {
     navigate(`/${postOwnerName}/status/${postId}`);
     window.location.reload();
   };
+
+  const redirectFollowersPage = () => {
+    navigate(`/profile/followers`);
+    window.location.reload();
+  };
+
+  const redirectFollowingPage = () => {
+    navigate(`/profile/following`);
+    window.location.reload();
+  };
   // finish to check
   const { getToken, userInfo, socket } = useContext(UserContext);
   const [profileInfo, setProfileInfo] = useState({});
@@ -64,9 +75,222 @@ function SpesificUserProfile() {
   const [notificationText, setnotificationText] = useState([]);
   // socket io 1 client finish to check
 
+  // follow unfollow logic start to check
+  const [isHovered, setIsHovered] = useState(false);
+  const [showUnfollowModal, setshowUnfollowModal] = useState(false);
+
+  const getFollowerIds = (array) => {
+    return array.map((eachFollower) => {
+      return eachFollower._id;
+    });
+  };
+
+  const getFollowingIds = (array) => {
+    if (array) {
+      return array.map((eachFollowing) => {
+        return eachFollowing._id;
+      });
+    }
+  };
+
+  const handleClose = () => setshowUnfollowModal(false);
+  const handleShow = () => setshowUnfollowModal(true);
+  // follow unfollow logic finish to check
+
+  const handleFollow = () => {
+    if (getFollowerIds(profileInfo.followers).includes(userInfo._id)) {
+      console.log("You are following this profile show unfollow modal!");
+      handleShow();
+    } else {
+      console.log("You are not following this profile follow !");
+
+      axios
+        .post(
+          `${API_URL}/follow`,
+          {
+            activeUserId: userInfo._id,
+            theFollowedUserID: profileInfo._id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
+          }
+        )
+        .then((response) => {
+          console.log("Response =>", response);
+
+          // change the userInfo who followed user start to check
+
+          const userInfoFromLocalStorage = JSON.parse(
+            localStorage.getItem("userInfo")
+          );
+
+          console.log("User info =>", userInfoFromLocalStorage);
+
+          userInfoFromLocalStorage.following.unshift(profileInfo);
+
+          localStorage.setItem(
+            "userInfo",
+            JSON.stringify(userInfoFromLocalStorage)
+          );
+
+          // change the userInfo who followed user finish to check
+
+          setTimeout(() => {
+            // start to check animation basic
+            if (postsWindow === "hide") {
+              setShow("");
+              handleShowSpesificUserProfilePageFavorites();
+            } else if (favoriteWindow === "hide") {
+              setShow("");
+              handleShowSpesificUserProfilePagePosts();
+            }
+            // finish to check animation basic
+
+            setProfileInfo((prevProfileInfo) => {
+              if (Array.isArray(prevProfileInfo.followers)) {
+                const updatedFollowers = [
+                  ...prevProfileInfo.followers,
+                  userInfo._id,
+                ];
+
+                return {
+                  ...prevProfileInfo,
+                  followers: updatedFollowers,
+                };
+              }
+
+              return prevProfileInfo;
+            });
+          }, 500);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
+
+  const handleUnfollow = () => {
+    if (getFollowerIds(profileInfo.followers).includes(userInfo._id)) {
+      axios
+        .post(
+          `${API_URL}/unfollow
+          `,
+          {
+            activeUserId: userInfo._id,
+            theUnfollowedUserID: profileInfo._id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
+          }
+        )
+        .then(() => {
+          // delete after unfollow also from localstorage start to check
+          const userInfoFromLocalStorage = JSON.parse(
+            localStorage.getItem("userInfo")
+          );
+
+          console.log("User info =>", userInfoFromLocalStorage);
+
+          const followedUser = userInfoFromLocalStorage.following.find(
+            (eachFollowing) => {
+              return eachFollowing._id === profileInfo._id;
+            }
+          );
+
+          const followedUserIndex =
+            userInfoFromLocalStorage.following.indexOf(followedUser);
+
+          userInfoFromLocalStorage.following.splice(followedUserIndex, 1);
+
+          localStorage.setItem(
+            "userInfo",
+            JSON.stringify(userInfoFromLocalStorage)
+          );
+          // delete after unfollow also from localstorage finish to check
+
+          setTimeout(() => {
+            console.log("Unfollow backend response ready to build !");
+
+            // start to check animation basic
+            if (postsWindow === "hide") {
+              setShow("");
+              handleShowSpesificUserProfilePageFavorites();
+            } else if (favoriteWindow === "hide") {
+              setShow("");
+              handleShowSpesificUserProfilePagePosts();
+            }
+            // finish to check animation basic
+
+            setProfileInfo((prevProfileInfo) => {
+              if (Array.isArray(prevProfileInfo.followers)) {
+                const updatedFollowers = prevProfileInfo.followers.filter(
+                  (id) => id !== userInfo._id
+                );
+
+                return {
+                  ...prevProfileInfo,
+                  followers: updatedFollowers,
+                };
+              }
+
+              return prevProfileInfo;
+            });
+            handleClose();
+          }, 500);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
+  const buttonStyles = {
+    cursor: "pointer",
+    // minWidth: "56px",
+    width: "25%",
+    textAlign: "center",
+    border: isHovered
+      ? "1px solid rgba(253,201,206,255)"
+      : "1px solid rgb(185, 202, 211)",
+    paddingLeft: "16px",
+    paddingRight: "16px",
+    borderRadius: "9999px",
+    lineHeight: "20px",
+    fontSize: "15px",
+    fontWeight: "700",
+    padding: "5px",
+    marginRight: "15px",
+    backgroundColor: isHovered
+      ? "rgba(255,234,235,255)"
+      : profileInfo.followers
+      ? getFollowerIds(profileInfo.followers).includes(userInfo._id)
+        ? "white"
+        : "black"
+      : null,
+    // backgroundColor: "rgba(39,44,48,255)",
+    color: isHovered
+      ? "rgba(244,34,45,255)"
+      : profileInfo.followers
+      ? getFollowerIds(profileInfo.followers).includes(userInfo._id)
+        ? "black"
+        : "white"
+      : null,
+  };
+
   // socket io 4 client start to check
   useEffect(() => {
-    console.log("Hello worldddddd");
     socket.on("socket_id_for_user", (socketId) => {
       console.log("socket id received from backend =>", socketId);
 
@@ -88,6 +312,8 @@ function SpesificUserProfile() {
       setnotificationText(data);
     });
   }, [socket]);
+
+  console.log("ACTIVE USER INFO =>", userInfo);
 
   // socket io 5 client start to check
   const handleNotification = (post, userInfo, type) => {
@@ -116,7 +342,6 @@ function SpesificUserProfile() {
           JSON.stringify(response.data.posts)
         );
 
-        console.log("Profile info posts => ", response.data.posts);
         const profileInfoPosts = JSON.parse(
           localStorage.getItem("profileInfoPosts")
         );
@@ -597,7 +822,7 @@ function SpesificUserProfile() {
         console.log(error);
       });
   };
-  console.log(profileInfo);
+  console.log("VISITED PROFILE =>", profileInfo);
   const handleDeleteRepostSpesificProfilePage = (postId) => {
     axios
       .post(
@@ -1149,9 +1374,6 @@ function SpesificUserProfile() {
     setIsLoading(false);
   };
 
-  console.log("Profile info favorites =>", favorites);
-  console.log("Profile info posts =>", profileInfoPosts);
-
   const handleGoBack = () => {
     navigate(-1);
   };
@@ -1291,6 +1513,59 @@ function SpesificUserProfile() {
               borderBottom: "none",
             }}
           >
+            {/* unfollow modal start to check  */}
+            <Modal show={showUnfollowModal} onHide={handleClose}>
+              <Modal.Body
+                style={{
+                  textAlign: "center",
+                }}
+              >
+                <div>
+                  <span
+                    style={{
+                      fontWeight: "700",
+                      fontSize: "20px",
+                      lineHeight: "24px",
+                      textAlign: "left",
+                    }}
+                  >
+                    Unfollow @{profileInfo.username}?
+                  </span>
+                  <div
+                    style={{
+                      color: "rgb(83, 100, 113)",
+                      fontWeight: "400",
+                      fontSize: "15px",
+                      lineHeight: "20px",
+                      textAlign: "left",
+                    }}
+                  >
+                    Their posts will no longer show up in your Following
+                    timeline. You can still view their profile, unless their
+                    posts are protected.
+                  </div>
+                </div>
+              </Modal.Body>
+              <Modal.Footer
+                style={{
+                  border: "none",
+                }}
+              >
+                <Button variant="dark" onClick={handleUnfollow}>
+                  Unfollow
+                </Button>
+                <Button
+                  className="hover-unfollow-cancel"
+                  style={{ color: "black" }}
+                  variant="light"
+                  onClick={handleClose}
+                >
+                  Cancel
+                </Button>
+              </Modal.Footer>
+            </Modal>
+            {/* unfollow modal finish to check  */}
+
             <Container>
               <Row>
                 <Stack direction="horizontal" gap={0}>
@@ -1381,40 +1656,103 @@ function SpesificUserProfile() {
                     </div>
                   )}
                   {profileInfo._id !== userInfo._id ? (
-                    <div className="">
-                      <span style={{}}>
+                    <div
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
+                      className="p-2 ms-auto"
+                    >
+                      <div
+                        className="three-dots-spesific-profile"
+                        style={{
+                          cursor: "pointer",
+                          border: "1px solid black",
+                          borderColor: "rgb(185, 202, 211)",
+                          borderRadius: "50%",
+                          marginRight: "15px",
+                          padding: "5px",
+                        }}
+                      >
                         <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="25"
-                          fill="currentColor"
-                          className="bi bi-three-dots"
-                          viewBox="0 0 20 20"
+                          width={20}
+                          height={20}
+                          style={{
+                            position: "relative",
+                            display: "inline-block",
+                            bottom: "2px",
+                            padding: "1px",
+                          }}
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
                         >
-                          <path
-                            stroke="black"
-                            strokeWidth="0.5"
-                            d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"
-                          />
+                          <g>
+                            <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                          </g>
                         </svg>
-                      </span>
-                      <span style={{}}>
+                      </div>
+                      {/* start to check  */}
+                      <div
+                        className="message-box-spesific-profile"
+                        style={{
+                          cursor: "pointer",
+
+                          border: "1px solid black",
+                          borderColor: "rgb(185, 202, 211)",
+                          borderRadius: "50%",
+                          marginRight: "15px",
+                          padding: "5px",
+                        }}
+                      >
                         <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="25"
+                          style={{
+                            position: "relative",
+                            display: "inline-block",
+                            bottom: "1px",
+                            padding: "1px",
+                          }}
+                          width={20}
+                          height={20}
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                          color="color: rgb(15, 20, 25)"
                           fill="currentColor"
-                          className="bi bi-envelope"
-                          viewBox="0 0 20 20"
                         >
-                          <path
-                            stroke="black"
-                            strokeWidth="0.5"
-                            d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"
-                          />
+                          <g>
+                            <path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v2.764l8 3.638 8-3.636V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 5.463l-8 3.636-8-3.638V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-8.037z"></path>
+                          </g>
                         </svg>
-                      </span>
-                      <span style={{}}>Follow</span>
+                      </div>
+                      {/* finish to check  */}
+                      <div
+                        onClick={handleFollow}
+                        className="follow-following-section-spesific-profile"
+                        style={buttonStyles}
+                        // onClick={handleClick}
+                        onMouseEnter={
+                          profileInfo.followers
+                            ? !getFollowerIds(profileInfo.followers).includes(
+                                userInfo._id
+                              )
+                              ? null
+                              : handleMouseEnter
+                            : null
+                        }
+                        onMouseLeave={handleMouseLeave}
+                      >
+                        {profileInfo.followers
+                          ? getFollowerIds(profileInfo.followers).includes(
+                              userInfo._id
+                            )
+                            ? isHovered
+                              ? "Unfollow"
+                              : "Following"
+                            : "Follow"
+                          : null}
+                      </div>
                     </div>
                   ) : null}
                 </Stack>
@@ -1432,11 +1770,20 @@ function SpesificUserProfile() {
                   </div>
                   <div style={{ color: "rgb(83, 100, 113)" }}>
                     @{profileInfo.username}
-                    {""}{" "}
+                    {""}
+                    {""}
                     {profileInfo._id !== userInfo._id ? (
                       <span
                         style={{
-                          backgroundColor: "rgb(239, 243, 244)",
+                          backgroundColor: getFollowingIds(
+                            profileInfo.following
+                          )
+                            ? getFollowingIds(profileInfo.following).includes(
+                                userInfo._id
+                              )
+                              ? "rgb(239, 243, 244)"
+                              : null
+                            : null,
                           color: "rgb(83, 100, 113)",
                           marginLeft: "4px",
                           fontWeight: "500",
@@ -1449,7 +1796,13 @@ function SpesificUserProfile() {
                           borderRadius: "3px",
                         }}
                       >
-                        Follows you or not ?!
+                        {getFollowingIds(profileInfo.following)
+                          ? getFollowingIds(profileInfo.following).includes(
+                              userInfo._id
+                            )
+                            ? "Follows you"
+                            : null
+                          : null}
                       </span>
                     ) : null}
                   </div>
@@ -1479,54 +1832,76 @@ function SpesificUserProfile() {
                     )}
                   </div>
                   <div>
-                    <span
+                    <Link
+                      to={"/profile/following"}
+                      className="following-followers-link"
+                      onClick={redirectFollowingPage}
                       style={{
-                        fontWeight: "700",
-                        fontSize: "15px",
-                        lineHeight: "20px",
+                        textDecoration: "none",
+                        color: "black",
                       }}
                     >
-                      {profileInfo.following && (
-                        <span>{profileInfo.following.length}</span>
-                      )}
-                    </span>{" "}
-                    <span
+                      <span
+                        style={{
+                          fontWeight: "700",
+                          fontSize: "15px",
+                          lineHeight: "20px",
+                        }}
+                      >
+                        {profileInfo.following && (
+                          <span>{profileInfo.following.length}</span>
+                        )}
+                      </span>{" "}
+                      <span
+                        style={{
+                          color: "rgb(83, 100, 113)",
+                          fontSize: "14px",
+                          lineHeight: "16px",
+                          fontWeight: "400",
+                        }}
+                      >
+                        Following
+                      </span>{" "}
+                    </Link>
+                    <Link
+                      to={"/profile/followers"}
+                      className="following-followers-link"
+                      onClick={redirectFollowersPage}
                       style={{
-                        color: "rgb(83, 100, 113)",
-                        fontSize: "14px",
-                        lineHeight: "16px",
-                        fontWeight: "400",
+                        textDecoration: "none",
+                        color: "black",
                       }}
                     >
-                      Following
-                    </span>{" "}
-                    <span
-                      style={{
-                        fontWeight: "700",
-                        fontSize: "15px",
-                        lineHeight: "20px",
-                      }}
-                    >
-                      {profileInfo.followers && (
-                        <span>{profileInfo.followers.length}</span>
-                      )}
-                    </span>{" "}
-                    <span
-                      style={{
-                        color: "rgb(83, 100, 113)",
-                        fontSize: "14px",
-                        lineHeight: "16px",
-                        fontWeight: "400",
-                      }}
-                    >
-                      <span>
-                        {profileInfo.followers
-                          ? profileInfo.followers.length > 1
-                            ? "Followers"
-                            : "Follower"
-                          : null}
+                      <span
+                        style={{
+                          fontWeight: "700",
+                          fontSize: "15px",
+                          lineHeight: "20px",
+                        }}
+                      >
+                        {profileInfo.followers && (
+                          <span>{profileInfo.followers.length}</span>
+                        )}
+                      </span>{" "}
+                      <span
+                        style={{
+                          color: "rgb(83, 100, 113)",
+                          fontSize: "14px",
+                          lineHeight: "16px",
+                          fontWeight: "400",
+                        }}
+                      >
+                        <span>
+                          {profileInfo.followers
+                            ? profileInfo.followers.length > 1
+                              ? "Followers"
+                              : profileInfo.followers.length === 0
+                              ? "Followers"
+                              : "Follower"
+                            : null}
+                        </span>
                       </span>
-                    </span>
+                    </Link>
                   </div>
                 </div>
               </Row>
@@ -1685,7 +2060,7 @@ function SpesificUserProfile() {
                         {/* profile image start to check */}
 
                         <div className="p-1">
-                          {post.userId ? (
+                          {post.userId.imageUrl.slice(0, 3) !== "../" ? (
                             <Link
                               onClick={() =>
                                 redirectSpesificProfilePage(post.userId._id)

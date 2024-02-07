@@ -39,4 +39,13 @@ app.use("/notifications", notificationRoutes);
 
 const postDetailRoutes = require("./routes/postDetail.routes");
 app.use("/", postDetailRoutes);
+
+const followRoutes = require("./routes/followRoutes.js");
+app.use("/follow", followRoutes);
+
+const unfollowRoutes = require("./routes/unfollowRoutes.js");
+app.use("/unfollow", unfollowRoutes);
+
+const followingPosts = require("./routes/followingPosts");
+app.use("/followingPosts", followingPosts);
 module.exports = app;

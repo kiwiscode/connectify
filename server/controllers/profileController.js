@@ -12,6 +12,8 @@ const handleProfile = (req, res) => {
       path: "posts",
       options: { sort: { createdAt: -1 } }, // createdAt tarihine göre tersten sıralama
     })
+    .populate("followers")
+    .populate("following")
     .populate({
       path: "favorites",
       options: { sort: { createdAt: -1 } }, // Favorites için de createdAt tarihine göre tersten sıralama
@@ -87,6 +89,8 @@ const handleShowSpesificProfile = (req, res) => {
       path: "favorites",
       options: { sort: { createdAt: -1 } }, // Favorites için de createdAt tarihine göre tersten sıralama
     })
+    .populate("followers")
+    .populate("following")
     .populate({
       path: "posts",
       populate: {
@@ -149,7 +153,7 @@ const handleShowSpesificProfile = (req, res) => {
       res.status(200).json(response);
     })
     .catch(() => {
-      res.status(404).json({ errorMessage: "User not found!" });
+      res.status(404).json({ errorMessage: "User not found! 1" });
     });
 };
 
@@ -206,8 +210,39 @@ const handleProfilePicture = (req, res) => {
     });
 };
 
+const getFollowers = (req, res) => {
+  console.log("Route is working !");
+
+  const { userId } = req.user;
+
+  User.findById(userId)
+    .populate("following")
+    .populate("followers")
+    .then((user) => {
+      res.status(200).json({ followers: user.followers });
+    })
+    .catch(() => {
+      res.status(404).json({ errorMessage: "User not found !" });
+    });
+};
+const getFollowing = (req, res) => {
+  const { userId } = req.user;
+
+  User.findById(userId)
+    .populate("following")
+    .populate("followers")
+    .then((user) => {
+      res.status(200).json({ following: user.following });
+    })
+    .catch(() => {
+      res.status(404).json({ errorMessage: "User not found !" });
+    });
+};
+
 module.exports = {
   handleProfile,
   handleShowSpesificProfile,
   handleProfilePicture,
+  getFollowers,
+  getFollowing,
 };
