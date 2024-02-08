@@ -897,6 +897,12 @@ function CommentModal({ post, width, height, refreshPosts }) {
       .then((response) => {
         console.log("Response =>", response);
 
+        const mainPagePosts = JSON.parse(localStorage.getItem("mainPagePosts"));
+
+        mainPagePosts.unshift(response.data.createdPost);
+
+        localStorage.setItem("mainPagePosts", JSON.stringify(mainPagePosts));
+
         setTimeout(() => {
           refreshPosts();
           handleClose();

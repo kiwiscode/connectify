@@ -81,9 +81,7 @@ const addComment = (req, res) => {
                     newCreatedPost.save();
                     console.log("THIS LINE IS WORKING 2 ", newCreatedPost);
                     return user.save().then(() => {
-                      res
-                        .status(200)
-                        .json({ message: "Comment added successfully." });
+                      res.status(200).json({ createdPost: newCreatedPost });
                     });
                   });
                 })
@@ -98,7 +96,6 @@ const addComment = (req, res) => {
                 authorFullName: user.fullname,
                 authorUserName: user.username,
                 content: commentPost,
-
                 isComment: true,
                 commentedForThisPost: postId,
                 commentedForThisUsersPost: post.userId._id.toString(),
@@ -122,9 +119,7 @@ const addComment = (req, res) => {
                     newCreatedPost.save();
                     console.log("THIS LINE IS WORKING 2 ", newCreatedPost);
                     return user.save().then(() => {
-                      res
-                        .status(200)
-                        .json({ message: "Comment added successfully." });
+                      res.status(200).json({ createdPost: newCreatedPost });
                     });
                   });
                 })
@@ -221,9 +216,7 @@ const addComment = (req, res) => {
 
                     console.log("THIS LINE IS WORKING 2 ", newCreatedPost);
                     return user.save().then(() => {
-                      res
-                        .status(200)
-                        .json({ message: "Comment added successfully." });
+                      res.status(200).json({ createdPost: newCreatedPost });
                     });
                   });
                 })
@@ -290,9 +283,7 @@ const addComment = (req, res) => {
 
                     console.log("THIS LINE IS WORKING 2 ", newCreatedPost);
                     return user.save().then(() => {
-                      res
-                        .status(200)
-                        .json({ message: "Comment added successfully." });
+                      res.status(200).json({ createdPost: newCreatedPost });
                     });
                   });
                 })
@@ -394,9 +385,7 @@ const addComment = (req, res) => {
 
                     console.log("THIS LINE IS WORKING 2 ", newCreatedPost);
                     return user.save().then(() => {
-                      res
-                        .status(200)
-                        .json({ message: "Comment added successfully." });
+                      res.status(200).json({ createdPost: newCreatedPost });
                     });
                   });
                 })
@@ -435,9 +424,7 @@ const addComment = (req, res) => {
                     newCreatedPost.save();
                     console.log("THIS LINE IS WORKING 2 ", newCreatedPost);
                     return user.save().then(() => {
-                      res
-                        .status(200)
-                        .json({ message: "Comment added successfully." });
+                      res.status(200).json({ createdPost: newCreatedPost });
                     });
                   });
                 })
@@ -538,9 +525,7 @@ const addComment = (req, res) => {
 
                     console.log("THIS LINE IS WORKING 2 ", newCreatedPost);
                     return user.save().then(() => {
-                      res
-                        .status(200)
-                        .json({ message: "Comment added successfully." });
+                      res.status(200).json({ createdPost: newCreatedPost });
                     });
                   });
                 })
@@ -615,9 +600,7 @@ const addComment = (req, res) => {
                     newCreatedPost.save();
                     console.log("THIS LINE IS WORKING 2 ", newCreatedPost);
                     return user.save().then(() => {
-                      res
-                        .status(200)
-                        .json({ message: "Comment added successfully." });
+                      res.status(200).json({ createdPost: newCreatedPost });
                     });
                   });
                 })

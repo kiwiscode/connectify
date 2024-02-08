@@ -146,11 +146,15 @@ function PostDetailPage() {
 
               console.log("Update this detailed post =>", updatedDetailedPost);
 
-              // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
-              if (updatedDetailedPost.comments.length) {
-                updatedDetailedPost.comments[
-                  detailedPostCommentIndex
-                ].likes.unshift(userInfo);
+              if (updatedDetailedPost.comments.length > 0) {
+                const targetComment =
+                  updatedDetailedPost.comments[detailedPostCommentIndex];
+
+                if (targetComment) {
+                  targetComment.likes.unshift(userInfo);
+                } else {
+                  updatedDetailedPost.likes.unshift(userInfo);
+                }
               } else {
                 updatedDetailedPost.likes.unshift(userInfo);
               }
@@ -242,23 +246,54 @@ function PostDetailPage() {
               detailedPost.comments.indexOf(detailedPostComment);
 
             console.log("Detailed post before adding like =>", detailedPost);
+            // let activeUserInsideLikes;
+            // let activeUserIndexInsideLikes;
+            // if (detailedPost.comments.length) {
+            //   activeUserInsideLikes = detailedPost.comments[
+            //     detailedPostCommentIndex
+            //   ].likes.find((eachLiker) => {
+            //     return eachLiker._id === userInfo._id;
+            //   });
+
+            //   activeUserIndexInsideLikes = detailedPost.comments[
+            //     detailedPostCommentIndex
+            //   ].likes.indexOf(activeUserInsideLikes);
+            // } else {
+            //   activeUserInsideLikes = detailedPost.likes.find((eachLiker) => {
+            //     return eachLiker._id === userInfo._id;
+            //   });
+
+            //   activeUserIndexInsideLikes = detailedPost.likes.indexOf(
+            //     activeUserInsideLikes
+            //   );
+            // }
+
             let activeUserInsideLikes;
             let activeUserIndexInsideLikes;
-            if (detailedPost.comments.length) {
-              activeUserInsideLikes = detailedPost.comments[
-                detailedPostCommentIndex
-              ].likes.find((eachLiker) => {
-                return eachLiker._id === userInfo._id;
-              });
 
-              activeUserIndexInsideLikes = detailedPost.comments[
-                detailedPostCommentIndex
-              ].likes.indexOf(activeUserInsideLikes);
+            if (detailedPost.comments.length > 0) {
+              // Eğer comments array'i boş değilse
+              const targetComment =
+                detailedPost.comments[detailedPostCommentIndex];
+
+              if (targetComment) {
+                // Eğer hedeflenen yorum varsa, yorumun likes array'indeki kullanıcıyı bul
+                activeUserInsideLikes = targetComment.likes.find(
+                  (eachLiker) => eachLiker._id === userInfo._id
+                );
+
+                // Bulunan kullanıcının index'ini bul
+                activeUserIndexInsideLikes = targetComment.likes.indexOf(
+                  activeUserInsideLikes
+                );
+              }
             } else {
-              activeUserInsideLikes = detailedPost.likes.find((eachLiker) => {
-                return eachLiker._id === userInfo._id;
-              });
+              // Eğer comments array'i boşsa, detailedPost.likes array'indeki kullanıcıyı bul
+              activeUserInsideLikes = detailedPost.likes.find(
+                (eachLiker) => eachLiker._id === userInfo._id
+              );
 
+              // Bulunan kullanıcının index'ini bul
               activeUserIndexInsideLikes = detailedPost.likes.indexOf(
                 activeUserInsideLikes
               );
@@ -271,11 +306,18 @@ function PostDetailPage() {
 
               console.log("Update this detailed post =>", updatedDetailedPost);
 
-              // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
-              if (detailedPost.comments.length) {
-                updatedDetailedPost.comments[
-                  detailedPostCommentIndex
-                ].likes.splice(activeUserIndexInsideLikes, 1);
+              if (updatedDetailedPost.comments.length > 0) {
+                const targetComment =
+                  updatedDetailedPost.comments[detailedPostCommentIndex];
+
+                if (targetComment) {
+                  targetComment.likes.splice(activeUserIndexInsideLikes, 1);
+                } else {
+                  updatedDetailedPost.likes.splice(
+                    activeUserIndexInsideLikes,
+                    1
+                  );
+                }
               } else {
                 updatedDetailedPost.likes.splice(activeUserIndexInsideLikes, 1);
               }
@@ -381,12 +423,14 @@ function PostDetailPage() {
 
               console.log("Update this detailed post =>", updatedDetailedPost);
 
-              // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
-
-              if (detailedPost.comments.length) {
-                updatedDetailedPost.comments[
-                  detailedPostCommentIndex
-                ].reposted.unshift(userInfo);
+              if (detailedPost.comments.length > 0) {
+                const targetComment =
+                  updatedDetailedPost.comments[detailedPostCommentIndex];
+                if (targetComment) {
+                  targetComment.reposted.unshift(userInfo);
+                } else {
+                  updatedDetailedPost.reposted.unshift(userInfo);
+                }
               } else {
                 updatedDetailedPost.reposted.unshift(userInfo);
               }
@@ -441,12 +485,15 @@ function PostDetailPage() {
         const findedPost = posts.find((element) => {
           return element._id === postId;
         });
+        let reposter;
 
-        const reposter = findedPost.reposted
-          ? findedPost.reposted.find((eachReposter) => {
-              return eachReposter._id === userInfo._id;
-            })
-          : null;
+        if (findedPost.reposted.length) {
+          reposter = findedPost.reposted
+            ? findedPost.reposted.find((eachReposter) => {
+                return eachReposter._id === userInfo._id;
+              })
+            : null;
+        }
 
         const reposterIndex = findedPost.reposted
           ? findedPost.reposted.indexOf(reposter)
@@ -468,51 +515,66 @@ function PostDetailPage() {
               detailedPost.comments.indexOf(detailedPostComment);
 
             console.log("Detailed post before adding like =>", detailedPost);
-            let activeUserInsideLikes;
-
-            let activeUserIndexInsideLikes;
+            let activeUserInsideReposts;
+            let activeUserIndexInsideReposts;
             if (detailedPost.comments.length) {
-              activeUserInsideLikes = detailedPost.comments[
-                detailedPostCommentIndex
-              ].reposted.find((eachLiker) => {
-                return eachLiker._id === userInfo._id;
-              });
+              // Eğer comments array'i boş değilse
+              const targetComment =
+                detailedPost.comments[detailedPostCommentIndex];
 
-              activeUserIndexInsideLikes = detailedPost.comments[
-                detailedPostCommentIndex
-              ].reposted.indexOf(activeUserInsideLikes);
+              if (targetComment) {
+                // Eğer hedeflenen yorum varsa, yorumun likes array'indeki kullanıcıyı bul
+                activeUserInsideReposts = targetComment.reposted.find(
+                  (eachLiker) => eachLiker._id === userInfo._id
+                );
+
+                // Bulunan kullanıcının index'ini bul
+                activeUserIndexInsideReposts = targetComment.reposted.indexOf(
+                  activeUserInsideReposts
+                );
+              }
             } else {
-              activeUserInsideLikes = detailedPost.reposted.find(
-                (eachLiker) => {
-                  return eachLiker._id === userInfo._id;
-                }
+              // Eğer comments array'i boşsa, detailedPost.likes array'indeki kullanıcıyı bul
+              activeUserInsideReposts = detailedPost.reposted.find(
+                (eachLiker) => eachLiker._id === userInfo._id
               );
 
-              activeUserIndexInsideLikes = detailedPost.reposted.indexOf(
-                activeUserInsideLikes
+              // Bulunan kullanıcının index'ini bul
+              activeUserIndexInsideReposts = detailedPost.reposted.indexOf(
+                activeUserInsideReposts
               );
             }
-
-            console.log("Active user inside likes =>", activeUserInsideLikes);
-
-            console.log(
-              "Active user index inside likes =>",
-              activeUserIndexInsideLikes
-            );
 
             setdetailedPost((prevDetailedPost) => {
               const updatedDetailedPost = { ...prevDetailedPost };
 
               console.log("Update this detailed post =>", updatedDetailedPost);
 
-              // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
-              if (detailedPost.comments.length) {
-                updatedDetailedPost.comments[
-                  detailedPostCommentIndex
-                ].reposted.splice(activeUserIndexInsideLikes, 1);
+              if (updatedDetailedPost.comments.length > 0) {
+                console.log("Here is working 1 ");
+                const targetComment =
+                  updatedDetailedPost.comments[detailedPostCommentIndex];
+
+                if (targetComment) {
+                  console.log("Here is working 2 ");
+
+                  targetComment.reposted.splice(
+                    activeUserIndexInsideReposts,
+                    1
+                  );
+                } else {
+                  console.log("Here is working 3 ");
+
+                  updatedDetailedPost.reposted.splice(
+                    activeUserIndexInsideReposts,
+                    1
+                  );
+                }
               } else {
+                console.log("Here is working 4 ");
+
                 updatedDetailedPost.reposted.splice(
-                  activeUserIndexInsideLikes,
+                  activeUserIndexInsideReposts,
                   1
                 );
               }
@@ -522,6 +584,7 @@ function PostDetailPage() {
             console.log("Detailed Post after adding like", detailedPost);
           } else {
             console.log("What !!!");
+            console.log("Here is working 5 ");
 
             console.log("Detailed post before adding like =>", detailedPost);
 
@@ -559,11 +622,6 @@ function PostDetailPage() {
               return updatedDetailedPost;
             });
             console.log("Detailed Post after adding like", detailedPost);
-
-            // setcommentedForThisPost(findedPost);
-            // setcommentedForThisUsersPost(
-            //   detailedPost.commentedForThisUsersPost
-            // );
           }
         };
 
@@ -995,6 +1053,23 @@ function PostDetailPage() {
         console.log(error);
       });
   }, []);
+
+  const refreshPostDetailPage = () => {
+    axios
+      .get(`${API_URL}/${postOwner}/status/${postId}`)
+      .then((response) => {
+        const { detailedPost } = response.data;
+        if (detailedPost.isComment) {
+          setcommentedForThisPost(detailedPost.commentedForThisPost);
+          setcommentedForThisUsersPost(detailedPost.commentedForThisUsersPost);
+        }
+        setdetailedPost(detailedPost);
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   console.log("Commented for this post =>", commentedForThisPost);
 
   console.log("Commented for this users post =>", commentedForThisUsersPost);
@@ -2312,6 +2387,7 @@ function PostDetailPage() {
                   post={detailedPost}
                   width={`${1.5}em`}
                   height={`${1.5}em`}
+                  refreshPosts={refreshPostDetailPage}
                 />
               </div>
               <div className="p-2">
@@ -3447,7 +3523,7 @@ function PostDetailPage() {
                                               <svg
                                                 onClick={() =>
                                                   handleDeleteRepostPostDetailPage(
-                                                    eachComment._id
+                                                    eachComment.postId
                                                   )
                                                 }
                                                 width={`${1.25}em`}
@@ -3491,7 +3567,9 @@ function PostDetailPage() {
                                                   cursor: "pointer",
                                                 }}
                                                 onClick={() =>
-                                                  handleRepost(eachComment._id)
+                                                  handleRepost(
+                                                    eachComment.postId
+                                                  )
                                                 }
                                                 width={`${1.25}em`}
                                                 height={`${1.25}em`}
@@ -3549,7 +3627,7 @@ function PostDetailPage() {
                                               <svg
                                                 onClick={() =>
                                                   handleDeleteLikePostDetailPage(
-                                                    eachComment._id
+                                                    eachComment.postId
                                                   )
                                                 }
                                                 width={`${1.25}em`}
@@ -3587,7 +3665,7 @@ function PostDetailPage() {
                                                 // real time notification start to check test
                                                 onClick={() =>
                                                   handlePostLikesPostDetailPage(
-                                                    eachComment._id
+                                                    eachComment.postId
                                                   )
                                                 }
                                                 // real time notification finish to check test
