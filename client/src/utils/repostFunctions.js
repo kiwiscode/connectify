@@ -11,7 +11,8 @@ export default function deleteRepost(
   postId,
   user,
   getToken,
-  setState
+  setState,
+  refreshPosts
 ) {
   console.log(localStoragePosts, postId, user, getToken, setState);
   const pagePosts = localStoragePosts;
@@ -43,6 +44,7 @@ export default function deleteRepost(
           pagePosts.splice(findPostIndex, 1);
           localStorage.setItem("mainPagePosts", JSON.stringify(pagePosts));
           setState(pagePosts);
+          refreshPosts();
         };
 
         setTimeout(updateProfilePosts, 500);
@@ -59,6 +61,7 @@ export default function deleteRepost(
           findOriginalPost.reposted.splice(reposterIndex, 1);
           localStorage.setItem("mainPagePosts", JSON.stringify(pagePosts));
           setState(pagePosts);
+          refreshPosts();
         };
 
         setTimeout(updateProfilePosts, 500);
@@ -90,6 +93,7 @@ export default function deleteRepost(
           findPost.reposted = [];
           localStorage.setItem("mainPagePosts", JSON.stringify(pagePosts));
           setState(pagePosts);
+          refreshPosts();
         };
 
         setTimeout(updateProfilePosts, 500);
@@ -154,6 +158,7 @@ export default function deleteRepost(
           );
           localStorage.setItem("mainPagePosts", JSON.stringify(pagePosts));
           setState(pagePosts);
+          refreshPosts();
         };
 
         setTimeout(updateProfilePosts, 500);

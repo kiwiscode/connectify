@@ -1,5 +1,6 @@
 const User = require("../models/User.model");
 const Post = require("../models/Post.model");
+const Comment = require("../models/Comment.model");
 const Favorite = require("../models/Favorite.model");
 const ObjectId = require("mongoose").Types.ObjectId;
 
@@ -46,6 +47,22 @@ const handleAddFavorite = (req, res) => {
       console.log("This line is working 2!");
 
       Post.findById(postId).then((post) => {
+        // eğer favorilere eklenen post comment ise onu comment collectionunda bul ve ayrıca likeslarına userı ekle start to check
+
+        if (post.isComment) {
+          Comment.find({ postId: post._id.toString() })
+            .then((commentFromDataBase) => {
+              console.log("Comment from data base =>", commentFromDataBase);
+
+              commentFromDataBase[0].likes.push(userId);
+              commentFromDataBase[0].save();
+            })
+            .catch((error) => {
+              console.log("Error =>", error);
+            });
+        }
+        // eğer favorilere eklenen post comment ise onu comment collectionunda bul ve ayrıca likeslarına userı ekle finish to check
+
         if (!post) {
           return res.status(404).json({ error: "Post not found" });
         }
@@ -311,6 +328,30 @@ const handleDeleteFavorite = (req, res) => {
       }
 
       Post.findById(postId).then((post) => {
+        if (post.isComment) {
+          console.log("This post is comment =>", post);
+          Comment.find({ postId: post._id })
+            .then((commentFromDataBase) => {
+              console.log("Comment from data base =>", commentFromDataBase);
+
+              // splice the user id from comment start to check
+
+              const newLikesArray = commentFromDataBase[0].likes.filter(
+                (eachLiker) => {
+                  return eachLiker._id.toString() !== userId;
+                }
+              );
+
+              commentFromDataBase[0].likes = newLikesArray;
+              commentFromDataBase[0].save();
+
+              // splice the user id from comment finish to check
+            })
+            .catch((error) => {
+              console.log("Error =>", error);
+            });
+        }
+
         // REVIEWED start to check
         if (!post.isReposted && post.reposted.length) {
           console.log("This line is working 1st conditional block");

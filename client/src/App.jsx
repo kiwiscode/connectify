@@ -9,6 +9,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import MessagesPage from "./pages/MessagesPage";
 import ChatDetailsPage from "./pages/ChatDetailsPage";
 import PostDetailPage from "./pages/PostDetailPage";
+import FollowingDetailPage from "./pages/FollowingDetail";
+import FollowerDetailPage from "./pages/FollowersDetailPage";
 
 function App() {
   return (
@@ -26,6 +28,16 @@ function App() {
         <Route
           path="/:postOwner/status/:postId"
           element={<PostDetailPage />}
+        ></Route>
+
+        <Route
+          path="/profile/following"
+          element={<FollowingDetailPage />}
+        ></Route>
+
+        <Route
+          path="/profile/followers"
+          element={<FollowerDetailPage />}
         ></Route>
       </Routes>
     </UserProvider>
