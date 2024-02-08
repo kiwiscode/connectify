@@ -81,9 +81,7 @@ const addComment = (req, res) => {
                     newCreatedPost.save();
                     console.log("THIS LINE IS WORKING 2 ", newCreatedPost);
                     return user.save().then(() => {
-                      res
-                        .status(200)
-                        .json({ message: "Comment added successfully." });
+                      res.status(200).json({ createdPost: newCreatedPost });
                     });
                   });
                 })
@@ -98,7 +96,6 @@ const addComment = (req, res) => {
                 authorFullName: user.fullname,
                 authorUserName: user.username,
                 content: commentPost,
-
                 isComment: true,
                 commentedForThisPost: postId,
                 commentedForThisUsersPost: post.userId._id.toString(),
@@ -122,9 +119,7 @@ const addComment = (req, res) => {
                     newCreatedPost.save();
                     console.log("THIS LINE IS WORKING 2 ", newCreatedPost);
                     return user.save().then(() => {
-                      res
-                        .status(200)
-                        .json({ message: "Comment added successfully." });
+                      res.status(200).json({ createdPost: newCreatedPost });
                     });
                   });
                 })
@@ -133,7 +128,7 @@ const addComment = (req, res) => {
                 });
             }
           }
-          // eğer kendi postuna comment yapıyorsan finish to check
+          // eğer kendi postuna comment yapıyorsan ve hiç repost yoksa finish to check
           // eğer kendi postuna comment yapıyorsan ve post reposted.length var ise start to check
           if (post.userId._id.toString() === userId && post.reposted.length) {
             console.log(
@@ -221,9 +216,7 @@ const addComment = (req, res) => {
 
                     console.log("THIS LINE IS WORKING 2 ", newCreatedPost);
                     return user.save().then(() => {
-                      res
-                        .status(200)
-                        .json({ message: "Comment added successfully." });
+                      res.status(200).json({ createdPost: newCreatedPost });
                     });
                   });
                 })
@@ -290,9 +283,7 @@ const addComment = (req, res) => {
 
                     console.log("THIS LINE IS WORKING 2 ", newCreatedPost);
                     return user.save().then(() => {
-                      res
-                        .status(200)
-                        .json({ message: "Comment added successfully." });
+                      res.status(200).json({ createdPost: newCreatedPost });
                     });
                   });
                 })
@@ -394,9 +385,7 @@ const addComment = (req, res) => {
 
                     console.log("THIS LINE IS WORKING 2 ", newCreatedPost);
                     return user.save().then(() => {
-                      res
-                        .status(200)
-                        .json({ message: "Comment added successfully." });
+                      res.status(200).json({ createdPost: newCreatedPost });
                     });
                   });
                 })
@@ -435,9 +424,7 @@ const addComment = (req, res) => {
                     newCreatedPost.save();
                     console.log("THIS LINE IS WORKING 2 ", newCreatedPost);
                     return user.save().then(() => {
-                      res
-                        .status(200)
-                        .json({ message: "Comment added successfully." });
+                      res.status(200).json({ createdPost: newCreatedPost });
                     });
                   });
                 })
@@ -538,9 +525,7 @@ const addComment = (req, res) => {
 
                     console.log("THIS LINE IS WORKING 2 ", newCreatedPost);
                     return user.save().then(() => {
-                      res
-                        .status(200)
-                        .json({ message: "Comment added successfully." });
+                      res.status(200).json({ createdPost: newCreatedPost });
                     });
                   });
                 })
@@ -574,14 +559,48 @@ const addComment = (req, res) => {
                     postId: newCreatedPost._id.toString(),
                   }).then((newCreatedComment) => {
                     user.posts.unshift(newCreatedPost);
-                    post.comments.unshift(newCreatedComment._id.toString());
-                    post.save();
+
+                    // eğer post reposted ise hem orijinal posta hem current posta commenti ekle start to check
+                    if (post.isReposted) {
+                      Post.find({
+                        _id: post.repostedFromThisOriginalPost[0],
+                      }).then((originalPost) => {
+                        console.log("Original post =>", originalPost);
+
+                        originalPost[0].comments.unshift(
+                          newCreatedComment._id.toString()
+                        );
+                        post.comments.unshift(newCreatedComment._id.toString());
+
+                        post.save();
+                        originalPost[0].save();
+                      });
+                    }
+
+                    // eğer post reposted ise hem orijinal posta hem current posta commenti ekle finish to check
+
+                    // eğer post reposted değil ise de hem orijinal posta hem current posta commenti ekle start to check
+                    else {
+                      Post.find({
+                        repostedFromThisOriginalPost: post._id,
+                      }).then((referencePost) => {
+                        console.log("Reference post =>", referencePost);
+
+                        referencePost[0].comments.unshift(
+                          newCreatedComment._id.toString()
+                        );
+                        post.comments.unshift(newCreatedComment._id.toString());
+
+                        post.save();
+                        referencePost[0].save();
+                      });
+                    }
+                    // eğer post reposted değil ise de hem orijinal posta hem current posta commenti ekle finish to check
+
                     newCreatedPost.save();
                     console.log("THIS LINE IS WORKING 2 ", newCreatedPost);
                     return user.save().then(() => {
-                      res
-                        .status(200)
-                        .json({ message: "Comment added successfully." });
+                      res.status(200).json({ createdPost: newCreatedPost });
                     });
                   });
                 })
