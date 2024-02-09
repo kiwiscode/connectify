@@ -536,7 +536,7 @@ function FollowerDetailPage() {
 
                     const buttonStyles = {
                       cursor: "pointer",
-                      width: "25%",
+                      minWidth: "25%",
                       textAlign: "center",
                       border:
                         isHovered === buttonId && isFollowing
@@ -555,6 +555,7 @@ function FollowerDetailPage() {
 
                       // isFollowing
                       //   ? isHovered === buttonId
+                      transitionDuration: "0.2s",
 
                       backgroundColor:
                         isHovered === buttonId && isFollowing
@@ -675,7 +676,7 @@ function FollowerDetailPage() {
                                 ? openUnfollowModal(user)
                                 : handleFollow(user)
                             }
-                            className="follow-following-section-spesific-profile ms-auto"
+                            className="follow-following-section-followers ms-auto"
                             style={buttonStyles ? buttonStyles : null}
                             onMouseEnter={isFollowing ? handleMouseEnter : null}
                             onMouseLeave={handleMouseLeave}

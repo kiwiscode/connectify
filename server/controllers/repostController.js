@@ -109,6 +109,13 @@ const handleRepost = (req, res) => {
               reposted: post.reposted,
               repostedFromThisOriginalPost: postId,
               likes: post.likes,
+              isComment: post.isComment ? true : false,
+              commentedForThisPost: post.isComment
+                ? post.commentedForThisPost
+                : null,
+              commentedForThisUsersPost: post.isComment
+                ? post.commentedForThisUsersPost
+                : null,
             })
 
               .then((createdPost) => {
