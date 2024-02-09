@@ -417,12 +417,14 @@ function FollowingDetailPage() {
                         );
                         // delete after unfollow also from localstorage finish to check
 
-                        const newFollowingArray =
-                          following.indexOf(selectedUser);
-                        following.splice(newFollowingArray, 1);
-                        console.log("Response =>", response);
+                        setTimeout(() => {
+                          const newFollowingArray =
+                            following.indexOf(selectedUser);
+                          following.splice(newFollowingArray, 1);
+                          console.log("Response =>", response);
 
-                        handleClose();
+                          handleClose();
+                        }, 500);
                       })
                       .catch((error) => {
                         console.log("Error =>", error);
@@ -441,8 +443,9 @@ function FollowingDetailPage() {
 
                   const buttonStyles = {
                     cursor: "pointer",
-                    width: "25%",
+                    minWidth: "25%",
                     textAlign: "center",
+
                     border:
                       isHovered === buttonId
                         ? "1px solid rgba(253,201,206,255)"
@@ -455,6 +458,7 @@ function FollowingDetailPage() {
                     fontWeight: "700",
                     padding: "5px",
                     marginRight: "15px",
+                    transitionDuration: "0.2s",
                     backgroundColor:
                       isHovered === buttonId ? "rgba(255,234,235,255)" : null,
                     color:

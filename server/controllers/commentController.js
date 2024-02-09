@@ -12,6 +12,7 @@ const addComment = (req, res) => {
   console.log("Post id to ready get some comments from some user =>", postId);
   console.log("Comment content =>", commentPost);
   console.log("Comment with image =>", modalImage.slice(0, 3));
+
   User.findById(userId)
     .then((user) => {
       Post.findById(postId)
@@ -77,6 +78,24 @@ const addComment = (req, res) => {
                   }).then((newCreatedComment) => {
                     user.posts.unshift(newCreatedPost);
                     post.comments.unshift(newCreatedComment._id.toString());
+                    // peki ya commente comment yapıldığında ne olacak ????
+                    if (post.isComment) {
+                      console.log(
+                        "You are adding a comment to another comment post inside your post 1"
+                      );
+                      Comment.find({ postId: postId })
+                        .then((findedComment) => {
+                          findedComment[0].comments.unshift(
+                            newCreatedComment._id.toString()
+                          );
+
+                          findedComment[0].save();
+                        })
+                        .catch((error) => {
+                          console.log("ERROR =>", error);
+                        });
+                    }
+
                     post.save();
                     newCreatedPost.save();
                     console.log("THIS LINE IS WORKING 2 ", newCreatedPost);
@@ -115,6 +134,25 @@ const addComment = (req, res) => {
                   }).then((newCreatedComment) => {
                     user.posts.unshift(newCreatedPost);
                     post.comments.unshift(newCreatedComment._id.toString());
+
+                    // peki ya commente comment yapıldığında ne olacak ????
+                    if (post.isComment) {
+                      console.log(
+                        "You are adding a comment to another comment post inside your post 2"
+                      );
+                      Comment.find({ postId: postId })
+                        .then((findedComment) => {
+                          findedComment[0].comments.unshift(
+                            newCreatedComment._id.toString()
+                          );
+
+                          findedComment[0].save();
+                        })
+                        .catch((error) => {
+                          console.log("ERROR =>", error);
+                        });
+                    }
+
                     post.save();
                     newCreatedPost.save();
                     console.log("THIS LINE IS WORKING 2 ", newCreatedPost);
@@ -134,6 +172,7 @@ const addComment = (req, res) => {
             console.log(
               "Bu post userın kendi postu ve isReposted değil veya isReposted ve post.reposted.length var"
             );
+
             if (modalImage !== "") {
               cloudinary.uploader
                 .upload(modalImage, {
@@ -184,6 +223,24 @@ const addComment = (req, res) => {
                   }).then((newCreatedComment) => {
                     user.posts.unshift(newCreatedPost);
                     post.comments.unshift(newCreatedComment._id.toString());
+                    // peki ya commente comment yapıldığında ne olacak ????
+                    if (post.isComment) {
+                      console.log(
+                        "You are adding a comment to another comment post inside your post 1 second condition"
+                      );
+                      Comment.find({ postId: postId })
+                        .then((findedComment) => {
+                          findedComment[0].comments.unshift(
+                            newCreatedComment._id.toString()
+                          );
+
+                          findedComment[0].save();
+                        })
+                        .catch((error) => {
+                          console.log("ERROR =>", error);
+                        });
+                    }
+
                     post.save();
                     newCreatedPost.save();
 
@@ -251,6 +308,24 @@ const addComment = (req, res) => {
                   }).then((newCreatedComment) => {
                     user.posts.unshift(newCreatedPost);
                     post.comments.unshift(newCreatedComment._id.toString());
+                    // peki ya commente comment yapıldığında ne olacak ????
+                    if (post.isComment) {
+                      console.log(
+                        "You are adding a comment to another comment post inside your post 2 second condition"
+                      );
+                      Comment.find({ postId: postId })
+                        .then((findedComment) => {
+                          findedComment[0].comments.unshift(
+                            newCreatedComment._id.toString()
+                          );
+
+                          findedComment[0].save();
+                        })
+                        .catch((error) => {
+                          console.log("ERROR =>", error);
+                        });
+                    }
+
                     post.save();
                     newCreatedPost.save();
 
@@ -353,6 +428,25 @@ const addComment = (req, res) => {
                   }).then((newCreatedComment) => {
                     user.posts.unshift(newCreatedPost);
                     post.comments.unshift(newCreatedComment._id.toString());
+
+                    // peki ya commente comment yapıldığında ne olacak ????
+                    if (post.isComment) {
+                      console.log(
+                        "You are adding a comment to another comment post inside someones post 1 third condition"
+                      );
+                      Comment.find({ postId: postId })
+                        .then((findedComment) => {
+                          findedComment[0].comments.unshift(
+                            newCreatedComment._id.toString()
+                          );
+
+                          findedComment[0].save();
+                        })
+                        .catch((error) => {
+                          console.log("ERROR =>", error);
+                        });
+                    }
+
                     post.save();
                     newCreatedPost.save();
 
@@ -420,6 +514,24 @@ const addComment = (req, res) => {
                   }).then((newCreatedComment) => {
                     user.posts.unshift(newCreatedPost);
                     post.comments.unshift(newCreatedComment._id.toString());
+
+                    // peki ya commente comment yapıldığında ne olacak ????
+                    if (post.isComment) {
+                      console.log(
+                        "You are adding a comment to another comment post inside someones post 2 third condition"
+                      );
+                      Comment.find({ postId: postId })
+                        .then((findedComment) => {
+                          findedComment[0].comments.unshift(
+                            newCreatedComment._id.toString()
+                          );
+
+                          findedComment[0].save();
+                        })
+                        .catch((error) => {
+                          console.log("ERROR =>", error);
+                        });
+                    }
                     post.save();
                     newCreatedPost.save();
                     console.log("THIS LINE IS WORKING 2 ", newCreatedPost);
@@ -493,6 +605,24 @@ const addComment = (req, res) => {
                   }).then((newCreatedComment) => {
                     user.posts.unshift(newCreatedPost);
                     post.comments.unshift(newCreatedComment._id.toString());
+
+                    // peki ya commente comment yapıldığında ne olacak ????
+                    if (post.isComment) {
+                      console.log(
+                        "You are adding a comment to another comment post inside someones post 1 fourth condition"
+                      );
+                      Comment.find({ postId: postId })
+                        .then((findedComment) => {
+                          findedComment[0].comments.unshift(
+                            newCreatedComment._id.toString()
+                          );
+
+                          findedComment[0].save();
+                        })
+                        .catch((error) => {
+                          console.log("ERROR =>", error);
+                        });
+                    }
                     post.save();
                     newCreatedPost.save();
 
@@ -559,6 +689,24 @@ const addComment = (req, res) => {
                     postId: newCreatedPost._id.toString(),
                   }).then((newCreatedComment) => {
                     user.posts.unshift(newCreatedPost);
+
+                    // peki ya commente comment yapıldığında ne olacak ????
+                    if (post.isComment) {
+                      console.log(
+                        "You are adding a comment to another comment post inside someones post 2 fourth condition"
+                      );
+                      Comment.find({ postId: postId })
+                        .then((findedComment) => {
+                          findedComment[0].comments.unshift(
+                            newCreatedComment._id.toString()
+                          );
+
+                          findedComment[0].save();
+                        })
+                        .catch((error) => {
+                          console.log("ERROR =>", error);
+                        });
+                    }
 
                     // eğer post reposted ise hem orijinal posta hem current posta commenti ekle start to check
                     if (post.isReposted) {

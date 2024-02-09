@@ -3,6 +3,7 @@ const Post = require("../models/Post.model");
 const Favorite = require("../models/Favorite.model");
 const Comment = require("../models/Comment.model");
 const cloudinary = require("../utils/cloudinary");
+const { deleteComment } = require("./commentController");
 const handlePost = (req, res) => {
   const { content, image, modalImage } = req.body;
   const { userId } = req.user;
@@ -215,27 +216,53 @@ const handleDeletePost = (req, res) => {
                         postId: deletedOriginalPost._id.toString(),
                       })
                         .then((deletedComment) => {
+                          // filter main comment comments array from this comment
+                          Comment.find({ comments: deletedComment._id })
+                            .then((parentComment) => {
+                              const newCommentsArrayForParentComment =
+                                parentComment[0]
+                                  ? parentComment[0].comments.filter(
+                                      (eachComment) => {
+                                        return (
+                                          eachComment._id.toString() !==
+                                          deletedComment._id.toString()
+                                        );
+                                      }
+                                    )
+                                  : null;
+                              parentComment[0]
+                                ? (parentComment[0].comments =
+                                    newCommentsArrayForParentComment)
+                                : null;
+                              parentComment[0] ? parentComment[0].save() : null;
+                            })
+                            .catch((error) => {
+                              console.log("Error =>", error);
+                            });
+
                           if (deletedComment) {
                             Post.findById(
                               deletedComment.commentedForThisPost._id.toString()
                             )
                               .then((commentedForThisPost) => {
-                                const filteredCommentsArray =
-                                  commentedForThisPost.comments.filter(
-                                    (eachComment) => {
-                                      return (
-                                        eachComment._id.toString() !==
-                                        deletedComment._id.toString()
-                                      );
-                                    }
+                                if (commentedForThisPost) {
+                                  const filteredCommentsArray =
+                                    commentedForThisPost.comments.filter(
+                                      (eachComment) => {
+                                        return (
+                                          eachComment._id.toString() !==
+                                          deletedComment._id.toString()
+                                        );
+                                      }
+                                    );
+                                  console.log(
+                                    "Deleted comment id =>",
+                                    deletedComment._id.toString()
                                   );
-                                console.log(
-                                  "Deleted comment id =>",
-                                  deletedComment._id.toString()
-                                );
-                                commentedForThisPost.comments =
-                                  filteredCommentsArray;
-                                commentedForThisPost.save();
+                                  commentedForThisPost.comments =
+                                    filteredCommentsArray;
+                                  commentedForThisPost.save();
+                                }
                               })
                               .catch((error) => {
                                 console.log(error);
@@ -308,28 +335,56 @@ const handleDeletePost = (req, res) => {
             if (post.reposted.length !== 0) {
               if (post.isComment) {
                 console.log("Post id =>", postId);
+
                 Comment.findOneAndDelete({ postId: postId })
                   .then((deletedComment) => {
+                    // filter main comment comments array from this comment
+                    Comment.find({ comments: deletedComment._id })
+                      .then((parentComment) => {
+                        const newCommentsArrayForParentComment =
+                          parentComment[0]
+                            ? parentComment[0].comments.filter(
+                                (eachComment) => {
+                                  return (
+                                    eachComment._id.toString() !==
+                                    deletedComment._id.toString()
+                                  );
+                                }
+                              )
+                            : null;
+                        parentComment[0]
+                          ? (parentComment[0].comments =
+                              newCommentsArrayForParentComment)
+                          : null;
+                        parentComment[0] ? parentComment[0].save() : null;
+                      })
+                      .catch((error) => {
+                        console.log("Error =>", error);
+                      });
+
                     if (deletedComment) {
                       Post.findById(
                         deletedComment.commentedForThisPost._id.toString()
                       )
                         .then((commentedForThisPost) => {
-                          const filteredCommentsArray =
-                            commentedForThisPost.comments.filter(
-                              (eachComment) => {
-                                return (
-                                  eachComment._id.toString() !==
-                                  deletedComment._id.toString()
-                                );
-                              }
+                          if (commentedForThisPost) {
+                            const filteredCommentsArray =
+                              commentedForThisPost.comments.filter(
+                                (eachComment) => {
+                                  return (
+                                    eachComment._id.toString() !==
+                                    deletedComment._id.toString()
+                                  );
+                                }
+                              );
+                            console.log(
+                              "Deleted comment id =>",
+                              deletedComment._id.toString()
                             );
-                          console.log(
-                            "Deleted comment id =>",
-                            deletedComment._id.toString()
-                          );
-                          commentedForThisPost.comments = filteredCommentsArray;
-                          commentedForThisPost.save();
+                            commentedForThisPost.comments =
+                              filteredCommentsArray;
+                            commentedForThisPost.save();
+                          }
                         })
                         .catch((error) => {
                           console.log(error);
@@ -493,26 +548,53 @@ const handleDeletePost = (req, res) => {
                 console.log("Post id =>", postId);
                 Comment.findOneAndDelete({ postId: postId })
                   .then((deletedComment) => {
+                    // filter main comment comments array from this comment
+                    Comment.find({ comments: deletedComment._id })
+                      .then((parentComment) => {
+                        const newCommentsArrayForParentComment =
+                          parentComment[0]
+                            ? parentComment[0].comments.filter(
+                                (eachComment) => {
+                                  return (
+                                    eachComment._id.toString() !==
+                                    deletedComment._id.toString()
+                                  );
+                                }
+                              )
+                            : null;
+                        parentComment[0]
+                          ? (parentComment[0].comments =
+                              newCommentsArrayForParentComment)
+                          : null;
+                        parentComment[0] ? parentComment[0].save() : null;
+                      })
+                      .catch((error) => {
+                        console.log("Error =>", error);
+                      });
+
                     if (deletedComment) {
                       Post.findById(
                         deletedComment.commentedForThisPost._id.toString()
                       )
                         .then((commentedForThisPost) => {
-                          const filteredCommentsArray =
-                            commentedForThisPost.comments.filter(
-                              (eachComment) => {
-                                return (
-                                  eachComment._id.toString() !==
-                                  deletedComment._id.toString()
-                                );
-                              }
+                          if (commentedForThisPost) {
+                            const filteredCommentsArray =
+                              commentedForThisPost.comments.filter(
+                                (eachComment) => {
+                                  return (
+                                    eachComment._id.toString() !==
+                                    deletedComment._id.toString()
+                                  );
+                                }
+                              );
+                            console.log(
+                              "Deleted comment id =>",
+                              deletedComment._id.toString()
                             );
-                          console.log(
-                            "Deleted comment id =>",
-                            deletedComment._id.toString()
-                          );
-                          commentedForThisPost.comments = filteredCommentsArray;
-                          commentedForThisPost.save();
+                            commentedForThisPost.comments =
+                              filteredCommentsArray;
+                            commentedForThisPost.save();
+                          }
                         })
                         .catch((error) => {
                           console.log(error);

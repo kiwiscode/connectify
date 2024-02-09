@@ -99,6 +99,23 @@ function PostDetailPage() {
     navigate(-1);
   };
 
+  const refreshPostDetailPage = () => {
+    axios
+      .get(`${API_URL}/${postOwner}/status/${postId}`)
+      .then((response) => {
+        const { detailedPost } = response.data;
+        if (detailedPost.isComment) {
+          setcommentedForThisPost(detailedPost.commentedForThisPost);
+          setcommentedForThisUsersPost(detailedPost.commentedForThisUsersPost);
+        }
+        setdetailedPost(detailedPost);
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const handlePostLikesPostDetailPage = (postId) => {
     axios
       .post(
@@ -1023,6 +1040,30 @@ function PostDetailPage() {
       });
   };
 
+  const handleDeletePostPostDetailPage = (postId) => {
+    setpostDetailPostId(postId);
+    axios
+      .post(
+        `${API_URL}/home/delete-post`,
+        { userId: userInfo._id, postId },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then(() => {
+        setTimeout(() => {
+          refreshPostDetailPage();
+        }, 500);
+      })
+      .catch((error) => {
+        const { errorMessage } = error.response.data;
+
+        console.log("Error =>", errorMessage);
+      });
+  };
+
   console.log("Detailed post =>", detailedPost);
   const getRepostedIds = (array) => {
     return array.reposted.map((eachRepost) => {
@@ -1054,22 +1095,6 @@ function PostDetailPage() {
       });
   }, []);
 
-  const refreshPostDetailPage = () => {
-    axios
-      .get(`${API_URL}/${postOwner}/status/${postId}`)
-      .then((response) => {
-        const { detailedPost } = response.data;
-        if (detailedPost.isComment) {
-          setcommentedForThisPost(detailedPost.commentedForThisPost);
-          setcommentedForThisUsersPost(detailedPost.commentedForThisUsersPost);
-        }
-        setdetailedPost(detailedPost);
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
   console.log("Commented for this post =>", commentedForThisPost);
 
   console.log("Commented for this users post =>", commentedForThisUsersPost);
@@ -1131,28 +1156,6 @@ function PostDetailPage() {
 
   const handleShowDetailPostFromPostDetailPage = (postId) => {
     console.log(postId);
-  };
-
-  const handleDeletePostPostDetailPage = (postId) => {
-    setpostDetailPostId(postId);
-    axios
-      .post(
-        `${API_URL}/home/delete-post`,
-        { userId: userInfo._id, postId },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        console.log("Post deleted !");
-      })
-      .catch((error) => {
-        const { errorMessage } = error.response.data;
-
-        console.log("Error =>", errorMessage);
-      });
   };
 
   console.log("Commented for this users post =>", commentedForThisUsersPost);
@@ -1761,6 +1764,7 @@ function PostDetailPage() {
                       >
                         <div className="">
                           <CommentModal
+                            refreshPosts={refreshPostDetailPage}
                             post={commentedForThisPost}
                             width={`${1.25}em`}
                             height={`${1.25}em`}
@@ -2384,10 +2388,10 @@ function PostDetailPage() {
             >
               <div className="p-2">
                 <CommentModal
+                  refreshPosts={refreshPostDetailPage}
                   post={detailedPost}
                   width={`${1.5}em`}
                   height={`${1.5}em`}
-                  refreshPosts={refreshPostDetailPage}
                 />
               </div>
               <div className="p-2">
@@ -2944,6 +2948,7 @@ function PostDetailPage() {
                                     >
                                       <div className="p-1">
                                         <CommentModal
+                                          refreshPosts={refreshPostDetailPage}
                                           post={
                                             eachComment ? eachComment : null
                                           }
@@ -3506,6 +3511,7 @@ function PostDetailPage() {
                                     >
                                       <div className="p-1">
                                         <CommentModal
+                                          refreshPosts={refreshPostDetailPage}
                                           post={
                                             eachComment ? eachComment : null
                                           }

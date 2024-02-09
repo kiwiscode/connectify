@@ -258,8 +258,9 @@ function SpesificUserProfile() {
 
   const buttonStyles = {
     cursor: "pointer",
-    // minWidth: "56px",
-    width: "25%",
+    minWidth: "25%",
+
+    // width: "25%",
     textAlign: "center",
     border: isHovered
       ? "1px solid rgba(253,201,206,255)"
