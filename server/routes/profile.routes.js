@@ -19,4 +19,10 @@ router.post(
   profileController.handleProfilePicture
 );
 
+router.get(
+  "/forCreateChat/:userId",
+  authenticateToken,
+  profileController.handlecreateChatSpesificUserInformations
+);
+
 module.exports = router;

@@ -120,6 +120,24 @@ function MessagesPage() {
 
   console.log("Your message rooms from filtered rooms =>", filteredRooms);
 
+  const checkIfAllFilteredRoomsChatEmpty = (array) => {
+    const allChatLengths = array.map((eachMessageRoom) => {
+      return eachMessageRoom.chat.length;
+    });
+
+    const sum = allChatLengths.reduce(
+      (accumulator, currentValue) => accumulator + currentValue,
+      0
+    );
+
+    return sum;
+  };
+
+  console.log(
+    "cHECK lENGTH =>",
+    checkIfAllFilteredRoomsChatEmpty(filteredRooms)
+  );
+
   const handleShowPostsMessagePage = () => {
     axios
       .get(`${API_URL}/home`, {
@@ -405,160 +423,209 @@ function MessagesPage() {
 
             {/* mainpage yani messages rotasına tüm messagelerin gösterileceği column burası !  */}
 
-            {filteredRooms.length ? (
+            {filteredRooms.length &&
+            checkIfAllFilteredRoomsChatEmpty(filteredRooms) !== 0 ? (
               <div>
                 {filteredRooms.map((eachMessageRoom) => (
                   <>
-                    <Link
-                      onClick={() =>
-                        redirectChatDetailPage(eachMessageRoom._id)
-                      }
-                      key={eachMessageRoom._id}
-                      style={{
-                        position: "relative",
-                        bottom: "20px",
-                        margin: "5px",
-                        cursor: "pointer",
-                        listStyleType: "none",
-                        textDecoration: "none",
-                      }}
-                      to={`/messages/${eachMessageRoom._id}`}
-                    >
-                      <div
+                    {eachMessageRoom.chat.length > 0 ? (
+                      <Link
+                        onClick={() =>
+                          redirectChatDetailPage(eachMessageRoom._id)
+                        }
+                        key={eachMessageRoom._id}
                         style={{
-                          backgroundColor: eachMessageRoom.readed
-                            ? "white"
-                            : "#F7F9F9",
-                          border: eachMessageRoom.chat.length
-                            ? "1px solid #e1e8ed"
-                            : "",
-                          borderRadius: "8px",
+                          position: "relative",
+                          bottom: "20px",
+                          margin: "5px",
+                          cursor: "pointer",
+                          listStyleType: "none",
+                          textDecoration: "none",
                         }}
+                        to={`/messages/${eachMessageRoom._id}`}
                       >
-                        {eachMessageRoom.chat &&
-                          eachMessageRoom.chat.length > 0 && (
-                            <>
-                              <Stack
-                                style={{
-                                  margin: "5px",
-                                  padding: "5px",
-                                }}
-                                direction="horizontal"
-                              >
-                                <div className="p-0">
-                                  {" "}
-                                  {getMemberNotEqualActiveUser(
-                                    eachMessageRoom
-                                  ).imageUrl.slice(0, 3) !== "../" ? (
-                                    <img
-                                      width={40}
-                                      height={40}
-                                      style={{
-                                        borderRadius: "50%",
-                                      }}
-                                      src={
-                                        getMemberNotEqualActiveUser(
-                                          eachMessageRoom
-                                        ).imageUrl
-                                      }
-                                      alt=""
-                                    />
-                                  ) : (
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      width="40"
-                                      height="40"
-                                      fill="rgb(83, 100, 113)"
-                                      className="bi bi-person-circle"
-                                      viewBox="0 0 16 16"
-                                      style={{}}
-                                    >
-                                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                      <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                    </svg>
-                                  )}
-                                </div>
-                                <div
+                        <div
+                          style={{
+                            backgroundColor: eachMessageRoom.readed
+                              ? "white"
+                              : "#F7F9F9",
+                            border: eachMessageRoom.chat.length
+                              ? "1px solid #e1e8ed"
+                              : "",
+                            borderRadius: "8px",
+                          }}
+                        >
+                          {eachMessageRoom.chat &&
+                            eachMessageRoom.chat.length > 0 && (
+                              <>
+                                <Stack
                                   style={{
-                                    marginLeft: "10px",
+                                    margin: "5px",
+                                    padding: "5px",
                                   }}
-                                  className="p-0"
+                                  direction="horizontal"
                                 >
-                                  <span
-                                    style={{
-                                      color: "rgb(15, 20, 25)",
-
-                                      fontSize: "15px",
-                                      fontWeight: "700",
-                                      lineHeight: "20px",
-                                    }}
-                                  >
-                                    {eachMessageRoom.members[1].fullname !==
-                                    userInfo.fullname
-                                      ? eachMessageRoom.members[1].fullname
-                                      : eachMessageRoom.members[0]
-                                          .fullname}{" "}
-                                  </span>
-                                  <span
-                                    style={{
-                                      color: "rgb(83, 100, 113)",
-                                      fontSize: "15px",
-                                      lineHeight: "20px",
-                                      fontWeight: "400",
-                                    }}
-                                  >
-                                    @
-                                    {eachMessageRoom.members[1].username !==
-                                    userInfo.username
-                                      ? eachMessageRoom.members[1].username
-                                      : eachMessageRoom.members[0]
-                                          .username}{" "}
-                                  </span>
-                                  <span
-                                    style={{
-                                      color: "rgb(83, 100, 113)",
-                                      fontSize: "15px",
-                                      lineHeight: "20px",
-                                      fontWeight: "400",
-                                    }}
-                                  >
-                                    {" "}
-                                    ·{" "}
-                                    {eachMessageRoom.chat[0]
-                                      ? getCreatedRoomDate(
-                                          eachMessageRoom.chat[0].messages[0]
-                                            .timestamp
-                                        )
-                                      : ""}
-                                  </span>
                                   <div className="p-0">
                                     {" "}
+                                    {getMemberNotEqualActiveUser(
+                                      eachMessageRoom
+                                    ).imageUrl.slice(0, 3) !== "../" ? (
+                                      <img
+                                        width={40}
+                                        height={40}
+                                        style={{
+                                          borderRadius: "50%",
+                                        }}
+                                        src={
+                                          getMemberNotEqualActiveUser(
+                                            eachMessageRoom
+                                          ).imageUrl
+                                        }
+                                        alt=""
+                                      />
+                                    ) : (
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="40"
+                                        height="40"
+                                        fill="rgb(83, 100, 113)"
+                                        className="bi bi-person-circle"
+                                        viewBox="0 0 16 16"
+                                        style={{}}
+                                      >
+                                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                        <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                      </svg>
+                                    )}
+                                  </div>
+                                  <div
+                                    style={{
+                                      marginLeft: "10px",
+                                    }}
+                                    className="p-0"
+                                  >
+                                    <span
+                                      style={{
+                                        color: "rgb(15, 20, 25)",
+
+                                        fontSize: "15px",
+                                        fontWeight: "700",
+                                        lineHeight: "20px",
+                                      }}
+                                    >
+                                      {eachMessageRoom.members[1].fullname !==
+                                      userInfo.fullname
+                                        ? eachMessageRoom.members[1].fullname
+                                        : eachMessageRoom.members[0]
+                                            .fullname}{" "}
+                                    </span>
                                     <span
                                       style={{
                                         color: "rgb(83, 100, 113)",
+                                        fontSize: "15px",
+                                        lineHeight: "20px",
+                                        fontWeight: "400",
                                       }}
                                     >
-                                      {
-                                        eachMessageRoom.chat[
-                                          eachMessageRoom.chat.length - 1
-                                        ].messages[0].text
-                                      }
+                                      @
+                                      {eachMessageRoom.members[1].username !==
+                                      userInfo.username
+                                        ? eachMessageRoom.members[1].username
+                                        : eachMessageRoom.members[0]
+                                            .username}{" "}
                                     </span>
+                                    <span
+                                      style={{
+                                        color: "rgb(83, 100, 113)",
+                                        fontSize: "15px",
+                                        lineHeight: "20px",
+                                        fontWeight: "400",
+                                      }}
+                                    >
+                                      {" "}
+                                      ·{" "}
+                                      {eachMessageRoom.chat[0]
+                                        ? getCreatedRoomDate(
+                                            eachMessageRoom.chat[0].messages[0]
+                                              .timestamp
+                                          )
+                                        : ""}
+                                    </span>
+                                    <div className="p-0">
+                                      {" "}
+                                      <span
+                                        style={{
+                                          color: "rgb(83, 100, 113)",
+                                        }}
+                                      >
+                                        {
+                                          eachMessageRoom.chat[
+                                            eachMessageRoom.chat.length - 1
+                                          ].messages[0].text
+                                        }
+                                      </span>
+                                    </div>
                                   </div>
-                                </div>
-                              </Stack>
+                                </Stack>
 
-                              {/* message text is here ? start to check  */}
+                                {/* message text is here ? start to check  */}
 
-                              {/* message text is here ? finish to check  */}
-                            </>
-                          )}
-                      </div>
-                    </Link>
+                                {/* message text is here ? finish to check  */}
+                              </>
+                            )}
+                        </div>
+                      </Link>
+                    ) : null}
                   </>
                 ))}
               </div>
-            ) : null}
+            ) : (
+              <>
+                <div style={{ textAlign: "left", padding: "16px" }}>
+                  <div
+                    style={{
+                      lineHeight: "36px",
+                      fontSize: "31px",
+                      fontWeight: "800",
+                      margin: "10px",
+                    }}
+                  >
+                    Welcome to your inbox!
+                  </div>
+                  <div
+                    style={{
+                      color: "rgb(83, 100, 113)",
+                      lineHeight: "20px",
+                      fontSize: "15px",
+                      fontWeight: "400",
+                      margin: "10px",
+                    }}
+                  >
+                    Drop a line, share posts and more with private conversations
+                    between you and others on Connectify.
+                  </div>
+                  <button
+                    style={{
+                      color: "white",
+                      backgroundColor: "rgb(29,155,240)",
+                      margin: "10px",
+                      borderStyle: "none",
+                      borderRadius: "9999px",
+                      minWidth: "52px",
+                      outlineStyle: "none",
+                      cursor: "pointer",
+                      minHeight: "52px",
+                      paddingLeft: "32px",
+                      paddingRight: "32px",
+                      fontWeight: "700",
+                      fontSize: "15px",
+                    }}
+                  >
+                    Write a message
+                  </button>
+                </div>
+              </>
+            )}
           </Col>
           {/* finish to check main column  */}
 

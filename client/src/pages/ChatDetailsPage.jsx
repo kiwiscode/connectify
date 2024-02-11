@@ -31,6 +31,8 @@ function ChatDetailsPage() {
   const [notificationText, setnotificationText] = useState([]);
   // socket io 1 client finish to check
 
+  console.log("Message room");
+
   // start to check
   const navigate = useNavigate();
   const redirectToMessages = () => {
@@ -56,7 +58,7 @@ function ChatDetailsPage() {
 
   // socket io 4 client start to check
   useEffect(() => {
-    console.log("Hello worldddddd");
+    console.log("First use effect working");
     socket.on("socket_id_for_user", (socketId) => {
       console.log("socket id received from backend =>", socketId);
 
@@ -68,6 +70,8 @@ function ChatDetailsPage() {
   // socket io 4 client finish to check
 
   useEffect(() => {
+    console.log("Second use effect working");
+
     socket.on("getNotification", (data) => {
       console.log("Data =>", data);
       setnotificationTest((prev) => [...prev, data]);
@@ -80,6 +84,8 @@ function ChatDetailsPage() {
   }, [socket]);
 
   useEffect(() => {
+    console.log("Third use effect working");
+
     socket.emit("send_spesific_chatRoomId", chatRoomId);
     socket.emit("send_spesific_userId", userInfo._id);
 

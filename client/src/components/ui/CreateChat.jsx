@@ -70,12 +70,15 @@ function CreateChat() {
     socket.emit("join_user_room", { activeUser: userInfo, selectedUser: user });
   };
 
+  // problem buradan kaynaklanıyor olabilir start to check
   // messageRoomId state'i değiştiğinde yönlendirme yap
   useEffect(() => {
     if (messageRoomId) {
       navigate(`/messages/${messageRoomId}`);
+      window.location.reload();
     }
   }, [messageRoomId]);
+  // problem buradan kaynaklanıyor olabilir finish to check
 
   const filterUsers = (users, term) => {
     const filtered = users.filter((user) =>
@@ -187,7 +190,7 @@ function CreateChat() {
                     cursor: "pointer",
                     textDecoration: "none",
                   }}
-                  to={`/messages/${messageRoomId}`}
+                  // to={`/messages/${messageRoomId}`}
                 >
                   <Stack
                     style={{
