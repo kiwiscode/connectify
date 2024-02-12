@@ -9,12 +9,17 @@ import {
   Row,
   Col,
   Stack,
+  Popover,
+  OverlayTrigger,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Picker from "emoji-picker-react";
+// import Picker from "emoji-picker-react";
 import axios from "axios";
 import "../../index.css";
+
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
 
 // socket io cleaning up socket.id after logout from online users client start to check
 // import io from "socket.io-client";
@@ -114,7 +119,7 @@ function SigninModal() {
               className="have-account"
             >
               <span
-                className="  responsive-input-group-text 
+                className="  responsive-input-group-text
                 "
                 style={{
                   position: "relative",
@@ -248,99 +253,138 @@ function LogoutModal() {
       });
   };
 
-  return (
-    <>
-      {/* start to check  */}
+  // start to check
 
+  const popoverTop = (
+    <Popover id="popover-positioned-top" title="Popover top">
       <div
         style={{
-          marginLeft: "5px",
+          height: 56,
+          width: 250,
         }}
-        className="logout-nav"
-        onClick={handleShow}
+        className="logout-body"
       >
-        {/* start to check */}
-        {userInfo.imageUrl.slice(0, 3) !== "../" ? (
-          <div>
-            <img
-              className="profile-img"
-              src={userInfo.imageUrl}
-              width={40}
-              height={40}
-              alt=""
-              style={{
-                borderRadius: "50%",
-              }}
-            />
-          </div>
-        ) : (
-          <div>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="40"
-              height="40"
-              fill="rgb(83, 100, 113)"
-              className="profile-svg bi bi-person-circle"
-              viewBox="0 0 16 16"
-            >
-              <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-              <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-            </svg>
-          </div>
-        )}
-
-        {/* finish to check */}
-
-        <div className="info-logout">
-          <span
-            style={{
-              color: "rgb(15,20,25)",
-              lineHeight: "20px",
-              fontWeight: "700",
-              fontSize: "15px",
-            }}
-          >
-            {localeInfo.username}
-          </span>
-          <span
-            style={{
-              color: "rgb(83, 100, 113)",
-              fontSize: "15px",
-              lineHeight: "20px",
-              fontWeight: "400",
-            }}
-          >
-            @{localeInfo.username}
-          </span>
-        </div>
-        <svg
-          width={`${1.25}em`}
-          height={`${1.25}em`}
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-          className="bi bi-three-dots none-backgroundColor logout-three-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+        <p
+          style={{
+            paddingBottom: "12px",
+            paddingTop: "12px",
+            lineHeight: "20px",
+            fontWeight: "700",
+            fontSize: "15px",
+          }}
+          className="logout-p"
+          onClick={handleLogout}
         >
-          <g>
-            <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-          </g>
-        </svg>
+          Log out @{localeInfo.username}
+        </p>
       </div>
+    </Popover>
+  );
 
-      {/* finish to check */}
-      <Modal
-        show={show}
-        onHide={handleClose}
-        className="logout-modal"
-        size="sm"
+  // finish to check
+
+  const updatePlacementBasedOnScreenWidth = () => {
+    const screenWidth = window.innerWidth;
+    const newPlacement = screenWidth <= 466 ? "bottom" : "top";
+    setresponsivePlacementLogoutPopup(newPlacement);
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", updatePlacementBasedOnScreenWidth);
+
+    return () => {
+      window.removeEventListener("resize", updatePlacementBasedOnScreenWidth);
+    };
+  }, []);
+
+  const [responsivePlacementLogoutPopup, setresponsivePlacementLogoutPopup] =
+    useState("top");
+
+  return (
+    <>
+      {/* popover basic test start to check  */}
+      <OverlayTrigger
+        trigger="click"
+        placement={`${responsivePlacementLogoutPopup}`}
+        overlay={popoverTop}
       >
-        <Modal.Body>
-          <div className="logout-body">
-            <p className="logout-p" onClick={handleLogout}>
-              Log out @{localeInfo.username}
-            </p>
+        {/* start to check  */}
+        <div
+          style={{
+            marginLeft: "5px",
+          }}
+          className="logout-nav"
+          onClick={handleShow}
+        >
+          {/* start to check */}
+          {userInfo.imageUrl.slice(0, 3) !== "../" ? (
+            <div>
+              <img
+                className="profile-img"
+                src={userInfo.imageUrl}
+                width={40}
+                height={40}
+                alt=""
+                style={{
+                  borderRadius: "50%",
+                }}
+              />
+            </div>
+          ) : (
+            <div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="40"
+                height="40"
+                fill="rgb(83, 100, 113)"
+                className="profile-svg bi bi-person-circle"
+                viewBox="0 0 16 16"
+              >
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+              </svg>
+            </div>
+          )}
+
+          {/* finish to check */}
+
+          <div className="info-logout">
+            <span
+              style={{
+                color: "rgb(15,20,25)",
+                lineHeight: "20px",
+                fontWeight: "700",
+                fontSize: "15px",
+              }}
+            >
+              {localeInfo.username}
+            </span>
+            <span
+              style={{
+                color: "rgb(83, 100, 113)",
+                fontSize: "15px",
+                lineHeight: "20px",
+                fontWeight: "400",
+              }}
+            >
+              @{localeInfo.username}
+            </span>
           </div>
-        </Modal.Body>
-      </Modal>
+          <svg
+            width={`${1.25}em`}
+            height={`${1.25}em`}
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            className="bi bi-three-dots none-backgroundColor logout-three-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+          >
+            <g>
+              <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+            </g>
+          </svg>
+        </div>
+        {/* finish to check */}
+      </OverlayTrigger>
+      {/* popover basic test finish to check  */}
     </>
   );
 }
@@ -383,11 +427,6 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
       setshowEmojisBar("");
     }
     setShowSecondModal(true);
-  };
-
-  const onEmojiClick = (emojiObject) => {
-    setChosenEmoji(emojiObject);
-    setContent((prevText) => prevText + emojiObject.emoji);
   };
 
   const handleChange = (event) => {
@@ -466,6 +505,32 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
       e.target.style.background = "#47494a";
     }
   };
+
+  const onEmojiClick = (emojiObject) => {
+    const sym = emojiObject.unified.split("_");
+    const codeArray = [];
+
+    sym.forEach((el) => codeArray.push("0x" + el));
+    let emoji = String.fromCodePoint(...codeArray);
+
+    setChosenEmoji(emoji);
+    setContent((prevText) => prevText + emoji);
+    console.log("Choosed emoji =>", chosenEmoji);
+    console.log("Content =>", content);
+  };
+
+  const popoverBottom = (
+    <Popover id="popover-positioned-bottom" title="Popover bottom">
+      <Picker
+        style={{ padding: "12px" }}
+        data={data}
+        onEmojiSelect={onEmojiClick}
+        maxFrequentRows={0}
+        emojiSize={20}
+        emojiButtonSize={28}
+      />
+    </Popover>
+  );
 
   return (
     <>
@@ -711,32 +776,40 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
             </div>
             {/* INFO */}
             <div className="p-2">
-              <div
-                className="svg-border-parent"
-                style={{
-                  // border: "1px solid black",
-                  cursor: "pointer",
-                  borderRadius: "50%",
-                }}
+              {/* emoji mart start to check */}
+
+              <OverlayTrigger
+                trigger="click"
+                placement="bottom"
+                overlay={popoverBottom}
               >
-                <svg
-                  onClick={() => toggleEmojis()}
-                  color="rgb(29,155,240)"
-                  fill="currentColor"
-                  width={20}
-                  height={20}
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  className="post-modal-emoji-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                <div
+                  className="svg-border-parent"
                   style={{
                     cursor: "pointer",
+                    borderRadius: "50%",
                   }}
                 >
-                  <g>
-                    <path d="M8 9.5C8 8.119 8.672 7 9.5 7S11 8.119 11 9.5 10.328 12 9.5 12 8 10.881 8 9.5zm6.5 2.5c.828 0 1.5-1.119 1.5-2.5S15.328 7 14.5 7 13 8.119 13 9.5s.672 2.5 1.5 2.5zM12 16c-2.224 0-3.021-2.227-3.051-2.316l-1.897.633c.05.15 1.271 3.684 4.949 3.684s4.898-3.533 4.949-3.684l-1.896-.638c-.033.095-.83 2.322-3.053 2.322zm10.25-4.001c0 5.652-4.598 10.25-10.25 10.25S1.75 17.652 1.75 12 6.348 1.75 12 1.75 22.25 6.348 22.25 12zm-2 0c0-4.549-3.701-8.25-8.25-8.25S3.75 7.451 3.75 12s3.701 8.25 8.25 8.25 8.25-3.701 8.25-8.25z"></path>
-                  </g>
-                </svg>
-              </div>
+                  <svg
+                    color="rgb(29,155,240)"
+                    fill="currentColor"
+                    width={20}
+                    height={20}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="post-modal-emoji-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                    style={{
+                      cursor: "pointer",
+                    }}
+                  >
+                    <g>
+                      <path d="M8 9.5C8 8.119 8.672 7 9.5 7S11 8.119 11 9.5 10.328 12 9.5 12 8 10.881 8 9.5zm6.5 2.5c.828 0 1.5-1.119 1.5-2.5S15.328 7 14.5 7 13 8.119 13 9.5s.672 2.5 1.5 2.5zM12 16c-2.224 0-3.021-2.227-3.051-2.316l-1.897.633c.05.15 1.271 3.684 4.949 3.684s4.898-3.533 4.949-3.684l-1.896-.638c-.033.095-.83 2.322-3.053 2.322zm10.25-4.001c0 5.652-4.598 10.25-10.25 10.25S1.75 17.652 1.75 12 6.348 1.75 12 1.75 22.25 6.348 22.25 12zm-2 0c0-4.549-3.701-8.25-8.25-8.25S3.75 7.451 3.75 12s3.701 8.25 8.25 8.25 8.25-3.701 8.25-8.25z"></path>
+                    </g>
+                  </svg>
+                </div>
+              </OverlayTrigger>
+
+              {/* emoji mart finish to check */}
             </div>
             <div className="p-2 ms-auto">
               {/* <div className="p-2 "> */}{" "}
@@ -760,22 +833,6 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
             </div>
           </Stack>
         </Modal.Footer>
-        <div
-          className={`${showEmojisBar}`}
-          style={{
-            position: "fixed",
-            zIndex: 9999,
-            marginTop: "315px",
-            marginLeft: "55px",
-          }}
-        >
-          <Picker
-            onEmojiClick={onEmojiClick}
-            emojiStyle="twitter"
-            width={"320px"}
-            height={"400px"}
-          />
-        </div>
       </Modal>
     </>
   );
@@ -791,7 +848,7 @@ function CommentModal({ post, width, height, refreshPosts }) {
   const [showEmojisBar, setshowEmojisBar] = useState("hide");
   const [showSecondModal, setShowSecondModal] = useState(false);
 
-  const { userInfo } = useContext(UserContext);
+  const { userInfo, socket } = useContext(UserContext);
   const maxCharacters = 140;
   //handle and convert it in base 64
   const handleImage = (e) => {
@@ -819,10 +876,6 @@ function CommentModal({ post, width, height, refreshPosts }) {
       setshowEmojisBar("");
     }
     setShowSecondModal(true);
-  };
-  const onEmojiClick = (emojiObject) => {
-    setChosenEmoji(emojiObject);
-    setContent((prevText) => prevText + emojiObject.emoji);
   };
 
   const handleChange = (event) => {
@@ -885,6 +938,17 @@ function CommentModal({ post, width, height, refreshPosts }) {
     return `${months[getMonth]} ${createdAt.getDate()}`;
   };
 
+  // socket io 5 client start to check
+  const handleNotification = (post, userInfo, type) => {
+    socket.emit("sendNotification", {
+      senderName: userInfo.username,
+      receiverName: post.userId.username,
+      type: type,
+      contactHasBeenMade: post,
+    });
+  };
+  // socket io 5 client finish to check
+
   const handleAddComment = (postId) => {
     console.log("Post id =>", postId);
     axios
@@ -895,6 +959,8 @@ function CommentModal({ post, width, height, refreshPosts }) {
         modalImage,
       })
       .then((response) => {
+        handleNotification(post, userInfo, "comment");
+
         console.log("Response =>", response);
 
         const mainPagePosts = JSON.parse(localStorage.getItem("mainPagePosts"));
@@ -914,6 +980,32 @@ function CommentModal({ post, width, height, refreshPosts }) {
         console.log("Error =>", error);
       });
   };
+
+  const onEmojiClick = (emojiObject) => {
+    const sym = emojiObject.unified.split("_");
+    const codeArray = [];
+
+    sym.forEach((el) => codeArray.push("0x" + el));
+    let emoji = String.fromCodePoint(...codeArray);
+
+    setChosenEmoji(emoji);
+    setContent((prevText) => prevText + emoji);
+    console.log("Choosed emoji =>", chosenEmoji);
+    console.log("Content =>", content);
+  };
+
+  const popoverBottom = (
+    <Popover id="popover-positioned-bottom" title="Popover bottom">
+      <Picker
+        style={{ padding: "12px" }}
+        data={data}
+        onEmojiSelect={onEmojiClick}
+        maxFrequentRows={0}
+        emojiSize={20}
+        emojiButtonSize={28}
+      />
+    </Popover>
+  );
 
   return (
     <>
@@ -1482,7 +1574,7 @@ function CommentModal({ post, width, height, refreshPosts }) {
               />
             </div>
             {/* INFO */}
-            <div className="p-2">
+            {/* <div className="p-2">
               <div
                 className="svg-border-parent"
                 style={{
@@ -1509,6 +1601,42 @@ function CommentModal({ post, width, height, refreshPosts }) {
                   </g>
                 </svg>
               </div>
+            </div> */}
+            <div className="p-2">
+              {/* emoji mart start to check */}
+
+              <OverlayTrigger
+                trigger="click"
+                placement="bottom"
+                overlay={popoverBottom}
+              >
+                <div
+                  className="svg-border-parent"
+                  style={{
+                    cursor: "pointer",
+                    borderRadius: "50%",
+                  }}
+                >
+                  <svg
+                    color="rgb(29,155,240)"
+                    fill="currentColor"
+                    width={20}
+                    height={20}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="post-modal-emoji-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                    style={{
+                      cursor: "pointer",
+                    }}
+                  >
+                    <g>
+                      <path d="M8 9.5C8 8.119 8.672 7 9.5 7S11 8.119 11 9.5 10.328 12 9.5 12 8 10.881 8 9.5zm6.5 2.5c.828 0 1.5-1.119 1.5-2.5S15.328 7 14.5 7 13 8.119 13 9.5s.672 2.5 1.5 2.5zM12 16c-2.224 0-3.021-2.227-3.051-2.316l-1.897.633c.05.15 1.271 3.684 4.949 3.684s4.898-3.533 4.949-3.684l-1.896-.638c-.033.095-.83 2.322-3.053 2.322zm10.25-4.001c0 5.652-4.598 10.25-10.25 10.25S1.75 17.652 1.75 12 6.348 1.75 12 1.75 22.25 6.348 22.25 12zm-2 0c0-4.549-3.701-8.25-8.25-8.25S3.75 7.451 3.75 12s3.701 8.25 8.25 8.25 8.25-3.701 8.25-8.25z"></path>
+                    </g>
+                  </svg>
+                </div>
+              </OverlayTrigger>
+
+              {/* emoji mart finish to check */}
             </div>
             <div className="p-2 ms-auto">
               {content !== "" || modalImage ? (
