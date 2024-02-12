@@ -20,6 +20,11 @@ import deleteRepost from "../utils/repostFunctions";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 
+import { Bounce, ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import CustomNotification from "../components/Notifications/CustomNotification";
+
 // socket io 2 client start to check
 // import io from "socket.io-client";
 // socket io 2 client finish to check
@@ -117,11 +122,31 @@ function MainPage() {
     socket.on("getNotification", (data) => {
       console.log("Data =>", data);
       setnotificationTest((prev) => [...prev, data]);
+      // toast(data.senderName);
     });
 
     socket.on("getText", (data) => {
       console.log("Data get text =>", data);
       setnotificationText(data);
+
+      // const username = "test";
+      // const message = "test 2";
+      // const time = "16 january 2024";
+      // toast(
+      //   <CustomNotification
+      //     username={username}
+      //     message={message}
+      //     time={time}
+      //   />,
+      //   {
+      //     position: "top-right",
+      //     autoClose: 5000,
+      //     hideProgressBar: false,
+      //     closeOnClick: true,
+      //     pauseOnHover: true,
+      //     draggable: true,
+      //   }
+      // );
     });
   }, [socket]);
 
@@ -132,6 +157,7 @@ function MainPage() {
       receiverName: post.userId.username,
       type: type,
       contactHasBeenMade: post,
+      senderInfo: userInfo,
     });
   };
   // socket io 5 client finish to check
@@ -756,6 +782,19 @@ function MainPage() {
 
   return (
     <>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
       <ResponsiveNavigationBarBottom />
       <ResponsiveNavigationBarTop />
       <Container>
