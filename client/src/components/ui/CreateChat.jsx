@@ -13,7 +13,7 @@ const API_URL = "http://localhost:3000";
 
 // const socket = io.connect(API_URL);
 
-function CreateChat() {
+function CreateChat({ writeMessageButton }) {
   const [show, setShow] = useState(false);
   const [room, setRoom] = useState("");
   const navigate = useNavigate();
@@ -102,25 +102,76 @@ function CreateChat() {
   };
   return (
     <>
-      <svg
-        onClick={handleShow}
-        width={20}
-        height={20}
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-        className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-        style={{
-          color: "rgb(15, 20, 25)",
-          lineHeight: "20px",
-          fontSize: "15px",
-          fontWeight: "700",
-          cursor: "pointer",
-        }}
-      >
-        <g>
-          <path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5V12h-2v-1.537l-8 3.635-8-3.635V18.5c0 .276.224.5.5.5H13v2H4.498c-1.381 0-2.5-1.119-2.5-2.5v-13zm2 2.766l8 3.635 8-3.635V5.5c0-.276-.224-.5-.5-.5h-15c-.276 0-.5.224-.5.5v2.766zM19 18v-3h2v3h3v2h-3v3h-2v-3h-3v-2h3z"></path>
-        </g>
-      </svg>
+      {writeMessageButton ? (
+        <>
+          <div
+            onClick={handleShow}
+            style={{ textAlign: "left", padding: "16px" }}
+          >
+            <div
+              style={{
+                lineHeight: "36px",
+                fontSize: "31px",
+                fontWeight: "800",
+                margin: "10px",
+              }}
+            >
+              Welcome to your inbox!
+            </div>
+            <div
+              style={{
+                color: "rgb(83, 100, 113)",
+                lineHeight: "20px",
+                fontSize: "15px",
+                fontWeight: "400",
+                margin: "10px",
+              }}
+            >
+              Drop a line, share posts and more with private conversations
+              between you and others on Connectify.
+            </div>
+            <button
+              style={{
+                color: "white",
+                backgroundColor: "rgb(29,155,240)",
+                margin: "10px",
+                borderStyle: "none",
+                borderRadius: "9999px",
+                minWidth: "52px",
+                outlineStyle: "none",
+                cursor: "pointer",
+                minHeight: "52px",
+                paddingLeft: "32px",
+                paddingRight: "32px",
+                fontWeight: "700",
+                fontSize: "15px",
+              }}
+            >
+              Write a message
+            </button>
+          </div>
+        </>
+      ) : (
+        <svg
+          onClick={handleShow}
+          width={20}
+          height={20}
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          className={`r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03`}
+          style={{
+            color: "rgb(15, 20, 25)",
+            lineHeight: "20px",
+            fontSize: "15px",
+            fontWeight: "700",
+            cursor: "pointer",
+          }}
+        >
+          <g>
+            <path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5V12h-2v-1.537l-8 3.635-8-3.635V18.5c0 .276.224.5.5.5H13v2H4.498c-1.381 0-2.5-1.119-2.5-2.5v-13zm2 2.766l8 3.635 8-3.635V5.5c0-.276-.224-.5-.5-.5h-15c-.276 0-.5.224-.5.5v2.766zM19 18v-3h2v3h3v2h-3v3h-2v-3h-3v-2h3z"></path>
+          </g>
+        </svg>
+      )}
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header

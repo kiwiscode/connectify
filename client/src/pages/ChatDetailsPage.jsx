@@ -155,10 +155,12 @@ function ChatDetailsPage() {
         notificationType,
         messageContent
       ) => {
+        console.log(messageSender);
         socket.emit("sendNotification", {
           receiverName: messageReceiver.username,
           senderName: messageSender.username,
           type: notificationType,
+          contactHasBeenMade: messageSender,
           text: messageContent,
         });
       };

@@ -137,9 +137,6 @@ const addComment = (req, res) => {
 
                     // peki ya commente comment yapıldığında ne olacak ????
                     if (post.isComment) {
-                      console.log(
-                        "You are adding a comment to another comment post inside your post 2"
-                      );
                       Comment.find({ postId: postId })
                         .then((findedComment) => {
                           findedComment[0].comments.unshift(
@@ -147,6 +144,10 @@ const addComment = (req, res) => {
                           );
 
                           findedComment[0].save();
+
+                          console.log(
+                            "You are added a comment to another comment post inside your post 2"
+                          );
                         })
                         .catch((error) => {
                           console.log("ERROR =>", error);
@@ -224,7 +225,7 @@ const addComment = (req, res) => {
                     user.posts.unshift(newCreatedPost);
                     post.comments.unshift(newCreatedComment._id.toString());
                     // peki ya commente comment yapıldığında ne olacak ????
-                    if (post.isComment) {
+                    if (post.isComment && !post.isReposted) {
                       console.log(
                         "You are adding a comment to another comment post inside your post 1 second condition"
                       );
@@ -253,6 +254,22 @@ const addComment = (req, res) => {
                             newCreatedComment._id.toString()
                           );
                           originalPost.save();
+
+                          // new thingy start to check
+                          Comment.find({
+                            postId: post.repostedFromThisOriginalPost[0]._id,
+                          })
+                            .then((findedComment) => {
+                              findedComment[0].comments.unshift(
+                                newCreatedComment._id.toString()
+                              );
+
+                              findedComment[0].save();
+                            })
+                            .catch((error) => {
+                              console.log("ERROR =>", error);
+                            });
+                          // new thingy finish to check
                         })
                         .catch((error) => {
                           console.log("Error =>", error);
@@ -309,7 +326,7 @@ const addComment = (req, res) => {
                     user.posts.unshift(newCreatedPost);
                     post.comments.unshift(newCreatedComment._id.toString());
                     // peki ya commente comment yapıldığında ne olacak ????
-                    if (post.isComment) {
+                    if (post.isComment && !post.isReposted) {
                       console.log(
                         "You are adding a comment to another comment post inside your post 2 second condition"
                       );
@@ -338,6 +355,23 @@ const addComment = (req, res) => {
                             newCreatedComment._id.toString()
                           );
                           originalPost.save();
+                          console.log("-----this line is working !");
+
+                          // new thingy start to check
+                          Comment.find({
+                            postId: post.repostedFromThisOriginalPost[0]._id,
+                          })
+                            .then((findedComment) => {
+                              findedComment[0].comments.unshift(
+                                newCreatedComment._id.toString()
+                              );
+
+                              findedComment[0].save();
+                            })
+                            .catch((error) => {
+                              console.log("ERROR =>", error);
+                            });
+                          // new thingy finish to check
                         })
                         .catch((error) => {
                           console.log("Error =>", error);
@@ -430,7 +464,7 @@ const addComment = (req, res) => {
                     post.comments.unshift(newCreatedComment._id.toString());
 
                     // peki ya commente comment yapıldığında ne olacak ????
-                    if (post.isComment) {
+                    if (post.isComment && !post.isReposted) {
                       console.log(
                         "You are adding a comment to another comment post inside someones post 1 third condition"
                       );
@@ -516,7 +550,7 @@ const addComment = (req, res) => {
                     post.comments.unshift(newCreatedComment._id.toString());
 
                     // peki ya commente comment yapıldığında ne olacak ????
-                    if (post.isComment) {
+                    if (post.isComment && !post.isReposted) {
                       console.log(
                         "You are adding a comment to another comment post inside someones post 2 third condition"
                       );
@@ -607,7 +641,7 @@ const addComment = (req, res) => {
                     post.comments.unshift(newCreatedComment._id.toString());
 
                     // peki ya commente comment yapıldığında ne olacak ????
-                    if (post.isComment) {
+                    if (post.isComment && !post.isReposted) {
                       console.log(
                         "You are adding a comment to another comment post inside someones post 1 fourth condition"
                       );
@@ -635,6 +669,22 @@ const addComment = (req, res) => {
                             newCreatedComment._id.toString()
                           );
                           originalPost.save();
+
+                          // new thingy start to check
+                          Comment.find({
+                            postId: post.repostedFromThisOriginalPost[0]._id,
+                          })
+                            .then((findedComment) => {
+                              findedComment[0].comments.unshift(
+                                newCreatedComment._id.toString()
+                              );
+
+                              findedComment[0].save();
+                            })
+                            .catch((error) => {
+                              console.log("ERROR =>", error);
+                            });
+                          // new thingy finish to check
                         })
                         .catch((error) => {
                           console.log("Error =>", error);
@@ -691,7 +741,7 @@ const addComment = (req, res) => {
                     user.posts.unshift(newCreatedPost);
 
                     // peki ya commente comment yapıldığında ne olacak ????
-                    if (post.isComment) {
+                    if (post.isComment && !post.isReposted) {
                       console.log(
                         "You are adding a comment to another comment post inside someones post 2 fourth condition"
                       );
@@ -722,6 +772,22 @@ const addComment = (req, res) => {
 
                         post.save();
                         originalPost[0].save();
+
+                        // new thingy start to check
+                        Comment.find({
+                          postId: post.repostedFromThisOriginalPost[0]._id,
+                        })
+                          .then((findedComment) => {
+                            findedComment[0].comments.unshift(
+                              newCreatedComment._id.toString()
+                            );
+
+                            findedComment[0].save();
+                          })
+                          .catch((error) => {
+                            console.log("ERROR =>", error);
+                          });
+                        // new thingy finish to check
                       });
                     }
 

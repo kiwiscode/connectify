@@ -83,13 +83,14 @@ function FollowerDetailPage() {
   }, [socket]);
 
   // socket io 5 client start to check
-  const handleNotification = (post, userInfo, type) => {
-    console.log("Sending notification to => ", post.userId.username);
+  const handleNotification = (selectedUser, userInfo, type) => {
+    console.log("Sending notification to => ", selectedUser.username);
 
     socket.emit("sendNotification", {
       senderName: userInfo.username,
-      receiverName: post.userId.username,
+      receiverName: selectedUser.username,
       type: type,
+      contactHasBeenMade: userInfo,
     });
   };
   // socket io 5 client finish to check
@@ -483,6 +484,14 @@ function FollowerDetailPage() {
                         )
                         .then((response) => {
                           console.log("Response =>", response);
+
+                          console.log("Selected user =>", selectedUser);
+
+                          handleNotification(
+                            selectedUser,
+                            userInfo,
+                            "followed"
+                          );
 
                           // change the userInfo who followed user start to check
                           const userInfoFromLocalStorage = JSON.parse(

@@ -186,6 +186,10 @@ function MessagesPage() {
     return result[0];
   };
 
+  const handleShowMessageDeleteModal = (messageRoom) => {
+    console.log("Message room clicked =>", messageRoom);
+  };
+
   return (
     <>
       <ResponsiveNavigationBarBottom />
@@ -388,7 +392,7 @@ function MessagesPage() {
               >
                 {/* create message icon start to check  */}
 
-                <CreateChat />
+                <CreateChat writeMessageButton={false} />
 
                 {/* create message icon finish to check  */}
               </div>
@@ -566,6 +570,33 @@ function MessagesPage() {
                                       </span>
                                     </div>
                                   </div>
+                                  {/* <div className="p-0 ms-auto">asd</div> */}
+                                  <div className="p-0 ms-auto">
+                                    <svg
+                                      style={{
+                                        cursor: "pointer",
+                                        position: "relative",
+                                        bottom: "15px",
+                                      }}
+                                      onClick={() =>
+                                        handleShowMessageDeleteModal(
+                                          eachMessageRoom
+                                        )
+                                      }
+                                      color="rgb(83, 100, 113)"
+                                      fill="currentColor"
+                                      width={`${1.25}em`}
+                                      height={`${1.25}em`}
+                                      viewBox="0 0 24 24"
+                                      aria-hidden="true"
+                                      className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                    >
+                                      <g>
+                                        <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                                      </g>
+                                    </svg>
+                                    <div>Delete message loading ???</div>
+                                  </div>
                                 </Stack>
 
                                 {/* message text is here ? start to check  */}
@@ -581,49 +612,7 @@ function MessagesPage() {
               </div>
             ) : (
               <>
-                <div style={{ textAlign: "left", padding: "16px" }}>
-                  <div
-                    style={{
-                      lineHeight: "36px",
-                      fontSize: "31px",
-                      fontWeight: "800",
-                      margin: "10px",
-                    }}
-                  >
-                    Welcome to your inbox!
-                  </div>
-                  <div
-                    style={{
-                      color: "rgb(83, 100, 113)",
-                      lineHeight: "20px",
-                      fontSize: "15px",
-                      fontWeight: "400",
-                      margin: "10px",
-                    }}
-                  >
-                    Drop a line, share posts and more with private conversations
-                    between you and others on Connectify.
-                  </div>
-                  <button
-                    style={{
-                      color: "white",
-                      backgroundColor: "rgb(29,155,240)",
-                      margin: "10px",
-                      borderStyle: "none",
-                      borderRadius: "9999px",
-                      minWidth: "52px",
-                      outlineStyle: "none",
-                      cursor: "pointer",
-                      minHeight: "52px",
-                      paddingLeft: "32px",
-                      paddingRight: "32px",
-                      fontWeight: "700",
-                      fontSize: "15px",
-                    }}
-                  >
-                    Write a message
-                  </button>
-                </div>
+                <CreateChat writeMessageButton={true}></CreateChat>
               </>
             )}
           </Col>
