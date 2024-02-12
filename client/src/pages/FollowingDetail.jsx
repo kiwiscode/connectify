@@ -95,18 +95,6 @@ function FollowingDetailPage() {
     });
   }, [socket]);
 
-  // socket io 5 client start to check
-  const handleNotification = (post, userInfo, type) => {
-    console.log("Sending notification to => ", post.userId.username);
-
-    socket.emit("sendNotification", {
-      senderName: userInfo.username,
-      receiverName: post.userId.username,
-      type: type,
-    });
-  };
-  // socket io 5 client finish to check
-
   useEffect(() => {
     getFollowing();
   }, []);

@@ -239,10 +239,34 @@ const getFollowing = (req, res) => {
     });
 };
 
+const handlecreateChatSpesificUserInformations = (req, res) => {
+  const { userId } = req.user;
+
+  User.findById(userId)
+    .populate("following")
+    .populate("followers")
+    .populate("favorites")
+    .populate("posts")
+    .populate("messages")
+    .then((user) => {
+      console.log(
+        "User ready to get current message room id =>",
+        user.username,
+        user.messages
+      );
+
+      res.status(200).json({ messages: user.messages });
+    })
+    .catch((error) => {
+      console.log("Error =>", error);
+    });
+};
+
 module.exports = {
   handleProfile,
   handleShowSpesificProfile,
   handleProfilePicture,
   getFollowers,
   getFollowing,
+  handlecreateChatSpesificUserInformations,
 };

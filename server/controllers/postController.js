@@ -211,7 +211,6 @@ const handleDeletePost = (req, res) => {
                   .then((deletedOriginalPost) => {
                     // start to check
                     if (deletedOriginalPost.isComment) {
-                      console.log("Post id =>", postId);
                       Comment.findOneAndDelete({
                         postId: deletedOriginalPost._id.toString(),
                       })
@@ -245,16 +244,17 @@ const handleDeletePost = (req, res) => {
                               deletedComment.commentedForThisPost._id.toString()
                             )
                               .then((commentedForThisPost) => {
-                                if (commentedForThisPost) {
-                                  const filteredCommentsArray =
-                                    commentedForThisPost.comments.filter(
-                                      (eachComment) => {
-                                        return (
-                                          eachComment._id.toString() !==
-                                          deletedComment._id.toString()
-                                        );
-                                      }
-                                    );
+                                if (
+                                  commentedForThisPost.reposted.length === 0
+                                ) {
+                                  commentedForThisPost.comments.filter(
+                                    (eachComment) => {
+                                      return (
+                                        eachComment._id.toString() !==
+                                        deletedComment._id.toString()
+                                      );
+                                    }
+                                  );
                                   console.log(
                                     "Deleted comment id =>",
                                     deletedComment._id.toString()
@@ -262,7 +262,117 @@ const handleDeletePost = (req, res) => {
                                   commentedForThisPost.comments =
                                     filteredCommentsArray;
                                   commentedForThisPost.save();
+                                } else {
+                                  if (commentedForThisPost.isReposted) {
+                                    console.log(
+                                      "We are here right now xXxXxXx -----"
+                                    );
+                                    // look for original post to filter comments array also start to check
+                                    Post.find({
+                                      _id: commentedForThisPost.repostedFromThisOriginalPost[0].toString(),
+                                    })
+                                      .then((originalPost) => {
+                                        console.log(
+                                          "original post =>",
+                                          originalPost
+                                        );
+                                        const filteredCommentsArray =
+                                          originalPost[0].comments.filter(
+                                            (eachComment) => {
+                                              return (
+                                                eachComment._id.toString() !==
+                                                deletedComment._id.toString()
+                                              );
+                                            }
+                                          );
+                                        originalPost[0].comments =
+                                          filteredCommentsArray;
+                                        originalPost[0].save();
+                                      })
+                                      .catch((error) => {
+                                        console.log("Error =>", error);
+                                      });
+                                    // look for original post to filter comments array also finish to check
+                                    const filteredCommentsArray =
+                                      commentedForThisPost.comments.filter(
+                                        (eachComment) => {
+                                          return (
+                                            eachComment._id.toString() !==
+                                            deletedComment._id.toString()
+                                          );
+                                        }
+                                      );
+                                    console.log(
+                                      "Deleted comment id =>",
+                                      deletedComment._id.toString()
+                                    );
+                                    commentedForThisPost.comments =
+                                      filteredCommentsArray;
+                                    commentedForThisPost.save();
+                                  } else {
+                                    console.log(
+                                      "We are here right now yYyYyYy -----"
+                                    );
+                                    // look for reference post to filter comments array also start to check
+                                    Post.find({
+                                      repostedFromThisOriginalPost:
+                                        commentedForThisPost._id.toString(),
+                                    })
+                                      .then((referencePost) => {
+                                        const filteredCommentsArray =
+                                          referencePost[0].comments.filter(
+                                            (eachComment) => {
+                                              return (
+                                                eachComment._id.toString() !==
+                                                deletedComment._id.toString()
+                                              );
+                                            }
+                                          );
+                                        referencePost[0].comments =
+                                          filteredCommentsArray;
+                                        referencePost[0].save();
+                                      })
+                                      .catch((error) => {
+                                        console.log("Error =>", error);
+                                      });
+                                    // look for reference post to filter comments array also finish to check
+                                    const filteredCommentsArray =
+                                      commentedForThisPost.comments.filter(
+                                        (eachComment) => {
+                                          return (
+                                            eachComment._id.toString() !==
+                                            deletedComment._id.toString()
+                                          );
+                                        }
+                                      );
+                                    console.log(
+                                      "Deleted comment id =>",
+                                      deletedComment._id.toString()
+                                    );
+                                    commentedForThisPost.comments =
+                                      filteredCommentsArray;
+                                    commentedForThisPost.save();
+                                  }
                                 }
+
+                                // if (commentedForThisPost) {
+                                //   const filteredCommentsArray =
+                                //     commentedForThisPost.comments.filter(
+                                //       (eachComment) => {
+                                //         return (
+                                //           eachComment._id.toString() !==
+                                //           deletedComment._id.toString()
+                                //         );
+                                //       }
+                                //     );
+                                //   console.log(
+                                //     "Deleted comment id =>",
+                                //     deletedComment._id.toString()
+                                //   );
+                                //   commentedForThisPost.comments =
+                                //     filteredCommentsArray;
+                                //   commentedForThisPost.save();
+                                // }
                               })
                               .catch((error) => {
                                 console.log(error);
@@ -287,8 +397,7 @@ const handleDeletePost = (req, res) => {
                         },
                       ],
                     })
-                      .then((response) => {
-                        console.log(response);
+                      .then(() => {
                         // burada findOne hatalı olabilir
                         res.status(200);
                       })
@@ -297,14 +406,6 @@ const handleDeletePost = (req, res) => {
                       });
                     // FINISHING WITH FAVORITE DELETING PROCESS IF THE POST ALREADY IN FAVORITE COLLECTION
 
-                    console.log("POSTS ARE DELETED FROM POST COLLECTION !");
-
-                    console.log(
-                      "Orjinal post id =>",
-                      post.repostedFromThisOriginalPost[0]._id.toString()
-                    );
-                    console.log("Reference post id =>", post._id.toString());
-                    console.log("Users post array =>", user.posts);
                     const filteredPostArr = user.posts.filter(
                       (eachPost) =>
                         eachPost._id.toString() !== postId &&
@@ -322,7 +423,6 @@ const handleDeletePost = (req, res) => {
                     }
                     user.posts = filteredPostArr;
                     user.save();
-                    console.log("Users post array =>", user.posts);
                   })
                   .catch((error) => {
                     console.log(error);
@@ -367,7 +467,7 @@ const handleDeletePost = (req, res) => {
                         deletedComment.commentedForThisPost._id.toString()
                       )
                         .then((commentedForThisPost) => {
-                          if (commentedForThisPost) {
+                          if (commentedForThisPost.reposted.length === 0) {
                             const filteredCommentsArray =
                               commentedForThisPost.comments.filter(
                                 (eachComment) => {
@@ -384,6 +484,92 @@ const handleDeletePost = (req, res) => {
                             commentedForThisPost.comments =
                               filteredCommentsArray;
                             commentedForThisPost.save();
+                          } else {
+                            if (commentedForThisPost.isReposted) {
+                              console.log("We are here right now 1 -----");
+                              // look for original post to filter comments array also start to check
+                              Post.find({
+                                _id: commentedForThisPost.repostedFromThisOriginalPost[0].toString(),
+                              })
+                                .then((originalPost) => {
+                                  console.log("original post =>", originalPost);
+                                  const filteredCommentsArray =
+                                    originalPost[0].comments.filter(
+                                      (eachComment) => {
+                                        return (
+                                          eachComment._id.toString() !==
+                                          deletedComment._id.toString()
+                                        );
+                                      }
+                                    );
+                                  originalPost[0].comments =
+                                    filteredCommentsArray;
+                                  originalPost[0].save();
+                                })
+                                .catch((error) => {
+                                  console.log("Error =>", error);
+                                });
+                              // look for original post to filter comments array also finish to check
+
+                              const filteredCommentsArray =
+                                commentedForThisPost.comments.filter(
+                                  (eachComment) => {
+                                    return (
+                                      eachComment._id.toString() !==
+                                      deletedComment._id.toString()
+                                    );
+                                  }
+                                );
+                              console.log(
+                                "Deleted comment id =>",
+                                deletedComment._id.toString()
+                              );
+                              commentedForThisPost.comments =
+                                filteredCommentsArray;
+                              commentedForThisPost.save();
+                            } else {
+                              console.log("We are here right now 2 -----");
+
+                              // look for reference post to filter comments array also start to check
+                              Post.find({
+                                repostedFromThisOriginalPost:
+                                  commentedForThisPost._id.toString(),
+                              })
+                                .then((referencePost) => {
+                                  const filteredCommentsArray =
+                                    referencePost[0].comments.filter(
+                                      (eachComment) => {
+                                        return (
+                                          eachComment._id.toString() !==
+                                          deletedComment._id.toString()
+                                        );
+                                      }
+                                    );
+                                  referencePost[0].comments =
+                                    filteredCommentsArray;
+                                  referencePost[0].save();
+                                })
+                                .catch((error) => {
+                                  console.log("Error =>", error);
+                                });
+                              // look for reference post to filter comments array also finish to check
+                              const filteredCommentsArray =
+                                commentedForThisPost.comments.filter(
+                                  (eachComment) => {
+                                    return (
+                                      eachComment._id.toString() !==
+                                      deletedComment._id.toString()
+                                    );
+                                  }
+                                );
+                              console.log(
+                                "Deleted comment id =>",
+                                deletedComment._id.toString()
+                              );
+                              commentedForThisPost.comments =
+                                filteredCommentsArray;
+                              commentedForThisPost.save();
+                            }
                           }
                         })
                         .catch((error) => {
@@ -545,7 +731,6 @@ const handleDeletePost = (req, res) => {
                 });
             } else {
               if (post.isComment) {
-                console.log("Post id =>", postId);
                 Comment.findOneAndDelete({ postId: postId })
                   .then((deletedComment) => {
                     // filter main comment comments array from this comment
@@ -577,7 +762,7 @@ const handleDeletePost = (req, res) => {
                         deletedComment.commentedForThisPost._id.toString()
                       )
                         .then((commentedForThisPost) => {
-                          if (commentedForThisPost) {
+                          if (commentedForThisPost.reposted.length === 0) {
                             const filteredCommentsArray =
                               commentedForThisPost.comments.filter(
                                 (eachComment) => {
@@ -587,13 +772,90 @@ const handleDeletePost = (req, res) => {
                                   );
                                 }
                               );
-                            console.log(
-                              "Deleted comment id =>",
-                              deletedComment._id.toString()
-                            );
+
                             commentedForThisPost.comments =
                               filteredCommentsArray;
                             commentedForThisPost.save();
+                          } else {
+                            console.log(
+                              "Commented for this post =>",
+                              commentedForThisPost
+                            );
+                            if (commentedForThisPost.isReposted) {
+                              // look for original post to filter comments array also start to check
+                              Post.find({
+                                _id: commentedForThisPost.repostedFromThisOriginalPost[0].toString(),
+                              })
+                                .then((originalPost) => {
+                                  const filteredCommentsArray =
+                                    originalPost[0].comments.filter(
+                                      (eachComment) => {
+                                        return (
+                                          eachComment._id.toString() !==
+                                          deletedComment._id.toString()
+                                        );
+                                      }
+                                    );
+                                  originalPost[0].comments =
+                                    filteredCommentsArray;
+                                  originalPost[0].save();
+                                })
+                                .catch((error) => {
+                                  console.log("Error =>", error);
+                                });
+                              // look for original post to filter comments array also finish to check
+
+                              const filteredCommentsArray =
+                                commentedForThisPost.comments.filter(
+                                  (eachComment) => {
+                                    return (
+                                      eachComment._id.toString() !==
+                                      deletedComment._id.toString()
+                                    );
+                                  }
+                                );
+
+                              commentedForThisPost.comments =
+                                filteredCommentsArray;
+                              commentedForThisPost.save();
+                            } else {
+                              // look for reference post to filter comments array also start to check
+                              Post.find({
+                                repostedFromThisOriginalPost:
+                                  commentedForThisPost._id.toString(),
+                              })
+                                .then((referencePost) => {
+                                  const filteredCommentsArray =
+                                    referencePost[0].comments.filter(
+                                      (eachComment) => {
+                                        return (
+                                          eachComment._id.toString() !==
+                                          deletedComment._id.toString()
+                                        );
+                                      }
+                                    );
+                                  referencePost[0].comments =
+                                    filteredCommentsArray;
+                                  referencePost[0].save();
+                                })
+                                .catch((error) => {
+                                  console.log("Error =>", error);
+                                });
+                              // look for reference post to filter comments array also finish to check
+                              const filteredCommentsArray =
+                                commentedForThisPost.comments.filter(
+                                  (eachComment) => {
+                                    return (
+                                      eachComment._id.toString() !==
+                                      deletedComment._id.toString()
+                                    );
+                                  }
+                                );
+
+                              commentedForThisPost.comments =
+                                filteredCommentsArray;
+                              commentedForThisPost.save();
+                            }
                           }
                         })
                         .catch((error) => {
@@ -663,7 +925,6 @@ const handleDeletePost = (req, res) => {
                       );
                     }
                   }
-                  console.log("Here is working 3");
 
                   // Tüm kullanıcıların favori ve post listelerini güncelledikten sonra Promise.all ile bekleyelim
                   return Promise.all(promises);
@@ -718,11 +979,8 @@ const handleDeletePost = (req, res) => {
           console.log(error);
         });
       // FINISHING WITH POST DELETE PROCESS
-      console.log("This line is working 3 ");
 
       return user.save().then(() => {
-        console.log("This line is working 4 ");
-
         res.status(200).json({
           message:
             "Post deleted from post model,user posts array (and favorites ?)",
