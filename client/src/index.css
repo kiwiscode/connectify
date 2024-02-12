@@ -1346,3 +1346,9 @@ span > a:hover {
   border-bottom: rgba(255, 255, 255, 0.639) solid 2px;
   padding-bottom: 5px;
 }
+.hideEmojiContainer,
+.hideLogoutPopup {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out; /* Transition süresi ve efektini ayarlayabilirsiniz */
+  pointer-events: none; /* Elementin pointer olaylarına müdahalesini kapatmak için */
+}
