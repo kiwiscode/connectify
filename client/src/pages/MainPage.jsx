@@ -21,7 +21,6 @@ import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 
 import { Bounce, ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 import CustomNotification from "../components/Notifications/CustomNotification";
 
@@ -121,32 +120,41 @@ function MainPage() {
   useEffect(() => {
     socket.on("getNotification", (data) => {
       console.log("Data =>", data);
-      setnotificationTest((prev) => [...prev, data]);
-      // toast(data.senderName);
+      if (data.senderName !== userInfo.username) {
+        setnotificationTest((prev) => [...prev, data]);
+      } else {
+        console.log("Kendine notification mu göndericeksin ? ");
+      }
     });
 
     socket.on("getText", (data) => {
       console.log("Data get text =>", data);
-      setnotificationText(data);
+      if (data.senderName !== userInfo.username) {
+        setnotificationText(data);
 
-      // const username = "test";
-      // const message = "test 2";
-      // const time = "16 january 2024";
-      // toast(
-      //   <CustomNotification
-      //     username={username}
-      //     message={message}
-      //     time={time}
-      //   />,
-      //   {
-      //     position: "top-right",
-      //     autoClose: 5000,
-      //     hideProgressBar: false,
-      //     closeOnClick: true,
-      //     pauseOnHover: true,
-      //     draggable: true,
-      //   }
-      // );
+        toast(
+          <CustomNotification
+            senderName={data.senderName}
+            type={data.type}
+            contactHasBeenMade={data.contactHasBeenMade}
+            senderInfo={data.senderInfo}
+            text={data.text ? data.text : null}
+          />,
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: Bounce,
+            theme: "light",
+          }
+        );
+      } else {
+        console.log("Kendine notification mu göndericeksin ? ");
+      }
     });
   }, [socket]);
 
@@ -780,21 +788,32 @@ function MainPage() {
     </Popover>
   );
 
+  const notify = () =>
+    toast(
+      <CustomNotification
+        senderName={"John Doe"}
+        // type={"type of action (liked?,repost?,comment?,followed?,message?"}
+        type={"liked"}
+        contactHasBeenMade={userInfo}
+        senderInfo={userInfo}
+      />,
+      {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        transition: Bounce,
+        theme: "light",
+      }
+    );
+
   return (
     <>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        transition={Bounce}
-      />
+      <button onClick={notify}>Notify !</button>
+      <ToastContainer />
       <ResponsiveNavigationBarBottom />
       <ResponsiveNavigationBarTop />
       <Container>
