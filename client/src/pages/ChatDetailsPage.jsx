@@ -162,6 +162,7 @@ function ChatDetailsPage() {
           type: notificationType,
           contactHasBeenMade: messageSender,
           text: messageContent,
+          senderInfo: userInfo,
         });
       };
       // socket io 5 client finish to check

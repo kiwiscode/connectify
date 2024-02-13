@@ -91,6 +91,7 @@ function FollowerDetailPage() {
       receiverName: selectedUser.username,
       type: type,
       contactHasBeenMade: userInfo,
+      senderInfo: userInfo,
     });
   };
   // socket io 5 client finish to check

@@ -6,6 +6,8 @@ import SpesificUserProfile from "./pages/SpesificUserProfile";
 import { Routes, Route } from "react-router-dom";
 import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "react-toastify/dist/ReactToastify.css";
+
 import MessagesPage from "./pages/MessagesPage";
 import ChatDetailsPage from "./pages/ChatDetailsPage";
 import PostDetailPage from "./pages/PostDetailPage";

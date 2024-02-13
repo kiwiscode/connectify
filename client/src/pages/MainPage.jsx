@@ -20,6 +20,10 @@ import deleteRepost from "../utils/repostFunctions";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 
+import { Bounce, ToastContainer, toast } from "react-toastify";
+
+import CustomNotification from "../components/Notifications/CustomNotification";
+
 // socket io 2 client start to check
 // import io from "socket.io-client";
 // socket io 2 client finish to check
@@ -116,12 +120,41 @@ function MainPage() {
   useEffect(() => {
     socket.on("getNotification", (data) => {
       console.log("Data =>", data);
-      setnotificationTest((prev) => [...prev, data]);
+      if (data.senderName !== userInfo.username) {
+        setnotificationTest((prev) => [...prev, data]);
+      } else {
+        console.log("Kendine notification mu göndericeksin ? ");
+      }
     });
 
     socket.on("getText", (data) => {
       console.log("Data get text =>", data);
-      setnotificationText(data);
+      if (data.senderName !== userInfo.username) {
+        setnotificationText(data);
+
+        toast(
+          <CustomNotification
+            senderName={data.senderName}
+            type={data.type}
+            contactHasBeenMade={data.contactHasBeenMade}
+            senderInfo={data.senderInfo}
+            text={data.text ? data.text : null}
+          />,
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: Bounce,
+            theme: "light",
+          }
+        );
+      } else {
+        console.log("Kendine notification mu göndericeksin ? ");
+      }
     });
   }, [socket]);
 
@@ -132,6 +165,7 @@ function MainPage() {
       receiverName: post.userId.username,
       type: type,
       contactHasBeenMade: post,
+      senderInfo: userInfo,
     });
   };
   // socket io 5 client finish to check
@@ -754,8 +788,32 @@ function MainPage() {
     </Popover>
   );
 
+  const notify = () =>
+    toast(
+      <CustomNotification
+        senderName={"John Doe"}
+        // type={"type of action (liked?,repost?,comment?,followed?,message?"}
+        type={"liked"}
+        contactHasBeenMade={userInfo}
+        senderInfo={userInfo}
+      />,
+      {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        transition: Bounce,
+        theme: "light",
+      }
+    );
+
   return (
     <>
+      <button onClick={notify}>Notify !</button>
+      <ToastContainer />
       <ResponsiveNavigationBarBottom />
       <ResponsiveNavigationBarTop />
       <Container>

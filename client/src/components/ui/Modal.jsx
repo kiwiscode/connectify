@@ -254,33 +254,33 @@ function LogoutModal() {
 
   const [showlogoutPopup, setShowLogoutPopup] = useState(false);
 
-  useEffect(() => {
-    const closeLogoutPopup = (e) => {
-      console.log("Event =>", e.target.classList.contains("info-logout"));
-      console.log(
-        "Event parent element =>",
-        e.srcElement.parentElement.className
-      );
-      console.log("Event parent node =>", e.srcElement.parentNode.className);
-      if (
-        e.target.classList.contains("profile-img") ||
-        e.srcElement.parentNode.className === "logout-nav" ||
-        e.target.classList.contains("info-logout")
-      ) {
-        setShowLogoutPopup(false);
-        console.log("Do not show logout popup  !");
-      } else {
-        setShowLogoutPopup(true);
-        console.log("Show logout popup  !");
-      }
-    };
+  // useEffect(() => {
+  //   const closeLogoutPopup = (e) => {
+  //     console.log("Event =>", e.target.classList.contains("info-logout"));
+  //     console.log(
+  //       "Event parent element =>",
+  //       e.srcElement.parentElement.className
+  //     );
+  //     console.log("Event parent node =>", e.srcElement.parentNode.className);
+  //     if (
+  //       e.target.classList.contains("profile-img") ||
+  //       e.srcElement.parentNode.className === "logout-nav" ||
+  //       e.target.classList.contains("info-logout")
+  //     ) {
+  //       setShowLogoutPopup(false);
+  //       console.log("Do not show logout popup  !");
+  //     } else {
+  //       setShowLogoutPopup(true);
+  //       console.log("Show logout popup  !");
+  //     }
+  //   };
 
-    document.body.addEventListener("click", closeLogoutPopup);
+  //   document.body.addEventListener("click", closeLogoutPopup);
 
-    return () => {
-      document.body.removeEventListener("click", closeLogoutPopup);
-    };
-  }, []);
+  //   return () => {
+  //     document.body.removeEventListener("click", closeLogoutPopup);
+  //   };
+  // }, []);
 
   // start to check
 
@@ -542,32 +542,26 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
     console.log("Content =>", content);
   };
 
-  useEffect(() => {
-    const closeEmojiContainer = (e) => {
-      console.log("Event =>", e.target.classList);
-      console.log(
-        "Event parent element =>",
-        e.srcElement.parentElement.className
-      );
-      console.log("Event parent node =>", e.srcElement.parentNode.className);
-      if (
-        e.target.classList.contains("post-modal-emoji-picker") ||
-        e.srcElement.parentElement.className === "svg-border-parent show-emoji"
-      ) {
-        setshowEmojisBar(false);
-        console.log("Do not show emoji bar !");
-      } else {
-        setshowEmojisBar(true);
-        console.log("Show emoji bar !");
-      }
-    };
+  // useEffect(() => {
+  //   const closeEmojiContainer = (e) => {
+  //     if (
+  //       e.target.classList.contains("post-modal-emoji-picker") ||
+  //       e.srcElement.parentElement.className === "svg-border-parent show-emoji"
+  //     ) {
+  //       setshowEmojisBar(false);
+  //       console.log("Do not show emoji bar !");
+  //     } else {
+  //       setshowEmojisBar(true);
+  //       console.log("Show emoji bar !");
+  //     }
+  //   };
 
-    document.body.addEventListener("click", closeEmojiContainer);
+  //   document.body.addEventListener("click", closeEmojiContainer);
 
-    return () => {
-      document.body.removeEventListener("click", closeEmojiContainer);
-    };
-  }, []);
+  //   return () => {
+  //     document.body.removeEventListener("click", closeEmojiContainer);
+  //   };
+  // }, []);
 
   const popoverBottom = (
     <Popover
@@ -999,6 +993,7 @@ function CommentModal({ post, width, height, refreshPosts }) {
       receiverName: post.userId.username,
       type: type,
       contactHasBeenMade: post,
+      senderInfo: userInfo,
     });
   };
   // socket io 5 client finish to check
