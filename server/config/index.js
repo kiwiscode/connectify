@@ -561,10 +561,19 @@ module.exports = (app) => {
     });
     socket.on(
       "sendNotification",
-      ({ senderName, receiverName, type, contactHasBeenMade, text }) => {
+      ({
+        senderName,
+        receiverName,
+        type,
+        contactHasBeenMade,
+        text,
+        senderInfo,
+      }) => {
         console.log("Receiver name =>", receiverName);
         console.log("Online users 4 =>", onlineUsers);
         console.log("General info =>", contactHasBeenMade);
+
+        console.log("Sender info =>", senderInfo);
         const receiver = onlineUsers.find((eachUser) => {
           return eachUser.username === receiverName;
         });
@@ -577,6 +586,7 @@ module.exports = (app) => {
             receiverName,
             type,
             contactHasBeenMade: contactHasBeenMade ? contactHasBeenMade : null,
+            senderInfo,
           });
 
           io.to(receiver.socketId).emit("getText", {
@@ -584,6 +594,7 @@ module.exports = (app) => {
             receiverName,
             type,
             contactHasBeenMade: contactHasBeenMade ? contactHasBeenMade : null,
+            senderInfo,
           });
         } else if (receiver && type === "message") {
           io.to(receiver.socketId).emit("getNotification", {
@@ -592,12 +603,14 @@ module.exports = (app) => {
             type,
             text,
             contactHasBeenMade: contactHasBeenMade ? contactHasBeenMade : null,
+            senderInfo,
           });
           io.to(receiver.socketId).emit("getText", {
             senderName,
             type,
             text,
             contactHasBeenMade: contactHasBeenMade ? contactHasBeenMade : null,
+            senderInfo,
           });
         } else if (!receiver) {
           // burada aktif olmayan userın notificationsına ekleme yapabiliriz !

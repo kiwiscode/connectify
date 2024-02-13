@@ -112,6 +112,7 @@ function UserProfile() {
       receiverName: post.userId.username,
       type: type,
       contactHasBeenMade: post,
+      senderInfo: userInfo,
     });
   };
   // socket io 5 client finish to check
