@@ -892,7 +892,8 @@ span > a:hover {
 }
 
 .post-modal-image-fill,
-.post-modal-emoji-picker {
+.post-modal-emoji-picker,
+.chat-detail-emoji-picker {
   position: absolute;
   bottom: 10px;
   left: 10px;

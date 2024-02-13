@@ -5,7 +5,9 @@ import { Container, Row, Col, Stack, Button, Modal } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { LogoutModal, PostModal } from "../components/ui/Modal";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
-
+import ResponsiveNavigationBarTop from "../components/Navbar/ResponsiveNavigationTop";
+import { Bounce, ToastContainer, toast } from "react-toastify";
+import CustomNotification from "../components/Notifications/CustomNotification";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -73,12 +75,41 @@ function FollowerDetailPage() {
   useEffect(() => {
     socket.on("getNotification", (data) => {
       console.log("Data =>", data);
-      setnotificationTest((prev) => [...prev, data]);
+      if (data.senderName !== userInfo.username) {
+        setnotificationTest((prev) => [...prev, data]);
+      } else {
+        console.log("Kendine notification mu göndericeksin ? ");
+      }
     });
 
     socket.on("getText", (data) => {
       console.log("Data get text =>", data);
-      setnotificationText(data);
+      if (data.senderName !== userInfo.username) {
+        setnotificationText(data);
+
+        toast(
+          <CustomNotification
+            senderName={data.senderName}
+            type={data.type}
+            contactHasBeenMade={data.contactHasBeenMade}
+            senderInfo={data.senderInfo}
+            text={data.text ? data.text : null}
+          />,
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: Bounce,
+            theme: "light",
+          }
+        );
+      } else {
+        console.log("Kendine notification mu göndericeksin ? ");
+      }
     });
   }, [socket]);
 
@@ -155,8 +186,10 @@ function FollowerDetailPage() {
   const [activeTab, setActiveTab] = useState("");
   return (
     <>
-      <ResponsiveNavigationBarBottom />
+      <ToastContainer />
 
+      <ResponsiveNavigationBarBottom />
+      {/* <ResponsiveNavigationBarTop /> */}
       <Container
         style={{
           justifyContent: "center",
@@ -284,11 +317,12 @@ function FollowerDetailPage() {
           {/* following followers detail start to check  */}
 
           <Col
-            xs={10} // 0px - 576px aralığı
-            sm={10} // 576px - 768px aralığı
-            md={10} // 768px - 992px aralığı
+            xs={12} // 0px - 576px aralığı
+            sm={12} // 576px - 768px aralığı
+            md={11} // 768px - 992px aralığı
             lg={6} // 1200px - 1400px aralığı
             xxl={6} // 1400px ve sonrası aralığı
+            className={`main-column`}
             style={{
               border: "1px solid rgba(0, 0, 0, 0.1)",
               borderTop: "none",
