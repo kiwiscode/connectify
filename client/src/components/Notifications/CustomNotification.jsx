@@ -257,7 +257,17 @@ const CustomNotification = ({
                   </Link>{" "}
                   sent you a new message!
                 </span>
-                <p>{text}</p>
+
+                <p
+                  style={{
+                    color: "black",
+                    fontSize: "15px",
+                    fontWeight: "400",
+                    lineHeight: "20px",
+                  }}
+                >
+                  {text}
+                </p>
               </div>
               {/* Message tipine özel JSX bileşenleri */}
             </>

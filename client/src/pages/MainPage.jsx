@@ -788,31 +788,8 @@ function MainPage() {
     </Popover>
   );
 
-  const notify = () =>
-    toast(
-      <CustomNotification
-        senderName={"John Doe"}
-        // type={"type of action (liked?,repost?,comment?,followed?,message?"}
-        type={"liked"}
-        contactHasBeenMade={userInfo}
-        senderInfo={userInfo}
-      />,
-      {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        transition: Bounce,
-        theme: "light",
-      }
-    );
-
   return (
     <>
-      <button onClick={notify}>Notify !</button>
       <ToastContainer />
       <ResponsiveNavigationBarBottom />
       <ResponsiveNavigationBarTop />

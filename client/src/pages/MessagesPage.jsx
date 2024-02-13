@@ -6,6 +6,8 @@ import { LogoutModal, PostModal } from "../components/ui/Modal";
 import axios from "axios";
 import CreateChat from "../components/ui/CreateChat";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
+import { Bounce, ToastContainer, toast } from "react-toastify";
+import CustomNotification from "../components/Notifications/CustomNotification";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -69,12 +71,41 @@ function MessagesPage() {
   useEffect(() => {
     socket.on("getNotification", (data) => {
       console.log("Data =>", data);
-      setnotificationTest((prev) => [...prev, data]);
+      if (data.senderName !== userInfo.username) {
+        setnotificationTest((prev) => [...prev, data]);
+      } else {
+        console.log("Kendine notification mu göndericeksin ? ");
+      }
     });
 
     socket.on("getText", (data) => {
       console.log("Data get text =>", data);
-      setnotificationText(data);
+      if (data.senderName !== userInfo.username) {
+        setnotificationText(data);
+
+        toast(
+          <CustomNotification
+            senderName={data.senderName}
+            type={data.type}
+            contactHasBeenMade={data.contactHasBeenMade}
+            senderInfo={data.senderInfo}
+            text={data.text ? data.text : null}
+          />,
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: Bounce,
+            theme: "light",
+          }
+        );
+      } else {
+        console.log("Kendine notification mu göndericeksin ? ");
+      }
     });
   }, [socket]);
 
@@ -252,6 +283,8 @@ function MessagesPage() {
 
   return (
     <>
+      <ToastContainer />
+
       <ResponsiveNavigationBarBottom />
       <Container
         style={{
