@@ -13,7 +13,7 @@ import ChatDetailsPage from "./pages/ChatDetailsPage";
 import PostDetailPage from "./pages/PostDetailPage";
 import FollowingDetailPage from "./pages/FollowingDetail";
 import FollowerDetailPage from "./pages/FollowersDetailPage";
-
+import ImagePostDetailPage from "./pages/ImagePostDetailPage";
 function App() {
   return (
     <UserProvider>
@@ -31,6 +31,13 @@ function App() {
           path="/:postOwner/status/:postId"
           element={<PostDetailPage />}
         ></Route>
+
+        {/* new page start to check  */}
+        <Route
+          path="/:postOwner/status/:postId/photo/1"
+          element={<ImagePostDetailPage />}
+        ></Route>
+        {/* new page finish to check  */}
 
         <Route
           path="/profile/following"

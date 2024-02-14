@@ -59,6 +59,11 @@ function SpesificUserProfile() {
     navigate(`/profile/following`);
     window.location.reload();
   };
+
+  const redirectToImagePostDetailPage = (postOwnerName, postId) => {
+    navigate(`/${postOwnerName}/status/${postId}/photo/1`);
+    window.location.reload();
+  };
   // finish to check
   const { getToken, userInfo, socket } = useContext(UserContext);
   const [profileInfo, setProfileInfo] = useState({});
@@ -2380,11 +2385,19 @@ function SpesificUserProfile() {
                     {post.image.url !== "image@url" ? (
                       <>
                         <Link
+                          onClick={() =>
+                            redirectToImagePostDetailPage(
+                              post.userId.username,
+                              !post.isReposted
+                                ? post._id
+                                : post.repostedFromThisOriginalPost[0]._id
+                            )
+                          }
                           to={`/${post.userId.username}/status/${
                             !post.isReposted
                               ? post._id
                               : post.repostedFromThisOriginalPost[0]._id
-                          }/photo/${22}`}
+                          }/photo/${1}`}
                           style={{
                             textDecoration: "none",
                           }}
@@ -2851,11 +2864,19 @@ function SpesificUserProfile() {
                       {favorite.image.url !== "image@url" ? (
                         <>
                           <Link
+                            onClick={() =>
+                              redirectToImagePostDetailPage(
+                                favorite.userId.username,
+                                !favorite.isReposted
+                                  ? favorite._id
+                                  : favorite.repostedFromThisOriginalPost[0]._id
+                              )
+                            }
                             to={`/${favorite.userId.username}/status/${
                               !favorite.isReposted
                                 ? favorite._id
                                 : favorite.repostedFromThisOriginalPost[0]
-                            }/photo/${22}`}
+                            }/photo/${1}`}
                             style={{
                               textDecoration: "none",
                             }}
