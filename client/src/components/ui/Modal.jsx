@@ -886,7 +886,13 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
   );
 }
 
-function CommentModal({ post, width, height, refreshPosts }) {
+function CommentModal({
+  post,
+  width,
+  height,
+  refreshPosts,
+  isImagePostDetail,
+}) {
   const [show, setShow] = useState(false);
   const [content, setContent] = useState("");
   const [modalImage, setModalImage] = useState("");
@@ -914,16 +920,6 @@ function CommentModal({ post, width, height, refreshPosts }) {
     reader.onloadend = () => {
       setModalImage(reader.result);
     };
-  };
-
-  const toggleEmojis = () => {
-    setshowEmojisBar("");
-    if (showEmojisBar === "") {
-      setshowEmojisBar("hide");
-    } else if (showEmojisBar === "hide") {
-      setshowEmojisBar("");
-    }
-    setShowSecondModal(true);
   };
 
   const handleChange = (event) => {
@@ -1066,12 +1062,11 @@ function CommentModal({ post, width, height, refreshPosts }) {
           viewBox="0 0 24 24"
           aria-hidden="true"
           className="bi bi-chat r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-          color="rgb(83, 100, 113)"
-          fill="currentColor"
+          fill={isImagePostDetail ? "white" : "rgb(83, 100, 113)"}
         >
           <g>
             <path
-              stroke="rgb(83, 100, 113)"
+              stroke={isImagePostDetail ? "white" : "rgb(83, 100, 113)"}
               strokeWidth="0.1"
               d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"
             ></path>
@@ -1079,7 +1074,7 @@ function CommentModal({ post, width, height, refreshPosts }) {
         </svg>
         <span
           className="post-description"
-          style={{ color: "rgb(83, 100, 113)" }}
+          style={{ color: isImagePostDetail ? "white" : "rgb(83, 100, 113)" }}
         >
           {post.comments && post.comments.length ? (
             <span>{post.comments.length}</span>

@@ -59,6 +59,11 @@ function MainPage() {
     navigate(`/${postOwnerName}/status/${postId}`);
     window.location.reload();
   };
+
+  const redirectToImagePostDetailPage = (postOwnerName, postId) => {
+    navigate(`/${postOwnerName}/status/${postId}/photo/1`);
+    window.location.reload();
+  };
   // finish to check
   const { userInfo, getToken, socket } = useContext(UserContext);
   const [posts, setPosts] = useState([]);
@@ -1573,11 +1578,19 @@ function MainPage() {
                         {post.image.url !== "image@url" ? (
                           <>
                             <Link
+                              onClick={() =>
+                                redirectToImagePostDetailPage(
+                                  post.userId.username,
+                                  !post.isReposted
+                                    ? post._id
+                                    : post.repostedFromThisOriginalPost[0]._id
+                                )
+                              }
                               to={`/${post.userId.username}/status/${
                                 !post.isReposted
                                   ? post._id
                                   : post.repostedFromThisOriginalPost[0]._id
-                              }/photo/${22}`}
+                              }/photo/${1}`}
                               style={{
                                 textDecoration: "none",
                               }}
@@ -2171,11 +2184,20 @@ function MainPage() {
                             {post.image.url !== "image@url" ? (
                               <>
                                 <Link
+                                  onClick={() =>
+                                    redirectToImagePostDetailPage(
+                                      post.userId.username,
+                                      !post.isReposted
+                                        ? post._id
+                                        : post.repostedFromThisOriginalPost[0]
+                                            ._id
+                                    )
+                                  }
                                   to={`/${post.userId.username}/status/${
                                     !post.isReposted
                                       ? post._id
                                       : post.repostedFromThisOriginalPost[0]._id
-                                  }/photo/${22}`}
+                                  }/photo/${1}`}
                                   style={{
                                     textDecoration: "none",
                                   }}
