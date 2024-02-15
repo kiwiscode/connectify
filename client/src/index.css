@@ -1363,6 +1363,7 @@ span > a:hover {
   padding-bottom: 5px;
 }
 .hideEmojiContainer,
+.hideChooseImageContainer,
 .hideLogoutPopup {
   opacity: 0;
   transition: opacity 0.2s ease-in-out; /* Transition süresi ve efektini ayarlayabilirsiniz */

@@ -259,7 +259,10 @@ function ChatDetailsPage() {
     const closeEmojiContainer = (e) => {
       if (
         e.target.classList.contains("chat-detail-emoji-picker") ||
-        e.srcElement.parentElement.className === "svg-border-parent show-emoji"
+        e.srcElement.parentElement.className ===
+          "svg-border-parent show-emoji" ||
+        e.srcElement.parentNode.className === "p-2" ||
+        e.target.classList.value === ""
       ) {
         setshowEmojisBar(false);
         console.log("Do not show emoji bar !");
@@ -724,7 +727,7 @@ function ChatDetailsPage() {
                   overlay={popoverTop}
                 >
                   <div
-                    className="svg-border-parent"
+                    className="svg-border-parent show-emoji"
                     style={{
                       cursor: "pointer",
                       borderRadius: "50%",
