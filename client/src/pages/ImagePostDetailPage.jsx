@@ -1240,7 +1240,7 @@ function PostDetailPage() {
                       width: "30px",
                       height: "30px",
                       borderRadius: "50%",
-                      background: " #ddd",
+                      background: "rgba(15, 15, 15, 0.9) ",
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",

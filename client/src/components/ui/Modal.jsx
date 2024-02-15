@@ -231,11 +231,6 @@ function LogoutModal() {
   const [show, setShow] = useState(false);
   const { getToken, logout, userInfo } = useContext(UserContext);
 
-  const handleShow = (e) => {
-    e.preventDefault();
-    setShow(true);
-  };
-
   const handleLogout = () => {
     axios
       .post(`${API_URL}/logout`, null, {
@@ -254,6 +249,11 @@ function LogoutModal() {
 
   const [showlogoutPopup, setShowLogoutPopup] = useState(false);
 
+  // const handleShow = (e) => {
+  //   e.preventDefault();
+  //   setShow(true);
+  // };
+
   useEffect(() => {
     const closeLogoutPopup = (e) => {
       console.log("Event =>", e.target.classList.contains("info-logout"));
@@ -264,8 +264,12 @@ function LogoutModal() {
       console.log("Event parent node =>", e.srcElement.parentNode.className);
       if (
         e.target.classList.contains("profile-img") ||
+        e.target.classList.contains("profile-svg") ||
         e.srcElement.parentNode.className === "logout-nav" ||
-        e.target.classList.contains("info-logout")
+        e.srcElement.parentNode.className === "info-logout" ||
+        e.target.classList.contains("info-logout") ||
+        e.target.classList.contains("bi-three-dots") ||
+        e.srcElement.parentNode.className === "nav-bar-home"
       ) {
         setShowLogoutPopup(false);
         console.log("Do not show logout popup  !");
@@ -347,7 +351,7 @@ function LogoutModal() {
             marginLeft: "5px",
           }}
           className="logout-nav"
-          onClick={handleShow}
+          // onClick={handleShow}
         >
           {/* start to check */}
           {userInfo.imageUrl.slice(0, 3) !== "../" ? (
@@ -544,9 +548,20 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
 
   useEffect(() => {
     const closeEmojiContainer = (e) => {
+      console.log("Here is working right now inside modal line 558");
+
+      console.log("Event =>", e.target.classList.value);
+      console.log(
+        "Event parent element =>",
+        e.srcElement.parentElement.className
+      );
+      console.log("Event parent node =>", e.srcElement.parentNode.className);
       if (
         e.target.classList.contains("post-modal-emoji-picker") ||
-        e.srcElement.parentElement.className === "svg-border-parent show-emoji"
+        e.srcElement.parentElement.className ===
+          "svg-border-parent show-emoji" ||
+        e.srcElement.parentNode.className === "p-2" ||
+        e.target.classList.value === ""
       ) {
         setshowEmojisBar(false);
         console.log("Do not show emoji bar !");
@@ -783,22 +798,22 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
         <Modal.Footer className="post-modal-footer ml-1">
           <Stack direction="horizontal" gap={0}>
             {/* INFO */}
-            <div className="p-2">
+            <div
+              className="p-2 image-choose-p-2"
+              onClick={() => document.getElementById("formupload").click()}
+            >
               <div
                 style={{
                   // border: "1px solid black",
                   cursor: "pointer",
                   borderRadius: "50%",
                 }}
-                className="svg-border-parent"
+                className="svg-border-parent svg-border-parent-image-choose"
               >
                 <svg
                   style={{
                     cursor: "pointer",
                   }}
-                  onClick={() =>
-                    document.getElementById("formuploadModal").click()
-                  }
                   width={20}
                   height={20}
                   color="rgb(29,155,240)"
@@ -1578,7 +1593,10 @@ function CommentModal({
         >
           <Stack direction="horizontal" gap={0}>
             {/* INFO */}
-            <div className="p-2">
+            <div
+              className="p-2"
+              onClick={() => document.getElementById("formupload").click()}
+            >
               <div
                 style={{
                   // border: "1px solid black",
@@ -1591,9 +1609,6 @@ function CommentModal({
                   style={{
                     cursor: "pointer",
                   }}
-                  onClick={() =>
-                    document.getElementById("formuploadModal").click()
-                  }
                   width={20}
                   height={20}
                   color="rgb(29,155,240)"
