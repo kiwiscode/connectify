@@ -752,7 +752,7 @@ function MainPage() {
 
   useEffect(() => {
     const closeEmojiContainer = (e) => {
-      console.log("Event =>", e.target.classList);
+      console.log("Event =>", e.target.classList.value);
       console.log(
         "Event parent element =>",
         e.srcElement.parentElement.className
@@ -760,7 +760,10 @@ function MainPage() {
       console.log("Event parent node =>", e.srcElement.parentNode.className);
       if (
         e.target.classList.contains("post-modal-emoji-picker") ||
-        e.srcElement.parentElement.className === "svg-border-parent show-emoji"
+        e.srcElement.parentElement.className ===
+          "svg-border-parent show-emoji" ||
+        e.srcElement.parentNode.className === "p-2" ||
+        e.target.classList.value === ""
       ) {
         setshowEmojisBar(false);
         console.log("Do not show emoji bar !");
@@ -1093,7 +1096,10 @@ function MainPage() {
               className="responsive-stack-home-page-2"
             >
               {/* INFO */}
-              <div className="p-2">
+              <div
+                className="p-2"
+                onClick={() => document.getElementById("formupload").click()}
+              >
                 <div
                   style={{
                     // border: "1px solid black",
@@ -1106,9 +1112,6 @@ function MainPage() {
                     style={{
                       cursor: "pointer",
                     }}
-                    onClick={() =>
-                      document.getElementById("formupload").click()
-                    }
                     width={20}
                     height={20}
                     color="rgb(29,155,240)"
