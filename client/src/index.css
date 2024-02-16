@@ -1243,6 +1243,65 @@ span > a:hover {
   }
 }
 
+@media (min-width: 1602px) {
+  .responsive-comment-line-image-post-detail {
+    margin: 5px 0px 5px 2px;
+  }
+}
+
+@media (max-width: 1602px) and (min-width: 1560px) {
+  .responsive-comment-line-image-post-detail {
+    margin: 5px 0px 5px 2px;
+  }
+}
+@media (max-width: 1560px) and (min-width: 1500px) {
+  .responsive-comment-line-image-post-detail {
+    margin: 5px 0px 5px 6px;
+  }
+}
+
+@media (max-width: 1500px) and (min-width: 1451px) {
+  .responsive-comment-line-image-post-detail {
+    margin: 5px 0px 5px 6px;
+  }
+}
+
+@media (max-width: 1451px) and (min-width: 1400px) {
+  .responsive-comment-line-image-post-detail {
+    margin: 5px 0px 5px 10px;
+  }
+}
+
+@media (max-width: 1399px) {
+  .responsive-comment-line-image-post-detail {
+    margin: 5px 0px 5px 0px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .responsive-comment-line-image-post-detail {
+    margin: 5px 0px 5px 3px;
+  }
+}
+
+@media (max-width: 1150px) {
+  .responsive-comment-line-image-post-detail {
+    margin: 5px 0px 5px 5px;
+  }
+}
+
+@media (max-width: 1126px) {
+  .responsive-comment-line-image-post-detail {
+    margin: 5px 0px 5px 8px;
+  }
+}
+
+@media (max-width: 1044px) {
+  .responsive-comment-line-image-post-detail {
+    margin: 5px 0px 5px 10px;
+  }
+}
+
 @media (max-width: 410px) {
   .responsive-comment-line-parent-div {
     width: 42px !important;
