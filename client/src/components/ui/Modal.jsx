@@ -800,7 +800,7 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
             {/* INFO */}
             <div
               className="p-2 image-choose-p-2"
-              onClick={() => document.getElementById("formupload").click()}
+              onClick={() => document.getElementById("formuploadModal").click()}
             >
               <div
                 style={{
@@ -1595,7 +1595,7 @@ function CommentModal({
             {/* INFO */}
             <div
               className="p-2"
-              onClick={() => document.getElementById("formupload").click()}
+              onClick={() => document.getElementById("formuploadModal").click()}
             >
               <div
                 style={{
