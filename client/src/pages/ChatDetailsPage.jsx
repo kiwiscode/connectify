@@ -257,11 +257,12 @@ function ChatDetailsPage() {
 
   useEffect(() => {
     const closeEmojiContainer = (e) => {
+      console.log();
       if (
         e.target.classList.contains("chat-detail-emoji-picker") ||
         e.srcElement.parentElement.className ===
-          "svg-border-parent show-emoji" ||
-        e.srcElement.parentNode.className === "p-2" ||
+          "chat-detail-emoji-svg-border-parent" ||
+        e.srcElement.parentNode.className === "p-2 chat-detail-emoji" ||
         e.target.classList.value === ""
       ) {
         setshowEmojisBar(false);
@@ -718,7 +719,7 @@ function ChatDetailsPage() {
                   height={"400px"}
                 />
               </div> */}
-              <div className="p-2">
+              <div className="p-2 chat-detail-emoji">
                 {/* emoji mart start to check */}
 
                 <OverlayTrigger
@@ -727,7 +728,7 @@ function ChatDetailsPage() {
                   overlay={popoverTop}
                 >
                   <div
-                    className="svg-border-parent show-emoji"
+                    className="svg-border-parent chat-detail-emoji-svg-border-parent"
                     style={{
                       cursor: "pointer",
                       borderRadius: "50%",

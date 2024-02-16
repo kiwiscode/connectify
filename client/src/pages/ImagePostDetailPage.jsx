@@ -1217,12 +1217,12 @@ function PostDetailPage() {
             xs={12} // 0px - 576px aralığı
             sm={12} // 576px - 768px aralığı
             md={12} // 768px - 992px aralığı
-            lg={9} // 1200px - 1400px aralığı
+            lg={8} // 1200px - 1400px aralığı
             xxl={9} // 1400px ve sonrası aralığı
             // className={`main-column`}
             style={{
               justify: "left",
-              backgroundColor: "rgba(15, 15, 15, 0.9)", // 0.5 opaklık
+              backgroundColor: "black", // 0.5 opaklık
             }}
           >
             <div
@@ -1535,7 +1535,7 @@ function PostDetailPage() {
             xs={12} // 0px - 576px aralığı
             sm={12} // 576px - 768px aralığı
             md={6} // 768px - 992px aralığı
-            lg={3} // 1200px - 1400px aralığı
+            lg={4} // 1200px - 1400px aralığı
             xxl={3} // 1400px ve sonrası aralığı
             style={{
               height: "100%",
@@ -1566,60 +1566,6 @@ function PostDetailPage() {
                         textAlign: "center",
                       }}
                     >
-                      {/* <Link
-                              onClick={() =>
-                                redirectSpesificProfilePage(
-                                  commentedForThisUsersPost._id
-                                )
-                              }
-                              style={{ cursor: "pointer" }}
-                              to={`/profile/${commentedForThisUsersPost._id}`}
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="40"
-                                height="40"
-                                fill="rgb(83, 100, 113)"
-                                className="bi bi-person-circle"
-                                viewBox="0 0 16 16"
-                              >
-                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                              </svg>
-                            </Link>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                              }}
-                            >
-                              <div
-                                className="responsive-comment-line "
-                                style={{
-                                  border: "1px solid rgba(0, 0, 0, 0.2)",
-                                  margin: "5px 0px 5px 0px",
-                                  width: "2px",
-
-                                  height: `${
-                                    commentedForThisPost.content.length < 38
-                                      ? "60px"
-                                      : commentedForThisPost.content.length >=
-                                          38 &&
-                                        commentedForThisPost.content.length < 75
-                                      ? "80px"
-                                      : commentedForThisPost.content.length >=
-                                          75 &&
-                                        commentedForThisPost.content.length <=
-                                          140
-                                      ? "100px"
-                                      : "0px"
-                                  }`,
-                                }}
-                              ></div>
-                            </div>
-                         
-
                       {/* profile image start to check */}
                       <div>
                         {commentedForThisUsersPost._id ? (
@@ -1657,10 +1603,9 @@ function PostDetailPage() {
                                   }}
                                 >
                                   <div
-                                    className="responsive-comment-line"
+                                    className="responsive-comment-line-image-post-detail"
                                     style={{
                                       border: "1px solid rgba(0, 0, 0, 0.2)",
-                                      margin: "5px 0px 5px 0px",
                                       width: "2px",
                                       height: `${
                                         commentedForThisPost.content.length < 38
@@ -2570,7 +2515,9 @@ function PostDetailPage() {
                   color: "rgba(83,100,113,1.00)",
                 }}
               >
-                View post engagements
+                {detailedPost.userId._id === userInfo._id ? (
+                  <span>View post engagements</span>
+                ) : null}
               </div>
             </Stack>
             {/* view post engagements section finish to check
