@@ -127,7 +127,8 @@ function FollowerDetailPage() {
     });
   };
   // socket io 5 client finish to check
-
+  const [followersofthemonitoreduser, setfollowersofthemonitoreduser] =
+    useState([]);
   const getFollowers = () => {
     console.log("Receive people that you are following");
     axios
@@ -138,7 +139,7 @@ function FollowerDetailPage() {
       })
       .then((response) => {
         console.log("Response =>", response);
-
+        setfollowersofthemonitoreduser(response.data.user);
         setActiveTab("followers");
         setFollowers(response.data.followers);
       })
@@ -150,6 +151,37 @@ function FollowerDetailPage() {
   const handleGoBack = () => {
     navigate(-1);
   };
+  const [activeUserFollowing, setactiveUserFollowing] = useState([]);
+  const [clicked, setClicked] = useState(false);
+
+  const getActiveUser = () => {
+    axios
+      .get(`${API_URL}/profile`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        console.log("Response for active user =>", response);
+
+        setactiveUserFollowing(response.data.user.following);
+        console.log("Active user followers =>", activeUserFollowing);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  };
+  useEffect(() => {
+    getActiveUser();
+  }, [clicked]);
+
+  const checkActiveUserFollowerIds = () => {
+    return activeUserFollowing.map((eachFollowerUser) => {
+      return eachFollowerUser._id;
+    });
+  };
+
+  console.log("Followers =>", checkActiveUserFollowerIds);
 
   useEffect(() => {
     getFollowers();
@@ -374,8 +406,10 @@ function FollowerDetailPage() {
                   height: "100px",
                 }}
               >
-                <div>{userInfo.username}</div>
-                <div className="profile-paragraph">@{userInfo.username}</div>
+                <div>{followersofthemonitoreduser.username}</div>
+                <div className="profile-paragraph">
+                  @{followersofthemonitoreduser.username}
+                </div>
               </div>
             </Stack>
 
@@ -409,11 +443,9 @@ function FollowerDetailPage() {
               {followers
                 ? followers.map((user, index) => {
                     const buttonId = `followButton_${index}`;
-                    const isFollowing =
-                      user.followers.includes(userInfo._id) &&
-                      userInfo.following.some(
-                        (followedUser) => followedUser._id === user._id
-                      );
+                    const isFollowing = checkActiveUserFollowerIds().includes(
+                      user._id
+                    );
 
                     console.log(
                       "Clicked user followers before follow =>",
@@ -435,6 +467,7 @@ function FollowerDetailPage() {
                           }
                         )
                         .then((response) => {
+                          setClicked(!clicked);
                           // delete after unfollow also from localstorage start to check
                           const userInfoFromLocalStorage = JSON.parse(
                             localStorage.getItem("userInfo")
@@ -489,13 +522,13 @@ function FollowerDetailPage() {
                             activeUserIndex
                           );
 
-                          setTimeout(() => {
-                            setFollowers(followersArrayShallowCopy);
-                            handleClose();
-                            followersArrayShallowCopy[
-                              unfollowedUserIndex
-                            ].followers.splice(activeUserIndex, 1);
-                          }, 500);
+                          // setTimeout(() => {
+                          setFollowers(followersArrayShallowCopy);
+                          handleClose();
+                          followersArrayShallowCopy[
+                            unfollowedUserIndex
+                          ].followers.splice(activeUserIndex, 1);
+                          // }, 500);
 
                           console.log("Response =>", response);
                         })
@@ -519,6 +552,7 @@ function FollowerDetailPage() {
                           }
                         )
                         .then((response) => {
+                          setClicked(!clicked);
                           console.log("Response =>", response);
 
                           console.log("Selected user =>", selectedUser);
@@ -668,27 +702,30 @@ function FollowerDetailPage() {
                               className="username"
                             >
                               <span>@{user.username}</span>
-                              <span
-                                style={{
-                                  position: "absolute",
-                                  textAlign: "center",
-                                  top: "4px",
-                                  marginLeft: "4px",
-                                  fontWeight: "500",
-                                  lineHeight: "10px",
-                                  color: "rgb(83, 100, 113)",
-                                  fontSize: "11px",
-                                  wordWrap: "break-word",
-                                  whiteSpace: "nowrap",
-                                  backgroundColor: "rgba(239,243,244,1.00)",
-                                  borderRadius: "3px",
-                                  padding: "4px",
-                                  overflowX: "hidden",
-                                  overflowY: "hidden",
-                                }}
-                              >
-                                Follows you
-                              </span>
+
+                              {user._id !== userInfo._id ? (
+                                <span
+                                  style={{
+                                    position: "absolute",
+                                    textAlign: "center",
+                                    top: "3px",
+                                    marginLeft: "4px",
+                                    fontWeight: "500",
+                                    lineHeight: "10px",
+                                    color: "rgb(83, 100, 113)",
+                                    fontSize: "11px",
+                                    wordWrap: "break-word",
+                                    whiteSpace: "nowrap",
+                                    backgroundColor: "rgba(239,243,244,1.00)",
+                                    borderRadius: "3px",
+                                    padding: "4px",
+                                    overflowX: "hidden",
+                                    overflowY: "hidden",
+                                  }}
+                                >
+                                  Follows you
+                                </span>
+                              ) : null}
                             </div>
                           </div>
                           {/* Verified Account Icon (Assuming 'verified' is a boolean property) */}
@@ -722,15 +759,23 @@ function FollowerDetailPage() {
                                 : handleFollow(user)
                             }
                             className="follow-following-section-followers ms-auto"
-                            style={buttonStyles ? buttonStyles : null}
+                            style={
+                              buttonStyles && user._id !== userInfo._id
+                                ? buttonStyles
+                                : null
+                            }
                             onMouseEnter={isFollowing ? handleMouseEnter : null}
                             onMouseLeave={handleMouseLeave}
                           >
-                            {isFollowing
-                              ? isHovered === buttonId && isFollowing
-                                ? "Unfollow"
-                                : "Following"
-                              : "Follow"}
+                            {user._id !== userInfo._id ? (
+                              <>
+                                {isFollowing
+                                  ? isHovered === buttonId
+                                    ? "Unfollow"
+                                    : "Following"
+                                  : "Follow"}
+                              </>
+                            ) : null}
                           </div>
                           {/* Following or unfollow Button finish to check */}
                           {/* unfollow modal start to check  */}

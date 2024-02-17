@@ -221,7 +221,7 @@ const getFollowers = (req, res) => {
     .populate("following")
     .populate("followers")
     .then((user) => {
-      res.status(200).json({ followers: user.followers });
+      res.status(200).json({ followers: user.followers, user: user });
     })
     .catch(() => {
       res.status(404).json({ errorMessage: "User not found !" });
@@ -238,7 +238,7 @@ const getFollowing = (req, res) => {
     .populate("following")
     .populate("followers")
     .then((user) => {
-      res.status(200).json({ following: user.following });
+      res.status(200).json({ following: user.following, user: user });
     })
     .catch(() => {
       res.status(404).json({ errorMessage: "User not found !" });

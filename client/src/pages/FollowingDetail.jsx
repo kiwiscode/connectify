@@ -55,7 +55,6 @@ function FollowingDetailPage() {
   };
   // finish to check
 
-  console.log("Profile id or spesific user profile id =>", userId);
   const { getToken, userInfo, socket } = useContext(UserContext);
 
   const [following, setFollowing] = useState([]);
@@ -66,21 +65,35 @@ function FollowingDetailPage() {
   // socket io 1 client start to check
   const [notificationTest, setnotificationTest] = useState([]);
   const [notificationText, setnotificationText] = useState([]);
+  const [activeUserFollowing, setactiveUserFollowing] = useState([]);
+  const [clicked, setClicked] = useState(false);
+  const getActiveUser = () => {
+    axios
+      .get(`${API_URL}/profile`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        setactiveUserFollowing(response.data.user.following);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  };
+  useEffect(() => {
+    getActiveUser();
+  }, [clicked]);
 
-  const openUnfollowModal = (selectedUser) => {
-    console.log("Selected user =>", selectedUser);
-
-    setSelectedUser(selectedUser);
-
-    setshowUnfollowModal(true);
+  const checkActiveUserFollowingIds = () => {
+    return activeUserFollowing.map((eachFollowedUser) => {
+      return eachFollowedUser._id;
+    });
   };
 
   // socket io 4 client start to check
   useEffect(() => {
-    console.log("Hello worldddddd");
     socket.on("socket_id_for_user", (socketId) => {
-      console.log("socket id received from backend =>", socketId);
-
       localStorage.setItem("socketId", socketId);
     });
 
@@ -90,7 +103,6 @@ function FollowingDetailPage() {
 
   useEffect(() => {
     socket.on("getNotification", (data) => {
-      console.log("Data =>", data);
       if (data.senderName !== userInfo.username) {
         setnotificationTest((prev) => [...prev, data]);
       } else {
@@ -151,10 +163,19 @@ function FollowingDetailPage() {
     };
   };
 
+  const openUnfollowModal = (selectedUser) => {
+    setSelectedUser(selectedUser);
+    setIsHovered(false);
+    setshowUnfollowModal(true);
+
+    console.log("Current hovered value =>", isHovered);
+  };
+
   const handleClose = () => setshowUnfollowModal(false);
 
+  const [followingofthemonitoreduser, setfollowingofthemonitoreduser] =
+    useState([]);
   const getFollowing = () => {
-    console.log("Receive people that you are following");
     axios
       .get(`${API_URL}/profile/${userId}/following`, {
         headers: {
@@ -162,8 +183,7 @@ function FollowingDetailPage() {
         },
       })
       .then((response) => {
-        console.log("Response =>", response);
-
+        setfollowingofthemonitoreduser(response.data.user);
         setActiveTab("following");
         setFollowing(response.data.following);
       })
@@ -171,6 +191,20 @@ function FollowingDetailPage() {
         console.log("Error =>", error);
       });
   };
+
+  // socket io 5 client start to check
+  const handleNotification = (selectedUser, userInfo, type) => {
+    console.log("Sending notification to => ", selectedUser.username);
+
+    socket.emit("sendNotification", {
+      senderName: userInfo.username,
+      receiverName: selectedUser.username,
+      type: type,
+      contactHasBeenMade: userInfo,
+      senderInfo: userInfo,
+    });
+  };
+  // socket io 5 client finish to check
 
   return (
     <>
@@ -360,8 +394,10 @@ function FollowingDetailPage() {
                   height: "100px",
                 }}
               >
-                <div>{userInfo.username}</div>
-                <div className="profile-paragraph">@{userInfo.username}</div>
+                <div>{followingofthemonitoreduser.username}</div>
+                <div className="profile-paragraph">
+                  @{followingofthemonitoreduser.username}
+                </div>
               </div>
             </Stack>
 
@@ -395,8 +431,12 @@ function FollowingDetailPage() {
               ? following.map((user, index) => {
                   const buttonId = `followButton_${index}`;
 
+                  const isFollowing = checkActiveUserFollowingIds().includes(
+                    user._id
+                  );
+
+                  console.log("Is following =>", isFollowing);
                   const handleUnfollow = (selectedUser) => {
-                    console.log("Selected user =>", selectedUser);
                     axios
                       .post(
                         `${API_URL}/unfollow
@@ -411,14 +451,13 @@ function FollowingDetailPage() {
                           },
                         }
                       )
-                      .then((response) => {
+                      .then(() => {
+                        // getActiveUser();
+                        setClicked(!clicked);
                         // delete after unfollow also from localstorage start to check
-
                         const userInfoFromLocalStorage = JSON.parse(
                           localStorage.getItem("userInfo")
                         );
-
-                        console.log("User info =>", userInfoFromLocalStorage);
 
                         const followedUser =
                           userInfoFromLocalStorage.following.find(
@@ -442,21 +481,85 @@ function FollowingDetailPage() {
                           JSON.stringify(userInfoFromLocalStorage)
                         );
                         // delete after unfollow also from localstorage finish to check
+                        const followings = [...following];
+                        // setTimeout(() => {
+                        const newFollowingArray =
+                          followings.indexOf(selectedUser);
 
-                        setTimeout(() => {
-                          const newFollowingArray =
-                            following.indexOf(selectedUser);
-                          following.splice(newFollowingArray, 1);
-                          console.log("Response =>", response);
+                        if (userId === userInfo._id) {
+                          followings.splice(newFollowingArray, 1);
+                          setFollowing(followings);
+                          setIsHovered(false);
+                          console.log("Is still following 1 =>", isFollowing);
 
-                          handleClose();
-                        }, 500);
+                          console.log(
+                            "Is following current after handle unfollow =>",
+                            isFollowing
+                          );
+                        } else {
+                          const filteredArray = followings[
+                            newFollowingArray
+                          ].followers.filter((eachFollower) => {
+                            return eachFollower !== userInfo._id;
+                          });
+                          console.log("Is still following 2 =>", isFollowing);
+                          setFollowing((prevState) => {
+                            const newData = [...prevState];
+
+                            newData[newFollowingArray] = {
+                              ...newData[newFollowingArray],
+                              followers: filteredArray,
+                            };
+
+                            return newData;
+                          });
+                          setIsHovered(false);
+
+                          console.log(
+                            "Is following current after handle unfollow =>",
+                            isFollowing
+                          );
+                        }
+
+                        handleClose();
+                        // }, 500);
                       })
                       .catch((error) => {
                         console.log("Error =>", error);
                       });
+                  };
 
-                    setIsHovered(buttonId);
+                  const handleFollow = (selectedUser) => {
+                    axios
+                      .post(
+                        `${API_URL}/follow`,
+                        {
+                          activeUserId: userInfo._id,
+                          theFollowedUserID: user._id,
+                        },
+                        {
+                          headers: {
+                            Authorization: `Bearer ${getToken()}`,
+                          },
+                        }
+                      )
+                      .then(() => {
+                        // getActiveUser();
+                        setClicked(!clicked);
+                        handleNotification(selectedUser, userInfo, "followed");
+                        console.log("sELECTED uSer =>", selectedUser);
+
+                        setIsHovered(false);
+                        console.log("Is still following 3 =>", isFollowing);
+
+                        console.log(
+                          "Is following current after handle follow =>",
+                          isFollowing
+                        );
+                      })
+                      .catch((error) => {
+                        console.log(error);
+                      });
                   };
 
                   const handleMouseEnter = () => {
@@ -464,18 +567,13 @@ function FollowingDetailPage() {
                   };
 
                   const handleMouseLeave = () => {
-                    setIsHovered(null);
+                    setIsHovered(false);
                   };
 
                   const buttonStyles = {
                     cursor: "pointer",
                     minWidth: "25%",
                     textAlign: "center",
-
-                    border:
-                      isHovered === buttonId
-                        ? "1px solid rgba(253,201,206,255)"
-                        : "1px solid rgb(185, 202, 211)",
                     paddingLeft: "16px",
                     paddingRight: "16px",
                     borderRadius: "9999px",
@@ -485,10 +583,24 @@ function FollowingDetailPage() {
                     padding: "5px",
                     marginRight: "15px",
                     transitionDuration: "0.2s",
+                    border:
+                      isHovered === buttonId && isFollowing
+                        ? "1px solid rgba(253,201,206,255)"
+                        : isFollowing
+                        ? "1px solid rgba(0, 0, 0, 0.1)"
+                        : "1px solid rgb(185, 202, 211)",
                     backgroundColor:
-                      isHovered === buttonId ? "rgba(255,234,235,255)" : null,
+                      isHovered === buttonId && isFollowing
+                        ? "rgba(255,234,235,255)"
+                        : isFollowing
+                        ? "white"
+                        : "black",
                     color:
-                      isHovered === buttonId ? "rgba(244,34,45,255)" : null,
+                      isHovered === buttonId && isFollowing
+                        ? "rgba(244,34,45,255)"
+                        : isFollowing
+                        ? "black"
+                        : "white",
                   };
 
                   return (
@@ -539,10 +651,34 @@ function FollowingDetailPage() {
                               fontWeight: "400",
                               lineHeight: "20px",
                               color: "rgb(83, 100, 113)",
+                              position: "relative",
                             }}
                             className="username"
                           >
                             @{user.username}
+                            {user._id !== userInfo._id ? (
+                              <span
+                                style={{
+                                  position: "absolute",
+                                  textAlign: "center",
+                                  top: "3px",
+                                  marginLeft: "4px",
+                                  fontWeight: "500",
+                                  lineHeight: "10px",
+                                  color: "rgb(83, 100, 113)",
+                                  fontSize: "11px",
+                                  wordWrap: "break-word",
+                                  whiteSpace: "nowrap",
+                                  backgroundColor: "rgba(239,243,244,1.00)",
+                                  borderRadius: "3px",
+                                  padding: "4px",
+                                  overflowX: "hidden",
+                                  overflowY: "hidden",
+                                }}
+                              >
+                                Follows you
+                              </span>
+                            ) : null}
                           </div>
                         </div>
                         {/* Verified Account Icon (Assuming 'verified' is a boolean property) */}
@@ -571,12 +707,28 @@ function FollowingDetailPage() {
                         {/* Following Button */}
                         <div
                           className="follow-following-section-spesific-profile ms-auto"
-                          style={buttonStyles}
+                          style={
+                            buttonStyles && user._id !== userInfo._id
+                              ? buttonStyles
+                              : null
+                          }
                           onMouseEnter={handleMouseEnter}
                           onMouseLeave={handleMouseLeave}
-                          onClick={() => openUnfollowModal(user)}
+                          onClick={() =>
+                            isFollowing
+                              ? openUnfollowModal(user)
+                              : handleFollow(user)
+                          }
                         >
-                          {isHovered === buttonId ? "Unfollow" : "Following"}
+                          {user._id !== userInfo._id ? (
+                            <>
+                              {isFollowing
+                                ? isHovered === buttonId
+                                  ? "Unfollow"
+                                  : "Following"
+                                : "Follow"}
+                            </>
+                          ) : null}
                         </div>
                         {/* unfollow modal start to check  */}
                         <Modal show={showUnfollowModal} onHide={handleClose}>

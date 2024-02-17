@@ -103,80 +103,6 @@ function SpesificUserProfile() {
   const handleShow = () => setshowUnfollowModal(true);
   // follow unfollow logic finish to check
 
-  const handleFollow = () => {
-    if (getFollowerIds(profileInfo.followers).includes(userInfo._id)) {
-      console.log("You are following this profile show unfollow modal!");
-      handleShow();
-    } else {
-      console.log("You are not following this profile follow !");
-
-      axios
-        .post(
-          `${API_URL}/follow`,
-          {
-            activeUserId: userInfo._id,
-            theFollowedUserID: profileInfo._id,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${getToken()}`,
-            },
-          }
-        )
-        .then((response) => {
-          console.log("Response =>", response);
-
-          // change the userInfo who followed user start to check
-
-          const userInfoFromLocalStorage = JSON.parse(
-            localStorage.getItem("userInfo")
-          );
-
-          console.log("User info =>", userInfoFromLocalStorage);
-
-          userInfoFromLocalStorage.following.unshift(profileInfo);
-
-          localStorage.setItem(
-            "userInfo",
-            JSON.stringify(userInfoFromLocalStorage)
-          );
-
-          // change the userInfo who followed user finish to check
-
-          setTimeout(() => {
-            // start to check animation basic
-            if (postsWindow === "hide") {
-              setShow("");
-              handleShowSpesificUserProfilePageFavorites();
-            } else if (favoriteWindow === "hide") {
-              setShow("");
-              handleShowSpesificUserProfilePagePosts();
-            }
-            // finish to check animation basic
-
-            setProfileInfo((prevProfileInfo) => {
-              if (Array.isArray(prevProfileInfo.followers)) {
-                const updatedFollowers = [
-                  ...prevProfileInfo.followers,
-                  userInfo._id,
-                ];
-
-                return {
-                  ...prevProfileInfo,
-                  followers: updatedFollowers,
-                };
-              }
-
-              return prevProfileInfo;
-            });
-          }, 500);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-  };
-
   const handleUnfollow = () => {
     if (getFollowerIds(profileInfo.followers).includes(userInfo._id)) {
       axios
@@ -353,17 +279,102 @@ function SpesificUserProfile() {
 
   // socket io 5 client start to check
   const handleNotification = (post, userInfo, type) => {
-    console.log("Sending notification to => ", post.userId.username);
-
+    console.log(
+      post.userId
+        ? post.userId.username
+        : post.username
+        ? post.username
+        : "null"
+    );
     socket.emit("sendNotification", {
       senderName: userInfo.username,
-      receiverName: post.userId.username,
+      receiverName: post.userId
+        ? post.userId.username
+        : post.username
+        ? post.username
+        : null,
       type: type,
       contactHasBeenMade: post,
       senderInfo: userInfo,
     });
   };
   // socket io 5 client finish to check
+
+  const handleFollow = () => {
+    if (getFollowerIds(profileInfo.followers).includes(userInfo._id)) {
+      console.log("You are following this profile show unfollow modal!");
+      handleShow();
+    } else {
+      console.log("You are not following this profile follow !");
+
+      axios
+        .post(
+          `${API_URL}/follow`,
+          {
+            activeUserId: userInfo._id,
+            theFollowedUserID: profileInfo._id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
+          }
+        )
+        .then((response) => {
+          console.log("Response =>", response);
+          console.log("sELECTED uSer =>", profileInfo);
+          handleNotification(profileInfo, userInfo, "followed");
+
+          // change the userInfo who followed user start to check
+
+          const userInfoFromLocalStorage = JSON.parse(
+            localStorage.getItem("userInfo")
+          );
+
+          console.log("User info =>", userInfoFromLocalStorage);
+
+          userInfoFromLocalStorage.following.unshift(profileInfo);
+
+          localStorage.setItem(
+            "userInfo",
+            JSON.stringify(userInfoFromLocalStorage)
+          );
+
+          // change the userInfo who followed user finish to check
+
+          setTimeout(() => {
+            // start to check animation basic
+            if (postsWindow === "hide") {
+              setShow("");
+              handleShowSpesificUserProfilePageFavorites();
+            } else if (favoriteWindow === "hide") {
+              setShow("");
+              handleShowSpesificUserProfilePagePosts();
+            }
+            // finish to check animation basic
+
+            setProfileInfo((prevProfileInfo) => {
+              if (Array.isArray(prevProfileInfo.followers)) {
+                const updatedFollowers = [
+                  ...prevProfileInfo.followers,
+                  userInfo._id,
+                ];
+
+                return {
+                  ...prevProfileInfo,
+                  followers: updatedFollowers,
+                };
+              }
+
+              return prevProfileInfo;
+            });
+          }, 500);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
 
   // start to check
   // NOTE must sorted

@@ -863,6 +863,23 @@ function UserProfile() {
     setshowUnfollowModal(true);
   };
 
+  const [activeUserFollowing, setactiveUserFollowing] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/profile`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        setactiveUserFollowing(response.data.user.following);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  }, []);
+
   return (
     <>
       <ToastContainer />
@@ -1208,6 +1225,11 @@ function UserProfile() {
                           )
                           .then((response) => {
                             console.log("Response =>", response);
+                            handleNotification(
+                              selectedUser,
+                              userInfo,
+                              "followed"
+                            );
 
                             // change the userInfo who followed user start to check
                             const userInfoFromLocalStorage = JSON.parse(
@@ -1916,8 +1938,8 @@ function UserProfile() {
                           lineHeight: "20px",
                         }}
                       >
-                        {userInfo.following && (
-                          <span>{userInfo.following.length}</span>
+                        {activeUserFollowing && (
+                          <span>{activeUserFollowing.length}</span>
                         )}
                       </span>{" "}
                       <span
