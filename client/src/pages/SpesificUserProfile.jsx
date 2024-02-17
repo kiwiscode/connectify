@@ -50,13 +50,13 @@ function SpesificUserProfile() {
     window.location.reload();
   };
 
-  const redirectFollowersPage = () => {
-    navigate(`/profile/followers`);
+  const redirectFollowersPage = (userId) => {
+    navigate(`/profile/${userId}/followers`);
     window.location.reload();
   };
 
-  const redirectFollowingPage = () => {
-    navigate(`/profile/following`);
+  const redirectFollowingPage = (userId) => {
+    navigate(`/profile/${userId}/following`);
     window.location.reload();
   };
 
@@ -1873,9 +1873,9 @@ function SpesificUserProfile() {
                   </div>
                   <div>
                     <Link
-                      to={"/profile/following"}
+                      to={`/profile/${profileInfo._id}/following`}
                       className="following-followers-link"
-                      onClick={redirectFollowingPage}
+                      onClick={() => redirectFollowingPage(profileInfo._id)}
                       style={{
                         textDecoration: "none",
                         color: "black",
@@ -1904,9 +1904,9 @@ function SpesificUserProfile() {
                       </span>{" "}
                     </Link>
                     <Link
-                      to={"/profile/followers"}
+                      to={`/profile/${profileInfo._id}/followers`}
                       className="following-followers-link"
-                      onClick={redirectFollowersPage}
+                      onClick={() => redirectFollowersPage(profileInfo._id)}
                       style={{
                         textDecoration: "none",
                         color: "black",

@@ -2,7 +2,7 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserContext";
 import { Container, Row, Col, Stack, Button, Modal } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { LogoutModal, PostModal } from "../components/ui/Modal";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import ResponsiveNavigationBarTop from "../components/Navbar/ResponsiveNavigationTop";
@@ -15,6 +15,8 @@ const API_URL = "http://localhost:3000";
 // ?
 
 function FollowingDetailPage() {
+  const { userId } = useParams();
+
   // start to check
   const navigate = useNavigate();
   const redirectToMessages = () => {
@@ -42,17 +44,18 @@ function FollowingDetailPage() {
     window.location.reload();
   };
 
-  const redirectFollowersPage = () => {
-    navigate(`/profile/followers`);
+  const redirectFollowersPage = (userId) => {
+    navigate(`/profile/${userId}/followers`);
     window.location.reload();
   };
 
-  const redirectFollowingPage = () => {
-    navigate(`/profile/following`);
+  const redirectFollowingPage = (userId) => {
+    navigate(`/profile/${userId}/following`);
     window.location.reload();
   };
   // finish to check
 
+  console.log("Profile id or spesific user profile id =>", userId);
   const { getToken, userInfo, socket } = useContext(UserContext);
 
   const [following, setFollowing] = useState([]);
@@ -153,7 +156,7 @@ function FollowingDetailPage() {
   const getFollowing = () => {
     console.log("Receive people that you are following");
     axios
-      .get(`${API_URL}/profile/following`, {
+      .get(`${API_URL}/profile/${userId}/following`, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
@@ -369,13 +372,13 @@ function FollowingDetailPage() {
               }}
             >
               <span
-                onClick={redirectFollowersPage}
+                onClick={() => redirectFollowersPage(userId)}
                 style={getTabStyle("followers")}
               >
                 Followers
               </span>
               <span
-                onClick={redirectFollowingPage}
+                onClick={() => redirectFollowingPage(userId)}
                 style={getTabStyle("following")}
               >
                 Following

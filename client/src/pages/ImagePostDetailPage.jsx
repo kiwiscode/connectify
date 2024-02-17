@@ -2515,8 +2515,12 @@ function PostDetailPage() {
                   color: "rgba(83,100,113,1.00)",
                 }}
               >
-                {detailedPost.userId._id === userInfo._id ? (
-                  <span>View post engagements</span>
+                {detailedPost.userId ? (
+                  <>
+                    {detailedPost.userId._id === userInfo._id ? (
+                      <span>View post engagements</span>
+                    ) : null}
+                  </>
                 ) : null}
               </div>
             </Stack>

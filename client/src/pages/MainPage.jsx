@@ -812,7 +812,7 @@ function MainPage() {
           <Col className="left-column" xs={12} sm={12} md={1} lg={3} xxl={3}>
             <nav className="nav-bar-home">
               <Link href="/home">
-                <div>
+                <div className="chevron-left-parent">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="30"
@@ -827,7 +827,7 @@ function MainPage() {
                 </div>
               </Link>
 
-              <div className="inner-div-fonts inner-div ">
+              <div className="inner-div-fonts inner-div">
                 <Link to="/home">
                   <div className="home">
                     <div>

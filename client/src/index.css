@@ -260,7 +260,7 @@ span > a:hover {
 }
 .inner-div div span {
   /* background-color: blue; */
-  padding: 12px;
+  padding: 10px;
 }
 
 .inner-div svg {
@@ -881,10 +881,6 @@ span > a:hover {
   margin: auto;
 }
 
-.login-button {
-  /* width: 40%; */
-}
-
 .svg-border-parent:hover,
 .send-button:hover {
   background-color: #dceaf4;
@@ -913,7 +909,100 @@ span > a:hover {
 
 /* start to check responsiveness implementation  */
 
-/* Navigation bar nav-bar-home ve left-bar-column responsive ayarları */
+/* navigation bar hover effect => start to check  */
+@media (max-width: 991px) and (min-width: 768px) {
+  .home:hover,
+  .notifications:hover,
+  .messages:hover,
+  .profile:hover {
+    background-color: initial !important;
+  }
+
+  .inner-div-fonts {
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  .inner-div a div div svg {
+    width: 36px;
+    height: 36px;
+    position: relative !important;
+    bottom: 2px !important;
+    padding: 0px 6px 0px 6px !important;
+    border-radius: 49% !important;
+  }
+
+  .inner-div a div div svg:hover {
+    background-color: #e7e7e8;
+  }
+}
+
+@media (max-width: 767px) and (min-width: 576px) {
+  .home:hover,
+  .notifications:hover,
+  .messages:hover,
+  .profile:hover {
+    background-color: initial !important;
+  }
+
+  .inner-div-fonts {
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  .inner-div a div {
+    position: relative !important;
+    right: 2px;
+  }
+
+  .inner-div a div div svg {
+    width: 36px;
+    height: 36px;
+    position: relative !important;
+    bottom: 2px !important;
+    padding: 0px 6px 0px 6px !important;
+    border-radius: 49% !important;
+  }
+
+  .inner-div a div div svg:hover {
+    background-color: #e7e7e8;
+  }
+}
+
+@media (max-width: 575px) and (min-width: 465px) {
+  .home:hover,
+  .notifications:hover,
+  .messages:hover,
+  .profile:hover {
+    background-color: initial !important;
+  }
+
+  .inner-div-fonts {
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  .inner-div a div {
+    position: relative !important;
+    right: 1px;
+  }
+
+  .inner-div a div div svg {
+    width: 36px;
+    height: 36px;
+    position: relative !important;
+    bottom: 2px !important;
+    padding: 0px 6px 0px 6px !important;
+    border-radius: 49% !important;
+  }
+
+  .inner-div a div div svg:hover {
+    background-color: #e7e7e8;
+  }
+}
+/* navigation bar hover effect => finish to check  */
+
+/* Navigation bar nav-bar-home ve left-bar-column responsive ayarları start to check */
 
 @media (max-width: 991px) and (min-width: 768px) {
   .main-column {
@@ -921,7 +1010,8 @@ span > a:hover {
   }
 
   .nav-bar-home {
-    background-color: beige;
+    /* background-color: beige; */
+    /* margin-left: 86; */
   }
 
   .left-column {
@@ -939,9 +1029,8 @@ span > a:hover {
     display: none !important;
   }
 
-  .nav-bar-home div a div div svg,
   .bi-chevron-double-left {
-    margin-left: 15px;
+    margin-left: 11px;
   }
 
   .bi-chevron-double-left,
@@ -970,6 +1059,7 @@ span > a:hover {
 
   .compose-tweet-svg {
     display: inline !important;
+
     width: 24px !important;
     height: 24px !important;
   }
@@ -979,6 +1069,15 @@ span > a:hover {
     position: relative !important;
     right: 8px !important;
   }
+
+  .inner-div {
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .compose-tweet-2 {
+    margin-left: 10px !important;
+  }
 }
 
 @media (max-width: 767px) and (min-width: 576px) {
@@ -987,7 +1086,7 @@ span > a:hover {
   }
 
   .nav-bar-home {
-    background-color: royalblue;
+    /* background-color: royalblue; */
   }
 
   .left-column {
@@ -1053,7 +1152,7 @@ span > a:hover {
   }
 
   .nav-bar-home {
-    background-color: rosybrown;
+    /* background-color: rosybrown; */
   }
 
   .left-column {
@@ -1071,8 +1170,7 @@ span > a:hover {
     display: none !important;
   }
 
-  .nav-bar-home div a div div svg,
-  .bi-chevron-double-left {
+  .nav-bar-home div a div div svg {
     margin-left: 15px;
   }
 
@@ -1113,7 +1211,45 @@ span > a:hover {
   .responsive-post-button {
     display: none !important;
   }
+
+  .inner-div {
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .compose-tweet-2 {
+    margin-left: 10px !important;
+  }
+
+  .bi-chevron-double-left {
+    margin-left: 15px;
+  }
 }
+
+@media (max-width: 550px) and (min-width: 465px) {
+  .bi-chevron-double-left {
+    margin-left: 14px;
+  }
+}
+
+@media (max-width: 526px) and (min-width: 465px) {
+  .bi-chevron-double-left {
+    margin-left: 12px;
+  }
+}
+
+@media (max-width: 500px) and (min-width: 465px) {
+  .bi-chevron-double-left {
+    margin-left: 11px;
+  }
+}
+
+@media (max-width: 471px) and (min-width: 465px) {
+  .bi-chevron-double-left {
+    margin-left: 10px;
+  }
+}
+/* Navigation bar nav-bar-home ve left-bar-column responsive ayarları finish to check */
 
 @media (max-width: 768px) and (min-width: 281px) {
   .header-first {
@@ -1196,7 +1332,7 @@ span > a:hover {
   }
 
   .inner-div div div:hover {
-    background-color: #e7e7e8 !important;
+    /* background-color: #e7e7e8 !important; */
   }
 
   .compose-tweet-2 {

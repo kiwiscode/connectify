@@ -213,7 +213,9 @@ const handleProfilePicture = (req, res) => {
 const getFollowers = (req, res) => {
   console.log("Route is working !");
 
-  const { userId } = req.user;
+  const { userId } = req.params;
+
+  console.log("Clicked user id =>", userId);
 
   User.findById(userId)
     .populate("following")
@@ -226,7 +228,11 @@ const getFollowers = (req, res) => {
     });
 };
 const getFollowing = (req, res) => {
-  const { userId } = req.user;
+  const { userId } = req.params;
+
+  console.log("Clicked user id =>", userId);
+
+  // const { userId } = req.user;
 
   User.findById(userId)
     .populate("following")

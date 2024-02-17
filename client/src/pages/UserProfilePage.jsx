@@ -54,13 +54,13 @@ function UserProfile() {
     window.location.reload();
   };
 
-  const redirectFollowersPage = () => {
-    navigate(`/profile/followers`);
+  const redirectFollowersPage = (userId) => {
+    navigate(`/profile/${userId}/followers`);
     window.location.reload();
   };
 
-  const redirectFollowingPage = () => {
-    navigate(`/profile/following`);
+  const redirectFollowingPage = (userId) => {
+    navigate(`/profile/${userId}/following`);
     window.location.reload();
   };
 
@@ -832,55 +832,6 @@ function UserProfile() {
 
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
-
-  const getFollowing = () => {
-    console.log("Receive people that you are following");
-    axios
-      .get(`${API_URL}/profile/following`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        console.log("Response =>", response);
-
-        showFollowingFollowersDetail("");
-        setshowMainColumn("hide");
-
-        setActiveTab("following");
-        setShowFollowing(true);
-        setShowFollowers(false);
-
-        setFollowing(response.data.following);
-      })
-      .catch((error) => {
-        console.log("Error =>", error);
-      });
-  };
-
-  const getFollowers = () => {
-    console.log("Receive people who followed you");
-
-    axios
-      .get(`${API_URL}/profile/followers`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        console.log("Response =>", response);
-
-        setFollowers(response.data.followers);
-        showFollowingFollowersDetail("");
-        setshowMainColumn("hide");
-        setActiveTab("followers");
-        setShowFollowers(true);
-        setShowFollowing(false);
-      })
-      .catch((error) => {
-        console.log("Error =>", error);
-      });
-  };
 
   console.log("Following =>", following);
   console.log("Followers =>", followers);
@@ -1953,8 +1904,8 @@ function UserProfile() {
                   <div>
                     {/* following and followers details start to check  */}
                     <Link
-                      to={"/profile/following"}
-                      onClick={redirectFollowingPage}
+                      to={`/profile/${userInfo._id}/following`}
+                      onClick={() => redirectFollowingPage(userInfo._id)}
                       style={{ textDecoration: "none", color: "black" }}
                       className="following-followers-link"
                     >
@@ -1982,8 +1933,8 @@ function UserProfile() {
                       </span>{" "}
                     </Link>
                     <Link
-                      to={"/profile/followers"}
-                      onClick={redirectFollowersPage}
+                      to={`/profile/${userInfo._id}/followers`}
+                      onClick={() => redirectFollowersPage(userInfo._id)}
                       className="following-followers-link"
                       style={{ textDecoration: "none", color: "black" }}
                     >
