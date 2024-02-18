@@ -5,8 +5,16 @@ const authenticateToken = require("../middleware/jwtMiddleware");
 
 router.get("/", authenticateToken, profileController.handleProfile);
 
-router.get("/followers", authenticateToken, profileController.getFollowers);
-router.get("/following", authenticateToken, profileController.getFollowing);
+router.get(
+  "/:userId/followers",
+  authenticateToken,
+  profileController.getFollowers
+);
+router.get(
+  "/:userId/following",
+  authenticateToken,
+  profileController.getFollowing
+);
 
 router.get(
   "/:id",

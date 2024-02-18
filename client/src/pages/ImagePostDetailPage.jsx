@@ -6,6 +6,8 @@ import { PostModal, LogoutModal, CommentModal } from "../components/ui/Modal";
 import { UserContext } from "../context/UserContext";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import CustomNotification from "../components/Notifications/CustomNotification";
+import PostEngagements from "../components/ui/PostEngagementsModal";
+
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -1201,7 +1203,15 @@ function PostDetailPage() {
   };
 
   console.log("Commented for this users post =>", commentedForThisUsersPost);
-
+  const handleFollowingNotification = (selectedUser, userInfo, type) => {
+    socket.emit("sendNotification", {
+      senderName: userInfo.username,
+      receiverName: selectedUser.username,
+      type: type,
+      contactHasBeenMade: selectedUser,
+      senderInfo: userInfo,
+    });
+  };
   return (
     <>
       <ToastContainer />
@@ -2211,6 +2221,7 @@ function PostDetailPage() {
                   xxl={2}
                   style={{
                     textAlign: "center",
+                    padding: "6px 0px 6px 0px",
                   }}
                 >
                   {/* profile image start to check */}
@@ -2486,39 +2497,10 @@ function PostDetailPage() {
               }}
               gap={0}
             >
-              <div className="p-2">
-                <svg
-                  style={{
-                    paddingRight: "4px",
-                    color: "rgba(83,100,113,1.00)",
-                  }}
-                  width={`${1.25}em`}
-                  height={`${1.25}em`}
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1hvjb8t"
-                  fill="currentColor"
-                >
-                  <g>
-                    <path d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"></path>
-                  </g>
-                </svg>
-              </div>
-              <div
-                className="p-0"
-                style={{
-                  position: "relative",
-                  top: "1px",
-                  fontSize: "15px",
-                  lineHeight: "20px",
-                  fontWeight: "400",
-                  color: "rgba(83,100,113,1.00)",
-                }}
-              >
-                {detailedPost.userId._id === userInfo._id ? (
-                  <span>View post engagements</span>
-                ) : null}
-              </div>
+              <PostEngagements
+                detailedPost={detailedPost}
+                handleFollowingNotification={handleFollowingNotification}
+              />
             </Stack>
             {/* view post engagements section finish to check
             {/* new version favorite repost comment start to check */}
