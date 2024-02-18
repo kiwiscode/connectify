@@ -266,10 +266,8 @@ function ChatDetailsPage() {
         e.target.classList.value === ""
       ) {
         setshowEmojisBar(false);
-        console.log("Do not show emoji bar !");
       } else {
         setshowEmojisBar(true);
-        console.log("Show emoji bar !");
       }
     };
 

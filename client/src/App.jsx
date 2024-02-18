@@ -40,12 +40,12 @@ function App() {
         {/* new page finish to check  */}
 
         <Route
-          path="/profile/following"
+          path="/profile/:userId/following"
           element={<FollowingDetailPage />}
         ></Route>
 
         <Route
-          path="/profile/followers"
+          path="/profile/:userId/followers"
           element={<FollowerDetailPage />}
         ></Route>
       </Routes>

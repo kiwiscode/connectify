@@ -2,8 +2,9 @@ const User = require("../models/User.model");
 
 const handleUnfollow = (req, res) => {
   const { activeUserId, theUnfollowedUserID } = req.body;
-  console.log("Unfollow Route is working !", activeUserId, theUnfollowedUserID);
-
+  console.log("Unfollow Route is working !");
+  console.log("User in action =>", activeUserId);
+  console.log("Unfollowed user =>", theUnfollowedUserID);
   User.findById(activeUserId)
     .then((activeUser) => {
       User.findById(theUnfollowedUserID)

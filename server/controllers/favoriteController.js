@@ -54,7 +54,7 @@ const handleAddFavorite = (req, res) => {
             .then((commentFromDataBase) => {
               console.log("Comment from data base =>", commentFromDataBase);
 
-              commentFromDataBase[0].likes.push(userId);
+              commentFromDataBase[0].likes.unshift(userId);
               commentFromDataBase[0].save();
             })
             .catch((error) => {
@@ -76,9 +76,9 @@ const handleAddFavorite = (req, res) => {
           !post.reposted.length &&
           !userFavoriteIds.includes(userId)
         ) {
-          post.likes.push(user);
+          post.likes.unshift(user);
           post.save();
-          user.favorites.push(post);
+          user.favorites.unshift(post);
           Favorite.create({
             userId: userId,
             postId: postId,
@@ -118,7 +118,7 @@ const handleAddFavorite = (req, res) => {
                 !checkingNotifications.length &&
                 notificationReceiver._id.toString() !== userId
               ) {
-                notificationReceiver.notifications.push(newNotification);
+                notificationReceiver.notifications.unshift(newNotification);
                 notificationReceiver.save();
                 console.log(
                   "NOTIFICATION RECEIVER INFORMED ABOUT HIS POST GOT FAVORITE 1"
@@ -157,11 +157,11 @@ const handleAddFavorite = (req, res) => {
               console.log("This then block is working!");
               console.log(repostedPost);
 
-              repostedPost[0].likes.push(user);
+              repostedPost[0].likes.unshift(user);
               repostedPost[0].save();
-              post.likes.push(user);
+              post.likes.unshift(user);
               post.save();
-              user.favorites.push(post);
+              user.favorites.unshift(post);
               Favorite.create({
                 userId: userId,
                 postId: postId,
@@ -200,7 +200,7 @@ const handleAddFavorite = (req, res) => {
                       },
                     };
 
-                    notificationReceiver.notifications.push(newNotification);
+                    notificationReceiver.notifications.unshift(newNotification);
                     notificationReceiver.save();
 
                     console.log(
@@ -239,11 +239,11 @@ const handleAddFavorite = (req, res) => {
               console.log("Reposted post =>", post);
               console.log("Original post =>", originalPost);
 
-              originalPost[0].likes.push(user);
+              originalPost[0].likes.unshift(user);
               originalPost[0].save();
-              post.likes.push(user);
+              post.likes.unshift(user);
               post.save();
-              user.favorites.push(originalPost[0]);
+              user.favorites.unshift(originalPost[0]);
               // user.save();
               Favorite.create({
                 userId: userId,
@@ -282,7 +282,7 @@ const handleAddFavorite = (req, res) => {
                       },
                     };
 
-                    notificationReceiver.notifications.push(newNotification);
+                    notificationReceiver.notifications.unshift(newNotification);
                     notificationReceiver.save();
 
                     console.log(

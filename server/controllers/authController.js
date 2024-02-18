@@ -90,6 +90,17 @@ const handleSignup = async (req, res, next) => {
     return;
   }
 
+  const allUserNames = [];
+  const allEmails = [];
+
+  User.find()
+    .then((allUsersFromDB) => {
+      console.log("All users =>", allUsersFromDB);
+    })
+    .catch((error) => {
+      console.log("Error occured while fetching all users from data base");
+    });
+
   // start to check trying to install chat engine (real time chatting engine)
 
   try {

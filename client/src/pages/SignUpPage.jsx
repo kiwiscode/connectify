@@ -135,6 +135,7 @@ function SignUpPage() {
                   <Button onClick={() => handleSignUp()} className="create-btn">
                     Create account
                   </Button>
+
                   <p
                     style={{
                       // backgroundColor: "indianred",
@@ -165,12 +166,37 @@ function SignUpPage() {
                   </p>
                 </div>
               </div>
-              {error}
-              {success}
             </div>
           </Col>
         </Row>
       </Container>
+      <div
+        style={{
+          display: " flex",
+          justifyContent: "right",
+        }}
+      >
+        <div
+          style={{
+            fontSize: "13px",
+            lineHeight: "16px",
+            fontWeight: "400",
+            color: "#f7555f",
+          }}
+        >
+          {error ? error + "." : null}
+        </div>
+        <div
+          style={{
+            fontSize: "13px",
+            lineHeight: "16px",
+            fontWeight: "400",
+            color: "rgb(83, 100, 113)",
+          }}
+        >
+          {success ? success + "." : null}
+        </div>
+      </div>
     </>
   );
 }

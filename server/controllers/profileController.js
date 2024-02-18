@@ -213,26 +213,32 @@ const handleProfilePicture = (req, res) => {
 const getFollowers = (req, res) => {
   console.log("Route is working !");
 
-  const { userId } = req.user;
+  const { userId } = req.params;
+
+  console.log("Clicked user id =>", userId);
 
   User.findById(userId)
     .populate("following")
     .populate("followers")
     .then((user) => {
-      res.status(200).json({ followers: user.followers });
+      res.status(200).json({ followers: user.followers, user: user });
     })
     .catch(() => {
       res.status(404).json({ errorMessage: "User not found !" });
     });
 };
 const getFollowing = (req, res) => {
-  const { userId } = req.user;
+  const { userId } = req.params;
+
+  console.log("Clicked user id =>", userId);
+
+  // const { userId } = req.user;
 
   User.findById(userId)
     .populate("following")
     .populate("followers")
     .then((user) => {
-      res.status(200).json({ following: user.following });
+      res.status(200).json({ following: user.following, user: user });
     })
     .catch(() => {
       res.status(404).json({ errorMessage: "User not found !" });
