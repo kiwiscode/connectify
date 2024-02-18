@@ -6,6 +6,8 @@ import { PostModal, LogoutModal, CommentModal } from "../components/ui/Modal";
 import { UserContext } from "../context/UserContext";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import CustomNotification from "../components/Notifications/CustomNotification";
+import PostEngagements from "../components/ui/PostEngagementsModal";
+
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -120,17 +122,25 @@ function PostDetailPage() {
 
   // socket io 5 client start to check
   const handleNotification = (post, userInfo, type) => {
-    console.log("Sending notification to => ", post.userId.username);
-
     socket.emit("sendNotification", {
       senderName: userInfo.username,
-      receiverName: post.userId.username,
+      receiverName: post.userId.username || post.username,
       type: type,
       contactHasBeenMade: post,
       senderInfo: userInfo,
     });
   };
   // socket io 5 client finish to check
+
+  const handleFollowingNotification = (selectedUser, userInfo, type) => {
+    socket.emit("sendNotification", {
+      senderName: userInfo.username,
+      receiverName: selectedUser.username,
+      type: type,
+      contactHasBeenMade: selectedUser,
+      senderInfo: userInfo,
+    });
+  };
 
   const handleGoBack = () => {
     navigate(-1);
@@ -2373,7 +2383,7 @@ function PostDetailPage() {
             {/* post content + post created date finish to check */}
 
             {/* view post engagements section start to check */}
-            <Stack
+            {/* <Stack
               className="view-post-engagements-section transition-gray-hover"
               direction="horizontal"
               style={{
@@ -2425,7 +2435,14 @@ function PostDetailPage() {
                   ) : null
                 ) : null}
               </div>
-            </Stack>
+            </Stack> */}
+
+            <PostEngagements
+              postDetailPage={true}
+              detailedPost={detailedPost}
+              handleFollowingNotification={handleFollowingNotification}
+            />
+
             {/* view post engagements section finish to check
             {/* new version favorite repost comment start to check */}
             <Stack

@@ -254,14 +254,12 @@ function LogoutModal() {
   //   setShow(true);
   // };
 
+  const handleShow = () => {
+    console.log("BUTTON CLICKED");
+    setShow(true);
+  };
   useEffect(() => {
     const closeLogoutPopup = (e) => {
-      console.log("Event =>", e.target.classList.contains("info-logout"));
-      console.log(
-        "Event parent element =>",
-        e.srcElement.parentElement.className
-      );
-      console.log("Event parent node =>", e.srcElement.parentNode.className);
       if (
         e.target.classList.contains("profile-img") ||
         e.target.classList.contains("profile-svg") ||
@@ -272,10 +270,8 @@ function LogoutModal() {
         e.srcElement.parentNode.className === "nav-bar-home"
       ) {
         setShowLogoutPopup(false);
-        console.log("Do not show logout popup  !");
       } else {
         setShowLogoutPopup(true);
-        console.log("Show logout popup  !");
       }
     };
 
@@ -296,11 +292,43 @@ function LogoutModal() {
     >
       <div
         style={{
-          height: 56,
+          textAlign: "left",
+
+          height: "auto",
           width: 250,
+          display: "flex",
+          flexDirection: "column",
+          padding: "5px 0px 5px 0px",
         }}
         className="logout-body"
       >
+        {/* settings icon start to check  */}
+        <div
+          onClick={handleShow}
+          className="settings-and-privacy"
+          style={{
+            paddingBottom: "12px",
+            paddingTop: "12px",
+            lineHeight: "20px",
+            fontWeight: "700",
+            fontSize: "15px",
+          }}
+        >
+          <svg
+            width={20}
+            height={20}
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+          >
+            <g>
+              <path d="M10.54 1.75h2.92l1.57 2.36c.11.17.32.25.53.21l2.53-.59 2.17 2.17-.58 2.54c-.05.2.04.41.21.53l2.36 1.57v2.92l-2.36 1.57c-.17.12-.26.33-.21.53l.58 2.54-2.17 2.17-2.53-.59c-.21-.04-.42.04-.53.21l-1.57 2.36h-2.92l-1.58-2.36c-.11-.17-.32-.25-.52-.21l-2.54.59-2.17-2.17.58-2.54c.05-.2-.03-.41-.21-.53l-2.35-1.57v-2.92L4.1 8.97c.18-.12.26-.33.21-.53L3.73 5.9 5.9 3.73l2.54.59c.2.04.41-.04.52-.21l1.58-2.36zm1.07 2l-.98 1.47C10.05 6.08 9 6.5 7.99 6.27l-1.46-.34-.6.6.33 1.46c.24 1.01-.18 2.07-1.05 2.64l-1.46.98v.78l1.46.98c.87.57 1.29 1.63 1.05 2.64l-.33 1.46.6.6 1.46-.34c1.01-.23 2.06.19 2.64 1.05l.98 1.47h.78l.97-1.47c.58-.86 1.63-1.28 2.65-1.05l1.45.34.61-.6-.34-1.46c-.23-1.01.18-2.07 1.05-2.64l1.47-.98v-.78l-1.47-.98c-.87-.57-1.28-1.63-1.05-2.64l.34-1.46-.61-.6-1.45.34c-1.02.23-2.07-.19-2.65-1.05l-.97-1.47h-.78zM12 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5c.82 0 1.5-.67 1.5-1.5s-.68-1.5-1.5-1.5zM8.5 12c0-1.93 1.56-3.5 3.5-3.5 1.93 0 3.5 1.57 3.5 3.5s-1.57 3.5-3.5 3.5c-1.94 0-3.5-1.57-3.5-3.5z"></path>
+            </g>
+          </svg>
+          <span className="logout-p">Settings and privacy</span>
+        </div>
+        {/* settings icon finish to check  */}
+
         <p
           style={{
             paddingBottom: "12px",
@@ -309,7 +337,7 @@ function LogoutModal() {
             fontWeight: "700",
             fontSize: "15px",
           }}
-          className="logout-p"
+          className="logout-p logout-popover"
           onClick={handleLogout}
         >
           Log out @{localeInfo.username}
@@ -317,6 +345,8 @@ function LogoutModal() {
       </div>
     </Popover>
   );
+  const [responsivePlacementLogoutPopup, setresponsivePlacementLogoutPopup] =
+    useState("top");
 
   // finish to check
 
@@ -334,8 +364,9 @@ function LogoutModal() {
     };
   }, []);
 
-  const [responsivePlacementLogoutPopup, setresponsivePlacementLogoutPopup] =
-    useState("top");
+  const handleClose = () => {
+    setShow(false);
+  };
 
   return (
     <>
@@ -422,6 +453,57 @@ function LogoutModal() {
         {/* finish to check */}
       </OverlayTrigger>
       {/* popover basic test finish to check  */}
+
+      {/* settings and privacy modal start to check  */}
+      <Modal
+        show={show}
+        onHide={handleClose}
+        centered="true"
+        contentClassName="settings-and-privacy-second"
+      >
+        <Modal.Header
+          style={{
+            border: "none",
+          }}
+        >
+          <div
+            onClick={handleClose}
+            className="close-button"
+            style={{ borderRadius: "50%", cursor: "pointer" }}
+          >
+            <div>
+              <svg
+                style={{
+                  border: "none",
+                  fontSize: "15px",
+                  margin: "5px",
+                }}
+                onClick={handleClose}
+                width={20}
+                height={20}
+                color="rgb(15,20,25)"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+              >
+                <g>
+                  <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                </g>
+              </svg>{" "}
+            </div>
+          </div>
+        </Modal.Header>
+        <Modal.Body>
+          <div>Body</div>
+        </Modal.Body>
+
+        <Modal.Footer className="post-modal-footer ml-1">
+          <div>Next</div>
+        </Modal.Footer>
+      </Modal>
+
+      {/* settings and privacy modal finish to check  */}
     </>
   );
 }
@@ -548,14 +630,6 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
 
   useEffect(() => {
     const closeEmojiContainer = (e) => {
-      console.log("Here is working right now inside modal line 558");
-
-      console.log("Event =>", e.target.classList.value);
-      console.log(
-        "Event parent element =>",
-        e.srcElement.parentElement.className
-      );
-      console.log("Event parent node =>", e.srcElement.parentNode.className);
       if (
         e.target.classList.contains("post-modal-emoji-picker") ||
         e.srcElement.parentElement.className ===
@@ -564,10 +638,8 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
         e.target.classList.value === ""
       ) {
         setshowEmojisBar(false);
-        console.log("Do not show emoji bar !");
       } else {
         setshowEmojisBar(true);
-        console.log("Show emoji bar !");
       }
     };
 

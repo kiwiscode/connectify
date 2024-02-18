@@ -1564,3 +1564,71 @@ span > a:hover {
   transition: opacity 0.2s ease-in-out; /* Transition süresi ve efektini ayarlayabilirsiniz */
   pointer-events: none; /* Elementin pointer olaylarına müdahalesini kapatmak için */
 }
+
+.extra-css-engage-modal,
+.settings-and-privacy-second {
+  height: 600px;
+}
+
+/* side bar colum responsiveness start to check  */
+
+.side-bar-column {
+  background-color: royalblue;
+}
+
+@media (min-width: 992px) and (max-width: 1200px) {
+  .side-bar-column {
+    position: fixed;
+    height: 100%;
+    right: 8px;
+  }
+}
+
+@media (min-width: 1200px) and (max-width: 1400px) {
+  .side-bar-column {
+    position: fixed;
+    height: 100%;
+    right: 16px;
+  }
+}
+
+@media (min-width: 1400px) and (max-width: 1600px) {
+  .side-bar-column {
+    position: fixed;
+    height: 100%;
+    right: 20px;
+  }
+}
+
+@media (min-width: 1600px) and (max-width: 1800px) {
+  .side-bar-column {
+    position: fixed;
+    height: 100%;
+    right: 70px;
+  }
+}
+
+@media (min-width: 1880px) and (max-width: 1940px) {
+  .side-bar-column {
+    position: fixed;
+    height: 100%;
+    right: 135px;
+  }
+}
+
+@media (min-width: 1940px) and (max-width: 2000px) {
+  .side-bar-column {
+    position: fixed;
+    height: 100%;
+    right: 145px;
+  }
+}
+/* side bar colum responsiveness finish to check  */
+
+/* popover hover effetct start to check  */
+
+.settings-and-privacy:hover,
+.logout-popover:hover {
+  background-color: #f7f9f9;
+}
+/* popover hover effetct finish to check  */
