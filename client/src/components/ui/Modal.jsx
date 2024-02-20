@@ -13,6 +13,7 @@ import {
   OverlayTrigger,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 // import Picker from "emoji-picker-react";
 import axios from "axios";
@@ -20,6 +21,9 @@ import "../../index.css";
 
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
+
+import { message, Steps, theme } from "antd";
+import { Divider, List } from "antd";
 
 // socket io cleaning up socket.id after logout from online users client start to check
 // import io from "socket.io-client";
@@ -226,6 +230,84 @@ function SigninModal() {
 }
 
 function LogoutModal() {
+  const [messageApi, contextHolder] = message.useMessage();
+  const successMessage = () => {
+    messageApi.success({
+      type: "success",
+      content: "Your password has been successfully updated.",
+      duration: 10,
+      className: "custom-message-style",
+    });
+  };
+  const data = [
+    "See your account information like your phone number and email address.",
+    "Change your password at any time.",
+    "Find out how you can deactivate your account",
+  ];
+  const steps = [
+    {
+      title: "First",
+      content: "First-content",
+    },
+    {
+      title: "Second",
+      content: "Second-content",
+    },
+    {
+      title: "Last",
+      content: "Last-content",
+    },
+  ];
+  const { token } = theme.useToken();
+  const [current, setCurrent] = useState(0);
+  const next = () => {
+    setCurrent(current + 1);
+  };
+  const prev = () => {
+    setCurrent(current - 1);
+  };
+  const items = steps.map((item) => ({
+    key: item.title,
+    title: item.title,
+  }));
+  const contentStyle = {
+    width: "100%",
+    lineHeight: "260px",
+    textAlign: "center",
+    color: token.colorTextTertiary,
+    backgroundColor: token.colorFillAlter,
+    borderRadius: token.borderRadiusLG,
+    border: `1px dashed ${token.colorBorder}`,
+    marginTop: 16,
+  };
+
+  const [showDetailAccountInfo, setShowDetailAccountInfo] = useState(false);
+  const [showDetailChangePasswordInfo, setShowDetailChangePasswordInfo] =
+    useState(false);
+  const [showDetailDeactivateAccountInfo, setShowDetailDeactivateAccountInfo] =
+    useState(false);
+
+  const [selectedSection, setSelectedSection] = useState(null);
+
+  const [showListItem, setshowListItem] = useState(null);
+  const showAccountInformationSection = () => {
+    setshowListItem("hide");
+    setShowDetailAccountInfo(true);
+    setSelectedSection("Account information");
+  };
+
+  const showChangePasswordSection = () => {
+    setshowListItem("hide");
+    setShowDetailChangePasswordInfo(true);
+    setSelectedSection("Change your password");
+  };
+
+  const showDeactivateAccountSection = () => {
+    setshowListItem("hide");
+    setShowDetailDeactivateAccountInfo(true);
+    setSelectedSection("Deactivate your account");
+  };
+
   const navigate = useNavigate();
   const localeInfo = JSON.parse(localStorage.getItem("userInfo"));
   const [show, setShow] = useState(false);
@@ -364,12 +446,131 @@ function LogoutModal() {
     };
   }, []);
 
+  function formatDateTime(inputDate) {
+    const dateObj = new Date(inputDate);
+
+    const formattedDate = dateObj.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+    });
+    const formattedTime = dateObj.toLocaleTimeString("en-US", {
+      hour12: true,
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+
+    const output = `${formattedDate}, ${formattedTime}`;
+
+    return output;
+  }
+
+  const [tabIndex, setTabIndex] = useState(0);
+  const [tabIndexSecond, setTabIndexSecond] = useState(1);
+  const [tabIndexThird, setTabIndexThird] = useState(2);
+
+  const showInitialTab = () => {
+    console.log("Button clicked");
+    setTabIndex(0);
+    setShowDetailAccountInfo(false);
+    setshowListItem(true);
+  };
+
+  const showSecondTab = () => {
+    console.log("Button clicked");
+    console.log("CURRENT INDEX =>", tabIndexSecond);
+    setTabIndexSecond((prevState) => (prevState === 0 ? 0 : 1));
+    setShowDetailChangePasswordInfo(false);
+    setshowListItem(true);
+  };
+
+  const showThirdTab = () => {
+    console.log("Button clicked");
+    console.log("CURRENT INDEX =>", tabIndexSecond);
+    setTabIndexThird((prevState) => (prevState === 0 ? 0 : 2));
+    setShowDetailDeactivateAccountInfo(false);
+    setshowListItem(true);
+  };
+
   const handleClose = () => {
     setShow(false);
   };
 
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [success, setSuccess] = useState("");
+  const [errorInputStyle, seterrorInputStyle] = useState(false);
+  const [errorInput, seterrorInput] = useState("");
+  const [errorInputStyle2, seterrorInputStyle2] = useState(false);
+  const [errorInput2, seterrorInput2] = useState("");
+  const [errorInputStyle3, seterrorInputStyle3] = useState(false);
+  const [errorInput3, seterrorInput3] = useState("");
+  const handleChangePassword = () => {
+    if (newPassword === oldPassword) {
+      seterrorInputStyle2(true);
+      seterrorInput2(
+        "New password cannot be the same as your existing password.      "
+      );
+      seterrorInput("");
+      seterrorInputStyle(false);
+
+      seterrorInputStyle3(false);
+      seterrorInput3("");
+    } else if (newPassword === confirmNewPassword) {
+      axios
+        .post(
+          `${API_URL}/profile/change-password`,
+          {
+            userId: userInfo._id,
+            oldPassword,
+            newPassword,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
+          }
+        )
+        .then(() => {
+          setOldPassword("");
+          setNewPassword("");
+          setConfirmNewPassword("");
+          seterrorInputStyle(false);
+          seterrorInputStyle2(false);
+          seterrorInputStyle3(false);
+          seterrorInput("");
+          seterrorInput2("");
+          seterrorInput3("");
+
+          successMessage();
+        })
+        .catch(() => {
+          seterrorInput3("The password you entered was incorrect.");
+          seterrorInputStyle3(true);
+
+          seterrorInput("");
+          seterrorInputStyle(false);
+
+          seterrorInputStyle2(false);
+          seterrorInput2("");
+        });
+    } else {
+      seterrorInput("Passwords do not match.");
+      seterrorInputStyle(true);
+
+      seterrorInputStyle2(false);
+      seterrorInput2("");
+
+      seterrorInputStyle3(false);
+      seterrorInput3("");
+    }
+  };
+
   return (
     <>
+      {contextHolder}
       {/* popover basic test start to check  */}
       <OverlayTrigger
         trigger="click"
@@ -402,11 +603,14 @@ function LogoutModal() {
             <div>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="40"
-                height="40"
+                width={40}
+                height={40}
                 fill="rgb(83, 100, 113)"
                 className="profile-svg bi bi-person-circle"
                 viewBox="0 0 16 16"
+                style={{
+                  borderRadius: "50%",
+                }}
               >
                 <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
                 <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
@@ -466,41 +670,820 @@ function LogoutModal() {
             border: "none",
           }}
         >
-          <div
-            onClick={handleClose}
-            className="close-button"
-            style={{ borderRadius: "50%", cursor: "pointer" }}
-          >
-            <div>
-              <svg
-                style={{
-                  border: "none",
-                  fontSize: "15px",
-                  margin: "5px",
-                }}
-                onClick={handleClose}
-                width={20}
-                height={20}
-                color="rgb(15,20,25)"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-              >
-                <g>
-                  <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
-                </g>
-              </svg>{" "}
+          {current > 0 ? (
+            <div
+              className="previous-button"
+              style={{ borderRadius: "50%", cursor: "pointer" }}
+            >
+              <div>
+                <svg
+                  style={{
+                    border: "none",
+                    fontSize: "15px",
+                    margin: "5px",
+                  }}
+                  onClick={() => prev()}
+                  height={20}
+                  width={20}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                >
+                  <g>
+                    <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                  </g>
+                </svg>
+              </div>
             </div>
-          </div>
+          ) : showDetailAccountInfo ? (
+            <div
+              className="previous-button"
+              style={{ borderRadius: "50%", cursor: "pointer" }}
+            >
+              <div>
+                <svg
+                  style={{
+                    border: "none",
+                    fontSize: "15px",
+                    margin: "5px",
+                  }}
+                  onClick={showInitialTab}
+                  height={20}
+                  width={20}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                >
+                  <g>
+                    <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                  </g>
+                </svg>
+              </div>
+            </div>
+          ) : showDetailChangePasswordInfo ? (
+            <div
+              className="previous-button"
+              style={{ borderRadius: "50%", cursor: "pointer" }}
+            >
+              <div>
+                <svg
+                  style={{
+                    border: "none",
+                    fontSize: "15px",
+                    margin: "5px",
+                  }}
+                  onClick={showSecondTab}
+                  height={20}
+                  width={20}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                >
+                  <g>
+                    <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                  </g>
+                </svg>
+              </div>
+            </div>
+          ) : showDetailDeactivateAccountInfo ? (
+            <div
+              className="previous-button"
+              style={{ borderRadius: "50%", cursor: "pointer" }}
+            >
+              <div>
+                <svg
+                  style={{
+                    border: "none",
+                    fontSize: "15px",
+                    margin: "5px",
+                  }}
+                  onClick={showThirdTab}
+                  height={20}
+                  width={20}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                >
+                  <g>
+                    <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                  </g>
+                </svg>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div
+                onClick={handleClose}
+                className="close-button"
+                style={{ borderRadius: "50%", cursor: "pointer" }}
+              >
+                <div>
+                  <svg
+                    style={{
+                      border: "none",
+                      fontSize: "15px",
+                      margin: "5px",
+                    }}
+                    onClick={handleClose}
+                    width={20}
+                    height={20}
+                    color="rgb(15,20,25)"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                  >
+                    <g>
+                      <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                    </g>
+                  </svg>{" "}
+                </div>
+              </div>
+            </>
+          )}
         </Modal.Header>
         <Modal.Body>
-          <div>Body</div>
+          {/* main navigation bar start to check  */}
+          <Divider
+            orientation="left"
+            style={{ fontWeight: "700", fontSize: "20px", lineHeight: "24px" }}
+          >
+            <div>{selectedSection ? selectedSection : "Your Account"}</div>
+          </Divider>
+          <div
+            style={{
+              fontSize: "13px",
+              lineHeight: "16px",
+              fontWeight: "400",
+              color: "rgb(83, 100, 113)",
+            }}
+          >
+            {selectedSection
+              ? null
+              : `See information about your account, download an archive of your
+        data, or learn about your account deactivation options`}
+          </div>
+
+          {tabIndex === 0 ? (
+            <List
+              style={{
+                width: "100%",
+                borderStyle: "none",
+                borderBottom: "none",
+                borderTop: "none",
+                height:
+                  showDetailAccountInfo ||
+                  showDetailChangePasswordInfo ||
+                  showDetailDeactivateAccountInfo
+                    ? "0px"
+                    : "auto",
+              }}
+              size="large"
+              bordered
+              grid={2}
+              itemLayout="horizontal"
+            >
+              {data.map((item, index) => (
+                <List.Item key={index}>
+                  {item && index === 0 ? (
+                    <>
+                      <div
+                        onClick={showAccountInformationSection}
+                        style={{
+                          height: "100px",
+                          padding: "12px",
+                          cursor: "pointer",
+                        }}
+                        className={`${showListItem} account-info-div`}
+                      >
+                        <Stack direction="horizontal" gap={3}>
+                          <div className="p-2">
+                            <svg
+                              width={`${1.25}em`}
+                              height={`${1.25}em`}
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                              className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
+                              color="rgba(83,100,113,1.00)"
+                              fill="currentColor"
+                            >
+                              <g>
+                                <path d="M5.651 19h12.698c-.337-1.8-1.023-3.21-1.945-4.19C15.318 13.65 13.838 13 12 13s-3.317.65-4.404 1.81c-.922.98-1.608 2.39-1.945 4.19zm.486-5.56C7.627 11.85 9.648 11 12 11s4.373.85 5.863 2.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H3.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46zM12 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM8 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4z"></path>
+                              </g>
+                            </svg>
+                          </div>
+                          <div className="p-2">
+                            {" "}
+                            <div>
+                              <div
+                                style={{
+                                  lineHeight: "20px",
+                                  fontSize: "15px",
+                                  fontWeight: "400",
+                                }}
+                              >
+                                Account information
+                              </div>
+                              <span
+                                style={{
+                                  fontSize: "13px",
+                                  lineHeight: "16px",
+                                  fontWeight: "400",
+                                  color:
+                                    "rgb(83, 100, 113)                      ",
+                                }}
+                              >
+                                {item}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="p-2 ms-auto">
+                            {" "}
+                            <svg
+                              color="rgba(83,100,113,1.00)"
+                              fill="currentColor"
+                              width={`${1.25}em`}
+                              height={`${1.25}em`}
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                              className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1q142lx r-f727ji"
+                            >
+                              <g>
+                                <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
+                              </g>
+                            </svg>
+                          </div>
+                        </Stack>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {item && index === 1 ? (
+                        <>
+                          <div
+                            onClick={showChangePasswordSection}
+                            style={{
+                              height: "100px",
+                              padding: "12px",
+                              cursor: "pointer",
+                            }}
+                            className={`${showListItem} change-password-div`}
+                          >
+                            <Stack direction="horizontal" gap={3}>
+                              <div className="p-2">
+                                <svg
+                                  color="rgba(83,100,113,1.00)"
+                                  fill="currentColor"
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
+                                >
+                                  <g>
+                                    <path d="M13 9.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5zm9.14 1.77l-5.83 5.84-4-1L6.41 22H2v-4.41l5.89-5.9-1-4 5.84-5.83 7.06 2.35 2.35 7.06zm-12.03 1.04L4 18.41V20h1.59l6.1-6.11 4 1 4.17-4.16-1.65-4.94-4.94-1.65-4.16 4.17 1 4z"></path>
+                                  </g>
+                                </svg>
+                              </div>
+                              <div className="p-2">
+                                {" "}
+                                <div>
+                                  <div
+                                    style={{
+                                      lineHeight: "20px",
+                                      fontSize: "15px",
+                                      fontWeight: "400",
+                                    }}
+                                  >
+                                    Change your password
+                                  </div>
+                                  <span
+                                    style={{
+                                      fontSize: "13px",
+                                      lineHeight: "16px",
+                                      fontWeight: "400",
+                                      color:
+                                        "rgb(83, 100, 113)                      ",
+                                    }}
+                                  >
+                                    {item}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="p-2 ms-auto">
+                                <svg
+                                  color="rgba(83,100,113,1.00)"
+                                  fill="currentColor"
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1q142lx r-f727ji"
+                                >
+                                  <g>
+                                    <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
+                                  </g>
+                                </svg>
+                              </div>
+                            </Stack>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          {item && index === 2 ? (
+                            <>
+                              <div
+                                onClick={showDeactivateAccountSection}
+                                style={{
+                                  height: "100px",
+                                  padding: "12px",
+                                  cursor: "pointer",
+                                }}
+                                className={`${showListItem} deactivate-account-div`}
+                              >
+                                <Stack direction="horizontal" gap={3}>
+                                  <div className="p-2">
+                                    <svg
+                                      color="rgba(83,100,113,1.00)"
+                                      fill="currentColor"
+                                      width={`${1.25}em`}
+                                      height={`${1.25}em`}
+                                      viewBox="0 0 24 24"
+                                      aria-hidden="true"
+                                      className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
+                                    >
+                                      <g>
+                                        <path d="M21.398 6.52c-.887-1.79-2.647-2.91-4.601-3.01-1.65-.09-3.367.56-4.796 2.01-1.43-1.45-3.147-2.1-4.798-2.01-1.954.1-3.714 1.22-4.601 3.01-.896 1.81-.846 4.17.514 6.67 1.353 2.48 4.003 5.12 8.382 7.67l.504.3.503-.3c4.378-2.55 7.028-5.19 8.379-7.67 1.36-2.5 1.41-4.86.514-6.67zm-2.27 5.71c-1.074 1.97-3.256 4.27-7.126 6.61-3.872-2.34-6.055-4.64-7.129-6.61-1.112-2.04-1.031-3.7-.479-4.82.561-1.13 1.667-1.84 2.91-1.91 1.077-.05 2.338.38 3.452 1.61L8.588 10.3l4.009 2.5-1.428 2.15 1.665 1.1 2.569-3.85-3.991-2.5 1.405-2.06c1.21-1.63 2.662-2.2 3.88-2.14 1.242.07 2.347.78 2.908 1.91.553 1.12.634 2.78-.477 4.82z"></path>
+                                      </g>
+                                    </svg>
+                                  </div>
+                                  <div className="p-2">
+                                    {" "}
+                                    <div>
+                                      <div
+                                        style={{
+                                          lineHeight: "20px",
+                                          fontSize: "15px",
+                                          fontWeight: "400",
+                                        }}
+                                      >
+                                        Deactivate your account
+                                      </div>
+                                      <span
+                                        style={{
+                                          fontSize: "13px",
+                                          lineHeight: "16px",
+                                          fontWeight: "400",
+                                          color:
+                                            "rgb(83, 100, 113)                      ",
+                                        }}
+                                      >
+                                        {item}.
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div className="p-2  ms-auto">
+                                    <svg
+                                      color="rgba(83,100,113,1.00)"
+                                      fill="currentColor"
+                                      width={`${1.25}em`}
+                                      height={`${1.25}em`}
+                                      viewBox="0 0 24 24"
+                                      aria-hidden="true"
+                                      className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1q142lx r-f727ji"
+                                    >
+                                      <g>
+                                        <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
+                                      </g>
+                                    </svg>
+                                  </div>
+                                </Stack>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              Something went wrong, and the modal data cannot be
+                              loaded.
+                            </>
+                          )}
+                        </>
+                      )}
+                    </>
+                  )}
+                </List.Item>
+              ))}
+            </List>
+          ) : (
+            <>???</>
+          )}
+          {/* main navigation bar finish to check  */}
+
+          {/* account information list start to check  */}
+          {tabIndex === 0 ? (
+            <>
+              <div
+                style={{
+                  width: "100%",
+                  border: "none",
+                }}
+              >
+                <List.Item
+                  style={{
+                    width: "100%",
+                    height: "100px",
+                    padding: "12px",
+                    // cursor: "pointer",
+                    listStyle: "none",
+                    borderBottom: "1px solid rgba(0,0,0,0.1)",
+                  }}
+                  className={showDetailAccountInfo ? "info-account" : "hide"}
+                >
+                  <Stack direction="horizontal" gap={3}>
+                    <div className="p-2">
+                      {" "}
+                      <div>
+                        <div
+                          style={{
+                            lineHeight: "20px",
+                            fontSize: "15px",
+                            fontWeight: "400",
+                          }}
+                        >
+                          Username
+                        </div>
+                        <span
+                          style={{
+                            fontSize: "13px",
+                            lineHeight: "16px",
+                            fontWeight: "400",
+                            color: "rgb(83, 100, 113)",
+                          }}
+                        >
+                          @{userInfo.username}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="p-2 ms-auto">
+                      {" "}
+                      <svg
+                        style={{
+                          opacity: "0.5",
+                        }}
+                        color="rgba(83,100,113,1.00)"
+                        fill="currentColor"
+                        width={`${1.25}em`}
+                        height={`${1.25}em`}
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1q142lx r-f727ji"
+                      >
+                        <g>
+                          <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
+                        </g>
+                      </svg>
+                    </div>
+                  </Stack>
+                </List.Item>
+                <List.Item
+                  style={{
+                    width: "100%",
+                    height: "100px",
+                    padding: "12px",
+                    // cursor: "pointer",
+                    listStyle: "none",
+                    borderBottom: "1px solid rgba(0,0,0,0.1)",
+                  }}
+                  className={showDetailAccountInfo ? "info-account" : "hide"}
+                >
+                  <Stack direction="horizontal" gap={3}>
+                    <div className="p-2">
+                      {" "}
+                      <div>
+                        <div
+                          style={{
+                            lineHeight: "20px",
+                            fontSize: "15px",
+                            fontWeight: "400",
+                          }}
+                        >
+                          Email
+                        </div>
+                        <span
+                          style={{
+                            fontSize: "13px",
+                            lineHeight: "16px",
+                            fontWeight: "400",
+                            color: "rgb(83, 100, 113)",
+                          }}
+                        >
+                          {userInfo.email}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="p-2 ms-auto">
+                      {" "}
+                      <svg
+                        style={{
+                          opacity: "0.5",
+                        }}
+                        color="rgba(83,100,113,1.00)"
+                        fill="currentColor"
+                        width={`${1.25}em`}
+                        height={`${1.25}em`}
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1q142lx r-f727ji"
+                      >
+                        <g>
+                          <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
+                        </g>
+                      </svg>
+                    </div>
+                  </Stack>
+                </List.Item>
+                <List.Item
+                  style={{
+                    width: "100%",
+                    height: "100px",
+                    padding: "12px",
+                    // cursor: "pointer",
+                    listStyle: "none",
+                    borderBottom: "1px solid rgba(0,0,0,0.1)",
+                  }}
+                  className={showDetailAccountInfo ? "info-account" : "hide"}
+                >
+                  <Stack direction="horizontal" gap={3}>
+                    <div className="p-2">
+                      {" "}
+                      <div>
+                        <div
+                          style={{
+                            lineHeight: "20px",
+                            fontSize: "15px",
+                            fontWeight: "400",
+                          }}
+                        >
+                          Verified
+                        </div>
+                        <span
+                          style={{
+                            fontSize: "13px",
+                            lineHeight: "16px",
+                            fontWeight: "400",
+                            color: "rgb(83, 100, 113)",
+                          }}
+                        >
+                          {userInfo.verified
+                            ? "Yes"
+                            : `${(
+                                <span
+                                  style={{
+                                    color: "rgb(83, 100, 113)",
+
+                                    fontSize: "13px",
+                                    cursor: "pointer",
+                                    lineHeight: "16px",
+                                  }}
+                                >
+                                  No.
+                                </span>
+                              )}${(
+                                <span
+                                  style={{
+                                    color: "rgb(29, 155, 240)",
+                                    fontSize: "13px",
+                                    cursor: "pointer",
+                                    lineHeight: "16px",
+                                  }}
+                                >
+                                  Learn more
+                                </span>
+                              )}`}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="p-2 ms-auto">
+                      {" "}
+                      <svg
+                        style={{
+                          opacity: "0.5",
+                        }}
+                        color="rgba(83,100,113,1.00)"
+                        fill="currentColor"
+                        width={`${1.25}em`}
+                        height={`${1.25}em`}
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1q142lx r-f727ji"
+                      >
+                        <g>
+                          <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
+                        </g>
+                      </svg>
+                    </div>
+                  </Stack>
+                </List.Item>
+                <List.Item
+                  style={{
+                    width: "100%",
+                    height: "100px",
+                    padding: "12px",
+                    // cursor: "pointer",
+                    listStyle: "none",
+                  }}
+                  className={showDetailAccountInfo ? "info-account" : "hide"}
+                >
+                  <Stack direction="horizontal" gap={3}>
+                    <div className="p-2">
+                      {" "}
+                      <div>
+                        <div
+                          style={{
+                            lineHeight: "20px",
+                            fontSize: "15px",
+                            fontWeight: "400",
+                          }}
+                        >
+                          Account creation
+                        </div>
+                        <span
+                          style={{
+                            fontSize: "13px",
+                            lineHeight: "16px",
+                            fontWeight: "400",
+                            color: "rgb(83, 100, 113)",
+                          }}
+                        >
+                          {formatDateTime(userInfo.createdAt)}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="p-2 ms-auto">
+                      {" "}
+                      <svg
+                        style={{
+                          opacity: "0.5",
+                        }}
+                        color="rgba(83,100,113,1.00)"
+                        fill="currentColor"
+                        width={`${1.25}em`}
+                        height={`${1.25}em`}
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1q142lx r-f727ji"
+                      >
+                        <g>
+                          <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
+                        </g>
+                      </svg>
+                    </div>
+                  </Stack>
+                </List.Item>
+              </div>
+            </>
+          ) : null}
+          {/* account information list finish to check  */}
+
+          {/* change password inputs start to check  */}
+          {tabIndexSecond === 1 ? (
+            <>
+              <div className={showDetailChangePasswordInfo ? "" : "hide"}>
+                <div className="responsive-input-group input-group">
+                  <InputGroup className="mb-2">
+                    <Form.Control
+                      aria-label="Default"
+                      aria-describedby="inputGroup-sizing-default"
+                      placeholder="Current password"
+                      type="password"
+                      value={oldPassword}
+                      onChange={(e) => setOldPassword(e.target.value)}
+                    />
+                  </InputGroup>
+                  {errorInputStyle3 ? (
+                    <>
+                      <div
+                        className="mt-0"
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          color: "rgba(244,39,49,255)",
+                          fontSize: "13px",
+                          lineHeight: "16px",
+                          fontWeight: "400",
+                        }}
+                      >
+                        {errorInput3}
+                      </div>
+                    </>
+                  ) : null}
+                  <InputGroup className="mt-2">
+                    <Form.Control
+                      aria-label="Default"
+                      aria-describedby="inputGroup-sizing-default"
+                      placeholder="New password"
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                    />
+                  </InputGroup>
+                  {errorInputStyle2 ? (
+                    <>
+                      <div
+                        className="mt-2"
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          color: "rgba(244,39,49,255)",
+                          fontSize: "13px",
+                          lineHeight: "16px",
+                          fontWeight: "400",
+                        }}
+                      >
+                        {errorInput2}
+                      </div>
+                    </>
+                  ) : null}
+                  <InputGroup className="mt-3">
+                    <Form.Control
+                      style={{
+                        borderColor: errorInputStyle
+                          ? "rgba(244,39,49,255)"
+                          : "",
+                      }}
+                      aria-label="Default"
+                      aria-describedby="inputGroup-sizing-default"
+                      placeholder="Confirm password"
+                      type="password"
+                      value={confirmNewPassword}
+                      onChange={(e) => setConfirmNewPassword(e.target.value)}
+                    />
+                  </InputGroup>
+                  {errorInputStyle ? (
+                    <>
+                      <div
+                        className="mt-2"
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          color: "rgba(244,39,49,255)",
+                          fontSize: "13px",
+                          lineHeight: "16px",
+                          fontWeight: "400",
+                        }}
+                      >
+                        {errorInput}
+                      </div>
+                    </>
+                  ) : null}
+                  <div>
+                    <Button
+                      style={{
+                        opacity:
+                          oldPassword && newPassword && confirmNewPassword
+                            ? ""
+                            : "0.5",
+                      }}
+                      onClick={() => handleChangePassword()}
+                      className="change-password-btn"
+                    >
+                      Save
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : null}
+          {/* change password inputs finish to check  */}
+
+          {/* deactivate user steps from navigation bar redirection start to check  */}
+          {tabIndexThird === 2 ? (
+            <div
+              className={`settings-privacy-navigation deactivate-account ${
+                showDetailDeactivateAccountInfo ? "" : "hide"
+              } `}
+            >
+              <Steps current={current} items={items} />
+              <div style={contentStyle}>{steps[current].content}</div>
+              <div>
+                {current < steps.length - 1 && (
+                  <Button type="primary" onClick={() => next()}>
+                    Next
+                  </Button>
+                )}
+                {current === steps.length - 1 && (
+                  <Button
+                    type="primary"
+                    onClick={() => message.success("Processing complete!")}
+                  >
+                    Done
+                  </Button>
+                )}
+              </div>
+            </div>
+          ) : null}
         </Modal.Body>
 
-        <Modal.Footer className="post-modal-footer ml-1">
-          <div>Next</div>
-        </Modal.Footer>
+        {/* deactivate user steps from navigation bar redirection finish to check  */}
       </Modal>
 
       {/* settings and privacy modal finish to check  */}

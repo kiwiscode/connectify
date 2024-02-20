@@ -2286,13 +2286,8 @@ function PostDetailPage() {
             </Container>
 
             {/* post content + post created date start to check */}
-            <Stack
-              direction="vertical"
-              gap={0}
-              style={{
-                borderBottom: "1px solid rgba(0,0,0,0.1)",
-              }}
-            >
+
+            <Stack direction="vertical" gap={0}>
               <div
                 style={{
                   marginLeft: "10px",
@@ -2379,6 +2374,11 @@ function PostDetailPage() {
                   {formatDateString(detailedPost.createdAt)}
                 </div>
               </Link>
+              <Row
+                style={{
+                  borderBottom: "1px solid rgba(0,0,0,0.1)",
+                }}
+              ></Row>
             </Stack>
             {/* post content + post created date finish to check */}
 
@@ -2436,12 +2436,19 @@ function PostDetailPage() {
                 ) : null}
               </div>
             </Stack> */}
-
-            <PostEngagements
-              postDetailPage={true}
-              detailedPost={detailedPost}
-              handleFollowingNotification={handleFollowingNotification}
-            />
+            {detailedPost.userId ? (
+              <>
+                {detailedPost.userId._id === userInfo._id ? (
+                  <>
+                    <PostEngagements
+                      postDetailPage={true}
+                      detailedPost={detailedPost}
+                      handleFollowingNotification={handleFollowingNotification}
+                    />
+                  </>
+                ) : null}
+              </>
+            ) : null}
 
             {/* view post engagements section finish to check
             {/* new version favorite repost comment start to check */}
@@ -2449,11 +2456,7 @@ function PostDetailPage() {
               direction="horizontal"
               style={{
                 justifyContent: "space-between",
-                borderBottom: detailedPost
-                  ? null
-                  : detailedPost.comments.length
-                  ? "1px solid rgba(0,0,0,0.1)"
-                  : null,
+                // borderBottom: "1px solid rgba(0,0,0,0.1)",
               }}
             >
               <div className="p-2">
@@ -2653,7 +2656,11 @@ function PostDetailPage() {
             </Stack>
 
             {/* new version favorite repost comment finish to check */}
-
+            <Row
+              style={{
+                borderBottom: "1px solid rgba(0,0,0,0.1)",
+              }}
+            ></Row>
             {/* accordion implementation for comments when it is more than 0 start to check  */}
             {!detailedPost.isComment &&
             detailedPost.comments &&

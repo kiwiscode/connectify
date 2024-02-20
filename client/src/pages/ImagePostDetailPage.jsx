@@ -2397,7 +2397,10 @@ function PostDetailPage() {
               direction="vertical"
               gap={0}
               style={{
-                borderBottom: "1px solid rgba(0,0,0,0.1)",
+                borderBottom:
+                  userInfo.username === detailedPost.authorUserName
+                    ? "1px solid rgba(0,0,0,0.1)"
+                    : null,
               }}
             >
               <div
@@ -2497,10 +2500,21 @@ function PostDetailPage() {
               }}
               gap={0}
             >
-              <PostEngagements
-                detailedPost={detailedPost}
-                handleFollowingNotification={handleFollowingNotification}
-              />
+              {detailedPost.userId ? (
+                <>
+                  {detailedPost.userId._id === userInfo._id ? (
+                    <>
+                      <PostEngagements
+                        postDetailPage={false}
+                        detailedPost={detailedPost}
+                        handleFollowingNotification={
+                          handleFollowingNotification
+                        }
+                      />
+                    </>
+                  ) : null}
+                </>
+              ) : null}
             </Stack>
             {/* view post engagements section finish to check
             {/* new version favorite repost comment start to check */}
@@ -2508,11 +2522,7 @@ function PostDetailPage() {
               direction="horizontal"
               style={{
                 justifyContent: "space-between",
-                borderBottom: detailedPost
-                  ? null
-                  : detailedPost.comments.length
-                  ? "1px solid rgba(0,0,0,0.1)"
-                  : null,
+                borderBottom: "1px solid rgba(0,0,0,0.1)",
               }}
             >
               <div className="p-2">

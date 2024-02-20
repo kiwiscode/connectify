@@ -1960,7 +1960,7 @@ function SpesificUserProfile() {
             {/* start */}
             <Row
               style={{
-                border: "1px solid rgba(0, 0, 0, 0.1)",
+                borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
               }}
             ></Row>
             <ButtonGroup
@@ -2007,7 +2007,7 @@ function SpesificUserProfile() {
             {!profileInfoPosts.length && postsWindow === "" ? (
               <Row
                 style={{
-                  border: "1px solid rgba(0, 0, 0, 0.1)",
+                  borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
                 }}
               ></Row>
             ) : null}
@@ -2015,7 +2015,7 @@ function SpesificUserProfile() {
             {!favorites.length && favoriteWindow === "" ? (
               <Row
                 style={{
-                  border: "1px solid rgba(0, 0, 0, 0.1)",
+                  borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
                 }}
               ></Row>
             ) : null}
@@ -2036,7 +2036,7 @@ function SpesificUserProfile() {
                     <div key={post._id}>
                       <Row
                         style={{
-                          border: "1px solid rgba(0, 0, 0, 0.1)",
+                          borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
                         }}
                       ></Row>
                       {/* start to check */}
@@ -2677,7 +2677,7 @@ function SpesificUserProfile() {
                       <div key={favorite._id}>
                         <Row
                           style={{
-                            border: "1px solid rgba(0, 0, 0, 0.1)",
+                            borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
                           }}
                         ></Row>
                         <div className="favorite-details">

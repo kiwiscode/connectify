@@ -817,7 +817,7 @@ span > a:hover {
 .selected-user-for-dm:hover {
   background-color: rgba(247, 249, 249, 255);
 }
-
+.previous-button:hover,
 .close-button:hover,
 .arrow:hover,
 .settings-icon:hover,
@@ -1632,3 +1632,56 @@ span > a:hover {
   background-color: #f7f9f9;
 }
 /* popover hover effetct finish to check  */
+
+.account-info-div:hover,
+.change-password-div:hover,
+.deactivate-account-div:hover {
+  background-color: #f7f9f9;
+}
+
+/* .info-account:hover {
+  background-color: #f7f9f9;
+} */
+
+.change-password-btn {
+  height: 45px;
+  margin-top: 15px;
+}
+.change-password-btn:hover {
+  background-color: rgb(16, 128, 202);
+  outline-style: none;
+  border-style: solid;
+  border-color: rgb(207, 217, 222);
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-top-width: 1px;
+  border-radius: var(--border-radius);
+}
+
+/* ant message success change password message start to check  */
+.ant-message {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  position: fixed;
+  bottom: 20px;
+  width: 100%;
+}
+.ant-message-notice-content {
+  background-color: rgb(16, 128, 202) !important;
+  color: white !important;
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 400;
+  width: 380px;
+}
+
+.ant-message-success {
+  padding: 6px;
+}
+
+.anticon-check-circle {
+  display: none !important;
+}
+/* ant message success change password message finish to check  */
