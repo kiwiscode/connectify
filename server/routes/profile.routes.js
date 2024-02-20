@@ -33,4 +33,21 @@ router.get(
   profileController.handlecreateChatSpesificUserInformations
 );
 
+router.post(
+  "/change-password",
+  authenticateToken,
+  profileController.handleChangePassword
+);
+
+router.post(
+  "/deactivate-password-confirmation",
+  authenticateToken,
+  profileController.handleDeactivatePasswordConfirmation
+);
+
+router.post(
+  "/deactivate-account",
+  authenticateToken,
+  profileController.handleDeactivateAccount
+);
 module.exports = router;

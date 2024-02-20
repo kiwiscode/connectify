@@ -1,7 +1,8 @@
 const User = require("../models/User.model");
 const Post = require("../models/Post.model");
 const cloudinary = require("../utils/cloudinary");
-
+const bcrypt = require("bcryptjs");
+const mongoose = require("mongoose");
 const handleProfile = (req, res) => {
   const userId = req.user.userId;
 
@@ -268,6 +269,97 @@ const handlecreateChatSpesificUserInformations = (req, res) => {
     });
 };
 
+async function handleChangePassword(req, res) {
+  const { userId, oldPassword, newPassword } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+
+    const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
+    console.log("is password match =>", isPasswordMatch);
+    if (!isPasswordMatch) {
+      return res.status(401).json({ message: "Incorrect old password." });
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedNewPassword;
+    await user.save();
+
+    return res.status(200).json({ message: "Password successfully changed." });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "An error occurred." });
+  }
+}
+
+async function handleDeactivatePasswordConfirmation(req, res) {
+  const { userId, deactivatePassword } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+
+    const isPasswordMatch = await bcrypt.compare(
+      deactivatePassword,
+      user.password
+    );
+    console.log("is password match =>", isPasswordMatch);
+    if (!isPasswordMatch) {
+      return res.status(401).json({ message: "Incorrect password." });
+    }
+
+    return res.status(200).json({ message: "Password correct" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ errorMessage: "An error occurred." });
+  }
+}
+
+const handleDeactivateAccount = (req, res) => {
+  const { userId } = req.user;
+  console.log("User id ready to deactivate his account =>", userId);
+
+  User.findById(userId)
+    .then((user) => {
+      user.isDeactivated = true;
+      user.deactivatedDate = Date.now();
+      user.save();
+
+      Post.updateMany({ userId: userId }, { $set: { deactivatedOwner: true } })
+        .then((result) => {
+          console.log(
+            `${result.nModified} posts have been successfully updated.`
+          );
+        })
+        .catch((error) => {
+          console.error("Error updating posts:", error.message);
+        });
+
+      User.find()
+        .then((users) => {
+          users.forEach((user) => {
+            user.messages.forEach((message) => {
+              message.members.forEach((eachMember) => {
+                if (eachMember._id.toString() === userId) {
+                  console.log("Room =>", message);
+
+                  if (user._id.toString() !== userId) {
+                    message.deactivatedMember = true;
+                    user.save();
+                  }
+                }
+              });
+            });
+          });
+          res.status(200).json({ message: "User deactivated!" });
+        })
+        .catch((error) => {
+          console.error("Error:", error.message);
+        });
+    })
+    .catch(() => {
+      console.log("Error");
+    });
+};
 module.exports = {
   handleProfile,
   handleShowSpesificProfile,
@@ -275,4 +367,7 @@ module.exports = {
   getFollowers,
   getFollowing,
   handlecreateChatSpesificUserInformations,
+  handleChangePassword,
+  handleDeactivatePasswordConfirmation,
+  handleDeactivateAccount,
 };

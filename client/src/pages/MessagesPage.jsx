@@ -525,181 +525,187 @@ function MessagesPage() {
               <div>
                 {filteredRooms.map((eachMessageRoom) => (
                   <>
-                    {eachMessageRoom.chat.length > 0 ? (
-                      <Link
-                        onClick={() =>
-                          redirectChatDetailPage(eachMessageRoom._id)
-                        }
-                        key={eachMessageRoom._id}
-                        style={{
-                          position: "relative",
-                          bottom: "20px",
-                          margin: "5px",
-                          cursor: "pointer",
-                          listStyleType: "none",
-                          textDecoration: "none",
-                        }}
-                        to={`/messages/${eachMessageRoom._id}`}
-                      >
-                        <div
-                          style={{
-                            backgroundColor: eachMessageRoom.readed
-                              ? "white"
-                              : "#F7F9F9",
-                            border: eachMessageRoom.chat.length
-                              ? "1px solid #e1e8ed"
-                              : "",
-                            borderRadius: "8px",
-                          }}
-                        >
-                          {eachMessageRoom.chat &&
-                            eachMessageRoom.chat.length > 0 && (
-                              <>
-                                <Stack
-                                  style={{
-                                    margin: "5px",
-                                    padding: "5px",
-                                  }}
-                                  direction="horizontal"
-                                >
-                                  <div className="p-0">
-                                    {" "}
-                                    {getMemberNotEqualActiveUser(
-                                      eachMessageRoom
-                                    ).imageUrl.slice(0, 3) !== "../" ? (
-                                      <img
-                                        width={40}
-                                        height={40}
-                                        style={{
-                                          borderRadius: "50%",
-                                        }}
-                                        src={
-                                          getMemberNotEqualActiveUser(
-                                            eachMessageRoom
-                                          ).imageUrl
-                                        }
-                                        alt=""
-                                      />
-                                    ) : (
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="40"
-                                        height="40"
-                                        fill="rgb(83, 100, 113)"
-                                        className="bi bi-person-circle"
-                                        viewBox="0 0 16 16"
-                                        style={{}}
-                                      >
-                                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                        <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                      </svg>
-                                    )}
-                                  </div>
-                                  <div
-                                    style={{
-                                      marginLeft: "10px",
-                                    }}
-                                    className="p-0"
-                                  >
-                                    <span
+                    {eachMessageRoom.deactivatedMember ? null : (
+                      <>
+                        {eachMessageRoom.chat.length > 0 ? (
+                          <Link
+                            onClick={() =>
+                              redirectChatDetailPage(eachMessageRoom._id)
+                            }
+                            key={eachMessageRoom._id}
+                            style={{
+                              position: "relative",
+                              bottom: "20px",
+                              margin: "5px",
+                              cursor: "pointer",
+                              listStyleType: "none",
+                              textDecoration: "none",
+                            }}
+                            to={`/messages/${eachMessageRoom._id}`}
+                          >
+                            <div
+                              style={{
+                                backgroundColor: eachMessageRoom.readed
+                                  ? "white"
+                                  : "#F7F9F9",
+                                border: eachMessageRoom.chat.length
+                                  ? "1px solid #e1e8ed"
+                                  : "",
+                                borderRadius: "8px",
+                              }}
+                            >
+                              {eachMessageRoom.chat &&
+                                eachMessageRoom.chat.length > 0 && (
+                                  <>
+                                    <Stack
                                       style={{
-                                        color: "rgb(15, 20, 25)",
-
-                                        fontSize: "15px",
-                                        fontWeight: "700",
-                                        lineHeight: "20px",
+                                        margin: "5px",
+                                        padding: "5px",
                                       }}
+                                      direction="horizontal"
                                     >
-                                      {eachMessageRoom.members[1].fullname !==
-                                      userInfo.fullname
-                                        ? eachMessageRoom.members[1].fullname
-                                        : eachMessageRoom.members[0]
-                                            .fullname}{" "}
-                                    </span>
-                                    <span
-                                      style={{
-                                        color: "rgb(83, 100, 113)",
-                                        fontSize: "15px",
-                                        lineHeight: "20px",
-                                        fontWeight: "400",
-                                      }}
-                                    >
-                                      @
-                                      {eachMessageRoom.members[1].username !==
-                                      userInfo.username
-                                        ? eachMessageRoom.members[1].username
-                                        : eachMessageRoom.members[0]
-                                            .username}{" "}
-                                    </span>
-                                    <span
-                                      style={{
-                                        color: "rgb(83, 100, 113)",
-                                        fontSize: "15px",
-                                        lineHeight: "20px",
-                                        fontWeight: "400",
-                                      }}
-                                    >
-                                      {" "}
-                                      ·{" "}
-                                      {eachMessageRoom.chat[0]
-                                        ? getCreatedRoomDate(
-                                            eachMessageRoom.chat[0].messages[0]
-                                              .timestamp
-                                          )
-                                        : ""}
-                                    </span>
-                                    <div className="p-0">
-                                      {" "}
-                                      <span
-                                        style={{
-                                          color: "rgb(83, 100, 113)",
-                                        }}
-                                      >
-                                        {
-                                          eachMessageRoom.chat[
-                                            eachMessageRoom.chat.length - 1
-                                          ].messages[0].text
-                                        }
-                                      </span>
-                                    </div>
-                                  </div>
-                                  {/* <div className="p-0 ms-auto">asd</div> */}
-                                  <div className="p-0 ms-auto">
-                                    <svg
-                                      style={{
-                                        cursor: "pointer",
-                                        position: "relative",
-                                        bottom: "15px",
-                                      }}
-                                      onClick={() =>
-                                        handleShowMessageDeleteModal(
+                                      <div className="p-0">
+                                        {" "}
+                                        {getMemberNotEqualActiveUser(
                                           eachMessageRoom
-                                        )
-                                      }
-                                      color="rgb(83, 100, 113)"
-                                      fill="currentColor"
-                                      width={`${1.25}em`}
-                                      height={`${1.25}em`}
-                                      viewBox="0 0 24 24"
-                                      aria-hidden="true"
-                                      className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                    >
-                                      <g>
-                                        <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                      </g>
-                                    </svg>
-                                    <div>Delete message ???</div>
-                                  </div>
-                                </Stack>
+                                        ).imageUrl.slice(0, 3) !== "../" ? (
+                                          <img
+                                            width={40}
+                                            height={40}
+                                            style={{
+                                              borderRadius: "50%",
+                                            }}
+                                            src={
+                                              getMemberNotEqualActiveUser(
+                                                eachMessageRoom
+                                              ).imageUrl
+                                            }
+                                            alt=""
+                                          />
+                                        ) : (
+                                          <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="40"
+                                            height="40"
+                                            fill="rgb(83, 100, 113)"
+                                            className="bi bi-person-circle"
+                                            viewBox="0 0 16 16"
+                                            style={{}}
+                                          >
+                                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                            <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                          </svg>
+                                        )}
+                                      </div>
+                                      <div
+                                        style={{
+                                          marginLeft: "10px",
+                                        }}
+                                        className="p-0"
+                                      >
+                                        <span
+                                          style={{
+                                            color: "rgb(15, 20, 25)",
 
-                                {/* message text is here ? start to check  */}
+                                            fontSize: "15px",
+                                            fontWeight: "700",
+                                            lineHeight: "20px",
+                                          }}
+                                        >
+                                          {eachMessageRoom.members[1]
+                                            .fullname !== userInfo.fullname
+                                            ? eachMessageRoom.members[1]
+                                                .fullname
+                                            : eachMessageRoom.members[0]
+                                                .fullname}{" "}
+                                        </span>
+                                        <span
+                                          style={{
+                                            color: "rgb(83, 100, 113)",
+                                            fontSize: "15px",
+                                            lineHeight: "20px",
+                                            fontWeight: "400",
+                                          }}
+                                        >
+                                          @
+                                          {eachMessageRoom.members[1]
+                                            .username !== userInfo.username
+                                            ? eachMessageRoom.members[1]
+                                                .username
+                                            : eachMessageRoom.members[0]
+                                                .username}{" "}
+                                        </span>
+                                        <span
+                                          style={{
+                                            color: "rgb(83, 100, 113)",
+                                            fontSize: "15px",
+                                            lineHeight: "20px",
+                                            fontWeight: "400",
+                                          }}
+                                        >
+                                          {" "}
+                                          ·{" "}
+                                          {eachMessageRoom.chat[0]
+                                            ? getCreatedRoomDate(
+                                                eachMessageRoom.chat[0]
+                                                  .messages[0].timestamp
+                                              )
+                                            : ""}
+                                        </span>
+                                        <div className="p-0">
+                                          {" "}
+                                          <span
+                                            style={{
+                                              color: "rgb(83, 100, 113)",
+                                            }}
+                                          >
+                                            {
+                                              eachMessageRoom.chat[
+                                                eachMessageRoom.chat.length - 1
+                                              ].messages[0].text
+                                            }
+                                          </span>
+                                        </div>
+                                      </div>
+                                      {/* <div className="p-0 ms-auto">asd</div> */}
+                                      <div className="p-0 ms-auto">
+                                        <svg
+                                          style={{
+                                            cursor: "pointer",
+                                            position: "relative",
+                                            bottom: "15px",
+                                          }}
+                                          onClick={() =>
+                                            handleShowMessageDeleteModal(
+                                              eachMessageRoom
+                                            )
+                                          }
+                                          color="rgb(83, 100, 113)"
+                                          fill="currentColor"
+                                          width={`${1.25}em`}
+                                          height={`${1.25}em`}
+                                          viewBox="0 0 24 24"
+                                          aria-hidden="true"
+                                          className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                        >
+                                          <g>
+                                            <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                                          </g>
+                                        </svg>
+                                        <div>Delete message ???</div>
+                                      </div>
+                                    </Stack>
 
-                                {/* message text is here ? finish to check  */}
-                              </>
-                            )}
-                        </div>
-                      </Link>
-                    ) : null}
+                                    {/* message text is here ? start to check  */}
+
+                                    {/* message text is here ? finish to check  */}
+                                  </>
+                                )}
+                            </div>
+                          </Link>
+                        ) : null}
+                      </>
+                    )}
                   </>
                 ))}
               </div>
@@ -883,6 +889,10 @@ function MessagesPage() {
                                   </div>
                                   <div
                                     style={{
+                                      marginRight:
+                                        user.imageUrl.slice(0, 3) !== "../"
+                                          ? ""
+                                          : "32px",
                                       color: "rgb(83, 100, 113)",
                                       lineHeight: "20px",
                                       fontSize: "15px",
