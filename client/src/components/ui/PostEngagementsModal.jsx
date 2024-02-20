@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Modal, Stack, Button } from "react-bootstrap";
+import { Modal, Stack, Button, Row } from "react-bootstrap";
 import { UserContext } from "../../context/UserContext";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
@@ -196,6 +196,7 @@ function PostEngagements({
   return (
     <>
       {/* view post engagements section start to check */}
+
       <Stack
         onClick={handleShow}
         className="view-post-engagements-section transition-gray-hover"
@@ -203,7 +204,6 @@ function PostEngagements({
         style={{
           cursor: "pointer",
           justifyContent: "left",
-          borderBottom: postDetailPage ? "1px solid rgba(0,0,0,0.1)" : null,
         }}
         gap={0}
       >
@@ -247,7 +247,11 @@ function PostEngagements({
         </div>
       </Stack>
       {/* view post engagements section finish to check */}
-
+      <Row
+        style={{
+          borderBottom: postDetailPage ? "1px solid rgba(0,0,0,0.1)" : null,
+        }}
+      ></Row>
       <Modal
         show={show}
         onHide={handleClose}
@@ -748,27 +752,51 @@ function PostEngagements({
                             <div className="p-0">
                               {" "}
                               {eachLiker.imageUrl.slice(0, 3) !== "../" ? (
-                                <img
-                                  width={40}
-                                  height={40}
-                                  style={{
-                                    borderRadius: "50%",
-                                  }}
-                                  src={eachLiker.imageUrl}
-                                  alt=""
-                                />
+                                <>
+                                  <Link
+                                    onClick={() =>
+                                      redirectSpesificProfilePage(eachLiker._id)
+                                    }
+                                    to={`/profile/${eachLiker._id}`}
+                                    style={{
+                                      textDecoration: "none",
+                                    }}
+                                  >
+                                    <img
+                                      width={40}
+                                      height={40}
+                                      style={{
+                                        borderRadius: "50%",
+                                      }}
+                                      src={eachLiker.imageUrl}
+                                      alt=""
+                                    />
+                                  </Link>
+                                </>
                               ) : (
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="40"
-                                  height="40"
-                                  fill="rgb(83, 100, 113)"
-                                  className="bi bi-person-circle"
-                                  viewBox="0 0 16 16"
-                                >
-                                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                  <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                </svg>
+                                <>
+                                  <Link
+                                    onClick={() =>
+                                      redirectSpesificProfilePage(eachLiker._id)
+                                    }
+                                    to={`/profile/${eachLiker._id}`}
+                                    style={{
+                                      textDecoration: "none",
+                                    }}
+                                  >
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      width="40"
+                                      height="40"
+                                      fill="rgb(83, 100, 113)"
+                                      className="bi bi-person-circle"
+                                      viewBox="0 0 16 16"
+                                    >
+                                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                      <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                    </svg>
+                                  </Link>
+                                </>
                               )}
                             </div>
                             <div
@@ -777,17 +805,28 @@ function PostEngagements({
                               }}
                               className="p-0"
                             >
-                              <span
+                              <Link
+                                onClick={() =>
+                                  redirectSpesificProfilePage(eachLiker._id)
+                                }
+                                to={`/profile/${eachLiker._id}`}
                                 style={{
-                                  color: "rgb(15, 20, 25)",
-
-                                  fontSize: "15px",
-                                  fontWeight: "700",
-                                  lineHeight: "20px",
+                                  textDecoration: "none",
                                 }}
                               >
-                                {eachLiker.fullname}
-                              </span>
+                                <span
+                                  className="hover-fullname"
+                                  style={{
+                                    color: "rgb(15, 20, 25)",
+
+                                    fontSize: "15px",
+                                    fontWeight: "700",
+                                    lineHeight: "20px",
+                                  }}
+                                >
+                                  {eachLiker.fullname}
+                                </span>
+                              </Link>
                               {/* Verified Account Icon (Assuming 'verified' is a boolean property) start to check */}
                               <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
                                 <svg
@@ -817,16 +856,26 @@ function PostEngagements({
                                 }}
                               >
                                 {" "}
-                                <span
+                                <Link
+                                  onClick={() =>
+                                    redirectSpesificProfilePage(eachLiker._id)
+                                  }
+                                  to={`/profile/${eachLiker._id}`}
                                   style={{
-                                    color: "rgb(83, 100, 113)",
-                                    fontSize: "15px",
-                                    lineHeight: "20px",
-                                    fontWeight: "400",
+                                    textDecoration: "none",
                                   }}
                                 >
-                                  @{eachLiker.username}{" "}
-                                </span>
+                                  <span
+                                    style={{
+                                      color: "rgb(83, 100, 113)",
+                                      fontSize: "15px",
+                                      lineHeight: "20px",
+                                      fontWeight: "400",
+                                    }}
+                                  >
+                                    @{eachLiker.username}{" "}
+                                  </span>
+                                </Link>
                                 {allFollowerIds().includes(eachLiker._id) ? (
                                   <span
                                     style={{

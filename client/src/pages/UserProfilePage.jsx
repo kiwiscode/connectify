@@ -1991,7 +1991,7 @@ function UserProfile() {
             </Container>
             <Row
               style={{
-                border: "1px solid rgba(0, 0, 0, 0.1)",
+                borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
               }}
             ></Row>
             <ButtonGroup
@@ -2042,7 +2042,7 @@ function UserProfile() {
             {!userprofiledata.length && postsWindow === "" ? (
               <Row
                 style={{
-                  border: "1px solid rgba(0, 0, 0, 0.1)",
+                  borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
                 }}
               ></Row>
             ) : null}
@@ -2050,7 +2050,7 @@ function UserProfile() {
             {!favorites.length && favoriteWindow === "" ? (
               <Row
                 style={{
-                  border: "1px solid rgba(0, 0, 0, 0.1)",
+                  borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
                 }}
               ></Row>
             ) : null}
@@ -2065,7 +2065,7 @@ function UserProfile() {
                     <div key={post._id}>
                       <Row
                         style={{
-                          border: "1px solid rgba(0, 0, 0, 0.1)",
+                          borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
                         }}
                       ></Row>
 
@@ -2641,7 +2641,7 @@ function UserProfile() {
                     <div key={favorite._id}>
                       <Row
                         style={{
-                          border: "1px solid rgba(0, 0, 0, 0.1)",
+                          borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
                         }}
                       ></Row>
 

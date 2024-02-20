@@ -1793,6 +1793,11 @@ function MainPage() {
                             </Stack>
                             {/* new version favorite repost comment finish to check */}
                           </div>
+                          <Row
+                            style={{
+                              borderBottom: "1px solid rgba(0,0,0,0.1)",
+                            }}
+                          ></Row>
                         </div>
                       ))}
                     </>
@@ -2422,6 +2427,11 @@ function MainPage() {
                           </Stack>
                           {/* new version favorite repost comment finish to check */}
                         </div>
+                        <Row
+                          style={{
+                            borderBottom: "1px solid rgba(0,0,0,0.1)",
+                          }}
+                        ></Row>
                       </div>
                     ))
                   ) : (
