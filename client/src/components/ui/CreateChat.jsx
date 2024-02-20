@@ -291,8 +291,8 @@ function CreateChat({ writeMessageButton }) {
                               borderRadius: "50%",
                             }}
                             xmlns="http://www.w3.org/2000/svg"
-                            width="40"
-                            height="40"
+                            width={40}
+                            height={40}
                             fill="rgb(83, 100, 113)"
                             className="bi bi-person-circle"
                             viewBox="0 0 16 16"
@@ -322,6 +322,8 @@ function CreateChat({ writeMessageButton }) {
                       </div>
                       <div
                         style={{
+                          marginRight:
+                            user.imageUrl.slice(0, 3) !== "../" ? "" : "32px",
                           color: "rgb(83, 100, 113)",
                           lineHeight: "20px",
                           fontSize: "15px",

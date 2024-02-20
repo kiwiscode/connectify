@@ -216,6 +216,13 @@ const handleLogin = (req, res, next) => {
     .populate("favorites")
     .populate("messages")
     .then((user) => {
+      if (user.isDeactivated) {
+        res.status(400).json({
+          errorMessage: "Deactivated user !",
+          user: user,
+        });
+        return;
+      }
       if (user ? !user.verified : null) {
         res.status(400).json({
           errorMessage: "Email hasn't been verified yet.Check your inbox.",
@@ -307,4 +314,139 @@ const handleLogin = (req, res, next) => {
     });
 };
 
-module.exports = { handleSignup, handleLogin, handleEmailverify };
+const handleDeactivatedUserLoginBack = (req, res) => {
+  const { username, password } = req.body;
+
+  if (username === "" || password === "") {
+    res.status(403).json({
+      errorMessage:
+        "All fields are mandatory.Please provide username,email,and password",
+    });
+    return;
+  }
+
+  if (password.length < 6) {
+    return res.status(402).json({
+      errorMessage: "Your password needs to be at least 6 characters long.",
+    });
+  }
+
+  User.findOne({ username })
+    // today changed 13 nov
+    .populate("posts")
+    // today changed 13 nov
+
+    .populate("followers")
+    .populate("following")
+    .populate("favorites")
+    .populate("messages")
+    .then((user) => {
+      console.log("User ready to come back :) =>", user.username);
+
+      bcrypt.compare(password, user.password).then((isSamePassword) => {
+        if (!isSamePassword || user.username !== username) {
+          res.status(401).json({
+            errorMessage: "Wrong credentials.",
+          });
+          return;
+        }
+        user.isDeactivated = false;
+        user.deactivatedDate = null;
+        user.active = true;
+
+        user.save().then((user) => {
+          const {
+            _id,
+            username,
+            email,
+            fullname,
+            verified,
+            active,
+            posts,
+            followers,
+            following,
+            messages,
+            createdAt,
+            updatedAt,
+            favorites,
+            imageUrl,
+            notifications,
+            chatEngineInfos,
+            isDeactivated,
+            deactivatedDate,
+          } = user;
+
+          const token = jwt.sign({ userId: _id }, process.env.JWT_SECRET, {
+            expiresIn: "24h",
+          });
+
+          console.log("Logged in user username =>", username);
+          res.json({
+            token,
+            user: {
+              _id,
+              username,
+              email,
+              fullname,
+              verified,
+              active,
+              posts,
+              followers,
+              following,
+              messages,
+              createdAt,
+              updatedAt,
+              favorites,
+              imageUrl,
+              notifications,
+              chatEngineInfos,
+              isDeactivated,
+              deactivatedDate,
+            },
+          });
+        });
+
+        Post.updateMany(
+          { userId: user._id.toString() },
+          { $set: { deactivatedOwner: false } }
+        )
+          .then((result) => {
+            console.log(`${result} posts have been successfully updated.`);
+          })
+          .catch((error) => {
+            console.error("Error updating posts:", error.message);
+          });
+
+        User.find()
+          .then((users) => {
+            users.forEach((user) => {
+              user.messages.forEach((message) => {
+                message.members.forEach((eachMember) => {
+                  if (eachMember._id.toString() === user._id.toString()) {
+                    console.log("Room =>", message);
+
+                    if (user._id.toString() !== user._id.toString()) {
+                      message.deactivatedMember = false;
+                      user.save();
+                    }
+                  }
+                });
+              });
+            });
+            res.status(200).json({ message: "User deactivated!" });
+          })
+          .catch((error) => {
+            console.error("Error:", error.message);
+          });
+      });
+    })
+    .catch(() => {
+      res.status(404).json({ errorMessage: "User not found!" });
+    });
+};
+module.exports = {
+  handleSignup,
+  handleLogin,
+  handleEmailverify,
+  handleDeactivatedUserLoginBack,
+};
