@@ -142,6 +142,7 @@ function FollowerDetailPage() {
         setfollowersofthemonitoreduser(response.data.user);
         setActiveTab("followers");
         setFollowers(response.data.followers);
+        console.log("Followers =>", followers);
       })
       .catch((error) => {
         console.log("Error =>", error);
@@ -646,102 +647,84 @@ function FollowerDetailPage() {
                   };
                   return (
                     <div key={user.id} className="following-user">
-                      {/* ... (rest of your code) */}
-                      <Stack direction="horizontal">
-                        {user.imageUrl.slice(0, 3) !== "../" ? (
-                          <>
-                            <Link
-                              onClick={() => {
-                                redirectSpesificProfilePage(user._id);
-                              }}
-                              to={`/profile/${user._id}`}
-                            >
-                              <img
-                                src={user.imageUrl}
-                                alt={`${user.fullname}'s profile`}
-                                width={40}
-                                height={40}
-                                className="profile-image"
-                              />
-                            </Link>
-                          </>
-                        ) : (
-                          <div>
-                            <Link
-                              onClick={() => {
-                                redirectSpesificProfilePage(user._id);
-                              }}
-                              to={`/profile/${user._id}`}
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="40"
-                                height="40"
-                                fill="rgb(83, 100, 113)"
-                                className="bi bi-person-circle"
-                                viewBox="0 0 16 16"
-                              >
-                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                              </svg>
-                            </Link>
-                          </div>
-                        )}
-                        {/* User Info */}
-                        <div className="user-info p-2">
-                          {/* Fullname */}
-                          <div
-                            style={{
-                              fontSize: "15px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
-                            }}
-                            className="fullname"
-                          >
-                            <Link
-                              onClick={() => {
-                                redirectSpesificProfilePage(user._id);
-                              }}
-                              to={`/profile/${user._id}`}
-                              className="hover-fullname"
-                              style={{
-                                textDecoration: "none",
-                                color: "black",
-                              }}
-                            >
-                              <span
+                      {user.isDeactivated ? null : (
+                        <>
+                          <Stack direction="horizontal">
+                            {user.imageUrl.slice(0, 3) !== "../" ? (
+                              <>
+                                <Link
+                                  onClick={() => {
+                                    redirectSpesificProfilePage(user._id);
+                                  }}
+                                  to={`/profile/${user._id}`}
+                                >
+                                  <img
+                                    src={user.imageUrl}
+                                    alt={`${user.fullname}'s profile`}
+                                    width={40}
+                                    height={40}
+                                    className="profile-image"
+                                  />
+                                </Link>
+                              </>
+                            ) : (
+                              <div>
+                                <Link
+                                  onClick={() => {
+                                    redirectSpesificProfilePage(user._id);
+                                  }}
+                                  to={`/profile/${user._id}`}
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="40"
+                                    height="40"
+                                    fill="rgb(83, 100, 113)"
+                                    className="bi bi-person-circle"
+                                    viewBox="0 0 16 16"
+                                  >
+                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                  </svg>
+                                </Link>
+                              </div>
+                            )}
+                            {/* User Info */}
+                            <div className="user-info p-2">
+                              {/* Fullname */}
+                              <div
                                 style={{
                                   fontSize: "15px",
                                   fontWeight: "700",
                                   lineHeight: "20px",
                                 }}
+                                className="fullname"
                               >
-                                {user.fullname}
-                              </span>
-                            </Link>
-                          </div>
+                                <Link
+                                  onClick={() => {
+                                    redirectSpesificProfilePage(user._id);
+                                  }}
+                                  to={`/profile/${user._id}`}
+                                  className="hover-fullname"
+                                  style={{
+                                    textDecoration: "none",
+                                    color: "black",
+                                  }}
+                                >
+                                  <span
+                                    style={{
+                                      fontSize: "15px",
+                                      fontWeight: "700",
+                                      lineHeight: "20px",
+                                    }}
+                                  >
+                                    {user.fullname}
+                                  </span>
+                                </Link>
+                              </div>
 
-                          {/* Username */}
-                          <div
-                            style={{
-                              fontSize: "15px",
-                              fontWeight: "400",
-                              lineHeight: "20px",
-                              color: "rgb(83, 100, 113)",
-                              position: "relative",
-                            }}
-                            className="username"
-                          >
-                            <Link
-                              style={{
-                                textDecoration: "none",
-                              }}
-                              onClick={() => {
-                                redirectSpesificProfilePage(user._id);
-                              }}
-                              to={`/profile/${user._id}`}
-                            >
-                              <span
+                              {/* Username */}
+                              <div
                                 style={{
                                   fontSize: "15px",
                                   fontWeight: "400",
@@ -749,142 +732,168 @@ function FollowerDetailPage() {
                                   color: "rgb(83, 100, 113)",
                                   position: "relative",
                                 }}
+                                className="username"
                               >
-                                @{user.username}
-                              </span>
-                            </Link>
+                                <Link
+                                  style={{
+                                    textDecoration: "none",
+                                  }}
+                                  onClick={() => {
+                                    redirectSpesificProfilePage(user._id);
+                                  }}
+                                  to={`/profile/${user._id}`}
+                                >
+                                  <span
+                                    style={{
+                                      fontSize: "15px",
+                                      fontWeight: "400",
+                                      lineHeight: "20px",
+                                      color: "rgb(83, 100, 113)",
+                                      position: "relative",
+                                    }}
+                                  >
+                                    @{user.username}
+                                  </span>
+                                </Link>
 
-                            {user._id !== userInfo._id ? (
-                              <span
-                                style={{
-                                  position: "absolute",
-                                  textAlign: "center",
-                                  top: "3px",
-                                  marginLeft: "4px",
-                                  fontWeight: "500",
-                                  lineHeight: "10px",
-                                  color: "rgb(83, 100, 113)",
-                                  fontSize: "11px",
-                                  wordWrap: "break-word",
-                                  whiteSpace: "nowrap",
-                                  backgroundColor: "rgba(239,243,244,1.00)",
-                                  borderRadius: "3px",
-                                  padding: "4px",
-                                  overflowX: "hidden",
-                                  overflowY: "hidden",
-                                }}
-                              >
-                                Follows you
-                              </span>
-                            ) : null}
-                          </div>
-                        </div>
-                        {/* Verified Account Icon (Assuming 'verified' is a boolean property) */}
-                        <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
-                          <svg
-                            style={{
-                              position: "relative",
-                              bottom: "10px",
-                              right: "7px",
-                            }}
-                            width={`${1.25}em`}
-                            height={`${1.25}em`}
-                            viewBox="0 0 22 22"
-                            aria-label="Verified account"
-                            role="img"
-                            className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
-                            data-testid="icon-verified"
-                            color="rgba(29,155,240,1.00)"
-                            fill="currentColor"
-                          >
-                            <g>
-                              <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
-                            </g>
-                          </svg>
-                        </span>{" "}
-                        {/* Following or unfollow Button start to check */}
-                        <div
-                          onClick={() =>
-                            isFollowing
-                              ? openUnfollowModal(user)
-                              : handleFollow(user)
-                          }
-                          className="follow-following-section-followers ms-auto"
-                          style={
-                            buttonStyles && user._id !== userInfo._id
-                              ? buttonStyles
-                              : null
-                          }
-                          onMouseEnter={isFollowing ? handleMouseEnter : null}
-                          onMouseLeave={handleMouseLeave}
-                        >
-                          {user._id !== userInfo._id ? (
-                            <>
-                              {isFollowing
-                                ? isHovered === buttonId
-                                  ? "Unfollow"
-                                  : "Following"
-                                : "Follow"}
-                            </>
-                          ) : null}
-                        </div>
-                        {/* Following or unfollow Button finish to check */}
-                        {/* unfollow modal start to check  */}
-                        <Modal show={showUnfollowModal} onHide={handleClose}>
-                          <Modal.Body
-                            style={{
-                              textAlign: "center",
-                            }}
-                          >
-                            <div>
-                              <span
-                                style={{
-                                  fontWeight: "700",
-                                  fontSize: "20px",
-                                  lineHeight: "24px",
-                                  textAlign: "left",
-                                }}
-                              >
-                                Unfollow @{selectedUser.username}?
-                              </span>
-                              <div
-                                style={{
-                                  color: "rgb(83, 100, 113)",
-                                  fontWeight: "400",
-                                  fontSize: "15px",
-                                  lineHeight: "20px",
-                                  textAlign: "left",
-                                }}
-                              >
-                                Their posts will no longer show up in your
-                                Following timeline. You can still view their
-                                profile, unless their posts are protected.
+                                {user._id !== userInfo._id ? (
+                                  <span
+                                    style={{
+                                      position: "absolute",
+                                      textAlign: "center",
+                                      top: "3px",
+                                      marginLeft: "4px",
+                                      fontWeight: "500",
+                                      lineHeight: "10px",
+                                      color: "rgb(83, 100, 113)",
+                                      fontSize: "11px",
+                                      wordWrap: "break-word",
+                                      whiteSpace: "nowrap",
+                                      backgroundColor: "rgba(239,243,244,1.00)",
+                                      borderRadius: "3px",
+                                      padding: "4px",
+                                      overflowX: "hidden",
+                                      overflowY: "hidden",
+                                    }}
+                                  >
+                                    Follows you
+                                  </span>
+                                ) : null}
                               </div>
                             </div>
-                          </Modal.Body>
-                          <Modal.Footer
-                            style={{
-                              border: "none",
-                            }}
-                          >
-                            <Button
-                              variant="dark"
-                              onClick={() => handleUnfollow(selectedUser)}
+                            {/* Verified Account Icon (Assuming 'verified' is a boolean property) */}
+                            <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
+                              <svg
+                                style={{
+                                  position: "relative",
+                                  bottom: "10px",
+                                  right: "7px",
+                                }}
+                                width={`${1.25}em`}
+                                height={`${1.25}em`}
+                                viewBox="0 0 22 22"
+                                aria-label="Verified account"
+                                role="img"
+                                className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                                data-testid="icon-verified"
+                                color="rgba(29,155,240,1.00)"
+                                fill="currentColor"
+                              >
+                                <g>
+                                  <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                                </g>
+                              </svg>
+                            </span>{" "}
+                            {/* Following or unfollow Button start to check */}
+                            <div
+                              onClick={() =>
+                                isFollowing
+                                  ? openUnfollowModal(user)
+                                  : handleFollow(user)
+                              }
+                              className="follow-following-section-followers ms-auto"
+                              style={
+                                buttonStyles && user._id !== userInfo._id
+                                  ? buttonStyles
+                                  : null
+                              }
+                              onMouseEnter={
+                                isFollowing ? handleMouseEnter : null
+                              }
+                              onMouseLeave={handleMouseLeave}
                             >
-                              Unfollow
-                            </Button>
-                            <Button
-                              className="hover-unfollow-cancel"
-                              style={{ color: "black" }}
-                              variant="light"
-                              onClick={handleClose}
+                              {user._id !== userInfo._id ? (
+                                <>
+                                  {isFollowing
+                                    ? isHovered === buttonId
+                                      ? "Unfollow"
+                                      : "Following"
+                                    : "Follow"}
+                                </>
+                              ) : null}
+                            </div>
+                            {/* Following or unfollow Button finish to check */}
+                            {/* unfollow modal start to check  */}
+                            <Modal
+                              show={showUnfollowModal}
+                              onHide={handleClose}
                             >
-                              Cancel
-                            </Button>
-                          </Modal.Footer>
-                        </Modal>
-                        {/* unfollow modal finish to check  */}
-                      </Stack>
+                              <Modal.Body
+                                style={{
+                                  textAlign: "center",
+                                }}
+                              >
+                                <div>
+                                  <span
+                                    style={{
+                                      fontWeight: "700",
+                                      fontSize: "20px",
+                                      lineHeight: "24px",
+                                      textAlign: "left",
+                                    }}
+                                  >
+                                    Unfollow @{selectedUser.username}?
+                                  </span>
+                                  <div
+                                    style={{
+                                      color: "rgb(83, 100, 113)",
+                                      fontWeight: "400",
+                                      fontSize: "15px",
+                                      lineHeight: "20px",
+                                      textAlign: "left",
+                                    }}
+                                  >
+                                    Their posts will no longer show up in your
+                                    Following timeline. You can still view their
+                                    profile, unless their posts are protected.
+                                  </div>
+                                </div>
+                              </Modal.Body>
+                              <Modal.Footer
+                                style={{
+                                  border: "none",
+                                }}
+                              >
+                                <Button
+                                  variant="dark"
+                                  onClick={() => handleUnfollow(selectedUser)}
+                                >
+                                  Unfollow
+                                </Button>
+                                <Button
+                                  className="hover-unfollow-cancel"
+                                  style={{ color: "black" }}
+                                  variant="light"
+                                  onClick={handleClose}
+                                >
+                                  Cancel
+                                </Button>
+                              </Modal.Footer>
+                            </Modal>
+                            {/* unfollow modal finish to check  */}
+                          </Stack>
+                        </>
+                      )}
                     </div>
                   );
                 })

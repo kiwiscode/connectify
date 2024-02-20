@@ -1,4 +1,4 @@
-import { UserProvider } from "./context/UserContext";
+import { UserContext, UserProvider } from "./context/UserContext";
 import HomePage from "./pages/HomePage";
 import MainPage from "./pages/MainPage";
 import UserProfile from "./pages/UserProfilePage";

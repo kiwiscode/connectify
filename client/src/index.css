@@ -1685,3 +1685,8 @@ span > a:hover {
   display: none !important;
 }
 /* ant message success change password message finish to check  */
+
+.signin-modal-dialog {
+  max-width: 600px;
+  max-height: 575px;
+}

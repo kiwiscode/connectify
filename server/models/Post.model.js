@@ -48,6 +48,10 @@ const postSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
+    deactivatedOwner: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

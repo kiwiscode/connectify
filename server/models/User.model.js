@@ -61,8 +61,20 @@ const userSchema = new Schema(
           type: Boolean,
           default: false,
         },
+        deactivatedMember: {
+          type: Boolean,
+          default: false,
+        },
       },
     ],
+    isDeactivated: {
+      type: Boolean,
+      default: false,
+    },
+    deactivatedDate: {
+      type: Date,
+      default: null,
+    },
     notifications: [notificationSchema],
   },
   {
