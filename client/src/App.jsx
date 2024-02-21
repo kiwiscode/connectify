@@ -13,6 +13,7 @@ import PostDetailPage from "./pages/PostDetailPage";
 import FollowingDetailPage from "./pages/FollowingDetail";
 import FollowerDetailPage from "./pages/FollowersDetailPage";
 import ImagePostDetailPage from "./pages/ImagePostDetailPage";
+import DeactivatedPage from "./pages/DeactivatedPage";
 function App() {
   return (
     <UserProvider>
@@ -46,6 +47,11 @@ function App() {
         <Route
           path="/profile/:userId/followers"
           element={<FollowerDetailPage />}
+        ></Route>
+
+        <Route
+          path="/settings/deactivated"
+          element={<DeactivatedPage />}
         ></Route>
       </Routes>
     </UserProvider>

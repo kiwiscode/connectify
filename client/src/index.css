@@ -1690,3 +1690,21 @@ span > a:hover {
   max-width: 600px;
   max-height: 575px;
 }
+
+@media (max-width: 618px) {
+  .deactivated-footer-text {
+    display: none !important;
+  }
+
+  .deactivated-footer-login {
+    margin-right: 50px !important;
+    margin-left: 0px !important;
+  }
+}
+
+@media (max-width: 300px) {
+  .deactivated-footer-login {
+    margin-right: 40px !important;
+    margin-left: 0px !important;
+  }
+}
