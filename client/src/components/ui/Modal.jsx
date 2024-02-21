@@ -37,7 +37,7 @@ const API_URL = "http://localhost:3000";
 
 // const socket = io.connect(API_URL);
 
-function SigninModal() {
+function SigninModal({ deactivatedScren }) {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -198,29 +198,85 @@ function SigninModal() {
               }
             }
           >
-            <p
-              style={{
-                // backgroundColor: "purple",
-                width: "100%",
-                display: "flex",
-                justifyContent: "flex-end",
-              }}
-              className="have-account"
-            >
-              <span
-                className="  responsive-input-group-text
+            {deactivatedScren ? (
+              <>
+                {/* <div
+                  onClick={handleShow}
+                  style={{
+                    cursor: "pointer",
+                    minWidth: "76px",
+                    minHeight: "36px",
+                    textAlign: "center",
+                    border: "1px solid rgb(185, 202, 211)",
+                    paddingLeft: "16px",
+                    paddingRight: "16px",
+                    borderRadius: "9999px",
+                    lineHeight: "20px",
+                    fontSize: "15px",
+                    fontWeight: "700",
+                    padding: "5px",
+                    backgroundColor: "rgba(29,155,240,1.00)",
+                    color: "white",
+                  }}
+                >
+                  Log in
+                </div> */}
+                <Button
+                  className="deactivated-footer-login"
+                  style={{
+                    cursor: "pointer",
+                    maxWidth: "76px",
+                    maxHeight: "36px",
+                    textAlign: "center",
+                    border: "1px solid rgb(185, 202, 211)",
+                    paddingLeft: "16px",
+                    paddingRight: "16px",
+                    borderRadius: "9999px",
+                    lineHeight: "20px",
+                    fontSize: "15px",
+                    fontWeight: "700",
+                    padding: "5px",
+                    backgroundColor: "rgba(29,155,240,1.00)",
+                    color: "white",
+                  }}
+                  // variant="light"
+                  onClick={handleShow}
+                  // className="sign-in "
+                >
+                  Log in
+                </Button>
+              </>
+            ) : (
+              <>
+                <p
+                  style={{
+                    // backgroundColor: "purple",
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "flex-end",
+                  }}
+                  className="have-account"
+                >
+                  <span
+                    className="  responsive-input-group-text
                 "
-                style={{
-                  position: "relative",
-                  right: "98px",
-                }}
-              >
-                Already have an account ?
-              </span>
-            </p>
-            <Button variant="light" onClick={handleShow} className="sign-in ">
-              Sign in
-            </Button>
+                    style={{
+                      position: "relative",
+                      right: "98px",
+                    }}
+                  >
+                    Already have an account ?
+                  </span>
+                </p>
+                <Button
+                  variant="light"
+                  onClick={handleShow}
+                  className="sign-in "
+                >
+                  Sign in
+                </Button>
+              </>
+            )}
             {openDeactivateLoginModal ? (
               <>
                 <Modal
@@ -294,7 +350,7 @@ function SigninModal() {
                           lineHeight: "20px",
                           textAlign: "left",
                         }}
-                      >{`You deactivated your account on ${userdeactivateddate}.On ${userdeletiondate}, it will no longer be possible for you to restore your X account if it was accidentally or wrongfully deactivated. By clicking "Yes, reactivate", you will halt the deactivation process and reactivate your account.`}</div>
+                      >{`You deactivated your account on ${userdeactivateddate}.On ${userdeletiondate}, it will no longer be possible for you to restore your Connectify account if it was accidentally or wrongfully deactivated. By clicking "Yes, reactivate", you will halt the deactivation process and reactivate your account.`}</div>
                     </div>
                   </Modal.Body>
                   <Modal.Footer
