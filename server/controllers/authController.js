@@ -210,7 +210,6 @@ const handleLogin = (req, res, next) => {
     // today changed 13 nov
     .populate("posts")
     // today changed 13 nov
-
     .populate("followers")
     .populate("following")
     .populate("favorites")
@@ -354,58 +353,6 @@ const handleDeactivatedUserLoginBack = (req, res) => {
         user.deactivatedDate = null;
         user.active = true;
 
-        user.save().then((user) => {
-          const {
-            _id,
-            username,
-            email,
-            fullname,
-            verified,
-            active,
-            posts,
-            followers,
-            following,
-            messages,
-            createdAt,
-            updatedAt,
-            favorites,
-            imageUrl,
-            notifications,
-            chatEngineInfos,
-            isDeactivated,
-            deactivatedDate,
-          } = user;
-
-          const token = jwt.sign({ userId: _id }, process.env.JWT_SECRET, {
-            expiresIn: "24h",
-          });
-
-          console.log("Logged in user username =>", username);
-          res.json({
-            token,
-            user: {
-              _id,
-              username,
-              email,
-              fullname,
-              verified,
-              active,
-              posts,
-              followers,
-              following,
-              messages,
-              createdAt,
-              updatedAt,
-              favorites,
-              imageUrl,
-              notifications,
-              chatEngineInfos,
-              isDeactivated,
-              deactivatedDate,
-            },
-          });
-        });
-
         Post.updateMany(
           { userId: user._id.toString() },
           { $set: { deactivatedOwner: false } }
@@ -433,7 +380,53 @@ const handleDeactivatedUserLoginBack = (req, res) => {
                 });
               });
             });
-            res.status(200).json({ message: "User deactivated!" });
+            user.save().then((user) => {
+              const {
+                _id,
+                username,
+                email,
+                fullname,
+                verified,
+                active,
+                posts,
+                followers,
+                following,
+                messages,
+                createdAt,
+                updatedAt,
+                favorites,
+                imageUrl,
+                notifications,
+                chatEngineInfos,
+              } = user;
+
+              const token = jwt.sign({ userId: _id }, process.env.JWT_SECRET, {
+                expiresIn: "24h",
+              });
+
+              console.log("Logged in user username =>", username);
+              res.json({
+                token,
+                user: {
+                  _id,
+                  username,
+                  email,
+                  fullname,
+                  verified,
+                  active,
+                  posts,
+                  followers,
+                  following,
+                  messages,
+                  createdAt,
+                  updatedAt,
+                  favorites,
+                  imageUrl,
+                  notifications,
+                  chatEngineInfos,
+                },
+              });
+            });
           })
           .catch((error) => {
             console.error("Error:", error.message);
