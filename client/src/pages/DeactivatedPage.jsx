@@ -3,7 +3,8 @@ const { Header, Footer, Sider, Content } = Layout;
 
 import { Container, Row, Col, Button, Stack } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { PostModal } from "../components/ui/Modal";
+import { PostModal, SigninModal } from "../components/ui/Modal";
+import { useState } from "react";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -13,6 +14,8 @@ const API_URL = "http://localhost:3000";
 // const socket = io.connect(API_URL);
 
 function DeactivatedPage() {
+  const [show, setShow] = useState(false);
+
   return (
     <>
       <Container>
@@ -191,15 +194,16 @@ function DeactivatedPage() {
           }}
         >
           <Stack
+            className="deactivated-footer"
             style={{
               display: "flex",
               justifyContent: " center",
             }}
             direction="horizontal"
-            gap={4}
+            gap={2}
           >
             <div
-              className="p-2"
+              className="p-2 ms-auto deactivated-footer-text"
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -223,39 +227,18 @@ function DeactivatedPage() {
                   lineHeight: "20px",
                 }}
               >
-                People on X are the first to know.
+                People on Connectify are the first to know.
               </div>
             </div>
-
-            <div className="p-2">
-              <div
-                style={{
-                  cursor: "pointer",
-                  minWidth: "76px",
-                  minHeight: "36px",
-                  textAlign: "center",
-                  border: "1px solid rgb(185, 202, 211)",
-                  paddingLeft: "16px",
-                  paddingRight: "16px",
-                  borderRadius: "9999px",
-                  lineHeight: "20px",
-                  fontSize: "15px",
-                  fontWeight: "700",
-                  padding: "5px",
-                  backgroundColor: "rgba(29,155,240,1.00)",
-
-                  color: "white",
-                }}
-              >
-                Log in
-              </div>
+            <div className="p-2 ms-auto deactivated-footer-login">
+              <SigninModal deactivatedScren={true} />
             </div>
-            <div className="p-0">
-              <div
+            <div className="p-0 deactivated-footer-signup">
+              <Button
                 style={{
                   cursor: "pointer",
-                  minWidth: "87px",
-                  minHeight: "36px",
+                  maxWidth: "87px",
+                  maxHeight: "36px",
                   textAlign: "center",
                   border: "none",
                   paddingLeft: "16px",
@@ -266,12 +249,12 @@ function DeactivatedPage() {
                   fontWeight: "700",
                   padding: "5px",
                   backgroundColor: "#eff3f4",
-
                   color: "black",
                 }}
+                // onClick={handleShowSignUpModal}
               >
                 Sign up
-              </div>
+              </Button>
             </div>
           </Stack>
         </Footer>
