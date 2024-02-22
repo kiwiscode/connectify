@@ -85,8 +85,6 @@ const handleAddFavorite = (req, res) => {
             content: post,
           });
 
-          console.log("This line is working 4!");
-
           // NOTE start to check send notification after adding favorite
 
           User.findById(post.userId.toString())

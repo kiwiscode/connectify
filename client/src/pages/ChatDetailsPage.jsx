@@ -16,6 +16,7 @@ import Picker from "@emoji-mart/react";
 
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import CustomNotification from "../components/Notifications/CustomNotification";
+import { message } from "antd";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -34,6 +35,51 @@ function ChatDetailsPage() {
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [showEmojisBar, setshowEmojisBar] = useState("hide");
   const [showSecondModal, setShowSecondModal] = useState(false);
+
+  const redirectToPostDetailPage = (postOwner, postId) => {
+    navigate(`/${postOwner}/status/${postId}`);
+    window.location.reload();
+  };
+
+  // start to check shared post view message
+  const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
+
+  const handleCallback = (childData) => {
+    console.log("Child data =>", childData);
+    // Update the name in the component's state
+    setcurrentCreatedPost(childData);
+    postSharedMessage(childData.authorUserName, childData._id);
+  };
+
+  console.log("Current created data =>", currentCreatedPost);
+
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const postSharedMessage = (postOwner, postId) => {
+    messageApi.success({
+      type: "success",
+      content: (
+        <div>
+          <span>Your post was sent.</span>
+          <>
+            <Link
+              to={`/${postOwner}/status/${postId}`}
+              onClick={() => redirectToPostDetailPage(postOwner, postId)}
+              style={{
+                color: "white",
+                marginLeft: "5px",
+              }}
+            >
+              View
+            </Link>
+          </>
+        </div>
+      ),
+      duration: 6,
+      className: "custom-message-style",
+    });
+  };
+  // finish to check shared post view message
 
   // socket io 1 client start to check
   const [notificationTest, setnotificationTest] = useState([]);
@@ -297,6 +343,7 @@ function ChatDetailsPage() {
 
   return (
     <>
+      {contextHolder}
       <ToastContainer />
       <Container
         style={{
@@ -414,9 +461,7 @@ function ChatDetailsPage() {
                 </Link>
                 <PostModal
                   // IMPORTANT => calling the refreshPosts as a prop from PostModal component and refreshing the posts !
-                  refreshPosts={() => handleShowPostsMessagePage()}
-                  setLoadingTrue={() => setLoadingTrue()}
-                  setLoadingFalse={() => setLoadingFalse()}
+                  parentCallBack={handleCallback}
                 ></PostModal>
               </div>
               <LogoutModal></LogoutModal>
@@ -657,6 +702,7 @@ function ChatDetailsPage() {
                           </div>
                         </div>
                       </div>
+                      <></>
                     </div>
                     <div
                       className={
@@ -667,17 +713,19 @@ function ChatDetailsPage() {
                     >
                       <p id="time">
                         {eachMessage.timestamp ? (
-                          <span>
-                            {new Date(eachMessage.timestamp).toLocaleString(
-                              "en-US",
-                              {
-                                weekday: "short",
-                                hour: "numeric",
-                                minute: "numeric",
-                                hour12: true,
-                              }
-                            )}
-                          </span>
+                          <>
+                            <span>
+                              {new Date(eachMessage.timestamp).toLocaleString(
+                                "en-US",
+                                {
+                                  weekday: "short",
+                                  hour: "numeric",
+                                  minute: "numeric",
+                                  hour12: true,
+                                }
+                              )}
+                            </span>
+                          </>
                         ) : (
                           <span>{eachMessage.time}</span>
                         )}

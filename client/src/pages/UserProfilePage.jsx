@@ -9,6 +9,7 @@ import {
   Button,
   ButtonGroup,
   Modal,
+  Accordion,
 } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { LogoutModal, PostModal, CommentModal } from "../components/ui/Modal";
@@ -16,7 +17,7 @@ import LoadingSpinner from "../components/ui/LoadingSpinner";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import CustomNotification from "../components/Notifications/CustomNotification";
-
+import { message } from "antd";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -80,6 +81,47 @@ function UserProfile() {
   const [isLoading, setIsLoading] = useState(false);
   const [profileImage, setprofileImage] = useState("");
   const [completedProfileImage, setcompletedProfileImage] = useState(false);
+
+  // start to check shared post view message
+  const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
+
+  const handleCallback = (childData) => {
+    console.log("Child data =>", childData);
+    // Update the name in the component's state
+    setcurrentCreatedPost(childData);
+    postSharedMessage(childData.authorUserName, childData._id);
+  };
+
+  console.log("Current created data =>", currentCreatedPost);
+
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const postSharedMessage = (postOwner, postId) => {
+    messageApi.success({
+      type: "success",
+      content: (
+        <div>
+          <span>Your post was sent.</span>
+          <>
+            <Link
+              to={`/${postOwner}/status/${postId}`}
+              onClick={() => redirectToPostDetailPage(postOwner, postId)}
+              style={{
+                color: "white",
+                marginLeft: "5px",
+              }}
+            >
+              View
+            </Link>
+          </>
+        </div>
+      ),
+      duration: 6,
+      className: "custom-message-style",
+    });
+  };
+  // finish to check shared post view message
+
   // socket io 1 client start to check
   const [notificationTest, setnotificationTest] = useState([]);
   const [notificationText, setnotificationText] = useState([]);
@@ -87,10 +129,7 @@ function UserProfile() {
 
   // socket io 4 client start to check
   useEffect(() => {
-    console.log("Hello worldddddd");
     socket.on("socket_id_for_user", (socketId) => {
-      console.log("socket id received from backend =>", socketId);
-
       localStorage.setItem("socketId", socketId);
     });
 
@@ -881,8 +920,19 @@ function UserProfile() {
       });
   }, []);
 
+  const [visibleTweets, setVisibleTweets] = useState(25);
+  const [visibleLikedTweets, setvisibleLikedTweets] = useState(25);
+  const handleShowMorePosts = () => {
+    setVisibleTweets((prevVisibleTweets) => prevVisibleTweets + 25);
+  };
+
+  const handleShowMoreLikedTweets = () => {
+    setvisibleLikedTweets((prevVisibleTweets) => prevVisibleTweets + 25);
+  };
+
   return (
     <>
+      {contextHolder}
       <ToastContainer />
 
       <ResponsiveNavigationBarBottom />
@@ -1002,6 +1052,7 @@ function UserProfile() {
                   refreshPosts={() => handleShowPostsProfilePage()}
                   setLoadingTrue={() => setLoadingTrue()}
                   setLoadingFalse={() => setLoadingFalse()}
+                  parentCallBack={handleCallback}
                 ></PostModal>
               </div>
 
@@ -1994,6 +2045,7 @@ function UserProfile() {
                 borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
               }}
             ></Row>
+
             <ButtonGroup
               aria-label="Basic example"
               style={{
@@ -2039,6 +2091,7 @@ function UserProfile() {
                 )}
               </Button>
             </ButtonGroup>
+
             {!userprofiledata.length && postsWindow === "" ? (
               <Row
                 style={{
@@ -2054,14 +2107,13 @@ function UserProfile() {
                 }}
               ></Row>
             ) : null}
-
             <span>{isLoading ? <LoadingSpinner></LoadingSpinner> : ""}</span>
             {/* mainpage yani home rotasına tüm twitlerin gösterileceği column burası !  */}
 
             <div className={`all-posts ${postsWindow}`}>
               {userprofiledata.length ? (
                 <>
-                  {userprofiledata.map((post) => (
+                  {userprofiledata.slice(0, visibleTweets).map((post) => (
                     <div key={post._id}>
                       {post.deactivatedOwner ? null : (
                         <>
@@ -2615,6 +2667,34 @@ function UserProfile() {
                       )}
                     </div>
                   ))}
+                  {visibleTweets < userprofiledata.length && (
+                    <Accordion defaultActiveKey="0">
+                      <Accordion.Item style={{ border: "none" }} eventKey="1">
+                        <Accordion.Header
+                          style={{ border: "none" }}
+                          className="accordion-2"
+                        >
+                          <div
+                            onClick={handleShowMorePosts}
+                            style={{
+                              border: "none",
+                              width: "100%",
+                              textAlign: "center",
+                              color: "rgb(29, 155, 240)",
+                              fontSize: "15px",
+                              fontWeight: "400",
+                              lineHeight: "24px",
+                              cursor: "pointer",
+                              backgroundColor: "transparent",
+                            }}
+                          >
+                            Show more
+                          </div>
+                        </Accordion.Header>
+                        <Accordion.Body></Accordion.Body>
+                      </Accordion.Item>
+                    </Accordion>
+                  )}
                 </>
               ) : (
                 <>
@@ -2655,7 +2735,7 @@ function UserProfile() {
             <div className={`${favoriteWindow} all-favorites`}>
               {favorites.length ? (
                 <>
-                  {favorites.map((favorite) => (
+                  {favorites.slice(0, visibleLikedTweets).map((favorite) => (
                     <div key={favorite._id}>
                       {favorite.deactivatedOwner ? null : (
                         <>
@@ -3145,6 +3225,34 @@ function UserProfile() {
                       )}
                     </div>
                   ))}
+                  {visibleLikedTweets < favorites.length && (
+                    <Accordion defaultActiveKey="0">
+                      <Accordion.Item style={{ border: "none" }} eventKey="1">
+                        <Accordion.Header
+                          style={{ border: "none" }}
+                          className="accordion-2"
+                        >
+                          <div
+                            onClick={handleShowMoreLikedTweets}
+                            style={{
+                              border: "none",
+                              width: "100%",
+                              textAlign: "center",
+                              color: "rgb(29, 155, 240)",
+                              fontSize: "15px",
+                              fontWeight: "400",
+                              lineHeight: "24px",
+                              cursor: "pointer",
+                              backgroundColor: "transparent",
+                            }}
+                          >
+                            Show more
+                          </div>
+                        </Accordion.Header>
+                        <Accordion.Body></Accordion.Body>
+                      </Accordion.Item>
+                    </Accordion>
+                  )}
                 </>
               ) : (
                 <>

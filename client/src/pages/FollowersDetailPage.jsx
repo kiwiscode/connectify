@@ -8,6 +8,8 @@ import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNaviga
 import ResponsiveNavigationBarTop from "../components/Navbar/ResponsiveNavigationTop";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import CustomNotification from "../components/Notifications/CustomNotification";
+import { message } from "antd";
+
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -55,6 +57,46 @@ function FollowerDetailPage() {
   // finish to check
 
   const { getToken, userInfo, socket } = useContext(UserContext);
+
+  // start to check shared post view message
+  const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
+
+  const handleCallback = (childData) => {
+    console.log("Child data =>", childData);
+    // Update the name in the component's state
+    setcurrentCreatedPost(childData);
+    postSharedMessage(childData.authorUserName, childData._id);
+  };
+
+  console.log("Current created data =>", currentCreatedPost);
+
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const postSharedMessage = (postOwner, postId) => {
+    messageApi.success({
+      type: "success",
+      content: (
+        <div>
+          <span>Your post was sent.</span>
+          <>
+            <Link
+              to={`/${postOwner}/status/${postId}`}
+              onClick={() => redirectToPostDetailPage(postOwner, postId)}
+              style={{
+                color: "white",
+                marginLeft: "5px",
+              }}
+            >
+              View
+            </Link>
+          </>
+        </div>
+      ),
+      duration: 6,
+      className: "custom-message-style",
+    });
+  };
+  // finish to check shared post view message
 
   // socket io 1 client start to check
   const [notificationTest, setnotificationTest] = useState([]);
@@ -220,6 +262,7 @@ function FollowerDetailPage() {
   const [activeTab, setActiveTab] = useState("");
   return (
     <>
+      {contextHolder}
       <ToastContainer />
 
       <ResponsiveNavigationBarBottom />
@@ -335,11 +378,7 @@ function FollowerDetailPage() {
                     </div>
                   </div>
                 </Link>
-                <PostModal
-                  refreshPosts={() => handleShowPostsProfilePage()}
-                  setLoadingTrue={() => setLoadingTrue()}
-                  setLoadingFalse={() => setLoadingFalse()}
-                ></PostModal>
+                <PostModal parentCallBack={handleCallback}></PostModal>
               </div>
 
               <LogoutModal></LogoutModal>

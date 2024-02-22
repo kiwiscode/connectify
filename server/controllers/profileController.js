@@ -281,6 +281,15 @@ async function handleChangePassword(req, res) {
       return res.status(401).json({ message: "Incorrect old password." });
     }
 
+    const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
+    if (!regex.test(newPassword) || newPassword.length < 6) {
+      res.status(402).json({
+        errorMessage:
+          "Password needs to have at least 6 chars and must contain at least one number, one lowercase and one uppercase letter.",
+      });
+      return;
+    }
+
     const hashedNewPassword = await bcrypt.hash(newPassword, 10);
     user.password = hashedNewPassword;
     await user.save();

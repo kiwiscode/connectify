@@ -7,7 +7,7 @@ import { UserContext } from "../context/UserContext";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import CustomNotification from "../components/Notifications/CustomNotification";
 import PostEngagements from "../components/ui/PostEngagementsModal";
-
+import { message } from "antd";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -25,6 +25,51 @@ function PostDetailPage() {
   const [postDetailPostId, setpostDetailPostId] = useState("");
 
   const [shouldHide, setshouldHide] = useState(true);
+
+  const redirectToPostDetailPage = (postOwner, postId) => {
+    navigate(`/${postOwner}/status/${postId}`);
+    window.location.reload();
+  };
+
+  // start to check shared post view message
+  const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
+
+  const handleCallback = (childData) => {
+    console.log("Child data =>", childData);
+    // Update the name in the component's state
+    setcurrentCreatedPost(childData);
+    postSharedMessage(childData.authorUserName, childData._id);
+  };
+
+  console.log("Current created data =>", currentCreatedPost);
+
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const postSharedMessage = (postOwner, postId) => {
+    messageApi.success({
+      type: "success",
+      content: (
+        <div>
+          <span>Your post was sent.</span>
+          <>
+            <Link
+              to={`/${postOwner}/status/${postId}`}
+              onClick={() => redirectToPostDetailPage(postOwner, postId)}
+              style={{
+                color: "white",
+                marginLeft: "5px",
+              }}
+            >
+              View
+            </Link>
+          </>
+        </div>
+      ),
+      duration: 6,
+      className: "custom-message-style",
+    });
+  };
+  // finish to check shared post view message
 
   // socket io 1 client start to check
   const [notificationTest, setnotificationTest] = useState([]);
@@ -1231,6 +1276,7 @@ function PostDetailPage() {
 
   return (
     <>
+      {contextHolder}
       <ToastContainer />
       <Container
         style={
@@ -1349,12 +1395,7 @@ function PostDetailPage() {
                   </div>
                 </Link>
 
-                <PostModal
-                  // IMPORTANT => calling the refreshPosts as a prop from PostModal component and refreshing the posts !
-                  refreshPosts={() => handleShowPostsHomePage()}
-                  setLoadingTrue={() => setLoadingTrue()}
-                  setLoadingFalse={() => setLoadingFalse()}
-                ></PostModal>
+                <PostModal parentCallBack={handleCallback}></PostModal>
               </div>
 
               <LogoutModal></LogoutModal>
@@ -2770,7 +2811,7 @@ function PostDetailPage() {
                         backgroundColor: "transparent",
                       }}
                     >
-                      Show this thread
+                      Show this threads
                     </div>
                   </Accordion.Header>
                   <Accordion.Body>
