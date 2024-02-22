@@ -12,7 +12,7 @@ import {
   Popover,
   OverlayTrigger,
 } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 // import Picker from "emoji-picker-react";
@@ -44,6 +44,18 @@ function SigninModal({ deactivatedScren }) {
   const [error, setError] = useState("");
   const { updateUser } = useContext(UserContext);
   const [show, setShow] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const catchErrorMessage = (message) => {
+    console.log("Clicked !");
+    console.log("Message =>", message);
+    messageApi.success({
+      type: "success",
+      content: message,
+      duration: 4,
+      className: "custom-message-style",
+    });
+  };
 
   const handleClose = () => {
     setShow(false);
@@ -84,12 +96,7 @@ function SigninModal({ deactivatedScren }) {
         if (err.response !== undefined) {
           const { status } = err.response;
           const { errorMessage } = err.response.data;
-          if (status === 403) {
-            setError(errorMessage);
-          }
-          if (status === 402) {
-            setError(errorMessage);
-          }
+
           if (status === 400 && errorMessage === "Deactivated user !") {
             console.log("Deactivate user trying to login !");
             console.log("Error message =>", err);
@@ -133,13 +140,16 @@ function SigninModal({ deactivatedScren }) {
             setUserDeactivatedDate(formattedDate);
             setUserdeletiondate(formattedDate2);
           } else if (status === 400) {
-            setError(errorMessage);
+            catchErrorMessage(errorMessage);
           }
           if (status === 401) {
-            setError(errorMessage);
+            catchErrorMessage(errorMessage);
+          }
+          if (status === 402) {
+            catchErrorMessage(errorMessage);
           }
           if (status === 500) {
-            setError("Please try again later.");
+            catchErrorMessage(errorMessage);
           }
         } else {
           return;
@@ -183,6 +193,7 @@ function SigninModal({ deactivatedScren }) {
   };
   return (
     <>
+      {contextHolder}
       <Container className="text-end" fluid="true">
         <Row>
           <Col
@@ -271,7 +282,7 @@ function SigninModal({ deactivatedScren }) {
                 <Button
                   variant="light"
                   onClick={handleShow}
-                  className="sign-in "
+                  className="sign-in"
                 >
                   Sign in
                 </Button>
@@ -362,7 +373,6 @@ function SigninModal({ deactivatedScren }) {
                       style={{
                         // width: "400px",
                         minHeight: "52px",
-                        backgroundColor: "rgb(15, 20, 25)",
                       }}
                       className="login-button"
                       // variant="dark"
@@ -371,12 +381,13 @@ function SigninModal({ deactivatedScren }) {
                       Yes, reactivate
                     </Button>
                     <Button
+                      className="cancel-btn-reactivate-tab"
                       style={{
                         // width: "400px",
                         minHeight: "52px",
                         color: "black",
                       }}
-                      className="login-button"
+                      // className="login-button"
                       variant="light"
                       onClick={handleClose}
                     >
@@ -456,8 +467,29 @@ function SigninModal({ deactivatedScren }) {
                         onChange={(e) => setPassword(e.target.value)}
                       />
                     </InputGroup>
+                    <div
+                      style={{
+                        width: "300px",
+                      }}
+                      className="grid-container"
+                    >
+                      <div
+                        style={{
+                          cursor: "pointer",
+                          color: "rgb(29, 155, 240)",
+                          fontSize: "13px",
+                          lineHeight: "16px",
+                          fontWeight: "400",
+                          marginLeft: "5px",
+                        }}
+                        className="grid-item forgot-password-text"
+                      >
+                        Forgot password?
+                      </div>
+                    </div>
                     {error}
                   </Modal.Body>
+
                   <Modal.Footer
                     style={{
                       border: "none",
@@ -470,10 +502,28 @@ function SigninModal({ deactivatedScren }) {
                     >
                       Log in
                     </Button>
-                    <span>
-                      Don&apos;t have an account?
-                      <a href="">Sign up</a>
-                    </span>
+                    <div
+                      style={{
+                        width: "300px",
+                      }}
+                      className="grid-container"
+                    >
+                      <div
+                        style={{
+                          cursor: "pointer",
+                          color: "rgb(83, 100, 113)",
+                          fontSize: "15px",
+                          lineHeight: "20px",
+                          fontWeight: "400",
+                          marginLeft: "5px",
+                        }}
+                        className="grid-item"
+                      >
+                        <span>
+                          Don&apos;t have an account? <a href="">Sign up</a>
+                        </span>
+                      </div>
+                    </div>
                   </Modal.Footer>
                 </Modal>
               </>
@@ -524,6 +574,8 @@ function LogoutModal() {
   const [errorInput2, seterrorInput2] = useState("");
   const [errorInputStyle3, seterrorInputStyle3] = useState(false);
   const [errorInput3, seterrorInput3] = useState("");
+  const [errorInputStyle4, seterrorInputStyle4] = useState(false);
+  const [errorInput4, seterrorInput4] = useState("");
   const [deactivatePassword, setdeactivatePassword] = useState("");
 
   const handleDeactivateUser = () => {
@@ -1020,6 +1072,8 @@ function LogoutModal() {
   };
 
   const handleChangePassword = () => {
+    const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
+
     if (newPassword === oldPassword) {
       seterrorInputStyle2(true);
       seterrorInput2(
@@ -1030,6 +1084,9 @@ function LogoutModal() {
 
       seterrorInputStyle3(false);
       seterrorInput3("");
+
+      seterrorInputStyle4(false);
+      seterrorInput4("");
     } else if (newPassword === confirmNewPassword) {
       axios
         .post(
@@ -1052,22 +1109,52 @@ function LogoutModal() {
           seterrorInputStyle(false);
           seterrorInputStyle2(false);
           seterrorInputStyle3(false);
+          seterrorInputStyle4(false);
           seterrorInput("");
           seterrorInput2("");
           seterrorInput3("");
+          seterrorInput4("");
 
           successMessage();
         })
-        .catch(() => {
-          seterrorInput3("The password you entered was incorrect.");
-          seterrorInputStyle3(true);
+        .catch((error) => {
+          console.log(error);
+          if (error.response.status === 402) {
+            seterrorInput4(
+              "Your password needs to be at least 8 characters. Please enter a longer one.      "
+            );
+            seterrorInputStyle4(true);
 
-          seterrorInput("");
-          seterrorInputStyle(false);
+            seterrorInput("");
+            seterrorInputStyle(false);
 
-          seterrorInputStyle2(false);
-          seterrorInput2("");
+            seterrorInputStyle2(false);
+            seterrorInput2("");
+          }
+          if (error.response.status === 401) {
+            seterrorInput3("The password you entered was incorrect.");
+            seterrorInputStyle3(true);
+
+            seterrorInput("");
+            seterrorInputStyle(false);
+
+            seterrorInputStyle2(false);
+            seterrorInput2("");
+
+            seterrorInput4("");
+            seterrorInputStyle4(false);
+          }
         });
+    } else if (!regex.test(newPassword) || newPassword.length < 6) {
+      seterrorInputStyle4(true);
+      seterrorInput3("");
+      seterrorInputStyle3(false);
+
+      seterrorInput("");
+      seterrorInputStyle(false);
+
+      seterrorInputStyle2(false);
+      seterrorInput2("");
     } else {
       seterrorInput("Passwords do not match.");
       seterrorInputStyle(true);
@@ -1077,6 +1164,9 @@ function LogoutModal() {
 
       seterrorInputStyle3(false);
       seterrorInput3("");
+
+      seterrorInput4("");
+      seterrorInputStyle4(false);
     }
   };
 
@@ -1898,6 +1988,23 @@ function LogoutModal() {
                       onChange={(e) => setNewPassword(e.target.value)}
                     />
                   </InputGroup>
+                  {errorInputStyle4 ? (
+                    <>
+                      <div
+                        className="mt-2"
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          color: "rgba(244,39,49,255)",
+                          fontSize: "13px",
+                          lineHeight: "16px",
+                          fontWeight: "400",
+                        }}
+                      >
+                        {errorInput4}
+                      </div>
+                    </>
+                  ) : null}
                   {errorInputStyle2 ? (
                     <>
                       <div
@@ -1947,6 +2054,7 @@ function LogoutModal() {
                       </div>
                     </>
                   ) : null}
+
                   <div>
                     <Button
                       style={{
@@ -2063,7 +2171,13 @@ function LogoutModal() {
   );
 }
 // IMPORTANT => refreshPosts as a props !
-function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
+function PostModal({
+  refreshPosts,
+  setLoadingTrue,
+  setLoadingFalse,
+  visible,
+  parentCallBack,
+}) {
   const [show, setShow] = useState(false);
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
@@ -2074,7 +2188,6 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
   const maxCharacters = 140;
 
   const [modalImage, setModalImage] = useState("");
-
   //handle and convert it in base 64
   const handleImage = (e) => {
     const file = e.target.files[0];
@@ -2125,15 +2238,25 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
           }
         )
 
-        .then(() => {
-          setLoadingTrue();
+        .then((response) => {
+          console.log("I am working ! handlePost()");
+          if (setLoadingTrue) {
+            setLoadingTrue();
+          }
+          console.log("I am working ! handlePost() 1");
+
           setModalImage("");
           setTimeout(() => {
-            // IMPORTANT => we are using refreshPosts() it means we are using prop as a function !
-            setLoadingFalse();
-            refreshPosts();
+            console.log("I am working ! handlePost() inside set time out 1");
+            parentCallBack(response.data.createdPost);
+            if (setLoadingTrue) {
+              setLoadingFalse();
+            }
+            if (refreshPosts) {
+              refreshPosts();
+            }
+            console.log("I am working ! handlePost() inside set time out 2");
           }, 1500);
-          // handleGetAllPosts();
           setContent("");
         })
         .catch((err) => {
@@ -2259,6 +2382,7 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
             fontWeight: "700",
             lineHeight: "20px",
             top: "0",
+            border: "none",
           }}
           className="compose-tweet-text compose-tweet-2"
         >
@@ -2505,6 +2629,9 @@ function PostModal({ refreshPosts, setLoadingTrue, setLoadingFalse, visible }) {
               {/* <div className="p-2 "> */}{" "}
               {content !== "" || modalImage ? (
                 <Button
+                  style={{
+                    border: "none",
+                  }}
                   variant="primary"
                   onClick={() => handlePost()}
                   className={`post-btn compose-tweet-textArea`}

@@ -51,7 +51,7 @@ const handlePost = (req, res) => {
             user.posts.unshift(post);
             console.log("THIS LINE IS WORKING 2 ", post);
             return user.save().then(() => {
-              res.status(200).json({ message: "Post added successfully." });
+              res.status(200).json({ createdPost: post });
             });
           })
           .catch((error) => {
@@ -69,7 +69,7 @@ const handlePost = (req, res) => {
             user.posts.unshift(post);
             console.log("THIS LINE IS WORKING 2 ", post);
             return user.save().then(() => {
-              res.status(200).json({ message: "Post added successfully." });
+              res.status(200).json({ createdPost: post });
             });
           })
           .catch((error) => {
