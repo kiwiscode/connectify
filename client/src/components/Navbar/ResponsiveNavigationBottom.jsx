@@ -3,6 +3,7 @@ import { Stack } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import "./navbar.css";
 import { PostModal } from "../ui/Modal";
+import { message } from "antd";
 
 // when working on local version
 
@@ -12,6 +13,50 @@ import { PostModal } from "../ui/Modal";
 function ResponsiveNavigationBarBottom() {
   const [prevScrollPos, setPrevScrollPos] = useState(window.pageYOffset);
   const [visible, setVisible] = useState(true);
+
+  const redirectToPostDetailPage = (postOwner, postId) => {
+    navigate(`/${postOwner}/status/${postId}`);
+    window.location.reload();
+  };
+
+  // start to check shared post view message
+  const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
+
+  const handleCallback = (childData) => {
+    console.log("Child data =>", childData);
+    // Update the name in the component's state
+    setcurrentCreatedPost(childData);
+    postSharedMessage(childData.authorUserName, childData._id);
+  };
+
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const postSharedMessage = (postOwner, postId) => {
+    messageApi.success({
+      type: "success",
+      content: (
+        <div>
+          <span>Your post was sent.</span>
+          <>
+            <Link
+              to={`/${postOwner}/status/${postId}`}
+              onClick={() => redirectToPostDetailPage(postOwner, postId)}
+              style={{
+                color: "white",
+                marginLeft: "5px",
+              }}
+            >
+              View
+            </Link>
+          </>
+        </div>
+      ),
+      duration: 60,
+      className: "custom-message-style-responsive",
+    });
+  };
+  // finish to check shared post view message
+
   // rendering page after redirectiring for fetching data without problem ! if you need to fetch data after you redirect or navigate to user to the page (it can work pretty good on your navigation bar)this lines of code is pretty useful
   // start to check
   const navigate = useNavigate();
@@ -44,6 +89,7 @@ function ResponsiveNavigationBarBottom() {
   }, [prevScrollPos]);
   return (
     <>
+      {contextHolder}
       <Stack
         style={{
           height: "50px",
@@ -121,9 +167,7 @@ function ResponsiveNavigationBarBottom() {
         <PostModal
           // IMPORTANT => calling the refreshPosts as a prop from PostModal component and refreshing the posts !
           visible={visible}
-          refreshPosts={() => handleShowPostsHomePage()}
-          setLoadingTrue={() => setLoadingTrue()}
-          setLoadingFalse={() => setLoadingFalse()}
+          parentCallBack={handleCallback}
         ></PostModal>
       </div>
     </>

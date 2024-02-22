@@ -16,15 +16,13 @@
 :root {
   --border-radius: 9999px;
   --font-weight: 500;
-  --font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, Helvetica, Arial, sans-serif;
+  font-family: "Helvetica Neue", sans-serif;
 }
 
 body {
-  font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, Helvetica, Arial, sans-serif;
   margin: 0;
   padding: 0;
+  font-family: "Helvetica Neue", sans-serif;
 }
 
 .logout-three-dots {
@@ -96,15 +94,23 @@ body {
 }
 
 .create-btn:hover {
-  background-color: rgb(16, 128, 202);
+  background-color: #198cd8;
   outline-style: none;
-  border-style: solid;
+  border-style: none;
   border-color: rgb(207, 217, 222);
   border-bottom-width: 1px;
   border-left-width: 1px;
   border-right-width: 1px;
   border-top-width: 1px;
   border-radius: var(--border-radius);
+}
+
+.create-btn {
+  border: none;
+}
+
+.compose-tweet:hover {
+  background-color: #198cd8;
 }
 
 .btn-light {
@@ -180,6 +186,10 @@ body {
 .create-btn,
 .sign-in {
   height: 45px;
+}
+
+.sign-in:hover {
+  background-color: #ebf5fe;
 }
 
 .footer-container {
@@ -295,18 +305,7 @@ span > a:hover {
   outline-style: none;
   border: none;
   margin-left: 5px;
-}
-
-.compose-tweet:hover {
-  background-color: rgb(16, 128, 202);
-  outline-style: none;
-  border-style: solid;
-  border-color: rgb(207, 217, 222);
-  border-bottom-width: 1px;
-  border-left-width: 1px;
-  border-right-width: 1px;
-  border-top-width: 1px;
-  border-radius: var(--border-radius);
+  border: none;
 }
 
 .compose-tweet-textArea {
@@ -382,6 +381,11 @@ span > a:hover {
 
 .post-btn {
   width: 80px;
+  border: none;
+}
+
+.post-btn:hover {
+  background-color: #198cd8;
 }
 
 .input-post {
@@ -1007,11 +1011,6 @@ span > a:hover {
 @media (max-width: 991px) and (min-width: 768px) {
   .main-column {
     width: 90% !important;
-  }
-
-  .nav-bar-home {
-    /* background-color: beige; */
-    /* margin-left: 86; */
   }
 
   .left-column {
@@ -1668,13 +1667,22 @@ span > a:hover {
   bottom: 20px;
   width: 100%;
 }
+
 .ant-message-notice-content {
-  background-color: rgb(16, 128, 202) !important;
+  background-color: #1d9bf0 !important;
   color: white !important;
   font-size: 15px;
   line-height: 20px;
   font-weight: 400;
-  width: 380px;
+}
+
+.ant-message-custom-content a {
+  text-decoration: none !important;
+}
+
+.ant-message-custom-content a:hover {
+  text-decoration: underline !important;
+  text-decoration-color: white !important;
 }
 
 .ant-message-success {
@@ -1685,6 +1693,67 @@ span > a:hover {
   display: none !important;
 }
 /* ant message success change password message finish to check  */
+
+/* ant message success responsive ! start to check */
+.custom-message-style-responsive {
+  /* display: flex;
+  justify-content: center; */
+  /* align-items: flex-end; */
+  /* position: fixed; */
+  position: relative !important;
+  bottom: 30px;
+  width: 100%;
+}
+
+@media (max-width: 340px) {
+  .custom-message-style-responsive {
+    background-color: blue;
+    position: relative !important;
+    bottom: 30px;
+    width: 100%;
+    right: 15px;
+  }
+}
+@media (max-width: 310px) {
+  .custom-message-style-responsive {
+    background-color: blue;
+    position: relative !important;
+    bottom: 30px;
+    width: 100%;
+    right: 20px;
+  }
+}
+@media (max-width: 300px) {
+  .custom-message-style-responsive {
+    background-color: yellow;
+    position: relative !important;
+    bottom: 30px;
+    width: 100%;
+    right: 25px;
+  }
+}
+
+@media (max-width: 290px) {
+  .custom-message-style-responsive {
+    background-color: yellow;
+    position: relative !important;
+    bottom: 30px;
+    width: 100%;
+    right: 30px;
+  }
+}
+
+@media (max-width: 280px) {
+  .custom-message-style-responsive {
+    background-color: purple;
+    position: relative !important;
+    bottom: 30px;
+    width: 100%;
+    right: 32px;
+  }
+}
+
+/* ant message success responsive ! finish to check */
 
 .signin-modal-dialog {
   max-width: 600px;
@@ -1707,4 +1776,41 @@ span > a:hover {
     margin-right: 40px !important;
     margin-left: 0px !important;
   }
+}
+
+.login-button,
+.unfollow-btn {
+  border: none;
+  background-color: #0f141a;
+}
+
+.login-button:hover,
+.unfollow-btn:hover {
+  outline-style: none;
+  border-style: none;
+  border-radius: var(--border-radius);
+  background-color: #272c30;
+}
+
+.cancel-btn-reactivate-tab:hover {
+  background-color: #e7e7e8;
+}
+
+/* #e7e7e8 */
+
+.forgot-password-text:hover {
+  text-decoration: underline;
+  text-decoration-color: rgb(29, 155, 240);
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 10px; /* İstediğiniz boşluk değerini ayarlayabilirsiniz */
+}
+
+.grid-item {
+  /* padding: 20px; */
+  /* border: 1px solid #ddd; */
+  text-align: left;
 }

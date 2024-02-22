@@ -1,6 +1,14 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserContext";
-import { Col, Row, Container, Stack, Modal } from "react-bootstrap";
+import {
+  Col,
+  Row,
+  Container,
+  Stack,
+  Modal,
+  OverlayTrigger,
+  Popover,
+} from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { LogoutModal, PostModal } from "../components/ui/Modal";
 import axios from "axios";
@@ -8,6 +16,7 @@ import CreateChat from "../components/ui/CreateChat";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import CustomNotification from "../components/Notifications/CustomNotification";
+import { message } from "antd";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -36,7 +45,17 @@ function MessagesPage() {
     window.location.reload();
   };
 
+  const redirectToPostDetailPage = (postOwner, postId) => {
+    navigate(`/${postOwner}/status/${postId}`);
+    window.location.reload();
+  };
   // finish to check
+
+  const popoverBottom = (
+    <Popover id="popover-positioned-scrolling-bottom" title="Popover bottom">
+      <strong>Holy guacamole!</strong> Check this info.
+    </Popover>
+  );
 
   const [searchTerm, setSearchTerm] = useState("");
   const { userInfo, getToken, socket } = useContext(UserContext);
@@ -45,6 +64,46 @@ function MessagesPage() {
   const [content, setContent] = useState("");
   const [messageRooms, setmessageRooms] = useState([]);
   const [filteredRooms, setfilteredRooms] = useState([]);
+
+  // start to check shared post view message
+  const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
+
+  const handleCallback = (childData) => {
+    console.log("Child data =>", childData);
+    // Update the name in the component's state
+    setcurrentCreatedPost(childData);
+    postSharedMessage(childData.authorUserName, childData._id);
+  };
+
+  console.log("Current created data =>", currentCreatedPost);
+
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const postSharedMessage = (postOwner, postId) => {
+    messageApi.success({
+      type: "success",
+      content: (
+        <div>
+          <span>Your post was sent.</span>
+          <>
+            <Link
+              to={`/${postOwner}/status/${postId}`}
+              onClick={() => redirectToPostDetailPage(postOwner, postId)}
+              style={{
+                color: "white",
+                marginLeft: "5px",
+              }}
+            >
+              View
+            </Link>
+          </>
+        </div>
+      ),
+      duration: 6,
+      className: "custom-message-style",
+    });
+  };
+  // finish to check shared post view message
 
   // socket io 1 client start to check
   const [notificationTest, setnotificationTest] = useState([]);
@@ -283,6 +342,7 @@ function MessagesPage() {
 
   return (
     <>
+      {contextHolder}
       <ToastContainer />
 
       <ResponsiveNavigationBarBottom />
@@ -405,6 +465,7 @@ function MessagesPage() {
                   refreshPosts={() => handleShowPostsMessagePage()}
                   setLoadingTrue={() => setLoadingTrue()}
                   setLoadingFalse={() => setLoadingFalse()}
+                  parentCallBack={handleCallback}
                 ></PostModal>
               </div>
               <LogoutModal></LogoutModal>
@@ -568,34 +629,45 @@ function MessagesPage() {
                                         {" "}
                                         {getMemberNotEqualActiveUser(
                                           eachMessageRoom
-                                        ).imageUrl.slice(0, 3) !== "../" ? (
-                                          <img
-                                            width={40}
-                                            height={40}
-                                            style={{
-                                              borderRadius: "50%",
-                                            }}
-                                            src={
-                                              getMemberNotEqualActiveUser(
-                                                eachMessageRoom
-                                              ).imageUrl
-                                            }
-                                            alt=""
-                                          />
-                                        ) : (
-                                          <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="40"
-                                            height="40"
-                                            fill="rgb(83, 100, 113)"
-                                            className="bi bi-person-circle"
-                                            viewBox="0 0 16 16"
-                                            style={{}}
-                                          >
-                                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                            <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                          </svg>
-                                        )}
+                                        ) ? (
+                                          <>
+                                            {getMemberNotEqualActiveUser(
+                                              eachMessageRoom
+                                            ).imageUrl.slice(0, 3) !== "../" ? (
+                                              <>
+                                                <img
+                                                  width={40}
+                                                  height={40}
+                                                  style={{
+                                                    borderRadius: "50%",
+                                                  }}
+                                                  src={
+                                                    getMemberNotEqualActiveUser(
+                                                      eachMessageRoom
+                                                    ).imageUrl
+                                                  }
+                                                  alt=""
+                                                />
+                                                <div></div>
+                                              </>
+                                            ) : (
+                                              <>
+                                                <svg
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  width="40"
+                                                  height="40"
+                                                  fill="rgb(83, 100, 113)"
+                                                  className="bi bi-person-circle"
+                                                  viewBox="0 0 16 16"
+                                                  style={{}}
+                                                >
+                                                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                                  <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                                </svg>
+                                              </>
+                                            )}
+                                          </>
+                                        ) : null}
                                       </div>
                                       <div
                                         style={{
@@ -612,12 +684,17 @@ function MessagesPage() {
                                             lineHeight: "20px",
                                           }}
                                         >
-                                          {eachMessageRoom.members[1]
-                                            .fullname !== userInfo.fullname
-                                            ? eachMessageRoom.members[1]
-                                                .fullname
-                                            : eachMessageRoom.members[0]
-                                                .fullname}{" "}
+                                          {eachMessageRoom.members[1] &&
+                                          eachMessageRoom.members[0] ? (
+                                            <>
+                                              {eachMessageRoom.members[1]
+                                                .fullname !== userInfo.fullname
+                                                ? eachMessageRoom.members[1]
+                                                    .fullname
+                                                : eachMessageRoom.members[0]
+                                                    .fullname}{" "}
+                                            </>
+                                          ) : null}
                                         </span>
                                         <span
                                           style={{
@@ -628,12 +705,17 @@ function MessagesPage() {
                                           }}
                                         >
                                           @
-                                          {eachMessageRoom.members[1]
-                                            .username !== userInfo.username
-                                            ? eachMessageRoom.members[1]
-                                                .username
-                                            : eachMessageRoom.members[0]
-                                                .username}{" "}
+                                          {eachMessageRoom.members[1] &&
+                                          eachMessageRoom.members[0] ? (
+                                            <>
+                                              {eachMessageRoom.members[1]
+                                                .username !== userInfo.username
+                                                ? eachMessageRoom.members[1]
+                                                    .username
+                                                : eachMessageRoom.members[0]
+                                                    .username}{" "}
+                                            </>
+                                          ) : null}
                                         </span>
                                         <span
                                           style={{
@@ -669,30 +751,43 @@ function MessagesPage() {
                                       </div>
                                       {/* <div className="p-0 ms-auto">asd</div> */}
                                       <div className="p-0 ms-auto">
-                                        <svg
-                                          style={{
-                                            cursor: "pointer",
-                                            position: "relative",
-                                            bottom: "15px",
-                                          }}
-                                          onClick={() =>
-                                            handleShowMessageDeleteModal(
-                                              eachMessageRoom
-                                            )
-                                          }
-                                          color="rgb(83, 100, 113)"
-                                          fill="currentColor"
-                                          width={`${1.25}em`}
-                                          height={`${1.25}em`}
-                                          viewBox="0 0 24 24"
-                                          aria-hidden="true"
-                                          className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                        <OverlayTrigger
+                                          trigger="click"
+                                          placement="bottom"
+                                          overlay={popoverBottom}
                                         >
-                                          <g>
-                                            <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                          </g>
-                                        </svg>
-                                        <div>Delete message ???</div>
+                                          <div
+                                            className="svg-border-parent chat-detail-emoji-svg-border-parent"
+                                            style={{
+                                              cursor: "pointer",
+                                              borderRadius: "50%",
+                                            }}
+                                          >
+                                            <svg
+                                              style={{
+                                                cursor: "pointer",
+                                                position: "relative",
+                                                bottom: "15px",
+                                              }}
+                                              onClick={() =>
+                                                handleShowMessageDeleteModal(
+                                                  eachMessageRoom
+                                                )
+                                              }
+                                              color="rgb(83, 100, 113)"
+                                              fill="currentColor"
+                                              width={`${1.25}em`}
+                                              height={`${1.25}em`}
+                                              viewBox="0 0 24 24"
+                                              aria-hidden="true"
+                                              className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                            >
+                                              <g>
+                                                <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                                              </g>
+                                            </svg>
+                                          </div>
+                                        </OverlayTrigger>
                                       </div>
                                     </Stack>
 

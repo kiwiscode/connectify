@@ -10,11 +10,14 @@ import {
   Button,
   ButtonGroup,
   Modal,
+  Accordion,
 } from "react-bootstrap";
 import { PostModal, LogoutModal, CommentModal } from "../components/ui/Modal";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import CustomNotification from "../components/Notifications/CustomNotification";
+import { message } from "antd";
+
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -84,6 +87,46 @@ function SpesificUserProfile() {
   // follow unfollow logic start to check
   const [isHovered, setIsHovered] = useState(false);
   const [showUnfollowModal, setshowUnfollowModal] = useState(false);
+
+  // start to check shared post view message
+  const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
+
+  const handleCallback = (childData) => {
+    console.log("Child data =>", childData);
+    // Update the name in the component's state
+    setcurrentCreatedPost(childData);
+    postSharedMessage(childData.authorUserName, childData._id);
+  };
+
+  console.log("Current created data =>", currentCreatedPost);
+
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const postSharedMessage = (postOwner, postId) => {
+    messageApi.success({
+      type: "success",
+      content: (
+        <div>
+          <span>Your post was sent.</span>
+          <>
+            <Link
+              to={`/${postOwner}/status/${postId}`}
+              onClick={() => redirectToPostDetailPage(postOwner, postId)}
+              style={{
+                color: "white",
+                marginLeft: "5px",
+              }}
+            >
+              View
+            </Link>
+          </>
+        </div>
+      ),
+      duration: 6,
+      className: "custom-message-style",
+    });
+  };
+  // finish to check shared post view message
 
   const getFollowerIds = (array) => {
     return array.map((eachFollower) => {
@@ -1427,8 +1470,19 @@ function SpesificUserProfile() {
     navigate(-1);
   };
 
+  const [visibleTweets, setVisibleTweets] = useState(25);
+  const [visibleLikedTweets, setvisibleLikedTweets] = useState(25);
+  const handleShowMorePosts = () => {
+    setVisibleTweets((prevVisibleTweets) => prevVisibleTweets + 25);
+  };
+
+  const handleShowMoreLikedTweets = () => {
+    setvisibleLikedTweets((prevVisibleTweets) => prevVisibleTweets + 25);
+  };
+
   return (
     <>
+      {contextHolder}
       <ToastContainer />
 
       <Container
@@ -1546,6 +1600,7 @@ function SpesificUserProfile() {
                   refreshPosts={() => handleShowSpesificUserProfilePagePosts()}
                   setLoadingTrue={() => setLoadingTrue()}
                   setLoadingFalse={() => setLoadingFalse()}
+                  parentCallBack={handleCallback}
                 ></PostModal>
               </div>
               <LogoutModal></LogoutModal>
@@ -1602,7 +1657,11 @@ function SpesificUserProfile() {
                   border: "none",
                 }}
               >
-                <Button variant="dark" onClick={handleUnfollow}>
+                <Button
+                  className="unfollow-btn"
+                  variant="dark"
+                  onClick={handleUnfollow}
+                >
                   Unfollow
                 </Button>
                 <Button
@@ -1706,9 +1765,12 @@ function SpesificUserProfile() {
                       )}
                     </div>
                   )}
+
                   {profileInfo._id !== userInfo._id ? (
                     <div
                       style={{
+                        position: "relative",
+                        right: "21px",
                         width: "100%",
                         display: "flex",
                         justifyContent: "center",
@@ -1808,7 +1870,6 @@ function SpesificUserProfile() {
                   ) : null}
                 </Stack>
 
-                {/* finish to check stack on the way  */}
                 <div style={{ lineHeight: "30px", marginBottom: "20px" }}>
                   <div
                     style={{
@@ -1957,6 +2018,7 @@ function SpesificUserProfile() {
                 </div>
               </Row>
             </Container>
+            {/* finish to check responsive error container  */}
             {/* start */}
             <Row
               style={{
@@ -2032,7 +2094,7 @@ function SpesificUserProfile() {
             <div className={`all-posts ${postsWindow}`}>
               {profileInfoPosts.length ? (
                 <>
-                  {profileInfoPosts.map((post) => (
+                  {profileInfoPosts.slice(0, visibleTweets).map((post) => (
                     <div key={post._id}>
                       {post.deactivatedOwner ? null : (
                         <>
@@ -2637,6 +2699,34 @@ function SpesificUserProfile() {
                       )}
                     </div>
                   ))}
+                  {visibleTweets < profileInfoPosts.length && (
+                    <Accordion defaultActiveKey="0">
+                      <Accordion.Item style={{ border: "none" }} eventKey="1">
+                        <Accordion.Header
+                          style={{ border: "none" }}
+                          className="accordion-2"
+                        >
+                          <div
+                            onClick={handleShowMorePosts}
+                            style={{
+                              border: "none",
+                              width: "100%",
+                              textAlign: "center",
+                              color: "rgb(29, 155, 240)",
+                              fontSize: "15px",
+                              fontWeight: "400",
+                              lineHeight: "24px",
+                              cursor: "pointer",
+                              backgroundColor: "transparent",
+                            }}
+                          >
+                            Show more
+                          </div>
+                        </Accordion.Header>
+                        <Accordion.Body></Accordion.Body>
+                      </Accordion.Item>
+                    </Accordion>
+                  )}
                 </>
               ) : (
                 <>
@@ -2686,7 +2776,7 @@ function SpesificUserProfile() {
             <div className={`${favoriteWindow} all-favorites`}>
               {favorites.length ? (
                 <>
-                  {favorites.map((favorite) => (
+                  {favorites.slice(0, visibleLikedTweets).map((favorite) => (
                     <>
                       <div key={favorite._id}>
                         {favorite.deactivatedOwner ? null : (
@@ -3190,6 +3280,34 @@ function SpesificUserProfile() {
                       </div>
                     </>
                   ))}
+                  {visibleLikedTweets < favorites.length && (
+                    <Accordion defaultActiveKey="0">
+                      <Accordion.Item style={{ border: "none" }} eventKey="1">
+                        <Accordion.Header
+                          style={{ border: "none" }}
+                          className="accordion-2"
+                        >
+                          <div
+                            onClick={handleShowMoreLikedTweets}
+                            style={{
+                              border: "none",
+                              width: "100%",
+                              textAlign: "center",
+                              color: "rgb(29, 155, 240)",
+                              fontSize: "15px",
+                              fontWeight: "400",
+                              lineHeight: "24px",
+                              cursor: "pointer",
+                              backgroundColor: "transparent",
+                            }}
+                          >
+                            Show more
+                          </div>
+                        </Accordion.Header>
+                        <Accordion.Body></Accordion.Body>
+                      </Accordion.Item>
+                    </Accordion>
+                  )}
                 </>
               ) : (
                 <>

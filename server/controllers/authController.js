@@ -90,12 +90,34 @@ const handleSignup = async (req, res, next) => {
     return;
   }
 
-  const allUserNames = [];
-  const allEmails = [];
-
   User.find()
     .then((allUsersFromDB) => {
       console.log("All users =>", allUsersFromDB);
+
+      const allUserNames = allUsersFromDB.map((eachUser) => {
+        return eachUser.username;
+      });
+
+      const allEmails = allUsersFromDB.map((eachUser) => {
+        return eachUser.email;
+      });
+
+      if (allUserNames.includes(username)) {
+        res.status(409).json({
+          errorMessage: "That username has been taken. Please choose another",
+        });
+        return;
+      }
+
+      if (allEmails.includes(email)) {
+        res.status(409).json({
+          errorMessage: "Email has already been taken",
+        });
+        return;
+      }
+
+      console.log("All user names =>", allUserNames);
+      console.log("All user emails =>", allEmails);
     })
     .catch((error) => {
       console.log("Error occured while fetching all users from data base");
@@ -124,7 +146,6 @@ const handleSignup = async (req, res, next) => {
         });
       })
       .then((user) => {
-        console.log("THIS LINE IS WORKING 4");
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
           expiresIn: "24h",
         });
@@ -143,28 +164,9 @@ const handleSignup = async (req, res, next) => {
           });
       })
       .catch((error) => {
-        if (error instanceof mongoose.Error.ValidationError) {
-          console.log("ERROR LINE IS WORKING 1");
-          res.status(501).json({
-            errorMessage:
-              "Username and email need to be unique. Provide a valid username or email.",
-          });
-        } else if (error.code === 11000) {
-          console.log("ERROR LINE IS WORKING 2");
-
-          res.status(501).json({
-            errorMessage:
-              "Username and email need to be unique. Provide a valid username or email.",
-          });
-        } else {
-          console.log("ERROR LINE IS WORKING 3");
-
-          next(error);
-        }
+        next(error);
       });
   } catch (error) {
-    console.log("ERROR LINE IS WORKING 4");
-
     return res.status(error.response.status).json(error.response.data);
   }
   // finish to check trying to install chat engine (real time chatting engine)
@@ -215,75 +217,25 @@ const handleLogin = (req, res, next) => {
     .populate("favorites")
     .populate("messages")
     .then((user) => {
-      if (user.isDeactivated) {
-        res.status(400).json({
-          errorMessage: "Deactivated user !",
-          user: user,
-        });
-        return;
-      }
-      if (user ? !user.verified : null) {
-        res.status(400).json({
-          errorMessage: "Email hasn't been verified yet.Check your inbox.",
-        });
-        return;
-      }
-
-      if (!user) {
-        res.status(401).json({
-          errorMessage: "Wrong credentials",
-        });
-      }
-
-      Post.find()
-        .then((post) => {
-          console.log("USERS POSTS:", post.length);
-        })
-        .catch(() => {});
-
-      // const filteredUserFavorites =
-
-      // if(user.favorites._id)
-
       bcrypt
         .compare(password, user.password)
         .then((isSamePassword) => {
-          if (!isSamePassword || user.username !== username) {
-            res.status(401).json({
-              errorMessage: "Wrong credentials.",
+          console.log("Is same password ?", isSamePassword);
+          if (!isSamePassword) {
+            res.status(401).json({ errorMessage: "Wrong password!" });
+          } else if (user.isDeactivated) {
+            res.status(400).json({
+              errorMessage: "Deactivated user !",
+              user: user,
             });
-            return;
-          }
-
-          user.active = true;
-          user.save().then((user) => {
-            const {
-              _id,
-              username,
-              email,
-              fullname,
-              verified,
-              active,
-              posts,
-              followers,
-              following,
-              messages,
-              createdAt,
-              updatedAt,
-              favorites,
-              imageUrl,
-              notifications,
-              chatEngineInfos,
-            } = user;
-
-            const token = jwt.sign({ userId: _id }, process.env.JWT_SECRET, {
-              expiresIn: "24h",
+          } else if (!user.verified) {
+            res.status(402).json({
+              errorMessage: "Email hasn't been verified yet.Check your inbox.",
             });
-
-            console.log("Logged in user username =>", username);
-            res.json({
-              token,
-              user: {
+          } else {
+            user.active = true;
+            user.save().then((user) => {
+              const {
                 _id,
                 username,
                 email,
@@ -299,17 +251,47 @@ const handleLogin = (req, res, next) => {
                 favorites,
                 imageUrl,
                 notifications,
-                chatEngineInfos,
-              },
+              } = user;
+
+              const token = jwt.sign({ userId: _id }, process.env.JWT_SECRET, {
+                expiresIn: "24h",
+              });
+
+              console.log("Logged in user username =>", username);
+              res.json({
+                token,
+                user: {
+                  _id,
+                  username,
+                  email,
+                  fullname,
+                  verified,
+                  active,
+                  posts,
+                  followers,
+                  following,
+                  messages,
+                  createdAt,
+                  updatedAt,
+                  favorites,
+                  imageUrl,
+                  notifications,
+                },
+              });
             });
-          });
+          }
         })
-        .catch((err) => {
-          next(err);
+        .catch(() => {
+          res.status(500).json({
+            errorMessage: "Invalid server error!",
+          });
         });
     })
-    .catch((err) => {
-      next(err);
+    .catch(() => {
+      // user not found error handling
+      res.status(400).json({
+        errorMessage: "Sorry, we could not find your account.",
+      });
     });
 };
 

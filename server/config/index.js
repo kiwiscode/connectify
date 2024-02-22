@@ -34,8 +34,6 @@ module.exports = (app) => {
   io.on("connection", async (socket) => {
     const userSocketId = socket.id;
 
-    console.log("User connected with socket ID:", userSocketId);
-
     // Bağlanan kullanıcıya socket.id bilgisini geri gönder
     socket.emit("socket_id_for_user", socket.id);
 
@@ -70,9 +68,7 @@ module.exports = (app) => {
     // start to check chat details page
 
     socket.on("send_spesific_chatRoomId", (chatRoomId) => {
-      console.log("This line is working check chatRoomId =>", chatRoomId);
       socket.on("send_spesific_userId", (userId) => {
-        console.log("This line is working 1 _", socket.id);
         User.findById(userId)
           .populate({
             path: "messages",
@@ -89,8 +85,6 @@ module.exports = (app) => {
             },
           })
           .then((user) => {
-            console.log("This line is working 2 _", socket.id);
-
             const findChatRoomIdInsideMessages = user.messages.find(
               (findedMessage) => {
                 return findedMessage._id.toString() === chatRoomId;
@@ -117,24 +111,17 @@ module.exports = (app) => {
                 );
               }
             }
-            console.log("get room name => ", findChatRoomIdInsideMessages.room);
-            console.log(
-              "Result array of messages chat details page message.length => ",
-              resultArrayOfMessages.length
-            );
+
             // Emit the messages to the client
             socket.emit("send_spesific_chat_details", {
               room: findChatRoomIdInsideMessages.room,
               messages: resultArrayOfMessages,
             });
 
-            console.log("This line is working 4 _", socket.id);
             let chatDetailActiveUser;
             let chatDetailSelectedUser;
             // start to check make 2 users join in a room spesificly and chat
             socket.on("join_spesific_message_room", (data) => {
-              console.log("This line is working 6 _", socket.id);
-
               const { activeUser, selectedUser } = data;
               // Create a unique room name using the usernames
               const room = [activeUser.username, selectedUser.username]
@@ -154,13 +141,7 @@ module.exports = (app) => {
                 chatDetailSelectedUser.username
               );
               socket.join(room);
-              console.log("This line is working 7 _", socket.id);
 
-              console.log(
-                `${activeUser.username} with socket ID: ${socket.id} joined real time chat room with:${selectedUser.username} so they are ready to chat in real time by using socket.io package in a room => ${room} 
-                -------------------------------------------------------------------------------------1
-                `
-              );
               // start to check receive send chat details
               socket.on("send_spesific_room_message", async (data) => {
                 console.log("This line is working => 8 _", data);
@@ -359,12 +340,6 @@ module.exports = (app) => {
 
       // Join the room
       socket.join(room);
-      console.log(
-        `User ${activeUser.username} with socket ID: ${socket.id} joined real time chat room with:${selectedUser.username} so they are ready to chat in real time by using socket.io package ${room}
-        -------------------------------------------------------------------------------------2
-
-        `
-      );
 
       User.find({
         _id: {

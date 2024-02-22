@@ -36,8 +36,6 @@ function SignUpPage() {
       .catch((err) => {
         const { status } = err.response;
         const { errorMessage } = err.response.data;
-        setFullname("");
-        setUsername("");
 
         if (status === 402) {
           setError(errorMessage);
@@ -51,7 +49,7 @@ function SignUpPage() {
           setError(errorMessage);
           setSuccess("");
         }
-        if (status === 501) {
+        if (status === 409) {
           setError(errorMessage);
           setSuccess("");
         }
