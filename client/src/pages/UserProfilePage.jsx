@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../context/UserContext";
 import {
   Container,
@@ -23,8 +23,10 @@ const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
+import io from "socket.io-client";
 
 function UserProfile() {
+  const socket = io.connect(`${API_URL}`);
   // rendering page after redirectiring for fetching data without problem ! if you need to fetch data after you redirect or navigate to user to the page (it can work pretty good on your navigation bar)this lines of code is pretty useful
   // start to check
   const navigate = useNavigate();
@@ -42,37 +44,38 @@ function UserProfile() {
 
   const redirectHomePage = () => {
     navigate("/home");
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectSpesificProfilePage = (userId) => {
     navigate(`/profile/${userId}`);
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectToPostDetailPage = (postOwnerName, postId) => {
     navigate(`/${postOwnerName}/status/${postId}`);
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectFollowersPage = (userId) => {
     navigate(`/profile/${userId}/followers`);
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectFollowingPage = (userId) => {
     navigate(`/profile/${userId}/following`);
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectToImagePostDetailPage = (postOwnerName, postId) => {
     navigate(`/${postOwnerName}/status/${postId}/photo/1`);
-    window.location.reload();
+    // window.location.reload();
   };
   // finish to check
 
   const [userprofiledata, setUserprofiledata] = useState([]);
-  const { getToken, userInfo, socket } = useContext(UserContext);
+  // const { getToken, userInfo, socket } = useContext(UserContext);
+  const { getToken, userInfo } = useContext(UserContext);
   const [favoriteWindow, setFavoriteWindow] = useState("hide");
   const [postsWindow, setPostWindow] = useState("");
   const [favorites, setFavorites] = useState([]);
@@ -86,13 +89,10 @@ function UserProfile() {
   const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
 
   const handleCallback = (childData) => {
-    console.log("Child data =>", childData);
     // Update the name in the component's state
     setcurrentCreatedPost(childData);
     postSharedMessage(childData.authorUserName, childData._id);
   };
-
-  console.log("Current created data =>", currentCreatedPost);
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -143,7 +143,7 @@ function UserProfile() {
       if (data.senderName !== userInfo.username) {
         setnotificationTest((prev) => [...prev, data]);
       } else {
-        console.log("Kendine notification mu göndericeksin ? ");
+        console.log("You cannot send a notification to yourself.");
       }
     });
 
@@ -173,7 +173,7 @@ function UserProfile() {
           }
         );
       } else {
-        console.log("Kendine notification mu göndericeksin ? ");
+        console.log("You cannot send a notification to yourself.");
       }
     });
   }, [socket]);
@@ -207,13 +207,26 @@ function UserProfile() {
           "profileFavorites",
           JSON.stringify(response.data.favorites)
         );
-        console.log("Profile favorites =>", response);
         setFavorites(response.data.favorites);
       })
       .catch((err) => {
         return err;
       });
   };
+
+  console.log("User rendered favorites =>", favorites);
+
+  const checkIfAllFavoritesFromDeactivatedUser = () => {
+    return favorites.map((eachFavorite) => {
+      return eachFavorite.deactivatedOwner;
+    });
+  };
+
+  const hasFalse = checkIfAllFavoritesFromDeactivatedUser().some(
+    (item) => item === false
+  );
+
+  console.log(hasFalse);
 
   const handleGoBack = () => {
     navigate(-1);
@@ -234,7 +247,6 @@ function UserProfile() {
           "profilePagePosts",
           JSON.stringify(response.data.posts)
         );
-        console.log("Profile posts =>", response);
         setUserprofiledata(response.data.posts);
       })
       .catch((err) => {
@@ -319,8 +331,6 @@ function UserProfile() {
         setError("");
       })
       .catch((error) => {
-        console.log("Error =>", error);
-
         if (error) {
           const { errorMessage } = error.response.data;
 
@@ -402,8 +412,6 @@ function UserProfile() {
   };
 
   const handleRepost = (postId) => {
-    console.log("ID =>", postId);
-
     axios
       .post(
         `${API_URL}/repost`,
@@ -418,11 +426,6 @@ function UserProfile() {
         // start to check
         // repost process for  user profile posts
         if (postsWindow === "hide") {
-          console.log(
-            "Am i seeing the new created reference post =>",
-            response
-          );
-
           const profileFavorites = JSON.parse(
             localStorage.getItem("profileFavorites")
           );
@@ -434,23 +437,19 @@ function UserProfile() {
           handleNotification(findedFavorite, userInfo, "repost");
           // socket io test finish to check
           const index2 = favorites.indexOf(findedFavorite);
-          console.log("LINE 1 WORKING");
-          profileFavorites[index2].reposted.unshift(userInfo._id);
 
-          console.log("LINE 2 WORKING");
+          profileFavorites[index2].reposted.unshift(userInfo._id);
 
           localStorage.setItem(
             "profileFavorites",
             JSON.stringify(profileFavorites)
           );
-          console.log("LINE 3 WORKING");
 
           setTimeout(() => {
             setFavorites(profileFavorites);
           }, 500);
 
           // finish to check
-          console.log("LINE 4 WORKING");
         } else if (favoriteWindow === "hide") {
           const profilePosts = JSON.parse(
             localStorage.getItem("profilePagePosts")
@@ -460,14 +459,9 @@ function UserProfile() {
             return element._id === postId;
           });
 
-          console.log("Finded post => ", findedPost);
           const index = profilePosts.indexOf(findedPost);
           const updateUserProfilePosts = () => {
             if (!findedPost.isReposted && !findedPost.reposted.length) {
-              console.log(
-                "Am i seeing the new created reference post =>",
-                response
-              );
               profilePosts[index].reposted.unshift(userInfo);
               profilePosts.unshift(response.data.newPost);
               // profilePosts[0].reposted.unshift(userInfo);
@@ -483,10 +477,6 @@ function UserProfile() {
 
               setUserprofiledata(profilePosts);
             } else if (!findedPost.isReposted && findedPost.reposted.length) {
-              console.log(
-                "Am i seeing the new created reference post 2 =>",
-                response
-              );
               profilePosts[index].reposted.unshift(userInfo);
               profilePosts.unshift(response.data.newPost);
 
@@ -524,11 +514,6 @@ function UserProfile() {
       )
       .then(() => {
         if (postsWindow !== "hide") {
-          console.log(
-            "This line is working because now you are dealing with delete repost function inside posts"
-          );
-          console.log("You deleted repost !");
-
           const profilePagePosts = JSON.parse(
             localStorage.getItem("profilePagePosts")
           );
@@ -539,13 +524,10 @@ function UserProfile() {
 
           const findedPostIndex = profilePagePosts.indexOf(findedPost);
 
-          console.log("Finded post index =>", findedPostIndex);
           const findedPostReposterIndex = findedPost
             ? findedPost.reposted.indexOf(userInfo._id)
             : null;
           if (findedPost ? findedPost.userId._id !== userInfo._id : null) {
-            console.log("You reposted this post from another user !");
-
             profilePagePosts[findedPostIndex].reposted.splice(
               findedPostReposterIndex,
               1
@@ -567,10 +549,8 @@ function UserProfile() {
 
             setTimeout(updateProfilePosts, 500);
           } else {
-            console.log("This is your post that you reposted !");
             if (findedPost.isReposted) {
               // delete reposter from original post
-              console.log(findedPost);
 
               const originalPostId =
                 findedPost.repostedFromThisOriginalPost[0]._id;
@@ -589,21 +569,13 @@ function UserProfile() {
 
               const reposterIndex =
                 profilePagePosts[originalPostIndex].reposted.indexOf(reposter);
-              console.log(
-                "Before =>",
-                profilePagePosts[originalPostIndex].reposted
-              );
+
               profilePagePosts[originalPostIndex].reposted.splice(
                 reposterIndex,
                 1
               );
-              console.log(
-                "After =>",
-                profilePagePosts[originalPostIndex].reposted
-              );
 
               const referencePostIndex = profilePagePosts.indexOf(findedPost);
-              console.log("Reference post =>", referencePostIndex);
 
               const referenceReposter = profilePagePosts[
                 referencePostIndex
@@ -615,9 +587,6 @@ function UserProfile() {
                 profilePagePosts[referencePostIndex].reposted.indexOf(
                   referenceReposter
                 );
-
-              console.log(referenceReposter);
-              console.log(referenceReposterIndex);
 
               const updateProfilePosts = () => {
                 profilePagePosts[referencePostIndex].reposted.splice(
@@ -636,12 +605,7 @@ function UserProfile() {
               };
 
               setTimeout(updateProfilePosts, 500);
-              console.log(originalPostId);
-              console.log(originalPostIndex);
-              console.log(reposter);
-              console.log(reposterIndex);
             } else if (!findedPost.isReposted) {
-              console.log("This post is original one");
               // find reference post
               const referencePost = profilePagePosts.find((eachPost) => {
                 return (
@@ -662,11 +626,6 @@ function UserProfile() {
                 profilePagePosts[referencePostIndex].reposted.indexOf(
                   findReposter
                 );
-
-              console.log("Reference post =>", referencePost);
-              console.log("Reference post index =>", referencePostIndex);
-              console.log("Reposter =>", findReposter);
-              console.log("Reposter index =>", reposterIndex);
 
               const findedPostIndex = profilePagePosts.indexOf(findedPost);
 
@@ -712,9 +671,6 @@ function UserProfile() {
         }
 
         if (favoriteWindow !== "hide") {
-          console.log(
-            "This line is working because now you are dealing with delete repost function inside favorites"
-          );
           const profilePageFavorites = JSON.parse(
             localStorage.getItem("profileFavorites")
           );
@@ -726,13 +682,10 @@ function UserProfile() {
           const findedFavoriteIndex =
             profilePageFavorites.indexOf(findedFavorite);
 
-          console.log("Finded favorite index =>", findedFavoriteIndex);
           const findedFavoriteReposterIndex = findedFavorite
             ? findedFavorite.reposted.indexOf(userInfo._id)
             : null;
           if (findedFavorite ? findedFavorite.isReposted : null) {
-            console.log("This post is reposted");
-
             const updateUserProfilePosts = () => {
               profilePageFavorites[findedFavoriteIndex].reposted.splice(
                 findedFavoriteReposterIndex,
@@ -749,7 +702,6 @@ function UserProfile() {
 
             setTimeout(updateUserProfilePosts, 500);
           } else {
-            console.log("This post is not reposted");
             const updateUserProfilePosts = () => {
               profilePageFavorites[findedFavoriteIndex].reposted.splice(
                 findedFavoriteReposterIndex,
@@ -773,31 +725,19 @@ function UserProfile() {
       });
   };
 
-  console.log("User info =>", userInfo);
-
   const handleImage = (e) => {
     const file = e.target.files[0];
-    console.log("FILE FROM PROFILE PICTURE PROCESS =>", file);
     setFileToBase(file);
-    console.log(file);
-    console.log("PROFILE IMAGE CURRENT INSIDE HANDLEIMAGE=>", profileImage);
   };
 
   const setFileToBase = (file) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
-    console.log("SET FILE TO BASE FILE =>", file);
 
     reader.onloadend = () => {
       setprofileImage(reader.result);
-
-      console.log(
-        "PROFILE IMAGE CURRENT INSIDE SETFILETOBASE=>",
-        reader.result.slice(0, 21)
-      );
     };
   };
-  console.log("PROFILE IMAGE CURRENT GLOBAL PAGE=>", profileImage.slice(0, 21));
 
   const changeProfileImage = () => {
     axios
@@ -811,20 +751,11 @@ function UserProfile() {
         }
       )
       .then((response) => {
-        console.log("RESPONSE AFTER POST PROFILE IMAGE =>", response);
-        console.log(
-          "WE SEND THIS PROFILE IMAGE FROM BODY TO SERVER =>",
-          profileImage.slice(0, 21)
-        );
-
         const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-        console.log(userInfo.imageUrl);
 
-        console.log(`"${response.data.url}"`);
         userInfo.imageUrl = response.data.url;
 
         const updatedUserInfo = userInfo;
-        console.log(updatedUserInfo);
         localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
         setcompletedProfileImage(true);
 
@@ -872,9 +803,6 @@ function UserProfile() {
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
 
-  console.log("Following =>", following);
-  console.log("Followers =>", followers);
-
   const getTabStyle = (tab) => {
     return {
       color: activeTab === tab ? "rgb(29, 155, 240" : "rgb(83,100,113)",
@@ -895,8 +823,6 @@ function UserProfile() {
   const handleClose = () => setshowUnfollowModal(false);
 
   const openUnfollowModal = (selectedUser) => {
-    console.log("Selected user =>", selectedUser);
-
     setSelectedUser(selectedUser);
 
     setshowUnfollowModal(true);
@@ -1184,11 +1110,6 @@ function UserProfile() {
                               localStorage.getItem("userInfo")
                             );
 
-                            console.log(
-                              "User info =>",
-                              userInfoFromLocalStorage
-                            );
-
                             const followedUser =
                               userInfoFromLocalStorage.following.find(
                                 (eachFollowing) => {
@@ -1225,24 +1146,10 @@ function UserProfile() {
                               unfollowedUserIndex
                             ].followers.splice(activeUserIndex, 1);
 
-                            console.log(
-                              "Selected user for unfollow =>",
-                              selectedUser
-                            );
-
-                            console.log("Followers array =>", followers);
-
-                            console.log(
-                              "Active user index inside unfollowed user followers array =>",
-                              activeUserIndex
-                            );
-
                             setTimeout(() => {
                               setFollowers(followersArrayShallowCopy);
                               handleClose();
                             }, 500);
-
-                            console.log("Response =>", response);
                           })
                           .catch((error) => {
                             console.log("Error =>", error);
@@ -1252,16 +1159,6 @@ function UserProfile() {
                       };
 
                       const handleFollow = (selectedUser) => {
-                        console.log(
-                          "You are not following this profile follow => !",
-                          selectedUser
-                        );
-
-                        console.log(
-                          "Before manipulating followers  array =>",
-                          followers
-                        );
-
                         axios
                           .post(
                             `${API_URL}/follow`,
@@ -1275,8 +1172,7 @@ function UserProfile() {
                               },
                             }
                           )
-                          .then((response) => {
-                            console.log("Response =>", response);
+                          .then(() => {
                             handleNotification(
                               selectedUser,
                               userInfo,
@@ -1305,14 +1201,6 @@ function UserProfile() {
                             setTimeout(() => {
                               setFollowers(newArr);
                             }, 500);
-                            console.log(
-                              "New array =>",
-                              newArr[findIndexFollowedUser].followers
-                            );
-                            console.log(
-                              "After manipulating followers  array =>",
-                              followers
-                            );
                           })
                           .catch((error) => {
                             console.log(error);
@@ -1561,7 +1449,6 @@ function UserProfile() {
                   const buttonId = `followButton_${index}`;
 
                   const handleUnfollow = (selectedUser) => {
-                    console.log("Selected user =>", selectedUser);
                     axios
                       .post(
                         `${API_URL}/unfollow
@@ -1582,8 +1469,6 @@ function UserProfile() {
                         const userInfoFromLocalStorage = JSON.parse(
                           localStorage.getItem("userInfo")
                         );
-
-                        console.log("User info =>", userInfoFromLocalStorage);
 
                         const followedUser =
                           userInfoFromLocalStorage.following.find(
@@ -1611,7 +1496,6 @@ function UserProfile() {
                         const newFollowingArray =
                           following.indexOf(selectedUser);
                         following.splice(newFollowingArray, 1);
-                        console.log("Response =>", response);
 
                         handleClose();
                       })
@@ -2733,7 +2617,7 @@ function UserProfile() {
             </div>
 
             <div className={`${favoriteWindow} all-favorites`}>
-              {favorites.length ? (
+              {favorites.length && hasFalse ? (
                 <>
                   {favorites.slice(0, visibleLikedTweets).map((favorite) => (
                     <div key={favorite._id}>
@@ -3257,6 +3141,7 @@ function UserProfile() {
               ) : (
                 <>
                   {/* when no post liked yet from likes section in general start to check  */}
+
                   <div
                     style={{
                       textAlign: "left",

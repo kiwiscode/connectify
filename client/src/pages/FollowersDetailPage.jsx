@@ -5,7 +5,6 @@ import { Container, Row, Col, Stack, Button, Modal } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { LogoutModal, PostModal } from "../components/ui/Modal";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
-import ResponsiveNavigationBarTop from "../components/Navbar/ResponsiveNavigationTop";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import CustomNotification from "../components/Notifications/CustomNotification";
 import { message } from "antd";
@@ -15,8 +14,10 @@ const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
+import io from "socket.io-client";
 
 function FollowerDetailPage() {
+  const socket = io.connect(`${API_URL}`);
   const { userId } = useParams();
   // start to check
   const navigate = useNavigate();
@@ -27,48 +28,46 @@ function FollowerDetailPage() {
 
   const redirectProfilePage = () => {
     navigate("/profile");
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectHomePage = () => {
     navigate("/home");
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectSpesificProfilePage = (userId) => {
     navigate(`/profile/${userId}`);
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectToPostDetailPage = (postOwnerName, postId) => {
     navigate(`/${postOwnerName}/status/${postId}`);
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectFollowersPage = (userId) => {
     navigate(`/profile/${userId}/followers`);
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectFollowingPage = (userId) => {
     navigate(`/profile/${userId}/following`);
-    window.location.reload();
+    // window.location.reload();
   };
   // finish to check
 
-  const { getToken, userInfo, socket } = useContext(UserContext);
+  // const { getToken, userInfo, socket } = useContext(UserContext);
+  const { getToken, userInfo } = useContext(UserContext);
 
   // start to check shared post view message
   const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
 
   const handleCallback = (childData) => {
-    console.log("Child data =>", childData);
     // Update the name in the component's state
     setcurrentCreatedPost(childData);
     postSharedMessage(childData.authorUserName, childData._id);
   };
-
-  console.log("Current created data =>", currentCreatedPost);
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -104,7 +103,6 @@ function FollowerDetailPage() {
 
   // socket io 4 client start to check
   useEffect(() => {
-    console.log("Hello worldddddd");
     socket.on("socket_id_for_user", (socketId) => {
       console.log("socket id received from backend =>", socketId);
 
@@ -121,7 +119,7 @@ function FollowerDetailPage() {
       if (data.senderName !== userInfo.username) {
         setnotificationTest((prev) => [...prev, data]);
       } else {
-        console.log("Kendine notification mu göndericeksin ? ");
+        console.log("You cannot send a notification to yourself.");
       }
     });
 
@@ -151,7 +149,7 @@ function FollowerDetailPage() {
           }
         );
       } else {
-        console.log("Kendine notification mu göndericeksin ? ");
+        console.log("You cannot send a notification to yourself.");
       }
     });
   }, [socket]);
@@ -172,7 +170,6 @@ function FollowerDetailPage() {
   const [followersofthemonitoreduser, setfollowersofthemonitoreduser] =
     useState([]);
   const getFollowers = () => {
-    console.log("Receive people that you are following");
     axios
       .get(`${API_URL}/profile/${userId}/followers`, {
         headers: {
@@ -180,11 +177,9 @@ function FollowerDetailPage() {
         },
       })
       .then((response) => {
-        console.log("Response =>", response);
         setfollowersofthemonitoreduser(response.data.user);
         setActiveTab("followers");
         setFollowers(response.data.followers);
-        console.log("Followers =>", followers);
       })
       .catch((error) => {
         console.log("Error =>", error);
@@ -205,10 +200,7 @@ function FollowerDetailPage() {
         },
       })
       .then((response) => {
-        console.log("Response for active user =>", response);
-
         setactiveUserFollowing(response.data.user.following);
-        console.log("Active user followers =>", activeUserFollowing);
       })
       .catch((error) => {
         console.log("Error =>", error);
@@ -224,8 +216,6 @@ function FollowerDetailPage() {
     });
   };
 
-  console.log("Followers =>", checkActiveUserFollowerIds);
-
   useEffect(() => {
     getFollowers();
   }, []);
@@ -239,8 +229,6 @@ function FollowerDetailPage() {
   const handleClose = () => setshowUnfollowModal(false);
 
   const openUnfollowModal = (selectedUser) => {
-    console.log("Selected user =>", selectedUser);
-
     setSelectedUser(selectedUser);
 
     setshowUnfollowModal(true);
@@ -486,11 +474,6 @@ function FollowerDetailPage() {
                     user._id
                   );
 
-                  console.log(
-                    "Clicked user followers before follow =>",
-                    user.followers
-                  );
-
                   const handleUnfollow = (selectedUser) => {
                     axios
                       .post(
@@ -510,11 +493,6 @@ function FollowerDetailPage() {
                         // delete after unfollow also from localstorage start to check
                         const userInfoFromLocalStorage = JSON.parse(
                           localStorage.getItem("userInfo")
-                        );
-
-                        console.log(
-                          "User info from local storage =>",
-                          userInfoFromLocalStorage
                         );
 
                         const followedUser =
@@ -549,18 +527,6 @@ function FollowerDetailPage() {
                           unfollowedUserIndex
                         ].followers.indexOf(userInfo._id);
 
-                        console.log(
-                          "Selected user for unfollow =>",
-                          selectedUser
-                        );
-
-                        console.log("Followers array =>", followers);
-
-                        console.log(
-                          "Active user index inside unfollowed user followers array =>",
-                          activeUserIndex
-                        );
-
                         // setTimeout(() => {
                         setFollowers(followersArrayShallowCopy);
                         handleClose();
@@ -568,8 +534,6 @@ function FollowerDetailPage() {
                           unfollowedUserIndex
                         ].followers.splice(activeUserIndex, 1);
                         // }, 500);
-
-                        console.log("Response =>", response);
                       })
                       .catch((error) => {
                         console.log("Error =>", error);
@@ -590,11 +554,8 @@ function FollowerDetailPage() {
                           },
                         }
                       )
-                      .then((response) => {
+                      .then(() => {
                         setClicked(!clicked);
-                        console.log("Response =>", response);
-
-                        console.log("Selected user =>", selectedUser);
 
                         handleNotification(user, userInfo, "followed");
 
@@ -609,11 +570,6 @@ function FollowerDetailPage() {
                         );
                         // change the userInfo who followed user finish to check
 
-                        console.log(
-                          "New array before set time out =>",
-                          followers
-                        );
-
                         setTimeout(() => {
                           const newArr = [...followers];
                           const findIndexFollowedUser =
@@ -623,16 +579,6 @@ function FollowerDetailPage() {
                             userInfo._id
                           );
                           setFollowers(newArr);
-
-                          console.log(
-                            "New array after set time out =>",
-                            newArr
-                          );
-
-                          console.log(
-                            "Clicked user followers before follow =>",
-                            user.followers
-                          );
                         }, 500);
                       })
                       .catch((error) => {

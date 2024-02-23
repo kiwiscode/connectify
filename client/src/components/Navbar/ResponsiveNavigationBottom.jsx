@@ -23,7 +23,6 @@ function ResponsiveNavigationBarBottom() {
   const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
 
   const handleCallback = (childData) => {
-    console.log("Child data =>", childData);
     // Update the name in the component's state
     setcurrentCreatedPost(childData);
     postSharedMessage(childData.authorUserName, childData._id);

@@ -48,4 +48,7 @@ app.use("/unfollow", unfollowRoutes);
 
 const followingPosts = require("./routes/followingPosts");
 app.use("/followingPosts", followingPosts);
+
+const messageRoutes = require("./routes/message.routes.js");
+app.use("/", messageRoutes);
 module.exports = app;

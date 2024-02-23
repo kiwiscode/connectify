@@ -47,8 +47,6 @@ function SigninModal({ deactivatedScren }) {
   const [messageApi, contextHolder] = message.useMessage();
 
   const catchErrorMessage = (message) => {
-    console.log("Clicked !");
-    console.log("Message =>", message);
     messageApi.success({
       type: "success",
       content: message,
@@ -61,7 +59,6 @@ function SigninModal({ deactivatedScren }) {
     setShow(false);
   };
   const handleShow = () => {
-    console.log("BUTTON CLICKED");
     setShow(true);
   };
 
@@ -83,7 +80,6 @@ function SigninModal({ deactivatedScren }) {
       .then((response) => {
         handleClose();
         const { token, user } = response.data;
-        console.log("User =>", user);
 
         localStorage.setItem("userInfo", JSON.stringify(user));
         localStorage.setItem("token", token);
@@ -98,9 +94,6 @@ function SigninModal({ deactivatedScren }) {
           const { errorMessage } = err.response.data;
 
           if (status === 400 && errorMessage === "Deactivated user !") {
-            console.log("Deactivate user trying to login !");
-            console.log("Error message =>", err);
-
             setOpenDeactivateLoginModal(true);
             setuserdeactivateddatenomutation(
               err.response.data.user.deactivatedDate
@@ -124,7 +117,6 @@ function SigninModal({ deactivatedScren }) {
               "en-US",
               options2
             );
-            console.log("Formatted 30 days later date =>", formattedDate2);
 
             // 1 month later finish to check
 
@@ -136,7 +128,6 @@ function SigninModal({ deactivatedScren }) {
               "en-US",
               options
             );
-            console.log(formattedDate);
             setUserDeactivatedDate(formattedDate);
             setUserdeletiondate(formattedDate2);
           } else if (status === 400) {
@@ -158,27 +149,14 @@ function SigninModal({ deactivatedScren }) {
   };
 
   const handleDeactivatedUserReturnLogin = () => {
-    console.log("User deactivated date =>", userdeactivateddate);
-
-    console.log("User will delete from database on =>", userdeletiondate);
-    console.log(
-      "No mutation deactivated date =>",
-      userdeactivateddatenomutation
-    );
-    console.log("Username =>", username);
-    console.log("Password =>", password);
-
     axios
       .post(`${API_URL}/auth/deactivate-user-back`, {
         username,
         password,
       })
       .then((response) => {
-        console.log("User =>", response);
-
         handleClose();
         const { token, user } = response.data;
-        console.log("User =>", user);
 
         localStorage.setItem("userInfo", JSON.stringify(user));
         localStorage.setItem("token", token);
@@ -579,8 +557,6 @@ function LogoutModal() {
   const [deactivatePassword, setdeactivatePassword] = useState("");
 
   const handleDeactivateUser = () => {
-    console.log("User ready to deactivate his/her profile !");
-
     axios
       .post(
         `${API_URL}/profile/deactivate-account`,
@@ -591,8 +567,7 @@ function LogoutModal() {
           },
         }
       )
-      .then((response) => {
-        console.log("Response =>", response);
+      .then(() => {
         navigate("/settings/deactivated");
         logout();
       })
@@ -603,7 +578,6 @@ function LogoutModal() {
 
   const [confirmed, setConfirmed] = useState(false);
   const checkConfirmPassword = () => {
-    console.log("Check confirm password !");
     axios
       .post(
         `${API_URL}/profile/deactivate-password-confirmation`,
@@ -618,16 +592,13 @@ function LogoutModal() {
         }
       )
       .then((response) => {
-        console.log("Response =>", response);
         const status = response.status;
         if (status === 200) {
-          console.log("Password confirmation is correct !");
           setConfirmed(true);
         }
       })
-      .catch((error) => {
+      .catch(() => {
         setConfirmed(false);
-        console.log("Error =>", error);
       });
   };
 
@@ -911,7 +882,6 @@ function LogoutModal() {
   // };
 
   const handleShow = () => {
-    console.log("BUTTON CLICKED");
     setShow(true);
   };
   useEffect(() => {
@@ -1045,23 +1015,18 @@ function LogoutModal() {
   const [tabIndexThird, setTabIndexThird] = useState(2);
 
   const showInitialTab = () => {
-    console.log("Button clicked");
     setTabIndex(0);
     setShowDetailAccountInfo(false);
     setshowListItem(true);
   };
 
   const showSecondTab = () => {
-    console.log("Button clicked");
-    console.log("CURRENT INDEX =>", tabIndexSecond);
     setTabIndexSecond((prevState) => (prevState === 0 ? 0 : 1));
     setShowDetailChangePasswordInfo(false);
     setshowListItem(true);
   };
 
   const showThirdTab = () => {
-    console.log("Button clicked");
-    console.log("CURRENT INDEX =>", tabIndexSecond);
     setTabIndexThird((prevState) => (prevState === 0 ? 0 : 2));
     setShowDetailDeactivateAccountInfo(false);
     setshowListItem(true);
@@ -1118,7 +1083,6 @@ function LogoutModal() {
           successMessage();
         })
         .catch((error) => {
-          console.log(error);
           if (error.response.status === 402) {
             seterrorInput4(
               "Your password needs to be at least 8 characters. Please enter a longer one.      "
@@ -2108,7 +2072,7 @@ function LogoutModal() {
                       float: "right",
                       border: " none",
                     }}
-                    className="deactivate-next-btn"
+                    className="deactivate-next-btn deactivate-tab-next-btn"
                     variant="info"
                     onClick={() => next()}
                   >
@@ -2128,7 +2092,7 @@ function LogoutModal() {
                       float: "right",
                       border: " none",
                     }}
-                    className="deactivate-next-btn"
+                    className="deactivate-next-btn deactivate-tab-next-btn"
                     variant="info"
                     onClick={() =>
                       confirmed ? next() : wrongPasswordMessage()
@@ -2154,6 +2118,7 @@ function LogoutModal() {
                     onClick={() => {
                       handleDeactivateUser();
                     }}
+                    className="deactivate-tab-deactivate-btn"
                   >
                     Deactivate
                   </Button>
@@ -2191,15 +2156,12 @@ function PostModal({
   //handle and convert it in base 64
   const handleImage = (e) => {
     const file = e.target.files[0];
-    console.log("FILE FROM MODAL.JSX =>", file);
     setFileToBase(file);
-    console.log(file);
   };
 
   const setFileToBase = (file) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
-    console.log("SET FILE TO BASE FILE FROM MODAL.JSX =>", file);
 
     reader.onloadend = () => {
       setModalImage(reader.result);
@@ -2239,15 +2201,12 @@ function PostModal({
         )
 
         .then((response) => {
-          console.log("I am working ! handlePost()");
           if (setLoadingTrue) {
             setLoadingTrue();
           }
-          console.log("I am working ! handlePost() 1");
 
           setModalImage("");
           setTimeout(() => {
-            console.log("I am working ! handlePost() inside set time out 1");
             parentCallBack(response.data.createdPost);
             if (setLoadingTrue) {
               setLoadingFalse();
@@ -2255,7 +2214,6 @@ function PostModal({
             if (refreshPosts) {
               refreshPosts();
             }
-            console.log("I am working ! handlePost() inside set time out 2");
           }, 1500);
           setContent("");
         })
@@ -2264,8 +2222,6 @@ function PostModal({
         });
     } else {
       handleShow();
-      console.log("No content !");
-      console.log("Nothing to share !");
     }
   };
 
@@ -2274,20 +2230,16 @@ function PostModal({
   };
 
   const handleMouseOver = (e) => {
-    console.log("MOUSE OVER =>", e);
-    console.log(e.target.classList);
     const shallowCopy = e.target.classList[0];
-    console.log(shallowCopy);
+
     if (shallowCopy === "target") {
       e.target.style.background = "#595b5b";
     }
   };
 
   const handleMouseOut = (e) => {
-    console.log("MOUSE OVER =>", e);
-    console.log(e.target.classList);
     const shallowCopy = e.target.classList[0];
-    console.log(shallowCopy);
+
     if (shallowCopy === "target") {
       e.target.style.background = "#47494a";
     }
@@ -2302,8 +2254,6 @@ function PostModal({
 
     setChosenEmoji(emoji);
     setContent((prevText) => prevText + emoji);
-    console.log("Choosed emoji =>", chosenEmoji);
-    console.log("Content =>", content);
   };
 
   useEffect(() => {
@@ -2676,15 +2626,12 @@ function CommentModal({
   //handle and convert it in base 64
   const handleImage = (e) => {
     const file = e.target.files[0];
-    console.log("FILE FROM MODAL.JSX =>", file);
     setFileToBase(file);
-    console.log(file);
   };
 
   const setFileToBase = (file) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
-    console.log("SET FILE TO BASE FILE FROM MODAL.JSX =>", file);
 
     reader.onloadend = () => {
       setModalImage(reader.result);
@@ -2711,20 +2658,14 @@ function CommentModal({
   };
 
   const handleMouseOver = (e) => {
-    console.log("MOUSE OVER =>", e);
-    console.log(e.target.classList);
     const shallowCopy = e.target.classList[0];
-    console.log(shallowCopy);
     if (shallowCopy === "target") {
       e.target.style.background = "#595b5b";
     }
   };
 
   const handleMouseOut = (e) => {
-    console.log("MOUSE OVER =>", e);
-    console.log(e.target.classList);
     const shallowCopy = e.target.classList[0];
-    console.log(shallowCopy);
     if (shallowCopy === "target") {
       e.target.style.background = "#47494a";
     }
@@ -2764,7 +2705,6 @@ function CommentModal({
   // socket io 5 client finish to check
 
   const handleAddComment = (postId) => {
-    console.log("Post id =>", postId);
     axios
       .post(`${API_URL}/comment`, {
         userId: userInfo._id,
@@ -2774,8 +2714,6 @@ function CommentModal({
       })
       .then((response) => {
         handleNotification(post, userInfo, "comment");
-
-        console.log("Response =>", response);
 
         const mainPagePosts = JSON.parse(localStorage.getItem("mainPagePosts"));
 
@@ -2804,8 +2742,6 @@ function CommentModal({
 
     setChosenEmoji(emoji);
     setContent((prevText) => prevText + emoji);
-    console.log("Choosed emoji =>", chosenEmoji);
-    console.log("Content =>", content);
   };
 
   const popoverBottom = (
@@ -3454,6 +3390,9 @@ function CommentModal({
             <div className="p-2 ms-auto">
               {content !== "" || modalImage ? (
                 <Button
+                  style={{
+                    border: "none",
+                  }}
                   variant="primary"
                   onClick={() => handleAddComment(post._id)}
                   className={`post-btn compose-tweet-textArea`}
@@ -3464,6 +3403,9 @@ function CommentModal({
                 </Button>
               ) : (
                 <Button
+                  style={{
+                    border: "none",
+                  }}
                   variant="primary"
                   className={`emptyContent post-btn compose-tweet-textArea`}
                 >

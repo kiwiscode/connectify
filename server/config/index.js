@@ -8,12 +8,9 @@ const Chat = require("../models/Chat.model");
 const Post = require("../models/Post.model");
 const { default: mongoose } = require("mongoose");
 
-// "Users connecting to the server with Socket.IO"
 let onlineUsers = [];
 
 module.exports = (app) => {
-  // socket io will be implement here !!!
-
   const server = http.createServer(app);
   app.use(logger("dev"));
 
@@ -30,11 +27,9 @@ module.exports = (app) => {
     },
   });
 
-  //NOTE INFO socket.io nun connection olayı istemci tarafında sunucuyla bağlantı kurulduğunda tetiklenir.Eğer bu olayı görmek istiyorsanız bir frontend uygulaması oluşturup bu uygulama üzerinden Socket.IO bağlantısı kurmalısınız.Örneğin React gibi bir kütüphane kullanarak veya basit bir HTML dosyası üzerinden JavaScript ile bir Socket.IO istemcisi oluşturarak bağlantı sağlayabilir ve "connection" olayını gözlemleyebilirsiniz.
   io.on("connection", async (socket) => {
-    const userSocketId = socket.id;
+    console.log("User connected =>", socket.id);
 
-    // Bağlanan kullanıcıya socket.id bilgisini geri gönder
     socket.emit("socket_id_for_user", socket.id);
 
     console.log("Online users =>", onlineUsers);
@@ -64,8 +59,6 @@ module.exports = (app) => {
           console.log("Error =>", error);
         });
     });
-
-    // start to check chat details page
 
     socket.on("send_spesific_chatRoomId", (chatRoomId) => {
       socket.on("send_spesific_userId", (userId) => {
@@ -105,14 +98,12 @@ module.exports = (app) => {
                 j < findChatRoomIdInsideMessages.chat[i].messages.length;
                 j++
               ) {
-                // Her bir mesajı resultArrayOfMessages dizisine pushlayalım.
                 resultArrayOfMessages.push(
                   findChatRoomIdInsideMessages.chat[i].messages[j]
                 );
               }
             }
 
-            // Emit the messages to the client
             socket.emit("send_spesific_chat_details", {
               room: findChatRoomIdInsideMessages.room,
               messages: resultArrayOfMessages,
@@ -120,14 +111,11 @@ module.exports = (app) => {
 
             let chatDetailActiveUser;
             let chatDetailSelectedUser;
-            // start to check make 2 users join in a room spesificly and chat
             socket.on("join_spesific_message_room", (data) => {
               const { activeUser, selectedUser } = data;
-              // Create a unique room name using the usernames
               const room = [activeUser.username, selectedUser.username]
                 .sort()
                 .join("_");
-              // Join the rooms
 
               chatDetailActiveUser = activeUser;
               chatDetailSelectedUser = selectedUser;
@@ -142,7 +130,6 @@ module.exports = (app) => {
               );
               socket.join(room);
 
-              // start to check receive send chat details
               socket.on("send_spesific_room_message", async (data) => {
                 console.log("This line is working => 8 _", data);
                 socket
@@ -151,7 +138,6 @@ module.exports = (app) => {
                 console.log("Data =>", data);
                 console.log("Data.room =>", data.room);
 
-                // finish to check receive send chat details
                 const newChat = {
                   sender: data.sender,
                   text: data.text,
@@ -163,8 +149,6 @@ module.exports = (app) => {
                   messages: [newChat],
                 })
                   .then((newCreatedChatBetween2User) => {
-                    // start to check find the room index inside users messages array
-
                     console.log(
                       "Check new created chat =>",
                       newCreatedChatBetween2User
@@ -250,7 +234,6 @@ module.exports = (app) => {
                           "User 2 message room length=>",
                           users[1].messages[user2RoomIndex].chat.length
                         );
-                        // Şimdi, her iki kullanıcının messages array'indeki ilgili room'un içine chat'i ekleyebiliriz
                         users[0].messages[user1RoomIndex].chat.push(
                           newCreatedChatBetween2User._id
                         );
@@ -259,14 +242,42 @@ module.exports = (app) => {
                         );
 
                         console.log(
-                          "User 1 message room length after updated =>",
-                          users[0].messages[user1RoomIndex].chat.length
+                          "First user Room =>",
+                          users[0].messages[user1RoomIndex].room
                         );
                         console.log(
-                          "User 2 message room length after updated =>",
-                          users[1].messages[user2RoomIndex].chat.length
+                          "Second user Room =>",
+                          users[1].messages[user2RoomIndex].room
                         );
+                        console.log(users[0].messages[user1RoomIndex].room);
 
+                        const firstMessageRoom =
+                          users[0].messages[user1RoomIndex];
+                        const secondMessageRoom =
+                          users[1].messages[user2RoomIndex];
+                        console.log(
+                          "User first, first message room before update =>",
+                          users[0].messages[user1RoomIndex].room
+                        );
+                        console.log(
+                          "User second, first message room before update =>",
+                          users[1].messages[user2RoomIndex].room
+                        );
+                        users[0].messages.splice(user1RoomIndex, 1);
+                        users[1].messages.splice(user2RoomIndex, 1);
+                        users[0].messages.unshift(firstMessageRoom);
+                        users[1].messages.unshift(secondMessageRoom);
+
+                        users[0].save();
+                        users[1].save();
+                        console.log(
+                          "User first, first message room after update =>",
+                          users[0].messages[user1RoomIndex].room
+                        );
+                        console.log(
+                          "User second, first message room after update =>",
+                          users[1].messages[user2RoomIndex].room
+                        );
                         // version error start to check
                         // users[0].save();
                         // users[1].save();
@@ -305,15 +316,12 @@ module.exports = (app) => {
                       .catch((error) => {
                         console.log(error);
                       });
-
-                    // finish to check find the room index inside users messages array
                   })
                   .catch((error) => {
                     console.error(error);
                   });
               });
             });
-            // finish to check make 2 users join in a room spesificly and chat
           })
           .catch((error) => {
             console.log("This line is working 10 ERROR !!! _", socket.id);
@@ -322,12 +330,9 @@ module.exports = (app) => {
           });
       });
     });
-    // finish to check chat details page
 
-    // start to check create chat page
     socket.on("join_user_room", async (data) => {
       const { activeUser, selectedUser } = data;
-      // Create a unique room name using the usernames
       console.log(
         "active user =>",
         activeUser,
@@ -338,7 +343,6 @@ module.exports = (app) => {
         .sort()
         .join("_");
 
-      // Join the room
       socket.join(room);
 
       User.find({
@@ -349,11 +353,6 @@ module.exports = (app) => {
           ],
         },
       }).then((initiatingChatRoomBetweenTwoUsers) => {
-        // start to check initiate a chat room between 2 user
-
-        // İki kullanıcıyı bul ve her birinin messages dizisine yeni bir room ekleyin
-
-        // İki kullanıcının daha önce aynı room altında bir chat odası oluşturup oluşturmadığını kontrol et
         const roomExists = initiatingChatRoomBetweenTwoUsers.every((user) => {
           return user.messages.some((message) => message.room === room);
         });
@@ -366,11 +365,16 @@ module.exports = (app) => {
             return User.findByIdAndUpdate(
               userId,
               {
-                $addToSet: {
+                $push: {
                   messages: {
-                    room: room,
-                    chat: [],
-                    members: [activeUser._id, selectedUser._id],
+                    $each: [
+                      {
+                        room: room,
+                        chat: [],
+                        members: [activeUser._id, selectedUser._id],
+                      },
+                    ],
+                    $position: 0,
                   },
                 },
               },
@@ -379,29 +383,23 @@ module.exports = (app) => {
           });
 
           const findMessageRoomId = (user1, user2) => {
-            // Her iki kullanıcının messages alanındaki odaları alınır
             const user1Rooms = user1.messages.map((message) => message.room);
             const user2Rooms = user2.messages.map((message) => message.room);
 
-            // İki kullanıcının ait olduğu odalar bulunur
             const commonRooms = user1Rooms.filter((room) =>
               user2Rooms.includes(room)
             );
 
             console.log("This is the common room =>", commonRooms);
-            // Eğer ortak odalar bulunduysa, ilk ortak odayı döndür
             if (commonRooms.length > 0) {
               return commonRooms[0];
             }
 
-            // Ortak oda bulunamadıysa null döndür
             return null;
           };
 
           Promise.all(updatePromises)
             .then((updatedUsers) => {
-              // updatedUsers içinde güncellenmiş kullanıcılar var
-
               console.log(
                 "bu iki kullanicinin üye olduğu odayi bul =>",
                 updatedUsers
@@ -414,7 +412,6 @@ module.exports = (app) => {
               if (roomName) {
                 console.log("Mesaj odasi ID'si:", roomName);
 
-                // updatedUsers[0] ve updatedUsers[1] içindeki kullanıcı nesnelerini güncelle
                 initiatingChatRoomBetweenTwoUsers[0].messages =
                   updatedUsers[0].messages;
                 initiatingChatRoomBetweenTwoUsers[1].messages =
@@ -426,7 +423,6 @@ module.exports = (app) => {
                   }
                 );
                 console.log("Id of new room =>", newIdOfMessageRoom);
-                // roomId'ı kullanarak bir şeyler yapabilirsiniz
 
                 socket.emit(
                   "getmessageRoomId",
@@ -437,20 +433,17 @@ module.exports = (app) => {
               }
             })
             .catch((error) => {
-              // Hata işleme kodu burada
               console.error("Error updating users:", error);
             });
         } else {
-          // NOTE INFO start to check show messages if the room exist between this two user
-
           User.find({
             _id: {
               $in: [new mongoose.Types.ObjectId(activeUser._id)],
             },
           })
             .populate({
-              path: "messages.chat", // Populate işlemi
-              model: "Chat", // Chat modeli
+              path: "messages.chat",
+              model: "Chat",
             })
             .then((user) => {
               const userMessages = user[0].messages || [];
@@ -494,31 +487,23 @@ module.exports = (app) => {
             .catch((error) => {
               console.error("Error fetching users:", error);
             });
-          // NOTE INFO finish to check show messages if the room exist between this two user
         }
-        // finish to check initiate a chat room between 2 user
 
-        // start to check INFO NOTE chat starting
         console.log("They are ready to chat their => room created!");
       });
     });
-    // finish to check create chat page
 
-    // start to check real time notification
-    // IMPORTANT
-    // Kullanıcı adını güncelleme
     socket.on("setUsername", (username) => {
       const user = {
         socketId: socket.id,
-        username: username, // Kullanıcı adını burada saklayabilirsiniz
+        username: username,
       };
       user.username = username;
-      // Kullanıcı adının benzersiz olduğunu kontrol et
+
       const existingUser = onlineUsers.find(
         (u) => u.username === user.username
       );
       if (existingUser) {
-        // Aynı kullanıcı adına sahip başka bir kullanıcı var, bağlantıyı reddet
         console.log(
           `Kullanıcı adı "${user.username}" zaten kullanılıyor. Bağlantı reddedildi.`
         );
@@ -588,17 +573,13 @@ module.exports = (app) => {
             senderInfo,
           });
         } else if (!receiver) {
-          // burada aktif olmayan userın notificationsına ekleme yapabiliriz !
           console.log("Receiver is not found !");
         }
       }
     );
 
-    // finish to check real time notification
-
     socket.on("disconnect", () => {
       console.log("User disconnected =>", socket.id);
-      // Kullanıcı ayrıldığında diziden kaldır
       const findedUser = onlineUsers.find((eachUser) => {
         return eachUser.socketId === socket.id;
       });
@@ -618,6 +599,5 @@ module.exports = (app) => {
     });
   });
 
-  // Bu socket.io örneğini kullanmak için app nesnesini middleware olarak ekleyin.
   app.set("io", io);
 };
