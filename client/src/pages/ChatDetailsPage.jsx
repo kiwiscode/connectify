@@ -38,20 +38,17 @@ function ChatDetailsPage() {
 
   const redirectToPostDetailPage = (postOwner, postId) => {
     navigate(`/${postOwner}/status/${postId}`);
-    window.location.reload();
+    // window.location.reload();
   };
 
   // start to check shared post view message
   const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
 
   const handleCallback = (childData) => {
-    console.log("Child data =>", childData);
     // Update the name in the component's state
     setcurrentCreatedPost(childData);
     postSharedMessage(childData.authorUserName, childData._id);
   };
-
-  console.log("Current created data =>", currentCreatedPost);
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -86,8 +83,6 @@ function ChatDetailsPage() {
   const [notificationText, setnotificationText] = useState([]);
   // socket io 1 client finish to check
 
-  console.log("Message room");
-
   // start to check
   const navigate = useNavigate();
   const redirectToMessages = () => {
@@ -97,23 +92,22 @@ function ChatDetailsPage() {
 
   const redirectProfilePage = () => {
     navigate("/profile");
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectHomePage = () => {
     navigate("/home");
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectSpesificProfilePage = (userId) => {
     navigate(`/profile/${userId}`);
-    window.location.reload();
+    // window.location.reload();
   };
   // finish to check
 
   // socket io 4 client start to check
   useEffect(() => {
-    console.log("First use effect working");
     socket.on("socket_id_for_user", (socketId) => {
       console.log("socket id received from backend =>", socketId);
 
@@ -125,8 +119,6 @@ function ChatDetailsPage() {
   // socket io 4 client finish to check
 
   useEffect(() => {
-    console.log("Second use effect working");
-
     socket.on("getNotification", (data) => {
       console.log("Data =>", data);
       if (data.senderName !== userInfo.username) {
@@ -162,19 +154,16 @@ function ChatDetailsPage() {
           }
         );
       } else {
-        console.log("Kendine notification mu göndericeksin ? ");
+        console.log("You cannot send a notification to yourself.");
       }
     });
   }, [socket]);
 
   useEffect(() => {
-    console.log("Third use effect working");
-
     socket.emit("send_spesific_chatRoomId", chatRoomId);
     socket.emit("send_spesific_userId", userInfo._id);
 
     socket.on("receive_selectedUser", (data) => {
-      console.log("Selected user =>", data);
       setselectedUser(data);
     });
 
@@ -211,10 +200,8 @@ function ChatDetailsPage() {
   // mesajların render edildiği kısım start to check
   socket.on("send_spesific_chat_details", (data) => {
     const { room, messages } = data;
-    console.log(room, messages);
     setRoom(room);
     setspesificRoom(messages);
-    console.log("spesific room outside use effect=>", spesificRoom);
   });
   // mesajların render edildiği kısım finish to check
 
@@ -239,7 +226,6 @@ function ChatDetailsPage() {
         notificationType,
         messageContent
       ) => {
-        console.log(messageSender);
         socket.emit("sendNotification", {
           receiverName: messageReceiver.username,
           senderName: messageSender.username,
@@ -252,20 +238,12 @@ function ChatDetailsPage() {
       // socket io 5 client finish to check
 
       await socket.emit("send_spesific_room_message", messageData);
-      console.log("Sended message =>", messageData);
       setspesificRoom((list) => [...list, messageData]);
       setCurrentMessage("");
 
       handleNotification(selectedUser[0], userInfo, "message", currentMessage);
-
-      console.log("Receiver user =>", selectedUser[0].username);
-      console.log("Sender user =>", userInfo.username);
-      console.log("Type =>", "message");
-      console.log("Current message =>", currentMessage);
     }
   };
-
-  console.log("Guest user =>", selectedUser);
 
   const monthsProfile = [
     "January",
@@ -297,13 +275,10 @@ function ChatDetailsPage() {
 
     setChosenEmoji(emoji);
     setCurrentMessage((prevText) => prevText + emoji);
-    console.log("Choosed emoji =>", chosenEmoji);
-    console.log("Content =>", currentMessage);
   };
 
   useEffect(() => {
     const closeEmojiContainer = (e) => {
-      console.log();
       if (
         e.target.classList.contains("chat-detail-emoji-picker") ||
         e.srcElement.parentElement.className ===

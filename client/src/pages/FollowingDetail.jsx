@@ -14,8 +14,10 @@ const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
+import io from "socket.io-client";
 
 function FollowingDetailPage() {
+  const socket = io.connect(`${API_URL}`);
   const { userId } = useParams();
 
   // start to check
@@ -27,36 +29,37 @@ function FollowingDetailPage() {
 
   const redirectProfilePage = () => {
     navigate("/profile");
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectHomePage = () => {
     navigate("/home");
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectSpesificProfilePage = (userId) => {
     navigate(`/profile/${userId}`);
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectToPostDetailPage = (postOwnerName, postId) => {
     navigate(`/${postOwnerName}/status/${postId}`);
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectFollowersPage = (userId) => {
     navigate(`/profile/${userId}/followers`);
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectFollowingPage = (userId) => {
     navigate(`/profile/${userId}/following`);
-    window.location.reload();
+    // window.location.reload();
   };
   // finish to check
 
-  const { getToken, userInfo, socket } = useContext(UserContext);
+  // const { getToken, userInfo, socket } = useContext(UserContext);
+  const { getToken, userInfo } = useContext(UserContext);
 
   const [following, setFollowing] = useState([]);
 
@@ -68,13 +71,10 @@ function FollowingDetailPage() {
   const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
 
   const handleCallback = (childData) => {
-    console.log("Child data =>", childData);
     // Update the name in the component's state
     setcurrentCreatedPost(childData);
     postSharedMessage(childData.authorUserName, childData._id);
   };
-
-  console.log("Current created data =>", currentCreatedPost);
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -148,7 +148,7 @@ function FollowingDetailPage() {
       if (data.senderName !== userInfo.username) {
         setnotificationTest((prev) => [...prev, data]);
       } else {
-        console.log("Kendine notification mu göndericeksin ? ");
+        console.log("You cannot send a notification to yourself.");
       }
     });
 
@@ -178,7 +178,7 @@ function FollowingDetailPage() {
           }
         );
       } else {
-        console.log("Kendine notification mu göndericeksin ? ");
+        console.log("You cannot send a notification to yourself.");
       }
     });
   }, [socket]);
@@ -209,8 +209,6 @@ function FollowingDetailPage() {
     setSelectedUser(selectedUser);
     setIsHovered(false);
     setshowUnfollowModal(true);
-
-    console.log("Current hovered value =>", isHovered);
   };
 
   const handleClose = () => setshowUnfollowModal(false);
@@ -228,7 +226,6 @@ function FollowingDetailPage() {
         setfollowingofthemonitoreduser(response.data.user);
         setActiveTab("following");
         setFollowing(response.data.following);
-        console.log("Following =>", response.data.following);
       })
       .catch((error) => {
         console.log("Error =>", error);
@@ -475,7 +472,6 @@ function FollowingDetailPage() {
                   user._id
                 );
 
-                console.log("Is following =>", isFollowing);
                 const handleUnfollow = (selectedUser) => {
                   axios
                     .post(
@@ -530,19 +526,12 @@ function FollowingDetailPage() {
                         followings.splice(newFollowingArray, 1);
                         setFollowing(followings);
                         setIsHovered(false);
-                        console.log("Is still following 1 =>", isFollowing);
-
-                        console.log(
-                          "Is following current after handle unfollow =>",
-                          isFollowing
-                        );
                       } else {
                         const filteredArray = followings[
                           newFollowingArray
                         ].followers.filter((eachFollower) => {
                           return eachFollower !== userInfo._id;
                         });
-                        console.log("Is still following 2 =>", isFollowing);
                         setFollowing((prevState) => {
                           const newData = [...prevState];
 
@@ -554,11 +543,6 @@ function FollowingDetailPage() {
                           return newData;
                         });
                         setIsHovered(false);
-
-                        console.log(
-                          "Is following current after handle unfollow =>",
-                          isFollowing
-                        );
                       }
 
                       handleClose();
@@ -587,15 +571,8 @@ function FollowingDetailPage() {
                       // getActiveUser();
                       setClicked(!clicked);
                       handleNotification(selectedUser, userInfo, "followed");
-                      console.log("sELECTED uSer =>", selectedUser);
 
                       setIsHovered(false);
-                      console.log("Is still following 3 =>", isFollowing);
-
-                      console.log(
-                        "Is following current after handle follow =>",
-                        isFollowing
-                      );
                     })
                     .catch((error) => {
                       console.log(error);

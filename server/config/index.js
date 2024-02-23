@@ -32,7 +32,7 @@ module.exports = (app) => {
 
   //NOTE INFO socket.io nun connection olayı istemci tarafında sunucuyla bağlantı kurulduğunda tetiklenir.Eğer bu olayı görmek istiyorsanız bir frontend uygulaması oluşturup bu uygulama üzerinden Socket.IO bağlantısı kurmalısınız.Örneğin React gibi bir kütüphane kullanarak veya basit bir HTML dosyası üzerinden JavaScript ile bir Socket.IO istemcisi oluşturarak bağlantı sağlayabilir ve "connection" olayını gözlemleyebilirsiniz.
   io.on("connection", async (socket) => {
-    const userSocketId = socket.id;
+    console.log("User connected =>", socket.id);
 
     // Bağlanan kullanıcıya socket.id bilgisini geri gönder
     socket.emit("socket_id_for_user", socket.id);

@@ -23,8 +23,11 @@ const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
+import io from "socket.io-client";
 
 function SpesificUserProfile() {
+  const socket = io.connect(`${API_URL}`);
+
   const { id } = useParams();
   // start to check
   const navigate = useNavigate();
@@ -35,40 +38,41 @@ function SpesificUserProfile() {
 
   const redirectProfilePage = () => {
     navigate("/profile");
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectHomePage = () => {
     navigate("/home");
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectSpesificProfilePage = (userId) => {
     navigate(`/profile/${userId}`);
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectToPostDetailPage = (postOwnerName, postId) => {
     navigate(`/${postOwnerName}/status/${postId}`);
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectFollowersPage = (userId) => {
     navigate(`/profile/${userId}/followers`);
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectFollowingPage = (userId) => {
     navigate(`/profile/${userId}/following`);
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectToImagePostDetailPage = (postOwnerName, postId) => {
     navigate(`/${postOwnerName}/status/${postId}/photo/1`);
-    window.location.reload();
+    // window.location.reload();
   };
   // finish to check
-  const { getToken, userInfo, socket } = useContext(UserContext);
+  // const { getToken, userInfo, socket } = useContext(UserContext);
+  const { getToken, userInfo } = useContext(UserContext);
   const [profileInfo, setProfileInfo] = useState({});
   const [profileInfoPosts, setprofileInfoPosts] = useState([]);
   const [favoriteWindow, setFavoriteWindow] = useState("hide");
@@ -92,13 +96,10 @@ function SpesificUserProfile() {
   const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
 
   const handleCallback = (childData) => {
-    console.log("Child data =>", childData);
     // Update the name in the component's state
     setcurrentCreatedPost(childData);
     postSharedMessage(childData.authorUserName, childData._id);
   };
-
-  console.log("Current created data =>", currentCreatedPost);
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -168,8 +169,6 @@ function SpesificUserProfile() {
             localStorage.getItem("userInfo")
           );
 
-          console.log("User info =>", userInfoFromLocalStorage);
-
           const followedUser = userInfoFromLocalStorage.following.find(
             (eachFollowing) => {
               return eachFollowing._id === profileInfo._id;
@@ -188,8 +187,6 @@ function SpesificUserProfile() {
           // delete after unfollow also from localstorage finish to check
 
           setTimeout(() => {
-            console.log("Unfollow backend response ready to build !");
-
             // start to check animation basic
             if (postsWindow === "hide") {
               setShow("");
@@ -313,22 +310,13 @@ function SpesificUserProfile() {
           }
         );
       } else {
-        console.log("Kendine notification mu göndericeksin ? ");
+        console.log("You cannot send a notification to yourself.");
       }
     });
   }, [socket]);
 
-  console.log("ACTIVE USER INFO =>", userInfo);
-
   // socket io 5 client start to check
   const handleNotification = (post, userInfo, type) => {
-    console.log(
-      post.userId
-        ? post.userId.username
-        : post.username
-        ? post.username
-        : "null"
-    );
     socket.emit("sendNotification", {
       senderName: userInfo.username,
       receiverName: post.userId
@@ -345,11 +333,8 @@ function SpesificUserProfile() {
 
   const handleFollow = () => {
     if (getFollowerIds(profileInfo.followers).includes(userInfo._id)) {
-      console.log("You are following this profile show unfollow modal!");
       handleShow();
     } else {
-      console.log("You are not following this profile follow !");
-
       axios
         .post(
           `${API_URL}/follow`,
@@ -363,9 +348,7 @@ function SpesificUserProfile() {
             },
           }
         )
-        .then((response) => {
-          console.log("Response =>", response);
-          console.log("sELECTED uSer =>", profileInfo);
+        .then(() => {
           handleNotification(profileInfo, userInfo, "followed");
 
           // change the userInfo who followed user start to check
@@ -373,8 +356,6 @@ function SpesificUserProfile() {
           const userInfoFromLocalStorage = JSON.parse(
             localStorage.getItem("userInfo")
           );
-
-          console.log("User info =>", userInfoFromLocalStorage);
 
           userInfoFromLocalStorage.following.unshift(profileInfo);
 
@@ -462,7 +443,6 @@ function SpesificUserProfile() {
           JSON.stringify(response.data.favorites)
         );
 
-        console.log("Favorites =>", response.data.favorites);
         setFavoriteWindow("");
         setPostWindow("hide");
         setFavorites(response.data.favorites);
@@ -472,6 +452,20 @@ function SpesificUserProfile() {
         return err;
       });
   };
+
+  console.log("User rendered favorites =>", favorites);
+
+  const checkIfAllFavoritesFromDeactivatedUser = () => {
+    return favorites.map((eachFavorite) => {
+      return eachFavorite.deactivatedOwner;
+    });
+  };
+
+  const hasFalse = checkIfAllFavoritesFromDeactivatedUser().some(
+    (item) => item === false
+  );
+
+  console.log(hasFalse);
 
   const getRepostedIds = (array) => {
     return array.reposted.map((eachRepost) => {
@@ -487,7 +481,7 @@ function SpesificUserProfile() {
       setShow("");
       handleShowSpesificUserProfilePagePosts();
     }
-  }, []);
+  }, [id]);
 
   // finish to check
   const months = [
@@ -604,7 +598,6 @@ function SpesificUserProfile() {
         setError("");
       })
       .catch((error) => {
-        console.log("ERROR =>", error);
         if (error.response) {
           const { errorMessage } = error.response.data;
           setError(errorMessage);
@@ -648,7 +641,6 @@ function SpesificUserProfile() {
   };
 
   const handleRepost = (postId) => {
-    console.log("Clicked Post id =>", postId);
     axios
       .post(
         `${API_URL}/repost`,
@@ -666,11 +658,6 @@ function SpesificUserProfile() {
 
         // repost process for  user profile posts
         if (postsWindow === "hide") {
-          console.log(
-            "Am i seeing the new created reference post =>",
-            response
-          );
-
           const profileInfoFavorites = JSON.parse(
             localStorage.getItem("profileInfoFavorites")
           );
@@ -684,16 +671,12 @@ function SpesificUserProfile() {
           // socket io test finish to check
 
           const index2 = favorites.indexOf(findedFavorite);
-          console.log("LINE 1 WORKING");
           profileInfoFavorites[index2].reposted.unshift(userInfo);
-
-          console.log("LINE 2 WORKING");
 
           localStorage.setItem(
             "profileInfoFavorites",
             JSON.stringify(profileInfoFavorites)
           );
-          console.log("LINE 3 WORKING");
 
           setTimeout(() => {
             setFavorites(profileInfoFavorites);
@@ -711,10 +694,7 @@ function SpesificUserProfile() {
             const specificProfilePosts = JSON.parse(
               localStorage.getItem("profileInfoPosts")
             );
-            console.log(
-              "All spesific user profile posts =>",
-              specificProfilePosts
-            );
+
             const findClickedPost = specificProfilePosts.find((eachPost) => {
               return eachPost._id === postId;
             });
@@ -728,7 +708,6 @@ function SpesificUserProfile() {
                   !findClickedPost.isReposted
                 : null
             ) {
-              console.log("Now we are here first !!!");
               specificProfilePosts[findClickedPostIndex].reposted.unshift(
                 userInfo
               );
@@ -739,14 +718,6 @@ function SpesificUserProfile() {
               );
 
               specificProfilePosts[newPostIndex].reposted.unshift(userInfo);
-              console.log("New post index =>", newPostIndex);
-              console.log(
-                "Spesific profile posts updated =>",
-                specificProfilePosts
-              );
-
-              console.log("Clicked post =>", findClickedPost);
-              console.log("Clicked post index =>", findClickedPostIndex);
 
               localStorage.setItem(
                 "profileInfoPosts",
@@ -761,8 +732,6 @@ function SpesificUserProfile() {
                     !findClickedPost.isReposted)
                 : null
             ) {
-              console.log("Now we are here second !!!");
-
               specificProfilePosts[findClickedPostIndex].reposted.unshift(
                 userInfo
               );
@@ -782,9 +751,6 @@ function SpesificUserProfile() {
           favoriteWindow === "hide" &&
           profileInfo._id !== userInfo._id
         ) {
-          console.log(
-            "Now we are here , you are checking someone elses spesific profile !!!"
-          );
           // burada sadece reposted.lengthler ile ilgileniyoruz çünkü başkasının profilindeyiz ...
           const spesificProfilePosts = JSON.parse(
             localStorage.getItem("profileInfoPosts")
@@ -804,10 +770,6 @@ function SpesificUserProfile() {
             findedPost.isReposted &&
             findedPost.userId._id === profileInfo._id
           ) {
-            console.log(
-              "This post reposted from user hisself from one of his posts"
-            );
-
             const originalPost = spesificProfilePosts.find((eachPost) => {
               return (
                 eachPost._id === findedPost.repostedFromThisOriginalPost[0]._id
@@ -836,10 +798,6 @@ function SpesificUserProfile() {
             findedPost.userId._id !== profileInfo._id &&
             findedPost.reposted.length > 0
           ) {
-            console.log(
-              "This post reposted from user itself from a different user"
-            );
-
             const updateSpesificProfilePosts = () => {
               spesificProfilePosts[findedPostIndex].reposted.unshift(userInfo);
 
@@ -857,9 +815,6 @@ function SpesificUserProfile() {
             findedPost.userId._id === profileInfo._id &&
             findedPost.reposted.length === 0
           ) {
-            console.log(
-              "This post just a post from user itself has no repost..."
-            );
             const updateSpesificProfilePosts = () => {
               spesificProfilePosts[findedPostIndex].reposted.unshift(userInfo);
 
@@ -886,8 +841,6 @@ function SpesificUserProfile() {
 
             const referencePostIndex =
               spesificProfilePosts.indexOf(referencePost);
-            console.log("Reference post =>", referencePost);
-            console.log("Reference post index =>", referencePostIndex);
 
             const updateSpesificProfilePosts = () => {
               spesificProfilePosts[findedPostIndex].reposted.unshift(userInfo);
@@ -914,7 +867,6 @@ function SpesificUserProfile() {
         console.log(error);
       });
   };
-  console.log("VISITED PROFILE =>", profileInfo);
   const handleDeleteRepostSpesificProfilePage = (postId) => {
     axios
       .post(
@@ -927,8 +879,6 @@ function SpesificUserProfile() {
         }
       )
       .then(() => {
-        console.log("You deleted repost !");
-
         if (postsWindow !== "hide") {
           const spesificProfilePosts = JSON.parse(
             localStorage.getItem("profileInfoPosts")
@@ -940,11 +890,8 @@ function SpesificUserProfile() {
 
           const findedPostIndex = spesificProfilePosts.indexOf(findedPost);
 
-          console.log("Finded post index =>", findedPostIndex);
           if (profileInfo._id === userInfo._id) {
             if (findedPost ? findedPost.userId._id !== userInfo._id : null) {
-              console.log("You reposted this post from another user !");
-
               const updateProfilePosts = () => {
                 spesificProfilePosts.splice(findedPostIndex, 1);
                 localStorage.setItem(
@@ -960,13 +907,8 @@ function SpesificUserProfile() {
               findedPost ? findedPost.userId._id === userInfo._id : null
             ) {
               if (findedPost.isReposted) {
-                console.log(
-                  "This is your post that you reposted from yourself and this is reference post!"
-                );
                 if (findedPost.reposted.length === 1) {
                   const updateProfilePosts = () => {
-                    console.log("The length of reposted is only 1 ");
-
                     const originalPost = spesificProfilePosts.find(
                       (eachPost) => {
                         return (
@@ -976,22 +918,8 @@ function SpesificUserProfile() {
                       }
                     );
 
-                    console.log(
-                      "Reference post =>",
-                      findedPost,
-                      "Original post =>",
-                      originalPost
-                    );
-
                     const originalPostIndex =
                       spesificProfilePosts.indexOf(originalPost);
-
-                    console.log(
-                      "Reference post index =>",
-                      findedPostIndex,
-                      "Original post index =>",
-                      originalPostIndex
-                    );
 
                     const originalPostReposter = spesificProfilePosts[
                       originalPostIndex
@@ -1003,12 +931,6 @@ function SpesificUserProfile() {
                         originalPostReposter
                       );
 
-                    console.log(
-                      "Is correct reposter found it from original post ?",
-                      spesificProfilePosts[originalPostIndex].reposted[
-                        originalPostReposterIndex
-                      ]
-                    );
                     spesificProfilePosts[originalPostIndex].reposted.splice(
                       originalPostReposterIndex,
                       1
@@ -1025,8 +947,6 @@ function SpesificUserProfile() {
                   setTimeout(updateProfilePosts, 500);
                 }
                 if (findedPost.reposted.length > 1) {
-                  console.log("The length of reposted is more than 1 ");
-
                   const updateProfilePosts = () => {
                     const originalPost = spesificProfilePosts.find(
                       (eachPost) => {
@@ -1040,13 +960,6 @@ function SpesificUserProfile() {
                     const originalPostIndex =
                       spesificProfilePosts.indexOf(originalPost);
 
-                    console.log(
-                      "Original post =>",
-                      originalPost,
-                      "Original post index =>",
-                      originalPostIndex
-                    );
-
                     const originalPostReposter = spesificProfilePosts[
                       originalPostIndex
                     ].reposted.find((eachReposter) => {
@@ -1057,13 +970,6 @@ function SpesificUserProfile() {
                       spesificProfilePosts[originalPostIndex].reposted.indexOf(
                         originalPostReposter
                       );
-
-                    console.log(
-                      "Original post reposter =>",
-                      originalPostReposter,
-                      "Original post reposter index =>",
-                      reposterIndex
-                    );
 
                     spesificProfilePosts[originalPostIndex].reposted.splice(
                       reposterIndex,
@@ -1081,15 +987,7 @@ function SpesificUserProfile() {
                   setTimeout(updateProfilePosts, 500);
                 }
               } else if (!findedPost.isReposted) {
-                console.log(
-                  "This is your post that you reposted this post has one reference post and this is original post!"
-                ); // find reference post
-
                 if (findedPost.reposted.length === 1) {
-                  console.log(
-                    "This line is working because reposted length is equal 1"
-                  );
-
                   // start to check basit settimeout animation
                   const updateProfilePosts = () => {
                     const findOriginalPost = spesificProfilePosts.find(
@@ -1104,13 +1002,6 @@ function SpesificUserProfile() {
                     const findOriginalPostIndex =
                       spesificProfilePosts.indexOf(findOriginalPost);
 
-                    console.log("Original post =>", findOriginalPost);
-
-                    console.log(
-                      "Original post index =>",
-                      findOriginalPostIndex
-                    );
-
                     const reposter = findedPost.reposted.find(
                       (eachReposter) => {
                         return eachReposter._id === userInfo._id;
@@ -1118,7 +1009,6 @@ function SpesificUserProfile() {
                     );
 
                     const reposterIndex = findedPost.reposted.indexOf(reposter);
-                    console.log("Profile posts first", spesificProfilePosts);
                     spesificProfilePosts[findedPostIndex].reposted.splice(
                       reposterIndex,
                       1
@@ -1129,7 +1019,6 @@ function SpesificUserProfile() {
                       "profileInfoPosts",
                       JSON.stringify(spesificProfilePosts)
                     );
-                    console.log("Profile post updated", spesificProfilePosts);
                     setprofileInfoPosts(spesificProfilePosts);
                   };
 
@@ -1137,10 +1026,6 @@ function SpesificUserProfile() {
                   // finish to check basit settimeout animation
                 }
                 if (findedPost.reposted.length > 1) {
-                  console.log(
-                    "This line is working because reposted length is bigger than 1"
-                  );
-
                   const referencePost = spesificProfilePosts.find(
                     (eachPost) => {
                       return (
@@ -1196,10 +1081,6 @@ function SpesificUserProfile() {
               }
             }
           } else if (profileInfo._id !== userInfo._id) {
-            console.log(
-              "So now you are in a different spesific profile and want it to delete some reposts!"
-            );
-
             const reposterIds = findedPost.reposted.map((eachReposter) => {
               return eachReposter._id;
             });
@@ -1210,7 +1091,6 @@ function SpesificUserProfile() {
                   !reposterIds.includes(profileInfo._id)
                 : null
             ) {
-              console.log("Now this line is working first ... ?");
               const updateSpesificProfilePosts = () => {
                 const reposter = spesificProfilePosts[
                   findedPostIndex
@@ -1242,8 +1122,6 @@ function SpesificUserProfile() {
                   reposterIds.includes(profileInfo._id)
                 : null
             ) {
-              console.log("Now this line is working second ...");
-
               const referencePost = spesificProfilePosts.find((eachPost) => {
                 return eachPost.repostedFromThisOriginalPost[0]
                   ? eachPost.repostedFromThisOriginalPost[0]._id === postId
@@ -1253,8 +1131,6 @@ function SpesificUserProfile() {
               const referencePostIndex =
                 spesificProfilePosts.indexOf(referencePost);
 
-              console.log("Reference post =>", referencePost);
-              console.log("Reference post index =>", referencePostIndex);
               const updateSpesificProfilePosts = () => {
                 const reposter = spesificProfilePosts[
                   findedPostIndex
@@ -1290,10 +1166,6 @@ function SpesificUserProfile() {
               findedPost.isReposted &&
               findedPost.userId._id !== profileInfo._id
             ) {
-              console.log(
-                "This line is working these are the posts profile owner reposted from another users !!!"
-              );
-
               const updateSpesificProfilePosts = () => {
                 const reposter = spesificProfilePosts[
                   findedPostIndex
@@ -1334,20 +1206,16 @@ function SpesificUserProfile() {
                 const originalPostIndex =
                   spesificProfilePosts.indexOf(originalPost);
 
-                console.log("Original post =>", originalPost);
-                console.log("Original post index =>", originalPostIndex);
                 const reposter = spesificProfilePosts[
                   findedPostIndex
                 ].reposted.find((eachReposter) => {
                   return eachReposter._id === userInfo._id;
                 });
 
-                console.log("Reposter =>", reposter);
                 const reposterIndex =
                   spesificProfilePosts[findedPostIndex].reposted.indexOf(
                     reposter
                   );
-                console.log("Reposter index =>", reposterIndex);
 
                 spesificProfilePosts[findedPostIndex].reposted.splice(
                   reposterIndex,
@@ -1367,17 +1235,11 @@ function SpesificUserProfile() {
               };
 
               setTimeout(updateSpesificProfilePosts, 500);
-              console.log(
-                "This line is working these are the posts profile owner reposted from hisself !!!"
-              );
             }
           }
         }
 
         if (favoriteWindow !== "hide") {
-          console.log(
-            "This line is working because now you are dealing with delete repost function inside favorites"
-          );
           const profileInfoFavorites = JSON.parse(
             localStorage.getItem("profileInfoFavorites")
           );
@@ -1388,12 +1250,6 @@ function SpesificUserProfile() {
 
           const findedFavoriteIndex =
             profileInfoFavorites.indexOf(findedFavorite);
-
-          console.log(
-            "Finded favorite reposted =>",
-            profileInfoFavorites[findedFavoriteIndex].reposted
-          );
-          console.log("Finded favorite index =>", findedFavoriteIndex);
 
           const findReposter = profileInfoFavorites[
             findedFavoriteIndex
@@ -1407,12 +1263,6 @@ function SpesificUserProfile() {
             );
 
           if (findedFavorite ? findedFavorite.isReposted : null) {
-            console.log("This post is reposted");
-            console.log(
-              "Finded favorite reposter index =>",
-              findedFavoriteReposterIndex
-            );
-
             const updateUserProfilePosts = () => {
               profileInfoFavorites[findedFavoriteIndex].reposted.splice(
                 findedFavoriteReposterIndex,
@@ -1429,11 +1279,6 @@ function SpesificUserProfile() {
 
             setTimeout(updateUserProfilePosts, 500);
           } else {
-            console.log("This post is not reposted");
-            console.log(
-              "Finded reposter index =>",
-              findedFavoriteReposterIndex
-            );
             const updateUserProfilePosts = () => {
               profileInfoFavorites[findedFavoriteIndex].reposted.splice(
                 findedFavoriteReposterIndex,
@@ -2774,7 +2619,7 @@ function SpesificUserProfile() {
             {/* finish to check */}
             {/* start */}
             <div className={`${favoriteWindow} all-favorites`}>
-              {favorites.length ? (
+              {favorites.length && hasFalse ? (
                 <>
                   {favorites.slice(0, visibleLikedTweets).map((favorite) => (
                     <>
@@ -3312,7 +3157,11 @@ function SpesificUserProfile() {
               ) : (
                 <>
                   {/* when no post shared yet from other profile posts section in general start to check  */}
-
+                  <Row
+                    style={{
+                      borderBottom: "1px solid rgba(0,0,0,0.1)",
+                    }}
+                  ></Row>
                   <div
                     style={{
                       textAlign: "left",

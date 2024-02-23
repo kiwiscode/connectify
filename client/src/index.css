@@ -885,9 +885,18 @@ span > a:hover {
   margin: auto;
 }
 
+.message-delete-three-dots-parent {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  margin: auto;
+  bottom: 8px;
+}
+
 .svg-border-parent:hover,
-.send-button:hover {
-  background-color: #dceaf4;
+.send-button:hover,
+.message-delete-three-dots-parent:hover {
+  background-color: #e4f0f9;
   transition-duration: 0.2s !important;
 }
 
@@ -1792,7 +1801,8 @@ span > a:hover {
   background-color: #272c30;
 }
 
-.cancel-btn-reactivate-tab:hover {
+.cancel-btn-reactivate-tab:hover,
+.cancel-btn-delete-conversation-tab:hover {
   background-color: #e7e7e8;
 }
 
@@ -1813,4 +1823,25 @@ span > a:hover {
   /* padding: 20px; */
   /* border: 1px solid #ddd; */
   text-align: left;
+}
+
+.hideshowMessageDeletePopover {
+  display: none;
+}
+
+.message-popoover:hover {
+  background-color: #f7f7f7;
+}
+
+.delete-conversation-content {
+  padding: 32px;
+}
+
+.delete-conversation-dialog {
+  /* background-color: green; */
+  width: 400px;
+}
+
+.leave-btn-delete-conversation-tab:hover {
+  background-color: #dc1f29 !important;
 }

@@ -27,19 +27,15 @@ import CustomNotification from "../components/Notifications/CustomNotification";
 
 import { message } from "antd";
 
-// socket io 2 client start to check
-// import io from "socket.io-client";
-// socket io 2 client finish to check
-
 // when working on local version
 const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-
-// const socket = io.connect(API_URL);
+import io from "socket.io-client";
 
 function MainPage() {
+  const socket = io.connect(`${API_URL}`);
   // rendering page after redirectiring for fetching data without problem ! if you need to fetch data after you redirect or navigate to user to the page (it can work pretty good on your navigation bar)this lines of code is pretty useful
   // start to check
   const navigate = useNavigate();
@@ -50,25 +46,26 @@ function MainPage() {
 
   const redirectProfilePage = () => {
     navigate("/profile");
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectSpesificProfilePage = (userId) => {
     navigate(`/profile/${userId}`);
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectToPostDetailPage = (postOwnerName, postId) => {
     navigate(`/${postOwnerName}/status/${postId}`);
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectToImagePostDetailPage = (postOwnerName, postId) => {
     navigate(`/${postOwnerName}/status/${postId}/photo/1`);
-    window.location.reload();
+    // window.location.reload();
   };
   // finish to check
-  const { userInfo, getToken, socket } = useContext(UserContext);
+  // const { userInfo, getToken, socket } = useContext(UserContext);
+  const { userInfo, getToken } = useContext(UserContext);
   const [posts, setPosts] = useState([]);
   const [postId, setpostId] = useState("");
   const [error, setError] = useState("");
@@ -87,7 +84,6 @@ function MainPage() {
   const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
 
   const handleCallback = (childData) => {
-    console.log("Child data =>", childData);
     // Update the name in the component's state
     setcurrentCreatedPost(childData);
     postSharedMessage(childData.authorUserName, childData._id);
@@ -131,8 +127,6 @@ function MainPage() {
     setshouldHide(true);
     handleShowPostsHomePage();
     socket.on("socket_id_for_user", (socketId) => {
-      console.log("socket id received from backend =>", socketId);
-
       localStorage.setItem("socketId", socketId);
     });
 
@@ -148,8 +142,6 @@ function MainPage() {
         },
       })
       .then((response) => {
-        console.log("Response =>", response);
-
         localStorage.setItem(
           "followedUsersPosts",
           JSON.stringify(response.data)
@@ -168,7 +160,7 @@ function MainPage() {
       if (data.senderName !== userInfo.username) {
         setnotificationTest((prev) => [...prev, data]);
       } else {
-        console.log("Kendine notification mu göndericeksin ? ");
+        console.log("You cannot send a notification to yourself.");
       }
     });
 
@@ -198,7 +190,7 @@ function MainPage() {
           }
         );
       } else {
-        console.log("Kendine notification mu göndericeksin ? ");
+        console.log("You cannot send a notification to yourself.");
       }
     });
   }, [socket]);
@@ -219,7 +211,6 @@ function MainPage() {
   const handleImage = (e) => {
     const file = e.target.files[0];
     setFileToBase(file);
-    console.log(file);
   };
 
   const setFileToBase = (file) => {
@@ -289,7 +280,6 @@ function MainPage() {
   };
 
   const handleDeleteLikeFromHomePage = (postId) => {
-    console.log("You deleted favorite");
     setpostId(postId);
     axios
       .post(
@@ -312,13 +302,7 @@ function MainPage() {
 
         const findedPostIndex = mainPagePosts.indexOf(findedPost);
 
-        console.log("Finded post =>", findedPost);
-        console.log("Finded post index =>", findedPostIndex);
-
         if (findedPost.isReposted) {
-          console.log("Finded post isReposted =>", findedPost);
-          console.log("Finded post index =>", findedPostIndex);
-
           const originalPostId =
             mainPagePosts[findedPostIndex].repostedFromThisOriginalPost[0]._id;
           const originalPost = mainPagePosts.find((eachPost) => {
@@ -335,12 +319,6 @@ function MainPage() {
           const likerIndex =
             mainPagePosts[originalPostIndex].likes.indexOf(liker);
 
-          console.log("Finded original post  =>", originalPost);
-
-          console.log("Finded original post index =>", originalPostIndex);
-
-          console.log("Liker =>", liker);
-          console.log("Liker index =>", likerIndex);
           const updatePosts = () => {
             mainPagePosts[findedPostIndex].likes.splice(likerIndex, 1);
             mainPagePosts[originalPostIndex].likes.splice(likerIndex, 1);
@@ -355,22 +333,12 @@ function MainPage() {
 
           setTimeout(updatePosts, 500);
         } else if (!findedPost.isReposted && findedPost.reposted.length > 0) {
-          console.log("Now here is working !");
-          console.log("Finded post !isReposted =>", findedPost);
-          console.log("Finded post index =>", findedPostIndex);
-          console.log(
-            "Finded post is not reposted and has reference post because of its length more than 0"
-          );
-
           const referencePost = mainPagePosts.find((eachPost) => {
             return eachPost.repostedFromThisOriginalPost[0]
               ? eachPost.repostedFromThisOriginalPost[0]._id === postId
               : null;
           });
           const referencePostIndex = mainPagePosts.indexOf(referencePost);
-
-          console.log("Reference post =>", referencePost);
-          console.log("Reference post index =>", referencePostIndex);
 
           const liker = mainPagePosts[referencePostIndex].likes.find(
             (eachLiker) => {
@@ -380,9 +348,6 @@ function MainPage() {
           const likerIndex =
             mainPagePosts[referencePostIndex].likes.indexOf(liker);
 
-          console.log("Liker =>", liker);
-          console.log("Liker index =>", likerIndex);
-
           const updatePosts = () => {
             mainPagePosts[findedPostIndex].likes.splice(likerIndex);
             mainPagePosts[referencePostIndex].likes.splice(likerIndex);
@@ -391,7 +356,6 @@ function MainPage() {
               "mainPagePosts",
               JSON.stringify(mainPagePosts)
             );
-            console.log("Main page posts =>", mainPagePosts);
             // setPosts(mainPagePosts);
             setLoadingTrue();
             setLoadingFalse();
@@ -402,10 +366,6 @@ function MainPage() {
 
           setTimeout(updatePosts, 500);
         } else if (!findedPost.isReposted && findedPost.reposted.length === 0) {
-          console.log("Finded post !isReposted =>", findedPost);
-          console.log("Finded post index =>", findedPostIndex);
-          console.log("Finded post is not reposted and has no reference post");
-
           const liker = mainPagePosts[findedPostIndex].likes.find(
             (eachLiker) => {
               return eachLiker._id === userInfo._id;
@@ -413,9 +373,6 @@ function MainPage() {
           );
           const likerIndex =
             mainPagePosts[findedPostIndex].likes.indexOf(liker);
-
-          console.log("Liker =>", liker);
-          console.log("Liker index =>", likerIndex);
 
           const updatePosts = () => {
             mainPagePosts[findedPostIndex].likes.splice(likerIndex, 1);
@@ -443,7 +400,6 @@ function MainPage() {
   };
 
   const handlePostLikesFromHomePage = (postId) => {
-    console.log("You added to favorite");
     setpostId(postId);
 
     axios
@@ -456,8 +412,7 @@ function MainPage() {
           },
         }
       )
-      .then((response) => {
-        console.log("Response after adding favorite =>", response);
+      .then(() => {
         const mainPagePosts = JSON.parse(localStorage.getItem("mainPagePosts"));
         const findedPost = mainPagePosts.find((eachPost) => {
           return eachPost._id === postId;
@@ -468,12 +423,7 @@ function MainPage() {
 
         const findedPostIndex = mainPagePosts.indexOf(findedPost);
 
-        console.log("Finded post =>", findedPost);
-        console.log("Finded post index =>", findedPostIndex);
         if (findedPost.isReposted) {
-          console.log("Finded post isReposted =>", findedPost);
-          console.log("Finded post index =>", findedPostIndex);
-
           const originalPostId =
             mainPagePosts[findedPostIndex].repostedFromThisOriginalPost[0]._id;
           const originalPost = mainPagePosts.find((eachPost) => {
@@ -481,9 +431,6 @@ function MainPage() {
           });
           const originalPostIndex = mainPagePosts.indexOf(originalPost);
 
-          console.log("Finded original post  =>", originalPost);
-
-          console.log("Finded original post index =>", originalPostIndex);
           const updatePosts = () => {
             mainPagePosts[findedPostIndex].likes.unshift(userInfo);
             mainPagePosts[originalPostIndex].likes.unshift(userInfo);
@@ -498,22 +445,12 @@ function MainPage() {
 
           setTimeout(updatePosts, 500);
         } else if (!findedPost.isReposted && findedPost.reposted.length > 0) {
-          console.log("Here is working !");
-          console.log("Finded post !isReposted =>", findedPost);
-          console.log("Finded post index =>", findedPostIndex);
-          console.log(
-            "Finded post is not reposted and has reference post because of its length more than 0"
-          );
-
           const referencePost = mainPagePosts.find((eachPost) => {
             return eachPost.repostedFromThisOriginalPost[0]
               ? eachPost.repostedFromThisOriginalPost[0]._id === postId
               : null;
           });
           const referencePostIndex = mainPagePosts.indexOf(referencePost);
-
-          console.log("Reference post =>", referencePost);
-          console.log("Reference post index =>", referencePostIndex);
 
           const updatePosts = () => {
             mainPagePosts[findedPostIndex].likes.unshift(userInfo);
@@ -529,10 +466,6 @@ function MainPage() {
 
           setTimeout(updatePosts, 500);
         } else if (!findedPost.isReposted && findedPost.reposted.length === 0) {
-          console.log("Finded post !isReposted =>", findedPost);
-          console.log("Finded post index =>", findedPostIndex);
-          console.log("Finded post is not reposted and has no reference post");
-
           const updatePosts = () => {
             mainPagePosts[findedPostIndex].likes.unshift(userInfo);
 
@@ -571,8 +504,6 @@ function MainPage() {
         }
       )
       .then(() => {
-        console.log("Deleted post !");
-
         setTimeout(() => {
           handleShowPostsHomePage();
           setError("");
@@ -605,8 +536,6 @@ function MainPage() {
           }
         )
         .then((response) => {
-          console.log("Response after posting a tweet =>", response);
-
           setImage("");
           setLoadingTrue();
           setTimeout(() => {
@@ -617,7 +546,6 @@ function MainPage() {
                 },
               })
               .then((response) => {
-                console.log("I am working right now! ");
                 // Assuming userInfo is retrieved from localStorage
                 const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
@@ -652,8 +580,6 @@ function MainPage() {
   };
 
   const handleRepost = (postId) => {
-    console.log("I AM WORKING NOW BECAUSE I AM NOT ACTIVE AS A REPOST ");
-
     axios
       .post(
         `${API_URL}/repost`,
@@ -664,8 +590,7 @@ function MainPage() {
           },
         }
       )
-      .then((response) => {
-        console.log("Am i getting created post =>", response);
+      .then(() => {
         const posts = JSON.parse(localStorage.getItem("mainPagePosts"));
 
         const findedPost = posts.find((element) => {
@@ -688,8 +613,6 @@ function MainPage() {
         };
 
         setTimeout(updatePosts, 500);
-
-        console.log("AFTER REPOST CURRENT STATE RENDERED POSTS =>", posts);
       })
       .catch((error) => {
         console.log(error);
@@ -712,20 +635,16 @@ function MainPage() {
   };
 
   const handleMouseOver = (e) => {
-    console.log("MOUSE OVER =>", e);
-    console.log(e.target.classList);
     const shallowCopy = e.target.classList[0];
-    console.log(shallowCopy);
+
     if (shallowCopy === "target") {
       e.target.style.background = "#595b5b";
     }
   };
 
   const handleMouseOut = (e) => {
-    console.log("MOUSE OVER =>", e);
-    console.log(e.target.classList);
     const shallowCopy = e.target.classList[0];
-    console.log(shallowCopy);
+
     if (shallowCopy === "target") {
       e.target.style.background = "#47494a";
     }
@@ -788,8 +707,6 @@ function MainPage() {
 
     setChosenEmoji(emoji);
     setContent((prevText) => prevText + emoji);
-    console.log("Choosed emoji =>", chosenEmoji);
-    console.log("Content =>", content);
   };
 
   useEffect(() => {

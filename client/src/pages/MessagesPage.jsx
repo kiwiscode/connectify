@@ -8,6 +8,7 @@ import {
   Modal,
   OverlayTrigger,
   Popover,
+  Button,
 } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { LogoutModal, PostModal } from "../components/ui/Modal";
@@ -16,7 +17,7 @@ import CreateChat from "../components/ui/CreateChat";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import CustomNotification from "../components/Notifications/CustomNotification";
-import { message } from "antd";
+import { List, message } from "antd";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -26,18 +27,42 @@ const API_URL = "http://localhost:3000";
 // const socket = io.connect(API_URL);
 
 function MessagesPage() {
+  useEffect(() => {
+    const closePopover = (e) => {
+      console.log("Target classlist =>", e.target.classList);
+      console.log(
+        "Target parent classname =>",
+        e.srcElement.parentNode.className
+      );
+      if (
+        e.target.classList.contains("message-delete-three-dots") ||
+        e.srcElement.parentNode.className === "btn-toolbar"
+      ) {
+        console.log("You clicked mesage deletion icon !");
+        setIsHovered(!isHovered);
+        setshowMessageDeletePopover(!showMessageDeletePopover);
+      }
+    };
+
+    document.body.addEventListener("click", closePopover);
+
+    return () => {
+      document.body.removeEventListener("click", closePopover);
+    };
+  }, []);
+  const [isHovered, setIsHovered] = useState(false);
   // rendering page after redirectiring for fetching data without problem ! if you need to fetch data after you redirect or navigate to user to the page (it can work pretty good on your navigation bar)this lines of code is pretty useful
   // start to check
   const navigate = useNavigate();
 
   const redirectHomePage = () => {
     navigate("/home");
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectProfilePage = () => {
     navigate("/profile");
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectChatDetailPage = (roomId) => {
@@ -47,13 +72,247 @@ function MessagesPage() {
 
   const redirectToPostDetailPage = (postOwner, postId) => {
     navigate(`/${postOwner}/status/${postId}`);
-    window.location.reload();
+    // window.location.reload();
   };
   // finish to check
 
+  const [showMessageDeletePopover, setshowMessageDeletePopover] =
+    useState(false);
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  const [showDeleteConversationModal, setShowDeleteConversationModal] =
+    useState(false);
+
+  const handleShowDeleteConversationModal = () => {
+    console.log("Button clicked !");
+    setShowDeleteConversationModal(true);
+  };
+
+  const handleCloseDeleteConversationModal = () => {
+    setShowDeleteConversationModal(false);
+  };
+
+  const deleteConversation = (messageRoom) => {
+    console.log("Message room clicked =>", messageRoom);
+  };
+
+  const deleteModalOutput = [
+    <Modal
+      contentClassName="delete-conversation-content"
+      dialogClassName="delete-conversation-dialog"
+      centered={true}
+      key={0}
+      show={showDeleteConversationModal}
+      onHide={handleClose}
+    >
+      <Modal.Body
+        style={{
+          border: "none",
+        }}
+      >
+        <div
+          style={{
+            textAlign: "left",
+          }}
+        >
+          <div
+            style={{
+              fontWeight: "700",
+              fontSize: "20px",
+              lineHeight: "24px",
+            }}
+          >
+            Leave conversation?
+          </div>
+          <div
+            style={{
+              lineHeight: "20px",
+              fontSize: "15px",
+              fontWeight: "400",
+              color: "rgb(83, 100, 113)",
+            }}
+          >
+            This conversation will be deleted from your inbox. Other people in
+            the conversation will still be able to see it.{" "}
+          </div>
+        </div>
+      </Modal.Body>
+      <Modal.Footer
+        style={{
+          border: "none",
+        }}
+      >
+        <Button
+          className="leave-btn-delete-conversation-tab"
+          style={{
+            minHeight: "44px",
+            color: "white",
+            backgroundColor: "rgb(244, 33, 46)",
+            border: "none",
+          }}
+          onClick={() => deleteConversation(messageRoom)}
+        >
+          Leave
+        </Button>
+        <Button
+          className="cancel-btn-delete-conversation-tab"
+          style={{
+            minHeight: "44px",
+            color: "black",
+          }}
+          // className="login-button"
+          variant="light"
+          onClick={handleCloseDeleteConversationModal}
+        >
+          Cancel
+        </Button>
+      </Modal.Footer>
+    </Modal>,
+  ];
+
   const popoverBottom = (
-    <Popover id="popover-positioned-scrolling-bottom" title="Popover bottom">
-      <strong>Holy guacamole!</strong> Check this info.
+    <Popover
+      id="popover-positioned-scrolling-bottom"
+      title="Popover bottom"
+      // className={`${
+      //   showMessageDeletePopover ? "" : "hideshowMessageDeletePopover"
+      // }`}
+    >
+      <div>
+        <List size="small" bordered>
+          <List.Item
+            style={{
+              padding: "12px 16px",
+              opacity: "0.5",
+            }}
+          >
+            <Stack direction="horizontal" gap={2}>
+              <svg
+                color="rgba(15,20,25,1.00)"
+                fill="currentcolor"
+                width={`${1.25}em`}
+                height={`${1.25}em`}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-1q142lx"
+              >
+                <g>
+                  <path d="M17 9.76V4.5C17 3.12 15.88 2 14.5 2h-5C8.12 2 7 3.12 7 4.5v5.26L3.88 16H11v5l1 2 1-2v-5h7.12L17 9.76zM7.12 14L9 10.24V4.5c0-.28.22-.5.5-.5h5c.28 0 .5.22.5.5v5.74L16.88 14H7.12z"></path>
+                </g>
+              </svg>
+              <span
+                style={{
+                  lineHeight: "20px",
+                  fontWeight: "700",
+                  fontSize: "15px",
+                }}
+              >
+                Pin conversation
+              </span>
+            </Stack>
+          </List.Item>
+          <List.Item
+            style={{
+              padding: "12px 16px",
+              opacity: "0.5",
+            }}
+          >
+            <Stack direction="horizontal" gap={2}>
+              <svg
+                color="rgba(15,20,25,1.00)"
+                fill="currentcolor"
+                width={`${1.25}em`}
+                height={`${1.25}em`}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-1q142lx"
+              >
+                <g>
+                  <path d="M20.29 2.29l-2.34 2.34C16.47 3.01 14.34 2 12 2 7.93 2 4.51 5.02 4 9.05L2.87 18h1.72l-2.3 2.29 1.42 1.42 18-18-1.42-1.42zM6.59 16H5.13l.85-6.7C6.36 6.27 8.94 4 12 4c1.79 0 3.42.78 4.54 2.05L6.59 16zM12 22c-1.57 0-2.98-.73-3.89-1.86l1.42-1.43c.55.78 1.45 1.29 2.47 1.29 1.31 0 2.42-.83 2.83-2H12v-2h6.86l-.74-5.87 1.76-1.76c.05.22.08.44.11.67L21.14 18H16.9c-.46 2.28-2.48 4-4.9 4z"></path>
+                </g>
+              </svg>
+              <span
+                style={{
+                  lineHeight: "20px",
+                  fontWeight: "700",
+                  fontSize: "15px",
+                }}
+              >
+                Snooze conversation
+              </span>
+            </Stack>
+          </List.Item>
+          <List.Item
+            style={{
+              padding: "12px 16px",
+              opacity: "0.5",
+            }}
+          >
+            <Stack direction="horizontal" gap={2}>
+              <svg
+                color="rgba(15,20,25,1.00)"
+                fill="currentcolor"
+                width={`${1.25}em`}
+                height={`${1.25}em`}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-1q142lx"
+              >
+                <g>
+                  <path d="M3 2h18.61l-3.5 7 3.5 7H5v6H3V2zm2 12h13.38l-2.5-5 2.5-5H5v10z"></path>
+                </g>
+              </svg>
+              <span
+                style={{
+                  lineHeight: "20px",
+                  fontWeight: "700",
+                  fontSize: "15px",
+                }}
+              >
+                Report conversation
+              </span>
+            </Stack>
+          </List.Item>
+          <List.Item
+            className="message-popoover"
+            style={{
+              padding: "12px 16px",
+              cursor: "pointer",
+            }}
+            onClick={() => handleShowDeleteConversationModal()}
+          >
+            {" "}
+            <Stack direction="horizontal" gap={2}>
+              <svg
+                style={{}}
+                color="rgba(244,33,46,1.00)"
+                fill="currentcolor"
+                width={`${1.25}em`}
+                height={`${1.25}em`}
+                viewBox="0 0 32 32"
+                aria-hidden="true"
+                className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1q142lx r-9l7dzd"
+              >
+                <g>
+                  <path d="M20 23h-2v-8h2v8zm-6-8h-2v8h2v-8zm14-5h-1.713l-1.111 15.577C25.038 27.496 23.424 29 21.5 29H10.486c-1.915 0-3.522-1.496-3.66-3.405L5.699 10H4V8h7V6c0-1.654 1.346-3 3-3h4c1.654 0 3 1.346 3 3v2h7v2zM13 8h6V6c0-.551-.449-1-1-1h-4c-.551 0-1 .449-1 1v2zm11.281 2H7.705l1.117 15.451c.062.869.793 1.549 1.665 1.549H21.5c.88 0 1.619-.688 1.681-1.565L24.282 10z"></path>
+                </g>
+              </svg>
+              <span
+                style={{
+                  color: "rgb(244, 33, 46)",
+                  lineHeight: "20px",
+                  fontWeight: "700",
+                  fontSize: "15px",
+                }}
+              >
+                Delete conversation
+              </span>
+            </Stack>
+          </List.Item>
+        </List>
+      </div>
+      <div></div>
     </Popover>
   );
 
@@ -69,13 +328,10 @@ function MessagesPage() {
   const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
 
   const handleCallback = (childData) => {
-    console.log("Child data =>", childData);
     // Update the name in the component's state
     setcurrentCreatedPost(childData);
     postSharedMessage(childData.authorUserName, childData._id);
   };
-
-  console.log("Current created data =>", currentCreatedPost);
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -110,13 +366,8 @@ function MessagesPage() {
   const [notificationText, setnotificationText] = useState([]);
   // socket io 1 client finish to check
 
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
   // socket io 4 client start to check
   useEffect(() => {
-    console.log("Hello worldddddd");
     socket.on("socket_id_for_user", (socketId) => {
       console.log("socket id received from backend =>", socketId);
 
@@ -163,7 +414,7 @@ function MessagesPage() {
           }
         );
       } else {
-        console.log("Kendine notification mu göndericeksin ? ");
+        console.log("You cannot send a notification to yourself.");
       }
     });
   }, [socket]);
@@ -213,14 +464,10 @@ function MessagesPage() {
       } else {
         filterUsers([], searchString);
       }
-
-      console.log("Active users =>", users);
     });
   }, []);
 
   const selectedUser = (user) => {
-    console.log("selected user =>", user);
-
     const room = [userInfo.username, user.username].sort().join("_");
 
     setRoom(room);
@@ -228,10 +475,7 @@ function MessagesPage() {
     socket.emit("join_user_room", { activeUser: userInfo, selectedUser: user });
   };
 
-  console.log("Messages page working outside use effect 2!");
-
   socket.on("receive_spesific_user_message_rooms", (data) => {
-    console.log("Received active user message rooms => ", data);
     setfilteredRooms(data.messages);
     setmessageRooms(data.messages);
   });
@@ -244,10 +488,8 @@ function MessagesPage() {
           eachRoom.room.split("_")[1].startsWith(searchTerm.toLowerCase())
         );
       });
-      console.log("Filtered room =>", filteredArray);
       setfilteredRooms(filteredArray);
     } else {
-      console.log("This line is working !");
       setfilteredRooms(messageRooms);
     }
   };
@@ -262,13 +504,8 @@ function MessagesPage() {
       setSearchTerm("");
       setfilteredRooms(messageRooms);
     }
-    console.log(searchTerm);
   };
   // finish to check filtering rooms
-
-  console.log("Your message rooms =>", messageRooms);
-
-  console.log("Your message rooms from filtered rooms =>", filteredRooms);
 
   const checkIfAllFilteredRoomsChatEmpty = (array) => {
     const allChatLengths = array.map((eachMessageRoom) => {
@@ -282,11 +519,6 @@ function MessagesPage() {
 
     return sum;
   };
-
-  console.log(
-    "cHECK lENGTH =>",
-    checkIfAllFilteredRoomsChatEmpty(filteredRooms)
-  );
 
   const handleShowPostsMessagePage = () => {
     axios
@@ -336,12 +568,14 @@ function MessagesPage() {
     return result[0];
   };
 
-  const handleShowMessageDeleteModal = (messageRoom) => {
-    console.log("Message room clicked =>", messageRoom);
-  };
+  const [showThreeDots, setShowThreeDots] = useState(false);
 
   return (
     <>
+      {/* start to check delete conversation modal  */}
+      {deleteModalOutput[0]}
+      {/* finish to check delete conversation modal  */}
+
       {contextHolder}
       <ToastContainer />
 
@@ -590,8 +824,16 @@ function MessagesPage() {
                       <>
                         {eachMessageRoom.chat.length > 0 ? (
                           <Link
+                            onMouseEnter={() => {
+                              setShowThreeDots(!showThreeDots);
+                            }}
+                            onMouseLeave={() => {
+                              setShowThreeDots(!showThreeDots);
+                            }}
                             onClick={() =>
-                              redirectChatDetailPage(eachMessageRoom._id)
+                              !isHovered && !showMessageDeletePopover
+                                ? redirectChatDetailPage(eachMessageRoom._id)
+                                : null
                             }
                             key={eachMessageRoom._id}
                             style={{
@@ -602,7 +844,11 @@ function MessagesPage() {
                               listStyleType: "none",
                               textDecoration: "none",
                             }}
-                            to={`/messages/${eachMessageRoom._id}`}
+                            to={
+                              !isHovered && !showMessageDeletePopover
+                                ? `/messages/${eachMessageRoom._id}`
+                                : null
+                            }
                           >
                             <div
                               style={{
@@ -750,14 +996,22 @@ function MessagesPage() {
                                         </div>
                                       </div>
                                       {/* <div className="p-0 ms-auto">asd</div> */}
-                                      <div className="p-0 ms-auto">
+                                      <div
+                                        onMouseEnter={() => {
+                                          setIsHovered(true);
+                                        }}
+                                        onMouseLeave={() => {
+                                          setIsHovered(false);
+                                        }}
+                                        className={`p-2 ms-auto`}
+                                      >
                                         <OverlayTrigger
                                           trigger="click"
                                           placement="bottom"
                                           overlay={popoverBottom}
                                         >
                                           <div
-                                            className="svg-border-parent chat-detail-emoji-svg-border-parent"
+                                            className={`message-delete-three-dots-parent`}
                                             style={{
                                               cursor: "pointer",
                                               borderRadius: "50%",
@@ -767,20 +1021,22 @@ function MessagesPage() {
                                               style={{
                                                 cursor: "pointer",
                                                 position: "relative",
-                                                bottom: "15px",
+                                                left: "10px",
+                                                top: "5px",
                                               }}
-                                              onClick={() =>
-                                                handleShowMessageDeleteModal(
-                                                  eachMessageRoom
-                                                )
+                                              color={
+                                                isHovered
+                                                  ? "#259ef0"
+                                                  : "rgb(83, 100, 113)"
                                               }
-                                              color="rgb(83, 100, 113)"
                                               fill="currentColor"
                                               width={`${1.25}em`}
                                               height={`${1.25}em`}
                                               viewBox="0 0 24 24"
                                               aria-hidden="true"
-                                              className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                              className={`${
+                                                showThreeDots ? "" : "hide "
+                                              } message-delete-three-dots bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi`}
                                             >
                                               <g>
                                                 <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
