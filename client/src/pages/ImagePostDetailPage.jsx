@@ -13,11 +13,14 @@ const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
+import io from "socket.io-client";
 
 function PostDetailPage() {
+  const socket = io.connect(`${API_URL}`);
   const { postOwner, postId } = useParams();
   const [detailedPost, setdetailedPost] = useState([]);
-  const { userInfo, getToken, socket } = useContext(UserContext);
+  // const { userInfo, getToken, socket } = useContext(UserContext);
+  const { userInfo, getToken } = useContext(UserContext);
   const [commentedForThisPost, setcommentedForThisPost] = useState([]);
   const [commentedForThisUsersPost, setcommentedForThisUsersPost] = useState(
     []
@@ -33,7 +36,6 @@ function PostDetailPage() {
 
   // socket io 4 client start to check
   useEffect(() => {
-    console.log("Hello worldddddd");
     socket.on("socket_id_for_user", (socketId) => {
       console.log("socket id received from backend =>", socketId);
 
@@ -50,7 +52,7 @@ function PostDetailPage() {
       if (data.senderName !== userInfo.username) {
         setnotificationTest((prev) => [...prev, data]);
       } else {
-        console.log("Kendine notification mu göndericeksin ? ");
+        console.log("You cannot send a notification to yourself.");
       }
     });
 
@@ -80,7 +82,7 @@ function PostDetailPage() {
           }
         );
       } else {
-        console.log("Kendine notification mu göndericeksin ? ");
+        console.log("You cannot send a notification to yourself.");
       }
     });
   }, [socket]);
@@ -88,36 +90,20 @@ function PostDetailPage() {
   // start to check
   const navigate = useNavigate();
 
-  const redirectHomePage = () => {
-    navigate("/home");
-    window.location.reload();
-  };
-
-  const redirectToMessages = () => {
-    navigate("/messages");
-    window.location.reload();
-  };
-
-  const redirectProfilePage = () => {
-    navigate("/profile");
-    window.location.reload();
-  };
-
   const redirectSpesificProfilePage = (userId) => {
     navigate(`/profile/${userId}`);
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectPostDetailPage = (postOwnerName, postId) => {
     navigate(`/${postOwnerName}/status/${postId}`);
-    window.location.reload();
+    // window.location.reload();
   };
 
   const redirectToImagePostDetailPage = (postOwnerName, postId) => {
     navigate(`/${postOwnerName}/status/${postId}/photo/1`);
-    window.location.reload();
+    // window.location.reload();
   };
-
   // finish to check
 
   // socket io 5 client start to check
@@ -148,7 +134,6 @@ function PostDetailPage() {
           setcommentedForThisUsersPost(detailedPost.commentedForThisUsersPost);
         }
         setdetailedPost(detailedPost);
-        console.log(response);
       })
       .catch((error) => {
         console.log(error);
@@ -174,9 +159,6 @@ function PostDetailPage() {
         });
 
         const findedPostIndex = posts.indexOf(findedPost);
-        console.log("Before adding like finded post =>", findedPost);
-
-        console.log("Finded post =>", findedPost);
 
         const updateDetailedPosts = () => {
           // socket io test start to check
@@ -195,12 +177,8 @@ function PostDetailPage() {
             const detailedPostCommentIndex =
               detailedPost.comments.indexOf(detailedPostComment);
 
-            console.log("Detailed post before adding like =>", detailedPost);
-
             setdetailedPost((prevDetailedPost) => {
               const updatedDetailedPost = { ...prevDetailedPost };
-
-              console.log("Update this detailed post =>", updatedDetailedPost);
 
               if (updatedDetailedPost.comments.length > 0) {
                 const targetComment =
@@ -217,23 +195,15 @@ function PostDetailPage() {
 
               return updatedDetailedPost;
             });
-            console.log("Detailed Post after adding like", detailedPost);
           } else {
-            console.log("What !!!");
-
-            console.log("Detailed post before adding like =>", detailedPost);
-
             setdetailedPost((prevDetailedPost) => {
               const updatedDetailedPost = { ...prevDetailedPost };
-
-              console.log("Update this detailed post =>", updatedDetailedPost);
 
               // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
               updatedDetailedPost.likes.unshift(userInfo);
 
               return updatedDetailedPost;
             });
-            console.log("Detailed Post after adding like", detailedPost);
             // setcommentedForThisPost(findedPost);
 
             // setcommentedForThisUsersPost(
@@ -245,7 +215,6 @@ function PostDetailPage() {
         setTimeout(updateDetailedPosts, 500);
       })
       .catch((error) => {
-        console.log("Error =>", error);
         if (error.response) {
           const { errorMessage } = error.response.data;
 
@@ -255,7 +224,6 @@ function PostDetailPage() {
   };
 
   const handleDeleteLikePostDetailPage = (postId) => {
-    console.log("clicked...");
     axios
       .post(
         `${API_URL}/favorite/delete-favorite`,
@@ -276,15 +244,10 @@ function PostDetailPage() {
           return element._id === postId;
         });
 
-        console.log("finded post ", findedPost);
-
         const liker = findedPost.likes
           ? findedPost.likes.find((eachLiker) => eachLiker._id === userInfo._id)
           : null;
-        console.log("Liker =>", liker);
         const likerIndex = findedPost.likes.indexOf(liker);
-
-        console.log("Liker index =>", likerIndex);
 
         const updateDetailedPosts = () => {
           findedPost.likes.splice(likerIndex, 1);
@@ -301,7 +264,6 @@ function PostDetailPage() {
             const detailedPostCommentIndex =
               detailedPost.comments.indexOf(detailedPostComment);
 
-            console.log("Detailed post before adding like =>", detailedPost);
             // let activeUserInsideLikes;
             // let activeUserIndexInsideLikes;
             // if (detailedPost.comments.length) {
@@ -355,12 +317,8 @@ function PostDetailPage() {
               );
             }
 
-            console.log("Active user inside likes =>", activeUserInsideLikes);
-
             setdetailedPost((prevDetailedPost) => {
               const updatedDetailedPost = { ...prevDetailedPost };
-
-              console.log("Update this detailed post =>", updatedDetailedPost);
 
               if (updatedDetailedPost.comments.length > 0) {
                 const targetComment =
@@ -380,12 +338,7 @@ function PostDetailPage() {
 
               return updatedDetailedPost;
             });
-            console.log("Detailed Post after adding like", detailedPost);
           } else {
-            console.log("What !!!");
-
-            console.log("Detailed post before adding like =>", detailedPost);
-
             const activeUserInsideLikes = detailedPost.likes.find(
               (eachLiker) => {
                 return eachLiker._id === userInfo._id;
@@ -396,24 +349,14 @@ function PostDetailPage() {
               activeUserInsideLikes
             );
 
-            console.log("Active user inside likes =>", activeUserInsideLikes);
-
-            console.log(
-              "Active user index inside likes =>",
-              activeUserIndexInsideLikes
-            );
-
             setdetailedPost((prevDetailedPost) => {
               const updatedDetailedPost = { ...prevDetailedPost };
-
-              console.log("Update this detailed post =>", updatedDetailedPost);
 
               // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
               updatedDetailedPost.likes.splice(activeUserIndexInsideLikes, 1);
 
               return updatedDetailedPost;
             });
-            console.log("Detailed Post after adding like", detailedPost);
 
             // setcommentedForThisPost(findedPost);
             // setcommentedForThisUsersPost(
@@ -423,8 +366,6 @@ function PostDetailPage() {
         };
 
         setTimeout(updateDetailedPosts, 500);
-
-        console.log("Post like deleted !");
       })
       .catch((err) => {
         return err;
@@ -432,8 +373,6 @@ function PostDetailPage() {
   };
 
   const handleRepost = (postId) => {
-    console.log("I AM WORKING NOW BECAUSE I AM NOT ACTIVE AS A REPOST ");
-
     axios
       .post(
         `${API_URL}/repost`,
@@ -472,12 +411,8 @@ function PostDetailPage() {
             const detailedPostCommentIndex =
               detailedPost.comments.indexOf(detailedPostComment);
 
-            console.log("Detailed post before adding like =>", detailedPost);
-
             setdetailedPost((prevDetailedPost) => {
               const updatedDetailedPost = { ...prevDetailedPost };
-
-              console.log("Update this detailed post =>", updatedDetailedPost);
 
               if (detailedPost.comments.length > 0) {
                 const targetComment =
@@ -493,19 +428,15 @@ function PostDetailPage() {
 
               return updatedDetailedPost;
             });
-            console.log("Detailed Post after adding like", detailedPost);
           } else {
             setdetailedPost((prevDetailedPost) => {
               const updatedDetailedPost = { ...prevDetailedPost };
-
-              console.log("Update this detailed post =>", updatedDetailedPost);
 
               // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
               updatedDetailedPost.reposted.unshift(userInfo);
 
               return updatedDetailedPost;
             });
-            console.log("Detailed Post after adding like", detailedPost);
 
             // setcommentedForThisPost(findedPost);
             // setcommentedForThisUsersPost(
@@ -515,8 +446,6 @@ function PostDetailPage() {
         };
 
         setTimeout(updateDetailedPosts, 500);
-
-        console.log("AFTER REPOST CURRENT STATE RENDERED POSTS =>", posts);
       })
       .catch((error) => {
         console.log(error);
@@ -524,7 +453,6 @@ function PostDetailPage() {
   };
 
   const handleDeleteRepostPostDetailPage = (postId) => {
-    console.log("I AM WORKING BECAUSE NOW I AM ACTIVE AS A REPOST");
     axios
       .post(
         `${API_URL}/repost/delete`,
@@ -570,7 +498,6 @@ function PostDetailPage() {
             const detailedPostCommentIndex =
               detailedPost.comments.indexOf(detailedPostComment);
 
-            console.log("Detailed post before adding like =>", detailedPost);
             let activeUserInsideReposts;
             let activeUserIndexInsideReposts;
             if (detailedPost.comments.length) {
@@ -604,31 +531,22 @@ function PostDetailPage() {
             setdetailedPost((prevDetailedPost) => {
               const updatedDetailedPost = { ...prevDetailedPost };
 
-              console.log("Update this detailed post =>", updatedDetailedPost);
-
               if (updatedDetailedPost.comments.length > 0) {
-                console.log("Here is working 1 ");
                 const targetComment =
                   updatedDetailedPost.comments[detailedPostCommentIndex];
 
                 if (targetComment) {
-                  console.log("Here is working 2 ");
-
                   targetComment.reposted.splice(
                     activeUserIndexInsideReposts,
                     1
                   );
                 } else {
-                  console.log("Here is working 3 ");
-
                   updatedDetailedPost.reposted.splice(
                     activeUserIndexInsideReposts,
                     1
                   );
                 }
               } else {
-                console.log("Here is working 4 ");
-
                 updatedDetailedPost.reposted.splice(
                   activeUserIndexInsideReposts,
                   1
@@ -637,13 +555,7 @@ function PostDetailPage() {
 
               return updatedDetailedPost;
             });
-            console.log("Detailed Post after adding like", detailedPost);
           } else {
-            console.log("What !!!");
-            console.log("Here is working 5 ");
-
-            console.log("Detailed post before adding like =>", detailedPost);
-
             const activeUserInsideReposts = detailedPost.reposted.find(
               (eachLiker) => {
                 return eachLiker._id === userInfo._id;
@@ -654,20 +566,8 @@ function PostDetailPage() {
               activeUserInsideReposts
             );
 
-            console.log(
-              "Active user inside reposted =>",
-              activeUserInsideReposts
-            );
-
-            console.log(
-              "Active user index inside reposted =>",
-              activeUserIndexInsideReposts
-            );
-
             setdetailedPost((prevDetailedPost) => {
               const updatedDetailedPost = { ...prevDetailedPost };
-
-              console.log("Update this detailed post =>", updatedDetailedPost);
 
               // İlgili comment'e ulaş ve reposted array'ine yeni like'ı ekle
               updatedDetailedPost.reposted.splice(
@@ -677,16 +577,10 @@ function PostDetailPage() {
 
               return updatedDetailedPost;
             });
-            console.log("Detailed Post after adding like", detailedPost);
           }
         };
 
         setTimeout(updateDetailedPosts, 500);
-
-        console.log("Reposter =>", reposter);
-        console.log("Reposter index =>", reposterIndex);
-
-        console.log("You deleted repost!");
       })
       .then(() => {})
       .catch((error) => {
@@ -695,8 +589,6 @@ function PostDetailPage() {
   };
 
   const handlePostLikesPostDetailPageCFTUP = (postId) => {
-    console.log("Post id for adding like =>", postId);
-
     axios
       .post(
         `${API_URL}/favorite`,
@@ -715,9 +607,6 @@ function PostDetailPage() {
         });
 
         const findedPostIndex = posts.indexOf(findedPost);
-        console.log("Before adding like finded post =>", findedPost);
-
-        console.log("Finded post =>", findedPost);
 
         const updateDetailedPosts = () => {
           // socket io test start to check
@@ -727,52 +616,26 @@ function PostDetailPage() {
 
           localStorage.setItem("mainPagePosts", JSON.stringify(posts));
           if (findedPost.isComment) {
-            console.log(
-              "Detailed post before adding like =>",
-              commentedForThisPost
-            );
-
             setcommentedForThisPost((prevDetailedPost) => {
               const updatedDetailedPost = { ...prevDetailedPost };
-
-              console.log("Update this detailed post =>", updatedDetailedPost);
 
               // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
               updatedDetailedPost.likes.unshift(userInfo);
 
               return updatedDetailedPost;
             });
-            console.log(
-              "Detailed Post after adding like",
-              commentedForThisPost
-            );
           } else {
-            console.log("What !!!");
-
-            console.log(
-              "Detailed post before adding like =>",
-              commentedForThisPost
-            );
-
             setcommentedForThisPost((prevCommentedForThisPost) => {
               const updatedCommentedForThisPost = {
                 ...prevCommentedForThisPost,
               };
-
-              console.log(
-                "Update this commented for this post =>",
-                updatedCommentedForThisPost
-              );
 
               // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
               updatedCommentedForThisPost.likes.unshift(userInfo);
 
               return updatedCommentedForThisPost;
             });
-            console.log(
-              "Commented for this Post after adding like",
-              commentedForThisPost
-            );
+
             // setcommentedForThisPost(findedPost);
 
             // setcommentedForThisUsersPost(
@@ -784,7 +647,6 @@ function PostDetailPage() {
         setTimeout(updateDetailedPosts, 500);
       })
       .catch((error) => {
-        console.log("Error =>", error);
         if (error.response) {
           const { errorMessage } = error.response.data;
 
@@ -794,8 +656,6 @@ function PostDetailPage() {
   };
 
   const handleRepostCFTUP = (postId) => {
-    console.log("Post id for adding repost =>", postId);
-
     axios
       .post(
         `${API_URL}/repost`,
@@ -825,41 +685,27 @@ function PostDetailPage() {
           localStorage.setItem("mainPagePosts", JSON.stringify(posts));
 
           if (findedPost.isComment) {
-            console.log("Detailed post before adding like =>", detailedPost);
-
             setcommentedForThisPost((prevCommentedForThisPost) => {
               const updatedCommentedForThisPost = {
                 ...prevCommentedForThisPost,
               };
-
-              console.log(
-                "Update this detailed post =>",
-                updatedCommentedForThisPost
-              );
 
               // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
               updatedCommentedForThisPost.reposted.unshift(userInfo);
 
               return updatedCommentedForThisPost;
             });
-            console.log("Detailed Post after adding like", detailedPost);
           } else {
             setcommentedForThisPost((prevCommentedForThisPost) => {
               const updatedCommentedForThisPost = {
                 ...prevCommentedForThisPost,
               };
 
-              console.log(
-                "Update this detailed post =>",
-                updatedCommentedForThisPost
-              );
-
               // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
               updatedCommentedForThisPost.reposted.unshift(userInfo);
 
               return updatedCommentedForThisPost;
             });
-            console.log("Detailed Post after adding like", detailedPost);
 
             // setcommentedForThisPost(findedPost);
             // setcommentedForThisUsersPost(
@@ -869,8 +715,6 @@ function PostDetailPage() {
         };
 
         setTimeout(updateDetailedPosts, 500);
-
-        console.log("AFTER REPOST CURRENT STATE RENDERED POSTS =>", posts);
       })
       .catch((error) => {
         console.log(error);
@@ -883,9 +727,6 @@ function PostDetailPage() {
   };
 
   const handleDeleteLikePostDetailPageCFTUP = (postId) => {
-    console.log("Post id for deleting like =>", postId);
-
-    console.log("clicked...");
     axios
       .post(
         `${API_URL}/favorite/delete-favorite`,
@@ -906,15 +747,10 @@ function PostDetailPage() {
           return element._id === postId;
         });
 
-        console.log("finded post ", findedPost);
-
         const liker = findedPost.likes
           ? findedPost.likes.find((eachLiker) => eachLiker._id === userInfo._id)
           : null;
-        console.log("Liker =>", liker);
         const likerIndex = findedPost.likes.indexOf(liker);
-
-        console.log("Liker index =>", likerIndex);
 
         const updateDetailedPosts = () => {
           findedPost.likes.splice(likerIndex, 1);
@@ -935,11 +771,6 @@ function PostDetailPage() {
             setcommentedForThisPost((prevDetailedPost) => {
               const updatedCommentedForThisPost = { ...prevDetailedPost };
 
-              console.log(
-                "Update this detailed post =>",
-                updatedCommentedForThisPost
-              );
-
               // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
               updatedCommentedForThisPost.likes.splice(
                 activeUserIndexInsideLikes,
@@ -948,16 +779,10 @@ function PostDetailPage() {
 
               return updatedCommentedForThisPost;
             });
-            console.log("Detailed Post after adding like", detailedPost);
           } else {
             setcommentedForThisPost((prevDetailedPost) => {
               const updatedCommentedForThisPost = { ...prevDetailedPost };
 
-              console.log(
-                "Update this detailed post =>",
-                updatedCommentedForThisPost
-              );
-
               // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
               updatedCommentedForThisPost.likes.splice(
                 activeUserIndexInsideLikes,
@@ -966,7 +791,6 @@ function PostDetailPage() {
 
               return updatedCommentedForThisPost;
             });
-            console.log("Detailed Post after adding like", detailedPost);
 
             // setcommentedForThisPost(findedPost);
             // setcommentedForThisUsersPost(
@@ -976,8 +800,6 @@ function PostDetailPage() {
         };
 
         setTimeout(updateDetailedPosts, 500);
-
-        console.log("Post like deleted !");
       })
       .catch((err) => {
         return err;
@@ -985,8 +807,6 @@ function PostDetailPage() {
   };
 
   const handleDeleteRepostPostDetailPageCFTUP = (postId) => {
-    console.log("Post id for deleting repost =>", postId);
-
     axios
       .post(
         `${API_URL}/repost/delete`,
@@ -1031,11 +851,6 @@ function PostDetailPage() {
             setcommentedForThisPost((prevDetailedPost) => {
               const updatedCommentedForThisPost = { ...prevDetailedPost };
 
-              console.log(
-                "Update this detailed post =>",
-                updatedCommentedForThisPost
-              );
-
               // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
               updatedCommentedForThisPost.reposted.splice(
                 activeUserIndexInsideReposts,
@@ -1044,16 +859,10 @@ function PostDetailPage() {
 
               return updatedCommentedForThisPost;
             });
-            console.log("Detailed Post after adding like", detailedPost);
           } else {
             setcommentedForThisPost((prevDetailedPost) => {
               const updatedCommentedForThisPost = { ...prevDetailedPost };
 
-              console.log(
-                "Update this detailed post =>",
-                updatedCommentedForThisPost
-              );
-
               // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
               updatedCommentedForThisPost.reposted.splice(
                 activeUserIndexInsideReposts,
@@ -1062,7 +871,6 @@ function PostDetailPage() {
 
               return updatedCommentedForThisPost;
             });
-            console.log("Detailed Post after adding like", detailedPost);
 
             // setcommentedForThisPost(findedPost);
             // setcommentedForThisUsersPost(
@@ -1072,11 +880,6 @@ function PostDetailPage() {
         };
 
         setTimeout(updateDetailedPosts, 500);
-
-        console.log("Reposter =>", reposter);
-        console.log("Reposter index =>", reposterIndex);
-
-        console.log("You deleted repost!");
       })
       .then(() => {})
       .catch((error) => {
@@ -1108,7 +911,6 @@ function PostDetailPage() {
       });
   };
 
-  console.log("Detailed post =>", detailedPost);
   const getRepostedIds = (array) => {
     return array.reposted.map((eachRepost) => {
       return eachRepost._id;
@@ -1132,16 +934,12 @@ function PostDetailPage() {
           setcommentedForThisUsersPost(detailedPost.commentedForThisUsersPost);
         }
         setdetailedPost(detailedPost);
-        console.log(response);
       })
       .catch((error) => {
         console.log(error);
       });
   }, []);
 
-  console.log("Commented for this post =>", commentedForThisPost);
-
-  console.log("Commented for this users post =>", commentedForThisUsersPost);
   const checkIds = (arr) => {
     if (arr.length) {
       return arr.map((eachItem) => {
@@ -1202,7 +1000,6 @@ function PostDetailPage() {
     console.log(postId);
   };
 
-  console.log("Commented for this users post =>", commentedForThisUsersPost);
   const handleFollowingNotification = (selectedUser, userInfo, type) => {
     socket.emit("sendNotification", {
       senderName: userInfo.username,

@@ -29,6 +29,7 @@ const UserProvider = ({ children }) => {
         followers: [],
         following: [],
         favorites: [],
+        socketId: "",
       }
     );
   });
@@ -36,6 +37,7 @@ const UserProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem("userInfo", JSON.stringify(userInfo));
     localStorage.setItem("socketId", userInfo.socketId);
+    console.log("User info socket id =>", userInfo.socketId);
   }, [userInfo]);
 
   const updateUser = (newUserInfo) => {
@@ -60,6 +62,7 @@ const UserProvider = ({ children }) => {
       followers: [],
       following: [],
       favorites: [],
+      socketId: "",
     });
     userInfo.active = false;
     localStorage.removeItem("userInfo");

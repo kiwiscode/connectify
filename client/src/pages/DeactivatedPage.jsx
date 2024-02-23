@@ -77,7 +77,6 @@ function DeactivatedPage() {
     setShow(false);
   };
   const handleShow = () => {
-    console.log("BUTTON CLICKED");
     setShow(true);
   };
 

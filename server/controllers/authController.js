@@ -321,75 +321,66 @@ const handleDeactivatedUserLoginBack = (req, res) => {
     .populate("following")
     .populate("favorites")
     .populate("messages")
-    .then((user) => {
-      console.log("User ready to come back :) =>", user.username);
+    .then((userRequestingReactivation) => {
+      console.log(
+        "User ready to come back :) =>",
+        userRequestingReactivation.username
+      );
 
-      bcrypt.compare(password, user.password).then((isSamePassword) => {
-        if (!isSamePassword || user.username !== username) {
-          res.status(401).json({
-            errorMessage: "Wrong credentials.",
-          });
-          return;
-        }
-        user.isDeactivated = false;
-        user.deactivatedDate = null;
-        user.active = true;
+      bcrypt
+        .compare(password, userRequestingReactivation.password)
+        .then((isSamePassword) => {
+          if (
+            !isSamePassword ||
+            userRequestingReactivation.username !== username
+          ) {
+            res.status(401).json({
+              errorMessage: "Wrong credentials.",
+            });
+            return;
+          }
+          userRequestingReactivation.isDeactivated = false;
+          userRequestingReactivation.deactivatedDate = null;
+          userRequestingReactivation.active = true;
 
-        Post.updateMany(
-          { userId: user._id.toString() },
-          { $set: { deactivatedOwner: false } }
-        )
-          .then((result) => {
-            console.log(`${result} posts have been successfully updated.`);
-          })
-          .catch((error) => {
-            console.error("Error updating posts:", error.message);
-          });
+          Post.updateMany(
+            { userId: userRequestingReactivation._id.toString() },
+            { $set: { deactivatedOwner: false } }
+          )
+            .then((result) => {
+              console.log(`${result} posts have been successfully updated.`);
+            })
+            .catch((error) => {
+              console.error("Error updating posts:", error.message);
+            });
 
-        User.find()
-          .then((users) => {
-            users.forEach((user) => {
-              user.messages.forEach((message) => {
-                message.members.forEach((eachMember) => {
-                  if (eachMember._id.toString() === user._id.toString()) {
-                    console.log("Room =>", message);
+          User.find()
+            .then((users) => {
+              users.forEach((user) => {
+                user.messages.forEach((message) => {
+                  message.members.forEach((eachMember) => {
+                    if (
+                      eachMember._id.toString() ===
+                      userRequestingReactivation._id.toString()
+                    ) {
+                      console.log("Room =>", message);
 
-                    if (user._id.toString() !== user._id.toString()) {
-                      message.deactivatedMember = false;
-                      user.save();
+                      console.log("This line is working  1 !!!");
+
+                      if (
+                        user._id.toString() !==
+                        userRequestingReactivation._id.toString()
+                      ) {
+                        console.log("This line is working 2 !!!");
+                        message.deactivatedMember = false;
+                        user.save();
+                      }
                     }
-                  }
+                  });
                 });
               });
-            });
-            user.save().then((user) => {
-              const {
-                _id,
-                username,
-                email,
-                fullname,
-                verified,
-                active,
-                posts,
-                followers,
-                following,
-                messages,
-                createdAt,
-                updatedAt,
-                favorites,
-                imageUrl,
-                notifications,
-                chatEngineInfos,
-              } = user;
-
-              const token = jwt.sign({ userId: _id }, process.env.JWT_SECRET, {
-                expiresIn: "24h",
-              });
-
-              console.log("Logged in user username =>", username);
-              res.json({
-                token,
-                user: {
+              userRequestingReactivation.save().then((reactivatedUser) => {
+                const {
                   _id,
                   username,
                   email,
@@ -406,14 +397,44 @@ const handleDeactivatedUserLoginBack = (req, res) => {
                   imageUrl,
                   notifications,
                   chatEngineInfos,
-                },
+                } = reactivatedUser;
+
+                const token = jwt.sign(
+                  { userId: _id },
+                  process.env.JWT_SECRET,
+                  {
+                    expiresIn: "24h",
+                  }
+                );
+
+                console.log("Logged in user username =>", username);
+                res.json({
+                  token,
+                  user: {
+                    _id,
+                    username,
+                    email,
+                    fullname,
+                    verified,
+                    active,
+                    posts,
+                    followers,
+                    following,
+                    messages,
+                    createdAt,
+                    updatedAt,
+                    favorites,
+                    imageUrl,
+                    notifications,
+                    chatEngineInfos,
+                  },
+                });
               });
+            })
+            .catch((error) => {
+              console.error("Error:", error.message);
             });
-          })
-          .catch((error) => {
-            console.error("Error:", error.message);
-          });
-      });
+        });
     })
     .catch(() => {
       res.status(404).json({ errorMessage: "User not found!" });

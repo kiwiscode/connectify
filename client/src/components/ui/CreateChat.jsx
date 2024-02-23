@@ -42,8 +42,6 @@ function CreateChat({ writeMessageButton }) {
       } else {
         filterUsers([], searchString);
       }
-
-      console.log("Active users =>", users);
     });
     socket.emit("get_spesific_user", userInfo);
 
@@ -61,8 +59,6 @@ function CreateChat({ writeMessageButton }) {
   }, []);
 
   const selectedUser = (user) => {
-    console.log("selected user =>", user);
-
     const room = [userInfo.username, user.username].sort().join("_");
 
     setRoom(room);
