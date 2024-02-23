@@ -31,15 +31,15 @@ function MessagesPage() {
     const closePopover = (e) => {
       console.log("Target classlist =>", e.target.classList);
       console.log(
-        "Target parent classname =>",
+        "Target parent node classname =>",
         e.srcElement.parentNode.className
       );
       if (
         e.target.classList.contains("message-delete-three-dots") ||
-        e.srcElement.parentNode.className === "btn-toolbar"
+        e.srcElement.parentNode.className === "btn-toolbar" ||
+        e.srcElement.parentNode.className === "p-2 ms-auto message-icon"
       ) {
-        console.log("You clicked mesage deletion icon !");
-        setIsHovered(!isHovered);
+        // setIsHovered(!isHovered);
         setshowMessageDeletePopover(!showMessageDeletePopover);
       }
     };
@@ -86,6 +86,7 @@ function MessagesPage() {
 
   const handleShowDeleteConversationModal = () => {
     console.log("Button clicked !");
+    setshowMessageDeletePopover(false);
     setShowDeleteConversationModal(true);
   };
 
@@ -93,8 +94,47 @@ function MessagesPage() {
     setShowDeleteConversationModal(false);
   };
 
-  const deleteConversation = (messageRoom) => {
-    console.log("Message room clicked =>", messageRoom);
+  const [receivedMessageRoom, setReceivedMessageRoom] = useState(null);
+
+  const grabTheMessageRoom = (messageRoom) => {
+    console.log("Message room clicked => ", messageRoom);
+    setReceivedMessageRoom(messageRoom);
+  };
+
+  console.log(
+    "After click three dots received message room =>",
+    receivedMessageRoom
+  );
+
+  const deleteConversation = () => {
+    console.log(
+      "Ready to delete this message room from current user user.messages array =>",
+      receivedMessageRoom
+    );
+
+    axios
+      .post(
+        `${API_URL}/delete-message`,
+        { receivedMessageRoom },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log("Response =>", response);
+        console.log("Filtered rooms array JSON structure =>", filteredRooms);
+        console.log(
+          "User current message room JSON structure =>",
+          response.data.currentMessagesArray
+        );
+        handleCloseDeleteConversationModal();
+        setfilteredRooms(response.data.currentMessagesArray);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
   };
 
   const deleteModalOutput = [
@@ -123,7 +163,7 @@ function MessagesPage() {
               lineHeight: "24px",
             }}
           >
-            Leave conversation?
+            Leave conversation?{" "}
           </div>
           <div
             style={{
@@ -131,6 +171,7 @@ function MessagesPage() {
               fontSize: "15px",
               fontWeight: "400",
               color: "rgb(83, 100, 113)",
+              marginTop: "15px",
             }}
           >
             This conversation will be deleted from your inbox. Other people in
@@ -151,7 +192,7 @@ function MessagesPage() {
             backgroundColor: "rgb(244, 33, 46)",
             border: "none",
           }}
-          onClick={() => deleteConversation(messageRoom)}
+          onClick={() => deleteConversation()}
         >
           Leave
         </Button>
@@ -174,10 +215,10 @@ function MessagesPage() {
   const popoverBottom = (
     <Popover
       id="popover-positioned-scrolling-bottom"
-      title="Popover bottom"
-      // className={`${
-      //   showMessageDeletePopover ? "" : "hideshowMessageDeletePopover"
-      // }`}
+      title="Popover left"
+      className={`${
+        showMessageDeletePopover ? "" : "hideshowMessageDeletePopover"
+      }`}
     >
       <div>
         <List size="small" bordered>
@@ -392,27 +433,28 @@ function MessagesPage() {
       console.log("Data get text =>", data);
       if (data.senderName !== userInfo.username) {
         setnotificationText(data);
-
-        toast(
-          <CustomNotification
-            senderName={data.senderName}
-            type={data.type}
-            contactHasBeenMade={data.contactHasBeenMade}
-            senderInfo={data.senderInfo}
-            text={data.text ? data.text : null}
-          />,
-          {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            transition: Bounce,
-            theme: "light",
-          }
-        );
+        if (data.type !== "message") {
+          toast(
+            <CustomNotification
+              senderName={data.senderName}
+              type={data.type}
+              contactHasBeenMade={data.contactHasBeenMade}
+              senderInfo={data.senderInfo}
+              text={data.text ? data.text : null}
+            />,
+            {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              transition: Bounce,
+              theme: "light",
+            }
+          );
+        }
       } else {
         console.log("You cannot send a notification to yourself.");
       }
@@ -569,7 +611,8 @@ function MessagesPage() {
   };
 
   const [showThreeDots, setShowThreeDots] = useState(false);
-
+  console.log("Filtered rooms =>", filteredRooms.length);
+  console.log(checkIfAllFilteredRoomsChatEmpty(filteredRooms));
   return (
     <>
       {/* start to check delete conversation modal  */}
@@ -746,7 +789,7 @@ function MessagesPage() {
                 Messages
               </div>
               <div
-                className="p-2 ms-auto  settings-icon"
+                className="p-2 ms-auto settings-icon"
                 style={{
                   borderRadius: "50%",
                 }}
@@ -793,24 +836,26 @@ function MessagesPage() {
             ></Row> */}
 
             {/* start to check here we gonna render filtered rooms */}
-            <div className="App">
-              {/* test */}
-
-              <div className="joinChatContainer">
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Search direct messages"
-                    value={searchTerm}
-                    onChange={handleSearchTerm}
-                    style={{
-                      fontSize: "14px",
-                      width: "100%",
-                    }}
-                  />
+            {filteredRooms.length &&
+            checkIfAllFilteredRoomsChatEmpty(filteredRooms) !== 0 ? (
+              <div className="App">
+                {/* test */}
+                <div className="joinChatContainer">
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Search direct messages"
+                      value={searchTerm}
+                      onChange={handleSearchTerm}
+                      style={{
+                        fontSize: "14px",
+                        width: "100%",
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            ) : null}
             {/* finish to check here we gonna render filtered rooms */}
 
             {/* mainpage yani messages rotasına tüm messagelerin gösterileceği column burası !  */}
@@ -825,13 +870,15 @@ function MessagesPage() {
                         {eachMessageRoom.chat.length > 0 ? (
                           <Link
                             onMouseEnter={() => {
-                              setShowThreeDots(!showThreeDots);
+                              setShowThreeDots(eachMessageRoom._id);
                             }}
                             onMouseLeave={() => {
-                              setShowThreeDots(!showThreeDots);
+                              setShowThreeDots(false);
+                              setshowMessageDeletePopover(false);
                             }}
                             onClick={() =>
-                              !isHovered && !showMessageDeletePopover
+                              isHovered !== eachMessageRoom._id &&
+                              !showMessageDeletePopover
                                 ? redirectChatDetailPage(eachMessageRoom._id)
                                 : null
                             }
@@ -845,13 +892,15 @@ function MessagesPage() {
                               textDecoration: "none",
                             }}
                             to={
-                              !isHovered && !showMessageDeletePopover
+                              isHovered !== eachMessageRoom._id &&
+                              !showMessageDeletePopover
                                 ? `/messages/${eachMessageRoom._id}`
                                 : null
                             }
                           >
                             <div
                               style={{
+                                // backgroundColor: "blue",
                                 backgroundColor: eachMessageRoom.readed
                                   ? "white"
                                   : "#F7F9F9",
@@ -997,21 +1046,34 @@ function MessagesPage() {
                                       </div>
                                       {/* <div className="p-0 ms-auto">asd</div> */}
                                       <div
+                                        onClick={() =>
+                                          grabTheMessageRoom(eachMessageRoom)
+                                        }
                                         onMouseEnter={() => {
-                                          setIsHovered(true);
+                                          console.log(
+                                            "Message room id =>",
+                                            eachMessageRoom._id
+                                          );
+                                          setIsHovered(eachMessageRoom._id);
+                                          // setshowMessageDeletePopover(true);
                                         }}
                                         onMouseLeave={() => {
                                           setIsHovered(false);
+                                          setshowMessageDeletePopover(false);
                                         }}
-                                        className={`p-2 ms-auto`}
+                                        className={`p-2 ms-auto message-icon`}
                                       >
                                         <OverlayTrigger
                                           trigger="click"
-                                          placement="bottom"
+                                          placement="left"
                                           overlay={popoverBottom}
                                         >
                                           <div
-                                            className={`message-delete-three-dots-parent`}
+                                            className={
+                                              isHovered === eachMessageRoom._id
+                                                ? `message-delete-three-dots-parent message-delete-three-dots-parent-hovered`
+                                                : `message-delete-three-dots-parent`
+                                            }
                                             style={{
                                               cursor: "pointer",
                                               borderRadius: "50%",
@@ -1025,7 +1087,8 @@ function MessagesPage() {
                                                 top: "5px",
                                               }}
                                               color={
-                                                isHovered
+                                                isHovered ===
+                                                eachMessageRoom._id
                                                   ? "#259ef0"
                                                   : "rgb(83, 100, 113)"
                                               }
@@ -1035,7 +1098,10 @@ function MessagesPage() {
                                               viewBox="0 0 24 24"
                                               aria-hidden="true"
                                               className={`${
-                                                showThreeDots ? "" : "hide "
+                                                showThreeDots ===
+                                                eachMessageRoom._id
+                                                  ? ""
+                                                  : "hide"
                                               } message-delete-three-dots bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi`}
                                             >
                                               <g>
@@ -1066,10 +1132,7 @@ function MessagesPage() {
 
                 <>
                   {/* another create chat modal start to check  */}
-                  <div
-                    onClick={handleShow}
-                    style={{ textAlign: "left", padding: "16px" }}
-                  >
+                  <div style={{ textAlign: "left", padding: "16px" }}>
                     <div
                       style={{
                         lineHeight: "36px",
@@ -1093,6 +1156,7 @@ function MessagesPage() {
                       conversations between you and others on Connectify.
                     </div>
                     <button
+                      className="write-a-message-message-page-btn"
                       style={{
                         color: "white",
                         backgroundColor: "rgb(29,155,240)",
@@ -1108,6 +1172,7 @@ function MessagesPage() {
                         fontWeight: "700",
                         fontSize: "15px",
                       }}
+                      onClick={handleShow}
                     >
                       Write a message
                     </button>

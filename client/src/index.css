@@ -13,16 +13,21 @@
   );
 }
 
+@font-face {
+  font-family: "cloneFont";
+  src: url("./assets/chirp-regular-web.ttf") format("opentype");
+}
+
 :root {
   --border-radius: 9999px;
   --font-weight: 500;
-  font-family: "Helvetica Neue", sans-serif;
+  font-family: "cloneFont";
 }
 
 body {
   margin: 0;
   padding: 0;
-  font-family: "Helvetica Neue", sans-serif;
+  font-family: "cloneFont" sans-serif;
 }
 
 .logout-three-dots {
@@ -103,6 +108,7 @@ body {
   border-right-width: 1px;
   border-top-width: 1px;
   border-radius: var(--border-radius);
+  transition-duration: 0.2s !important;
 }
 
 .create-btn {
@@ -111,6 +117,7 @@ body {
 
 .compose-tweet:hover {
   background-color: #198cd8;
+  transition-duration: 0.2s !important;
 }
 
 .btn-light {
@@ -190,6 +197,7 @@ body {
 
 .sign-in:hover {
   background-color: #ebf5fe;
+  transition-duration: 0.2s !important;
 }
 
 .footer-container {
@@ -293,6 +301,7 @@ span > a:hover {
 .messages:hover,
 .profile:hover {
   background-color: #e7e7e8;
+  transition-duration: 0.2s !important;
 }
 /* navigation bar hover effect finish to check */
 
@@ -323,6 +332,7 @@ span > a:hover {
   border-right-width: 1px;
   border-top-width: 1px;
   border-radius: var(--border-radius);
+  transition-duration: 0.2s !important;
 }
 
 .like-icon {
@@ -358,6 +368,7 @@ span > a:hover {
   border-width: 4px 1.25em;
   border-radius: var(--border-radius);
   transition: background-color 0.3s, box-shadow 0.3s;
+  transition-duration: 0.2s !important;
 }
 
 /* NOTE NOTE PROBABLY DONE WITH THOSE CODES */
@@ -386,6 +397,7 @@ span > a:hover {
 
 .post-btn:hover {
   background-color: #198cd8;
+  transition-duration: 0.2s !important;
 }
 
 .input-post {
@@ -814,12 +826,14 @@ span > a:hover {
 /* Hover effect */
 .message-detail-user-card:hover {
   background-color: #f5f8fa; /* Twitter hover rengi */
+  transition-duration: 0.2s;
 }
 
 /* chat details page user information finish to check  */
 
 .selected-user-for-dm:hover {
   background-color: rgba(247, 249, 249, 255);
+  transition-duration: 0.2s;
 }
 .previous-button:hover,
 .close-button:hover,
@@ -895,7 +909,7 @@ span > a:hover {
 
 .svg-border-parent:hover,
 .send-button:hover,
-.message-delete-three-dots-parent:hover {
+.message-delete-three-dots-parent-hovered:hover {
   background-color: #e4f0f9;
   transition-duration: 0.2s !important;
 }
@@ -929,6 +943,7 @@ span > a:hover {
   .messages:hover,
   .profile:hover {
     background-color: initial !important;
+    transition-duration: 0.2s;
   }
 
   .inner-div-fonts {
@@ -947,6 +962,7 @@ span > a:hover {
 
   .inner-div a div div svg:hover {
     background-color: #e7e7e8;
+    transition-duration: 0.2s !important;
   }
 }
 
@@ -956,6 +972,7 @@ span > a:hover {
   .messages:hover,
   .profile:hover {
     background-color: initial !important;
+    transition-duration: 0.2s !important;
   }
 
   .inner-div-fonts {
@@ -979,6 +996,7 @@ span > a:hover {
 
   .inner-div a div div svg:hover {
     background-color: #e7e7e8;
+    transition-duration: 0.2s !important;
   }
 }
 
@@ -988,6 +1006,7 @@ span > a:hover {
   .messages:hover,
   .profile:hover {
     background-color: initial !important;
+    transition-duration: 0.2s !important;
   }
 
   .inner-div-fonts {
@@ -1011,6 +1030,7 @@ span > a:hover {
 
   .inner-div a div div svg:hover {
     background-color: #e7e7e8;
+    transition-duration: 0.2s !important;
   }
 }
 /* navigation bar hover effect => finish to check  */
@@ -1540,10 +1560,9 @@ span > a:hover {
 }
 
 .three-dots-spesific-profile:hover,
-.message-box-spesific-profile:hover,
-.follow-following-section-spesific-profile:hover {
+.message-box-spesific-profile:hover {
   background-color: #e7e7e8;
-  transition-duration: 0.2s;
+  transition-duration: 0.2s !important;
 }
 
 .hover-unfollow-cancel:hover {
@@ -1637,7 +1656,8 @@ span > a:hover {
 
 .settings-and-privacy:hover,
 .logout-popover:hover {
-  background-color: #f7f9f9;
+  background-color: #f7f9f9 !important;
+  transition-duration: 0.2s !important;
 }
 /* popover hover effetct finish to check  */
 
@@ -1665,6 +1685,7 @@ span > a:hover {
   border-right-width: 1px;
   border-top-width: 1px;
   border-radius: var(--border-radius);
+  transition-duration: 0.2s !important;
 }
 
 /* ant message success change password message start to check  */
@@ -1798,12 +1819,19 @@ span > a:hover {
   outline-style: none;
   border-style: none;
   border-radius: var(--border-radius);
-  background-color: #272c30;
+  background-color: #272c30 !important;
+  transition-duration: 0.2s !important;
+}
+
+.deactivate-tab-next-btn:hover {
+  background-color: #272c30 !important;
+  transition-duration: 0.2s !important;
 }
 
 .cancel-btn-reactivate-tab:hover,
 .cancel-btn-delete-conversation-tab:hover {
   background-color: #e7e7e8;
+  transition-duration: 0.2s !important;
 }
 
 /* #e7e7e8 */
@@ -1842,6 +1870,13 @@ span > a:hover {
   width: 400px;
 }
 
-.leave-btn-delete-conversation-tab:hover {
+.leave-btn-delete-conversation-tab:hover,
+.deactivate-tab-deactivate-btn:hover {
   background-color: #dc1f29 !important;
+  transition-duration: 0.2s !important;
+}
+
+.write-a-message-message-page-btn:hover {
+  background-color: #198cd8 !important;
+  transition-duration: 0.2s !important;
 }

@@ -92,17 +92,17 @@ function ChatDetailsPage() {
 
   const redirectProfilePage = () => {
     navigate("/profile");
-    // window.location.reload();
+    window.location.reload();
   };
 
   const redirectHomePage = () => {
     navigate("/home");
-    // window.location.reload();
+    window.location.reload();
   };
 
   const redirectSpesificProfilePage = (userId) => {
     navigate(`/profile/${userId}`);
-    // window.location.reload();
+    window.location.reload();
   };
   // finish to check
 
@@ -132,27 +132,28 @@ function ChatDetailsPage() {
       console.log("Data get text =>", data);
       if (data.senderName !== userInfo.username) {
         setnotificationText(data);
-
-        toast(
-          <CustomNotification
-            senderName={data.senderName}
-            type={data.type}
-            contactHasBeenMade={data.contactHasBeenMade}
-            senderInfo={data.senderInfo}
-            text={data.text ? data.text : null}
-          />,
-          {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            transition: Bounce,
-            theme: "light",
-          }
-        );
+        if (data.type !== "message") {
+          toast(
+            <CustomNotification
+              senderName={data.senderName}
+              type={data.type}
+              contactHasBeenMade={data.contactHasBeenMade}
+              senderInfo={data.senderInfo}
+              text={data.text ? data.text : null}
+            />,
+            {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              transition: Bounce,
+              theme: "light",
+            }
+          );
+        }
       } else {
         console.log("You cannot send a notification to yourself.");
       }

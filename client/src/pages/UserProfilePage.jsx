@@ -3141,11 +3141,7 @@ function UserProfile() {
               ) : (
                 <>
                   {/* when no post liked yet from likes section in general start to check  */}
-                  <Row
-                    style={{
-                      borderBottom: "1px solid rgba(0,0,0,0.1)",
-                    }}
-                  ></Row>
+
                   <div
                     style={{
                       textAlign: "left",

@@ -2072,7 +2072,7 @@ function LogoutModal() {
                       float: "right",
                       border: " none",
                     }}
-                    className="deactivate-next-btn"
+                    className="deactivate-next-btn deactivate-tab-next-btn"
                     variant="info"
                     onClick={() => next()}
                   >
@@ -2092,7 +2092,7 @@ function LogoutModal() {
                       float: "right",
                       border: " none",
                     }}
-                    className="deactivate-next-btn"
+                    className="deactivate-next-btn deactivate-tab-next-btn"
                     variant="info"
                     onClick={() =>
                       confirmed ? next() : wrongPasswordMessage()
@@ -2118,6 +2118,7 @@ function LogoutModal() {
                     onClick={() => {
                       handleDeactivateUser();
                     }}
+                    className="deactivate-tab-deactivate-btn"
                   >
                     Deactivate
                   </Button>
@@ -3389,6 +3390,9 @@ function CommentModal({
             <div className="p-2 ms-auto">
               {content !== "" || modalImage ? (
                 <Button
+                  style={{
+                    border: "none",
+                  }}
                   variant="primary"
                   onClick={() => handleAddComment(post._id)}
                   className={`post-btn compose-tweet-textArea`}
@@ -3399,6 +3403,9 @@ function CommentModal({
                 </Button>
               ) : (
                 <Button
+                  style={{
+                    border: "none",
+                  }}
                   variant="primary"
                   className={`emptyContent post-btn compose-tweet-textArea`}
                 >
