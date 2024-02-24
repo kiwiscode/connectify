@@ -73,6 +73,63 @@ function UserProfile() {
   };
   // finish to check
 
+  // use effect to grab current mouse click location start to check
+
+  const [clickedPostBox, setclickedPostBox] = useState(null);
+  console.log("Clicked post outside of use effect =>", clickedPostBox);
+  useEffect(() => {
+    const getClickLocation = (e) => {
+      const clickedElementParentClass = e.target.parentNode.className;
+      const clickedElementClass = e.target.classList;
+      console.log("target details =>", clickedElementParentClass);
+      console.log("Target class list =>", e.target.classList);
+      if (
+        (clickedElementClass.contains("hover-reposted-text") &&
+          clickedElementParentClass !== "post-circle-profile-svg-on-point" &&
+          clickedElementParentClass !== "post-circle-profile-image-on-point" &&
+          clickedElementParentClass !== "post-circle-postowner-fullname" &&
+          clickedElementParentClass !== "post-circle-postowner-username" &&
+          clickedElementParentClass !== "post-circle-date-post-detail" &&
+          clickedElementParentClass !== "svg-three-dots-post-detail" &&
+          clickedElementParentClass === "p-1 next-to-comment") ||
+        clickedElementParentClass === "p-1 next-to-repost" ||
+        clickedElementParentClass === "p-1 next-to-like" ||
+        clickedElementParentClass === "parent-footer-stack" ||
+        clickedElementParentClass ===
+          "posts-details outside-of-inner-circle-actions" ||
+        clickedElementParentClass ===
+          "outside-of-inner-circle-action-comment-text vstack gap-1" ||
+        clickedElementParentClass === "p-2 parent-comment-text" ||
+        clickedElementParentClass ===
+          "outside-of-inner-circle-post-info-user-info-svg-three-dots hstack gap-1" ||
+        clickedElementParentClass === "mt-0 parent-footer-stack hstack" ||
+        clickedElementClass.contains("repost-svg-post-box") ||
+        clickedElementParentClass === "post-head"
+      ) {
+        console.log("Clicked post box inside of use effect =>", clickedPostBox);
+        console.log(
+          "You clicked outside of any actions inside clicked post box"
+        );
+        if (clickedPostBox) {
+          redirectToPostDetailPage(
+            clickedPostBox.userId.username,
+            !clickedPostBox.isReposted
+              ? clickedPostBox._id
+              : clickedPostBox.repostedFromThisOriginalPost[0]._id
+          );
+        }
+      }
+    };
+
+    document.body.addEventListener("click", getClickLocation);
+
+    return () => {
+      document.body.removeEventListener("click", getClickLocation);
+    };
+  }, [clickedPostBox]);
+
+  // use effect to grab current mouse click location finish to check
+
   const [userprofiledata, setUserprofiledata] = useState([]);
   // const { getToken, userInfo, socket } = useContext(UserContext);
   const { getToken, userInfo } = useContext(UserContext);
@@ -1997,41 +2054,41 @@ function UserProfile() {
                         <>
                           {getRepostedIds(post).includes(userInfo._id) &&
                           post.isReposted ? (
-                            <svg
-                              style={{
-                                marginLeft: "20px",
-                              }}
-                              width={16}
-                              height={16}
-                              viewBox="0 0 24 24"
-                              aria-hidden="true"
-                              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                              color="rgb(83, 100, 113)"
-                              fill="currentColor"
-                            >
-                              <g>
-                                <path
-                                  stroke="rgb(83, 100, 113)"
-                                  strokeWidth="0.1"
-                                  d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
-                                ></path>
-                              </g>
-                            </svg>
+                            <>
+                              <svg
+                                style={{
+                                  marginLeft: "20px",
+                                }}
+                                width={16}
+                                height={16}
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                color="rgb(83, 100, 113)"
+                                fill="currentColor"
+                              >
+                                <g>
+                                  <path
+                                    stroke="rgb(83, 100, 113)"
+                                    strokeWidth="0.1"
+                                    d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                                  ></path>
+                                </g>
+                              </svg>
+                              <span
+                                style={{
+                                  fontSize: "13px",
+                                  lineHeight: "20px",
+                                  fontWeight: "700",
+                                  color: "rgb(83, 100, 113)",
+                                  marginLeft: "10px",
+                                }}
+                              >
+                                You reposted
+                              </span>
+                            </>
                           ) : null}
-                          {getRepostedIds(post).includes(userInfo._id) &&
-                          post.isReposted ? (
-                            <span
-                              style={{
-                                fontSize: "13px",
-                                lineHeight: "20px",
-                                fontWeight: "700",
-                                color: "rgb(83, 100, 113)",
-                                marginLeft: "10px",
-                              }}
-                            >
-                              You reposted
-                            </span>
-                          ) : null}
+
                           <div className="posts-details">
                             <div className="post-head">
                               <Stack direction="horizontal" gap={1}>
