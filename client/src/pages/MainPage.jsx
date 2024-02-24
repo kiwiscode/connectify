@@ -50,6 +50,7 @@ function MainPage() {
   };
 
   const redirectSpesificProfilePage = (userId) => {
+    console.log("User id =>", userId);
     navigate(`/profile/${userId}`);
     // window.location.reload();
   };
@@ -63,7 +64,66 @@ function MainPage() {
     navigate(`/${postOwnerName}/status/${postId}/photo/1`);
     // window.location.reload();
   };
+
   // finish to check
+
+  // use effect to grab current mouse click location start to check
+
+  const [clickedPostBox, setclickedPostBox] = useState(null);
+  console.log("Clicked post outside of use effect =>", clickedPostBox);
+  useEffect(() => {
+    const getClickLocation = (e) => {
+      const clickedElementParentClass = e.target.parentNode.className;
+      const clickedElementClass = e.target.classList;
+      console.log("target details =>", clickedElementParentClass);
+      console.log("Target class list =>", e.target.classList);
+      if (
+        (clickedElementClass.contains("hover-reposted-text") &&
+          clickedElementParentClass !== "post-circle-profile-svg-on-point" &&
+          clickedElementParentClass !== "post-circle-profile-image-on-point" &&
+          clickedElementParentClass !== "post-circle-postowner-fullname" &&
+          clickedElementParentClass !== "post-circle-postowner-username" &&
+          clickedElementParentClass !== "post-circle-date-post-detail" &&
+          clickedElementParentClass !== "svg-three-dots-post-detail" &&
+          clickedElementParentClass === "p-1 next-to-comment") ||
+        clickedElementParentClass === "p-1 next-to-repost" ||
+        clickedElementParentClass === "p-1 next-to-like" ||
+        clickedElementParentClass === "parent-footer-stack" ||
+        clickedElementParentClass ===
+          "posts-details outside-of-inner-circle-actions" ||
+        clickedElementParentClass ===
+          "outside-of-inner-circle-action-comment-text vstack gap-1" ||
+        clickedElementParentClass === "p-2 parent-comment-text" ||
+        clickedElementParentClass ===
+          "outside-of-inner-circle-post-info-user-info-svg-three-dots hstack gap-1" ||
+        clickedElementParentClass === "mt-0 parent-footer-stack hstack" ||
+        clickedElementClass.contains("repost-svg-post-box") ||
+        clickedElementParentClass === "post-head"
+      ) {
+        console.log("Clicked post box inside of use effect =>", clickedPostBox);
+        console.log(
+          "You clicked outside of any actions inside clicked post box"
+        );
+        if (clickedPostBox) {
+          redirectToPostDetailPage(
+            clickedPostBox.userId.username,
+            !clickedPostBox.isReposted
+              ? clickedPostBox._id
+              : clickedPostBox.repostedFromThisOriginalPost[0]._id
+          );
+        }
+      }
+    };
+
+    document.body.addEventListener("click", getClickLocation);
+
+    return () => {
+      document.body.removeEventListener("click", getClickLocation);
+    };
+  }, [clickedPostBox]);
+
+  // use effect to grab current mouse click location finish to check
+
   // const { userInfo, getToken, socket } = useContext(UserContext);
   const { userInfo, getToken } = useContext(UserContext);
   const [posts, setPosts] = useState([]);
@@ -792,13 +852,13 @@ function MainPage() {
               <div className="inner-div-fonts inner-div">
                 <Link to="/home">
                   <div className="home">
-                    <div>
+                    <div style={{}}>
                       <svg
                         width={26}
                         height={26}
                         viewBox="0 0 24 24"
                         aria-hidden="true"
-                        className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
+                        className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
                       >
                         <g>
                           <path d="M21.591 7.146L12.52 1.157c-.316-.21-.724-.21-1.04 0l-9.071 5.99c-.26.173-.409.456-.409.757v13.183c0 .502.418.913.929.913H9.14c.51 0 .929-.41.929-.913v-7.075h3.909v7.075c0 .502.417.913.928.913h6.165c.511 0 .929-.41.929-.913V7.904c0-.301-.158-.584-.408-.758z"></path>
@@ -900,6 +960,7 @@ function MainPage() {
               border: "1px solid rgba(0, 0, 0, 0.1)",
               borderTop: "none",
               borderBottom: "none",
+              padding: "0px",
             }}
           >
             <div
@@ -927,19 +988,19 @@ function MainPage() {
               </span>
             </div>
 
-            <Row
+            <div
               className="responsive-top-border"
               style={{
                 borderTop: "1px solid rgba(0, 0, 0, 0.1)",
               }}
-            ></Row>
+            ></div>
 
             <Stack
               direction="horizontal"
               gap={1}
               className="responsive-stack-home-page"
             >
-              <div className="p-0 mt-2">
+              <div className="p-2 mt-2">
                 {" "}
                 {userInfo.imageUrl.slice(0, 3) !== "../" ? (
                   <img
@@ -1002,7 +1063,7 @@ function MainPage() {
             </Stack>
 
             {image && (
-              <div style={{ position: "relative" }}>
+              <div className="p-2" style={{ position: "relative" }}>
                 <div
                   className="target"
                   style={{
@@ -1047,12 +1108,12 @@ function MainPage() {
                 />
               </div>
             )}
-            <Row
+            <div
               // className="responsive-stack-home-page-row"
               style={{
                 borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
               }}
-            ></Row>
+            ></div>
             <Stack
               direction="horizontal"
               gap={0}
@@ -1161,12 +1222,12 @@ function MainPage() {
                 )}
               </div>
             </Stack>
-            <Row
+            <div
               className="responsive-stack-home-page-row"
               style={{
                 borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
               }}
-            ></Row>
+            ></div>
             {/* mainpage yani home rotasına tüm twitlerin gösterileceği column burası !  */}
             <span>{isLoading ? <LoadingSpinner></LoadingSpinner> : ""}</span>
             <div className="all-posts">
@@ -1177,8 +1238,16 @@ function MainPage() {
                       {posts.slice(0, visibleTweets).map((post, index) => (
                         <>
                           {post.deactivatedOwner ? null : (
-                            <div key={post._id}>
-                              <div className="posts-details">
+                            <div className="each-post" key={post._id}>
+                              <Link
+                                style={{
+                                  textDecoration: "none",
+                                }}
+                                onClick={() => {
+                                  setclickedPostBox(post);
+                                }}
+                                className="posts-details outside-of-inner-circle-actions"
+                              >
                                 <div className="post-head">
                                   {/* Typeof ={typeof index} , {index} */}
 
@@ -1187,9 +1256,11 @@ function MainPage() {
                                   post.isReposted &&
                                   post.reposted[0]._id === userInfo._id ? (
                                     <div
+                                      className="you-reposted-head"
                                       style={{
                                         position: "relative",
-                                        right: "15px",
+                                        left: "6px",
+                                        cursor: "pointer",
                                       }}
                                     >
                                       <svg
@@ -1197,11 +1268,11 @@ function MainPage() {
                                           color: "rgb(83, 100, 113)",
                                           marginLeft: "20px",
                                         }}
-                                        width={`${1.25}em`}
-                                        height={`${1.25}em`}
+                                        width={`16px`}
+                                        height={`16px`}
                                         viewBox="0 0 24 24"
                                         aria-hidden="true"
-                                        className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                        className="repost-svg-post-box svg-repost-post box svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                                         color="rgb(83, 100, 113)"
                                         fill="currentColor"
                                       >
@@ -1213,17 +1284,22 @@ function MainPage() {
                                           ></path>
                                         </g>
                                       </svg>
-                                      <span
+                                      <Link
+                                        className="hover-reposted-text"
                                         style={{
                                           fontSize: "13px",
                                           lineHeight: "16px",
                                           fontWeight: "700",
                                           color: "rgb(83, 100, 113)",
                                           marginLeft: "10px",
+                                          cursor: "pointer",
+                                          textDecoration: "none",
                                         }}
+                                        onClick={() => setclickedPostBox(post)}
+                                        to={`/profile/${post.reposted[0]._id}`}
                                       >
                                         You reposted
-                                      </span>{" "}
+                                      </Link>{" "}
                                     </div>
                                   ) : null}
 
@@ -1234,18 +1310,19 @@ function MainPage() {
                                     <div
                                       style={{
                                         position: "relative",
-                                        right: "16px",
+                                        left: "6px",
                                       }}
                                     >
                                       <svg
                                         style={{
+                                          color: "rgb(83, 100, 113)",
                                           marginLeft: "20px",
                                         }}
-                                        width={`${1.25}em`}
-                                        height={`${1.25}em`}
+                                        width={`16px`}
+                                        height={`16px`}
                                         viewBox="0 0 24 24"
                                         aria-hidden="true"
-                                        className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                        className="repost-svg-post-box svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                                         color="rgb(83, 100, 113)"
                                         fill="currentColor"
                                       >
@@ -1257,30 +1334,51 @@ function MainPage() {
                                           ></path>
                                         </g>
                                       </svg>
-                                      <span
-                                        style={{
-                                          fontSize: "13px",
-                                          lineHeight: "20px",
-                                          fontWeight: "700",
-                                          color: "rgb(83, 100, 113)",
-                                          marginLeft: "10px",
-                                        }}
-                                      >
+                                      <span>
                                         {post.reposted[0].fullname ? (
-                                          <span>
+                                          <Link
+                                            style={{
+                                              fontSize: "13px",
+                                              lineHeight: "16px",
+                                              fontWeight: "700",
+                                              color: "rgb(83, 100, 113)",
+                                              marginLeft: "10px",
+                                              cursor: "pointer",
+                                              textDecoration: "none",
+                                            }}
+                                            className="hover-reposted-text"
+                                            onClick={() =>
+                                              setclickedPostBox(post)
+                                            }
+                                            to={`/profile/${post.reposted[0]._id}`}
+                                          >
                                             {post.reposted[0].fullname} reposted
-                                          </span>
+                                          </Link>
                                         ) : null}
                                       </span>{" "}
                                     </div>
                                   ) : null}
                                 </div>
-                                <Stack direction="horizontal" gap={1}>
+                                <Stack
+                                  style={{
+                                    cursor: "pointer",
+                                  }}
+                                  to={`/${post.userId.username}/status/${
+                                    !post.isReposted
+                                      ? post._id
+                                      : post.repostedFromThisOriginalPost[0]._id
+                                  }`}
+                                  onClick={() => setclickedPostBox(post)}
+                                  className="outside-of-inner-circle-post-info-user-info-svg-three-dots"
+                                  direction="horizontal"
+                                  gap={1}
+                                >
                                   {/* profile image start to check */}
-                                  <div className="p-1">
+                                  <div className="p-1 ">
                                     {post.userId.imageUrl.slice(0, 3) !==
                                     "../" ? (
                                       <Link
+                                        className="post-circle-profile-image-on-point"
                                         onClick={() =>
                                           redirectSpesificProfilePage(
                                             post.userId._id
@@ -1300,10 +1398,12 @@ function MainPage() {
                                               : null
                                           }
                                           alt="??"
+                                          style={{ borderRadius: "50%" }}
                                         />
                                       </Link>
                                     ) : (
                                       <Link
+                                        className="post-circle-profile-svg-on-point"
                                         onClick={() =>
                                           redirectSpesificProfilePage(
                                             post.userId._id
@@ -1336,6 +1436,7 @@ function MainPage() {
                                     {post.userId ? (
                                       <>
                                         <Link
+                                          className="post-circle-postowner-fullname"
                                           onClick={() =>
                                             redirectSpesificProfilePage(
                                               post.userId._id
@@ -1393,7 +1494,7 @@ function MainPage() {
                                             fontWeight: "400",
                                           }}
                                         >
-                                          <span>
+                                          <span className="post-circle-postowner-username">
                                             <span>@{post.authorUserName}</span>
                                           </span>
                                         </Link>
@@ -1422,6 +1523,7 @@ function MainPage() {
                                           }}
                                         >
                                           <span
+                                            className="post-circle-date-post-detail"
                                             style={{
                                               color: "rgb(83, 100, 113)",
                                               lineHeight: "20px",
@@ -1444,7 +1546,7 @@ function MainPage() {
 
                                   {/* three dots svg start to check */}
                                   <div className="p-1 ms-auto">
-                                    <span>
+                                    <span className="svg-three-dots-post-detail">
                                       {/* show if post owner userId !equal currentUserId */}
                                       {post.userId &&
                                       post.userId._id !== userInfo._id ? (
@@ -1501,9 +1603,28 @@ function MainPage() {
                                 </Stack>
 
                                 {/* post content start to check  */}
-                                <Stack direction="vertical" gap={1}>
+                                <Stack
+                                  to={`/${post.userId.username}/status/${
+                                    !post.isReposted
+                                      ? post._id
+                                      : post.repostedFromThisOriginalPost[0]._id
+                                  }`}
+                                  onClick={() => setclickedPostBox(post)}
+                                  className="outside-of-inner-circle-action-comment-text"
+                                  direction="vertical"
+                                  gap={1}
+                                >
                                   {post.isComment ? (
-                                    <div className="p-2">
+                                    <div
+                                      to={`/${post.userId.username}/status/${
+                                        !post.isReposted
+                                          ? post._id
+                                          : post.repostedFromThisOriginalPost[0]
+                                              ._id
+                                      }`}
+                                      onClick={() => setclickedPostBox(post)}
+                                      className="p-2 parent-comment-text"
+                                    >
                                       <span
                                         style={{
                                           color: "rgb(83, 100, 113)",
@@ -1521,6 +1642,7 @@ function MainPage() {
                                         }}
                                       >
                                         <span
+                                          className="replying-to-text"
                                           onClick={() =>
                                             redirectSpesificProfilePage(
                                               post.commentedForThisUsersPost._id
@@ -1571,6 +1693,7 @@ function MainPage() {
                                         lineHeight: "20px",
                                         overflowWrap: "break-word",
                                         maxWidth: "100%",
+                                        cursor: "pointer",
                                       }}
                                       className="p-2"
                                     >
@@ -1627,14 +1750,19 @@ function MainPage() {
                                 {/* finish to check NOTE if there is no internet connection images would be hidden because of 'cloudinary connection' */}
                                 {/* new version favorite repost comment start to check */}
                                 <Stack
-                                  className="mt-0"
+                                  className="mt-0 parent-footer-stack"
+                                  onClick={() => setclickedPostBox(post)}
                                   direction="horizontal"
                                   style={{
                                     justifyContent: "space-between",
                                     margin: "5px 0px 5px 0px",
+                                    cursor: "pointer",
                                   }}
                                 >
-                                  <div className="p-1">
+                                  <div
+                                    onClick={() => setclickedPostBox(post)}
+                                    className="p-1 next-to-comment"
+                                  >
                                     <CommentModal
                                       post={post ? post : null}
                                       width={`${1.25}em`}
@@ -1642,7 +1770,10 @@ function MainPage() {
                                       refreshPosts={handleShowPostsHomePage}
                                     />
                                   </div>
-                                  <div className="p-1">
+                                  <div
+                                    onClick={() => setclickedPostBox(post)}
+                                    className="p-1 next-to-repost"
+                                  >
                                     {post.reposted.length > 0 &&
                                     getRepostedIds(post).includes(
                                       userInfo._id
@@ -1725,7 +1856,16 @@ function MainPage() {
                                       </div>
                                     )}
                                   </div>
-                                  <div className="p-1">
+                                  <div
+                                    to={`/${post.userId.username}/status/${
+                                      !post.isReposted
+                                        ? post._id
+                                        : post.repostedFromThisOriginalPost[0]
+                                            ._id
+                                    }`}
+                                    onClick={() => setclickedPostBox(post)}
+                                    className="p-1 next-to-like"
+                                  >
                                     {getLikerIds(post).includes(
                                       userInfo._id
                                     ) ? (
@@ -1797,12 +1937,12 @@ function MainPage() {
                                   </div>
                                 </Stack>
                                 {/* new version favorite repost comment finish to check */}
-                              </div>
-                              <Row
+                              </Link>
+                              <div
                                 style={{
                                   borderBottom: "1px solid rgba(0,0,0,0.1)",
                                 }}
-                              ></Row>
+                              ></div>
                             </div>
                           )}
                         </>
@@ -1885,8 +2025,13 @@ function MainPage() {
                         .slice(0, visibleFollowingTweets)
                         .map((post, index) => (
                           <>
-                            <div key={post._id}>
-                              <div className="posts-details">
+                            <div className="each-post" key={post._id}>
+                              <div
+                                style={{
+                                  cursor: "pointer",
+                                }}
+                                className="posts-details "
+                              >
                                 <div className="post-head">
                                   {/* start to check */}
                                   {post.reposted.length > 0 &&
@@ -1894,8 +2039,9 @@ function MainPage() {
                                   post.reposted[0]._id === userInfo._id ? (
                                     <div
                                       style={{
+                                        cursor: "pointer",
                                         position: "relative",
-                                        right: "15px",
+                                        left: "6px",
                                       }}
                                     >
                                       <svg
@@ -1903,8 +2049,8 @@ function MainPage() {
                                           color: "rgb(83, 100, 113)",
                                           marginLeft: "20px",
                                         }}
-                                        width={`${1.25}em`}
-                                        height={`${1.25}em`}
+                                        width={`16px`}
+                                        height={`16px`}
                                         viewBox="0 0 24 24"
                                         aria-hidden="true"
                                         className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -1920,12 +2066,14 @@ function MainPage() {
                                         </g>
                                       </svg>
                                       <span
+                                        className="hover-reposted-text"
                                         style={{
                                           fontSize: "13px",
-                                          lineHeight: "16px",
+                                          lineHeight: "20px",
                                           fontWeight: "700",
                                           color: "rgb(83, 100, 113)",
                                           marginLeft: "10px",
+                                          cursor: "pointer",
                                         }}
                                       >
                                         You reposted
@@ -2504,11 +2652,11 @@ function MainPage() {
                                 </Stack>
                                 {/* new version favorite repost comment finish to check */}
                               </div>
-                              <Row
+                              <div
                                 style={{
                                   borderBottom: "1px solid rgba(0,0,0,0.1)",
                                 }}
-                              ></Row>
+                              ></div>
                             </div>
                           </>
                         ))}

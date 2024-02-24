@@ -1714,6 +1714,7 @@ function UserProfile() {
               border: "1px solid rgba(0, 0, 0, 0.1)",
               borderTop: "none",
               borderBottom: "none",
+              padding: "0px",
             }}
           >
             <Container>
@@ -1924,11 +1925,11 @@ function UserProfile() {
                 </div>
               </Row>
             </Container>
-            <Row
+            <div
               style={{
                 borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
               }}
-            ></Row>
+            ></div>
 
             <ButtonGroup
               aria-label="Basic example"
@@ -1976,21 +1977,14 @@ function UserProfile() {
               </Button>
             </ButtonGroup>
 
-            {!userprofiledata.length && postsWindow === "" ? (
-              <Row
+            {postsWindow || favoriteWindow ? (
+              <div
                 style={{
                   borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
                 }}
-              ></Row>
+              ></div>
             ) : null}
 
-            {!favorites.length && favoriteWindow === "" ? (
-              <Row
-                style={{
-                  borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
-                }}
-              ></Row>
-            ) : null}
             <span>{isLoading ? <LoadingSpinner></LoadingSpinner> : ""}</span>
             {/* mainpage yani home rotasına tüm twitlerin gösterileceği column burası !  */}
 
@@ -1998,15 +1992,9 @@ function UserProfile() {
               {userprofiledata.length ? (
                 <>
                   {userprofiledata.slice(0, visibleTweets).map((post) => (
-                    <div key={post._id}>
+                    <div className="each-post" key={post._id}>
                       {post.deactivatedOwner ? null : (
                         <>
-                          <Row
-                            style={{
-                              borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
-                            }}
-                          ></Row>
-
                           {getRepostedIds(post).includes(userInfo._id) &&
                           post.isReposted ? (
                             <svg
@@ -2067,6 +2055,9 @@ function UserProfile() {
                                         height={40}
                                         src={post.userId.imageUrl}
                                         alt=""
+                                        style={{
+                                          borderRadius: "50%",
+                                        }}
                                       />
                                     </Link>
                                   ) : (
@@ -2089,6 +2080,9 @@ function UserProfile() {
                                         fill="rgb(83, 100, 113)"
                                         className="bi bi-person-circle"
                                         viewBox="0 0 16 16"
+                                        style={{
+                                          borderRadius: "50%",
+                                        }}
                                       >
                                         <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
                                         <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
@@ -2547,6 +2541,13 @@ function UserProfile() {
                             </Stack>
                             {/* new version favorite repost comment finish to check */}
                           </div>
+                          <div
+                            style={{
+                              borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
+                              margin: "0px",
+                              padding: "0px",
+                            }}
+                          ></div>
                         </>
                       )}
                     </div>
@@ -2620,15 +2621,9 @@ function UserProfile() {
               {favorites.length && hasFalse ? (
                 <>
                   {favorites.slice(0, visibleLikedTweets).map((favorite) => (
-                    <div key={favorite._id}>
+                    <div className="each-post" key={favorite._id}>
                       {favorite.deactivatedOwner ? null : (
                         <>
-                          <Row
-                            style={{
-                              borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
-                            }}
-                          ></Row>
-
                           <div className="favorite-details">
                             <div className="favorite-head">
                               <Stack direction="horizontal" gap={1}>
@@ -2652,6 +2647,9 @@ function UserProfile() {
                                         height={40}
                                         src={favorite.userId.imageUrl}
                                         alt=""
+                                        style={{
+                                          borderRadius: "50%",
+                                        }}
                                       />
                                     </Link>
                                   ) : (
@@ -3105,6 +3103,11 @@ function UserProfile() {
                             </Stack>
                             {/* new version favorite repost comment finish to check */}
                           </div>
+                          <div
+                            style={{
+                              borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
+                            }}
+                          ></div>
                         </>
                       )}
                     </div>
