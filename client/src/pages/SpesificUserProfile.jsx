@@ -1462,6 +1462,7 @@ function SpesificUserProfile() {
               border: "1px solid rgba(0, 0, 0, 0.1)",
               borderTop: "none",
               borderBottom: "none",
+              padding: "0px",
             }}
           >
             {/* unfollow modal start to check  */}
@@ -1865,11 +1866,11 @@ function SpesificUserProfile() {
             </Container>
             {/* finish to check responsive error container  */}
             {/* start */}
-            <Row
+            <div
               style={{
                 borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
               }}
-            ></Row>
+            ></div>
             <ButtonGroup
               aria-label="Basic example"
               style={{
@@ -1911,20 +1912,12 @@ function SpesificUserProfile() {
                 )}
               </Button>
             </ButtonGroup>
-            {!profileInfoPosts.length && postsWindow === "" ? (
-              <Row
+            {postsWindow || favoriteWindow ? (
+              <div
                 style={{
                   borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
                 }}
-              ></Row>
-            ) : null}
-
-            {!favorites.length && favoriteWindow === "" ? (
-              <Row
-                style={{
-                  borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
-                }}
-              ></Row>
+              ></div>
             ) : null}
             <span>
               {isLoading && userInfo._id === profileInfo._id ? (
@@ -1940,14 +1933,9 @@ function SpesificUserProfile() {
               {profileInfoPosts.length ? (
                 <>
                   {profileInfoPosts.slice(0, visibleTweets).map((post) => (
-                    <div key={post._id}>
+                    <div className="each-post" key={post._id}>
                       {post.deactivatedOwner ? null : (
                         <>
-                          <Row
-                            style={{
-                              borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
-                            }}
-                          ></Row>
                           {/* start to check */}
 
                           {post.isReposted &&
@@ -2540,6 +2528,11 @@ function SpesificUserProfile() {
                             </Stack>
                             {/* new version favorite repost comment finish to check */}
                           </div>
+                          <div
+                            style={{
+                              borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
+                            }}
+                          ></div>
                         </>
                       )}
                     </div>
@@ -2623,14 +2616,9 @@ function SpesificUserProfile() {
                 <>
                   {favorites.slice(0, visibleLikedTweets).map((favorite) => (
                     <>
-                      <div key={favorite._id}>
+                      <div className="each-post" key={favorite._id}>
                         {favorite.deactivatedOwner ? null : (
                           <>
-                            <Row
-                              style={{
-                                borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
-                              }}
-                            ></Row>
                             <div className="favorite-details">
                               <div className="favorite-head">
                                 <Stack direction="horizontal" gap={1}>
@@ -3120,6 +3108,11 @@ function SpesificUserProfile() {
                               </Stack>
                               {/* new version favorite repost comment finish to check */}
                             </div>
+                            <div
+                              style={{
+                                borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
+                              }}
+                            ></div>
                           </>
                         )}
                       </div>
@@ -3157,11 +3150,7 @@ function SpesificUserProfile() {
               ) : (
                 <>
                   {/* when no post shared yet from other profile posts section in general start to check  */}
-                  <Row
-                    style={{
-                      borderBottom: "1px solid rgba(0,0,0,0.1)",
-                    }}
-                  ></Row>
+
                   <div
                     style={{
                       textAlign: "left",
