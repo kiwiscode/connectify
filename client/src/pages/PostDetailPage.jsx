@@ -25,6 +25,9 @@ function PostDetailPage() {
   const [commentedForThisUsersPost, setcommentedForThisUsersPost] = useState(
     []
   );
+
+  console.log("Commented for this post check =>", commentedForThisPost);
+  console.log("Detailed post check =>", detailedPost);
   const [postDetailPostId, setpostDetailPostId] = useState("");
 
   const [shouldHide, setshouldHide] = useState(true);

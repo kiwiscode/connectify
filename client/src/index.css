@@ -914,9 +914,29 @@ span > a:hover {
   transition-duration: 0.2s !important;
 }
 
+.each-post {
+  cursor: "pointer";
+}
+
+.each-post:hover {
+  background-color: #f8f8f8;
+}
+
+.replying-to-text:hover {
+  text-decoration: underline !important;
+  text-decoration-color: rgb(29, 155, 240) !important;
+}
+
+.hover-reposted-text:hover {
+  text-decoration: underline !important;
+  text-decoration-color: rgb(83, 100, 113) !important;
+}
+
 .post-modal-image-fill,
 .post-modal-emoji-picker,
-.chat-detail-emoji-picker {
+.chat-detail-emoji-picker,
+.messages-settings-and-privacy,
+.messages-create-chat {
   position: absolute;
   bottom: 10px;
   left: 10px;
@@ -957,7 +977,7 @@ span > a:hover {
     position: relative !important;
     bottom: 2px !important;
     padding: 0px 6px 0px 6px !important;
-    border-radius: 49% !important;
+    border-radius: 50% !important;
   }
 
   .inner-div a div div svg:hover {
