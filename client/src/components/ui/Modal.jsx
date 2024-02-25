@@ -2611,6 +2611,9 @@ function CommentModal({
   height,
   refreshPosts,
   isImagePostDetail,
+  setLoadingTrue,
+  setLoadingFalse,
+  postSharedMessage,
 }) {
   const [show, setShow] = useState(false);
   const [content, setContent] = useState("");
@@ -2713,23 +2716,36 @@ function CommentModal({
         modalImage,
       })
       .then((response) => {
-        handleNotification(post, userInfo, "comment");
+        console.log("Response => ", response);
+        // const mainPagePosts = JSON.parse(localStorage.getItem("mainPagePosts"));
 
-        const mainPagePosts = JSON.parse(localStorage.getItem("mainPagePosts"));
+        // mainPagePosts.unshift(response.data.createdPost);
 
-        mainPagePosts.unshift(response.data.createdPost);
+        // localStorage.setItem("mainPagePosts", JSON.stringify(mainPagePosts));
 
-        localStorage.setItem("mainPagePosts", JSON.stringify(mainPagePosts));
-
-        setTimeout(() => {
-          refreshPosts();
-          handleClose();
-        }, 500);
+        handleClose();
         setModalImage("");
         setContent("");
+        setLoadingTrue();
+        setTimeout(() => {
+          handleNotification(post, userInfo, "comment");
+          setLoadingFalse();
+          refreshPosts();
+          postSharedMessage(
+            response.data.createdPost.authorUserName,
+            response.data.createdPost._id
+          );
+        }, 1200);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.log("Error message =>", error);
+
+        if (error.response.data) {
+          const { errorMessage } = error.response.data;
+          setError(errorMessage);
+        } else {
+          setError(error);
+        }
       });
   };
 
