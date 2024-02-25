@@ -1506,6 +1506,9 @@ function MainPage() {
                                                     ._id
                                             )
                                           }
+                                          style={{
+                                            textDecoration: "none",
+                                          }}
                                           to={`/${
                                             post.userId.username
                                           }/status/${
@@ -1515,9 +1518,6 @@ function MainPage() {
                                                   .repostedFromThisOriginalPost[0]
                                                   ._id
                                           }`}
-                                          style={{
-                                            textDecoration: "none",
-                                          }}
                                         >
                                           <span
                                             className="post-circle-date-post-detail"
@@ -1662,6 +1662,7 @@ function MainPage() {
                                       </Link>
                                     </div>
                                   ) : null}
+
                                   <Link
                                     to={`/${post.userId.username}/status/${
                                       !post.isReposted
@@ -2421,7 +2422,6 @@ function MainPage() {
                                         Replying to {""}
                                       </span>
                                       <Link
-                                        to={`/profile/${post.commentedForThisUsersPost._id}`}
                                         style={{
                                           textDecoration: "none",
                                         }}
