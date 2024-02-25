@@ -408,8 +408,12 @@ function UserProfile() {
           }, 500);
         }
       })
-      .catch((err) => {
-        return err;
+      .catch((error) => {
+        if (error) {
+          const { errorMessage } = error.response.data;
+
+          setError(errorMessage);
+        }
       });
   };
 
@@ -467,77 +471,15 @@ function UserProfile() {
         }
       )
       .then(() => {
-        // start to check
-        // repost process for  user profile posts
         if (postsWindow === "hide") {
-          // const profileFavorites = JSON.parse(
-          //   localStorage.getItem("profileFavorites")
-          // );
-
-          // const findedFavorite = favorites.find((element) => {
-          //   return element._id === postId;
-          // });
-          // socket io test start to check
-          // socket io test finish to check
-          // const index2 = favorites.indexOf(findedFavorite);
-
-          // profileFavorites[index2].reposted.unshift(userInfo._id);
-
-          // localStorage.setItem(
-          //   "profileFavorites",
-          //   JSON.stringify(profileFavorites)
-          // );
           console.log("1 WORKS");
           setTimeout(() => {
-            // setFavorites(profileFavorites);
             handleGetFavorites();
             handleNotification(findedPost, userInfo, "repost");
           }, 500);
-
-          // finish to check
         } else if (favoriteWindow === "hide") {
-          // const profilePosts = JSON.parse(
-          //   localStorage.getItem("profilePagePosts")
-          // );
-
-          // const findedPost = profilePosts.find((element) => {
-          //   return element._id === postId;
-          // });
-
-          // const index = profilePosts.indexOf(findedPost);
-          // const updateUserProfilePosts = () => {
-          //   if (!findedPost.isReposted && !findedPost.reposted.length) {
-          //     profilePosts[index].reposted.unshift(userInfo);
-          //     profilePosts.unshift(response.data.newPost);
-          //     // profilePosts[0].reposted.unshift(userInfo);
-          //     const findedNewPost = profilePosts.find((eachPost) => {
-          //       return eachPost._id === response.data.newPost._id;
-          //     });
-          //     const findIndexNewPost = profilePosts.indexOf(findedNewPost);
-          //     profilePosts[findIndexNewPost].reposted.unshift(userInfo);
-          //     localStorage.setItem(
-          //       "profilePagePosts",
-          //       JSON.stringify(profilePosts)
-          //     );
-
-          //     setUserprofiledata(profilePosts);
-          //   } else if (!findedPost.isReposted && findedPost.reposted.length) {
-          //     profilePosts[index].reposted.unshift(userInfo);
-          //     profilePosts.unshift(response.data.newPost);
-
-          //     localStorage.setItem(
-          //       "profilePagePosts",
-          //       JSON.stringify(profilePosts)
-          //     );
-
-          //     setUserprofiledata(profilePosts);
-          //   } else if (findedPost.isReposted && findedPost.reposted.length) {
-          //     console.log("Here is working right now !");
-          //   }
-          // };
           console.log("2 WORKS");
           setTimeout(() => {
-            // setFavorites(profileFavorites);
             handleShowPostsProfilePage();
             handleNotification(findedPost, userInfo, "repost");
           }, 500);
@@ -554,7 +496,7 @@ function UserProfile() {
     axios
       .post(
         `${API_URL}/repost/delete`,
-        { postId: postId, userId: userInfo._id },
+        { userId: userInfo._id, postId },
         {
           headers: {
             Authorization: `Bearer ${getToken()}`,
@@ -563,174 +505,12 @@ function UserProfile() {
       )
       .then(() => {
         if (postsWindow === "hide") {
-          // const profilePagePosts = JSON.parse(
-          //   localStorage.getItem("profilePagePosts")
-          // );
-          // const findedPost = profilePagePosts.find((eachPost) => {
-          //   return eachPost._id === postId;
-          // });
-          // const findedPostIndex = profilePagePosts.indexOf(findedPost);
-          // const findedPostReposterIndex = findedPost
-          //   ? findedPost.reposted.indexOf(userInfo._id)
-          //   : null;
-          // if (findedPost ? findedPost.userId._id !== userInfo._id : null) {
-          //   profilePagePosts[findedPostIndex].reposted.splice(
-          //     findedPostReposterIndex,
-          //     1
-          //   );
-          //   const updateProfilePosts = () => {
-          //     profilePagePosts[findedPostIndex].reposted.splice(
-          //       findedPostReposterIndex,
-          //       1
-          //     );
-          //     profilePagePosts.splice(findedPostIndex, 1);
-          //     localStorage.setItem(
-          //       "profilePagePosts",
-          //       JSON.stringify(profilePagePosts)
-          //     );
-          //     setUserprofiledata(profilePagePosts);
-          //   };
-          //   setTimeout(updateProfilePosts, 500);
-          // } else {
-          //   if (findedPost.isReposted) {
-          //     // delete reposter from original post
-          //     const originalPostId =
-          //       findedPost.repostedFromThisOriginalPost[0]._id;
-          //     const originalPost = profilePagePosts.find((eachPost) => {
-          //       return eachPost._id === originalPostId;
-          //     });
-          //     const originalPostIndex = profilePagePosts.indexOf(originalPost);
-          //     const reposter = profilePagePosts[
-          //       originalPostIndex
-          //     ].reposted.find((eachReposter) => {
-          //       return eachReposter._id === userInfo._id;
-          //     });
-          //     const reposterIndex =
-          //       profilePagePosts[originalPostIndex].reposted.indexOf(reposter);
-          //     profilePagePosts[originalPostIndex].reposted.splice(
-          //       reposterIndex,
-          //       1
-          //     );
-          //     const referencePostIndex = profilePagePosts.indexOf(findedPost);
-          //     const referenceReposter = profilePagePosts[
-          //       referencePostIndex
-          //     ].reposted.find((eachReposter) => {
-          //       return eachReposter._id === userInfo._id;
-          //     });
-          //     const referenceReposterIndex =
-          //       profilePagePosts[referencePostIndex].reposted.indexOf(
-          //         referenceReposter
-          //       );
-          //     const updateProfilePosts = () => {
-          //       profilePagePosts[referencePostIndex].reposted.splice(
-          //         referenceReposterIndex,
-          //         1
-          //       );
-          //       profilePagePosts.splice(referencePostIndex, 1);
-          //       localStorage.setItem(
-          //         "profilePagePosts",
-          //         JSON.stringify(profilePagePosts)
-          //       );
-          //       setUserprofiledata(profilePagePosts);
-          //     };
-          //     setTimeout(updateProfilePosts, 500);
-          //   } else if (!findedPost.isReposted) {
-          //     // find reference post
-          //     const referencePost = profilePagePosts.find((eachPost) => {
-          //       return (
-          //         eachPost.repostedFromThisOriginalPost[0]._id ===
-          //         findedPost._id
-          //       );
-          //     });
-          //     const referencePostIndex =
-          //       profilePagePosts.indexOf(referencePost);
-          //     const findReposter = referencePost.reposted.find(
-          //       (eachReposter) => {
-          //         return eachReposter._id === userInfo._id;
-          //       }
-          //     );
-          //     const reposterIndex =
-          //       profilePagePosts[referencePostIndex].reposted.indexOf(
-          //         findReposter
-          //       );
-          //     const findedPostIndex = profilePagePosts.indexOf(findedPost);
-          //     const reposter2 = profilePagePosts[findedPostIndex].reposted.find(
-          //       (eachReposter) => {
-          //         return eachReposter._id === userInfo._id;
-          //       }
-          //     );
-          //     const reposterIndex2 =
-          //       profilePagePosts[findedPostIndex].reposted.indexOf(reposter2);
-          //     profilePagePosts[findedPostIndex].reposted.splice(
-          //       reposterIndex2,
-          //       1
-          //     );
-          //     localStorage.setItem(
-          //       "profilePagePosts",
-          //       JSON.stringify(profilePagePosts)
-          //     );
-          //     // start to check basit settimeout animation
-          //     const updateProfilePosts = () => {
-          //       profilePagePosts[referencePostIndex].reposted.splice(
-          //         reposterIndex,
-          //         1
-          //       );
-          //       profilePagePosts.splice(referencePostIndex, 1);
-          //       localStorage.setItem(
-          //         "profilePagePosts",
-          //         JSON.stringify(profilePagePosts)
-          //       );
-          //       setUserprofiledata(profilePagePosts);
-          //     };
-          //     setTimeout(updateProfilePosts, 500);
-          //     // finish to check basit settimeout animation
-          //   }
-          // }
           console.log("1 WORKS");
           setTimeout(() => {
             handleGetFavorites();
           }, 500);
         }
-
         if (favoriteWindow === "hide") {
-          // const profilePageFavorites = JSON.parse(
-          //   localStorage.getItem("profileFavorites")
-          // );
-          // const findedFavorite = profilePageFavorites.find((eachPost) => {
-          //   return eachPost._id === postId;
-          // });
-          // const findedFavoriteIndex =
-          //   profilePageFavorites.indexOf(findedFavorite);
-          // const findedFavoriteReposterIndex = findedFavorite
-          //   ? findedFavorite.reposted.indexOf(userInfo._id)
-          //   : null;
-          // if (findedFavorite ? findedFavorite.isReposted : null) {
-          //   const updateUserProfilePosts = () => {
-          //     profilePageFavorites[findedFavoriteIndex].reposted.splice(
-          //       findedFavoriteReposterIndex,
-          //       1
-          //     );
-          //     localStorage.setItem(
-          //       "profileFavorites",
-          //       JSON.stringify(profilePageFavorites)
-          //     );
-          //     setFavorites(profilePageFavorites);
-          //   };
-          //   setTimeout(updateUserProfilePosts, 500);
-          // } else {
-          //   const updateUserProfilePosts = () => {
-          //     profilePageFavorites[findedFavoriteIndex].reposted.splice(
-          //       findedFavoriteReposterIndex,
-          //       1
-          //     );
-          //     localStorage.setItem(
-          //       "profileFavorites",
-          //       JSON.stringify(profilePageFavorites)
-          //     );
-          //     setFavorites(profilePageFavorites);
-          //   };
-          //   setTimeout(updateUserProfilePosts, 500);
-          // }
           console.log("2 WORKS");
           setTimeout(() => {
             handleShowPostsProfilePage();
