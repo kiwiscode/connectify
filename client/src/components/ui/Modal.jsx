@@ -2617,7 +2617,7 @@ function CommentModal({
 }) {
   const [show, setShow] = useState(false);
   const [content, setContent] = useState("");
-  const [modalImage, setModalImage] = useState("");
+  const [commentModalmodalImage, setCommentModalModalImage] = useState("");
   const [error, setError] = useState("");
 
   const [chosenEmoji, setChosenEmoji] = useState(null);
@@ -2627,17 +2627,17 @@ function CommentModal({
   const { userInfo, socket } = useContext(UserContext);
   const maxCharacters = 140;
   //handle and convert it in base 64
-  const handleImage = (e) => {
+  const handleImageCommentModal = (e) => {
     const file = e.target.files[0];
-    setFileToBase(file);
+    setFileToBaseCommentModal(file);
   };
 
-  const setFileToBase = (file) => {
+  const setFileToBaseCommentModal = (file) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
 
     reader.onloadend = () => {
-      setModalImage(reader.result);
+      setCommentModalModalImage(reader.result);
     };
   };
 
@@ -2657,7 +2657,7 @@ function CommentModal({
 
   const handleShow = () => setShow(true);
   const closeImage = () => {
-    setModalImage("");
+    setCommentModalModalImage("");
   };
 
   const handleMouseOver = (e) => {
@@ -2713,18 +2713,11 @@ function CommentModal({
         userId: userInfo._id,
         postId,
         commentPost: content,
-        modalImage,
+        commentModalmodalImage,
       })
       .then((response) => {
-        console.log("Response => ", response);
-        // const mainPagePosts = JSON.parse(localStorage.getItem("mainPagePosts"));
-
-        // mainPagePosts.unshift(response.data.createdPost);
-
-        // localStorage.setItem("mainPagePosts", JSON.stringify(mainPagePosts));
-
         handleClose();
-        setModalImage("");
+        setCommentModalModalImage("");
         setContent("");
         setLoadingTrue();
         setTimeout(() => {
@@ -3242,7 +3235,7 @@ function CommentModal({
               {/* finish to check */}
             </div>
             <div className="p-2">
-              {modalImage && (
+              {commentModalmodalImage && (
                 <div style={{ position: "relative" }}>
                   <div
                     className="target"
@@ -3283,7 +3276,7 @@ function CommentModal({
                       borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
                       boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
                     }}
-                    src={modalImage ? modalImage : ""}
+                    src={commentModalmodalImage ? commentModalmodalImage : ""}
                     alt=""
                   />
                 </div>
@@ -3293,19 +3286,18 @@ function CommentModal({
         </Modal.Body>
         {/* finish to check twitterdaki gibi post içeriği gelecek body içerisine  */}
 
-        <Modal.Footer
-          style={{ border: "none" }}
-          className="post-modal-footer ml-1"
-        >
+        <Modal.Footer style={{ border: "none" }} className="ml-1">
           <Stack direction="horizontal" gap={0}>
             {/* INFO */}
             <div
               className="p-2"
-              onClick={() => document.getElementById("formuploadModal").click()}
+              onClick={() => {
+                console.log("Clicked");
+                document.getElementById("commentModalformuploadModal").click();
+              }}
             >
               <div
                 style={{
-                  // border: "1px solid black",
                   cursor: "pointer",
                   borderRadius: "50%",
                 }}
@@ -3330,43 +3322,15 @@ function CommentModal({
               </div>
 
               <input
-                onChange={handleImage}
+                onChange={handleImageCommentModal}
                 type="file"
-                id="formuploadModal"
-                name="modalImage"
-                className="form-control"
+                id="commentModalformuploadModal"
+                name="commentModalmodalImage"
+                className="form-control-2"
                 style={{ display: "none" }}
               />
             </div>
-            {/* INFO */}
-            {/* <div className="p-2">
-              <div
-                className="svg-border-parent"
-                style={{
-                  // border: "1px solid black",
-                  cursor: "pointer",
-                  borderRadius: "50%",
-                }}
-              >
-                <svg
-                  onClick={() => toggleEmojis()}
-                  color="rgb(29,155,240)"
-                  fill="currentColor"
-                  width={20}
-                  height={20}
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  className="post-modal-emoji-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                  style={{
-                    cursor: "pointer",
-                  }}
-                >
-                  <g>
-                    <path d="M8 9.5C8 8.119 8.672 7 9.5 7S11 8.119 11 9.5 10.328 12 9.5 12 8 10.881 8 9.5zm6.5 2.5c.828 0 1.5-1.119 1.5-2.5S15.328 7 14.5 7 13 8.119 13 9.5s.672 2.5 1.5 2.5zM12 16c-2.224 0-3.021-2.227-3.051-2.316l-1.897.633c.05.15 1.271 3.684 4.949 3.684s4.898-3.533 4.949-3.684l-1.896-.638c-.033.095-.83 2.322-3.053 2.322zm10.25-4.001c0 5.652-4.598 10.25-10.25 10.25S1.75 17.652 1.75 12 6.348 1.75 12 1.75 22.25 6.348 22.25 12zm-2 0c0-4.549-3.701-8.25-8.25-8.25S3.75 7.451 3.75 12s3.701 8.25 8.25 8.25 8.25-3.701 8.25-8.25z"></path>
-                  </g>
-                </svg>
-              </div>
-            </div> */}
+
             <div className="p-2">
               {/* emoji mart start to check */}
 
@@ -3404,7 +3368,7 @@ function CommentModal({
               {/* emoji mart finish to check */}
             </div>
             <div className="p-2 ms-auto">
-              {content !== "" || modalImage ? (
+              {content !== "" || commentModalmodalImage ? (
                 <Button
                   style={{
                     border: "none",

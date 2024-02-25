@@ -901,8 +901,7 @@ function UserProfile() {
                               },
                             }
                           )
-                          .then((response) => {
-                            // delete after unfollow also from localstorage start to check
+                          .then(() => {
                             const userInfoFromLocalStorage = JSON.parse(
                               localStorage.getItem("userInfo")
                             );

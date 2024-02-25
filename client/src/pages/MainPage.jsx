@@ -16,7 +16,6 @@ import axios from "axios";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import ResponsiveNavigationBarTop from "../components/Navbar/ResponsiveNavigationTop";
-// import deleteRepost from "../utils/repostFunctions";
 
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
@@ -313,9 +312,7 @@ function MainPage() {
         },
       })
       .then((response) => {
-        // start to check
         localStorage.setItem("mainPagePosts", JSON.stringify(response.data));
-        // finish to check
 
         getOnlyFollowingPosts();
         setPosts(response.data);

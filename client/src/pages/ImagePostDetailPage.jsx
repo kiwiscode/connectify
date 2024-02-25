@@ -140,7 +140,7 @@ function PostDetailPage() {
       });
   };
 
-  const handlePostLikesPostDetailPage = (postId) => {
+  const handlePostLikesPostDetailPage = (postId, findedPost) => {
     axios
       .post(
         `${API_URL}/favorite`,
@@ -152,67 +152,10 @@ function PostDetailPage() {
         }
       )
       .then(() => {
-        const posts = JSON.parse(localStorage.getItem("mainPagePosts"));
-
-        const findedPost = posts.find((element) => {
-          return element._id === postId;
-        });
-
-        const findedPostIndex = posts.indexOf(findedPost);
-
-        const updateDetailedPosts = () => {
-          // socket io test start to check
+        setTimeout(() => {
+          getImagePostDetail();
           handleNotification(findedPost, userInfo, "liked");
-          // socket io test finish to check
-          // posts[findedPostIndex].likes.unshift(userInfo);
-
-          localStorage.setItem("mainPagePosts", JSON.stringify(posts));
-          if (findedPost.isComment) {
-            const detailedPostComment = detailedPost.comments.find(
-              (eachComment) => {
-                return eachComment.postId === postId;
-              }
-            );
-
-            const detailedPostCommentIndex =
-              detailedPost.comments.indexOf(detailedPostComment);
-
-            setdetailedPost((prevDetailedPost) => {
-              const updatedDetailedPost = { ...prevDetailedPost };
-
-              if (updatedDetailedPost.comments.length > 0) {
-                const targetComment =
-                  updatedDetailedPost.comments[detailedPostCommentIndex];
-
-                if (targetComment) {
-                  targetComment.likes.unshift(userInfo);
-                } else {
-                  updatedDetailedPost.likes.unshift(userInfo);
-                }
-              } else {
-                updatedDetailedPost.likes.unshift(userInfo);
-              }
-
-              return updatedDetailedPost;
-            });
-          } else {
-            setdetailedPost((prevDetailedPost) => {
-              const updatedDetailedPost = { ...prevDetailedPost };
-
-              // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
-              updatedDetailedPost.likes.unshift(userInfo);
-
-              return updatedDetailedPost;
-            });
-            // setcommentedForThisPost(findedPost);
-
-            // setcommentedForThisUsersPost(
-            //   detailedPost.commentedForThisUsersPost
-            // );
-          }
-        };
-
-        setTimeout(updateDetailedPosts, 500);
+        }, 500);
       })
       .catch((error) => {
         if (error.response) {
@@ -588,7 +531,7 @@ function PostDetailPage() {
       });
   };
 
-  const handlePostLikesPostDetailPageCFTUP = (postId) => {
+  const handlePostLikesPostDetailPageCFTUP = (postId, findedPost) => {
     axios
       .post(
         `${API_URL}/favorite`,
@@ -600,51 +543,10 @@ function PostDetailPage() {
         }
       )
       .then(() => {
-        const posts = JSON.parse(localStorage.getItem("mainPagePosts"));
-
-        const findedPost = posts.find((element) => {
-          return element._id === postId;
-        });
-
-        const findedPostIndex = posts.indexOf(findedPost);
-
-        const updateDetailedPosts = () => {
-          // socket io test start to check
+        setTimeout(() => {
+          getImagePostDetail();
           handleNotification(findedPost, userInfo, "liked");
-          // socket io test finish to check
-          // posts[findedPostIndex].likes.unshift(userInfo);
-
-          localStorage.setItem("mainPagePosts", JSON.stringify(posts));
-          if (findedPost.isComment) {
-            setcommentedForThisPost((prevDetailedPost) => {
-              const updatedDetailedPost = { ...prevDetailedPost };
-
-              // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
-              updatedDetailedPost.likes.unshift(userInfo);
-
-              return updatedDetailedPost;
-            });
-          } else {
-            setcommentedForThisPost((prevCommentedForThisPost) => {
-              const updatedCommentedForThisPost = {
-                ...prevCommentedForThisPost,
-              };
-
-              // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
-              updatedCommentedForThisPost.likes.unshift(userInfo);
-
-              return updatedCommentedForThisPost;
-            });
-
-            // setcommentedForThisPost(findedPost);
-
-            // setcommentedForThisUsersPost(
-            //   commentedForThisPost.commentedForThisUsersPost
-            // );
-          }
-        };
-
-        setTimeout(updateDetailedPosts, 500);
+        }, 500);
       })
       .catch((error) => {
         if (error.response) {
@@ -924,7 +826,8 @@ function PostDetailPage() {
       });
     }
   };
-  useEffect(() => {
+
+  const getImagePostDetail = () => {
     axios
       .get(`${API_URL}/${postOwner}/status/${postId}`)
       .then((response) => {
@@ -938,6 +841,10 @@ function PostDetailPage() {
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  useEffect(() => {
+    getImagePostDetail();
   }, []);
 
   const checkIds = (arr) => {
@@ -1278,7 +1185,10 @@ function PostDetailPage() {
                         {" "}
                         <svg
                           onClick={() =>
-                            handlePostLikesPostDetailPage(detailedPost._id)
+                            handlePostLikesPostDetailPage(
+                              detailedPost._id,
+                              detailedPost
+                            )
                           }
                           width={`${1.5}em`}
                           height={`${1.5}em`}
@@ -1309,7 +1219,10 @@ function PostDetailPage() {
                       {" "}
                       <svg
                         onClick={() =>
-                          handlePostLikesPostDetailPage(detailedPost._id)
+                          handlePostLikesPostDetailPage(
+                            detailedPost._id,
+                            detailedPost
+                          )
                         }
                         width={`${1.5}em`}
                         height={`${1.5}em`}
@@ -1883,7 +1796,8 @@ function PostDetailPage() {
                                 <svg
                                   onClick={() =>
                                     handlePostLikesPostDetailPageCFTUP(
-                                      commentedForThisPost._id
+                                      commentedForThisPost._id,
+                                      commentedForThisPost
                                     )
                                   }
                                   width={`${1.25}em`}
@@ -1913,7 +1827,8 @@ function PostDetailPage() {
                               <svg
                                 onClick={() =>
                                   handlePostLikesPostDetailPageCFTUP(
-                                    commentedForThisPost._id
+                                    commentedForThisPost._id,
+                                    commentedForThisPost
                                   )
                                 }
                                 width={`${1.25}em`}
@@ -2472,7 +2387,10 @@ function PostDetailPage() {
                       {" "}
                       <svg
                         onClick={() =>
-                          handlePostLikesPostDetailPage(detailedPost._id)
+                          handlePostLikesPostDetailPage(
+                            detailedPost._id,
+                            detailedPost
+                          )
                         }
                         width={`${1.5}em`}
                         height={`${1.5}em`}
@@ -2498,7 +2416,10 @@ function PostDetailPage() {
                     {" "}
                     <svg
                       onClick={() =>
-                        handlePostLikesPostDetailPage(detailedPost._id)
+                        handlePostLikesPostDetailPage(
+                          detailedPost._id,
+                          detailedPost
+                        )
                       }
                       width={`${1.5}em`}
                       height={`${1.5}em`}
@@ -3032,7 +2953,8 @@ function PostDetailPage() {
                                               // real time notification start to check test
                                               onClick={() =>
                                                 handlePostLikesPostDetailPage(
-                                                  eachComment.postId
+                                                  eachComment.postId,
+                                                  eachComment
                                                 )
                                               }
                                               // real time notification finish to check test
@@ -3609,7 +3531,8 @@ function PostDetailPage() {
                                                 // real time notification start to check test
                                                 onClick={() =>
                                                   handlePostLikesPostDetailPage(
-                                                    eachComment.postId
+                                                    eachComment.postId,
+                                                    eachComment
                                                   )
                                                 }
                                                 // real time notification finish to check test

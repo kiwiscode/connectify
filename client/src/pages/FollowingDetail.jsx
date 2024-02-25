@@ -472,6 +472,31 @@ function FollowingDetailPage() {
                   user._id
                 );
 
+                const handleFollow = (selectedUser) => {
+                  axios
+                    .post(
+                      `${API_URL}/follow`,
+                      {
+                        activeUserId: userInfo._id,
+                        theFollowedUserID: user._id,
+                      },
+                      {
+                        headers: {
+                          Authorization: `Bearer ${getToken()}`,
+                        },
+                      }
+                    )
+                    .then(() => {
+                      setClicked(!clicked);
+                      handleNotification(selectedUser, userInfo, "followed");
+                      setIsHovered(false);
+                      getFollowing();
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                    });
+                };
+
                 const handleUnfollow = (selectedUser) => {
                   axios
                     .post(
@@ -488,94 +513,13 @@ function FollowingDetailPage() {
                       }
                     )
                     .then(() => {
-                      // getActiveUser();
                       setClicked(!clicked);
-                      // delete after unfollow also from localstorage start to check
-                      const userInfoFromLocalStorage = JSON.parse(
-                        localStorage.getItem("userInfo")
-                      );
-
-                      const followedUser =
-                        userInfoFromLocalStorage.following.find(
-                          (eachFollowing) => {
-                            return eachFollowing._id === selectedUser._id;
-                          }
-                        );
-
-                      const followedUserIndex =
-                        userInfoFromLocalStorage.following.indexOf(
-                          followedUser
-                        );
-
-                      userInfoFromLocalStorage.following.splice(
-                        followedUserIndex,
-                        1
-                      );
-
-                      localStorage.setItem(
-                        "userInfo",
-                        JSON.stringify(userInfoFromLocalStorage)
-                      );
-                      // delete after unfollow also from localstorage finish to check
-                      const followings = [...following];
-                      // setTimeout(() => {
-                      const newFollowingArray =
-                        followings.indexOf(selectedUser);
-
-                      if (userId === userInfo._id) {
-                        followings.splice(newFollowingArray, 1);
-                        setFollowing(followings);
-                        setIsHovered(false);
-                      } else {
-                        const filteredArray = followings[
-                          newFollowingArray
-                        ].followers.filter((eachFollower) => {
-                          return eachFollower !== userInfo._id;
-                        });
-                        setFollowing((prevState) => {
-                          const newData = [...prevState];
-
-                          newData[newFollowingArray] = {
-                            ...newData[newFollowingArray],
-                            followers: filteredArray,
-                          };
-
-                          return newData;
-                        });
-                        setIsHovered(false);
-                      }
-
+                      getFollowing();
                       handleClose();
                       // }, 500);
                     })
                     .catch((error) => {
                       console.log("Error =>", error);
-                    });
-                };
-
-                const handleFollow = (selectedUser) => {
-                  axios
-                    .post(
-                      `${API_URL}/follow`,
-                      {
-                        activeUserId: userInfo._id,
-                        theFollowedUserID: user._id,
-                      },
-                      {
-                        headers: {
-                          Authorization: `Bearer ${getToken()}`,
-                        },
-                      }
-                    )
-                    .then(() => {
-                      // getActiveUser();
-                      setClicked(!clicked);
-                      handleNotification(selectedUser, userInfo, "followed");
-
-                      setIsHovered(false);
-                    })
-                    .catch((error) => {
-                      console.log(error);
                     });
                 };
 

@@ -570,10 +570,7 @@ function MessagesPage() {
         },
       })
       .then((response) => {
-        // NOTE UPDATING THE LOCALSTORAGE
-        // start to check
         localStorage.setItem("mainPagePosts", JSON.stringify(response.data));
-        // finish to check
         setPosts(response.data);
       })
       .catch((err) => {

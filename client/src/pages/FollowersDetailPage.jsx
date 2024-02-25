@@ -177,6 +177,7 @@ function FollowerDetailPage() {
         },
       })
       .then((response) => {
+        console.log("Response of get followers() =>", response);
         setfollowersofthemonitoreduser(response.data.user);
         setActiveTab("followers");
         setFollowers(response.data.followers);
@@ -200,6 +201,7 @@ function FollowerDetailPage() {
         },
       })
       .then((response) => {
+        console.log("Get active user() response =>", response);
         setactiveUserFollowing(response.data.user.following);
       })
       .catch((error) => {
@@ -474,72 +476,6 @@ function FollowerDetailPage() {
                     user._id
                   );
 
-                  const handleUnfollow = (selectedUser) => {
-                    axios
-                      .post(
-                        `${API_URL}/unfollow`,
-                        {
-                          activeUserId: userInfo._id,
-                          theUnfollowedUserID: selectedUser._id,
-                        },
-                        {
-                          headers: {
-                            Authorization: `Bearer ${getToken()}`,
-                          },
-                        }
-                      )
-                      .then((response) => {
-                        setClicked(!clicked);
-                        // delete after unfollow also from localstorage start to check
-                        const userInfoFromLocalStorage = JSON.parse(
-                          localStorage.getItem("userInfo")
-                        );
-
-                        const followedUser =
-                          userInfoFromLocalStorage.following.find(
-                            (eachFollowing) => {
-                              return eachFollowing._id === selectedUser._id;
-                            }
-                          );
-
-                        const followedUserIndex =
-                          userInfoFromLocalStorage.following.indexOf(
-                            followedUser
-                          );
-
-                        userInfoFromLocalStorage.following.splice(
-                          followedUserIndex,
-                          1
-                        );
-
-                        localStorage.setItem(
-                          "userInfo",
-                          JSON.stringify(userInfoFromLocalStorage)
-                        );
-                        // delete after unfollow also from localstorage finish to check
-
-                        const followersArrayShallowCopy = [...followers];
-
-                        const unfollowedUserIndex =
-                          followersArrayShallowCopy.indexOf(selectedUser);
-
-                        const activeUserIndex = followersArrayShallowCopy[
-                          unfollowedUserIndex
-                        ].followers.indexOf(userInfo._id);
-
-                        // setTimeout(() => {
-                        setFollowers(followersArrayShallowCopy);
-                        handleClose();
-                        followersArrayShallowCopy[
-                          unfollowedUserIndex
-                        ].followers.splice(activeUserIndex, 1);
-                        // }, 500);
-                      })
-                      .catch((error) => {
-                        console.log("Error =>", error);
-                      });
-                  };
-
                   const handleFollow = (selectedUser) => {
                     axios
                       .post(
@@ -556,33 +492,35 @@ function FollowerDetailPage() {
                       )
                       .then(() => {
                         setClicked(!clicked);
-
-                        handleNotification(user, userInfo, "followed");
-
-                        // change the userInfo who followed user start to check
-                        const userInfoFromLocalStorage = JSON.parse(
-                          localStorage.getItem("userInfo")
-                        );
-                        userInfoFromLocalStorage.following.unshift(user);
-                        localStorage.setItem(
-                          "userInfo",
-                          JSON.stringify(userInfoFromLocalStorage)
-                        );
-                        // change the userInfo who followed user finish to check
-
-                        setTimeout(() => {
-                          const newArr = [...followers];
-                          const findIndexFollowedUser =
-                            followers.indexOf(selectedUser);
-
-                          newArr[findIndexFollowedUser].followers.unshift(
-                            userInfo._id
-                          );
-                          setFollowers(newArr);
-                        }, 500);
+                        handleNotification(selectedUser, userInfo, "followed");
+                        getFollowers();
                       })
                       .catch((error) => {
                         console.log(error);
+                      });
+                  };
+
+                  const handleUnfollow = (selectedUser) => {
+                    axios
+                      .post(
+                        `${API_URL}/unfollow`,
+                        {
+                          activeUserId: userInfo._id,
+                          theUnfollowedUserID: selectedUser._id,
+                        },
+                        {
+                          headers: {
+                            Authorization: `Bearer ${getToken()}`,
+                          },
+                        }
+                      )
+                      .then(() => {
+                        setClicked(!clicked);
+                        getFollowers();
+                        handleClose();
+                      })
+                      .catch((error) => {
+                        console.log("Error =>", error);
                       });
                   };
 
