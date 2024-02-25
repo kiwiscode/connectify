@@ -16,7 +16,7 @@ import axios from "axios";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import ResponsiveNavigationBarTop from "../components/Navbar/ResponsiveNavigationTop";
-import deleteRepost from "../utils/repostFunctions";
+// import deleteRepost from "../utils/repostFunctions";
 
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
@@ -201,10 +201,10 @@ function MainPage() {
         },
       })
       .then((response) => {
-        localStorage.setItem(
-          "followedUsersPosts",
-          JSON.stringify(response.data)
-        );
+        // localStorage.setItem(
+        //   "followedUsersPosts",
+        //   JSON.stringify(response.data)
+        // );
 
         setFollowingPosts(response.data);
       })
@@ -322,6 +322,8 @@ function MainPage() {
         // start to check
         localStorage.setItem("mainPagePosts", JSON.stringify(response.data));
         // finish to check
+
+        getOnlyFollowingPosts();
         setPosts(response.data);
       })
       .catch((err) => {
@@ -354,101 +356,12 @@ function MainPage() {
         }
       )
       .then(() => {
-        const mainPagePosts = JSON.parse(localStorage.getItem("mainPagePosts"));
-        const findedPost = mainPagePosts.find((eachPost) => {
-          return eachPost._id === postId;
-        });
-
-        const findedPostIndex = mainPagePosts.indexOf(findedPost);
-
-        if (findedPost.isReposted) {
-          const originalPostId =
-            mainPagePosts[findedPostIndex].repostedFromThisOriginalPost[0]._id;
-          const originalPost = mainPagePosts.find((eachPost) => {
-            return eachPost._id === originalPostId;
-          });
-          const originalPostIndex = mainPagePosts.indexOf(originalPost);
-
-          const liker = mainPagePosts[originalPostIndex].likes.find(
-            (eachLiker) => {
-              return eachLiker._id === userInfo._id;
-            }
-          );
-
-          const likerIndex =
-            mainPagePosts[originalPostIndex].likes.indexOf(liker);
-
-          const updatePosts = () => {
-            mainPagePosts[findedPostIndex].likes.splice(likerIndex, 1);
-            mainPagePosts[originalPostIndex].likes.splice(likerIndex, 1);
-
-            localStorage.setItem(
-              "mainPagePosts",
-              JSON.stringify(mainPagePosts)
-            );
-            setPosts(mainPagePosts);
-            getOnlyFollowingPosts();
-          };
-
-          setTimeout(updatePosts, 500);
-        } else if (!findedPost.isReposted && findedPost.reposted.length > 0) {
-          const referencePost = mainPagePosts.find((eachPost) => {
-            return eachPost.repostedFromThisOriginalPost[0]
-              ? eachPost.repostedFromThisOriginalPost[0]._id === postId
-              : null;
-          });
-          const referencePostIndex = mainPagePosts.indexOf(referencePost);
-
-          const liker = mainPagePosts[referencePostIndex].likes.find(
-            (eachLiker) => {
-              return eachLiker._id === userInfo._id;
-            }
-          );
-          const likerIndex =
-            mainPagePosts[referencePostIndex].likes.indexOf(liker);
-
-          const updatePosts = () => {
-            mainPagePosts[findedPostIndex].likes.splice(likerIndex);
-            mainPagePosts[referencePostIndex].likes.splice(likerIndex);
-
-            localStorage.setItem(
-              "mainPagePosts",
-              JSON.stringify(mainPagePosts)
-            );
-            // setPosts(mainPagePosts);
-            setLoadingTrue();
-            setLoadingFalse();
-            setError("");
-            handleShowPostsHomePage();
-            getOnlyFollowingPosts();
-          };
-
-          setTimeout(updatePosts, 500);
-        } else if (!findedPost.isReposted && findedPost.reposted.length === 0) {
-          const liker = mainPagePosts[findedPostIndex].likes.find(
-            (eachLiker) => {
-              return eachLiker._id === userInfo._id;
-            }
-          );
-          const likerIndex =
-            mainPagePosts[findedPostIndex].likes.indexOf(liker);
-
-          const updatePosts = () => {
-            mainPagePosts[findedPostIndex].likes.splice(likerIndex, 1);
-
-            localStorage.setItem(
-              "mainPagePosts",
-              JSON.stringify(mainPagePosts)
-            );
-            setPosts(mainPagePosts);
-            getOnlyFollowingPosts();
-          };
-
-          setTimeout(updatePosts, 500);
-        }
+        setTimeout(() => {
+          handleShowPostsHomePage();
+        }, 500);
       })
       .catch((err) => {
-        return err;
+        console.log("Error =>", err);
       });
   };
 
@@ -458,7 +371,7 @@ function MainPage() {
     });
   };
 
-  const handlePostLikesFromHomePage = (postId) => {
+  const handlePostLikesFromHomePage = (postId, findedPost) => {
     setpostId(postId);
 
     axios
@@ -472,81 +385,23 @@ function MainPage() {
         }
       )
       .then(() => {
-        const mainPagePosts = JSON.parse(localStorage.getItem("mainPagePosts"));
-        const findedPost = mainPagePosts.find((eachPost) => {
-          return eachPost._id === postId;
-        });
-        // socket io test start to check
-        handleNotification(findedPost, userInfo, "liked");
-        // socket io test finish to check
-
-        const findedPostIndex = mainPagePosts.indexOf(findedPost);
-
-        if (findedPost.isReposted) {
-          const originalPostId =
-            mainPagePosts[findedPostIndex].repostedFromThisOriginalPost[0]._id;
-          const originalPost = mainPagePosts.find((eachPost) => {
-            return eachPost._id === originalPostId;
-          });
-          const originalPostIndex = mainPagePosts.indexOf(originalPost);
-
-          const updatePosts = () => {
-            mainPagePosts[findedPostIndex].likes.unshift(userInfo);
-            mainPagePosts[originalPostIndex].likes.unshift(userInfo);
-
-            localStorage.setItem(
-              "mainPagePosts",
-              JSON.stringify(mainPagePosts)
-            );
-            setPosts(mainPagePosts);
-            getOnlyFollowingPosts();
-          };
-
-          setTimeout(updatePosts, 500);
-        } else if (!findedPost.isReposted && findedPost.reposted.length > 0) {
-          const referencePost = mainPagePosts.find((eachPost) => {
-            return eachPost.repostedFromThisOriginalPost[0]
-              ? eachPost.repostedFromThisOriginalPost[0]._id === postId
-              : null;
-          });
-          const referencePostIndex = mainPagePosts.indexOf(referencePost);
-
-          const updatePosts = () => {
-            mainPagePosts[findedPostIndex].likes.unshift(userInfo);
-            mainPagePosts[referencePostIndex].likes.unshift(userInfo);
-
-            localStorage.setItem(
-              "mainPagePosts",
-              JSON.stringify(mainPagePosts)
-            );
-            setPosts(mainPagePosts);
-            getOnlyFollowingPosts();
-          };
-
-          setTimeout(updatePosts, 500);
-        } else if (!findedPost.isReposted && findedPost.reposted.length === 0) {
-          const updatePosts = () => {
-            mainPagePosts[findedPostIndex].likes.unshift(userInfo);
-
-            localStorage.setItem(
-              "mainPagePosts",
-              JSON.stringify(mainPagePosts)
-            );
-            setPosts(mainPagePosts);
-            getOnlyFollowingPosts();
-          };
-
-          setTimeout(updatePosts, 500);
-        }
-        // setLoadingTrue();
-        // setLoadingFalse();
-        // setError("");
-        // handleShowPostsHomePage();
+        setTimeout(() => {
+          handleNotification(findedPost, userInfo, "liked");
+          setLoadingTrue();
+          setLoadingFalse();
+          setError("");
+          handleShowPostsHomePage();
+        }, 500);
       })
       .catch((error) => {
-        const { errorMessage } = error.response.data;
+        console.log("Error message =>", error);
 
-        setError(errorMessage);
+        if (error.response.data) {
+          const { errorMessage } = error.response.data;
+          setError(errorMessage);
+        } else {
+          setError(error);
+        }
       });
   };
 
@@ -638,7 +493,7 @@ function MainPage() {
     }
   };
 
-  const handleRepost = (postId) => {
+  const handleRepost = (postId, findedPost) => {
     axios
       .post(
         `${API_URL}/repost`,
@@ -650,28 +505,13 @@ function MainPage() {
         }
       )
       .then(() => {
-        const posts = JSON.parse(localStorage.getItem("mainPagePosts"));
-
-        const findedPost = posts.find((element) => {
-          return element._id === postId;
-        });
-        // socket io test start to check
-        handleNotification(findedPost, userInfo, "repost");
-        // socket io test finish to check
-        const index = posts.indexOf(findedPost);
-
-        const updatePosts = () => {
-          setshouldHide(false);
-          setPosts(posts);
+        setTimeout(() => {
+          handleNotification(findedPost, userInfo, "repost");
+          setLoadingTrue();
+          setLoadingFalse();
+          setError("");
           handleShowPostsHomePage();
-          getOnlyFollowingPosts();
-
-          posts[index].reposted.unshift(userInfo);
-
-          localStorage.setItem("mainPagePosts", JSON.stringify(posts));
-        };
-
-        setTimeout(updatePosts, 500);
+        }, 500);
       })
       .catch((error) => {
         console.log(error);
@@ -679,14 +519,24 @@ function MainPage() {
   };
 
   const handleDeleteRepostMainPage = (postId) => {
-    deleteRepost(
-      JSON.parse(localStorage.getItem("mainPagePosts")),
-      postId,
-      userInfo,
-      getToken,
-      setPosts,
-      getOnlyFollowingPosts
-    );
+    axios
+      .post(
+        `${API_URL}/repost/delete`,
+        { userId: userInfo._id, postId },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then(() => {
+        setTimeout(() => {
+          handleShowPostsHomePage();
+        }, 500);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
   };
 
   const closeImage = () => {
@@ -1766,6 +1616,9 @@ function MainPage() {
                                       width={`${1.25}em`}
                                       height={`${1.25}em`}
                                       refreshPosts={handleShowPostsHomePage}
+                                      setLoadingFalse={setLoadingFalse}
+                                      setLoadingTrue={setLoadingTrue}
+                                      postSharedMessage={postSharedMessage}
                                     />
                                   </div>
                                   <div
@@ -1814,7 +1667,9 @@ function MainPage() {
                                           style={{
                                             cursor: "pointer",
                                           }}
-                                          onClick={() => handleRepost(post._id)}
+                                          onClick={() =>
+                                            handleRepost(post._id, post)
+                                          }
                                           width={`${1.25}em`}
                                           height={`${1.25}em`}
                                           viewBox="0 0 24 24"
@@ -1908,7 +1763,8 @@ function MainPage() {
                                           // real time notification start to check test
                                           onClick={() =>
                                             handlePostLikesFromHomePage(
-                                              post._id
+                                              post._id,
+                                              post
                                             )
                                           }
                                           // real time notification finish to check test
@@ -2553,6 +2409,9 @@ function MainPage() {
                                       width={`${1.25}em`}
                                       height={`${1.25}em`}
                                       refreshPosts={handleShowPostsHomePage}
+                                      setLoadingFalse={setLoadingFalse}
+                                      setLoadingTrue={setLoadingTrue}
+                                      postSharedMessage={postSharedMessage}
                                     />
                                   </div>
                                   <div
@@ -2601,7 +2460,9 @@ function MainPage() {
                                           style={{
                                             cursor: "pointer",
                                           }}
-                                          onClick={() => handleRepost(post._id)}
+                                          onClick={() =>
+                                            handleRepost(post._id, post)
+                                          }
                                           width={`${1.25}em`}
                                           height={`${1.25}em`}
                                           viewBox="0 0 24 24"
@@ -2695,7 +2556,8 @@ function MainPage() {
                                           // real time notification start to check test
                                           onClick={() =>
                                             handlePostLikesFromHomePage(
-                                              post._id
+                                              post._id,
+                                              post
                                             )
                                           }
                                           // real time notification finish to check test
