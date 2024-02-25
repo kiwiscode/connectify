@@ -11,8 +11,9 @@ import {
   Modal,
   Accordion,
 } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LogoutModal, PostModal, CommentModal } from "../components/ui/Modal";
+
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import { Bounce, ToastContainer, toast } from "react-toastify";
@@ -27,62 +28,19 @@ import io from "socket.io-client";
 
 function UserProfile() {
   const socket = io.connect(`${API_URL}`);
-  // rendering page after redirectiring for fetching data without problem ! if you need to fetch data after you redirect or navigate to user to the page (it can work pretty good on your navigation bar)this lines of code is pretty useful
-  // start to check
+
   const navigate = useNavigate();
-  const redirectToMessages = () => {
-    navigate("/messages");
-    window.location.reload();
-  };
 
-  const redirectProfilePage = () => {
-    navigate("/profile");
-    showFollowingFollowersDetail("hide");
-    showMainColumn("");
-    window.location.reload();
-  };
-
-  const redirectHomePage = () => {
-    navigate("/home");
-    // window.location.reload();
-  };
-
-  const redirectSpesificProfilePage = (userId) => {
-    navigate(`/profile/${userId}`);
-    // window.location.reload();
-  };
-
-  const redirectToPostDetailPage = (postOwnerName, postId) => {
-    navigate(`/${postOwnerName}/status/${postId}`);
-    // window.location.reload();
-  };
-
-  const redirectFollowersPage = (userId) => {
-    navigate(`/profile/${userId}/followers`);
-    // window.location.reload();
-  };
-
-  const redirectFollowingPage = (userId) => {
-    navigate(`/profile/${userId}/following`);
-    // window.location.reload();
-  };
-
-  const redirectToImagePostDetailPage = (postOwnerName, postId) => {
-    navigate(`/${postOwnerName}/status/${postId}/photo/1`);
-    // window.location.reload();
-  };
   // finish to check
 
   // use effect to grab current mouse click location start to check
-
   const [clickedPostBox, setclickedPostBox] = useState(null);
-  console.log("Clicked post outside of use effect =>", clickedPostBox);
   useEffect(() => {
+    console.log("Wait for me 1");
     const getClickLocation = (e) => {
       const clickedElementParentClass = e.target.parentNode.className;
       const clickedElementClass = e.target.classList;
-      console.log("target details =>", clickedElementParentClass);
-      console.log("Target class list =>", e.target.classList);
+
       if (
         (clickedElementClass.contains("hover-reposted-text") &&
           clickedElementParentClass !== "post-circle-profile-svg-on-point" &&
@@ -106,16 +64,13 @@ function UserProfile() {
         clickedElementClass.contains("repost-svg-post-box") ||
         clickedElementParentClass === "post-head"
       ) {
-        console.log("Clicked post box inside of use effect =>", clickedPostBox);
-        console.log(
-          "You clicked outside of any actions inside clicked post box"
-        );
         if (clickedPostBox) {
-          redirectToPostDetailPage(
-            clickedPostBox.userId.username,
-            !clickedPostBox.isReposted
-              ? clickedPostBox._id
-              : clickedPostBox.repostedFromThisOriginalPost[0]._id
+          navigate(
+            `/${clickedPostBox.userId.username}/status/${
+              !clickedPostBox.isReposted
+                ? clickedPostBox._id
+                : clickedPostBox.repostedFromThisOriginalPost[0]._id
+            }`
           );
         }
       }
@@ -162,7 +117,6 @@ function UserProfile() {
           <>
             <Link
               to={`/${postOwner}/status/${postId}`}
-              onClick={() => redirectToPostDetailPage(postOwner, postId)}
               style={{
                 color: "white",
                 marginLeft: "5px",
@@ -186,6 +140,8 @@ function UserProfile() {
 
   // socket io 4 client start to check
   useEffect(() => {
+    console.log("Wait for me 2");
+
     socket.on("socket_id_for_user", (socketId) => {
       localStorage.setItem("socketId", socketId);
     });
@@ -195,6 +151,7 @@ function UserProfile() {
   // socket io 4 client finish to check
 
   useEffect(() => {
+    console.log("Wait for me 3");
     socket.on("getNotification", (data) => {
       console.log("Data =>", data);
       if (data.senderName !== userInfo.username) {
@@ -271,8 +228,6 @@ function UserProfile() {
       });
   };
 
-  console.log("User rendered favorites =>", favorites);
-
   const checkIfAllFavoritesFromDeactivatedUser = () => {
     return favorites.map((eachFavorite) => {
       return eachFavorite.deactivatedOwner;
@@ -283,9 +238,8 @@ function UserProfile() {
     (item) => item === false
   );
 
-  console.log(hasFalse);
-
   const handleGoBack = () => {
+    console.log("Go one page back !");
     navigate(-1);
   };
 
@@ -472,13 +426,11 @@ function UserProfile() {
       )
       .then(() => {
         if (postsWindow === "hide") {
-          console.log("1 WORKS");
           setTimeout(() => {
             handleGetFavorites();
             handleNotification(findedPost, userInfo, "repost");
           }, 500);
         } else if (favoriteWindow === "hide") {
-          console.log("2 WORKS");
           setTimeout(() => {
             handleShowPostsProfilePage();
             handleNotification(findedPost, userInfo, "repost");
@@ -505,13 +457,11 @@ function UserProfile() {
       )
       .then(() => {
         if (postsWindow === "hide") {
-          console.log("1 WORKS");
           setTimeout(() => {
             handleGetFavorites();
           }, 500);
         }
         if (favoriteWindow === "hide") {
-          console.log("2 WORKS");
           setTimeout(() => {
             handleShowPostsProfilePage();
           }, 500);
@@ -579,6 +529,8 @@ function UserProfile() {
   };
 
   useEffect(() => {
+    console.log("Wait for me 4");
+
     if (postsWindow === "hide") {
       handleGetFavorites();
     } else if (favoriteWindow === "hide") {
@@ -610,6 +562,7 @@ function UserProfile() {
       flex: 1,
       textAlign: "center",
       transition: "background 0.3s",
+      textDecoration: "none",
     };
   };
 
@@ -628,6 +581,8 @@ function UserProfile() {
   const [activeUserFollowing, setactiveUserFollowing] = useState([]);
   const [activeUserFollowers, setactiveUserFollowers] = useState([]);
   useEffect(() => {
+    console.log("Wait for me 5");
+
     axios
       .get(`${API_URL}/profile`, {
         headers: {
@@ -692,7 +647,7 @@ function UserProfile() {
               </Link>
 
               <div className="inner-div inner-div-fonts">
-                <Link to="/home" onClick={redirectHomePage}>
+                <Link to="/home">
                   <div className="home">
                     <div>
                       <svg
@@ -733,7 +688,7 @@ function UserProfile() {
                 </Link>
                 {/* finish to check notification component place  */}
 
-                <Link to="/messages" onClick={redirectToMessages}>
+                <Link to="/messages">
                   <div className="messages">
                     <div>
                       <svg
@@ -752,7 +707,7 @@ function UserProfile() {
                   </div>
                 </Link>
 
-                <Link to={"/profile"} onClick={redirectProfilePage}>
+                <Link to={"/profile"}>
                   <div className="profile">
                     <div>
                       <svg
@@ -833,7 +788,6 @@ function UserProfile() {
                   </g>
                 </svg>
               </div>
-
               {/* finish to check  */}
 
               <div
@@ -855,18 +809,18 @@ function UserProfile() {
                 padding: "16px 0px 16px 0px",
               }}
             >
-              <span
-                onClick={redirectFollowersPage}
+              <Link
+                to={`/profile/${userInfo._id}/followers`}
                 style={getTabStyle("followers")}
               >
                 Followers
-              </span>
-              <span
-                onClick={redirectFollowingPage}
+              </Link>
+              <Link
+                to={`/profile/${userInfo._id}/following`}
                 style={getTabStyle("following")}
               >
                 Following
-              </span>
+              </Link>
             </div>
 
             <Row
@@ -1660,7 +1614,6 @@ function UserProfile() {
                     {/* following and followers details start to check  */}
                     <Link
                       to={`/profile/${userInfo._id}/following`}
-                      onClick={() => redirectFollowingPage(userInfo._id)}
                       style={{ textDecoration: "none", color: "black" }}
                       className="following-followers-link"
                     >
@@ -1689,7 +1642,6 @@ function UserProfile() {
                     </Link>
                     <Link
                       to={`/profile/${userInfo._id}/followers`}
-                      onClick={() => redirectFollowersPage(userInfo._id)}
                       className="following-followers-link"
                       style={{ textDecoration: "none", color: "black" }}
                     >
@@ -1783,7 +1735,9 @@ function UserProfile() {
 
             <span>
               {isLoading && favoriteWindow === "hide" ? (
-                <LoadingSpinner></LoadingSpinner>
+                <LoadingSpinner
+                  strokeColor={"rgb(29, 155, 240)"}
+                ></LoadingSpinner>
               ) : (
                 ""
               )}
@@ -1797,7 +1751,7 @@ function UserProfile() {
                     <div className="each-post" key={post._id}>
                       {post.deactivatedOwner ? null : (
                         <>
-                          <Link
+                          <div
                             style={{
                               textDecoration: "none",
                             }}
@@ -1868,11 +1822,6 @@ function UserProfile() {
                                 {post.userId.imageUrl.slice(0, 3) !== "../" ? (
                                   <Link
                                     className="post-circle-profile-image-on-point"
-                                    onClick={() =>
-                                      redirectSpesificProfilePage(
-                                        post.userId._id
-                                      )
-                                    }
                                     style={{ cursor: "pointer" }}
                                     to={`/profile/${
                                       post ? post.userId._id : null
@@ -1891,11 +1840,6 @@ function UserProfile() {
                                 ) : (
                                   <Link
                                     className="post-circle-profile-svg-on-point"
-                                    onClick={() =>
-                                      redirectSpesificProfilePage(
-                                        post.userId._id
-                                      )
-                                    }
                                     to={`/profile/${
                                       post.userId ? post.userId._id : null
                                     }`}
@@ -1927,11 +1871,6 @@ function UserProfile() {
                                   <>
                                     <Link
                                       className="post-circle-postowner-fullname"
-                                      onClick={() =>
-                                        redirectSpesificProfilePage(
-                                          post.userId._id
-                                        )
-                                      }
                                       to={`/profile/${post.userId._id}`}
                                       style={{
                                         textDecoration: "none",
@@ -1970,11 +1909,6 @@ function UserProfile() {
                                       </span>{" "}
                                     </span>
                                     <Link
-                                      onClick={() =>
-                                        redirectSpesificProfilePage(
-                                          post.userId._id
-                                        )
-                                      }
                                       to={`/profile/${post.userId._id}`}
                                       style={{
                                         textDecoration: "none",
@@ -1989,16 +1923,6 @@ function UserProfile() {
                                       </span>
                                     </Link>
                                     <Link
-                                      onClick={() =>
-                                        redirectToPostDetailPage(
-                                          post.userId.username,
-                                          !post.isReposted
-                                            ? post._id
-                                            : post
-                                                .repostedFromThisOriginalPost[0]
-                                                ._id
-                                        )
-                                      }
                                       style={{
                                         textDecoration: "none",
                                       }}
@@ -2128,11 +2052,6 @@ function UserProfile() {
                                   >
                                     <span
                                       className="replying-to-text"
-                                      onClick={() =>
-                                        redirectSpesificProfilePage(
-                                          post.commentedForThisUsersPost._id
-                                        )
-                                      }
                                       style={{
                                         color: "rgb(29, 155, 240)",
                                         cursor: "pointer",
@@ -2153,14 +2072,6 @@ function UserProfile() {
                                     ? post._id
                                     : post.repostedFromThisOriginalPost[0]._id
                                 }`}
-                                onClick={() =>
-                                  redirectToPostDetailPage(
-                                    post.userId.username,
-                                    !post.isReposted
-                                      ? post._id
-                                      : post.repostedFromThisOriginalPost[0]._id
-                                  )
-                                }
                                 style={{
                                   textDecoration: "none",
                                   color: "rgb(15, 20, 25)",
@@ -2186,15 +2097,6 @@ function UserProfile() {
                             {post.image.url !== "image@url" ? (
                               <>
                                 <Link
-                                  onClick={() =>
-                                    redirectToImagePostDetailPage(
-                                      post.userId.username,
-                                      !post.isReposted
-                                        ? post._id
-                                        : post.repostedFromThisOriginalPost[0]
-                                            ._id
-                                    )
-                                  }
                                   to={`/${post.userId.username}/status/${
                                     !post.isReposted
                                       ? post._id
@@ -2396,7 +2298,7 @@ function UserProfile() {
                               </div>
                             </Stack>
                             {/* new version favorite repost comment finish to check */}
-                          </Link>
+                          </div>
                           <div
                             style={{
                               borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
@@ -2480,7 +2382,7 @@ function UserProfile() {
                     <div className="each-post" key={favorite._id}>
                       {favorite.deactivatedOwner ? null : (
                         <>
-                          <Link
+                          <div
                             style={{
                               textDecoration: "none",
                             }}
@@ -2511,11 +2413,6 @@ function UserProfile() {
                                   "../" ? (
                                     <Link
                                       className="post-circle-profile-image-on-point"
-                                      onClick={() =>
-                                        redirectSpesificProfilePage(
-                                          favorite.userId._id
-                                        )
-                                      }
                                       style={{ cursor: "pointer" }}
                                       to={`/profile/${
                                         favorite ? favorite.userId._id : null
@@ -2532,11 +2429,6 @@ function UserProfile() {
                                   ) : (
                                     <Link
                                       className="post-circle-profile-svg-on-point"
-                                      onClick={() =>
-                                        redirectSpesificProfilePage(
-                                          favorite.userId._id
-                                        )
-                                      }
                                       to={`/profile/${
                                         favorite.userId
                                           ? favorite.userId._id
@@ -2567,11 +2459,6 @@ function UserProfile() {
                                     <>
                                       <Link
                                         className="post-circle-postowner-fullname"
-                                        onClick={() =>
-                                          redirectSpesificProfilePage(
-                                            favorite.userId._id
-                                          )
-                                        }
                                         to={`/profile/${favorite.userId._id}`}
                                         style={{
                                           textDecoration: "none",
@@ -2610,11 +2497,6 @@ function UserProfile() {
                                         </span>{" "}
                                       </span>
                                       <Link
-                                        onClick={() =>
-                                          redirectSpesificProfilePage(
-                                            favorite.userId._id
-                                          )
-                                        }
                                         to={`/profile/${favorite.userId._id}`}
                                         style={{
                                           textDecoration: "none",
@@ -2631,16 +2513,6 @@ function UserProfile() {
                                         </span>
                                       </Link>
                                       <Link
-                                        onClick={() =>
-                                          redirectToPostDetailPage(
-                                            favorite.userId.username,
-                                            !favorite.isReposted
-                                              ? favorite._id
-                                              : favorite
-                                                  .repostedFromThisOriginalPost[0]
-                                                  ._id
-                                          )
-                                        }
                                         style={{
                                           textDecoration: "none",
                                         }}
@@ -2747,15 +2619,6 @@ function UserProfile() {
                               gap={1}
                             >
                               <Link
-                                onClick={() =>
-                                  redirectToPostDetailPage(
-                                    favorite.userId.username,
-                                    !favorite.isReposted
-                                      ? favorite._id
-                                      : favorite.repostedFromThisOriginalPost[0]
-                                          ._id
-                                  )
-                                }
                                 style={{
                                   textDecoration: "none",
                                   color: "rgb(15, 20, 25)",
@@ -2787,15 +2650,6 @@ function UserProfile() {
                             {favorite.image.url !== "image@url" ? (
                               <>
                                 <Link
-                                  onClick={() =>
-                                    redirectToImagePostDetailPage(
-                                      favorite.userId.username,
-                                      !favorite.isReposted
-                                        ? favorite._id
-                                        : favorite
-                                            .repostedFromThisOriginalPost[0]._id
-                                    )
-                                  }
                                   to={`/${favorite.userId.username}/status/${
                                     !favorite.isReposted
                                       ? favorite._id
@@ -3022,7 +2876,7 @@ function UserProfile() {
                               </div>
                             </Stack>
                             {/* new version favorite repost comment finish to check */}
-                          </Link>
+                          </div>
                           <div
                             style={{
                               borderBottom: "1px solid rgba(0, 0, 0, 0.1)",

@@ -36,11 +36,6 @@ function ChatDetailsPage() {
   const [showEmojisBar, setshowEmojisBar] = useState("hide");
   const [showSecondModal, setShowSecondModal] = useState(false);
 
-  const redirectToPostDetailPage = (postOwner, postId) => {
-    navigate(`/${postOwner}/status/${postId}`);
-    // window.location.reload();
-  };
-
   // start to check shared post view message
   const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
 
@@ -61,7 +56,6 @@ function ChatDetailsPage() {
           <>
             <Link
               to={`/${postOwner}/status/${postId}`}
-              onClick={() => redirectToPostDetailPage(postOwner, postId)}
               style={{
                 color: "white",
                 marginLeft: "5px",
@@ -83,28 +77,7 @@ function ChatDetailsPage() {
   const [notificationText, setnotificationText] = useState([]);
   // socket io 1 client finish to check
 
-  // start to check
   const navigate = useNavigate();
-  const redirectToMessages = () => {
-    navigate("/messages");
-    window.location.reload();
-  };
-
-  const redirectProfilePage = () => {
-    navigate("/profile");
-    window.location.reload();
-  };
-
-  const redirectHomePage = () => {
-    navigate("/home");
-    window.location.reload();
-  };
-
-  const redirectSpesificProfilePage = (userId) => {
-    navigate(`/profile/${userId}`);
-    window.location.reload();
-  };
-  // finish to check
 
   // socket io 4 client start to check
   useEffect(() => {
@@ -353,7 +326,7 @@ function ChatDetailsPage() {
               </Link>
 
               <div className="inner-div inner-div-fonts">
-                <Link onClick={redirectHomePage} to="/home">
+                <Link to="/home">
                   <div className="home">
                     <div>
                       <svg
@@ -394,9 +367,7 @@ function ChatDetailsPage() {
                 </Link>
                 {/* finish to check notification component place  */}
 
-                {/* start to check redirect to the correct component for messages */}
-
-                <Link to="/messages" onClick={redirectToMessages}>
+                <Link to="/messages">
                   <div className="messages">
                     <div>
                       <svg
@@ -414,9 +385,8 @@ function ChatDetailsPage() {
                     </div>
                   </div>
                 </Link>
-                {/* finish to check redirect to the correct component for messages */}
 
-                <Link onClick={redirectProfilePage} to="/profile">
+                <Link to="/profile">
                   <div className="profile">
                     <div>
                       <svg
@@ -465,7 +435,6 @@ function ChatDetailsPage() {
                 <>
                   <Stack direction="horizontal" gap={3}>
                     <div
-                      onClick={redirectToMessages}
                       className="p-2 arrow"
                       style={{
                         position: "relative",
@@ -527,9 +496,6 @@ function ChatDetailsPage() {
 
                   <Link
                     style={{ textDecoration: "none", color: "black" }}
-                    onClick={() =>
-                      redirectSpesificProfilePage(selectedUser[0]._id)
-                    }
                     to={`/profile/${selectedUser[0]._id}`}
                   >
                     <div className="message-detail-user-card">

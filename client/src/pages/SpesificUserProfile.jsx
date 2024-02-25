@@ -29,48 +29,9 @@ function SpesificUserProfile() {
   const socket = io.connect(`${API_URL}`);
 
   const { id } = useParams();
-  // start to check
+
   const navigate = useNavigate();
-  const redirectToMessages = () => {
-    navigate("/messages");
-    window.location.reload();
-  };
 
-  const redirectProfilePage = () => {
-    navigate("/profile");
-    // window.location.reload();
-  };
-
-  const redirectHomePage = () => {
-    navigate("/home");
-    // window.location.reload();
-  };
-
-  const redirectSpesificProfilePage = (userId) => {
-    navigate(`/profile/${userId}`);
-    // window.location.reload();
-  };
-
-  const redirectToPostDetailPage = (postOwnerName, postId) => {
-    navigate(`/${postOwnerName}/status/${postId}`);
-    // window.location.reload();
-  };
-
-  const redirectFollowersPage = (userId) => {
-    navigate(`/profile/${userId}/followers`);
-    // window.location.reload();
-  };
-
-  const redirectFollowingPage = (userId) => {
-    navigate(`/profile/${userId}/following`);
-    // window.location.reload();
-  };
-
-  const redirectToImagePostDetailPage = (postOwnerName, postId) => {
-    navigate(`/${postOwnerName}/status/${postId}/photo/1`);
-    // window.location.reload();
-  };
-  // finish to check
   // const { getToken, userInfo, socket } = useContext(UserContext);
 
   // use effect to grab current mouse click location start to check
@@ -111,11 +72,12 @@ function SpesificUserProfile() {
           "You clicked outside of any actions inside clicked post box"
         );
         if (clickedPostBox) {
-          redirectToPostDetailPage(
-            clickedPostBox.userId.username,
-            !clickedPostBox.isReposted
-              ? clickedPostBox._id
-              : clickedPostBox.repostedFromThisOriginalPost[0]._id
+          navigate(
+            `/½${clickedPostBox.userId.username}/status/${
+              !clickedPostBox.isReposted
+                ? clickedPostBox._id
+                : clickedPostBox.repostedFromThisOriginalPost[0]._id
+            }`
           );
         }
       }
@@ -169,7 +131,6 @@ function SpesificUserProfile() {
           <>
             <Link
               to={`/${postOwner}/status/${postId}`}
-              onClick={() => redirectToPostDetailPage(postOwner, postId)}
               style={{
                 color: "white",
                 marginLeft: "5px",
@@ -815,7 +776,7 @@ function SpesificUserProfile() {
                 </div>
               </Link>
               <div className="inner-div inner-div-fonts">
-                <Link to="/home" onClick={redirectHomePage}>
+                <Link to="/home">
                   <div className="home">
                     <div>
                       <svg
@@ -857,7 +818,7 @@ function SpesificUserProfile() {
 
                 {/* finish to check notification component place  */}
 
-                <Link to="/messages" onClick={redirectToMessages}>
+                <Link to="/messages">
                   <div className="messages">
                     <div>
                       <svg
@@ -876,7 +837,7 @@ function SpesificUserProfile() {
                   </div>
                 </Link>
 
-                <Link to="/profile" onClick={redirectProfilePage}>
+                <Link to="/profile">
                   <div className="profile">
                     <div>
                       <svg
@@ -1247,7 +1208,6 @@ function SpesificUserProfile() {
                     <Link
                       to={`/profile/${profileInfo._id}/following`}
                       className="following-followers-link"
-                      onClick={() => redirectFollowingPage(profileInfo._id)}
                       style={{
                         textDecoration: "none",
                         color: "black",
@@ -1278,7 +1238,6 @@ function SpesificUserProfile() {
                     <Link
                       to={`/profile/${profileInfo._id}/followers`}
                       className="following-followers-link"
-                      onClick={() => redirectFollowersPage(profileInfo._id)}
                       style={{
                         textDecoration: "none",
                         color: "black",
@@ -1377,7 +1336,9 @@ function SpesificUserProfile() {
               {isLoading &&
               userInfo._id === profileInfo._id &&
               favoriteWindow === "hide" ? (
-                <LoadingSpinner></LoadingSpinner>
+                <LoadingSpinner
+                  strokeColor={"rgb(29, 155, 240)"}
+                ></LoadingSpinner>
               ) : (
                 ""
               )}
@@ -1392,7 +1353,7 @@ function SpesificUserProfile() {
                     <div className="each-post" key={post._id}>
                       {post.deactivatedOwner ? null : (
                         <>
-                          <Link
+                          <div
                             style={{
                               textDecoration: "none",
                             }}
@@ -1515,11 +1476,6 @@ function SpesificUserProfile() {
                                 {post.userId.imageUrl.slice(0, 3) !== "../" ? (
                                   <Link
                                     className="post-circle-profile-image-on-point"
-                                    onClick={() =>
-                                      redirectSpesificProfilePage(
-                                        post.userId._id
-                                      )
-                                    }
                                     style={{ cursor: "pointer" }}
                                     to={`/profile/${
                                       post ? post.userId._id : null
@@ -1538,11 +1494,6 @@ function SpesificUserProfile() {
                                 ) : (
                                   <Link
                                     className="post-circle-profile-svg-on-point"
-                                    onClick={() =>
-                                      redirectSpesificProfilePage(
-                                        post.userId._id
-                                      )
-                                    }
                                     to={`/profile/${
                                       post.userId ? post.userId._id : null
                                     }`}
@@ -1572,11 +1523,6 @@ function SpesificUserProfile() {
                                   <>
                                     <Link
                                       className="post-circle-postowner-fullname"
-                                      onClick={() =>
-                                        redirectSpesificProfilePage(
-                                          post.userId._id
-                                        )
-                                      }
                                       to={`/profile/${post.userId._id}`}
                                       style={{
                                         textDecoration: "none",
@@ -1615,11 +1561,6 @@ function SpesificUserProfile() {
                                       </span>{" "}
                                     </span>
                                     <Link
-                                      onClick={() =>
-                                        redirectSpesificProfilePage(
-                                          post.userId._id
-                                        )
-                                      }
                                       to={`/profile/${post.userId._id}`}
                                       style={{
                                         textDecoration: "none",
@@ -1634,16 +1575,6 @@ function SpesificUserProfile() {
                                       </span>
                                     </Link>
                                     <Link
-                                      onClick={() =>
-                                        redirectToPostDetailPage(
-                                          post.userId.username,
-                                          !post.isReposted
-                                            ? post._id
-                                            : post
-                                                .repostedFromThisOriginalPost[0]
-                                                ._id
-                                        )
-                                      }
                                       style={{
                                         textDecoration: "none",
                                       }}
@@ -1776,11 +1707,6 @@ function SpesificUserProfile() {
                                   >
                                     <span
                                       className="replying-to-text"
-                                      onClick={() =>
-                                        redirectSpesificProfilePage(
-                                          post.commentedForThisUsersPost._id
-                                        )
-                                      }
                                       style={{
                                         color: "rgb(29, 155, 240)",
                                         cursor: "pointer",
@@ -1795,14 +1721,6 @@ function SpesificUserProfile() {
                                 </div>
                               ) : null}
                               <Link
-                                onClick={() =>
-                                  redirectToPostDetailPage(
-                                    post.userId.username,
-                                    !post.isReposted
-                                      ? post._id
-                                      : post.repostedFromThisOriginalPost[0]._id
-                                  )
-                                }
                                 style={{
                                   textDecoration: "none",
                                   color: "rgb(15, 20, 25)",
@@ -1835,15 +1753,6 @@ function SpesificUserProfile() {
                             {post.image.url !== "image@url" ? (
                               <>
                                 <Link
-                                  onClick={() =>
-                                    redirectToImagePostDetailPage(
-                                      post.userId.username,
-                                      !post.isReposted
-                                        ? post._id
-                                        : post.repostedFromThisOriginalPost[0]
-                                            ._id
-                                    )
-                                  }
                                   to={`/${post.userId.username}/status/${
                                     !post.isReposted
                                       ? post._id
@@ -2050,7 +1959,7 @@ function SpesificUserProfile() {
                               </div>
                             </Stack>
                             {/* new version favorite repost comment finish to check */}
-                          </Link>
+                          </div>
                           <div
                             style={{
                               borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
@@ -2142,7 +2051,7 @@ function SpesificUserProfile() {
                       <div className="each-post" key={favorite._id}>
                         {favorite.deactivatedOwner ? null : (
                           <>
-                            <Link
+                            <div
                               style={{
                                 textDecoration: "none",
                               }}
@@ -2173,11 +2082,6 @@ function SpesificUserProfile() {
                                     "../" ? (
                                       <Link
                                         className="post-circle-profile-image-on-point"
-                                        onClick={() =>
-                                          redirectSpesificProfilePage(
-                                            favorite.userId._id
-                                          )
-                                        }
                                         style={{ cursor: "pointer" }}
                                         to={`/profile/${
                                           favorite ? favorite.userId._id : null
@@ -2194,11 +2098,6 @@ function SpesificUserProfile() {
                                     ) : (
                                       <Link
                                         className="post-circle-profile-svg-on-point"
-                                        onClick={() =>
-                                          redirectSpesificProfilePage(
-                                            favorite.userId._id
-                                          )
-                                        }
                                         to={`/profile/${
                                           favorite.userId
                                             ? favorite.userId._id
@@ -2229,11 +2128,6 @@ function SpesificUserProfile() {
                                       <>
                                         <Link
                                           className="post-circle-postowner-fullname"
-                                          onClick={() =>
-                                            redirectSpesificProfilePage(
-                                              favorite.userId._id
-                                            )
-                                          }
                                           to={`/profile/${favorite.userId._id}`}
                                           style={{
                                             textDecoration: "none",
@@ -2272,11 +2166,6 @@ function SpesificUserProfile() {
                                           </span>{" "}
                                         </span>
                                         <Link
-                                          onClick={() =>
-                                            redirectSpesificProfilePage(
-                                              favorite.userId._id
-                                            )
-                                          }
                                           to={`/profile/${favorite.userId._id}`}
                                           style={{
                                             textDecoration: "none",
@@ -2293,16 +2182,6 @@ function SpesificUserProfile() {
                                           </span>
                                         </Link>
                                         <Link
-                                          onClick={() =>
-                                            redirectToPostDetailPage(
-                                              favorite.userId.username,
-                                              !favorite.isReposted
-                                                ? favorite._id
-                                                : favorite
-                                                    .repostedFromThisOriginalPost[0]
-                                                    ._id
-                                            )
-                                          }
                                           style={{
                                             textDecoration: "none",
                                           }}
@@ -2413,15 +2292,6 @@ function SpesificUserProfile() {
                                 gap={1}
                               >
                                 <Link
-                                  onClick={() =>
-                                    redirectToPostDetailPage(
-                                      favorite.userId.username,
-                                      !favorite.isReposted
-                                        ? favorite._id
-                                        : favorite
-                                            .repostedFromThisOriginalPost[0]._id
-                                    )
-                                  }
                                   style={{
                                     textDecoration: "none",
                                     color: "rgb(15, 20, 25)",
@@ -2453,16 +2323,6 @@ function SpesificUserProfile() {
                               {favorite.image.url !== "image@url" ? (
                                 <>
                                   <Link
-                                    onClick={() =>
-                                      redirectToImagePostDetailPage(
-                                        favorite.userId.username,
-                                        !favorite.isReposted
-                                          ? favorite._id
-                                          : favorite
-                                              .repostedFromThisOriginalPost[0]
-                                              ._id
-                                      )
-                                    }
                                     to={`/${favorite.userId.username}/status/${
                                       !favorite.isReposted
                                         ? favorite._id
@@ -2689,7 +2549,7 @@ function SpesificUserProfile() {
                                 </div>
                               </Stack>
                               {/* new version favorite repost comment finish to check */}
-                            </Link>
+                            </div>
                             <div
                               style={{
                                 borderBottom: "1px solid rgba(0, 0, 0, 0.1)",

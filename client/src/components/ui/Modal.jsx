@@ -2039,7 +2039,6 @@ function LogoutModal() {
           ) : null}
           {/* change password inputs finish to check  */}
 
-          {/* deactivate user steps from navigation bar redirection start to check  */}
           {tabIndexThird === 2 ? (
             <div
               style={{
@@ -2127,8 +2126,6 @@ function LogoutModal() {
             </div>
           ) : null}
         </Modal.Body>
-
-        {/* deactivate user steps from navigation bar redirection finish to check  */}
       </Modal>
 
       {/* settings and privacy modal finish to check  */}
@@ -2617,7 +2614,6 @@ function CommentModal({
 }) {
   const [show, setShow] = useState(false);
   const [content, setContent] = useState("");
-  const [commentModalmodalImage, setCommentModalModalImage] = useState("");
   const [error, setError] = useState("");
 
   const [chosenEmoji, setChosenEmoji] = useState(null);
@@ -2626,18 +2622,24 @@ function CommentModal({
 
   const { userInfo, socket } = useContext(UserContext);
   const maxCharacters = 140;
+
+  const [modalImage, setModalImage] = useState("");
+
   //handle and convert it in base 64
-  const handleImageCommentModal = (e) => {
+  const handleImage = (e) => {
     const file = e.target.files[0];
-    setFileToBaseCommentModal(file);
+    console.log("FILE FROM MODAL.JSX =>", file);
+    setFileToBase(file);
+    console.log(file);
   };
 
-  const setFileToBaseCommentModal = (file) => {
+  const setFileToBase = (file) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
+    console.log("SET FILE TO BASE FILE FROM MODAL.JSX =>", file);
 
     reader.onloadend = () => {
-      setCommentModalModalImage(reader.result);
+      setModalImage(reader.result);
     };
   };
 
@@ -2657,7 +2659,7 @@ function CommentModal({
 
   const handleShow = () => setShow(true);
   const closeImage = () => {
-    setCommentModalModalImage("");
+    setModalImage("");
   };
 
   const handleMouseOver = (e) => {
@@ -2713,11 +2715,11 @@ function CommentModal({
         userId: userInfo._id,
         postId,
         commentPost: content,
-        commentModalmodalImage,
+        modalImage,
       })
       .then((response) => {
         handleClose();
-        setCommentModalModalImage("");
+        setModalImage("");
         setContent("");
         setLoadingTrue();
         setTimeout(() => {
@@ -3235,7 +3237,7 @@ function CommentModal({
               {/* finish to check */}
             </div>
             <div className="p-2">
-              {commentModalmodalImage && (
+              {modalImage && (
                 <div style={{ position: "relative" }}>
                   <div
                     className="target"
@@ -3276,7 +3278,7 @@ function CommentModal({
                       borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
                       boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
                     }}
-                    src={commentModalmodalImage ? commentModalmodalImage : ""}
+                    src={modalImage ? modalImage : ""}
                     alt=""
                   />
                 </div>
@@ -3289,19 +3291,21 @@ function CommentModal({
         <Modal.Footer style={{ border: "none" }} className="ml-1">
           <Stack direction="horizontal" gap={0}>
             {/* INFO */}
+
+            {/* comment modal svg start to check  */}
             <div
-              className="p-2"
+              className="p-2 image-choose-p-2"
               onClick={() => {
-                console.log("Clicked");
-                document.getElementById("commentModalformuploadModal").click();
+                document.getElementById("formuploadModal").click();
               }}
             >
               <div
                 style={{
+                  // border: "1px solid black",
                   cursor: "pointer",
                   borderRadius: "50%",
                 }}
-                className="svg-border-parent"
+                className="svg-border-parent svg-border-parent-image-choose"
               >
                 <svg
                   style={{
@@ -3322,18 +3326,18 @@ function CommentModal({
               </div>
 
               <input
-                onChange={handleImageCommentModal}
+                onChange={handleImage}
                 type="file"
-                id="commentModalformuploadModal"
-                name="commentModalmodalImage"
-                className="form-control-2"
+                id="formuploadModal"
+                name="modalImage"
+                className="form-control"
                 style={{ display: "none" }}
               />
             </div>
+            {/* comment modal svg finish to check  */}
 
+            {/* emoji mart start to check */}
             <div className="p-2">
-              {/* emoji mart start to check */}
-
               <OverlayTrigger
                 trigger="click"
                 placement="bottom"
@@ -3368,7 +3372,7 @@ function CommentModal({
               {/* emoji mart finish to check */}
             </div>
             <div className="p-2 ms-auto">
-              {content !== "" || commentModalmodalImage ? (
+              {content !== "" || modalImage ? (
                 <Button
                   style={{
                     border: "none",

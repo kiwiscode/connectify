@@ -2,7 +2,7 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { Container, Row, Col, Stack, Accordion } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { PostModal, LogoutModal, CommentModal } from "../components/ui/Modal";
+
 import { UserContext } from "../context/UserContext";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import CustomNotification from "../components/Notifications/CustomNotification";
@@ -14,6 +14,7 @@ const API_URL = "http://localhost:3000";
 // when working on deployment version
 // ?
 import io from "socket.io-client";
+import { CommentModal } from "../components/ui/Modal";
 
 function PostDetailPage() {
   const socket = io.connect(`${API_URL}`);
@@ -87,24 +88,7 @@ function PostDetailPage() {
     });
   }, [socket]);
 
-  // start to check
   const navigate = useNavigate();
-
-  const redirectSpesificProfilePage = (userId) => {
-    navigate(`/profile/${userId}`);
-    // window.location.reload();
-  };
-
-  const redirectPostDetailPage = (postOwnerName, postId) => {
-    navigate(`/${postOwnerName}/status/${postId}`);
-    // window.location.reload();
-  };
-
-  const redirectToImagePostDetailPage = (postOwnerName, postId) => {
-    navigate(`/${postOwnerName}/status/${postId}/photo/1`);
-    // window.location.reload();
-  };
-  // finish to check
 
   // socket io 5 client start to check
   const handleNotification = (post, userInfo, type) => {
@@ -1296,11 +1280,6 @@ function PostDetailPage() {
                             ) !== "../" ? (
                               <>
                                 <Link
-                                  onClick={() =>
-                                    redirectSpesificProfilePage(
-                                      commentedForThisUsersPost._id
-                                    )
-                                  }
                                   style={{ cursor: "pointer" }}
                                   to={`/profile/${commentedForThisUsersPost._id}`}
                                 >
@@ -1415,11 +1394,6 @@ function PostDetailPage() {
                         {commentedForThisPost._id ? (
                           <>
                             <Link
-                              onClick={() =>
-                                redirectSpesificProfilePage(
-                                  commentedForThisUsersPost._id
-                                )
-                              }
                               style={{
                                 textDecoration: "none",
                               }}
@@ -1460,11 +1434,6 @@ function PostDetailPage() {
                             </span>
 
                             <Link
-                              onClick={() =>
-                                redirectSpesificProfilePage(
-                                  commentedForThisUsersPost._id
-                                )
-                              }
                               style={{
                                 textDecoration: "none",
                               }}
@@ -1483,12 +1452,6 @@ function PostDetailPage() {
                             </Link>
 
                             <Link
-                              onClick={() =>
-                                redirectPostDetailPage(
-                                  commentedForThisPost.authorUserName,
-                                  commentedForThisPost._id
-                                )
-                              }
                               style={{
                                 textDecoration: "none",
                               }}
@@ -1586,12 +1549,6 @@ function PostDetailPage() {
                         }}
                       >
                         <Link
-                          onClick={() =>
-                            redirectPostDetailPage(
-                              commentedForThisPost.authorUserName,
-                              commentedForThisPost._id
-                            )
-                          }
                           style={{
                             textDecoration: "none",
                             color: "black",
@@ -1942,9 +1899,6 @@ function PostDetailPage() {
                     {detailedPost.userId ? (
                       detailedPost.userId.imageUrl.slice(0, 3) !== "../" ? (
                         <Link
-                          onClick={() =>
-                            redirectSpesificProfilePage(detailedPost.userId._id)
-                          }
                           style={{ cursor: "pointer" }}
                           to={`/profile/${
                             detailedPost.userId ? detailedPost.userId._id : null
@@ -1962,9 +1916,6 @@ function PostDetailPage() {
                         </Link>
                       ) : (
                         <Link
-                          onClick={() =>
-                            redirectSpesificProfilePage(detailedPost.userId._id)
-                          }
                           to={`/profile/${
                             detailedPost.userId ? detailedPost.userId._id : null
                           }`}
@@ -1993,9 +1944,6 @@ function PostDetailPage() {
                   {/* start to check post owner full name + post owner user name  */}
                   <div>
                     <Link
-                      onClick={() =>
-                        redirectSpesificProfilePage(detailedPost.userId._id)
-                      }
                       to={
                         detailedPost.userId
                           ? `/profile/${detailedPost.userId._id}`
@@ -2076,9 +2024,6 @@ function PostDetailPage() {
                     {/* three dots svg finish to check */}
                   </div>
                   <Link
-                    onClick={() =>
-                      redirectSpesificProfilePage(detailedPost.userId._id)
-                    }
                     to={
                       detailedPost.userId
                         ? `/profile/${detailedPost.userId._id}`
@@ -2127,12 +2072,6 @@ function PostDetailPage() {
                 className="p-1"
               >
                 <Link
-                  onClick={() =>
-                    redirectPostDetailPage(
-                      detailedPost.authorUserName,
-                      detailedPost._id
-                    )
-                  }
                   to={`/${detailedPost.authorUserName}/status/${detailedPost._id}`}
                   style={{ textDecoration: "none", color: "black" }}
                 >
@@ -2489,11 +2428,6 @@ function PostDetailPage() {
                                           3
                                         ) !== "../" ? (
                                           <Link
-                                            onClick={() =>
-                                              redirectSpesificProfilePage(
-                                                eachComment.userId._id
-                                              )
-                                            }
                                             style={{ cursor: "pointer" }}
                                             to={`/profile/${
                                               eachComment
@@ -2510,11 +2444,6 @@ function PostDetailPage() {
                                           </Link>
                                         ) : (
                                           <Link
-                                            onClick={() =>
-                                              redirectSpesificProfilePage(
-                                                eachComment.userId._id
-                                              )
-                                            }
                                             to={`/profile/${
                                               eachComment.userId
                                                 ? eachComment.userId._id
@@ -2544,11 +2473,6 @@ function PostDetailPage() {
                                         {eachComment.userId ? (
                                           <>
                                             <Link
-                                              onClick={() =>
-                                                redirectSpesificProfilePage(
-                                                  eachComment.userId._id
-                                                )
-                                              }
                                               to={`/profile/${eachComment.userId._id}`}
                                               style={{
                                                 textDecoration: "none",
@@ -2587,11 +2511,6 @@ function PostDetailPage() {
                                               </span>{" "}
                                             </span>
                                             <Link
-                                              onClick={() =>
-                                                redirectSpesificProfilePage(
-                                                  eachComment.userId._id
-                                                )
-                                              }
                                               to={`/profile/${eachComment.userId._id}`}
                                               style={{
                                                 textDecoration: "none",
@@ -2608,16 +2527,6 @@ function PostDetailPage() {
                                               </span>
                                             </Link>
                                             <Link
-                                              onClick={() =>
-                                                redirectPostDetailPage(
-                                                  eachComment.userId.username,
-                                                  !eachComment.isReposted
-                                                    ? eachComment.postId
-                                                    : eachComment
-                                                        .repostedFromThisOriginalPost[0]
-                                                        ._id
-                                                )
-                                              }
                                               to={`/${
                                                 eachComment.userId.username
                                               }/status/${
@@ -2725,16 +2634,6 @@ function PostDetailPage() {
                                                 .repostedFromThisOriginalPost[0]
                                                 ._id
                                         }`}
-                                        onClick={() =>
-                                          redirectPostDetailPage(
-                                            eachComment.userId.username,
-                                            !eachComment.isReposted
-                                              ? eachComment.postId
-                                              : eachComment
-                                                  .repostedFromThisOriginalPost[0]
-                                                  ._id
-                                          )
-                                        }
                                         style={{
                                           textDecoration: "none",
                                           color: "rgb(15, 20, 25)",
@@ -3046,11 +2945,6 @@ function PostDetailPage() {
                                             3
                                           ) !== "../" ? (
                                             <Link
-                                              onClick={() =>
-                                                redirectSpesificProfilePage(
-                                                  eachComment.userId._id
-                                                )
-                                              }
                                               style={{ cursor: "pointer" }}
                                               to={`/profile/${
                                                 eachComment
@@ -3069,11 +2963,6 @@ function PostDetailPage() {
                                             </Link>
                                           ) : (
                                             <Link
-                                              onClick={() =>
-                                                redirectSpesificProfilePage(
-                                                  eachComment.userId._id
-                                                )
-                                              }
                                               to={`/profile/${
                                                 eachComment.userId
                                                   ? eachComment.userId._id
@@ -3104,11 +2993,6 @@ function PostDetailPage() {
                                         {eachComment.userId ? (
                                           <>
                                             <Link
-                                              onClick={() =>
-                                                redirectSpesificProfilePage(
-                                                  eachComment.userId._id
-                                                )
-                                              }
                                               to={`/profile/${eachComment.userId._id}`}
                                               style={{
                                                 textDecoration: "none",
@@ -3147,11 +3031,6 @@ function PostDetailPage() {
                                               </span>{" "}
                                             </span>
                                             <Link
-                                              onClick={() =>
-                                                redirectSpesificProfilePage(
-                                                  eachComment.userId._id
-                                                )
-                                              }
                                               to={`/profile/${eachComment.userId._id}`}
                                               style={{
                                                 textDecoration: "none",
@@ -3168,16 +3047,6 @@ function PostDetailPage() {
                                               </span>
                                             </Link>
                                             <Link
-                                              onClick={() =>
-                                                redirectPostDetailPage(
-                                                  eachComment.userId.username,
-                                                  !eachComment.isReposted
-                                                    ? eachComment.postId
-                                                    : eachComment
-                                                        .repostedFromThisOriginalPost[0]
-                                                        ._id
-                                                )
-                                              }
                                               to={`/${
                                                 eachComment.userId.username
                                               }/status/${
@@ -3287,16 +3156,6 @@ function PostDetailPage() {
                                                 .repostedFromThisOriginalPost[0]
                                                 ._id
                                         }`}
-                                        onClick={() =>
-                                          redirectPostDetailPage(
-                                            eachComment.userId.username,
-                                            !eachComment.isReposted
-                                              ? eachComment.postId
-                                              : eachComment
-                                                  .repostedFromThisOriginalPost[0]
-                                                  ._id
-                                          )
-                                        }
                                         style={{
                                           textDecoration: "none",
                                           color: "rgb(15, 20, 25)",
@@ -3322,12 +3181,6 @@ function PostDetailPage() {
                                       eachComment.image.url !== "image@url" ? (
                                         <>
                                           <Link
-                                            onClick={() => {
-                                              redirectToImagePostDetailPage(
-                                                eachComment.userId.username,
-                                                eachComment.postId
-                                              );
-                                            }}
                                             to={`/${
                                               eachComment.userId.username
                                             }/status/${

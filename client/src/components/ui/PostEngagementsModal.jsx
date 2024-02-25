@@ -57,11 +57,6 @@ function PostEngagements({
     setshowLikes(true);
   };
 
-  const redirectSpesificProfilePage = (userId) => {
-    navigate(`/profile/${userId}`);
-    window.location.reload();
-  };
-
   const [isHovered, setIsHovered] = useState(false);
 
   const [hoveredTab, setHoveredTab] = useState(null);
@@ -423,11 +418,6 @@ function PostEngagements({
                               {eachReposter.imageUrl.slice(0, 3) !== "../" ? (
                                 <>
                                   <Link
-                                    onClick={() =>
-                                      redirectSpesificProfilePage(
-                                        eachReposter._id
-                                      )
-                                    }
                                     to={`/profile/${eachReposter._id}`}
                                     style={{
                                       textDecoration: "none",
@@ -447,11 +437,6 @@ function PostEngagements({
                               ) : (
                                 <>
                                   <Link
-                                    onClick={() =>
-                                      redirectSpesificProfilePage(
-                                        eachReposter._id
-                                      )
-                                    }
                                     to={`/profile/${eachReposter._id}`}
                                     style={{
                                       textDecoration: "none",
@@ -479,9 +464,6 @@ function PostEngagements({
                               className="p-0"
                             >
                               <Link
-                                onClick={() =>
-                                  redirectSpesificProfilePage(eachReposter._id)
-                                }
                                 to={`/profile/${eachReposter._id}`}
                                 style={{
                                   textDecoration: "none",
@@ -530,11 +512,6 @@ function PostEngagements({
                               >
                                 {" "}
                                 <Link
-                                  onClick={() =>
-                                    redirectSpesificProfilePage(
-                                      eachReposter._id
-                                    )
-                                  }
                                   to={`/profile/${eachReposter._id}`}
                                   style={{
                                     textDecoration: "none",
@@ -754,9 +731,6 @@ function PostEngagements({
                               {eachLiker.imageUrl.slice(0, 3) !== "../" ? (
                                 <>
                                   <Link
-                                    onClick={() =>
-                                      redirectSpesificProfilePage(eachLiker._id)
-                                    }
                                     to={`/profile/${eachLiker._id}`}
                                     style={{
                                       textDecoration: "none",
@@ -776,9 +750,6 @@ function PostEngagements({
                               ) : (
                                 <>
                                   <Link
-                                    onClick={() =>
-                                      redirectSpesificProfilePage(eachLiker._id)
-                                    }
                                     to={`/profile/${eachLiker._id}`}
                                     style={{
                                       textDecoration: "none",
@@ -806,9 +777,6 @@ function PostEngagements({
                               className="p-0"
                             >
                               <Link
-                                onClick={() =>
-                                  redirectSpesificProfilePage(eachLiker._id)
-                                }
                                 to={`/profile/${eachLiker._id}`}
                                 style={{
                                   textDecoration: "none",
@@ -857,9 +825,6 @@ function PostEngagements({
                               >
                                 {" "}
                                 <Link
-                                  onClick={() =>
-                                    redirectSpesificProfilePage(eachLiker._id)
-                                  }
                                   to={`/profile/${eachLiker._id}`}
                                   style={{
                                     textDecoration: "none",
