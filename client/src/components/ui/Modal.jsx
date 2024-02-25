@@ -2039,7 +2039,6 @@ function LogoutModal() {
           ) : null}
           {/* change password inputs finish to check  */}
 
-          {/* deactivate user steps from navigation bar redirection start to check  */}
           {tabIndexThird === 2 ? (
             <div
               style={{
@@ -2127,8 +2126,6 @@ function LogoutModal() {
             </div>
           ) : null}
         </Modal.Body>
-
-        {/* deactivate user steps from navigation bar redirection finish to check  */}
       </Modal>
 
       {/* settings and privacy modal finish to check  */}
@@ -2617,7 +2614,6 @@ function CommentModal({
 }) {
   const [show, setShow] = useState(false);
   const [content, setContent] = useState("");
-  const [modalImage, setModalImage] = useState("");
   const [error, setError] = useState("");
 
   const [chosenEmoji, setChosenEmoji] = useState(null);
@@ -2626,15 +2622,21 @@ function CommentModal({
 
   const { userInfo, socket } = useContext(UserContext);
   const maxCharacters = 140;
+
+  const [modalImage, setModalImage] = useState("");
+
   //handle and convert it in base 64
   const handleImage = (e) => {
     const file = e.target.files[0];
+    console.log("FILE FROM MODAL.JSX =>", file);
     setFileToBase(file);
+    console.log(file);
   };
 
   const setFileToBase = (file) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
+    console.log("SET FILE TO BASE FILE FROM MODAL.JSX =>", file);
 
     reader.onloadend = () => {
       setModalImage(reader.result);
@@ -2716,13 +2718,6 @@ function CommentModal({
         modalImage,
       })
       .then((response) => {
-        console.log("Response => ", response);
-        // const mainPagePosts = JSON.parse(localStorage.getItem("mainPagePosts"));
-
-        // mainPagePosts.unshift(response.data.createdPost);
-
-        // localStorage.setItem("mainPagePosts", JSON.stringify(mainPagePosts));
-
         handleClose();
         setModalImage("");
         setContent("");
@@ -3293,15 +3288,16 @@ function CommentModal({
         </Modal.Body>
         {/* finish to check twitterdaki gibi post içeriği gelecek body içerisine  */}
 
-        <Modal.Footer
-          style={{ border: "none" }}
-          className="post-modal-footer ml-1"
-        >
+        <Modal.Footer style={{ border: "none" }} className="ml-1">
           <Stack direction="horizontal" gap={0}>
             {/* INFO */}
+
+            {/* comment modal svg start to check  */}
             <div
-              className="p-2"
-              onClick={() => document.getElementById("formuploadModal").click()}
+              className="p-2 image-choose-p-2"
+              onClick={() => {
+                document.getElementById("formuploadModal").click();
+              }}
             >
               <div
                 style={{
@@ -3309,7 +3305,7 @@ function CommentModal({
                   cursor: "pointer",
                   borderRadius: "50%",
                 }}
-                className="svg-border-parent"
+                className="svg-border-parent svg-border-parent-image-choose"
               >
                 <svg
                   style={{
@@ -3338,38 +3334,10 @@ function CommentModal({
                 style={{ display: "none" }}
               />
             </div>
-            {/* INFO */}
-            {/* <div className="p-2">
-              <div
-                className="svg-border-parent"
-                style={{
-                  // border: "1px solid black",
-                  cursor: "pointer",
-                  borderRadius: "50%",
-                }}
-              >
-                <svg
-                  onClick={() => toggleEmojis()}
-                  color="rgb(29,155,240)"
-                  fill="currentColor"
-                  width={20}
-                  height={20}
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  className="post-modal-emoji-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                  style={{
-                    cursor: "pointer",
-                  }}
-                >
-                  <g>
-                    <path d="M8 9.5C8 8.119 8.672 7 9.5 7S11 8.119 11 9.5 10.328 12 9.5 12 8 10.881 8 9.5zm6.5 2.5c.828 0 1.5-1.119 1.5-2.5S15.328 7 14.5 7 13 8.119 13 9.5s.672 2.5 1.5 2.5zM12 16c-2.224 0-3.021-2.227-3.051-2.316l-1.897.633c.05.15 1.271 3.684 4.949 3.684s4.898-3.533 4.949-3.684l-1.896-.638c-.033.095-.83 2.322-3.053 2.322zm10.25-4.001c0 5.652-4.598 10.25-10.25 10.25S1.75 17.652 1.75 12 6.348 1.75 12 1.75 22.25 6.348 22.25 12zm-2 0c0-4.549-3.701-8.25-8.25-8.25S3.75 7.451 3.75 12s3.701 8.25 8.25 8.25 8.25-3.701 8.25-8.25z"></path>
-                  </g>
-                </svg>
-              </div>
-            </div> */}
-            <div className="p-2">
-              {/* emoji mart start to check */}
+            {/* comment modal svg finish to check  */}
 
+            {/* emoji mart start to check */}
+            <div className="p-2">
               <OverlayTrigger
                 trigger="click"
                 placement="bottom"
