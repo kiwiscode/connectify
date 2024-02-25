@@ -247,11 +247,11 @@ function PostEngagements({
         </div>
       </Stack>
       {/* view post engagements section finish to check */}
-      <Row
+      <div
         style={{
           borderBottom: postDetailPage ? "1px solid rgba(0,0,0,0.1)" : null,
         }}
-      ></Row>
+      ></div>
       <Modal
         show={show}
         onHide={handleClose}

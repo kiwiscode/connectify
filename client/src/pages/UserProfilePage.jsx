@@ -73,6 +73,63 @@ function UserProfile() {
   };
   // finish to check
 
+  // use effect to grab current mouse click location start to check
+
+  const [clickedPostBox, setclickedPostBox] = useState(null);
+  console.log("Clicked post outside of use effect =>", clickedPostBox);
+  useEffect(() => {
+    const getClickLocation = (e) => {
+      const clickedElementParentClass = e.target.parentNode.className;
+      const clickedElementClass = e.target.classList;
+      console.log("target details =>", clickedElementParentClass);
+      console.log("Target class list =>", e.target.classList);
+      if (
+        (clickedElementClass.contains("hover-reposted-text") &&
+          clickedElementParentClass !== "post-circle-profile-svg-on-point" &&
+          clickedElementParentClass !== "post-circle-profile-image-on-point" &&
+          clickedElementParentClass !== "post-circle-postowner-fullname" &&
+          clickedElementParentClass !== "post-circle-postowner-username" &&
+          clickedElementParentClass !== "post-circle-date-post-detail" &&
+          clickedElementParentClass !== "svg-three-dots-post-detail" &&
+          clickedElementParentClass === "p-1 next-to-comment") ||
+        clickedElementParentClass === "p-1 next-to-repost" ||
+        clickedElementParentClass === "p-1 next-to-like" ||
+        clickedElementParentClass === "parent-footer-stack" ||
+        clickedElementParentClass ===
+          "posts-details outside-of-inner-circle-actions" ||
+        clickedElementParentClass ===
+          "outside-of-inner-circle-action-comment-text vstack gap-1" ||
+        clickedElementParentClass === "p-2 parent-comment-text" ||
+        clickedElementParentClass ===
+          "outside-of-inner-circle-post-info-user-info-svg-three-dots hstack gap-1" ||
+        clickedElementParentClass === "mt-0 parent-footer-stack hstack" ||
+        clickedElementClass.contains("repost-svg-post-box") ||
+        clickedElementParentClass === "post-head"
+      ) {
+        console.log("Clicked post box inside of use effect =>", clickedPostBox);
+        console.log(
+          "You clicked outside of any actions inside clicked post box"
+        );
+        if (clickedPostBox) {
+          redirectToPostDetailPage(
+            clickedPostBox.userId.username,
+            !clickedPostBox.isReposted
+              ? clickedPostBox._id
+              : clickedPostBox.repostedFromThisOriginalPost[0]._id
+          );
+        }
+      }
+    };
+
+    document.body.addEventListener("click", getClickLocation);
+
+    return () => {
+      document.body.removeEventListener("click", getClickLocation);
+    };
+  }, [clickedPostBox]);
+
+  // use effect to grab current mouse click location finish to check
+
   const [userprofiledata, setUserprofiledata] = useState([]);
   // const { getToken, userInfo, socket } = useContext(UserContext);
   const { getToken, userInfo } = useContext(UserContext);
@@ -1995,274 +2052,319 @@ function UserProfile() {
                     <div className="each-post" key={post._id}>
                       {post.deactivatedOwner ? null : (
                         <>
-                          {getRepostedIds(post).includes(userInfo._id) &&
-                          post.isReposted ? (
-                            <svg
-                              style={{
-                                marginLeft: "20px",
-                              }}
-                              width={16}
-                              height={16}
-                              viewBox="0 0 24 24"
-                              aria-hidden="true"
-                              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                              color="rgb(83, 100, 113)"
-                              fill="currentColor"
-                            >
-                              <g>
-                                <path
-                                  stroke="rgb(83, 100, 113)"
-                                  strokeWidth="0.1"
-                                  d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
-                                ></path>
-                              </g>
-                            </svg>
-                          ) : null}
-                          {getRepostedIds(post).includes(userInfo._id) &&
-                          post.isReposted ? (
-                            <span
-                              style={{
-                                fontSize: "13px",
-                                lineHeight: "20px",
-                                fontWeight: "700",
-                                color: "rgb(83, 100, 113)",
-                                marginLeft: "10px",
-                              }}
-                            >
-                              You reposted
-                            </span>
-                          ) : null}
-                          <div className="posts-details">
+                          <Link
+                            style={{
+                              textDecoration: "none",
+                            }}
+                            onClick={() => {
+                              setclickedPostBox(post);
+                            }}
+                            className="posts-details outside-of-inner-circle-actions"
+                          >
                             <div className="post-head">
-                              <Stack direction="horizontal" gap={1}>
-                                {/* profile image start to check */}
-                                <div className="p-1">
-                                  {post.userId.imageUrl.slice(0, 3) !==
-                                  "../" ? (
-                                    <Link
-                                      onClick={() =>
-                                        redirectSpesificProfilePage(
-                                          post.userId._id
-                                        )
-                                      }
-                                      style={{ cursor: "pointer" }}
-                                      to={`/profile/${
-                                        post ? post.userId._id : null
-                                      }`}
+                              {getRepostedIds(post).includes(userInfo._id) &&
+                              post.isReposted ? (
+                                <>
+                                  <svg
+                                    style={{
+                                      marginLeft: "20px",
+                                    }}
+                                    width={16}
+                                    height={16}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                    color="rgb(83, 100, 113)"
+                                    fill="currentColor"
+                                  >
+                                    <g>
+                                      <path
+                                        stroke="rgb(83, 100, 113)"
+                                        strokeWidth="0.1"
+                                        d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                                      ></path>
+                                    </g>
+                                  </svg>
+                                  <Link
+                                    className="hover-reposted-text"
+                                    style={{
+                                      fontSize: "13px",
+                                      lineHeight: "16px",
+                                      fontWeight: "700",
+                                      color: "rgb(83, 100, 113)",
+                                      marginLeft: "10px",
+                                      cursor: "pointer",
+                                      textDecoration: "none",
+                                    }}
+                                    onClick={() => setclickedPostBox(post)}
+                                    to={`/profile/${post.reposted[0]._id}`}
+                                  >
+                                    You reposted
+                                  </Link>{" "}
+                                </>
+                              ) : null}
+                            </div>
+                            <Stack
+                              style={{
+                                cursor: "pointer",
+                              }}
+                              to={`/${post.userId.username}/status/${
+                                !post.isReposted
+                                  ? post._id
+                                  : post.repostedFromThisOriginalPost[0]._id
+                              }`}
+                              onClick={() => setclickedPostBox(post)}
+                              className="outside-of-inner-circle-post-info-user-info-svg-three-dots"
+                              direction="horizontal"
+                              gap={1}
+                            >
+                              {/* profile image start to check */}
+                              <div className="p-1">
+                                {post.userId.imageUrl.slice(0, 3) !== "../" ? (
+                                  <Link
+                                    className="post-circle-profile-image-on-point"
+                                    onClick={() =>
+                                      redirectSpesificProfilePage(
+                                        post.userId._id
+                                      )
+                                    }
+                                    style={{ cursor: "pointer" }}
+                                    to={`/profile/${
+                                      post ? post.userId._id : null
+                                    }`}
+                                  >
+                                    <img
+                                      width={40}
+                                      height={40}
+                                      src={post.userId.imageUrl}
+                                      alt=""
+                                      style={{
+                                        borderRadius: "50%",
+                                      }}
+                                    />
+                                  </Link>
+                                ) : (
+                                  <Link
+                                    className="post-circle-profile-svg-on-point"
+                                    onClick={() =>
+                                      redirectSpesificProfilePage(
+                                        post.userId._id
+                                      )
+                                    }
+                                    to={`/profile/${
+                                      post.userId ? post.userId._id : null
+                                    }`}
+                                    style={{ cursor: "pointer" }}
+                                  >
+                                    {" "}
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      width="40"
+                                      height="40"
+                                      fill="rgb(83, 100, 113)"
+                                      className="bi bi-person-circle"
+                                      viewBox="0 0 16 16"
+                                      style={{
+                                        borderRadius: "50%",
+                                      }}
                                     >
-                                      <img
-                                        width={40}
-                                        height={40}
-                                        src={post.userId.imageUrl}
-                                        alt=""
-                                        style={{
-                                          borderRadius: "50%",
-                                        }}
-                                      />
-                                    </Link>
-                                  ) : (
-                                    <Link
-                                      onClick={() =>
-                                        redirectSpesificProfilePage(
-                                          post.userId._id
-                                        )
-                                      }
-                                      to={`/profile/${
-                                        post.userId ? post.userId._id : null
-                                      }`}
-                                      style={{ cursor: "pointer" }}
-                                    >
-                                      {" "}
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="40"
-                                        height="40"
-                                        fill="rgb(83, 100, 113)"
-                                        className="bi bi-person-circle"
-                                        viewBox="0 0 16 16"
-                                        style={{
-                                          borderRadius: "50%",
-                                        }}
-                                      >
-                                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                        <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                      </svg>
-                                    </Link>
-                                  )}
-                                </div>
-                                {/* profile image finish to check  */}
+                                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                      <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                    </svg>
+                                  </Link>
+                                )}
+                              </div>
+                              {/* profile image finish to check  */}
 
-                                {/* post owner full name + verified account svg + post owner user name + post created date start to check  */}
-                                <div className="p-1">
-                                  {post.userId ? (
-                                    <>
-                                      <Link
-                                        onClick={() =>
-                                          redirectSpesificProfilePage(
-                                            post.userId._id
-                                          )
-                                        }
-                                        to={`/profile/${post.userId._id}`}
+                              {/* post owner full name + verified account svg + post owner user name + post created date start to check  */}
+                              <div className="p-1">
+                                {post.userId ? (
+                                  <>
+                                    <Link
+                                      className="post-circle-postowner-fullname"
+                                      onClick={() =>
+                                        redirectSpesificProfilePage(
+                                          post.userId._id
+                                        )
+                                      }
+                                      to={`/profile/${post.userId._id}`}
+                                      style={{
+                                        textDecoration: "none",
+                                        color: "black",
+                                      }}
+                                    >
+                                      <span
+                                        className="hover-fullname"
                                         style={{
-                                          textDecoration: "none",
-                                          color: "black",
+                                          fontWeight: "700",
+                                          fontSize: "15px",
+                                          lineHeight: "20px",
                                         }}
                                       >
-                                        <span
-                                          className="hover-fullname"
-                                          style={{
-                                            fontWeight: "700",
-                                            fontSize: "15px",
-                                            lineHeight: "20px",
-                                          }}
-                                        >
-                                          {post.authorFullName}
-                                        </span>
-                                      </Link>
-                                      <span>
-                                        {/* start to check  */}{" "}
-                                        <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
-                                          <svg
-                                            width={`${1.25}em`}
-                                            height={`${1.25}em`}
-                                            viewBox="0 0 22 22"
-                                            aria-label="Verified account"
-                                            role="img"
-                                            className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
-                                            data-testid="icon-verified"
-                                            color="rgba(29,155,240,1.00)"
-                                            fill="currentColor"
-                                          >
-                                            <g>
-                                              <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
-                                            </g>
-                                          </svg>
-                                        </span>{" "}
+                                        {post.authorFullName}
                                       </span>
-                                      <Link
-                                        onClick={() =>
-                                          redirectSpesificProfilePage(
-                                            post.userId._id
-                                          )
-                                        }
-                                        to={`/profile/${post.userId._id}`}
+                                    </Link>
+                                    <span>
+                                      {/* start to check  */}{" "}
+                                      <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
+                                        <svg
+                                          width={`${1.25}em`}
+                                          height={`${1.25}em`}
+                                          viewBox="0 0 22 22"
+                                          aria-label="Verified account"
+                                          role="img"
+                                          className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                                          data-testid="icon-verified"
+                                          color="rgba(29,155,240,1.00)"
+                                          fill="currentColor"
+                                        >
+                                          <g>
+                                            <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                                          </g>
+                                        </svg>
+                                      </span>{" "}
+                                    </span>
+                                    <Link
+                                      onClick={() =>
+                                        redirectSpesificProfilePage(
+                                          post.userId._id
+                                        )
+                                      }
+                                      to={`/profile/${post.userId._id}`}
+                                      style={{
+                                        textDecoration: "none",
+                                        color: "rgb(83, 100, 113)",
+                                        lineHeight: "20px",
+                                        fontSize: "15px",
+                                        fontWeight: "400",
+                                      }}
+                                    >
+                                      <span className="post-circle-postowner-username">
+                                        <span>@{post.authorUserName}</span>
+                                      </span>
+                                    </Link>
+                                    <Link
+                                      onClick={() =>
+                                        redirectToPostDetailPage(
+                                          post.userId.username,
+                                          !post.isReposted
+                                            ? post._id
+                                            : post
+                                                .repostedFromThisOriginalPost[0]
+                                                ._id
+                                        )
+                                      }
+                                      style={{
+                                        textDecoration: "none",
+                                      }}
+                                      to={`/${post.userId.username}/status/${
+                                        !post.isReposted
+                                          ? post._id
+                                          : post.repostedFromThisOriginalPost[0]
+                                              ._id
+                                      }`}
+                                    >
+                                      <span
+                                        className="post-circle-date-post-detail"
                                         style={{
-                                          textDecoration: "none",
                                           color: "rgb(83, 100, 113)",
                                           lineHeight: "20px",
                                           fontSize: "15px",
                                           fontWeight: "400",
                                         }}
                                       >
-                                        <span>
-                                          <span>@{post.authorUserName}</span>
+                                        {" "}
+                                        ·{" "}
+                                        <span className="date-post-detail">
+                                          {getCreatedDate(post.createdAt)}
                                         </span>
-                                      </Link>
-                                      <Link
-                                        onClick={() =>
-                                          redirectToPostDetailPage(
-                                            post.userId.username,
-                                            !post.isReposted
-                                              ? post._id
-                                              : post
-                                                  .repostedFromThisOriginalPost[0]
-                                                  ._id
-                                          )
-                                        }
-                                        style={{
-                                          textDecoration: "none",
-                                        }}
-                                        to={`/${post.userId.username}/status/${
-                                          !post.isReposted
-                                            ? post._id
-                                            : post
-                                                .repostedFromThisOriginalPost[0]
-                                                ._id
-                                        }`}
-                                      >
-                                        <span
-                                          style={{
-                                            color: "rgb(83, 100, 113)",
-                                            lineHeight: "20px",
-                                            fontSize: "15px",
-                                            fontWeight: "400",
-                                          }}
-                                        >
-                                          {" "}
-                                          ·{" "}
-                                          <span className="date-post-detail">
-                                            {getCreatedDate(post.createdAt)}
-                                          </span>
-                                        </span>
-                                      </Link>
-                                      {/* finish to check  */}
-                                    </>
-                                  ) : null}
-                                </div>
-                                {/* post owner full name + verified account svg + post owner user name + post created date  finish to check  */}
+                                      </span>
+                                    </Link>
+                                    {/* finish to check  */}
+                                  </>
+                                ) : null}
+                              </div>
+                              {/* post owner full name + verified account svg + post owner user name + post created date  finish to check  */}
 
-                                {/* three dots svg start to check */}
-                                <div className="p-1 ms-auto">
-                                  <span>
-                                    {/* show if post owner userId !equal currentUserId */}
-                                    {post.userId &&
-                                    post.userId._id !== userInfo._id ? (
-                                      <svg
-                                        style={{
-                                          cursor: "pointer",
-                                          backgroundColor: "rgb(29, 155, 240)",
-                                        }}
-                                        onClick={() =>
-                                          handleShowDetailPostFromProfilePage(
-                                            post._id
-                                          )
-                                        }
-                                        color="rgb(83, 100, 113)"
-                                        fill="currentColor"
-                                        width={`${1.25}em`}
-                                        height={`${1.25}em`}
-                                        viewBox="0 0 24 24"
-                                        aria-hidden="true"
-                                        className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                      >
-                                        <g>
-                                          <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                        </g>
-                                      </svg>
-                                    ) : (
-                                      <svg
-                                        style={{
-                                          cursor: "pointer",
-                                          backgroundColor: "crimson",
-                                        }}
-                                        onClick={() =>
-                                          handleDeletePostFromProfilePage(
-                                            post._id
-                                          )
-                                        }
-                                        color="rgb(83, 100, 113)"
-                                        fill="currentColor"
-                                        width={`${1.25}em`}
-                                        height={`${1.25}em`}
-                                        viewBox="0 0 24 24"
-                                        aria-hidden="true"
-                                        className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                      >
-                                        <g>
-                                          <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                        </g>
-                                      </svg>
-                                    )}
-                                  </span>
-                                </div>
-                                {/* three dots svg finish to check */}
-                              </Stack>
-                            </div>
+                              {/* three dots svg start to check */}
+                              <div className="p-1 ms-auto">
+                                <span>
+                                  {/* show if post owner userId !equal currentUserId */}
+                                  {post.userId &&
+                                  post.userId._id !== userInfo._id ? (
+                                    <svg
+                                      style={{
+                                        cursor: "pointer",
+                                        backgroundColor: "rgb(29, 155, 240)",
+                                      }}
+                                      onClick={() =>
+                                        handleShowDetailPostFromProfilePage(
+                                          post._id
+                                        )
+                                      }
+                                      color="rgb(83, 100, 113)"
+                                      fill="currentColor"
+                                      width={`${1.25}em`}
+                                      height={`${1.25}em`}
+                                      viewBox="0 0 24 24"
+                                      aria-hidden="true"
+                                      className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                    >
+                                      <g>
+                                        <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                                      </g>
+                                    </svg>
+                                  ) : (
+                                    <svg
+                                      style={{
+                                        cursor: "pointer",
+                                        backgroundColor: "crimson",
+                                      }}
+                                      onClick={() =>
+                                        handleDeletePostFromProfilePage(
+                                          post._id
+                                        )
+                                      }
+                                      color="rgb(83, 100, 113)"
+                                      fill="currentColor"
+                                      width={`${1.25}em`}
+                                      height={`${1.25}em`}
+                                      viewBox="0 0 24 24"
+                                      aria-hidden="true"
+                                      className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                    >
+                                      <g>
+                                        <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                                      </g>
+                                    </svg>
+                                  )}
+                                </span>
+                              </div>
+                              {/* three dots svg finish to check */}
+                            </Stack>
 
                             {/* post content start to check  */}
-                            <Stack direction="vertical" gap={1}>
+                            <Stack
+                              to={`/${post.userId.username}/status/${
+                                !post.isReposted
+                                  ? post._id
+                                  : post.repostedFromThisOriginalPost[0]._id
+                              }`}
+                              onClick={() => setclickedPostBox(post)}
+                              className="outside-of-inner-circle-action-comment-text"
+                              direction="vertical"
+                              gap={1}
+                            >
                               {post.isComment ? (
-                                <div className="p-2">
+                                <div
+                                  to={`/${post.userId.username}/status/${
+                                    !post.isReposted
+                                      ? post._id
+                                      : post.repostedFromThisOriginalPost[0]._id
+                                  }`}
+                                  onClick={() => setclickedPostBox(post)}
+                                  className="p-2 parent-comment-text"
+                                >
                                   <span
                                     style={{
                                       color: "rgb(83, 100, 113)",
@@ -2274,12 +2376,13 @@ function UserProfile() {
                                     Replying to {""}
                                   </span>
                                   <Link
+                                    to={`/profile/${post.commentedForThisUsersPost._id}`}
                                     style={{
                                       textDecoration: "none",
                                     }}
-                                    to={`/profile/${post.commentedForThisUsersPost._id}`}
                                   >
                                     <span
+                                      className="replying-to-text"
                                       onClick={() =>
                                         redirectSpesificProfilePage(
                                           post.commentedForThisUsersPost._id
@@ -2300,6 +2403,11 @@ function UserProfile() {
                               ) : null}
 
                               <Link
+                                to={`/${post.userId.username}/status/${
+                                  !post.isReposted
+                                    ? post._id
+                                    : post.repostedFromThisOriginalPost[0]._id
+                                }`}
                                 onClick={() =>
                                   redirectToPostDetailPage(
                                     post.userId.username,
@@ -2312,11 +2420,6 @@ function UserProfile() {
                                   textDecoration: "none",
                                   color: "rgb(15, 20, 25)",
                                 }}
-                                to={`/${post.userId.username}/status/${
-                                  !post.isReposted
-                                    ? post._id
-                                    : post.repostedFromThisOriginalPost[0]._id
-                                }`}
                               >
                                 <div
                                   style={{
@@ -2325,6 +2428,7 @@ function UserProfile() {
                                     lineHeight: "20px",
                                     overflowWrap: "break-word",
                                     maxWidth: "100%",
+                                    cursor: "pointer",
                                   }}
                                   className="p-2"
                                 >
@@ -2385,7 +2489,10 @@ function UserProfile() {
                                 margin: "5px 0px 5px 0px",
                               }}
                             >
-                              <div className="p-1">
+                              <div
+                                onClick={() => setclickedPostBox(post)}
+                                className="p-1 next-to-comment"
+                              >
                                 <CommentModal
                                   post={post}
                                   width={`${1.25}em`}
@@ -2540,7 +2647,7 @@ function UserProfile() {
                               </div>
                             </Stack>
                             {/* new version favorite repost comment finish to check */}
-                          </div>
+                          </Link>
                           <div
                             style={{
                               borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
@@ -2624,14 +2731,37 @@ function UserProfile() {
                     <div className="each-post" key={favorite._id}>
                       {favorite.deactivatedOwner ? null : (
                         <>
-                          <div className="favorite-details">
+                          <Link
+                            style={{
+                              textDecoration: "none",
+                            }}
+                            onClick={() => {
+                              setclickedPostBox(favorite);
+                            }}
+                            className="posts-details outside-of-inner-circle-actions"
+                          >
                             <div className="favorite-head">
-                              <Stack direction="horizontal" gap={1}>
+                              <Stack
+                                style={{
+                                  cursor: "pointer",
+                                }}
+                                to={`/${favorite.userId.username}/status/${
+                                  !favorite.isReposted
+                                    ? favorite._id
+                                    : favorite.repostedFromThisOriginalPost[0]
+                                        ._id
+                                }`}
+                                onClick={() => setclickedPostBox(favorite)}
+                                className="outside-of-inner-circle-post-info-user-info-svg-three-dots"
+                                direction="horizontal"
+                                gap={1}
+                              >
                                 {/* profile image start to check */}
                                 <div className="p-1">
                                   {favorite.userId.imageUrl.slice(0, 3) !==
                                   "../" ? (
                                     <Link
+                                      className="post-circle-profile-image-on-point"
                                       onClick={() =>
                                         redirectSpesificProfilePage(
                                           favorite.userId._id
@@ -2646,14 +2776,13 @@ function UserProfile() {
                                         width={40}
                                         height={40}
                                         src={favorite.userId.imageUrl}
-                                        alt=""
-                                        style={{
-                                          borderRadius: "50%",
-                                        }}
+                                        alt="??"
+                                        style={{ borderRadius: "50%" }}
                                       />
                                     </Link>
                                   ) : (
                                     <Link
+                                      className="post-circle-profile-svg-on-point"
                                       onClick={() =>
                                         redirectSpesificProfilePage(
                                           favorite.userId._id
@@ -2669,8 +2798,8 @@ function UserProfile() {
                                       {" "}
                                       <svg
                                         xmlns="http://www.w3.org/2000/svg"
-                                        width="40"
-                                        height="40"
+                                        width={40}
+                                        height={40}
                                         fill="rgb(83, 100, 113)"
                                         className="bi bi-person-circle"
                                         viewBox="0 0 16 16"
@@ -2688,6 +2817,7 @@ function UserProfile() {
                                   {favorite.userId ? (
                                     <>
                                       <Link
+                                        className="post-circle-postowner-fullname"
                                         onClick={() =>
                                           redirectSpesificProfilePage(
                                             favorite.userId._id
@@ -2745,7 +2875,7 @@ function UserProfile() {
                                           fontWeight: "400",
                                         }}
                                       >
-                                        <span>
+                                        <span className="post-circle-postowner-username">
                                           <span>
                                             @{favorite.authorUserName}
                                           </span>
@@ -2776,6 +2906,7 @@ function UserProfile() {
                                         }`}
                                       >
                                         <span
+                                          className="post-circle-date-post-detail"
                                           style={{
                                             color: "rgb(83, 100, 113)",
                                             lineHeight: "20px",
@@ -2798,7 +2929,7 @@ function UserProfile() {
 
                                 {/* three dots svg start to check */}
                                 <div className="p-1 ms-auto">
-                                  <span>
+                                  <span className="svg-three-dots-post-detail">
                                     {/* show if post owner userId !equal currentUserId */}
                                     {favorite.userId &&
                                     favorite.userId._id !== userInfo._id ? (
@@ -2853,8 +2984,19 @@ function UserProfile() {
                                 {/* three dots svg finish to check */}
                               </Stack>
                             </div>
+
                             {/* post content start to check  */}
-                            <Stack direction="vertical" gap={1}>
+                            <Stack
+                              to={`/${favorite.userId.username}/status/${
+                                !favorite.isReposted
+                                  ? favorite._id
+                                  : favorite.repostedFromThisOriginalPost[0]._id
+                              }`}
+                              onClick={() => setclickedPostBox(favorite)}
+                              className="outside-of-inner-circle-action-comment-text"
+                              direction="vertical"
+                              gap={1}
+                            >
                               <Link
                                 onClick={() =>
                                   redirectToPostDetailPage(
@@ -2938,14 +3080,19 @@ function UserProfile() {
 
                             {/* new version favorite repost comment start to check */}
                             <Stack
-                              className="mt-0"
+                              className="mt-0 parent-footer-stack"
+                              onClick={() => setclickedPostBox(favorite)}
                               direction="horizontal"
                               style={{
                                 justifyContent: "space-between",
                                 margin: "5px 0px 5px 0px",
+                                cursor: "pointer",
                               }}
                             >
-                              <div className="p-1">
+                              <div
+                                onClick={() => setclickedPostBox(favorite)}
+                                className="p-1 next-to-comment"
+                              >
                                 <CommentModal
                                   post={favorite}
                                   width={`${1.25}em`}
@@ -2955,84 +3102,102 @@ function UserProfile() {
                               </div>
 
                               {/* start to check */}
-                              <div className="p-1">
+                              <div
+                                onClick={() => setclickedPostBox(favorite)}
+                                className="p-1 next-to-repost"
+                              >
                                 {favorite.reposted.includes(userInfo._id) ? (
-                                  <svg
-                                    style={{
-                                      cursor: "pointer",
-                                    }}
-                                    onClick={() =>
-                                      handleDeleteRepostProfilePage(
-                                        favorite._id
-                                      )
-                                    }
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                    className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                    color="rgb(0, 186, 124)"
-                                    fill="currentColor"
-                                  >
-                                    <g>
-                                      <path
-                                        stroke="rgb(83, 100, 113)"
-                                        strokeWidth="0.1"
-                                        d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
-                                      ></path>
-                                    </g>
-                                  </svg>
-                                ) : (
-                                  <svg
-                                    style={{
-                                      cursor: "pointer",
-                                    }}
-                                    onClick={() => handleRepost(favorite._id)}
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                    className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                    color="rgb(83, 100, 113)"
-                                    fill="currentColor"
-                                  >
-                                    <g>
-                                      <path
-                                        stroke="rgb(83, 100, 113)"
-                                        strokeWidth="0.1"
-                                        d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
-                                      ></path>
-                                    </g>
-                                  </svg>
-                                )}
+                                  <div>
+                                    <svg
+                                      onClick={() =>
+                                        handleDeleteRepostProfilePage(
+                                          favorite._id
+                                        )
+                                      }
+                                      width={`${1.25}em`}
+                                      height={`${1.25}em`}
+                                      viewBox="0 0 24 24"
+                                      aria-hidden="true"
+                                      className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                      fill="rgb(0, 186, 124)"
+                                    >
+                                      <g>
+                                        <path
+                                          stroke="rgb(83, 100, 113)"
+                                          strokeWidth="0.1"
+                                          d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                                        ></path>
+                                      </g>
+                                    </svg>
 
-                                {favorite.reposted.includes(userInfo._id) ? (
-                                  <span
-                                    className="post-description"
-                                    style={{
-                                      color: "rgb(0, 186, 124)",
-                                    }}
-                                  >
-                                    {favorite.reposted.length}
-                                  </span>
+                                    <span
+                                      style={{ color: "rgb(0, 186, 124)" }}
+                                      className="post-description"
+                                    >
+                                      {/* some test */}
+                                      {favorite.reposted.length ? (
+                                        <span>{favorite.reposted.length}</span>
+                                      ) : null}
+                                    </span>
+                                  </div>
                                 ) : (
-                                  <span
-                                    className="post-description"
-                                    style={{
-                                      color: "rgb(83, 100, 113)",
-                                    }}
-                                  >
-                                    {favorite.reposted.length ? (
-                                      <span>{favorite.reposted.length}</span>
-                                    ) : null}
-                                  </span>
+                                  <div>
+                                    {" "}
+                                    <svg
+                                      style={{
+                                        cursor: "pointer",
+                                      }}
+                                      onClick={() => handleRepost(favorite._id)}
+                                      width={`${1.25}em`}
+                                      height={`${1.25}em`}
+                                      viewBox="0 0 24 24"
+                                      aria-hidden="true"
+                                      className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                      fill={
+                                        favorite.reposted.includes(userInfo._id)
+                                          ? "rgb(0, 186, 124)"
+                                          : "rgb(83, 100, 113)"
+                                      }
+                                    >
+                                      <g>
+                                        <path
+                                          stroke="rgb(83, 100, 113)"
+                                          strokeWidth="0.1"
+                                          d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                                        ></path>
+                                      </g>
+                                    </svg>
+                                    <span
+                                      className="post-description"
+                                      style={{
+                                        color: favorite.reposted.includes(
+                                          userInfo._id
+                                        )
+                                          ? "rgb(0, 186, 124)"
+                                          : "rgb(83, 100, 113)",
+                                      }}
+                                    >
+                                      {favorite.reposted.length ? (
+                                        <span>{favorite.reposted.length}</span>
+                                      ) : null}
+                                    </span>
+                                  </div>
                                 )}
 
                                 {/* start  */}
                               </div>
 
                               {/* finish to check  */}
-                              <div className="p-1">
+                              <div
+                                to={`/${favorite.userId.username}/status/${
+                                  !favorite.isReposted
+                                    ? favorite._id
+                                    : favorite.repostedFromThisOriginalPost[0]
+                                        ._id
+                                }`}
+                                onClick={() => setclickedPostBox(favorite)}
+                                className="p-1 next-to-like"
+                              >
                                 <div>
                                   {favorite.likes.includes(userInfo._id) ? (
                                     <div>
@@ -3102,7 +3267,7 @@ function UserProfile() {
                               </div>
                             </Stack>
                             {/* new version favorite repost comment finish to check */}
-                          </div>
+                          </Link>
                           <div
                             style={{
                               borderBottom: "1px solid rgba(0, 0, 0, 0.1)",

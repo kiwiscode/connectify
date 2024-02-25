@@ -1225,6 +1225,7 @@ function PostDetailPage() {
               borderTop: "none",
               borderBottom: "none",
               justify: "left",
+              padding: "0px",
             }}
           >
             <Stack direction="horizontal" gap={3}>
@@ -2246,7 +2247,13 @@ function PostDetailPage() {
                   to={`/${detailedPost.authorUserName}/status/${detailedPost._id}`}
                   style={{ textDecoration: "none", color: "black" }}
                 >
-                  <span>{detailedPost.content}</span>
+                  <span
+                    style={{
+                      marginLeft: "10px",
+                    }}
+                  >
+                    {detailedPost.content}
+                  </span>
                 </Link>
                 <span>
                   {detailedPost.image ? (
@@ -2305,17 +2312,18 @@ function PostDetailPage() {
                     fontSize: "15px",
                     fontWeight: "400",
                     lineHeight: "20px",
+                    marginLeft: "10px",
                   }}
                   className="p-0 mt-3 mb-3 post-detail-underline-text-1"
                 >
                   {formatDateString(detailedPost.createdAt)}
                 </div>
               </Link>
-              <Row
+              <div
                 style={{
                   borderBottom: "1px solid rgba(0,0,0,0.1)",
                 }}
-              ></Row>
+              ></div>
             </Stack>
             {/* post content + post created date finish to check */}
 
@@ -2593,11 +2601,11 @@ function PostDetailPage() {
             </Stack>
 
             {/* new version favorite repost comment finish to check */}
-            <Row
+            <div
               style={{
                 borderBottom: "1px solid rgba(0,0,0,0.1)",
               }}
-            ></Row>
+            ></div>
             {/* accordion implementation for comments when it is more than 0 start to check  */}
             {!detailedPost.isComment &&
             detailedPost.comments &&
