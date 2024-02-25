@@ -201,11 +201,6 @@ function MainPage() {
         },
       })
       .then((response) => {
-        // localStorage.setItem(
-        //   "followedUsersPosts",
-        //   JSON.stringify(response.data)
-        // );
-
         setFollowingPosts(response.data);
       })
       .catch((error) => {
@@ -318,7 +313,6 @@ function MainPage() {
         },
       })
       .then((response) => {
-        // NOTE UPDATING THE LOCALSTORAGE
         // start to check
         localStorage.setItem("mainPagePosts", JSON.stringify(response.data));
         // finish to check
@@ -460,17 +454,7 @@ function MainPage() {
                 },
               })
               .then((response) => {
-                // Assuming userInfo is retrieved from localStorage
-                const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-
-                // Assuming 'posts' is an array in userInfo
-                if (userInfo.posts.length) {
-                  userInfo.posts.splice(0, 0, response.data[0]); // Assuming response contains the created post data
-                } else {
-                  userInfo.posts.push(response.data[0]._id);
-                }
-                // Saving the updated userInfo back to localStorage
-                localStorage.setItem("userInfo", JSON.stringify(userInfo));
+                handleShowPostsHomePage();
                 setPosts(response.data);
               })
               .catch((err) => {
