@@ -12,16 +12,6 @@ const CustomNotification = ({
   const { userInfo } = useContext(UserContext);
   const navigate = useNavigate();
 
-  const redirectPostDetailPage = (username, postId) => {
-    navigate(`/${username}/status/${postId}`);
-    window.location.reload();
-  };
-
-  const redirectSpesificProfilePage = (userId) => {
-    navigate(`/profile/${userId}`);
-    window.location.reload();
-  };
-
   return (
     <>
       <div
@@ -40,7 +30,6 @@ const CustomNotification = ({
             textDecoration: "none",
             borderRadius: "50%",
           }}
-          onClick={() => redirectSpesificProfilePage(senderInfo._id)}
           to={`/profile/${senderInfo._id}`}
         >
           <div style={{ position: "relative", bottom: "5px" }}>
@@ -90,7 +79,6 @@ const CustomNotification = ({
                       fontSize: "15px",
                       lineHeight: "20px",
                     }}
-                    onClick={() => redirectSpesificProfilePage(senderInfo._id)}
                     to={`/profile/${senderInfo._id}`}
                   >
                     <span className="post-detail-underline-text-2">
@@ -108,12 +96,6 @@ const CustomNotification = ({
                   fontSize: "15px",
                   lineHeight: "20px",
                 }}
-                onClick={() =>
-                  redirectPostDetailPage(
-                    userInfo.username,
-                    contactHasBeenMade._id
-                  )
-                }
                 to={`/${userInfo.username}/status/${contactHasBeenMade._id}`}
               >
                 <p>{contactHasBeenMade.content}</p>
@@ -132,7 +114,6 @@ const CustomNotification = ({
                       fontSize: "15px",
                       lineHeight: "20px",
                     }}
-                    onClick={() => redirectSpesificProfilePage(senderInfo._id)}
                     to={`/profile/${senderInfo._id}`}
                   >
                     <span className="post-detail-underline-text-2">
@@ -150,12 +131,6 @@ const CustomNotification = ({
                   fontSize: "15px",
                   lineHeight: "20px",
                 }}
-                onClick={() =>
-                  redirectPostDetailPage(
-                    userInfo.username,
-                    contactHasBeenMade._id
-                  )
-                }
                 to={`/${userInfo.username}/status/${contactHasBeenMade._id}`}
               >
                 <p>{contactHasBeenMade.content}</p>
@@ -176,7 +151,6 @@ const CustomNotification = ({
                       fontSize: "15px",
                       lineHeight: "20px",
                     }}
-                    onClick={() => redirectSpesificProfilePage(senderInfo._id)}
                     to={`/profile/${senderInfo._id}`}
                   >
                     <span className="post-detail-underline-text-2">
@@ -194,12 +168,6 @@ const CustomNotification = ({
                   fontSize: "15px",
                   lineHeight: "20px",
                 }}
-                onClick={() =>
-                  redirectPostDetailPage(
-                    userInfo.username,
-                    contactHasBeenMade._id
-                  )
-                }
                 to={`/${userInfo.username}/status/${contactHasBeenMade._id}`}
               >
                 <p>{contactHasBeenMade.content}</p>
@@ -221,7 +189,6 @@ const CustomNotification = ({
                       fontSize: "15px",
                       lineHeight: "20px",
                     }}
-                    onClick={() => redirectSpesificProfilePage(senderInfo._id)}
                     to={`/profile/${senderInfo._id}`}
                   >
                     <span className="post-detail-underline-text-2">
@@ -248,7 +215,6 @@ const CustomNotification = ({
                       fontSize: "15px",
                       lineHeight: "20px",
                     }}
-                    onClick={() => redirectSpesificProfilePage(senderInfo._id)}
                     to={`/profile/${senderInfo._id}`}
                   >
                     <span className="post-detail-underline-text-2">

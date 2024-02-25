@@ -14,11 +14,6 @@ function ResponsiveNavigationBarBottom() {
   const [prevScrollPos, setPrevScrollPos] = useState(window.pageYOffset);
   const [visible, setVisible] = useState(true);
 
-  const redirectToPostDetailPage = (postOwner, postId) => {
-    navigate(`/${postOwner}/status/${postId}`);
-    window.location.reload();
-  };
-
   // start to check shared post view message
   const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
 
@@ -39,7 +34,6 @@ function ResponsiveNavigationBarBottom() {
           <>
             <Link
               to={`/${postOwner}/status/${postId}`}
-              onClick={() => redirectToPostDetailPage(postOwner, postId)}
               style={{
                 color: "white",
                 marginLeft: "5px",
@@ -56,14 +50,11 @@ function ResponsiveNavigationBarBottom() {
   };
   // finish to check shared post view message
 
-  // rendering page after redirectiring for fetching data without problem ! if you need to fetch data after you redirect or navigate to user to the page (it can work pretty good on your navigation bar)this lines of code is pretty useful
-  // start to check
   const navigate = useNavigate();
   const redirectToMessages = () => {
     navigate("/messages");
     window.location.reload();
   };
-  // finish to check
 
   const handleScroll = () => {
     const currentScrollPos = window.pageYOffset;

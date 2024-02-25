@@ -14,6 +14,7 @@ import FollowingDetailPage from "./pages/FollowingDetail";
 import FollowerDetailPage from "./pages/FollowersDetailPage";
 import ImagePostDetailPage from "./pages/ImagePostDetailPage";
 import DeactivatedPage from "./pages/DeactivatedPage";
+
 function App() {
   return (
     <UserProvider>

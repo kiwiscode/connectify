@@ -19,43 +19,7 @@ import io from "socket.io-client";
 function FollowerDetailPage() {
   const socket = io.connect(`${API_URL}`);
   const { userId } = useParams();
-  // start to check
   const navigate = useNavigate();
-  const redirectToMessages = () => {
-    navigate("/messages");
-    window.location.reload();
-  };
-
-  const redirectProfilePage = () => {
-    navigate("/profile");
-    // window.location.reload();
-  };
-
-  const redirectHomePage = () => {
-    navigate("/home");
-    // window.location.reload();
-  };
-
-  const redirectSpesificProfilePage = (userId) => {
-    navigate(`/profile/${userId}`);
-    // window.location.reload();
-  };
-
-  const redirectToPostDetailPage = (postOwnerName, postId) => {
-    navigate(`/${postOwnerName}/status/${postId}`);
-    // window.location.reload();
-  };
-
-  const redirectFollowersPage = (userId) => {
-    navigate(`/profile/${userId}/followers`);
-    // window.location.reload();
-  };
-
-  const redirectFollowingPage = (userId) => {
-    navigate(`/profile/${userId}/following`);
-    // window.location.reload();
-  };
-  // finish to check
 
   // const { getToken, userInfo, socket } = useContext(UserContext);
   const { getToken, userInfo } = useContext(UserContext);
@@ -80,7 +44,6 @@ function FollowerDetailPage() {
           <>
             <Link
               to={`/${postOwner}/status/${postId}`}
-              onClick={() => redirectToPostDetailPage(postOwner, postId)}
               style={{
                 color: "white",
                 marginLeft: "5px",
@@ -177,6 +140,7 @@ function FollowerDetailPage() {
         },
       })
       .then((response) => {
+        console.log("Response of get followers() =>", response);
         setfollowersofthemonitoreduser(response.data.user);
         setActiveTab("followers");
         setFollowers(response.data.followers);
@@ -187,6 +151,7 @@ function FollowerDetailPage() {
   };
 
   const handleGoBack = () => {
+    console.log("You clicked to go back !");
     navigate(-1);
   };
   const [activeUserFollowing, setactiveUserFollowing] = useState([]);
@@ -200,6 +165,7 @@ function FollowerDetailPage() {
         },
       })
       .then((response) => {
+        console.log("Get active user() response =>", response);
         setactiveUserFollowing(response.data.user.following);
       })
       .catch((error) => {
@@ -244,6 +210,7 @@ function FollowerDetailPage() {
       flex: 1,
       textAlign: "center",
       transition: "background 0.3s",
+      textDecoration: "none",
     };
   };
 
@@ -287,7 +254,7 @@ function FollowerDetailPage() {
               </Link>
 
               <div className="inner-div inner-div-fonts">
-                <Link to="/home" onClick={redirectHomePage}>
+                <Link to="/home">
                   <div className="home">
                     <div>
                       <svg
@@ -328,7 +295,7 @@ function FollowerDetailPage() {
                 </Link>
                 {/* finish to check notification component place  */}
 
-                <Link to="/messages" onClick={redirectToMessages}>
+                <Link to="/messages">
                   <div className="messages">
                     <div>
                       <svg
@@ -347,7 +314,7 @@ function FollowerDetailPage() {
                   </div>
                 </Link>
 
-                <Link to={"/profile"} onClick={redirectProfilePage}>
+                <Link to={"/profile"}>
                   <div className="profile">
                     <div>
                       <svg
@@ -447,18 +414,18 @@ function FollowerDetailPage() {
                 padding: "16px 0px 16px 0px",
               }}
             >
-              <span
-                onClick={() => redirectFollowersPage(userId)}
+              <Link
+                to={`/profile/${followersofthemonitoreduser._id}/followers`}
                 style={getTabStyle("followers")}
               >
                 Followers
-              </span>
-              <span
-                onClick={() => redirectFollowingPage(userId)}
+              </Link>
+              <Link
+                to={`/profile/${followersofthemonitoreduser._id}/following`}
                 style={getTabStyle("following")}
               >
                 Following
-              </span>
+              </Link>
             </div>
             <Row
               style={{
@@ -473,72 +440,6 @@ function FollowerDetailPage() {
                   const isFollowing = checkActiveUserFollowerIds().includes(
                     user._id
                   );
-
-                  const handleUnfollow = (selectedUser) => {
-                    axios
-                      .post(
-                        `${API_URL}/unfollow`,
-                        {
-                          activeUserId: userInfo._id,
-                          theUnfollowedUserID: selectedUser._id,
-                        },
-                        {
-                          headers: {
-                            Authorization: `Bearer ${getToken()}`,
-                          },
-                        }
-                      )
-                      .then((response) => {
-                        setClicked(!clicked);
-                        // delete after unfollow also from localstorage start to check
-                        const userInfoFromLocalStorage = JSON.parse(
-                          localStorage.getItem("userInfo")
-                        );
-
-                        const followedUser =
-                          userInfoFromLocalStorage.following.find(
-                            (eachFollowing) => {
-                              return eachFollowing._id === selectedUser._id;
-                            }
-                          );
-
-                        const followedUserIndex =
-                          userInfoFromLocalStorage.following.indexOf(
-                            followedUser
-                          );
-
-                        userInfoFromLocalStorage.following.splice(
-                          followedUserIndex,
-                          1
-                        );
-
-                        localStorage.setItem(
-                          "userInfo",
-                          JSON.stringify(userInfoFromLocalStorage)
-                        );
-                        // delete after unfollow also from localstorage finish to check
-
-                        const followersArrayShallowCopy = [...followers];
-
-                        const unfollowedUserIndex =
-                          followersArrayShallowCopy.indexOf(selectedUser);
-
-                        const activeUserIndex = followersArrayShallowCopy[
-                          unfollowedUserIndex
-                        ].followers.indexOf(userInfo._id);
-
-                        // setTimeout(() => {
-                        setFollowers(followersArrayShallowCopy);
-                        handleClose();
-                        followersArrayShallowCopy[
-                          unfollowedUserIndex
-                        ].followers.splice(activeUserIndex, 1);
-                        // }, 500);
-                      })
-                      .catch((error) => {
-                        console.log("Error =>", error);
-                      });
-                  };
 
                   const handleFollow = (selectedUser) => {
                     axios
@@ -556,33 +457,77 @@ function FollowerDetailPage() {
                       )
                       .then(() => {
                         setClicked(!clicked);
-
-                        handleNotification(user, userInfo, "followed");
-
-                        // change the userInfo who followed user start to check
-                        const userInfoFromLocalStorage = JSON.parse(
-                          localStorage.getItem("userInfo")
-                        );
-                        userInfoFromLocalStorage.following.unshift(user);
-                        localStorage.setItem(
-                          "userInfo",
-                          JSON.stringify(userInfoFromLocalStorage)
-                        );
-                        // change the userInfo who followed user finish to check
-
-                        setTimeout(() => {
-                          const newArr = [...followers];
-                          const findIndexFollowedUser =
-                            followers.indexOf(selectedUser);
-
-                          newArr[findIndexFollowedUser].followers.unshift(
-                            userInfo._id
-                          );
-                          setFollowers(newArr);
-                        }, 500);
+                        handleNotification(selectedUser, userInfo, "followed");
+                        getFollowers();
                       })
                       .catch((error) => {
                         console.log(error);
+                      });
+                  };
+
+                  const handleUnfollow = (selectedUser) => {
+                    axios
+                      .post(
+                        `${API_URL}/unfollow`,
+                        {
+                          activeUserId: userInfo._id,
+                          theUnfollowedUserID: selectedUser._id,
+                        },
+                        {
+                          headers: {
+                            Authorization: `Bearer ${getToken()}`,
+                          },
+                        }
+                      )
+                      .then(() => {
+                        setClicked(!clicked);
+                        // delete after unfollow also from localstorage start to check
+                        // const userInfoFromLocalStorage = JSON.parse(
+                        //   localStorage.getItem("userInfo")
+                        // );
+
+                        // const followedUser =
+                        //   userInfoFromLocalStorage.following.find(
+                        //     (eachFollowing) => {
+                        //       return eachFollowing._id === selectedUser._id;
+                        //     }
+                        //   );
+
+                        // const followedUserIndex =
+                        //   userInfoFromLocalStorage.following.indexOf(
+                        //     followedUser
+                        //   );
+
+                        // userInfoFromLocalStorage.following.splice(
+                        //   followedUserIndex,
+                        //   1
+                        // );
+
+                        // localStorage.setItem(
+                        //   "userInfo",
+                        //   JSON.stringify(userInfoFromLocalStorage)
+                        // );
+                        // // delete after unfollow also from localstorage finish to check
+
+                        // const followersArrayShallowCopy = [...followers];
+
+                        // const unfollowedUserIndex =
+                        //   followersArrayShallowCopy.indexOf(selectedUser);
+
+                        // const activeUserIndex = followersArrayShallowCopy[
+                        //   unfollowedUserIndex
+                        // ].followers.indexOf(userInfo._id);
+
+                        // // setTimeout(() => {
+                        // setFollowers(followersArrayShallowCopy);
+                        // handleClose();
+                        // followersArrayShallowCopy[
+                        //   unfollowedUserIndex
+                        // ].followers.splice(activeUserIndex, 1);
+                        // // }, 500);
+                      })
+                      .catch((error) => {
+                        console.log("Error =>", error);
                       });
                   };
 
@@ -637,12 +582,7 @@ function FollowerDetailPage() {
                           <Stack direction="horizontal">
                             {user.imageUrl.slice(0, 3) !== "../" ? (
                               <>
-                                <Link
-                                  onClick={() => {
-                                    redirectSpesificProfilePage(user._id);
-                                  }}
-                                  to={`/profile/${user._id}`}
-                                >
+                                <Link to={`/profile/${user._id}`}>
                                   <img
                                     src={user.imageUrl}
                                     alt={`${user.fullname}'s profile`}
@@ -654,12 +594,7 @@ function FollowerDetailPage() {
                               </>
                             ) : (
                               <div>
-                                <Link
-                                  onClick={() => {
-                                    redirectSpesificProfilePage(user._id);
-                                  }}
-                                  to={`/profile/${user._id}`}
-                                >
+                                <Link to={`/profile/${user._id}`}>
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     width="40"
@@ -686,9 +621,6 @@ function FollowerDetailPage() {
                                 className="fullname"
                               >
                                 <Link
-                                  onClick={() => {
-                                    redirectSpesificProfilePage(user._id);
-                                  }}
                                   to={`/profile/${user._id}`}
                                   className="hover-fullname"
                                   style={{
@@ -722,9 +654,6 @@ function FollowerDetailPage() {
                                 <Link
                                   style={{
                                     textDecoration: "none",
-                                  }}
-                                  onClick={() => {
-                                    redirectSpesificProfilePage(user._id);
                                   }}
                                   to={`/profile/${user._id}`}
                                 >

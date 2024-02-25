@@ -27,6 +27,37 @@ const API_URL = "http://localhost:3000";
 // const socket = io.connect(API_URL);
 
 function MessagesPage() {
+  const { userInfo, getToken, socket } = useContext(UserContext);
+
+  const [isHovered, setIsHovered] = useState(false);
+  const [messageRooms, setmessageRooms] = useState([]);
+  const [filteredRooms, setfilteredRooms] = useState([]);
+  const [showMessageDeletePopover, setshowMessageDeletePopover] =
+    useState(false);
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  const [showDeleteConversationModal, setShowDeleteConversationModal] =
+    useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [posts, setPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [content, setContent] = useState("");
+
+  const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
+  const [receivedMessageRoom, setReceivedMessageRoom] = useState(null);
+
+  const [notificationTest, setnotificationTest] = useState([]);
+  const [notificationText, setnotificationText] = useState([]);
+  const [activeUsers, setActiveUsers] = useState([]);
+  const [searchString, setSearchString] = useState("");
+
+  const [filteredUsers, setFilteredUsers] = useState([]);
+
+  const [room, setRoom] = useState("");
+  const [showThreeDots, setShowThreeDots] = useState(false);
+  const navigate = useNavigate();
+
   useEffect(() => {
     const closePopover = (e) => {
       console.log("Target classlist =>", e.target.classList);
@@ -50,39 +81,16 @@ function MessagesPage() {
       document.body.removeEventListener("click", closePopover);
     };
   }, []);
-  const [isHovered, setIsHovered] = useState(false);
-  // rendering page after redirectiring for fetching data without problem ! if you need to fetch data after you redirect or navigate to user to the page (it can work pretty good on your navigation bar)this lines of code is pretty useful
-  // start to check
-  const navigate = useNavigate();
 
-  const redirectHomePage = () => {
-    navigate("/home");
-    // window.location.reload();
-  };
+  useEffect(() => {
+    console.log("User info =>", userInfo);
+    socket.emit("get_spesific_user", userInfo);
+  }, []);
 
-  const redirectProfilePage = () => {
-    navigate("/profile");
-    // window.location.reload();
-  };
-
-  const redirectChatDetailPage = (roomId) => {
-    navigate(`/messages/${roomId}`);
-    window.location.reload();
-  };
-
-  const redirectToPostDetailPage = (postOwner, postId) => {
-    navigate(`/${postOwner}/status/${postId}`);
-    // window.location.reload();
-  };
-  // finish to check
-
-  const [showMessageDeletePopover, setshowMessageDeletePopover] =
-    useState(false);
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-  const [showDeleteConversationModal, setShowDeleteConversationModal] =
-    useState(false);
+  socket.on("receive_spesific_user_message_rooms", (data) => {
+    setfilteredRooms(data.messages);
+    setmessageRooms(data.messages);
+  });
 
   const handleShowDeleteConversationModal = () => {
     console.log("Button clicked !");
@@ -94,17 +102,10 @@ function MessagesPage() {
     setShowDeleteConversationModal(false);
   };
 
-  const [receivedMessageRoom, setReceivedMessageRoom] = useState(null);
-
   const grabTheMessageRoom = (messageRoom) => {
     console.log("Message room clicked => ", messageRoom);
     setReceivedMessageRoom(messageRoom);
   };
-
-  console.log(
-    "After click three dots received message room =>",
-    receivedMessageRoom
-  );
 
   const deleteConversation = () => {
     console.log(
@@ -123,12 +124,6 @@ function MessagesPage() {
         }
       )
       .then((response) => {
-        console.log("Response =>", response);
-        console.log("Filtered rooms array JSON structure =>", filteredRooms);
-        console.log(
-          "User current message room JSON structure =>",
-          response.data.currentMessagesArray
-        );
         handleCloseDeleteConversationModal();
         setfilteredRooms(response.data.currentMessagesArray);
       })
@@ -357,16 +352,7 @@ function MessagesPage() {
     </Popover>
   );
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const { userInfo, getToken, socket } = useContext(UserContext);
-  const [posts, setPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [content, setContent] = useState("");
-  const [messageRooms, setmessageRooms] = useState([]);
-  const [filteredRooms, setfilteredRooms] = useState([]);
-
   // start to check shared post view message
-  const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
 
   const handleCallback = (childData) => {
     // Update the name in the component's state
@@ -385,7 +371,6 @@ function MessagesPage() {
           <>
             <Link
               to={`/${postOwner}/status/${postId}`}
-              onClick={() => redirectToPostDetailPage(postOwner, postId)}
               style={{
                 color: "white",
                 marginLeft: "5px",
@@ -403,12 +388,13 @@ function MessagesPage() {
   // finish to check shared post view message
 
   // socket io 1 client start to check
-  const [notificationTest, setnotificationTest] = useState([]);
-  const [notificationText, setnotificationText] = useState([]);
+
   // socket io 1 client finish to check
 
   // socket io 4 client start to check
   useEffect(() => {
+    console.log("This use effect is working 2");
+
     socket.on("socket_id_for_user", (socketId) => {
       console.log("socket id received from backend =>", socketId);
 
@@ -420,6 +406,8 @@ function MessagesPage() {
   // socket io 4 client finish to check
 
   useEffect(() => {
+    console.log("This use effect is working 3");
+
     socket.on("getNotification", (data) => {
       console.log("Data =>", data);
       if (data.senderName !== userInfo.username) {
@@ -461,17 +449,6 @@ function MessagesPage() {
     });
   }, [socket]);
 
-  useEffect(() => {
-    socket.emit("get_spesific_user", userInfo);
-  }, []);
-
-  const [activeUsers, setActiveUsers] = useState([]);
-  const [searchString, setSearchString] = useState("");
-
-  const [filteredUsers, setFilteredUsers] = useState([]);
-
-  const [room, setRoom] = useState("");
-
   const filterUsers = (users, term) => {
     const filtered = users.filter((user) =>
       user.username.toLowerCase().startsWith(term.toLowerCase())
@@ -495,6 +472,8 @@ function MessagesPage() {
   };
 
   useEffect(() => {
+    console.log("This use effect is working 5");
+
     // Server tarafından emit edilen "activeUsers" olayını dinle
     socket.on("activeUsers", (users) => {
       const spliceActiveUser = users.filter((eachUser) => {
@@ -517,10 +496,11 @@ function MessagesPage() {
     socket.emit("join_user_room", { activeUser: userInfo, selectedUser: user });
   };
 
-  socket.on("receive_spesific_user_message_rooms", (data) => {
-    setfilteredRooms(data.messages);
-    setmessageRooms(data.messages);
-  });
+  // socket.on("receive_spesific_user_message_rooms", (data) => {
+  //   setfilteredRooms(data.messages);
+  //   setmessageRooms(data.messages);
+  // });
+
   // start to check filtering rooms
   const filterRoom = (array, searchTerm) => {
     if (searchTerm !== "") {
@@ -570,10 +550,7 @@ function MessagesPage() {
         },
       })
       .then((response) => {
-        // NOTE UPDATING THE LOCALSTORAGE
-        // start to check
         localStorage.setItem("mainPagePosts", JSON.stringify(response.data));
-        // finish to check
         setPosts(response.data);
       })
       .catch((err) => {
@@ -610,9 +587,8 @@ function MessagesPage() {
     return result[0];
   };
 
-  const [showThreeDots, setShowThreeDots] = useState(false);
-  console.log("Filtered rooms =>", filteredRooms.length);
-  console.log(checkIfAllFilteredRoomsChatEmpty(filteredRooms));
+  console.log("Filtered rooms length =>", filteredRooms.length);
+  console.log(checkIfAllFilteredRoomsChatEmpty(filteredRooms) !== 0);
   return (
     <>
       {/* start to check delete conversation modal  */}
@@ -655,7 +631,7 @@ function MessagesPage() {
               </Link>
 
               <div className="inner-div inner-div-fonts ">
-                <Link to="/home" onClick={redirectHomePage}>
+                <Link to="/home">
                   <div className="home">
                     <div>
                       <svg
@@ -696,8 +672,6 @@ function MessagesPage() {
                 </Link>
                 {/* finish to check notification component place  */}
 
-                {/* start to check redirect to the correct component for messages */}
-
                 <Link to="/messages">
                   <div className="messages">
                     <div>
@@ -716,9 +690,8 @@ function MessagesPage() {
                     </div>
                   </div>
                 </Link>
-                {/* finish to check redirect to the correct component for messages */}
 
-                <Link onClick={redirectProfilePage} to="/profile">
+                <Link to="/profile">
                   <div className="profile">
                     <div>
                       <svg
@@ -863,264 +836,265 @@ function MessagesPage() {
               <div>
                 {filteredRooms.map((eachMessageRoom) => (
                   <>
-                    {eachMessageRoom.deactivatedMember ? null : (
-                      <>
-                        {eachMessageRoom.chat.length > 0 ? (
-                          <Link
-                            onMouseEnter={() => {
-                              setShowThreeDots(eachMessageRoom._id);
-                            }}
-                            onMouseLeave={() => {
-                              setShowThreeDots(false);
-                              setshowMessageDeletePopover(false);
-                            }}
-                            onClick={() =>
-                              isHovered !== eachMessageRoom._id &&
-                              !showMessageDeletePopover
-                                ? redirectChatDetailPage(eachMessageRoom._id)
-                                : null
-                            }
-                            key={eachMessageRoom._id}
-                            style={{
-                              position: "relative",
-                              bottom: "20px",
-                              margin: "5px",
-                              cursor: "pointer",
-                              listStyleType: "none",
-                              textDecoration: "none",
-                            }}
-                            to={
-                              isHovered !== eachMessageRoom._id &&
-                              !showMessageDeletePopover
-                                ? `/messages/${eachMessageRoom._id}`
-                                : null
-                            }
-                          >
-                            <div
-                              style={{
-                                // backgroundColor: "blue",
-                                backgroundColor: eachMessageRoom.readed
-                                  ? "white"
-                                  : "#F7F9F9",
-                                border: eachMessageRoom.chat.length
-                                  ? "1px solid #e1e8ed"
-                                  : "",
-                                borderRadius: "8px",
+                    <div key={eachMessageRoom._id}>
+                      {eachMessageRoom.deactivatedMember ? null : (
+                        <>
+                          {eachMessageRoom.chat.length > 0 ? (
+                            <Link
+                              onMouseEnter={() => {
+                                setShowThreeDots(eachMessageRoom._id);
                               }}
+                              onMouseLeave={() => {
+                                setShowThreeDots(false);
+                                setshowMessageDeletePopover(false);
+                              }}
+                              key={eachMessageRoom._id}
+                              style={{
+                                position: "relative",
+                                bottom: "20px",
+                                margin: "5px",
+                                cursor: "pointer",
+                                listStyleType: "none",
+                                textDecoration: "none",
+                              }}
+                              to={
+                                isHovered !== eachMessageRoom._id &&
+                                !showMessageDeletePopover
+                                  ? `/messages/${eachMessageRoom._id}`
+                                  : null
+                              }
                             >
-                              {eachMessageRoom.chat &&
-                                eachMessageRoom.chat.length > 0 && (
-                                  <>
-                                    <Stack
-                                      style={{
-                                        margin: "5px",
-                                        padding: "5px",
-                                      }}
-                                      direction="horizontal"
-                                    >
-                                      <div className="p-0">
-                                        {" "}
-                                        {getMemberNotEqualActiveUser(
-                                          eachMessageRoom
-                                        ) ? (
-                                          <>
-                                            {getMemberNotEqualActiveUser(
-                                              eachMessageRoom
-                                            ).imageUrl.slice(0, 3) !== "../" ? (
-                                              <>
-                                                <img
-                                                  width={40}
-                                                  height={40}
-                                                  style={{
-                                                    borderRadius: "50%",
-                                                  }}
-                                                  src={
-                                                    getMemberNotEqualActiveUser(
-                                                      eachMessageRoom
-                                                    ).imageUrl
-                                                  }
-                                                  alt=""
-                                                />
-                                                <div></div>
-                                              </>
-                                            ) : (
-                                              <>
-                                                <svg
-                                                  xmlns="http://www.w3.org/2000/svg"
-                                                  width="40"
-                                                  height="40"
-                                                  fill="rgb(83, 100, 113)"
-                                                  className="bi bi-person-circle"
-                                                  viewBox="0 0 16 16"
-                                                  style={{}}
-                                                >
-                                                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                                  <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                                </svg>
-                                              </>
-                                            )}
-                                          </>
-                                        ) : null}
-                                      </div>
-                                      <div
+                              <div
+                                style={{
+                                  // backgroundColor: "blue",
+                                  backgroundColor: eachMessageRoom.readed
+                                    ? "white"
+                                    : "#F7F9F9",
+                                  border: eachMessageRoom.chat.length
+                                    ? "1px solid #e1e8ed"
+                                    : "",
+                                  borderRadius: "8px",
+                                }}
+                              >
+                                {eachMessageRoom.chat &&
+                                  eachMessageRoom.chat.length > 0 && (
+                                    <>
+                                      <Stack
                                         style={{
-                                          marginLeft: "10px",
+                                          margin: "5px",
+                                          padding: "5px",
                                         }}
-                                        className="p-0"
+                                        direction="horizontal"
                                       >
-                                        <span
-                                          style={{
-                                            color: "rgb(15, 20, 25)",
-
-                                            fontSize: "15px",
-                                            fontWeight: "700",
-                                            lineHeight: "20px",
-                                          }}
-                                        >
-                                          {eachMessageRoom.members[1] &&
-                                          eachMessageRoom.members[0] ? (
-                                            <>
-                                              {eachMessageRoom.members[1]
-                                                .fullname !== userInfo.fullname
-                                                ? eachMessageRoom.members[1]
-                                                    .fullname
-                                                : eachMessageRoom.members[0]
-                                                    .fullname}{" "}
-                                            </>
-                                          ) : null}
-                                        </span>
-                                        <span
-                                          style={{
-                                            color: "rgb(83, 100, 113)",
-                                            fontSize: "15px",
-                                            lineHeight: "20px",
-                                            fontWeight: "400",
-                                          }}
-                                        >
-                                          @
-                                          {eachMessageRoom.members[1] &&
-                                          eachMessageRoom.members[0] ? (
-                                            <>
-                                              {eachMessageRoom.members[1]
-                                                .username !== userInfo.username
-                                                ? eachMessageRoom.members[1]
-                                                    .username
-                                                : eachMessageRoom.members[0]
-                                                    .username}{" "}
-                                            </>
-                                          ) : null}
-                                        </span>
-                                        <span
-                                          style={{
-                                            color: "rgb(83, 100, 113)",
-                                            fontSize: "15px",
-                                            lineHeight: "20px",
-                                            fontWeight: "400",
-                                          }}
-                                        >
-                                          {" "}
-                                          ·{" "}
-                                          {eachMessageRoom.chat[0]
-                                            ? getCreatedRoomDate(
-                                                eachMessageRoom.chat[0]
-                                                  .messages[0].timestamp
-                                              )
-                                            : ""}
-                                        </span>
                                         <div className="p-0">
                                           {" "}
+                                          {getMemberNotEqualActiveUser(
+                                            eachMessageRoom
+                                          ) ? (
+                                            <>
+                                              {getMemberNotEqualActiveUser(
+                                                eachMessageRoom
+                                              ).imageUrl.slice(0, 3) !==
+                                              "../" ? (
+                                                <>
+                                                  <img
+                                                    width={40}
+                                                    height={40}
+                                                    style={{
+                                                      borderRadius: "50%",
+                                                    }}
+                                                    src={
+                                                      getMemberNotEqualActiveUser(
+                                                        eachMessageRoom
+                                                      ).imageUrl
+                                                    }
+                                                    alt=""
+                                                  />
+                                                  <div></div>
+                                                </>
+                                              ) : (
+                                                <>
+                                                  <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    width="40"
+                                                    height="40"
+                                                    fill="rgb(83, 100, 113)"
+                                                    className="bi bi-person-circle"
+                                                    viewBox="0 0 16 16"
+                                                    style={{}}
+                                                  >
+                                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                                  </svg>
+                                                </>
+                                              )}
+                                            </>
+                                          ) : null}
+                                        </div>
+                                        <div
+                                          style={{
+                                            marginLeft: "10px",
+                                          }}
+                                          className="p-0"
+                                        >
+                                          <span
+                                            style={{
+                                              color: "rgb(15, 20, 25)",
+
+                                              fontSize: "15px",
+                                              fontWeight: "700",
+                                              lineHeight: "20px",
+                                            }}
+                                          >
+                                            {eachMessageRoom.members[1] &&
+                                            eachMessageRoom.members[0] ? (
+                                              <>
+                                                {eachMessageRoom.members[1]
+                                                  .fullname !==
+                                                userInfo.fullname
+                                                  ? eachMessageRoom.members[1]
+                                                      .fullname
+                                                  : eachMessageRoom.members[0]
+                                                      .fullname}{" "}
+                                              </>
+                                            ) : null}
+                                          </span>
                                           <span
                                             style={{
                                               color: "rgb(83, 100, 113)",
+                                              fontSize: "15px",
+                                              lineHeight: "20px",
+                                              fontWeight: "400",
                                             }}
                                           >
-                                            {
-                                              eachMessageRoom.chat[
-                                                eachMessageRoom.chat.length - 1
-                                              ].messages[0].text
-                                            }
+                                            @
+                                            {eachMessageRoom.members[1] &&
+                                            eachMessageRoom.members[0] ? (
+                                              <>
+                                                {eachMessageRoom.members[1]
+                                                  .username !==
+                                                userInfo.username
+                                                  ? eachMessageRoom.members[1]
+                                                      .username
+                                                  : eachMessageRoom.members[0]
+                                                      .username}{" "}
+                                              </>
+                                            ) : null}
                                           </span>
-                                        </div>
-                                      </div>
-                                      {/* <div className="p-0 ms-auto">asd</div> */}
-                                      <div
-                                        onClick={() =>
-                                          grabTheMessageRoom(eachMessageRoom)
-                                        }
-                                        onMouseEnter={() => {
-                                          console.log(
-                                            "Message room id =>",
-                                            eachMessageRoom._id
-                                          );
-                                          setIsHovered(eachMessageRoom._id);
-                                          // setshowMessageDeletePopover(true);
-                                        }}
-                                        onMouseLeave={() => {
-                                          setIsHovered(false);
-                                          setshowMessageDeletePopover(false);
-                                        }}
-                                        className={`p-2 ms-auto message-icon`}
-                                      >
-                                        <OverlayTrigger
-                                          trigger="click"
-                                          placement="left"
-                                          overlay={popoverBottom}
-                                        >
-                                          <div
-                                            className={
-                                              isHovered === eachMessageRoom._id
-                                                ? `message-delete-three-dots-parent message-delete-three-dots-parent-hovered`
-                                                : `message-delete-three-dots-parent`
-                                            }
+                                          <span
                                             style={{
-                                              cursor: "pointer",
-                                              borderRadius: "50%",
+                                              color: "rgb(83, 100, 113)",
+                                              fontSize: "15px",
+                                              lineHeight: "20px",
+                                              fontWeight: "400",
                                             }}
                                           >
-                                            <svg
+                                            {" "}
+                                            ·{" "}
+                                            {eachMessageRoom.chat[0]
+                                              ? getCreatedRoomDate(
+                                                  eachMessageRoom.chat[0]
+                                                    .messages[0].timestamp
+                                                )
+                                              : ""}
+                                          </span>
+                                          <div className="p-0">
+                                            {" "}
+                                            <span
                                               style={{
-                                                cursor: "pointer",
-                                                position: "relative",
-                                                left: "10px",
-                                                top: "5px",
+                                                color: "rgb(83, 100, 113)",
                                               }}
-                                              color={
+                                            >
+                                              {
+                                                eachMessageRoom.chat[
+                                                  eachMessageRoom.chat.length -
+                                                    1
+                                                ].messages[0].text
+                                              }
+                                            </span>
+                                          </div>
+                                        </div>
+                                        {/* <div className="p-0 ms-auto">asd</div> */}
+                                        <div
+                                          onClick={() =>
+                                            grabTheMessageRoom(eachMessageRoom)
+                                          }
+                                          onMouseEnter={() => {
+                                            console.log(
+                                              "Message room id =>",
+                                              eachMessageRoom._id
+                                            );
+                                            setIsHovered(eachMessageRoom._id);
+                                            // setshowMessageDeletePopover(true);
+                                          }}
+                                          onMouseLeave={() => {
+                                            setIsHovered(false);
+                                            setshowMessageDeletePopover(false);
+                                          }}
+                                          className={`p-2 ms-auto message-icon`}
+                                        >
+                                          <OverlayTrigger
+                                            trigger="click"
+                                            placement="left"
+                                            overlay={popoverBottom}
+                                          >
+                                            <div
+                                              className={
                                                 isHovered ===
                                                 eachMessageRoom._id
-                                                  ? "#259ef0"
-                                                  : "rgb(83, 100, 113)"
+                                                  ? `message-delete-three-dots-parent message-delete-three-dots-parent-hovered`
+                                                  : `message-delete-three-dots-parent`
                                               }
-                                              fill="currentColor"
-                                              width={`${1.25}em`}
-                                              height={`${1.25}em`}
-                                              viewBox="0 0 24 24"
-                                              aria-hidden="true"
-                                              className={`${
-                                                showThreeDots ===
-                                                eachMessageRoom._id
-                                                  ? ""
-                                                  : "hide"
-                                              } message-delete-three-dots bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi`}
+                                              style={{
+                                                cursor: "pointer",
+                                                borderRadius: "50%",
+                                              }}
                                             >
-                                              <g>
-                                                <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                              </g>
-                                            </svg>
-                                          </div>
-                                        </OverlayTrigger>
-                                      </div>
-                                    </Stack>
+                                              <svg
+                                                style={{
+                                                  cursor: "pointer",
+                                                  position: "relative",
+                                                  left: "10px",
+                                                  top: "5px",
+                                                }}
+                                                color={
+                                                  isHovered ===
+                                                  eachMessageRoom._id
+                                                    ? "#259ef0"
+                                                    : "rgb(83, 100, 113)"
+                                                }
+                                                fill="currentColor"
+                                                width={`${1.25}em`}
+                                                height={`${1.25}em`}
+                                                viewBox="0 0 24 24"
+                                                aria-hidden="true"
+                                                className={`${
+                                                  showThreeDots ===
+                                                  eachMessageRoom._id
+                                                    ? ""
+                                                    : "hide"
+                                                } message-delete-three-dots bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi`}
+                                              >
+                                                <g>
+                                                  <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                                                </g>
+                                              </svg>
+                                            </div>
+                                          </OverlayTrigger>
+                                        </div>
+                                      </Stack>
 
-                                    {/* message text is here ? start to check  */}
+                                      {/* message text is here ? start to check  */}
 
-                                    {/* message text is here ? finish to check  */}
-                                  </>
-                                )}
-                            </div>
-                          </Link>
-                        ) : null}
-                      </>
-                    )}
+                                      {/* message text is here ? finish to check  */}
+                                    </>
+                                  )}
+                              </div>
+                            </Link>
+                          ) : null}
+                        </>
+                      )}
+                    </div>
                   </>
                 ))}
               </div>

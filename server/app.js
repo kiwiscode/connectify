@@ -51,4 +51,5 @@ app.use("/followingPosts", followingPosts);
 
 const messageRoutes = require("./routes/message.routes.js");
 app.use("/", messageRoutes);
+
 module.exports = app;

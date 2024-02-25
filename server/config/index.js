@@ -7,7 +7,7 @@ const User = require("../models/User.model");
 const Chat = require("../models/Chat.model");
 const Post = require("../models/Post.model");
 const { default: mongoose } = require("mongoose");
-
+const router = express();
 let onlineUsers = [];
 
 module.exports = (app) => {
@@ -37,6 +37,7 @@ module.exports = (app) => {
     socket.emit("activeUsers", allUsers);
 
     socket.on("get_spesific_user", (data) => {
+      console.log("Spesific user received =>", data.username);
       User.findById(data._id)
         .populate({
           path: "messages",

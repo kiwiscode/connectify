@@ -29,48 +29,9 @@ function SpesificUserProfile() {
   const socket = io.connect(`${API_URL}`);
 
   const { id } = useParams();
-  // start to check
+
   const navigate = useNavigate();
-  const redirectToMessages = () => {
-    navigate("/messages");
-    window.location.reload();
-  };
 
-  const redirectProfilePage = () => {
-    navigate("/profile");
-    // window.location.reload();
-  };
-
-  const redirectHomePage = () => {
-    navigate("/home");
-    // window.location.reload();
-  };
-
-  const redirectSpesificProfilePage = (userId) => {
-    navigate(`/profile/${userId}`);
-    // window.location.reload();
-  };
-
-  const redirectToPostDetailPage = (postOwnerName, postId) => {
-    navigate(`/${postOwnerName}/status/${postId}`);
-    // window.location.reload();
-  };
-
-  const redirectFollowersPage = (userId) => {
-    navigate(`/profile/${userId}/followers`);
-    // window.location.reload();
-  };
-
-  const redirectFollowingPage = (userId) => {
-    navigate(`/profile/${userId}/following`);
-    // window.location.reload();
-  };
-
-  const redirectToImagePostDetailPage = (postOwnerName, postId) => {
-    navigate(`/${postOwnerName}/status/${postId}/photo/1`);
-    // window.location.reload();
-  };
-  // finish to check
   // const { getToken, userInfo, socket } = useContext(UserContext);
 
   // use effect to grab current mouse click location start to check
@@ -111,11 +72,12 @@ function SpesificUserProfile() {
           "You clicked outside of any actions inside clicked post box"
         );
         if (clickedPostBox) {
-          redirectToPostDetailPage(
-            clickedPostBox.userId.username,
-            !clickedPostBox.isReposted
-              ? clickedPostBox._id
-              : clickedPostBox.repostedFromThisOriginalPost[0]._id
+          navigate(
+            `/½${clickedPostBox.userId.username}/status/${
+              !clickedPostBox.isReposted
+                ? clickedPostBox._id
+                : clickedPostBox.repostedFromThisOriginalPost[0]._id
+            }`
           );
         }
       }
@@ -169,7 +131,6 @@ function SpesificUserProfile() {
           <>
             <Link
               to={`/${postOwner}/status/${postId}`}
-              onClick={() => redirectToPostDetailPage(postOwner, postId)}
               style={{
                 color: "white",
                 marginLeft: "5px",
@@ -610,12 +571,16 @@ function SpesificUserProfile() {
         }
         setError("");
       })
-      .catch((err) => {
-        return err;
+      .catch((error) => {
+        if (error) {
+          const { errorMessage } = error.response.data;
+
+          setError(errorMessage);
+        }
       });
   };
 
-  const handlePostLikesFromSpesificUserProfilePage = (postId) => {
+  const handlePostLikesFromSpesificUserProfilePage = (postId, findedPost) => {
     setpostId(postId);
 
     axios
@@ -629,34 +594,25 @@ function SpesificUserProfile() {
         }
       )
       .then(() => {
-        const findedPost = profileInfoPosts.find((element) => {
-          return element._id === postId;
-        });
-
-        const findedFavorite = favorites.find((element) => {
-          return element._id === postId;
-        });
-
         if (favoriteWindow === "") {
-          // socket io test start to check
-          handleNotification(findedFavorite, userInfo, "liked");
-          // socket io test finish to check
           setTimeout(() => {
             handleShowSpesificUserProfilePageFavorites();
+            handleNotification(findedPost, userInfo, "liked");
+            setError("");
           }, 500);
         } else if (postsWindow === "") {
-          // socket io test start to check
-          handleNotification(findedPost, userInfo, "liked");
-          // socket io test finish to check
           setTimeout(() => {
             handleShowSpesificUserProfilePagePosts();
+            handleNotification(findedPost, userInfo, "liked");
+            setError("");
           }, 500);
         }
         setError("");
       })
       .catch((error) => {
-        if (error.response) {
+        if (error) {
           const { errorMessage } = error.response.data;
+
           setError(errorMessage);
         }
       });
@@ -697,7 +653,7 @@ function SpesificUserProfile() {
     console.log("Button Clicked");
   };
 
-  const handleRepost = (postId) => {
+  const handleRepost = (postId, findedPost) => {
     axios
       .post(
         `${API_URL}/repost`,
@@ -708,227 +664,34 @@ function SpesificUserProfile() {
           },
         }
       )
-      .then((response) => {
-        const findedPost = profileInfoPosts.find((element) => {
-          return element._id === postId;
-        });
-
-        // repost process for  user profile posts
-        if (postsWindow === "hide") {
-          const profileInfoFavorites = JSON.parse(
-            localStorage.getItem("profileInfoFavorites")
-          );
-
-          const findedFavorite = favorites.find((element) => {
-            return element._id === postId;
-          });
-
-          // socket io test start to check
-          handleNotification(findedFavorite, userInfo, "repost");
-          // socket io test finish to check
-
-          const index2 = favorites.indexOf(findedFavorite);
-          profileInfoFavorites[index2].reposted.unshift(userInfo);
-
-          localStorage.setItem(
-            "profileInfoFavorites",
-            JSON.stringify(profileInfoFavorites)
-          );
-
+      .then(() => {
+        if (favoriteWindow === "") {
+          console.log("1 WORKS");
           setTimeout(() => {
-            setFavorites(profileInfoFavorites);
+            handleShowSpesificUserProfilePageFavorites();
+            handleNotification(findedPost, userInfo, "repost");
           }, 500);
 
           // finish to check
-        } else if (
-          favoriteWindow === "hide" &&
-          profileInfo._id === userInfo._id
-        ) {
-          // socket io test start to check
-          handleNotification(findedPost, userInfo, "repost");
-          // socket io test finish to check
-          const updateSpesificProfilePosts = () => {
-            const specificProfilePosts = JSON.parse(
-              localStorage.getItem("profileInfoPosts")
-            );
-
-            const findClickedPost = specificProfilePosts.find((eachPost) => {
-              return eachPost._id === postId;
-            });
-
-            const findClickedPostIndex =
-              specificProfilePosts.indexOf(findClickedPost);
-
-            if (
-              findClickedPost
-                ? findClickedPost.reposted.length === 0 &&
-                  !findClickedPost.isReposted
-                : null
-            ) {
-              specificProfilePosts[findClickedPostIndex].reposted.unshift(
-                userInfo
-              );
-              specificProfilePosts.unshift(response.data.newPost);
-
-              const newPostIndex = specificProfilePosts.indexOf(
-                response.data.newPost
-              );
-
-              specificProfilePosts[newPostIndex].reposted.unshift(userInfo);
-
-              localStorage.setItem(
-                "profileInfoPosts",
-                JSON.stringify(specificProfilePosts)
-              );
-
-              setprofileInfoPosts(specificProfilePosts);
-            } else if (
-              findClickedPost
-                ? findClickedPost.reposted.length === 1 ||
-                  (findClickedPost.reposted.length > 1 &&
-                    !findClickedPost.isReposted)
-                : null
-            ) {
-              specificProfilePosts[findClickedPostIndex].reposted.unshift(
-                userInfo
-              );
-              specificProfilePosts.unshift(response.data.newPost);
-
-              localStorage.setItem(
-                "profileInfoPosts",
-                JSON.stringify(specificProfilePosts)
-              );
-
-              setprofileInfoPosts(specificProfilePosts);
-            }
-          };
-
-          setTimeout(updateSpesificProfilePosts, 500);
-        } else if (
-          favoriteWindow === "hide" &&
-          profileInfo._id !== userInfo._id
-        ) {
-          // burada sadece reposted.lengthler ile ilgileniyoruz çünkü başkasının profilindeyiz ...
-          const spesificProfilePosts = JSON.parse(
-            localStorage.getItem("profileInfoPosts")
-          );
-
-          const findedPost = spesificProfilePosts.find((eachPost) => {
-            return eachPost._id === postId;
-          });
-
-          // socket io test start to check
-          handleNotification(findedPost, userInfo, "repost");
-          // socket io test finish to check
-
-          const findedPostIndex = spesificProfilePosts.indexOf(findedPost);
-
-          if (
-            findedPost.isReposted &&
-            findedPost.userId._id === profileInfo._id
-          ) {
-            const originalPost = spesificProfilePosts.find((eachPost) => {
-              return (
-                eachPost._id === findedPost.repostedFromThisOriginalPost[0]._id
-              );
-            });
-
-            const originalPostIndex =
-              spesificProfilePosts.indexOf(originalPost);
-
-            const updateSpesificProfilePosts = () => {
-              spesificProfilePosts[findedPostIndex].reposted.unshift(userInfo);
-              spesificProfilePosts[originalPostIndex].reposted.unshift(
-                userInfo
-              );
-              localStorage.setItem(
-                "profileInfoPosts",
-                JSON.stringify(spesificProfilePosts)
-              );
-
-              setprofileInfoPosts(spesificProfilePosts);
-            };
-
-            setTimeout(updateSpesificProfilePosts, 500);
-          } else if (
-            findedPost.isReposted &&
-            findedPost.userId._id !== profileInfo._id &&
-            findedPost.reposted.length > 0
-          ) {
-            const updateSpesificProfilePosts = () => {
-              spesificProfilePosts[findedPostIndex].reposted.unshift(userInfo);
-
-              localStorage.setItem(
-                "profileInfoPosts",
-                JSON.stringify(spesificProfilePosts)
-              );
-
-              setprofileInfoPosts(spesificProfilePosts);
-            };
-
-            setTimeout(updateSpesificProfilePosts, 500);
-          } else if (
-            !findedPost.isReposted &&
-            findedPost.userId._id === profileInfo._id &&
-            findedPost.reposted.length === 0
-          ) {
-            const updateSpesificProfilePosts = () => {
-              spesificProfilePosts[findedPostIndex].reposted.unshift(userInfo);
-
-              localStorage.setItem(
-                "profileInfoPosts",
-                JSON.stringify(spesificProfilePosts)
-              );
-
-              setprofileInfoPosts(spesificProfilePosts);
-            };
-
-            setTimeout(updateSpesificProfilePosts, 500);
-          } else if (
-            !findedPost.isReposted &&
-            findedPost.userId._id === profileInfo._id &&
-            findedPost.reposted.length > 0
-          ) {
-            const referencePost = spesificProfilePosts.find((eachPost) => {
-              return eachPost.repostedFromThisOriginalPost[0]
-                ? eachPost.repostedFromThisOriginalPost[0]._id ===
-                    findedPost._id
-                : null;
-            });
-
-            const referencePostIndex =
-              spesificProfilePosts.indexOf(referencePost);
-
-            const updateSpesificProfilePosts = () => {
-              spesificProfilePosts[findedPostIndex].reposted.unshift(userInfo);
-
-              if (spesificProfilePosts[referencePostIndex]) {
-                spesificProfilePosts[referencePostIndex].reposted.unshift(
-                  userInfo
-                );
-              }
-
-              localStorage.setItem(
-                "profileInfoPosts",
-                JSON.stringify(spesificProfilePosts)
-              );
-
-              setprofileInfoPosts(spesificProfilePosts);
-            };
-
-            setTimeout(updateSpesificProfilePosts, 500);
-          }
+        } else if (postsWindow === "") {
+          console.log("2 WORKS");
+          setTimeout(() => {
+            handleShowSpesificUserProfilePagePosts();
+            handleNotification(findedPost, userInfo, "repost");
+          }, 500);
+        } else {
+          return;
         }
       })
       .catch((error) => {
-        console.log(error);
+        console.log("Error =>", error);
       });
   };
   const handleDeleteRepostSpesificProfilePage = (postId) => {
     axios
       .post(
         `${API_URL}/repost/delete`,
-        { postId: postId, userId: userInfo._id },
+        { userId: userInfo._id, postId },
         {
           headers: {
             Authorization: `Bearer ${getToken()}`,
@@ -936,422 +699,17 @@ function SpesificUserProfile() {
         }
       )
       .then(() => {
-        if (postsWindow !== "hide") {
-          const spesificProfilePosts = JSON.parse(
-            localStorage.getItem("profileInfoPosts")
-          );
-
-          const findedPost = spesificProfilePosts.find((eachPost) => {
-            return eachPost._id === postId;
-          });
-
-          const findedPostIndex = spesificProfilePosts.indexOf(findedPost);
-
-          if (profileInfo._id === userInfo._id) {
-            if (findedPost ? findedPost.userId._id !== userInfo._id : null) {
-              const updateProfilePosts = () => {
-                spesificProfilePosts.splice(findedPostIndex, 1);
-                localStorage.setItem(
-                  "profileInfoPosts",
-                  JSON.stringify(spesificProfilePosts)
-                );
-
-                setprofileInfoPosts(spesificProfilePosts);
-              };
-
-              setTimeout(updateProfilePosts, 500);
-            } else if (
-              findedPost ? findedPost.userId._id === userInfo._id : null
-            ) {
-              if (findedPost.isReposted) {
-                if (findedPost.reposted.length === 1) {
-                  const updateProfilePosts = () => {
-                    const originalPost = spesificProfilePosts.find(
-                      (eachPost) => {
-                        return (
-                          eachPost._id ===
-                          findedPost.repostedFromThisOriginalPost[0]._id
-                        );
-                      }
-                    );
-
-                    const originalPostIndex =
-                      spesificProfilePosts.indexOf(originalPost);
-
-                    const originalPostReposter = spesificProfilePosts[
-                      originalPostIndex
-                    ].reposted.find((eachReposter) => {
-                      return eachReposter._id === userInfo._id;
-                    });
-                    const originalPostReposterIndex =
-                      spesificProfilePosts[originalPostIndex].reposted.indexOf(
-                        originalPostReposter
-                      );
-
-                    spesificProfilePosts[originalPostIndex].reposted.splice(
-                      originalPostReposterIndex,
-                      1
-                    );
-                    spesificProfilePosts.splice(findedPostIndex, 1);
-
-                    localStorage.setItem(
-                      "profileInfoPosts",
-                      JSON.stringify(spesificProfilePosts)
-                    );
-                    setprofileInfoPosts(spesificProfilePosts);
-                  };
-
-                  setTimeout(updateProfilePosts, 500);
-                }
-                if (findedPost.reposted.length > 1) {
-                  const updateProfilePosts = () => {
-                    const originalPost = spesificProfilePosts.find(
-                      (eachPost) => {
-                        return (
-                          eachPost._id ===
-                          findedPost.repostedFromThisOriginalPost[0]._id
-                        );
-                      }
-                    );
-
-                    const originalPostIndex =
-                      spesificProfilePosts.indexOf(originalPost);
-
-                    const originalPostReposter = spesificProfilePosts[
-                      originalPostIndex
-                    ].reposted.find((eachReposter) => {
-                      return eachReposter._id === userInfo._id;
-                    });
-
-                    const reposterIndex =
-                      spesificProfilePosts[originalPostIndex].reposted.indexOf(
-                        originalPostReposter
-                      );
-
-                    spesificProfilePosts[originalPostIndex].reposted.splice(
-                      reposterIndex,
-                      1
-                    );
-                    spesificProfilePosts.splice(findedPostIndex, 1);
-
-                    localStorage.setItem(
-                      "profileInfoPosts",
-                      JSON.stringify(spesificProfilePosts)
-                    );
-                    setprofileInfoPosts(spesificProfilePosts);
-                  };
-
-                  setTimeout(updateProfilePosts, 500);
-                }
-              } else if (!findedPost.isReposted) {
-                if (findedPost.reposted.length === 1) {
-                  // start to check basit settimeout animation
-                  const updateProfilePosts = () => {
-                    const findOriginalPost = spesificProfilePosts.find(
-                      (eachPost) => {
-                        return (
-                          eachPost.repostedFromThisOriginalPost[0]._id ===
-                          postId
-                        );
-                      }
-                    );
-
-                    const findOriginalPostIndex =
-                      spesificProfilePosts.indexOf(findOriginalPost);
-
-                    const reposter = findedPost.reposted.find(
-                      (eachReposter) => {
-                        return eachReposter._id === userInfo._id;
-                      }
-                    );
-
-                    const reposterIndex = findedPost.reposted.indexOf(reposter);
-                    spesificProfilePosts[findedPostIndex].reposted.splice(
-                      reposterIndex,
-                      1
-                    );
-
-                    spesificProfilePosts.splice(findOriginalPostIndex, 1);
-                    localStorage.setItem(
-                      "profileInfoPosts",
-                      JSON.stringify(spesificProfilePosts)
-                    );
-                    setprofileInfoPosts(spesificProfilePosts);
-                  };
-
-                  setTimeout(updateProfilePosts, 500);
-                  // finish to check basit settimeout animation
-                }
-                if (findedPost.reposted.length > 1) {
-                  const referencePost = spesificProfilePosts.find(
-                    (eachPost) => {
-                      return (
-                        eachPost.repostedFromThisOriginalPost[0]._id === postId
-                      );
-                    }
-                  );
-                  const referecePostIndex =
-                    spesificProfilePosts.indexOf(referencePost);
-                  const reposterFromReferencePost = spesificProfilePosts[
-                    referecePostIndex
-                  ].reposted.find((eachReposter) => {
-                    return eachReposter._id === userInfo._id;
-                  });
-                  const reposterIndexFromReferencePost = spesificProfilePosts[
-                    referecePostIndex
-                  ].reposted.indexOf(reposterFromReferencePost);
-
-                  const originalPostReposter = spesificProfilePosts[
-                    findedPostIndex
-                  ].reposted.find((eachReposter) => {
-                    return eachReposter._id === userInfo._id;
-                  });
-                  const originalPostReposterIndex =
-                    spesificProfilePosts[findedPostIndex].reposted.indexOf(
-                      originalPostReposter
-                    );
-
-                  spesificProfilePosts[referecePostIndex].reposted.splice(
-                    reposterIndexFromReferencePost,
-                    1
-                  );
-                  spesificProfilePosts[findedPostIndex].reposted.splice(
-                    originalPostReposterIndex,
-                    1
-                  );
-
-                  spesificProfilePosts.splice(referecePostIndex, 1);
-
-                  // start to check basit settimeout animation
-                  const updateProfilePosts = () => {
-                    localStorage.setItem(
-                      "profileInfoPosts",
-                      JSON.stringify(spesificProfilePosts)
-                    );
-
-                    setprofileInfoPosts(spesificProfilePosts);
-                  };
-
-                  setTimeout(updateProfilePosts, 500);
-                  // finish to check basit settimeout animation
-                }
-              }
-            }
-          } else if (profileInfo._id !== userInfo._id) {
-            const reposterIds = findedPost.reposted.map((eachReposter) => {
-              return eachReposter._id;
-            });
-
-            if (
-              findedPost
-                ? !findedPost.isReposted &&
-                  !reposterIds.includes(profileInfo._id)
-                : null
-            ) {
-              const updateSpesificProfilePosts = () => {
-                const reposter = spesificProfilePosts[
-                  findedPostIndex
-                ].reposted.find((eachReposter) => {
-                  return eachReposter._id === userInfo._id;
-                });
-
-                const reposterIndex =
-                  spesificProfilePosts[findedPostIndex].reposted.indexOf(
-                    reposter
-                  );
-                spesificProfilePosts[findedPostIndex].reposted.splice(
-                  reposterIndex,
-                  1
-                );
-
-                localStorage.setItem(
-                  "profileInfoPosts",
-                  JSON.stringify(spesificProfilePosts)
-                );
-
-                setprofileInfoPosts(spesificProfilePosts);
-              };
-
-              setTimeout(updateSpesificProfilePosts, 500);
-            } else if (
-              findedPost
-                ? !findedPost.isReposted &&
-                  reposterIds.includes(profileInfo._id)
-                : null
-            ) {
-              const referencePost = spesificProfilePosts.find((eachPost) => {
-                return eachPost.repostedFromThisOriginalPost[0]
-                  ? eachPost.repostedFromThisOriginalPost[0]._id === postId
-                  : null;
-              });
-
-              const referencePostIndex =
-                spesificProfilePosts.indexOf(referencePost);
-
-              const updateSpesificProfilePosts = () => {
-                const reposter = spesificProfilePosts[
-                  findedPostIndex
-                ].reposted.find((eachReposter) => {
-                  return eachReposter._id === userInfo._id;
-                });
-
-                const reposterIndex =
-                  spesificProfilePosts[findedPostIndex].reposted.indexOf(
-                    reposter
-                  );
-
-                spesificProfilePosts[findedPostIndex].reposted.splice(
-                  reposterIndex,
-                  1
-                );
-
-                spesificProfilePosts[referencePostIndex].reposted.splice(
-                  reposterIndex,
-                  1
-                );
-
-                localStorage.setItem(
-                  "profileInfoPosts",
-                  JSON.stringify(spesificProfilePosts)
-                );
-
-                setprofileInfoPosts(spesificProfilePosts);
-              };
-
-              setTimeout(updateSpesificProfilePosts, 500);
-            } else if (
-              findedPost.isReposted &&
-              findedPost.userId._id !== profileInfo._id
-            ) {
-              const updateSpesificProfilePosts = () => {
-                const reposter = spesificProfilePosts[
-                  findedPostIndex
-                ].reposted.find((eachReposter) => {
-                  return eachReposter._id === userInfo._id;
-                });
-
-                const reposterIndex =
-                  spesificProfilePosts[findedPostIndex].reposted.indexOf(
-                    reposter
-                  );
-
-                spesificProfilePosts[findedPostIndex].reposted.splice(
-                  reposterIndex,
-                  1
-                );
-
-                localStorage.setItem(
-                  "profileInfoPosts",
-                  JSON.stringify(spesificProfilePosts)
-                );
-
-                setprofileInfoPosts(spesificProfilePosts);
-              };
-
-              setTimeout(updateSpesificProfilePosts, 500);
-            } else if (
-              findedPost.isReposted &&
-              findedPost.userId._id === profileInfo._id
-            ) {
-              const updateSpesificProfilePosts = () => {
-                const originalPost = spesificProfilePosts.find((eachPost) => {
-                  return findedPost.repostedFromThisOriginalPost[0]
-                    ? findedPost.repostedFromThisOriginalPost[0]._id ===
-                        eachPost._id
-                    : null;
-                });
-                const originalPostIndex =
-                  spesificProfilePosts.indexOf(originalPost);
-
-                const reposter = spesificProfilePosts[
-                  findedPostIndex
-                ].reposted.find((eachReposter) => {
-                  return eachReposter._id === userInfo._id;
-                });
-
-                const reposterIndex =
-                  spesificProfilePosts[findedPostIndex].reposted.indexOf(
-                    reposter
-                  );
-
-                spesificProfilePosts[findedPostIndex].reposted.splice(
-                  reposterIndex,
-                  1
-                );
-                spesificProfilePosts[originalPostIndex].reposted.splice(
-                  reposterIndex,
-                  1
-                );
-
-                localStorage.setItem(
-                  "profileInfoPosts",
-                  JSON.stringify(spesificProfilePosts)
-                );
-
-                setprofileInfoPosts(spesificProfilePosts);
-              };
-
-              setTimeout(updateSpesificProfilePosts, 500);
-            }
-          }
+        if (postsWindow === "hide") {
+          console.log("1 WORKS");
+          setTimeout(() => {
+            handleShowSpesificUserProfilePageFavorites();
+          }, 500);
         }
-
-        if (favoriteWindow !== "hide") {
-          const profileInfoFavorites = JSON.parse(
-            localStorage.getItem("profileInfoFavorites")
-          );
-
-          const findedFavorite = profileInfoFavorites.find((eachPost) => {
-            return eachPost._id === postId;
-          });
-
-          const findedFavoriteIndex =
-            profileInfoFavorites.indexOf(findedFavorite);
-
-          const findReposter = profileInfoFavorites[
-            findedFavoriteIndex
-          ].reposted.find((eachReposter) => {
-            return eachReposter._id === userInfo._id;
-          });
-
-          const findedFavoriteReposterIndex =
-            profileInfoFavorites[findedFavoriteIndex].reposted.indexOf(
-              findReposter
-            );
-
-          if (findedFavorite ? findedFavorite.isReposted : null) {
-            const updateUserProfilePosts = () => {
-              profileInfoFavorites[findedFavoriteIndex].reposted.splice(
-                findedFavoriteReposterIndex,
-                1
-              );
-
-              localStorage.setItem(
-                "profileInfoFavorites",
-                JSON.stringify(profileInfoFavorites)
-              );
-
-              setFavorites(profileInfoFavorites);
-            };
-
-            setTimeout(updateUserProfilePosts, 500);
-          } else {
-            const updateUserProfilePosts = () => {
-              profileInfoFavorites[findedFavoriteIndex].reposted.splice(
-                findedFavoriteReposterIndex,
-                1
-              );
-
-              localStorage.setItem(
-                "profileInfoFavorites",
-                JSON.stringify(profileInfoFavorites)
-              );
-
-              setFavorites(profileInfoFavorites);
-            };
-
-            setTimeout(updateUserProfilePosts, 500);
-          }
+        if (favoriteWindow === "hide") {
+          console.log("2 WORKS");
+          setTimeout(() => {
+            handleShowSpesificUserProfilePagePosts();
+          }, 500);
         }
       })
 
@@ -1418,7 +776,7 @@ function SpesificUserProfile() {
                 </div>
               </Link>
               <div className="inner-div inner-div-fonts">
-                <Link to="/home" onClick={redirectHomePage}>
+                <Link to="/home">
                   <div className="home">
                     <div>
                       <svg
@@ -1460,7 +818,7 @@ function SpesificUserProfile() {
 
                 {/* finish to check notification component place  */}
 
-                <Link to="/messages" onClick={redirectToMessages}>
+                <Link to="/messages">
                   <div className="messages">
                     <div>
                       <svg
@@ -1479,7 +837,7 @@ function SpesificUserProfile() {
                   </div>
                 </Link>
 
-                <Link to="/profile" onClick={redirectProfilePage}>
+                <Link to="/profile">
                   <div className="profile">
                     <div>
                       <svg
@@ -1850,7 +1208,6 @@ function SpesificUserProfile() {
                     <Link
                       to={`/profile/${profileInfo._id}/following`}
                       className="following-followers-link"
-                      onClick={() => redirectFollowingPage(profileInfo._id)}
                       style={{
                         textDecoration: "none",
                         color: "black",
@@ -1881,7 +1238,6 @@ function SpesificUserProfile() {
                     <Link
                       to={`/profile/${profileInfo._id}/followers`}
                       className="following-followers-link"
-                      onClick={() => redirectFollowersPage(profileInfo._id)}
                       style={{
                         textDecoration: "none",
                         color: "black",
@@ -1977,8 +1333,12 @@ function SpesificUserProfile() {
               ></div>
             ) : null}
             <span>
-              {isLoading && userInfo._id === profileInfo._id ? (
-                <LoadingSpinner></LoadingSpinner>
+              {isLoading &&
+              userInfo._id === profileInfo._id &&
+              favoriteWindow === "hide" ? (
+                <LoadingSpinner
+                  strokeColor={"rgb(29, 155, 240)"}
+                ></LoadingSpinner>
               ) : (
                 ""
               )}
@@ -1993,7 +1353,7 @@ function SpesificUserProfile() {
                     <div className="each-post" key={post._id}>
                       {post.deactivatedOwner ? null : (
                         <>
-                          <Link
+                          <div
                             style={{
                               textDecoration: "none",
                             }}
@@ -2116,11 +1476,6 @@ function SpesificUserProfile() {
                                 {post.userId.imageUrl.slice(0, 3) !== "../" ? (
                                   <Link
                                     className="post-circle-profile-image-on-point"
-                                    onClick={() =>
-                                      redirectSpesificProfilePage(
-                                        post.userId._id
-                                      )
-                                    }
                                     style={{ cursor: "pointer" }}
                                     to={`/profile/${
                                       post ? post.userId._id : null
@@ -2139,11 +1494,6 @@ function SpesificUserProfile() {
                                 ) : (
                                   <Link
                                     className="post-circle-profile-svg-on-point"
-                                    onClick={() =>
-                                      redirectSpesificProfilePage(
-                                        post.userId._id
-                                      )
-                                    }
                                     to={`/profile/${
                                       post.userId ? post.userId._id : null
                                     }`}
@@ -2173,11 +1523,6 @@ function SpesificUserProfile() {
                                   <>
                                     <Link
                                       className="post-circle-postowner-fullname"
-                                      onClick={() =>
-                                        redirectSpesificProfilePage(
-                                          post.userId._id
-                                        )
-                                      }
                                       to={`/profile/${post.userId._id}`}
                                       style={{
                                         textDecoration: "none",
@@ -2216,11 +1561,6 @@ function SpesificUserProfile() {
                                       </span>{" "}
                                     </span>
                                     <Link
-                                      onClick={() =>
-                                        redirectSpesificProfilePage(
-                                          post.userId._id
-                                        )
-                                      }
                                       to={`/profile/${post.userId._id}`}
                                       style={{
                                         textDecoration: "none",
@@ -2235,16 +1575,6 @@ function SpesificUserProfile() {
                                       </span>
                                     </Link>
                                     <Link
-                                      onClick={() =>
-                                        redirectToPostDetailPage(
-                                          post.userId.username,
-                                          !post.isReposted
-                                            ? post._id
-                                            : post
-                                                .repostedFromThisOriginalPost[0]
-                                                ._id
-                                        )
-                                      }
                                       style={{
                                         textDecoration: "none",
                                       }}
@@ -2377,11 +1707,6 @@ function SpesificUserProfile() {
                                   >
                                     <span
                                       className="replying-to-text"
-                                      onClick={() =>
-                                        redirectSpesificProfilePage(
-                                          post.commentedForThisUsersPost._id
-                                        )
-                                      }
                                       style={{
                                         color: "rgb(29, 155, 240)",
                                         cursor: "pointer",
@@ -2396,14 +1721,6 @@ function SpesificUserProfile() {
                                 </div>
                               ) : null}
                               <Link
-                                onClick={() =>
-                                  redirectToPostDetailPage(
-                                    post.userId.username,
-                                    !post.isReposted
-                                      ? post._id
-                                      : post.repostedFromThisOriginalPost[0]._id
-                                  )
-                                }
                                 style={{
                                   textDecoration: "none",
                                   color: "rgb(15, 20, 25)",
@@ -2436,15 +1753,6 @@ function SpesificUserProfile() {
                             {post.image.url !== "image@url" ? (
                               <>
                                 <Link
-                                  onClick={() =>
-                                    redirectToImagePostDetailPage(
-                                      post.userId.username,
-                                      !post.isReposted
-                                        ? post._id
-                                        : post.repostedFromThisOriginalPost[0]
-                                            ._id
-                                    )
-                                  }
                                   to={`/${post.userId.username}/status/${
                                     !post.isReposted
                                       ? post._id
@@ -2496,6 +1804,9 @@ function SpesificUserProfile() {
                                   refreshPosts={
                                     handleShowSpesificUserProfilePagePosts
                                   }
+                                  setLoadingFalse={setLoadingFalse}
+                                  setLoadingTrue={setLoadingTrue}
+                                  postSharedMessage={postSharedMessage}
                                 />
                               </div>
 
@@ -2532,7 +1843,7 @@ function SpesificUserProfile() {
                                     style={{
                                       cursor: "pointer",
                                     }}
-                                    onClick={() => handleRepost(post._id)}
+                                    onClick={() => handleRepost(post._id, post)}
                                     width={`${1.25}em`}
                                     height={`${1.25}em`}
                                     viewBox="0 0 24 24"
@@ -2621,7 +1932,8 @@ function SpesificUserProfile() {
                                       <svg
                                         onClick={() =>
                                           handlePostLikesFromSpesificUserProfilePage(
-                                            post._id
+                                            post._id,
+                                            post
                                           )
                                         }
                                         width={`${1.25}em`}
@@ -2647,7 +1959,7 @@ function SpesificUserProfile() {
                               </div>
                             </Stack>
                             {/* new version favorite repost comment finish to check */}
-                          </Link>
+                          </div>
                           <div
                             style={{
                               borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
@@ -2739,7 +2051,7 @@ function SpesificUserProfile() {
                       <div className="each-post" key={favorite._id}>
                         {favorite.deactivatedOwner ? null : (
                           <>
-                            <Link
+                            <div
                               style={{
                                 textDecoration: "none",
                               }}
@@ -2770,11 +2082,6 @@ function SpesificUserProfile() {
                                     "../" ? (
                                       <Link
                                         className="post-circle-profile-image-on-point"
-                                        onClick={() =>
-                                          redirectSpesificProfilePage(
-                                            favorite.userId._id
-                                          )
-                                        }
                                         style={{ cursor: "pointer" }}
                                         to={`/profile/${
                                           favorite ? favorite.userId._id : null
@@ -2791,11 +2098,6 @@ function SpesificUserProfile() {
                                     ) : (
                                       <Link
                                         className="post-circle-profile-svg-on-point"
-                                        onClick={() =>
-                                          redirectSpesificProfilePage(
-                                            favorite.userId._id
-                                          )
-                                        }
                                         to={`/profile/${
                                           favorite.userId
                                             ? favorite.userId._id
@@ -2826,11 +2128,6 @@ function SpesificUserProfile() {
                                       <>
                                         <Link
                                           className="post-circle-postowner-fullname"
-                                          onClick={() =>
-                                            redirectSpesificProfilePage(
-                                              favorite.userId._id
-                                            )
-                                          }
                                           to={`/profile/${favorite.userId._id}`}
                                           style={{
                                             textDecoration: "none",
@@ -2869,11 +2166,6 @@ function SpesificUserProfile() {
                                           </span>{" "}
                                         </span>
                                         <Link
-                                          onClick={() =>
-                                            redirectSpesificProfilePage(
-                                              favorite.userId._id
-                                            )
-                                          }
                                           to={`/profile/${favorite.userId._id}`}
                                           style={{
                                             textDecoration: "none",
@@ -2890,16 +2182,6 @@ function SpesificUserProfile() {
                                           </span>
                                         </Link>
                                         <Link
-                                          onClick={() =>
-                                            redirectToPostDetailPage(
-                                              favorite.userId.username,
-                                              !favorite.isReposted
-                                                ? favorite._id
-                                                : favorite
-                                                    .repostedFromThisOriginalPost[0]
-                                                    ._id
-                                            )
-                                          }
                                           style={{
                                             textDecoration: "none",
                                           }}
@@ -3010,15 +2292,6 @@ function SpesificUserProfile() {
                                 gap={1}
                               >
                                 <Link
-                                  onClick={() =>
-                                    redirectToPostDetailPage(
-                                      favorite.userId.username,
-                                      !favorite.isReposted
-                                        ? favorite._id
-                                        : favorite
-                                            .repostedFromThisOriginalPost[0]._id
-                                    )
-                                  }
                                   style={{
                                     textDecoration: "none",
                                     color: "rgb(15, 20, 25)",
@@ -3050,16 +2323,6 @@ function SpesificUserProfile() {
                               {favorite.image.url !== "image@url" ? (
                                 <>
                                   <Link
-                                    onClick={() =>
-                                      redirectToImagePostDetailPage(
-                                        favorite.userId.username,
-                                        !favorite.isReposted
-                                          ? favorite._id
-                                          : favorite
-                                              .repostedFromThisOriginalPost[0]
-                                              ._id
-                                      )
-                                    }
                                     to={`/${favorite.userId.username}/status/${
                                       !favorite.isReposted
                                         ? favorite._id
@@ -3113,6 +2376,9 @@ function SpesificUserProfile() {
                                     refreshPosts={
                                       handleShowSpesificUserProfilePageFavorites
                                     }
+                                    setLoadingFalse={setLoadingFalse}
+                                    setLoadingTrue={setLoadingTrue}
+                                    postSharedMessage={postSharedMessage}
                                   />
                                 </div>
 
@@ -3166,7 +2432,7 @@ function SpesificUserProfile() {
                                           cursor: "pointer",
                                         }}
                                         onClick={() =>
-                                          handleRepost(favorite._id)
+                                          handleRepost(favorite._id, favorite)
                                         }
                                         width={`${1.25}em`}
                                         height={`${1.25}em`}
@@ -3256,7 +2522,8 @@ function SpesificUserProfile() {
                                         <svg
                                           onClick={() =>
                                             handlePostLikesFromSpesificUserProfilePage(
-                                              favorite._id
+                                              favorite._id,
+                                              favorite
                                             )
                                           }
                                           width={`${1.25}em`}
@@ -3282,7 +2549,7 @@ function SpesificUserProfile() {
                                 </div>
                               </Stack>
                               {/* new version favorite repost comment finish to check */}
-                            </Link>
+                            </div>
                             <div
                               style={{
                                 borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
