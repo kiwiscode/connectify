@@ -613,10 +613,6 @@ function UserProfile() {
   const handleShowMoreLikedTweets = () => {
     setvisibleLikedTweets((prevVisibleTweets) => prevVisibleTweets + 25);
   };
-  const redirectToMessages = () => {
-    navigate("/messages");
-    window.location.reload();
-  };
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -639,7 +635,11 @@ function UserProfile() {
       {contextHolder}
       <ToastContainer />
 
-      <ResponsiveNavigationBarBottom />
+      <ResponsiveNavigationBarBottom
+        refreshPosts={() => handleShowPostsProfilePage()}
+        setLoadingTrue={() => setLoadingTrue()}
+        setLoadingFalse={() => setLoadingFalse()}
+      />
 
       <Container fluid>
         <Row

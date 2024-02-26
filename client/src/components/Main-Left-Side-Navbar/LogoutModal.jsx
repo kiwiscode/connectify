@@ -392,7 +392,7 @@ function LogoutModal() {
     <Popover
       id="popover-positioned-top"
       title="Popover top"
-      className={`${showlogoutPopup ? "hideLogoutPopup" : ""}`}
+      className={`${showlogoutPopup ? "" : "hideLogoutPopup"}`}
     >
       <div
         style={{
@@ -612,6 +612,41 @@ function LogoutModal() {
     }
   };
 
+  useEffect(() => {
+    const getClickLocation = (e) => {
+      console.log("Target classlist =>", e.target.classList);
+      console.log(
+        "Target parent classlist =>",
+        e.srcElement.parentNode.className
+      );
+
+      const classList = e.target.classList;
+      const parentNodeClassName = e.srcElement.parentNode.className;
+
+      if (
+        classList.contains("logout-profile-img") ||
+        parentNodeClassName === "p-2 profile-img-and-svg" ||
+        classList.contains("p-2 profile-img-and-svg") ||
+        classList.contains("stack-logout-navigation-parent") ||
+        classList.contains("responsive-logout") ||
+        classList.contains("logout-three-dots") ||
+        classList.contains("localeInfo-username") ||
+        parentNodeClassName === "stack-logout-navigation-parent hstack"
+      ) {
+        setShowLogoutPopup(true);
+        console.log("Show if block =>", showlogoutPopup);
+      } else {
+        setShowLogoutPopup(false);
+        console.log("Show else block =>", showlogoutPopup);
+      }
+    };
+
+    document.body.addEventListener("click", getClickLocation);
+    return () => {
+      document.body.removeEventListener("click", getClickLocation);
+    };
+  }, []);
+
   return (
     <>
       {contextHolder}
@@ -637,7 +672,7 @@ function LogoutModal() {
             {userInfo.imageUrl.slice(0, 3) !== "../" ? (
               <div>
                 <img
-                  className="profile-img"
+                  className="profile-img logout-profile-img"
                   src={userInfo.imageUrl}
                   width={40}
                   height={40}
@@ -671,6 +706,7 @@ function LogoutModal() {
           <div className="p-2 responsive-logout">
             <div>
               <div
+                className="localeInfo-username"
                 style={{
                   color: "rgb(15,20,25)",
                   lineHeight: "20px",
@@ -681,6 +717,7 @@ function LogoutModal() {
                 {localeInfo.username}
               </div>
               <span
+                className="localeInfo-username"
                 style={{
                   color: "rgb(83, 100, 113)",
                   fontSize: "15px",

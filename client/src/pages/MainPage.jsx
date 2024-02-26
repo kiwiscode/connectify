@@ -644,7 +644,11 @@ function MainPage() {
     <>
       {contextHolder}
       <ToastContainer />
-      <ResponsiveNavigationBarBottom />
+      <ResponsiveNavigationBarBottom
+        refreshPosts={() => handleShowPostsHomePage()}
+        setLoadingTrue={() => setLoadingTrue()}
+        setLoadingFalse={() => setLoadingFalse()}
+      />
       <ResponsiveNavigationBarTop />
       <Container fluid>
         <Row

@@ -17,7 +17,7 @@ import io from "socket.io-client";
 import PostModal from "../components/Main-Left-Side-Navbar/PostModal";
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
-
+import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 function PostDetailPage() {
   const socket = io.connect(`${API_URL}`);
   const { postOwner, postId } = useParams();
@@ -1048,10 +1048,7 @@ function PostDetailPage() {
   const handleShowDetailPostFromPostDetailPage = (postId) => {
     console.log(postId);
   };
-  const redirectToMessages = () => {
-    navigate("/messages");
-    window.location.reload();
-  };
+
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   console.log("Current inner width =>", windowWidth);
@@ -1071,6 +1068,7 @@ function PostDetailPage() {
     <>
       {contextHolder}
       <ToastContainer />
+      <ResponsiveNavigationBarBottom />
       <Container fluid>
         <Row
           style={{
