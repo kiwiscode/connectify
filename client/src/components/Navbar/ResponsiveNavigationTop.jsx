@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { Stack } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
-import { LogoutModal } from "../ui/Modal";
+import LogoutModal from "../Main-Left-Side-Navbar/LogoutModal";
 
 function ResponsiveNavigationBarTop() {
   const { userInfo } = useContext(UserContext);

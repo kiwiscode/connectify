@@ -36,8 +36,8 @@ module.exports = (app) => {
     const allUsers = await User.find();
     socket.emit("activeUsers", allUsers);
 
-    socket.on("get_spesific_user", (data) => {
-      console.log("Spesific user received =>", data.username);
+    socket.on("get_specific_user", (data) => {
+      console.log("specific user received =>", data.username);
       User.findById(data._id)
         .populate({
           path: "messages",
@@ -54,7 +54,7 @@ module.exports = (app) => {
           },
         })
         .then((user) => {
-          socket.emit("receive_spesific_user_message_rooms", user);
+          socket.emit("receive_specific_user_message_rooms", user);
         })
         .catch((error) => {
           console.log("Error =>", error);
