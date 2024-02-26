@@ -15,6 +15,7 @@ const API_URL = "http://localhost:3000";
 // ?
 import io from "socket.io-client";
 import { CommentModal } from "../components/ui/Modal";
+import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
 
 function PostDetailPage() {
   const socket = io.connect(`${API_URL}`);
@@ -900,6 +901,21 @@ function PostDetailPage() {
       senderInfo: userInfo,
     });
   };
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  console.log("Current inner width =>", windowWidth);
+
+  const handleResize = () => {
+    setWindowWidth(window.innerWidth);
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
   return (
     <>
       <ToastContainer />

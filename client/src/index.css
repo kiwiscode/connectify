@@ -37,7 +37,7 @@ body {
 .logout-nav {
   display: flex;
   /* margin: 0px 0px 0px 0px; */
-  margin: 80px 0px 0px 0px;
+  margin: 40px 0px 0px 0px;
   cursor: pointer;
 }
 
@@ -838,6 +838,7 @@ span > a:hover {
 .previous-button:hover,
 .close-button:hover,
 .arrow:hover,
+.message-info:hover,
 .settings-icon:hover,
 .chat-create-icon:hover {
   background-color: #e7e7e8 !important;
@@ -914,8 +915,9 @@ span > a:hover {
   transition-duration: 0.2s !important;
 }
 
-.each-post {
-  cursor: "pointer";
+.each-post,
+.border-extra {
+  cursor: pointer !important;
 }
 
 .each-post:hover {
@@ -1059,14 +1061,7 @@ span > a:hover {
 
 @media (max-width: 991px) and (min-width: 768px) {
   .main-column {
-    width: 90% !important;
-  }
-
-  .left-column {
-    /* background-color: blue; */
-    width: 10% !important;
-    display: flex !important;
-    flex-direction: column !important;
+    width: 91% !important;
   }
 
   .nav-bar-home div a div div span,
@@ -1130,18 +1125,7 @@ span > a:hover {
 
 @media (max-width: 767px) and (min-width: 576px) {
   .main-column {
-    width: 86% !important;
-  }
-
-  .nav-bar-home {
-    /* background-color: royalblue; */
-  }
-
-  .left-column {
-    /* background-color: blue; */
-    width: 14% !important;
-    display: flex !important;
-    flex-direction: column !important;
+    width: 90% !important;
   }
 
   .nav-bar-home div a div div span,
@@ -1194,20 +1178,9 @@ span > a:hover {
   }
 }
 
-@media (max-width: 575px) and (min-width: 465px) {
+@media (max-width: 600px) and (min-width: 500px) {
   .main-column {
-    width: 82% !important;
-  }
-
-  .nav-bar-home {
-    /* background-color: rosybrown; */
-  }
-
-  .left-column {
-    /* background-color: blue; */
-    width: 14% !important;
-    display: flex !important;
-    flex-direction: column !important;
+    width: 88% !important;
   }
 
   .nav-bar-home div a div div span,
@@ -1271,6 +1244,12 @@ span > a:hover {
 
   .bi-chevron-double-left {
     margin-left: 15px;
+  }
+}
+
+@media (max-width: 500px) {
+  .main-column {
+    width: 100% !important;
   }
 }
 
@@ -1377,10 +1356,6 @@ span > a:hover {
   .inner-div svg {
     position: relative !important;
     right: 6px;
-  }
-
-  .inner-div div div:hover {
-    /* background-color: #e7e7e8 !important; */
   }
 
   .compose-tweet-2 {
@@ -1619,57 +1594,6 @@ span > a:hover {
 
 /* side bar colum responsiveness start to check  */
 
-.side-bar-column {
-  background-color: royalblue;
-}
-
-@media (min-width: 992px) and (max-width: 1200px) {
-  .side-bar-column {
-    position: fixed;
-    height: 100%;
-    right: 8px;
-  }
-}
-
-@media (min-width: 1200px) and (max-width: 1400px) {
-  .side-bar-column {
-    position: fixed;
-    height: 100%;
-    right: 16px;
-  }
-}
-
-@media (min-width: 1400px) and (max-width: 1600px) {
-  .side-bar-column {
-    position: fixed;
-    height: 100%;
-    right: 20px;
-  }
-}
-
-@media (min-width: 1600px) and (max-width: 1800px) {
-  .side-bar-column {
-    position: fixed;
-    height: 100%;
-    right: 70px;
-  }
-}
-
-@media (min-width: 1880px) and (max-width: 1940px) {
-  .side-bar-column {
-    position: fixed;
-    height: 100%;
-    right: 135px;
-  }
-}
-
-@media (min-width: 1940px) and (max-width: 2000px) {
-  .side-bar-column {
-    position: fixed;
-    height: 100%;
-    right: 145px;
-  }
-}
 /* side bar colum responsiveness finish to check  */
 
 /* popover hover effetct start to check  */
@@ -1952,3 +1876,169 @@ span > a:hover {
   }
 }
 /* .loading-spinner test finish to check  */
+
+/* new navigation bar left side start responsiveness and general styling start to check  */
+
+.nav-bar-left-side div a {
+  text-decoration: none;
+  color: black;
+}
+.stack-logout-navigation-parent:hover {
+  background-color: #e7e7e8;
+}
+@media (max-width: 1201px) and (min-width: 500px) {
+  .home-nav-link-parent-div div span,
+  .notifications-nav-link-parent-div div span,
+  .messages-nav-link-parent-div div span,
+  .profile-nav-link-parent-div div span,
+  .compose-tweet-text {
+    display: none !important;
+  }
+
+  .connectify-basic-icon,
+  .post-btn-left-side-nav-bar {
+    display: flex;
+  }
+
+  .home-nav-link-parent-div div,
+  .notifications-nav-link-parent-div div,
+  .messages-nav-link-parent-div div,
+  .profile-nav-link-parent-div div,
+  .connectify-basic-icon,
+  .post-btn-left-side-nav-bar {
+    justify-content: flex-end !important;
+  }
+
+  .compose-tweet {
+    position: initial !important;
+  }
+
+  .compose-tweet {
+    max-width: 50px !important;
+    max-height: 50px !important;
+  }
+
+  .compose-tweet-svg {
+    display: inline !important;
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  .compose-tweet-2 {
+    position: relative !important;
+    left: 10px !important;
+  }
+
+  .responsive-logout,
+  .responsive-logout div,
+  .responsive-logout svg {
+    display: none !important;
+  }
+
+  .stack-logout-navigation-parent {
+    width: 100% !important;
+  }
+  .profile-img-and-svg {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    position: relative !important;
+    left: 10px !important;
+  }
+  .stack-logout-navigation-parent:hover {
+    background-color: initial !important;
+  }
+}
+
+@media (max-width: 500px) and (min-width: 0px) {
+  .responsive-logout,
+  .responsive-logout div,
+  .responsive-logout svg {
+    display: none !important;
+  }
+  .profile-img-and-svg {
+    /* width: 100% !important; */
+    display: flex !important;
+    justify-content: flex-end !important;
+    position: relative !important;
+    left: 18px !important;
+  }
+
+  .stack-logout-navigation-parent:hover {
+    background: initial !important;
+  }
+}
+
+@media (max-width: 768px) and (min-width: 576px) {
+  .profile-img-and-svg {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    position: relative !important;
+    left: 17px !important;
+  }
+  .compose-tweet-2 {
+    position: relative !important;
+    left: 15px !important;
+  }
+}
+
+@media (max-width: 780px) and (min-width: 500px) {
+  .home-nav-link-parent-div div svg,
+  .notifications-nav-link-parent-div div svg,
+  .messages-nav-link-parent-div div svg,
+  .profile-nav-link-parent-div div svg {
+    min-width: 35px !important;
+  }
+
+  .connectify-basic-icon svg {
+    min-width: 45px !important;
+    position: relative !important;
+    left: 24px !important;
+  }
+
+  .home-nav-link-parent-div div,
+  .notifications-nav-link-parent-div div,
+  .messages-nav-link-parent-div div,
+  .profile-nav-link-parent-div div
+  /* ,.connectify-basic-icon */ {
+    position: relative !important;
+    left: 15px;
+  }
+  .profile-img-and-svg {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    position: relative !important;
+    left: 20px !important;
+  }
+  .compose-tweet-2 {
+    position: relative !important;
+    left: 18px !important;
+  }
+}
+
+@media (max-width: 680px) and (min-width: 500px) {
+  .profile-img-and-svg {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    position: relative !important;
+    left: 19px !important;
+  }
+  .compose-tweet-2 {
+    position: relative !important;
+    left: 17px !important;
+  }
+}
+
+@media (max-width: 500px) and (min-width: 0px) {
+  .left-column {
+    display: none !important;
+  }
+}
+
+@media (max-width: 770px) {
+}
+
+/* new navigation bar left side start responsiveness and general styling finish to check  */

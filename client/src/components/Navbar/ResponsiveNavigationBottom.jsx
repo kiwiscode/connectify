@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Stack } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import "./navbar.css";
-import { PostModal } from "../ui/Modal";
 import { message } from "antd";
+import PostModal from "../Main-Left-Side-Navbar/PostModal";
 
 // when working on local version
 
@@ -63,11 +63,9 @@ function ResponsiveNavigationBarBottom() {
     setPrevScrollPos(currentScrollPos);
 
     if (scrollingUp) {
-      // Scroll up
-      setVisible(true); // Örneğin, opacity'yi artırabilirsiniz
+      setVisible(true);
     } else {
-      // Scroll down
-      setVisible(false); // Örneğin, opacity'yi azaltabilirsiniz
+      setVisible(false);
     }
   };
 
@@ -77,6 +75,7 @@ function ResponsiveNavigationBarBottom() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [prevScrollPos]);
+
   return (
     <>
       {contextHolder}
@@ -153,7 +152,12 @@ function ResponsiveNavigationBarBottom() {
           </Link>
         </div>
       </Stack>
-      <div className="responsive-navigation-bar-bottom">
+      <div
+        style={{
+          backgroundColor: "red",
+        }}
+        className="responsive-navigation-bar-bottom"
+      >
         <PostModal
           // IMPORTANT => calling the refreshPosts as a prop from PostModal component and refreshing the posts !
           visible={visible}

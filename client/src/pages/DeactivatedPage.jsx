@@ -230,11 +230,7 @@ function DeactivatedPage() {
         </Modal.Footer>
       </Modal>
       {/* finish to check signup modal */}
-      <Container
-        style={{
-          height: "100%",
-        }}
-      >
+      <Container fluid>
         <Row
           style={{
             height: "100vh",

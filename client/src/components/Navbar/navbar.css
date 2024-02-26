@@ -1,6 +1,6 @@
 /* responsive navigation bar bottom */
 
-@media (max-width: 465px) and (min-width: 0px) {
+@media (max-width: 500px) and (min-width: 0px) {
   .main-column {
     width: 100% !important;
     height: 100% !important;
@@ -35,7 +35,7 @@
 
 /* responsive navigation bar top */
 
-@media (max-width: 465px) and (min-width: 0px) {
+@media (max-width: 500px) and (min-width: 0px) {
   .responsive-navigation-bar-top {
     display: flex !important;
     justify-content: space-between !important;
