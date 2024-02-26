@@ -11,13 +11,16 @@ import {
   Button,
 } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { LogoutModal, PostModal } from "../components/ui/Modal";
 import axios from "axios";
 import CreateChat from "../components/ui/CreateChat";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import CustomNotification from "../components/Notifications/CustomNotification";
 import { List, message } from "antd";
+import PostModal from "../components/Main-Left-Side-Navbar/PostModal";
+import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
+import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
+
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -84,10 +87,10 @@ function MessagesPage() {
 
   useEffect(() => {
     console.log("User info =>", userInfo);
-    socket.emit("get_spesific_user", userInfo);
+    socket.emit("get_specific_user", userInfo);
   }, []);
 
-  socket.on("receive_spesific_user_message_rooms", (data) => {
+  socket.on("receive_specific_user_message_rooms", (data) => {
     setfilteredRooms(data.messages);
     setmessageRooms(data.messages);
   });
@@ -589,6 +592,26 @@ function MessagesPage() {
 
   console.log("Filtered rooms length =>", filteredRooms.length);
   console.log(checkIfAllFilteredRoomsChatEmpty(filteredRooms) !== 0);
+
+  const redirectToChatDetailPage = (roomId) => {
+    navigate(`/messages/${roomId}`);
+    window.location.reload();
+  };
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  console.log("Current inner width =>", windowWidth);
+
+  const handleResize = () => {
+    setWindowWidth(window.innerWidth);
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
   return (
     <>
       {/* start to check delete conversation modal  */}
@@ -599,12 +622,7 @@ function MessagesPage() {
       <ToastContainer />
 
       <ResponsiveNavigationBarBottom />
-      <Container
-        style={{
-          justifyContent: "center",
-          position: "relative",
-        }}
-      >
+      <Container fluid>
         <Row
           style={{
             height: "100vh",
@@ -612,115 +630,12 @@ function MessagesPage() {
             borderBottom: "none",
           }}
         >
-          <Col className="left-column" xs={12} sm={12} md={1} lg={3} xxl={3}>
-            <nav className="nav-bar-home">
-              <Link href="/home">
-                <div>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="30"
-                    height="30"
-                    fill="currentColor"
-                    className="bi bi-chevron-double-left like-icon"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-                    <path d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-                  </svg>
-                </div>
-              </Link>
-
-              <div className="inner-div inner-div-fonts ">
-                <Link to="/home">
-                  <div className="home">
-                    <div>
-                      <svg
-                        width={26}
-                        height={26}
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                        className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
-                      >
-                        <g>
-                          <path d="M21.591 7.146L12.52 1.157c-.316-.21-.724-.21-1.04 0l-9.071 5.99c-.26.173-.409.456-.409.757v13.183c0 .502.418.913.929.913H9.14c.51 0 .929-.41.929-.913v-7.075h3.909v7.075c0 .502.417.913.928.913h6.165c.511 0 .929-.41.929-.913V7.904c0-.301-.158-.584-.408-.758z"></path>
-                        </g>
-                      </svg>
-
-                      <span>Home</span>
-                    </div>
-                  </div>
-                </Link>
-                {/* start to check notification component place  */}
-                <Link>
-                  <div className="notifications">
-                    <div>
-                      <svg
-                        width={26}
-                        height={26}
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                        className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
-                      >
-                        <g>
-                          <path d="M19.993 9.042C19.48 5.017 16.054 2 11.996 2s-7.49 3.021-7.999 7.051L2.866 18H7.1c.463 2.282 2.481 4 4.9 4s4.437-1.718 4.9-4h4.236l-1.143-8.958zM12 20c-1.306 0-2.417-.835-2.829-2h5.658c-.412 1.165-1.523 2-2.829 2zm-6.866-4l.847-6.698C6.364 6.272 8.941 4 11.996 4s5.627 2.268 6.013 5.295L18.864 16H5.134z"></path>
-                        </g>
-                      </svg>
-
-                      <span>Notifications </span>
-                    </div>
-                  </div>
-                </Link>
-                {/* finish to check notification component place  */}
-
-                <Link to="/messages">
-                  <div className="messages">
-                    <div>
-                      <svg
-                        width={26}
-                        height={26}
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                        className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
-                      >
-                        <g>
-                          <path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v2.764l8 3.638 8-3.636V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 5.463l-8 3.636-8-3.638V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-8.037z"></path>
-                        </g>
-                      </svg>
-                      <span>Messages</span>
-                    </div>
-                  </div>
-                </Link>
-
-                <Link to="/profile">
-                  <div className="profile">
-                    <div>
-                      <svg
-                        width={26}
-                        height={26}
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                        className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
-                      >
-                        <g>
-                          <path d="M5.651 19h12.698c-.337-1.8-1.023-3.21-1.945-4.19C15.318 13.65 13.838 13 12 13s-3.317.65-4.404 1.81c-.922.98-1.608 2.39-1.945 4.19zm.486-5.56C7.627 11.85 9.648 11 12 11s4.373.85 5.863 2.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H3.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46zM12 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM8 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4z"></path>
-                        </g>
-                      </svg>
-
-                      <span>Profile</span>
-                    </div>
-                  </div>
-                </Link>
-                <PostModal
-                  // IMPORTANT => calling the refreshPosts as a prop from PostModal component and refreshing the posts !
-                  refreshPosts={() => handleShowPostsMessagePage()}
-                  setLoadingTrue={() => setLoadingTrue()}
-                  setLoadingFalse={() => setLoadingFalse()}
-                  parentCallBack={handleCallback}
-                ></PostModal>
-              </div>
-              <LogoutModal></LogoutModal>
-            </nav>
-          </Col>
+          <LeftSideNavBar
+            refreshPosts={() => handleShowPostsMessagePage()}
+            setLoadingTrue={() => setLoadingTrue()}
+            setLoadingFalse={() => setLoadingFalse()}
+            parentCallBack={handleCallback}
+          />
 
           {/* finish to check left bar column */}
 
@@ -729,13 +644,21 @@ function MessagesPage() {
             xs={12} // 0px - 576px aralığı
             sm={12} // 576px - 768px aralığı
             md={11} // 768px - 992px aralığı
-            lg={6} // 1200px - 1400px aralığı
-            xxl={6} // 1400px ve sonrası aralığı
-            className={`main-column`}
+            lg={
+              windowWidth <= 1201 && windowWidth >= 992
+                ? 7
+                : windowWidth > 1201
+                ? 5
+                : ""
+            } // 992px - 1400px aralığı
+            xxl={5} // 1400px ve sonrası aralığı
+            className={`main-column `}
             style={{
               border: "1px solid rgba(0, 0, 0, 0.1)",
               borderTop: "none",
               borderBottom: "none",
+              padding: "0px",
+              position: "relative",
             }}
           >
             <Stack direction="horizontal" gap={3}>
@@ -765,16 +688,14 @@ function MessagesPage() {
               <div
                 className="p-2 ms-auto settings-icon"
                 style={{
+                  cursor: "pointer",
                   borderRadius: "50%",
                   position: "relative",
                   width: "40px",
                   height: "40px",
-                  cursor: "pointer",
                 }}
               >
                 <svg
-                  width={20}
-                  height={20}
                   style={{
                     color: "rgb(15, 20, 25)",
                     lineHeight: "20px",
@@ -782,6 +703,8 @@ function MessagesPage() {
                     fontWeight: "700",
                     cursor: "pointer",
                   }}
+                  width={20}
+                  height={20}
                   viewBox="0 0 24 24"
                   aria-hidden="true"
                   className="messages-settings-and-privacy r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
@@ -851,7 +774,7 @@ function MessagesPage() {
                               key={eachMessageRoom._id}
                               style={{
                                 position: "relative",
-                                bottom: "20px",
+                                // bottom: "20px",
                                 margin: "5px",
                                 cursor: "pointer",
                                 listStyleType: "none",
@@ -863,10 +786,17 @@ function MessagesPage() {
                                   ? `/messages/${eachMessageRoom._id}`
                                   : null
                               }
+                              onClick={() =>
+                                isHovered !== eachMessageRoom._id &&
+                                !showMessageDeletePopover
+                                  ? redirectToChatDetailPage(
+                                      eachMessageRoom._id
+                                    )
+                                  : null
+                              }
                             >
                               <div
                                 style={{
-                                  // backgroundColor: "blue",
                                   backgroundColor: eachMessageRoom.readed
                                     ? "white"
                                     : "#F7F9F9",
@@ -910,7 +840,6 @@ function MessagesPage() {
                                                     }
                                                     alt=""
                                                   />
-                                                  <div></div>
                                                 </>
                                               ) : (
                                                 <>
@@ -1311,21 +1240,7 @@ function MessagesPage() {
           {/* finish to check main column  */}
 
           {/* 3.column burası olucak */}
-
-          <Col
-            className="side-bar-column d-none d-lg-block d-xxl-block"
-            xs={12} // 0px - 576px aralığı
-            sm={12} // 576px - 768px aralığı
-            md={6} // 768px - 992px aralığı
-            lg={3} // 1200px - 1400px aralığı
-            xxl={3} // 1400px ve sonrası aralığı
-            style={{
-              height: "100%",
-              backgroundColor: "indianred",
-            }}
-          >
-            Side bar column
-          </Col>
+          <RightSideColumn />
         </Row>
       </Container>
     </>

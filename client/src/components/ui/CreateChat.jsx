@@ -43,7 +43,7 @@ function CreateChat({ writeMessageButton }) {
         filterUsers([], searchString);
       }
     });
-    socket.emit("get_spesific_user", userInfo);
+    socket.emit("get_specific_user", userInfo);
 
     // Component unmount olduğunda temizlik yap
     // return () => {
