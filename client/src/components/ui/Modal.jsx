@@ -632,10 +632,14 @@ function CommentModal({
         handleClose();
         setModalImage("");
         setContent("");
-        setLoadingTrue();
+        if (setLoadingTrue) {
+          setLoadingTrue();
+        }
         setTimeout(() => {
           handleNotification(post, userInfo, "comment");
-          setLoadingFalse();
+          if (setLoadingFalse) {
+            setLoadingFalse();
+          }
           refreshPosts();
           postSharedMessage(
             response.data.createdPost.authorUserName,

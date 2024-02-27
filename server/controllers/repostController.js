@@ -16,8 +16,6 @@ const handleRepost = (req, res) => {
           if (post.isComment) {
             Comment.find({ postId: post._id.toString() })
               .then((commentFromDataBase) => {
-                console.log("Comment from data base =>", commentFromDataBase);
-
                 commentFromDataBase[0].reposted.push(userId);
                 commentFromDataBase[0].save();
               })
@@ -126,9 +124,6 @@ const handleRepost = (req, res) => {
                 ]);
               })
               .then((populatedPost) => {
-                console.log("Post reposted =>", post.reposted);
-                console.log("Is updated =>", [...post.reposted, userId]);
-                console.log(user._id);
                 // Popüle edilmiş post işlemleri
                 // populatedPost.reposted.unshift(userId);
                 user.posts.unshift(populatedPost._id);
@@ -344,8 +339,6 @@ const handleDeleteReposts = (req, res) => {
         console.log("This post is comment =>", post);
         Comment.find({ postId: post._id })
           .then((commentFromDataBase) => {
-            console.log("Comment from data base =>", commentFromDataBase);
-
             // splice the user id from comment start to check
 
             const newRepostedArray = commentFromDataBase[0].reposted.filter(

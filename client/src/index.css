@@ -47,6 +47,10 @@ body {
   display: none !important;
 }
 
+.responsive-post-button:hover {
+  background-color: #198cd8 !important;
+}
+
 .header-container {
   font-size: 64px;
   font-weight: 700;
