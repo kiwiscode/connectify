@@ -18,10 +18,6 @@ const handleShowFollowingPosts = (req, res) => {
       User.find({ followers: userId })
         .then((response) => {
           // finish to check user following these users
-          console.log(
-            "These are the users that our users following =>",
-            response
-          );
 
           // we need to get all the posts from post collection with the id of response id , response it self is an array in this case and it can have more than 1 length , because user can follow more than 1 person... start to check
 

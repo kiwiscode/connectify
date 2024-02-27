@@ -8,7 +8,6 @@ import {
   Stack,
   Button,
   ButtonGroup,
-  Modal,
   Accordion,
 } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
@@ -39,7 +38,6 @@ function UserProfile() {
   // use effect to grab current mouse click location start to check
   const [clickedPostBox, setclickedPostBox] = useState(null);
   useEffect(() => {
-    console.log("Wait for me 1");
     const getClickLocation = (e) => {
       const clickedElementParentClass = e.target.parentNode.className;
       const clickedElementClass = e.target.classList;
@@ -146,8 +144,6 @@ function UserProfile() {
 
   // socket io 4 client start to check
   useEffect(() => {
-    console.log("Wait for me 2");
-
     socket.on("socket_id_for_user", (socketId) => {
       localStorage.setItem("socketId", socketId);
     });
@@ -157,7 +153,6 @@ function UserProfile() {
   // socket io 4 client finish to check
 
   useEffect(() => {
-    console.log("Wait for me 3");
     socket.on("getNotification", (data) => {
       console.log("Data =>", data);
       if (data.senderName !== userInfo.username) {
@@ -248,7 +243,7 @@ function UserProfile() {
     console.log("Go one page back !");
     navigate(-1);
   };
-
+  const [profile, setProfile] = useState([]);
   const handleShowPostsProfilePage = () => {
     axios
       .get(`${API_URL}/profile`, {
@@ -257,6 +252,7 @@ function UserProfile() {
         },
       })
       .then((response) => {
+        console.log("Profile info =>", response);
         setFavoriteWindow("hide");
         setPostWindow("");
 
@@ -264,13 +260,13 @@ function UserProfile() {
           "profilePagePosts",
           JSON.stringify(response.data.posts)
         );
+        setProfile(response.data.user);
         setUserprofiledata(response.data.posts);
       })
       .catch((err) => {
         return err;
       });
   };
-
   const handleDeletePostFromProfilePage = (postId) => {
     axios
       .post(
@@ -504,9 +500,10 @@ function UserProfile() {
         }
       )
       .then((response) => {
+        console.log("Response =>", response);
         const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
-        userInfo.imageUrl = response.data.url;
+        userInfo.imageUrl = response.data.imageInfo.url;
 
         const updatedUserInfo = userInfo;
         localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
@@ -519,6 +516,8 @@ function UserProfile() {
         console.log(error);
       });
   };
+
+  console.log("Profile =>", profile);
 
   const setLoadingTrue = () => {
     setIsLoading(true);
@@ -535,14 +534,13 @@ function UserProfile() {
   };
 
   useEffect(() => {
-    console.log("Wait for me 4");
-
     if (postsWindow === "hide") {
+      changeProfileImage();
       handleGetFavorites();
     } else if (favoriteWindow === "hide") {
+      changeProfileImage();
       handleShowPostsProfilePage();
     }
-    changeProfileImage();
   }, [profileImage, postsWindow, favoriteWindow]);
 
   const [followingFollowersDetail, showFollowingFollowersDetail] =
@@ -587,8 +585,6 @@ function UserProfile() {
   const [activeUserFollowing, setactiveUserFollowing] = useState([]);
   const [activeUserFollowers, setactiveUserFollowers] = useState([]);
   useEffect(() => {
-    console.log("Wait for me 5");
-
     axios
       .get(`${API_URL}/profile`, {
         headers: {
@@ -615,8 +611,6 @@ function UserProfile() {
   };
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-
-  console.log("Current inner width =>", windowWidth);
 
   const handleResize = () => {
     setWindowWidth(window.innerWidth);

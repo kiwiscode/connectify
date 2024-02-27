@@ -199,7 +199,7 @@ const handleProfilePicture = (req, res) => {
             user.imageUrl = imageInfo.url;
             user.save();
 
-            res.status(200).json(imageInfo);
+            res.status(200).json({ imageInfo: imageInfo });
           })
           .catch((error) => {
             console.log(error);

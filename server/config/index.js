@@ -136,7 +136,7 @@ module.exports = (app) => {
                 socket
                   .to(data.room)
                   .emit("receive_spesific_room_message", data);
-                console.log("Data =>", data);
+
                 console.log("Data.room =>", data.room);
 
                 const newChat = {
@@ -150,11 +150,6 @@ module.exports = (app) => {
                   messages: [newChat],
                 })
                   .then((newCreatedChatBetween2User) => {
-                    console.log(
-                      "Check new created chat =>",
-                      newCreatedChatBetween2User
-                    );
-
                     // BUG users room index not receiving correctly start to check
 
                     // console.log(
@@ -530,11 +525,6 @@ module.exports = (app) => {
         text,
         senderInfo,
       }) => {
-        console.log("Receiver name =>", receiverName);
-        console.log("Online users 4 =>", onlineUsers);
-        console.log("General info =>", contactHasBeenMade);
-
-        console.log("Sender info =>", senderInfo);
         const receiver = onlineUsers.find((eachUser) => {
           return eachUser.username === receiverName;
         });
