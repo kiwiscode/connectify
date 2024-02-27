@@ -77,8 +77,8 @@ const getPostDetail = (req, res) => {
       },
     })
     .then((post) => {
-      console.log("Detailed post =>", post.isReposted, post.content);
-      res.status(202).json({ detailedPost: post });
+      console.log("Detailed post comments =>", post.comments.length);
+      res.status(200).json({ detailedPost: post });
     })
     .catch(() => {
       res.status(404).json({

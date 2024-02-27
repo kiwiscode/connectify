@@ -52,8 +52,6 @@ const handleAddFavorite = (req, res) => {
         if (post.isComment) {
           Comment.find({ postId: post._id.toString() })
             .then((commentFromDataBase) => {
-              console.log("Comment from data base =>", commentFromDataBase);
-
               commentFromDataBase[0].likes.unshift(userId);
               commentFromDataBase[0].save();
             })
@@ -330,8 +328,6 @@ const handleDeleteFavorite = (req, res) => {
           console.log("This post is comment =>", post);
           Comment.find({ postId: post._id })
             .then((commentFromDataBase) => {
-              console.log("Comment from data base =>", commentFromDataBase);
-
               // splice the user id from comment start to check
 
               const newLikesArray = commentFromDataBase[0].likes.filter(

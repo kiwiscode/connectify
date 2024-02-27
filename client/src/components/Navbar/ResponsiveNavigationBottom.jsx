@@ -1,19 +1,28 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Stack } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import "./navbar.css";
 import { message } from "antd";
 import PostModal from "../Main-Left-Side-Navbar/PostModal";
+import axios from "axios";
+import { UserContext } from "../../context/UserContext";
 
 // when working on local version
+const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
 
-function ResponsiveNavigationBarBottom() {
+function ResponsiveNavigationBarBottom({
+  refreshPosts,
+  setLoadingTrue,
+  setLoadingFalse,
+  isUserProfile,
+  isUserSpesificProfile,
+}) {
   const [prevScrollPos, setPrevScrollPos] = useState(window.pageYOffset);
   const [visible, setVisible] = useState(true);
-
+  const { getToken } = useContext(UserContext);
   // start to check shared post view message
   const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
 
@@ -44,11 +53,10 @@ function ResponsiveNavigationBarBottom() {
           </>
         </div>
       ),
-      duration: 60,
+      duration: 6,
       className: "custom-message-style-responsive",
     });
   };
-  // finish to check shared post view message
 
   const navigate = useNavigate();
   const redirectToMessages = () => {
@@ -152,14 +160,12 @@ function ResponsiveNavigationBarBottom() {
           </Link>
         </div>
       </Stack>
-      <div
-        style={{
-          backgroundColor: "red",
-        }}
-        className="responsive-navigation-bar-bottom"
-      >
+      <div className="responsive-navigation-bar-bottom">
         <PostModal
           // IMPORTANT => calling the refreshPosts as a prop from PostModal component and refreshing the posts !
+          setLoadingTrue={setLoadingTrue}
+          setLoadingFalse={setLoadingFalse}
+          refreshPosts={refreshPosts}
           visible={visible}
           parentCallBack={handleCallback}
         ></PostModal>

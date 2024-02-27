@@ -27,6 +27,7 @@ import io from "socket.io-client";
 
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
+import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 
 function SpesificUserProfile() {
   const socket = io.connect(`${API_URL}`);
@@ -745,10 +746,7 @@ function SpesificUserProfile() {
   const handleShowMoreLikedTweets = () => {
     setvisibleLikedTweets((prevVisibleTweets) => prevVisibleTweets + 25);
   };
-  const redirectToMessages = () => {
-    navigate("/messages");
-    window.location.reload();
-  };
+
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   console.log("Current inner width =>", windowWidth);
@@ -768,6 +766,11 @@ function SpesificUserProfile() {
     <>
       {contextHolder}
       <ToastContainer />
+      <ResponsiveNavigationBarBottom
+        refreshPosts={() => handleShowSpesificUserProfilePagePosts()}
+        setLoadingTrue={() => setLoadingTrue()}
+        setLoadingFalse={() => setLoadingFalse()}
+      />
 
       <Container fluid>
         <Row
