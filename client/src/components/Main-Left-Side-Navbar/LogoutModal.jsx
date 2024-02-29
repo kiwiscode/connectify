@@ -629,6 +629,7 @@ function LogoutModal() {
         classList.contains("p-2 profile-img-and-svg") ||
         classList.contains("stack-logout-navigation-parent") ||
         classList.contains("responsive-logout") ||
+        classList.contains("p-2 responsive-logout") ||
         classList.contains("logout-three-dots") ||
         classList.contains("localeInfo-username") ||
         parentNodeClassName === "stack-logout-navigation-parent hstack"
@@ -703,7 +704,7 @@ function LogoutModal() {
           </div>
           {/* finish to check */}
 
-          <div className="p-2 responsive-logout">
+          <div className="p-2 responsive-logout test 1 ">
             <div>
               <div
                 className="localeInfo-username"
@@ -729,7 +730,7 @@ function LogoutModal() {
               </span>
             </div>
           </div>
-          <div className="p-2 ms-auto responsive-logout">
+          <div className="p-2 ms-auto responsive-logout test 2">
             <svg
               width={`${1.25}em`}
               height={`${1.25}em`}

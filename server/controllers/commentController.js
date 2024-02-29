@@ -814,121 +814,314 @@ const addComment = (req, res) => {
                 Post.findById(findedComment.postId.toString())
                   .then((post) => {
                     if (post.reposted.length) {
-                      Post.find({
-                        repostedFromThisOriginalPost: post._id,
-                      })
-                        .then((findedReferencePost) => {
-                          return Post.create({
-                            userId: userId,
-                            authorFullName: user.fullname,
-                            authorUserName: user.username,
-                            content: commentPost,
-                            isComment: true,
-                            commentedForThisPost: post._id.toString(),
-                            commentedForThisUsersPost:
-                              post.userId._id.toString(),
+                      // eğer comment içerisindeki commentlerden herhangi birine comment yapıyorsan ve bu commentin ayrıca reposted.lengthi varsa ve ayrıca image ekleyeceksen start to check
+                      if (modalImage !== "") {
+                        console.log("Bu line çalışıyor !");
+
+                        cloudinary.uploader
+                          .upload(modalImage, {
+                            folder: "connectify",
+                            allowed_formats: [
+                              "mp4",
+                              "ogv",
+                              "jpg",
+                              "png",
+                              "pdf",
+                              "webm",
+                              "webp",
+                            ],
+                            height: 1000,
+                            crop: "limit",
                           })
-                            .then((newCreatedPost) => {
-                              return Comment.create({
+                          .then((result) => {
+                            globalImageId = result.public_id;
+                            globalImageUrl = result.secure_url;
+
+                            Post.find({
+                              repostedFromThisOriginalPost: post._id,
+                            })
+                              .then((findedReferencePost) => {
+                                return Post.create({
+                                  userId: userId,
+                                  authorFullName: user.fullname,
+                                  authorUserName: user.username,
+                                  content: commentPost,
+                                  isComment: true,
+                                  image: {
+                                    public_id: result.public_id,
+                                    url: result.secure_url,
+                                  },
+                                  commentedForThisPost: post._id.toString(),
+                                  commentedForThisUsersPost:
+                                    post.userId._id.toString(),
+                                })
+                                  .then((newCreatedPost) => {
+                                    return Comment.create({
+                                      userId: userId,
+                                      authorFullName: user.fullname,
+                                      authorUserName: user.username,
+                                      content: commentPost,
+                                      isComment: true,
+                                      image: {
+                                        public_id: globalImageId,
+                                        url: globalImageUrl,
+                                      },
+                                      commentedForThisPost: postId,
+                                      commentedForThisUsersPost:
+                                        post.userId._id.toString(),
+                                      postId: newCreatedPost._id.toString(),
+                                    }).then((newCreatedComment) => {
+                                      user.posts.unshift(
+                                        newCreatedPost._id.toString()
+                                      );
+                                      user.save();
+
+                                      findedComment.comments.unshift(
+                                        newCreatedComment._id.toString()
+                                      );
+                                      post.comments.unshift(
+                                        newCreatedComment._id.toString()
+                                      );
+                                      findedReferencePost[0].comments.unshift(
+                                        newCreatedComment._id.toString()
+                                      );
+
+                                      findedComment.save();
+                                      post.save();
+                                      findedReferencePost[0]
+                                        .save()
+                                        .then(() => {
+                                          res.status(200).json({
+                                            createdPost: newCreatedPost,
+                                          });
+                                        })
+                                        .catch(() => {
+                                          res.status(404).json({
+                                            message:
+                                              "Error occured while saving findedComment,post,findedReferencePost !",
+                                          });
+                                        });
+                                    });
+                                  })
+                                  .catch(() => {
+                                    res.status(404).json({
+                                      message:
+                                        "Error occured while fetching new created post !",
+                                    });
+                                  });
+                              })
+                              .catch(() => {
+                                res.status(404).json({
+                                  message: "Reference post not found !",
+                                });
+                              });
+                          })
+                          .catch(() => {});
+                      }
+                      // eğer comment içerisindeki commentlerden herhangi birine comment yapıyorsan ve bu commentin ayrıca reposted.lengthi varsa ve ayrıca image ekleyeceksen finish to check
+                      else {
+                        console.log("Bu line çalışıyor 2 !");
+
+                        Post.find({
+                          repostedFromThisOriginalPost: post._id,
+                        })
+                          .then((findedReferencePost) => {
+                            return Post.create({
+                              userId: userId,
+                              authorFullName: user.fullname,
+                              authorUserName: user.username,
+                              content: commentPost,
+                              isComment: true,
+                              commentedForThisPost: post._id.toString(),
+                              commentedForThisUsersPost:
+                                post.userId._id.toString(),
+                            })
+                              .then((newCreatedPost) => {
+                                return Comment.create({
+                                  userId: userId,
+                                  authorFullName: user.fullname,
+                                  authorUserName: user.username,
+                                  content: commentPost,
+                                  isComment: true,
+                                  commentedForThisPost: postId,
+                                  commentedForThisUsersPost:
+                                    post.userId._id.toString(),
+                                  postId: newCreatedPost._id.toString(),
+                                }).then((newCreatedComment) => {
+                                  user.posts.unshift(
+                                    newCreatedPost._id.toString()
+                                  );
+                                  user.save();
+
+                                  findedComment.comments.unshift(
+                                    newCreatedComment._id.toString()
+                                  );
+                                  post.comments.unshift(
+                                    newCreatedComment._id.toString()
+                                  );
+                                  findedReferencePost[0].comments.unshift(
+                                    newCreatedComment._id.toString()
+                                  );
+
+                                  findedComment.save();
+                                  post.save();
+                                  findedReferencePost[0]
+                                    .save()
+                                    .then(() => {
+                                      res
+                                        .status(200)
+                                        .json({ createdPost: newCreatedPost });
+                                    })
+                                    .catch(() => {
+                                      res.status(404).json({
+                                        message:
+                                          "Error occured while saving findedComment,post,findedReferencePost !",
+                                      });
+                                    });
+                                });
+                              })
+                              .catch(() => {
+                                res.status(404).json({
+                                  message:
+                                    "Error occured while fetching new created post !",
+                                });
+                              });
+                          })
+                          .catch(() => {
+                            res.status(404).json({
+                              message: "Reference post not found !",
+                            });
+                          });
+                      }
+                    } else {
+                      if (modalImage !== "") {
+                        console.log("Bu kısım çalışıyor !");
+                        //  start to check
+                        if (modalImage !== "") {
+                          cloudinary.uploader
+                            .upload(modalImage, {
+                              folder: "connectify",
+                              allowed_formats: [
+                                "mp4",
+                                "ogv",
+                                "jpg",
+                                "png",
+                                "pdf",
+                                "webm",
+                                "webp",
+                              ],
+                              height: 1000,
+                              crop: "limit",
+                            })
+                            .then((result) => {
+                              globalImageId = result.public_id;
+                              globalImageUrl = result.secure_url;
+
+                              return Post.create({
                                 userId: userId,
                                 authorFullName: user.fullname,
                                 authorUserName: user.username,
                                 content: commentPost,
                                 isComment: true,
-                                commentedForThisPost: postId,
+                                image: {
+                                  public_id: result.public_id,
+                                  url: result.secure_url,
+                                },
+                                commentedForThisPost: post._id.toString(),
                                 commentedForThisUsersPost:
                                   post.userId._id.toString(),
-                                postId: newCreatedPost._id.toString(),
-                              }).then((newCreatedComment) => {
-                                user.posts.unshift(
-                                  newCreatedPost._id.toString()
-                                );
-                                user.save();
+                              })
+                                .then((newCreatedPost) => {
+                                  return Comment.create({
+                                    userId: userId,
+                                    authorFullName: user.fullname,
+                                    authorUserName: user.username,
+                                    content: commentPost,
+                                    isComment: true,
+                                    image: {
+                                      public_id: globalImageId,
+                                      url: globalImageUrl,
+                                    },
+                                    commentedForThisPost: postId,
+                                    commentedForThisUsersPost:
+                                      post.userId._id.toString(),
+                                    postId: newCreatedPost._id.toString(),
+                                  }).then((newCreatedComment) => {
+                                    user.posts.unshift(
+                                      newCreatedPost._id.toString()
+                                    );
+                                    user.save();
 
-                                findedComment.comments.unshift(
-                                  newCreatedComment._id.toString()
-                                );
-                                post.comments.unshift(
-                                  newCreatedComment._id.toString()
-                                );
-                                findedReferencePost[0].comments.unshift(
-                                  newCreatedComment._id.toString()
-                                );
+                                    findedComment.comments.unshift(
+                                      newCreatedComment._id.toString()
+                                    );
+                                    post.comments.unshift(
+                                      newCreatedComment._id.toString()
+                                    );
 
-                                findedComment.save();
-                                post.save();
-                                findedReferencePost[0]
-                                  .save()
-                                  .then(() => {
+                                    findedComment.save();
+                                    post.save();
                                     res
                                       .status(200)
                                       .json({ createdPost: newCreatedPost });
-                                  })
-                                  .catch(() => {
-                                    res.status(404).json({
-                                      message:
-                                        "Error occured while saving findedComment,post,findedReferencePost !",
-                                    });
                                   });
-                              });
-                            })
-                            .catch(() => {
-                              res.status(404).json({
-                                message:
-                                  "Error occured while fetching new created post !",
-                              });
+                                })
+                                .catch(() => {
+                                  res.status(404).json({
+                                    message:
+                                      "Error occured while fetching new created post !",
+                                  });
+                                });
                             });
-                        })
-                        .catch(() => {
-                          res.status(404).json({
-                            message: "Reference post not found !",
-                          });
-                        });
-                    } else {
-                      return Post.create({
-                        userId: userId,
-                        authorFullName: user.fullname,
-                        authorUserName: user.username,
-                        content: commentPost,
-                        isComment: true,
-                        commentedForThisPost: post._id.toString(),
-                        commentedForThisUsersPost: post.userId._id.toString(),
-                      })
-                        .then((newCreatedPost) => {
-                          return Comment.create({
-                            userId: userId,
-                            authorFullName: user.fullname,
-                            authorUserName: user.username,
-                            content: commentPost,
-                            isComment: true,
-                            commentedForThisPost: postId,
-                            commentedForThisUsersPost:
-                              post.userId._id.toString(),
-                            postId: newCreatedPost._id.toString(),
-                          }).then((newCreatedComment) => {
-                            user.posts.unshift(newCreatedPost._id.toString());
-                            user.save();
+                        }
 
-                            findedComment.comments.unshift(
-                              newCreatedComment._id.toString()
-                            );
-                            post.comments.unshift(
-                              newCreatedComment._id.toString()
-                            );
-
-                            findedComment.save();
-                            post.save();
-                            res
-                              .status(200)
-                              .json({ createdPost: newCreatedPost });
-                          });
+                        // finish to check
+                      } else {
+                        return Post.create({
+                          userId: userId,
+                          authorFullName: user.fullname,
+                          authorUserName: user.username,
+                          content: commentPost,
+                          isComment: true,
+                          commentedForThisPost: post._id.toString(),
+                          commentedForThisUsersPost: post.userId._id.toString(),
                         })
-                        .catch(() => {
-                          res.status(404).json({
-                            message:
-                              "Error occured while fetching new created post !",
+                          .then((newCreatedPost) => {
+                            return Comment.create({
+                              userId: userId,
+                              authorFullName: user.fullname,
+                              authorUserName: user.username,
+                              content: commentPost,
+                              isComment: true,
+                              commentedForThisPost: postId,
+                              commentedForThisUsersPost:
+                                post.userId._id.toString(),
+                              postId: newCreatedPost._id.toString(),
+                            }).then((newCreatedComment) => {
+                              user.posts.unshift(newCreatedPost._id.toString());
+                              user.save();
+
+                              findedComment.comments.unshift(
+                                newCreatedComment._id.toString()
+                              );
+                              post.comments.unshift(
+                                newCreatedComment._id.toString()
+                              );
+
+                              findedComment.save();
+                              post.save();
+                              res
+                                .status(200)
+                                .json({ createdPost: newCreatedPost });
+                            });
+                          })
+                          .catch(() => {
+                            res.status(404).json({
+                              message:
+                                "Error occured while fetching new created post !",
+                            });
                           });
-                        });
+                      }
                     }
                   })
                   .catch(() => {
