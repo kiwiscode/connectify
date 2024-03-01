@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, redirect, useNavigate } from "react-router-dom";
 
 import LogoutModal from "./LogoutModal";
 import axios from "axios";
@@ -48,15 +48,23 @@ function LeftSideNavBar({
         "Target parent classlist =>",
         e.srcElement.parentNode.className
       );
+      console.log(
+        "Target parent classlist group name =>",
+        e.srcElement.parentNode.className.baseVal
+      );
 
       const classList = e.target.classList;
       const parentNodeClassName = e.srcElement.parentNode.className;
+      const svgGroupClassName = e.srcElement.parentNode.className.baseVal;
 
       if (
         (parentNodeClassName !== "nav-bar-test vstack gap-2" &&
           parentNodeClassName === "home-nav-link active") ||
         classList.contains("home-svg") ||
-        classList.contains("nav-home-text")
+        classList.contains("nav-home-text") ||
+        classList.contains("home-nav-link-parent-div") ||
+        parentNodeClassName === "p-2 home-nav-link-parent-div" ||
+        svgGroupClassName === "home-svg-group"
       ) {
         setIsHomeRouteActive(true);
         setIsNotificationsRouteActive(false);
@@ -66,7 +74,10 @@ function LeftSideNavBar({
         (parentNodeClassName !== "nav-bar-test vstack gap-2" &&
           parentNodeClassName === "notifications-nav-link active") ||
         classList.contains("notifications-svg") ||
-        classList.contains("nav-notifications-text")
+        classList.contains("nav-notifications-text") ||
+        classList.contains("notifications-nav-link-parent-div") ||
+        parentNodeClassName === "p-2 notifications-nav-link-parent-div" ||
+        svgGroupClassName === "notifications-svg-group"
       ) {
         setIsNotificationsRouteActive(true);
         setIsHomeRouteActive(false);
@@ -76,7 +87,10 @@ function LeftSideNavBar({
         (parentNodeClassName !== "nav-bar-test vstack gap-2" &&
           parentNodeClassName === "messages-nav-link active") ||
         classList.contains("messages-svg") ||
-        classList.contains("nav-messages-text")
+        classList.contains("nav-messages-text") ||
+        classList.contains("messages-nav-link-parent-div") ||
+        parentNodeClassName === "p-2 messages-nav-link-parent-div" ||
+        svgGroupClassName === "messages-svg-group"
       ) {
         setIsMessagesRouteActive(true);
         setIsNotificationsRouteActive(false);
@@ -86,7 +100,10 @@ function LeftSideNavBar({
         (parentNodeClassName !== "nav-bar-test vstack gap-2" &&
           parentNodeClassName === "profile-nav-link active") ||
         classList.contains("profile-svg") ||
-        classList.contains("nav-profile-text")
+        classList.contains("nav-profile-text") ||
+        classList.contains("profile-nav-link-parent-div") ||
+        parentNodeClassName === "p-2 profile-nav-link-parent-div" ||
+        svgGroupClassName === "profile-svg-group"
       ) {
         setIsProfileRouteActive(true);
         setIsNotificationsRouteActive(false);
@@ -256,8 +273,6 @@ function LeftSideNavBar({
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  console.log("Current inner width =>", windowWidth);
-
   const handleResize = () => {
     setWindowWidth(window.innerWidth);
   };
@@ -290,42 +305,38 @@ function LeftSideNavBar({
         xxl={3} // 1400px ve sonrası aralığı */}
       >
         {/* nav bar test for left column start to check  */}
-        <Stack
-          // style={{
-          //   padding: "0px 80px",
-          // }}
-
-          className="nav-bar-left-side"
-          gap={2}
-        >
+        <Stack className="nav-bar-left-side" gap={2}>
           {/* First  */}
-          <div className="p-2 connectify-basic-icon">
-            {" "}
-            <svg
-              style={{
-                position: "relative",
-                left: "6px",
-              }}
-              xmlns="http://www.w3.org/2000/svg"
-              width="30"
-              height="30"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-              <path d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-            </svg>
-          </div>
+          <NavLink className="home-nav-link" to={"/home"}>
+            <div className="p-2 connectify-basic-icon">
+              {" "}
+              <svg
+                style={{
+                  position: "relative",
+                  left: "6px",
+                }}
+                xmlns="http://www.w3.org/2000/svg"
+                width="30"
+                height="30"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+                <path d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+              </svg>
+            </div>
+          </NavLink>
           {/* Second */}
-          <div
-            style={{
-              cursor: "pointer",
-            }}
-            className="p-2 home-nav-link-parent-div"
-          >
-            {" "}
-            <NavLink className="home-nav-link" to={"/home"}>
+          <NavLink className="home-nav-link" to={"/home"}>
+            <div
+              style={{
+                cursor: "pointer",
+              }}
+              className="p-2 home-nav-link-parent-div"
+            >
+              {" "}
               <div
+                className="home-parent-of-span-svg"
                 style={{
                   display: "flex",
                 }}
@@ -337,7 +348,7 @@ function LeftSideNavBar({
                   aria-hidden="true"
                   className="home-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
                 >
-                  <g>
+                  <g className="home-svg-group">
                     {isHomeRouteActive ? (
                       <path d="M21.591 7.146L12.52 1.157c-.316-.21-.724-.21-1.04 0l-9.071 5.99c-.26.173-.409.456-.409.757v13.183c0 .502.418.913.929.913H9.14c.51 0 .929-.41.929-.913v-7.075h3.909v7.075c0 .502.417.913.928.913h6.165c.511 0 .929-.41.929-.913V7.904c0-.301-.158-.584-.408-.758z"></path>
                     ) : (
@@ -357,16 +368,19 @@ function LeftSideNavBar({
                   Home
                 </span>
               </div>
-            </NavLink>
-          </div>
+            </div>
+          </NavLink>
           {/* Third */}
-          <div
-            style={{
-              cursor: "pointer",
-            }}
-            className="p-2 notifications-nav-link-parent-div"
+          <NavLink
+            className="notifications-nav-link"
+            // to={"/notifications"}
           >
-            <NavLink className="notifications-nav-link" to={"/notifications"}>
+            <div
+              style={{
+                cursor: "pointer",
+              }}
+              className="p-2 notifications-nav-link-parent-div"
+            >
               <div
                 style={{
                   display: "flex",
@@ -379,7 +393,7 @@ function LeftSideNavBar({
                   aria-hidden="true"
                   className="notifications-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
                 >
-                  <g>
+                  <g className="notifications-svg-group">
                     {isNotificationsRouteActive ? (
                       <path d="M11.996 2c-4.062 0-7.49 3.021-7.999 7.051L2.866 18H7.1c.463 2.282 2.481 4 4.9 4s4.437-1.718 4.9-4h4.236l-1.143-8.958C19.48 5.017 16.054 2 11.996 2zM9.171 18h5.658c-.412 1.165-1.523 2-2.829 2s-2.417-.835-2.829-2z"></path>
                     ) : (
@@ -400,20 +414,19 @@ function LeftSideNavBar({
                   Notifications{" "}
                 </span>
               </div>
-            </NavLink>
-          </div>
-
+            </div>
+          </NavLink>
           {/* Fourth  */}
-          <div
-            style={{
-              cursor: "pointer",
-            }}
-            className="p-2 messages-nav-link-parent-div"
+          <NavLink
+            className="messages-nav-link"
+            // onClick={redirectToMessages}
+            to={"/messages"}
           >
-            <NavLink
-              className="messages-nav-link"
-              onClick={redirectToMessages}
-              to={"/messages"}
+            <div
+              style={{
+                cursor: "pointer",
+              }}
+              className="p-2 messages-nav-link-parent-div"
             >
               <div
                 style={{
@@ -425,9 +438,9 @@ function LeftSideNavBar({
                   height={26}
                   viewBox="0 0 24 24"
                   aria-hidden="true"
-                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
+                  className="messages-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
                 >
-                  <g>
+                  <g className="messages-svg-group">
                     {isMessagesRouteActive ? (
                       <path d="M1.998 4.499c0-.828.671-1.499 1.5-1.499h17c.828 0 1.5.671 1.5 1.499v2.858l-10 4.545-10-4.547V4.499zm0 5.053V19.5c0 .828.671 1.5 1.5 1.5h17c.828 0 1.5-.672 1.5-1.5V9.554l-10 4.545-10-4.547z"></path>
                     ) : (
@@ -448,16 +461,16 @@ function LeftSideNavBar({
                   Messages{" "}
                 </span>
               </div>
-            </NavLink>
-          </div>
+            </div>
+          </NavLink>
           {/* Fifth  */}
-          <div
-            style={{
-              cursor: "pointer",
-            }}
-            className="p-2 profile-nav-link-parent-div"
-          >
-            <NavLink className="profile-nav-link" to={"/profile"}>
+          <NavLink className="profile-nav-link" to={"/profile"}>
+            <div
+              style={{
+                cursor: "pointer",
+              }}
+              className="p-2 profile-nav-link-parent-div"
+            >
               <div
                 style={{
                   display: "flex",
@@ -468,9 +481,9 @@ function LeftSideNavBar({
                   height={26}
                   viewBox="0 0 24 24"
                   aria-hidden="true"
-                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
+                  className="profile-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
                 >
-                  <g>
+                  <g className="profile-svg-group">
                     {isProfileRouteActive ? (
                       <path d="M17.863 13.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H3.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46C7.627 11.85 9.648 11 12 11s4.373.85 5.863 2.44zM12 2C9.791 2 8 3.79 8 6s1.791 4 4 4 4-1.79 4-4-1.791-4-4-4z"></path>
                     ) : (
@@ -491,9 +504,8 @@ function LeftSideNavBar({
                   Profile{" "}
                 </span>
               </div>
-            </NavLink>
-          </div>
-
+            </div>
+          </NavLink>
           {/* Sixth  */}
           <div className="p-2 post-btn-left-side-nav-bar">
             <>

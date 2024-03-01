@@ -242,6 +242,7 @@ function MainPage() {
 
   // socket io 5 client start to check
   const handleNotification = (post, userInfo, type) => {
+    console.log("Post =>", post);
     socket.emit("sendNotification", {
       senderName: userInfo.username,
       receiverName: post.userId.username,
@@ -626,8 +627,6 @@ function MainPage() {
   };
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-
-  console.log("Current inner width =>", windowWidth);
 
   const handleResize = () => {
     setWindowWidth(window.innerWidth);

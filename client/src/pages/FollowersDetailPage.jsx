@@ -222,8 +222,6 @@ function FollowerDetailPage() {
   };
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  console.log("Current inner width =>", windowWidth);
-
   const handleResize = () => {
     setWindowWidth(window.innerWidth);
   };

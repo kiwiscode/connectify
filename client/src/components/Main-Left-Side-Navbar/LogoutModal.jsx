@@ -632,7 +632,8 @@ function LogoutModal() {
         classList.contains("p-2 responsive-logout") ||
         classList.contains("logout-three-dots") ||
         classList.contains("localeInfo-username") ||
-        parentNodeClassName === "stack-logout-navigation-parent hstack"
+        parentNodeClassName === "stack-logout-navigation-parent hstack" ||
+        parentNodeClassName === "p-2 responsive-logout"
       ) {
         setShowLogoutPopup(true);
         console.log("Show if block =>", showlogoutPopup);
@@ -704,7 +705,7 @@ function LogoutModal() {
           </div>
           {/* finish to check */}
 
-          <div className="p-2 responsive-logout test 1 ">
+          <div className="p-2 responsive-logout">
             <div>
               <div
                 className="localeInfo-username"
@@ -730,7 +731,7 @@ function LogoutModal() {
               </span>
             </div>
           </div>
-          <div className="p-2 ms-auto responsive-logout test 2">
+          <div className="p-2 ms-auto responsive-logout">
             <svg
               width={`${1.25}em`}
               height={`${1.25}em`}

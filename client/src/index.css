@@ -963,34 +963,6 @@ span > a:hover {
 /* start to check responsiveness implementation  */
 
 /* navigation bar hover effect => start to check  */
-@media (max-width: 991px) and (min-width: 768px) {
-  .home:hover,
-  .notifications:hover,
-  .messages:hover,
-  .profile:hover {
-    background-color: initial !important;
-    transition-duration: 0.2s;
-  }
-
-  .inner-div-fonts {
-    display: flex !important;
-    justify-content: center !important;
-  }
-
-  .inner-div a div div svg {
-    width: 36px;
-    height: 36px;
-    position: relative !important;
-    bottom: 2px !important;
-    padding: 0px 6px 0px 6px !important;
-    border-radius: 50% !important;
-  }
-
-  .inner-div a div div svg:hover {
-    background-color: #e7e7e8;
-    transition-duration: 0.2s !important;
-  }
-}
 
 @media (max-width: 767px) and (min-width: 576px) {
   .home:hover,
@@ -1883,13 +1855,29 @@ span > a:hover {
 
 /* new navigation bar left side start responsiveness and general styling start to check  */
 
-.nav-bar-left-side div a {
+.nav-bar-left-side a {
   text-decoration: none;
   color: black;
 }
-.stack-logout-navigation-parent:hover {
+
+.home-nav-link-parent-div,
+.notifications-nav-link-parent-div,
+.messages-nav-link-parent-div,
+.profile-nav-link-parent-div {
+  padding: 16px 16px !important;
+  width: 80% !important;
+  border-radius: 9999px !important;
+  cursor: pointer !important;
+}
+
+.stack-logout-navigation-parent:hover,
+.home-nav-link-parent-div:hover,
+.notifications-nav-link-parent-div:hover,
+.messages-nav-link-parent-div:hover,
+.profile-nav-link-parent-div:hover {
   background-color: #e7e7e8;
 }
+
 @media (max-width: 1201px) and (min-width: 500px) {
   .home-nav-link-parent-div div span,
   .notifications-nav-link-parent-div div span,
@@ -1899,7 +1887,10 @@ span > a:hover {
     display: none !important;
   }
 
-  .connectify-basic-icon,
+  .connectify-basic-icon {
+    display: none !important;
+  }
+
   .post-btn-left-side-nav-bar {
     display: flex;
   }
@@ -1930,7 +1921,16 @@ span > a:hover {
 
   .compose-tweet-2 {
     position: relative !important;
-    left: 10px !important;
+    /* left: 10px !important; */
+    left: 5px !important;
+  }
+  .profile-img-and-svg {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    position: relative !important;
+    /* left: 10px !important; */
+    left: 5px !important;
   }
 
   .responsive-logout,
@@ -1942,15 +1942,17 @@ span > a:hover {
   .stack-logout-navigation-parent {
     width: 100% !important;
   }
-  .profile-img-and-svg {
-    width: 100% !important;
-    display: flex !important;
-    justify-content: flex-end !important;
-    position: relative !important;
-    left: 10px !important;
-  }
+
   .stack-logout-navigation-parent:hover {
     background-color: initial !important;
+  }
+
+  .home-nav-link,
+  .notifications-nav-link,
+  .messages-nav-link,
+  .profile-nav-link {
+    position: relative !important;
+    left: 10px !important;
   }
 }
 
@@ -1973,15 +1975,90 @@ span > a:hover {
   }
 }
 
-@media (max-width: 768px) and (min-width: 576px) {
-  .profile-img-and-svg {
-    width: 100% !important;
-    display: flex !important;
-    justify-content: flex-end !important;
-    position: relative !important;
-    left: 17px !important;
+@media (max-width: 500px) and (min-width: 0px) {
+  .left-column {
+    display: none !important;
   }
+}
+
+@media (max-width: 770px) {
+}
+
+/* new navigation bar left side start responsiveness and general styling finish to check  */
+
+.home-svg,
+.notifications-svg,
+.messages-svg,
+.profile-svg {
+  min-width: 26px !important;
+  min-height: 26px !important;
+}
+
+@media (max-width: 991px) and (min-width: 768px) {
+  .home:hover,
+  .notifications:hover,
+  .messages:hover,
+  .profile:hover {
+    background-color: initial !important;
+    transition-duration: 0.2s;
+  }
+
+  .inner-div-fonts {
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  .inner-div a div div svg {
+    width: 36px;
+    height: 36px;
+    position: relative !important;
+    bottom: 2px !important;
+    padding: 0px 6px 0px 6px !important;
+    border-radius: 50% !important;
+  }
+
+  .inner-div a div div svg:hover {
+    background-color: #e7e7e8;
+    transition-duration: 0.2s !important;
+  }
+
   .compose-tweet-2 {
+    position: relative !important;
+    /* left: 10px !important; */
+
+    left: 10px !important;
+  }
+  .profile-img-and-svg {
+    position: relative !important;
+    /* left: 10px !important; */
+    left: 10px !important;
+  }
+
+  .home-nav-link,
+  .notifications-nav-link,
+  .messages-nav-link,
+  .profile-nav-link {
+    position: relative !important;
+    left: 15px !important;
+  }
+}
+
+@media (max-width: 870px) and (min-width: 768px) {
+  .compose-tweet-2 {
+    position: relative !important;
+    /* left: 10px !important; */
+    left: 15px !important;
+  }
+  .profile-img-and-svg {
+    position: relative !important;
+    /* left: 10px !important; */
+    left: 15px !important;
+  }
+
+  .home-nav-link,
+  .notifications-nav-link,
+  .messages-nav-link,
+  .profile-nav-link {
     position: relative !important;
     left: 15px !important;
   }
@@ -2007,18 +2084,18 @@ span > a:hover {
   .profile-nav-link-parent-div div
   /* ,.connectify-basic-icon */ {
     position: relative !important;
-    left: 15px;
+    left: 5px;
   }
   .profile-img-and-svg {
     width: 100% !important;
     display: flex !important;
     justify-content: flex-end !important;
     position: relative !important;
-    left: 20px !important;
+    left: 11px !important;
   }
   .compose-tweet-2 {
     position: relative !important;
-    left: 18px !important;
+    left: 10px !important;
   }
 }
 
@@ -2036,13 +2113,30 @@ span > a:hover {
   }
 }
 
-@media (max-width: 500px) and (min-width: 0px) {
-  .left-column {
-    display: none !important;
+@media (max-width: 560px) and (min-width: 500px) {
+  .profile-img-and-svg {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    position: relative !important;
+    left: 15px !important;
+  }
+  .compose-tweet-2 {
+    position: relative !important;
+    left: 20px !important;
   }
 }
 
-@media (max-width: 770px) {
+@media (max-width: 540px) and (min-width: 500px) {
+  .profile-img-and-svg {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    position: relative !important;
+    left: 17px !important;
+  }
+  .compose-tweet-2 {
+    position: relative !important;
+    left: 22px !important;
+  }
 }
-
-/* new navigation bar left side start responsiveness and general styling finish to check  */
