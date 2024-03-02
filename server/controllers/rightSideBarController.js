@@ -1,7 +1,30 @@
 const User = require("../models/User.model");
 
-const searchUsers = (req, res) => {
-  console.log("Right side bar controller working !");
+const handleGetAllUsers = (req, res) => {
+  const { userId } = req.user;
+  console.log("uSER Id =>", userId);
+  User.find()
+    .then((allUsersFromDataBase) => {
+      const filteredFromUser = allUsersFromDataBase.filter((eachUser) => {
+        return eachUser._id.toString() !== userId;
+      });
+
+      const updatedUsers = filteredFromUser.map((user) => ({
+        ...user,
+        fullname: user.fullname.split(" ").join("").toLowerCase(),
+        username: user.username.split(" ").join("").toLowerCase(),
+      }));
+
+      console.log("Filtered array fullname =>", filteredFromUser[0].fullname);
+      console.log("Updated users array  =>", updatedUsers[0].fullname);
+      res.status(201).json({ allUsers: updatedUsers });
+    })
+    .catch(() => {
+      res.status(500).json({
+        errorMessage:
+          "Error occured while trying to fetch all users from database !",
+      });
+    });
 };
 
 const getFirst3MostFollowedUser = (req, res) => {
@@ -21,6 +44,6 @@ const getFirst3MostFollowedUser = (req, res) => {
 };
 
 module.exports = {
-  searchUsers,
   getFirst3MostFollowedUser,
+  handleGetAllUsers,
 };

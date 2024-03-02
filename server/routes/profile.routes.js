@@ -50,4 +50,5 @@ router.post(
   authenticateToken,
   profileController.handleDeactivateAccount
 );
+
 module.exports = router;

@@ -1,10 +1,11 @@
 const router = require("express").Router();
 const authenticateToken = require("../middleware/jwtMiddleware");
 const rightSideBarController = require("../controllers/rightSideBarController");
+
 router.get(
-  "/search-users",
+  "/allUsersFromDataBase",
   authenticateToken,
-  rightSideBarController.searchUsers
+  rightSideBarController.handleGetAllUsers
 );
 
 router.get(

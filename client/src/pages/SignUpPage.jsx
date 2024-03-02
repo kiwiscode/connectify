@@ -97,6 +97,7 @@ function SignUpPage() {
                     type="text"
                     value={fullname}
                     onChange={(e) => setFullname(e.target.value)}
+                    maxLength={50}
                   />
                 </InputGroup>
                 <InputGroup className="mb-2">

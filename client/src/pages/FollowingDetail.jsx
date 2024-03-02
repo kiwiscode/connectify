@@ -370,7 +370,7 @@ function FollowingDetailPage() {
             ></div>
             <div
               style={{
-                padding: "0px 12px",
+                padding: "0px 4px",
               }}
             >
               {following && following.length ? (
@@ -451,7 +451,6 @@ function FollowingDetailPage() {
                     fontSize: "15px",
                     fontWeight: "700",
                     padding: "5px",
-                    marginRight: "15px",
                     transitionDuration: "0.2s",
                     border:
                       isHovered === buttonId && isFollowing
@@ -477,7 +476,13 @@ function FollowingDetailPage() {
                     <div key={user.id} className="following-user">
                       {user.isDeactivated ? null : (
                         <>
-                          <Stack direction="horizontal">
+                          <Stack
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                            }}
+                            direction="horizontal"
+                          >
                             {user.imageUrl.slice(0, 3) !== "../" ? (
                               <Link to={`/profile/${user._id}`}>
                                 <img
@@ -524,15 +529,20 @@ function FollowingDetailPage() {
                                     color: "black",
                                   }}
                                 >
-                                  <span
+                                  <div
                                     style={{
                                       fontSize: "15px",
                                       fontWeight: "700",
                                       lineHeight: "20px",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                      whiteSpace: "nowrap",
+                                      width: "200px",
+                                      display: "initial",
                                     }}
                                   >
                                     {user.fullname}
-                                  </span>
+                                  </div>
                                 </Link>
                               </div>
 

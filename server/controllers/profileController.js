@@ -369,6 +369,7 @@ const handleDeactivateAccount = (req, res) => {
       console.log("Error");
     });
 };
+
 module.exports = {
   handleProfile,
   handleShowSpesificProfile,
