@@ -37,6 +37,7 @@ import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
 
 function MainPage() {
+  const [first3User, setFirst3User] = useState([]);
   const socket = io.connect(`${API_URL}`);
   // start to check
 
@@ -50,9 +51,6 @@ function MainPage() {
     const getClickLocation = (e) => {
       const clickedElementParentClass = e.target.parentNode.className;
       const clickedElementClass = e.target.classList;
-      console.log("Parent class =>", clickedElementParentClass);
-      console.log("Child class =>", clickedElementClass);
-      console.log("Clicked post =>", clickedPostBox);
       if (
         (clickedElementClass.contains("hover-reposted-text") &&
           clickedElementParentClass !== "post-circle-profile-svg-on-point" &&
@@ -242,6 +240,7 @@ function MainPage() {
 
   // socket io 5 client start to check
   const handleNotification = (post, userInfo, type) => {
+    console.log("Post =>", post);
     socket.emit("sendNotification", {
       senderName: userInfo.username,
       receiverName: post.userId.username,
@@ -627,8 +626,6 @@ function MainPage() {
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  console.log("Current inner width =>", windowWidth);
-
   const handleResize = () => {
     setWindowWidth(window.innerWidth);
   };
@@ -640,6 +637,23 @@ function MainPage() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/get-most-followed-3-user`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        console.log("Response =>", response);
+
+        setFirst3User(response.data.first3User);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  }, []);
   return (
     <>
       {contextHolder}
@@ -650,7 +664,13 @@ function MainPage() {
         setLoadingFalse={() => setLoadingFalse()}
       />
       <ResponsiveNavigationBarTop />
-      <Container fluid>
+
+      <Container
+        style={{
+          overflowX: "hidden",
+        }}
+        fluid
+      >
         <Row
           style={{
             height: "100vh",
@@ -2500,7 +2520,7 @@ function MainPage() {
           </Col>
           {/* finish to check  main column */}
           {/* 3.column burası olucak */}
-          <RightSideColumn />
+          <RightSideColumn first3User={first3User} />
         </Row>
       </Container>
     </>

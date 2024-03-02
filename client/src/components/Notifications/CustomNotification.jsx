@@ -11,10 +11,19 @@ const CustomNotification = ({
 }) => {
   const { userInfo } = useContext(UserContext);
   const navigate = useNavigate();
+  const redirectPostDetailIfNoContentOnlyImage = () => {
+    navigate(`/${senderInfo.username}/status/${contactHasBeenMade._id}`);
+  };
 
+  console.log("Contact has been made =>", contactHasBeenMade);
   return (
     <>
       <div
+        onClick={
+          contactHasBeenMade.image.url && !contactHasBeenMade.content
+            ? redirectPostDetailIfNoContentOnlyImage
+            : ""
+        }
         style={{
           display: "flex",
           alignItems: "center",

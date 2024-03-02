@@ -11,13 +11,13 @@ const handleProfile = (req, res) => {
 
     .populate({
       path: "posts",
-      options: { sort: { createdAt: -1 } }, // createdAt tarihine göre tersten sıralama
+      options: { sort: { createdAt: -1 } },
     })
     .populate("followers")
     .populate("following")
     .populate({
       path: "favorites",
-      options: { sort: { createdAt: -1 } }, // Favorites için de createdAt tarihine göre tersten sıralama
+      options: { sort: { createdAt: -1 } },
     })
     .populate({
       path: "posts",

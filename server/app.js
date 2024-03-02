@@ -52,4 +52,7 @@ app.use("/followingPosts", followingPosts);
 const messageRoutes = require("./routes/message.routes.js");
 app.use("/", messageRoutes);
 
+const rightSideBarRoutes = require("./routes/right-side-bar.route");
+app.use("/", rightSideBarRoutes);
+
 module.exports = app;
