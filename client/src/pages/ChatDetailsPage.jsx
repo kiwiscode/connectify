@@ -18,6 +18,7 @@ import CustomNotification from "../components/Notifications/CustomNotification";
 import { message } from "antd";
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
+import axios from "axios";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -298,8 +299,6 @@ function ChatDetailsPage() {
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  console.log("Current inner width =>", windowWidth);
-
   const handleResize = () => {
     setWindowWidth(window.innerWidth);
   };
@@ -311,11 +310,34 @@ function ChatDetailsPage() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+  const [first3User, setFirst3User] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/get-most-followed-3-user`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        console.log("Response =>", response);
+
+        setFirst3User(response.data.first3User);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  }, []);
   return (
     <>
       {contextHolder}
       <ToastContainer />
-      <Container fluid>
+      <Container
+        style={{
+          overflowX: "hidden",
+        }}
+        fluid
+      >
         <Row
           style={{
             height: "100vh",
@@ -727,7 +749,7 @@ function ChatDetailsPage() {
 
           {/* 3.column burası olucak */}
 
-          <RightSideColumn />
+          <RightSideColumn first3User={first3User} />
         </Row>
       </Container>
     </>

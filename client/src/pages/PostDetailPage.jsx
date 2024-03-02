@@ -506,8 +506,6 @@ function PostDetailPage() {
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  console.log("Current inner width =>", windowWidth);
-
   const handleResize = () => {
     setWindowWidth(window.innerWidth);
   };
@@ -519,13 +517,36 @@ function PostDetailPage() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+  const [first3User, setFirst3User] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/get-most-followed-3-user`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        console.log("Response =>", response);
+
+        setFirst3User(response.data.first3User);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  }, []);
 
   return (
     <>
       {contextHolder}
       <ToastContainer />
       <ResponsiveNavigationBarBottom />
-      <Container fluid>
+      <Container
+        style={{
+          overflowX: "hidden",
+        }}
+        fluid
+      >
         <Row
           style={{
             height: "100vh",
@@ -2993,7 +3014,7 @@ function PostDetailPage() {
             {/* accordion implementation for comments when it is more than 0 finish to check  */}
           </Col>
           {/* 3.column burası olucak */}
-          <RightSideColumn />
+          <RightSideColumn first3User={first3User} />
         </Row>
       </Container>
     </>

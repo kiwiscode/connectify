@@ -222,8 +222,6 @@ function FollowerDetailPage() {
   };
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  console.log("Current inner width =>", windowWidth);
-
   const handleResize = () => {
     setWindowWidth(window.innerWidth);
   };
@@ -235,6 +233,24 @@ function FollowerDetailPage() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+  const [first3User, setFirst3User] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/get-most-followed-3-user`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        console.log("Response =>", response);
+
+        setFirst3User(response.data.first3User);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  }, []);
   return (
     <>
       {contextHolder}
@@ -242,7 +258,12 @@ function FollowerDetailPage() {
 
       <ResponsiveNavigationBarBottom />
       {/* <ResponsiveNavigationBarTop /> */}
-      <Container fluid>
+      <Container
+        style={{
+          overflowX: "hidden",
+        }}
+        fluid
+      >
         <Row
           style={{
             height: "100vh",
@@ -353,7 +374,11 @@ function FollowerDetailPage() {
               }}
             ></div>
 
-            <div>
+            <div
+              style={{
+                padding: "0px 12px",
+              }}
+            >
               {followers && followers.length ? (
                 followers.map((user, index) => {
                   const buttonId = `followButton_${index}`;
@@ -401,50 +426,8 @@ function FollowerDetailPage() {
                       )
                       .then(() => {
                         setClicked(!clicked);
-                        // delete after unfollow also from localstorage start to check
-                        // const userInfoFromLocalStorage = JSON.parse(
-                        //   localStorage.getItem("userInfo")
-                        // );
-
-                        // const followedUser =
-                        //   userInfoFromLocalStorage.following.find(
-                        //     (eachFollowing) => {
-                        //       return eachFollowing._id === selectedUser._id;
-                        //     }
-                        //   );
-
-                        // const followedUserIndex =
-                        //   userInfoFromLocalStorage.following.indexOf(
-                        //     followedUser
-                        //   );
-
-                        // userInfoFromLocalStorage.following.splice(
-                        //   followedUserIndex,
-                        //   1
-                        // );
-
-                        // localStorage.setItem(
-                        //   "userInfo",
-                        //   JSON.stringify(userInfoFromLocalStorage)
-                        // );
-                        // // delete after unfollow also from localstorage finish to check
-
-                        // const followersArrayShallowCopy = [...followers];
-
-                        // const unfollowedUserIndex =
-                        //   followersArrayShallowCopy.indexOf(selectedUser);
-
-                        // const activeUserIndex = followersArrayShallowCopy[
-                        //   unfollowedUserIndex
-                        // ].followers.indexOf(userInfo._id);
-
-                        // // setTimeout(() => {
-                        // setFollowers(followersArrayShallowCopy);
-                        // handleClose();
-                        // followersArrayShallowCopy[
-                        //   unfollowedUserIndex
-                        // ].followers.splice(activeUserIndex, 1);
-                        // // }, 500);
+                        getFollowers();
+                        setshowUnfollowModal(false);
                       })
                       .catch((error) => {
                         console.log("Error =>", error);
@@ -478,8 +461,6 @@ function FollowerDetailPage() {
                     padding: "5px",
                     marginRight: "15px",
 
-                    // isFollowing
-                    //   ? isHovered === buttonId
                     transitionDuration: "0.2s",
 
                     backgroundColor:
@@ -771,7 +752,7 @@ function FollowerDetailPage() {
 
           {/* following followers detail finish to check  */}
 
-          <RightSideColumn />
+          <RightSideColumn first3User={first3User} />
         </Row>
       </Container>
     </>
