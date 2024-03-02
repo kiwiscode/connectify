@@ -760,6 +760,24 @@ function SpesificUserProfile() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  const [first3User, setFirst3User] = useState([]);
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/get-most-followed-3-user`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        console.log("Response =>", response);
+
+        setFirst3User(response.data.first3User);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  }, []);
   return (
     <>
       {contextHolder}
@@ -770,7 +788,12 @@ function SpesificUserProfile() {
         setLoadingFalse={() => setLoadingFalse()}
       />
 
-      <Container fluid>
+      <Container
+        style={{
+          overflowX: "hidden",
+        }}
+        fluid
+      >
         <Row
           style={{
             height: "100vh",
@@ -2589,7 +2612,7 @@ function SpesificUserProfile() {
           </Col>
 
           {/* 3.column burası olucak */}
-          <RightSideColumn />
+          <RightSideColumn first3User={first3User} />
         </Row>
       </Container>
     </>

@@ -23,11 +23,28 @@ function RightSideColumn({ first3User }) {
 
   useEffect(() => {
     const getClickedLocation = (e) => {
+      console.log("E target class list =>", e.target.classList);
+      console.log(
+        "E target parent node class name =>",
+        e.srcElement.parentNode.className
+      );
+
+      console.log("Base val =>", e.srcElement.parentNode.className.baseVal);
       if (
         e.target.classList.contains("right-side-bar-input") ||
         e.target.classList.contains("search-bar-right-side-column") ||
         e.srcElement.parentNode.className ===
-          "search-bar-right-side-column-group"
+          "search-bar-right-side-column-group" ||
+        e.target.classList.contains(
+          "right-side-input-close-text-search-input"
+        ) ||
+        e.srcElement.parentNode.className ===
+          "search-input-delete-search-term-svg-group" ||
+        e.target.classList.contains("search-input-delete-search-term-svg") ||
+        e.srcElement.parentNode.className ===
+          "div-second-parent-search-input-delete-search-term" ||
+        e.srcElement.parentNode.className.baseVal ===
+          "search-input-delete-search-term-svg-group"
       ) {
         onFocusActive();
       } else {
@@ -71,6 +88,7 @@ function RightSideColumn({ first3User }) {
 
   const [showUnfollowModal, setshowUnfollowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleFollow = (selectedUser) => {
     axios
@@ -128,9 +146,9 @@ function RightSideColumn({ first3User }) {
     console.log("Selected user =>", selectedUser);
     console.log("Open unfollow modal !");
     setSelectedUser(selectedUser);
-    document.body.style.overflow = "hidden";
     setshowUnfollowModal(true);
   };
+
   return (
     <>
       <Modal
@@ -214,42 +232,51 @@ function RightSideColumn({ first3User }) {
         lg={4} // 992px - 1400px aralığı
         xxl={4} // 1400px ve sonrası aralığı
         style={{
-          height: "100%",
-          position: "fixed",
+          position: "relative",
           right: -20,
         }}
       >
-        <Stack gap={3}>
+        <Stack
+          style={{
+            height: "100%",
+            position: "fixed",
+          }}
+          gap={3}
+        >
           {/* input start to check  */}
           <div
             style={{
               position: "relative",
               right: "40px",
               bottom: "20px",
+              marginLeft: "15px",
             }}
             className="p-4"
           >
-            <svg
-              color={onFocus ? "#1e9bf0" : "rgba(83, 100, 113, 1.00)"}
-              style={{
-                display: "inline-block",
-                position: "relative",
-                left: "30px",
-                bottom: "2px",
-              }}
-              fill="currentColor"
-              width={16}
-              height={16}
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-              className="search-bar-right-side-column r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-4wgw6l r-f727ji"
-            >
-              <g className="search-bar-right-side-column-group">
-                <path d="M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781c-1.447 1.142-3.276 1.824-5.262 1.824-4.694 0-8.5-3.806-8.5-8.5z"></path>
-              </g>
-            </svg>
+            <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+              <svg
+                color={onFocus ? "#1e9bf0" : "rgba(83, 100, 113, 1.00)"}
+                style={{
+                  display: "inline-block",
+                  position: "relative",
+                  left: "30px",
+                }}
+                fill="currentColor"
+                width={16}
+                height={16}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className="search-bar-right-side-column r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-4wgw6l r-f727ji"
+              >
+                <g className="search-bar-right-side-column-group">
+                  <path d="M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781c-1.447 1.142-3.276 1.824-5.262 1.824-4.694 0-8.5-3.806-8.5-8.5z"></path>
+                </g>
+              </svg>
+            </div>
+
             <input
               onFocus={onFocusActive}
+              onChange={(e) => setSearchTerm(e.target.value)}
               style={{
                 width: "375px",
                 height: "42px",
@@ -263,7 +290,100 @@ function RightSideColumn({ first3User }) {
               type="text"
               className="right-side-bar-input"
               placeholder="Search"
+              value={searchTerm}
             />
+            {/* close text start to check right side input  */}
+            {searchTerm.length ? (
+              <div
+                style={{
+                  display: "inline-block",
+                  float: "right",
+                  position: "absolute",
+                  top: "35px",
+                  right: "40px",
+
+                  backgroundColor: "yellow",
+                  borderRadius: "50%",
+                }}
+                className="div-parent-search-input-delete-search-term css-175oi2r r-6koalj r-1777fci"
+                onClick={() => {
+                  console.log(
+                    "Delete search term ! Keep Try searching for people modal open !"
+                  );
+                  setSearchTerm("");
+                }}
+              >
+                <div
+                  aria-label="Clear"
+                  role="button"
+                  className="right-side-input-close-text-search-input css-175oi2r r-sdzlij r-1phboty r-lrvibr r-1yadl64 r-1b7u577 r-12sks89 r-1y7e96w r-1loqt21 r-o7ynqc r-6416eg r-1ny4l3l"
+                  data-testid="clearButton"
+                  style={{
+                    borderColor: "rgb(0,0,0,0)",
+                    backgroundColor: "rgb(29,155,240)",
+                    display: "flex",
+                    justifyContent: "center",
+                    borderRadius: "50%",
+                    width: "20px",
+                    height: "auto",
+                  }}
+                >
+                  <div
+                    dir="ltr"
+                    className="div-second-parent-search-input-delete-search-term css-1rynq56 r-bcqeeo r-qvutc0 r-37j5jr r-q4m81j r-a023e6 r-rjixqe r-b88u0q r-1awozwy r-6koalj r-18u37iz r-16y2uox r-1777fci"
+                    style={{ textOverflow: "unset", color: "rgb(255,255,255)" }}
+                  >
+                    <svg
+                      style={{
+                        position: "relative",
+                        bottom: "2px",
+                      }}
+                      color="white"
+                      fill="currentColor"
+                      width={9}
+                      height={9}
+                      viewBox="0 0 15 15"
+                      aria-hidden="true"
+                      className="search-input-delete-search-term-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1or9b2r r-5soawk"
+                    >
+                      <g className="search-input-delete-search-term-svg-group">
+                        <path d="M6.09 7.5L.04 1.46 1.46.04 7.5 6.09 13.54.04l1.42 1.42L8.91 7.5l6.05 6.04-1.42 1.42L7.5 8.91l-6.04 6.05-1.42-1.42L6.09 7.5z"></path>
+                      </g>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+
+            {/* close text finish to check right side input  */}
+            <div
+              style={{
+                backgroundColor: "white",
+                position: "absolute",
+                width: "375px",
+                minHeight: "100px",
+                borderRadius: "8px",
+                border: "none",
+                zIndex: 9999,
+                display: onFocus ? "flex" : "none",
+                justifyContent: "center",
+                padding: "12px",
+                boxShadow:
+                  "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+              }}
+            >
+              <span
+                style={{
+                  color: "rgb(83, 100, 113)                ",
+                  lineHeight: "20px",
+                  fontSize: "15px",
+                  fontWeight: "400",
+                }}
+              >
+                Try searching for people
+              </span>
+            </div>
+            {/* close text start to check right side input  */}
           </div>
           {/* input finish to check  */}
           <div
@@ -276,7 +396,7 @@ function RightSideColumn({ first3User }) {
               style={{
                 border: "none",
                 borderWidth: "1px",
-                borderRadius: "12px",
+                borderRadius: "16px",
                 backgroundColor: "#eff3f4",
                 maxWidth: "375px",
               }}
@@ -324,7 +444,7 @@ function RightSideColumn({ first3User }) {
               style={{
                 border: "none",
                 borderWidth: "1px",
-                borderRadius: "12px",
+                borderRadius: "16px",
                 backgroundColor: "#eff3f4",
                 maxWidth: "375px",
                 marginTop: "10px",

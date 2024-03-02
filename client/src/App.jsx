@@ -14,7 +14,6 @@ import FollowingDetailPage from "./pages/FollowingDetail";
 import FollowerDetailPage from "./pages/FollowersDetailPage";
 import ImagePostDetailPage from "./pages/ImagePostDetailPage";
 import DeactivatedPage from "./pages/DeactivatedPage";
-import RightSideColumnTest from "./components/RightSideColumnTest";
 
 function App() {
   return (
@@ -54,11 +53,6 @@ function App() {
         <Route
           path="/settings/deactivated"
           element={<DeactivatedPage />}
-        ></Route>
-
-        <Route
-          path="/test/rightsidebarcolumn"
-          element={<RightSideColumnTest />}
         ></Route>
       </Routes>
     </UserProvider>

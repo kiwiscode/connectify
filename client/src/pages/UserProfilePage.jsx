@@ -100,7 +100,24 @@ function UserProfile() {
   const [isLoading, setIsLoading] = useState(false);
   const [profileImage, setprofileImage] = useState("");
   const [completedProfileImage, setcompletedProfileImage] = useState(false);
+  const [first3User, setFirst3User] = useState([]);
 
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/get-most-followed-3-user`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        console.log("Response =>", response);
+
+        setFirst3User(response.data.first3User);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  }, []);
   // start to check shared post view message
   const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
 
@@ -635,7 +652,12 @@ function UserProfile() {
         setLoadingFalse={() => setLoadingFalse()}
       />
 
-      <Container fluid>
+      <Container
+        style={{
+          overflowX: "hidden",
+        }}
+        fluid
+      >
         <Row
           style={{
             height: "100vh",
@@ -2187,7 +2209,7 @@ function UserProfile() {
           </Col>
 
           {/* 3.column burası olucak  */}
-          <RightSideColumn />
+          <RightSideColumn first3User={first3User} />
         </Row>
       </Container>
     </>

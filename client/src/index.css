@@ -1,3 +1,6 @@
+@tailwind components;
+@tailwind utilities;
+
 #root {
   --toastify-color-light: rgba(0, 0, 0, 0.1);
   --toastify-text-color-light: #757575;
@@ -1804,31 +1807,31 @@ span > a:hover {
 /* .loading-spinner test start to check  */
 .spinner {
   width: 1.5em;
+}
 
-  span {
-    display: block;
-    height: 0;
-    padding-bottom: 100%;
-    position: relative;
-    width: 100%;
-  }
+.spinner span {
+  display: block;
+  height: 0;
+  padding-bottom: 100%;
+  position: relative;
+  width: 100%;
+}
 
-  svg {
-    height: 100%;
-    overflow: hidden;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-  }
+.spinner svg {
+  height: 100%;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
 
-  circle:nth-of-type(2) {
-    animation: spin 3s linear infinite;
-    stroke-dasharray: 1 1;
-    stroke-dashoffset: 1;
-    transform-origin: 50% 50%;
-    transform: rotate(-0.25turn);
-  }
+.spinner circle:nth-of-type(2) {
+  animation: spin 3s linear infinite;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  transform-origin: 50% 50%;
+  transform: rotate(-0.25turn);
 }
 
 .topSpinner {
@@ -1860,22 +1863,21 @@ span > a:hover {
   color: black;
 }
 
-.home-nav-link-parent-div,
-.notifications-nav-link-parent-div,
-.messages-nav-link-parent-div,
-.profile-nav-link-parent-div {
-  padding: 16px 16px !important;
-  width: 80% !important;
+.home-parent-of-span-svg,
+.notifications-parent-of-span-svg,
+.messages-parent-of-span-svg,
+.profile-parent-of-span-svg {
   border-radius: 9999px !important;
   cursor: pointer !important;
 }
 
 .stack-logout-navigation-parent:hover,
-.home-nav-link-parent-div:hover,
-.notifications-nav-link-parent-div:hover,
-.messages-nav-link-parent-div:hover,
-.profile-nav-link-parent-div:hover {
+.home-parent-of-span-svg:hover,
+.notifications-parent-of-span-svg:hover,
+.messages-parent-of-span-svg:hover,
+.profile-parent-of-span-svg:hover {
   background-color: #e7e7e8;
+  transition-duration: 0.2s;
 }
 
 @media (max-width: 1201px) and (min-width: 500px) {
@@ -1895,10 +1897,17 @@ span > a:hover {
     display: flex;
   }
 
-  .home-nav-link-parent-div div,
-  .notifications-nav-link-parent-div div,
-  .messages-nav-link-parent-div div,
-  .profile-nav-link-parent-div div,
+  .home-nav-link,
+  .notifications-nav-link,
+  .messages-nav-link,
+  .profile-nav-link {
+    display: flex;
+  }
+
+  .home-nav-link,
+  .notifications-nav-link,
+  .messages-nav-link,
+  .profile-nav-link,
   .connectify-basic-icon,
   .post-btn-left-side-nav-bar {
     justify-content: flex-end !important;
@@ -1921,7 +1930,6 @@ span > a:hover {
 
   .compose-tweet-2 {
     position: relative !important;
-    /* left: 10px !important; */
     left: 5px !important;
   }
   .profile-img-and-svg {
@@ -1929,7 +1937,6 @@ span > a:hover {
     display: flex !important;
     justify-content: flex-end !important;
     position: relative !important;
-    /* left: 10px !important; */
     left: 5px !important;
   }
 
@@ -1952,7 +1959,6 @@ span > a:hover {
   .messages-nav-link,
   .profile-nav-link {
     position: relative !important;
-    left: 10px !important;
   }
 }
 
@@ -2026,18 +2032,19 @@ span > a:hover {
     position: relative !important;
     /* left: 10px !important; */
 
-    left: 10px !important;
+    left: 15px !important;
   }
   .profile-img-and-svg {
     position: relative !important;
     /* left: 10px !important; */
-    left: 10px !important;
+    left: 15px !important;
   }
 
   .home-nav-link,
   .notifications-nav-link,
   .messages-nav-link,
   .profile-nav-link {
+    display: flex;
     position: relative !important;
     left: 15px !important;
   }
@@ -2047,12 +2054,12 @@ span > a:hover {
   .compose-tweet-2 {
     position: relative !important;
     /* left: 10px !important; */
-    left: 15px !important;
+    left: 20px !important;
   }
   .profile-img-and-svg {
     position: relative !important;
     /* left: 10px !important; */
-    left: 15px !important;
+    left: 22px !important;
   }
 
   .home-nav-link,
@@ -2060,11 +2067,11 @@ span > a:hover {
   .messages-nav-link,
   .profile-nav-link {
     position: relative !important;
-    left: 15px !important;
+    left: 20px !important;
   }
 }
 
-@media (max-width: 780px) and (min-width: 500px) {
+@media (max-width: 768px) and (min-width: 500px) {
   .home-nav-link-parent-div div svg,
   .notifications-nav-link-parent-div div svg,
   .messages-nav-link-parent-div div svg,
@@ -2084,18 +2091,19 @@ span > a:hover {
   .profile-nav-link-parent-div div
   /* ,.connectify-basic-icon */ {
     position: relative !important;
-    left: 5px;
+    left: 25px;
   }
+
   .profile-img-and-svg {
     width: 100% !important;
     display: flex !important;
     justify-content: flex-end !important;
     position: relative !important;
-    left: 11px !important;
+    left: 22px !important;
   }
   .compose-tweet-2 {
     position: relative !important;
-    left: 10px !important;
+    left: 21px !important;
   }
 }
 
@@ -2105,11 +2113,11 @@ span > a:hover {
     display: flex !important;
     justify-content: flex-end !important;
     position: relative !important;
-    left: 19px !important;
+    left: 22px !important;
   }
   .compose-tweet-2 {
     position: relative !important;
-    left: 17px !important;
+    left: 20px !important;
   }
 }
 
@@ -2176,4 +2184,9 @@ span > a:hover {
 
 .right-side-bar-unfollow-modal-footer {
   padding: 0px 16px 16px 16px !important;
+}
+
+.right-side-input-close-text-search-input:hover {
+  transition-duration: 0.2s;
+  background-color: rgba(25, 140, 216, 255) !important;
 }

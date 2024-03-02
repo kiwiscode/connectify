@@ -51,7 +51,6 @@ function MainPage() {
     const getClickLocation = (e) => {
       const clickedElementParentClass = e.target.parentNode.className;
       const clickedElementClass = e.target.classList;
-
       if (
         (clickedElementClass.contains("hover-reposted-text") &&
           clickedElementParentClass !== "post-circle-profile-svg-on-point" &&
@@ -665,7 +664,13 @@ function MainPage() {
         setLoadingFalse={() => setLoadingFalse()}
       />
       <ResponsiveNavigationBarTop />
-      <Container fluid>
+
+      <Container
+        style={{
+          overflowX: "hidden",
+        }}
+        fluid
+      >
         <Row
           style={{
             height: "100vh",

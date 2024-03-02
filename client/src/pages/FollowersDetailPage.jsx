@@ -233,6 +233,24 @@ function FollowerDetailPage() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+  const [first3User, setFirst3User] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/get-most-followed-3-user`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        console.log("Response =>", response);
+
+        setFirst3User(response.data.first3User);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  }, []);
   return (
     <>
       {contextHolder}
@@ -240,7 +258,12 @@ function FollowerDetailPage() {
 
       <ResponsiveNavigationBarBottom />
       {/* <ResponsiveNavigationBarTop /> */}
-      <Container fluid>
+      <Container
+        style={{
+          overflowX: "hidden",
+        }}
+        fluid
+      >
         <Row
           style={{
             height: "100vh",
@@ -729,7 +752,7 @@ function FollowerDetailPage() {
 
           {/* following followers detail finish to check  */}
 
-          <RightSideColumn />
+          <RightSideColumn first3User={first3User} />
         </Row>
       </Container>
     </>
