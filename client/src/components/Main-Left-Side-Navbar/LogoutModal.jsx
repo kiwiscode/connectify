@@ -440,6 +440,10 @@ function LogoutModal() {
             lineHeight: "20px",
             fontWeight: "700",
             fontSize: "15px",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            width: "200px",
           }}
           className="logout-p logout-popover"
           onClick={handleLogout}
@@ -616,6 +620,15 @@ function LogoutModal() {
     const getClickLocation = (e) => {
       const classList = e.target.classList;
       const parentNodeClassName = e.srcElement.parentNode.className;
+      const parentNodeClassNameBaseVal =
+        e.srcElement.parentNode.className.baseVal;
+
+      console.log("Target classlist =>", classList);
+      console.log("Target parent node classname =>", parentNodeClassName);
+      console.log(
+        "Target parent node classname base value =>",
+        parentNodeClassNameBaseVal
+      );
 
       if (
         classList.contains("logout-profile-img") ||
@@ -627,7 +640,11 @@ function LogoutModal() {
         classList.contains("logout-three-dots") ||
         classList.contains("localeInfo-username") ||
         parentNodeClassName === "stack-logout-navigation-parent hstack" ||
-        parentNodeClassName === "p-2 responsive-logout"
+        parentNodeClassName === "p-2 responsive-logout" ||
+        parentNodeClassNameBaseVal === "profile-svg bi bi-person-circle" ||
+        classList.contains("profile-svg-logout-modal") ||
+        parentNodeClassNameBaseVal ===
+          "profile-svg-logout-modal bi bi-person-circle"
       ) {
         setShowLogoutPopup(true);
       } else {
@@ -683,7 +700,7 @@ function LogoutModal() {
                   width={40}
                   height={40}
                   fill="rgb(83, 100, 113)"
-                  className="profile-svg bi bi-person-circle"
+                  className="profile-svg-logout-modal bi bi-person-circle"
                   viewBox="0 0 16 16"
                   style={{
                     borderRadius: "50%",
@@ -706,21 +723,29 @@ function LogoutModal() {
                   lineHeight: "20px",
                   fontWeight: "700",
                   fontSize: "15px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  width: "120px",
                 }}
               >
                 {localeInfo.username}
               </div>
-              <span
+              <div
                 className="localeInfo-username"
                 style={{
                   color: "rgb(83, 100, 113)",
                   fontSize: "15px",
                   lineHeight: "20px",
                   fontWeight: "400",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  width: "120px",
                 }}
               >
                 @{localeInfo.username}
-              </span>
+              </div>
             </div>
           </div>
           <div className="p-2 ms-auto responsive-logout">

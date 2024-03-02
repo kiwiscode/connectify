@@ -646,14 +646,55 @@ function MainPage() {
         },
       })
       .then((response) => {
-        console.log("Response =>", response);
-
         setFirst3User(response.data.first3User);
       })
       .catch((error) => {
         console.log("Error =>", error);
       });
   }, []);
+
+  // start to check right side search bar progress
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredSearchResult, setFilteredSearchResult] = useState([]);
+
+  const handleSetSearchTerm = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const setSearchTermEmpty = () => {
+    setSearchTerm("");
+  };
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/allUsersFromDataBase`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        console.log("Filtered new array =>", response.data.allUsers);
+        const term = searchTerm.split(" ").join("").toLowerCase();
+
+        const filteredUsers = response.data.allUsers.filter((eachUser) => {
+          return (
+            eachUser.username.includes(term) || eachUser.fullname.includes(term)
+          );
+        });
+
+        console.log("Term", term);
+        console.log("Filtered users =>", filteredUsers);
+
+        setFilteredSearchResult(filteredUsers);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  }, [searchTerm]);
+
+  console.log("Search term =>", searchTerm);
+  // finish to check right side search bar progress
+
   return (
     <>
       {contextHolder}
@@ -1213,6 +1254,10 @@ function MainPage() {
                                                 fontWeight: "700",
                                                 fontSize: "15px",
                                                 lineHeight: "20px",
+                                                overflow: "hidden",
+                                                textOverflow: "ellipsis",
+                                                whiteSpace: "nowrap",
+                                                width: "120px",
                                               }}
                                             >
                                               {post.authorFullName}
@@ -2520,7 +2565,13 @@ function MainPage() {
           </Col>
           {/* finish to check  main column */}
           {/* 3.column burası olucak */}
-          <RightSideColumn first3User={first3User} />
+          <RightSideColumn
+            handleSetSearchTerm={handleSetSearchTerm}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTermEmpty}
+            filteredSearchResult={filteredSearchResult}
+            first3User={first3User}
+          />
         </Row>
       </Container>
     </>

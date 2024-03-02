@@ -1,18 +1,28 @@
 import { useContext, useEffect, useState } from "react";
-import { Button, Col, Stack, Modal } from "react-bootstrap";
+import { Button, Col, Stack, Modal, Row } from "react-bootstrap";
 import axios from "axios";
 import { UserContext } from "../../context/UserContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { List, Typography, Divider } from "antd";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-function RightSideColumn({ first3User }) {
+function RightSideColumn({
+  first3User,
+  handleSetSearchTerm,
+  searchTerm,
+  setSearchTerm,
+  filteredSearchResult,
+}) {
   const { getToken } = useContext(UserContext);
   const [onFocus, setOnFocus] = useState(false);
   const [user, setUser] = useState([]);
   const [isHovered, setIsHovered] = useState("");
+  const navigate = useNavigate();
+  const [closeDeleteSearchTermBtn, setCloseDeleteSearchTermBtn] =
+    useState(false);
   const onFocusActive = () => {
     setOnFocus(true);
   };
@@ -20,6 +30,8 @@ function RightSideColumn({ first3User }) {
   const onFocusInActive = () => {
     setOnFocus(false);
   };
+
+  console.log("Search term =>", searchTerm);
 
   useEffect(() => {
     const getClickedLocation = (e) => {
@@ -47,8 +59,10 @@ function RightSideColumn({ first3User }) {
           "search-input-delete-search-term-svg-group"
       ) {
         onFocusActive();
+        setCloseDeleteSearchTermBtn(false);
       } else {
         onFocusInActive();
+        setCloseDeleteSearchTermBtn(true);
       }
     };
 
@@ -88,7 +102,6 @@ function RightSideColumn({ first3User }) {
 
   const [showUnfollowModal, setshowUnfollowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
 
   const handleFollow = (selectedUser) => {
     axios
@@ -148,7 +161,9 @@ function RightSideColumn({ first3User }) {
     setSelectedUser(selectedUser);
     setshowUnfollowModal(true);
   };
+  console.log("filtered search result =>", filteredSearchResult);
 
+  const [isHoveredListItem, setIsHoveredListItem] = useState("");
   return (
     <>
       <Modal
@@ -233,7 +248,7 @@ function RightSideColumn({ first3User }) {
         xxl={4} // 1400px ve sonrası aralığı
         style={{
           position: "relative",
-          right: -20,
+          left: "1.5%",
         }}
       >
         <Stack
@@ -262,8 +277,8 @@ function RightSideColumn({ first3User }) {
                   left: "30px",
                 }}
                 fill="currentColor"
-                width={16}
-                height={16}
+                width={`${1.25}em`}
+                height={`${1.25}em`}
                 viewBox="0 0 24 24"
                 aria-hidden="true"
                 className="search-bar-right-side-column r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-4wgw6l r-f727ji"
@@ -276,16 +291,20 @@ function RightSideColumn({ first3User }) {
 
             <input
               onFocus={onFocusActive}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSetSearchTerm}
               style={{
-                width: "375px",
-                height: "42px",
+                width: "350px",
+                height: "44px",
                 backgroundColor: onFocus ? "white" : "#eff3f4",
                 border: onFocus ? "1px solid #1e9bf0" : "none",
                 outlineStyle: "none",
                 borderRadius: "9999px",
                 borderWidth: "1px",
                 padding: "0px 55px",
+                fontSize: "15px",
+                fontWeight: "400",
+                lineHeight: "20px",
+                wordWrap: "break-word",
               }}
               type="text"
               className="right-side-bar-input"
@@ -293,7 +312,7 @@ function RightSideColumn({ first3User }) {
               value={searchTerm}
             />
             {/* close text start to check right side input  */}
-            {searchTerm.length ? (
+            {searchTerm?.length && !closeDeleteSearchTermBtn ? (
               <div
                 style={{
                   display: "inline-block",
@@ -310,7 +329,7 @@ function RightSideColumn({ first3User }) {
                   console.log(
                     "Delete search term ! Keep Try searching for people modal open !"
                   );
-                  setSearchTerm("");
+                  setSearchTerm();
                 }}
               >
                 <div
@@ -358,30 +377,170 @@ function RightSideColumn({ first3User }) {
             {/* close text finish to check right side input  */}
             <div
               style={{
-                backgroundColor: "white",
-                position: "absolute",
-                width: "375px",
+                overflowY: "auto",
+                overflowX: "hidden",
+                maxHeight: "400px",
                 minHeight: "100px",
+                backgroundColor: "white",
+                zIndex: 9999,
+                width: "350px",
                 borderRadius: "8px",
                 border: "none",
-                zIndex: 9999,
-                display: onFocus ? "flex" : "none",
-                justifyContent: "center",
+                position: "absolute",
                 padding: "12px",
                 boxShadow:
                   "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                display: onFocus ? "flex" : "none",
+                flexDirection: "column",
+
+                alignItems: "center",
               }}
             >
-              <span
-                style={{
-                  color: "rgb(83, 100, 113)                ",
-                  lineHeight: "20px",
-                  fontSize: "15px",
-                  fontWeight: "400",
-                }}
-              >
-                Try searching for people
-              </span>
+              {!searchTerm ? (
+                <>
+                  <div
+                    style={{
+                      color: "rgb(83, 100, 113)",
+                      lineHeight: "20px",
+                      fontSize: "15px",
+                      fontWeight: "400",
+                    }}
+                  >
+                    Try searching for people
+                  </div>
+                </>
+              ) : (
+                <>
+                  <List
+                    className="right-side-bar-column-search-bar-list"
+                    size="small"
+                    header={<div>{`Search for "${searchTerm}"`}</div>}
+                    bordered
+                  >
+                    {filteredSearchResult.map((eachUser, index) => (
+                      <List.Item
+                        onMouseEnter={() => {
+                          setIsHoveredListItem(index);
+                        }}
+                        key={index}
+                        style={{
+                          backgroundColor:
+                            isHoveredListItem === index ? "#f7f9f9" : "",
+                          border: "none",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => {
+                          navigate(`/profile/${eachUser._doc._id}`);
+                        }}
+                      >
+                        <Stack
+                          style={{
+                            width: "100%",
+                          }}
+                          direction="horizontal"
+                        >
+                          {eachUser._doc?.imageUrl?.slice(0, 3) !== "../" ? (
+                            <Link to={`/profile/${eachUser._doc?._id}`}>
+                              <img
+                                src={eachUser._doc?.imageUrl}
+                                alt={`${eachUser._doc?.fullname}'s profile`}
+                                width={40}
+                                height={40}
+                                className="profile-image"
+                                style={{
+                                  borderRadius: "50%",
+                                }}
+                              />
+                            </Link>
+                          ) : (
+                            <div>
+                              <Link to={`/profile/${eachUser._doc?._id}`}>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="40"
+                                  height="40"
+                                  fill="rgb(83, 100, 113)"
+                                  className="bi bi-person-circle"
+                                  viewBox="0 0 16 16"
+                                >
+                                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                  <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                </svg>
+                              </Link>
+                            </div>
+                          )}
+                          {/* User Info */}
+                          <div className="user-info p-2">
+                            {/* Fullname */}
+                            <div
+                              style={{
+                                fontSize: "15px",
+                                fontWeight: "700",
+                                lineHeight: "20px",
+                              }}
+                              className="fullname"
+                            >
+                              <Link
+                                to={`/profile/${eachUser._doc?._id}`}
+                                className="hover-fullname"
+                                style={{
+                                  textDecoration: "none",
+                                  color: "black",
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    fontSize: "15px",
+                                    fontWeight: "700",
+                                    lineHeight: "20px",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
+                                    width: "200px",
+                                  }}
+                                >
+                                  {eachUser._doc?.fullname}
+                                </div>
+                              </Link>
+                            </div>
+
+                            {/* Username */}
+                            <div
+                              style={{
+                                fontSize: "15px",
+                                fontWeight: "400",
+                                lineHeight: "20px",
+                                color: "rgb(83, 100, 113)",
+                                position: "relative",
+                              }}
+                              className="username"
+                            >
+                              <Link
+                                style={{
+                                  textDecoration: "none",
+                                }}
+                                to={`/profile/${eachUser._doc?._id}`}
+                              >
+                                <span
+                                  style={{
+                                    fontSize: "15px",
+                                    fontWeight: "400",
+                                    lineHeight: "20px",
+                                    color: "rgb(83, 100, 113)",
+                                    position: "relative",
+                                  }}
+                                >
+                                  @{eachUser._doc?.username}
+                                </span>
+                              </Link>
+                            </div>
+                          </div>
+                        </Stack>
+                      </List.Item>
+                    ))}
+                  </List>
+                </>
+              )}
             </div>
             {/* close text start to check right side input  */}
           </div>
@@ -398,7 +557,7 @@ function RightSideColumn({ first3User }) {
                 borderWidth: "1px",
                 borderRadius: "16px",
                 backgroundColor: "#eff3f4",
-                maxWidth: "375px",
+                maxWidth: "350px",
               }}
               className="p-4"
             >
@@ -446,8 +605,11 @@ function RightSideColumn({ first3User }) {
                 borderWidth: "1px",
                 borderRadius: "16px",
                 backgroundColor: "#eff3f4",
-                maxWidth: "375px",
+                maxWidth: "350px",
                 marginTop: "10px",
+                display: "flex",
+                flexDirection: "column",
+                textAlign: "left",
               }}
               className="p-4"
             >
@@ -456,6 +618,8 @@ function RightSideColumn({ first3User }) {
                   fontSize: "20px",
                   fontWeight: "800",
                   lineHeight: "24px",
+                  position: "relative",
+                  right: "10px",
                 }}
               >
                 Who to follow
@@ -463,9 +627,21 @@ function RightSideColumn({ first3User }) {
               {first3User
                 ? first3User.map((eachUser, index) => {
                     return (
-                      <div key={eachUser._id}>
+                      <div
+                        style={{
+                          position: "relative",
+                          right: "10px",
+                        }}
+                        key={eachUser._id}
+                      >
                         <div>
-                          <Stack direction="horizontal">
+                          <Stack
+                            className="each-who-to-follow-user"
+                            style={{
+                              width: "108%",
+                            }}
+                            direction="horizontal"
+                          >
                             <div>
                               {" "}
                               {eachUser.imageUrl.slice(0, 3) !== "../" ? (
@@ -524,6 +700,10 @@ function RightSideColumn({ first3User }) {
                                     lineHeight: "20px",
                                     fontSize: "15px",
                                     fontWeight: "700",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
+                                    width: "120px",
                                   }}
                                 >
                                   <span>{eachUser.fullname}</span>
@@ -557,11 +737,24 @@ function RightSideColumn({ first3User }) {
                                 }}
                               >
                                 <div
+                                  // style={{
+                                  //   lineHeight: "20px",
+                                  //   fontSize: "15px",
+                                  //   fontWeight: "700",
+                                  //   overflow: "hidden",
+                                  //   textOverflow: "ellipsis",
+                                  //   whiteSpace: "nowrap",
+                                  //   width: "120px",
+                                  // }}
                                   style={{
                                     lineHeight: "20px",
                                     fontSize: "15px",
                                     fontWeight: "400",
                                     color: "rgb(83, 100, 113)",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
+                                    width: "120px",
                                   }}
                                 >
                                   @{eachUser.username}
@@ -652,6 +845,8 @@ function RightSideColumn({ first3User }) {
                   fontSize: "15px",
                   lineHeight: "20px",
                   fontWeight: "400",
+                  position: "relative",
+                  right: "10px",
                 }}
               >
                 Show more
