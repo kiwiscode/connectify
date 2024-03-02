@@ -43,16 +43,6 @@ function LeftSideNavBar({
   };
   useEffect(() => {
     const getClickLocation = (e) => {
-      console.log("Target classlist =>", e.target.classList);
-      console.log(
-        "Target parent classlist =>",
-        e.srcElement.parentNode.className
-      );
-      console.log(
-        "Target parent classlist group name =>",
-        e.srcElement.parentNode.className.baseVal
-      );
-
       const classList = e.target.classList;
       const parentNodeClassName = e.srcElement.parentNode.className;
       const svgGroupClassName = e.srcElement.parentNode.className.baseVal;

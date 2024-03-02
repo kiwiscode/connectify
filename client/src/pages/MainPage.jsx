@@ -37,6 +37,7 @@ import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
 
 function MainPage() {
+  const [first3User, setFirst3User] = useState([]);
   const socket = io.connect(`${API_URL}`);
   // start to check
 
@@ -50,9 +51,7 @@ function MainPage() {
     const getClickLocation = (e) => {
       const clickedElementParentClass = e.target.parentNode.className;
       const clickedElementClass = e.target.classList;
-      console.log("Parent class =>", clickedElementParentClass);
-      console.log("Child class =>", clickedElementClass);
-      console.log("Clicked post =>", clickedPostBox);
+
       if (
         (clickedElementClass.contains("hover-reposted-text") &&
           clickedElementParentClass !== "post-circle-profile-svg-on-point" &&
@@ -638,6 +637,23 @@ function MainPage() {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/get-most-followed-3-user`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        console.log("Response =>", response);
+
+        setFirst3User(response.data.first3User);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
   }, []);
   return (
     <>
@@ -2499,7 +2515,7 @@ function MainPage() {
           </Col>
           {/* finish to check  main column */}
           {/* 3.column burası olucak */}
-          <RightSideColumn />
+          <RightSideColumn first3User={first3User} />
         </Row>
       </Container>
     </>

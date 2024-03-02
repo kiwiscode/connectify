@@ -2140,3 +2140,40 @@ span > a:hover {
     left: 22px !important;
   }
 }
+
+.right-side-bar-column-list li {
+  margin: 2px 5px;
+  line-height: 16px;
+  font-size: 13px;
+  font-weight: 400;
+  color: rgb(83, 100, 113);
+  cursor: pointer;
+}
+
+.right-side-bar-column-list li:hover {
+  text-decoration: underline;
+  text-decoration-color: rgb(83, 100, 113);
+}
+
+.right-side-bar-unfollow-modal {
+  display: flex !important;
+  justify-content: center !important;
+  align-content: center !important;
+  align-items: center !important;
+}
+
+.right-side-bar-unfollow-modal div div {
+  max-width: 320px !important;
+}
+
+.right-side-bar-unfollow-modal-body {
+  padding: 32px !important;
+}
+
+.right-side-bar-unfollow-modal-body div {
+  text-align: left !important;
+}
+
+.right-side-bar-unfollow-modal-footer {
+  padding: 0px 16px 16px 16px !important;
+}

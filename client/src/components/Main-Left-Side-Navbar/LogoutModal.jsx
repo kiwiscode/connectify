@@ -143,9 +143,10 @@ function LogoutModal() {
               color: "rgb(83, 100, 113)",
             }}
           >
-            You’re about to start the process of deactivating your X account.
-            Your display name, @username, and public profile will no longer be
-            viewable on X.com, X for iOS, or X for Android.
+            You’re about to start the process of deactivating your Connectify
+            account. Your display name, @username, and public profile will no
+            longer be viewable on Connectify.com, Connectify for iOS, or
+            Connectify for Android.
           </List.Item>
           <List.Item
             style={{
@@ -176,8 +177,8 @@ function LogoutModal() {
               color: "rgb(83, 100, 113)",
             }}
           >
-            To use your current @username or email address with a different X
-            account, change them before you deactivate this account.
+            To use your current @username or email address with a different
+            Connectify account, change them before you deactivate this account.
           </List.Item>
         </List>
       ),
@@ -397,12 +398,11 @@ function LogoutModal() {
       <div
         style={{
           textAlign: "left",
-
           height: "auto",
           width: 250,
           display: "flex",
           flexDirection: "column",
-          padding: "5px 0px 5px 0px",
+          padding: "5px 12px 5px 12px",
         }}
         className="logout-body"
       >
@@ -614,12 +614,6 @@ function LogoutModal() {
 
   useEffect(() => {
     const getClickLocation = (e) => {
-      console.log("Target classlist =>", e.target.classList);
-      console.log(
-        "Target parent classlist =>",
-        e.srcElement.parentNode.className
-      );
-
       const classList = e.target.classList;
       const parentNodeClassName = e.srcElement.parentNode.className;
 
@@ -636,10 +630,8 @@ function LogoutModal() {
         parentNodeClassName === "p-2 responsive-logout"
       ) {
         setShowLogoutPopup(true);
-        console.log("Show if block =>", showlogoutPopup);
       } else {
         setShowLogoutPopup(false);
-        console.log("Show else block =>", showlogoutPopup);
       }
     };
 
