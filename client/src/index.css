@@ -2190,3 +2190,27 @@ span > a:hover {
   transition-duration: 0.2s;
   background-color: rgba(25, 140, 216, 255) !important;
 }
+
+/* right side bar column search bar start to check  */
+.right-side-bar-column-search-bar-list {
+  border: none !important;
+  width: 107% !important;
+}
+
+.right-side-bar-column-search-bar-list .ant-list-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.right-side-bar-column-search-bar-list .ant-list-items .ant-list-item {
+  border: none !important;
+}
+
+.right-side-bar-column-search-bar-list .ant-list-items .ant-list-item:hover {
+  background-color: #f7f9f9 !important;
+  cursor: pointer;
+}
+/* right side bar column search bar finish to check  */
+
+.each-who-to-follow-user {
+  cursor: pointer;
+}

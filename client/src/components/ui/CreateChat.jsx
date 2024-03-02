@@ -81,7 +81,7 @@ function CreateChat({ writeMessageButton }) {
       user.username.toLowerCase().startsWith(term.toLowerCase())
     );
 
-    if (searchString !== []) {
+    if (searchString !== "") {
       setFilteredUsers(filtered);
     } else {
       setFilteredUsers([]);

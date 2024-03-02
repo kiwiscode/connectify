@@ -73,6 +73,13 @@ const handleSignup = async (req, res, next) => {
     return;
   }
 
+  if (username.length > 15) {
+    res.status(403).json({
+      errorMessage: "Your username must be shorter than 15 characters",
+    });
+    return;
+  }
+
   const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
   if (!regex.test(password) || password.length < 6) {
     res.status(402).json({

@@ -37,8 +37,6 @@ const handleShowFollowingPosts = (req, res) => {
             .populate("commentedForThisPost")
             .populate("commentedForThisUsersPost")
             .then((posts) => {
-              console.log("Posts =>", posts);
-
               res.status(202).json({ followingPosts: posts });
             })
             .catch((error) => {
