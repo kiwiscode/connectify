@@ -8,6 +8,7 @@ const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const capitalize = require("../utils/capitalize");
 const Post = require("../models/Post.model");
+require("dotenv").config();
 let sendVerificationEmail;
 emailProcess();
 
@@ -447,6 +448,38 @@ const handleDeactivatedUserLoginBack = (req, res) => {
       res.status(404).json({ errorMessage: "User not found!" });
     });
 };
+
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+
+const client = require("twilio")(accountSid, authToken);
+
+const generateRandomCode = () => {
+  const min = 100000; // En küçük 6 haneli sayı
+  const max = 999999; // En büyük 6 haneli sayı
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
+const verificationCode = generateRandomCode();
+console.log(verificationCode);
+
+const sendSms = async (body) => {
+  let msgOptions = {
+    from: process.env.TWILIO_FROM_NUMBER,
+    to: "+4915781219181",
+    body,
+  };
+
+  try {
+    const message = await client.messages.create(msgOptions);
+    console.log("Message =>", message);
+  } catch (error) {
+    console.log("Error =>", error);
+  }
+};
+
+sendSms(`Your verification code is: ${verificationCode}`);
+
 module.exports = {
   handleSignup,
   handleLogin,

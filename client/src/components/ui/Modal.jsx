@@ -381,8 +381,10 @@ function SigninModal({ deactivatedScren }) {
                   onHide={handleClose}
                   size="lg"
                   centered={true}
+                  className="signin-modal-parent-non-reactivate"
                 >
                   <Modal.Header
+                    className="signin-modal-header-child-non-reactivate"
                     style={{
                       border: "none",
                     }}
@@ -396,7 +398,7 @@ function SigninModal({ deactivatedScren }) {
                       }}
                     >
                       <div>
-                        {/* create message icon start to check  */}
+                        {/* close signin modal icon start to check  */}
                         <svg
                           style={{
                             border: "none",
@@ -416,17 +418,20 @@ function SigninModal({ deactivatedScren }) {
                             <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
                           </g>
                         </svg>{" "}
-                        {/* create message icon finish to check  */}
+                        {/* close signin modal icon finish to check  */}
                       </div>
                     </div>
                   </Modal.Header>
 
-                  <Modal.Body>
+                  <Modal.Body className="signin-modal-body-child-non-reactivate">
                     <span className="sign-in-header mt-4 mb-4">
                       Sign in to Connectify
                     </span>
                     <InputGroup className="mb-2">
                       <Form.Control
+                        style={{
+                          boxShadow: "none",
+                        }}
                         aria-label="Default"
                         aria-describedby="inputGroup-sizing-default"
                         type="text"
@@ -435,7 +440,7 @@ function SigninModal({ deactivatedScren }) {
                         onChange={(e) => setUsername(e.target.value)}
                       />
                     </InputGroup>{" "}
-                    <InputGroup className="mb-2">
+                    <InputGroup className="mt-2">
                       <Form.Control
                         aria-label="Default"
                         aria-describedby="inputGroup-sizing-default"
@@ -458,22 +463,52 @@ function SigninModal({ deactivatedScren }) {
                           fontSize: "13px",
                           lineHeight: "16px",
                           fontWeight: "400",
-                          marginLeft: "5px",
+                          marginLeft: "12px",
                         }}
-                        className="grid-item forgot-password-text"
+                        className="grid-item forgot-password-text mt-1"
                       >
                         Forgot password?
                       </div>
                     </div>
                     {error}
+                    <Button
+                      className="login-button mt-5"
+                      variant="dark"
+                      onClick={handleLogin}
+                    >
+                      Log in
+                    </Button>
+                    <div
+                      style={{
+                        width: "300px",
+                      }}
+                      className="grid-container"
+                    >
+                      <div
+                        style={{
+                          cursor: "pointer",
+                          color: "rgb(83, 100, 113)",
+                          fontSize: "15px",
+                          lineHeight: "20px",
+                          fontWeight: "400",
+                          marginLeft: "5px",
+                        }}
+                        className="grid-item mt-5"
+                      >
+                        <span>
+                          Don&apos;t have an account? <a href="">Sign up</a>
+                        </span>
+                      </div>
+                    </div>
                   </Modal.Body>
 
-                  <Modal.Footer
+                  {/* <Modal.Footer
+                    className="signin-modal-footer-child-non-reactivate"
                     style={{
                       border: "none",
                     }}
                   >
-                    <Button
+                     <Button
                       className="login-button"
                       variant="dark"
                       onClick={handleLogin}
@@ -502,7 +537,7 @@ function SigninModal({ deactivatedScren }) {
                         </span>
                       </div>
                     </div>
-                  </Modal.Footer>
+                  </Modal.Footer> */}
                 </Modal>
               </>
             )}

@@ -2214,3 +2214,46 @@ span > a:hover {
 .each-who-to-follow-user {
   cursor: pointer;
 }
+
+/* sing-in-modal-non-reactivate  start to check  */
+.signin-modal-parent-non-reactivate div {
+  max-width: 600px !important;
+  max-height: 591px !important;
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;
+}
+/* signin modal content parent  */
+.signin-modal-parent-non-reactivate div div {
+  /* background-color: indianred; */
+  max-height: 90vh !important;
+  max-width: 80vw !important;
+}
+/* signin modal content header  */
+.signin-modal-header-child-non-reactivate {
+  /* background-color: #607d8b !important; */
+  height: 53px !important;
+}
+
+/* signin modal content body  */
+.signin-modal-body-child-non-reactivate {
+  /* background-color: purple !important; */
+  /* border-top: 1px solid black !important; */
+  height: 600px;
+}
+
+.signin-modal-body-child-non-reactivate input {
+  height: auto;
+  outline-style: none !important;
+}
+
+/* signin modal content footer  */
+.signin-modal-footer-child-non-reactivate {
+  border-top: 1px solid black !important;
+  /* background-color: royalblue !important; */
+}
+
+/* sing-in-modal-non-reactivate  finish to check  */
+
+.form-control {
+  box-shadow: none !important;
+}
