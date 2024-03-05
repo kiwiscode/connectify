@@ -2214,3 +2214,63 @@ span > a:hover {
 .each-who-to-follow-user {
   cursor: pointer;
 }
+
+/* sing-in-modal-non-reactivate  start to check  */
+.signin-modal-parent-non-reactivate div {
+  max-width: 600px !important;
+  max-height: 591px !important;
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;
+}
+/* signin modal content parent  */
+.signin-modal-parent-non-reactivate div div {
+  /* background-color: indianred; */
+  max-height: 90vh !important;
+  max-width: 80vw !important;
+}
+/* signin modal content header  */
+.signin-modal-header-child-non-reactivate {
+  /* background-color: #607d8b !important; */
+  height: 53px !important;
+}
+
+/* signin modal content body  */
+.signin-modal-body-child-non-reactivate {
+  /* background-color: purple !important; */
+  /* border-top: 1px solid black !important; */
+  height: 600px;
+}
+
+.signin-modal-body-child-non-reactivate input {
+  height: auto;
+  outline-style: none !important;
+}
+
+/* signin modal content footer  */
+.signin-modal-footer-child-non-reactivate {
+  border-top: 1px solid black !important;
+  /* background-color: royalblue !important; */
+}
+
+/* sing-in-modal-non-reactivate  finish to check  */
+
+.form-control {
+  box-shadow: none !important;
+}
+
+.hover-forgot-password-send-email-stack-svg-verified-email:hover {
+  background-color: #ebf5fe;
+  transition-duration: 0.2s;
+}
+
+.hover-forgot-password-send-email-stack-svg-verified-email-variant-2:hover {
+  background-color: #e7e7e8;
+  transition-duration: 0.2s;
+}
+
+.connectify-support-forgot-password-screen span:hover {
+  cursor: pointer;
+  text-decoration: underline !important;
+  text-decoration-color: rgb(29, 155, 240) !important;
+  transition-duration: 0.2s;
+}

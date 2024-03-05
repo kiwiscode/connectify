@@ -55,7 +55,7 @@ function IndexFooter() {
                 <span>Settings</span>
               </a>
               <a href="">
-                <span>© 2023 C kiwiscode</span>
+                <span>© 2024 C kiwiscode</span>
               </a>
             </div>
           </Col>

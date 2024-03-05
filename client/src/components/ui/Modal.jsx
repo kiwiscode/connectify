@@ -24,6 +24,7 @@ import Picker from "@emoji-mart/react";
 
 import { message, Steps, theme } from "antd";
 import { Divider, List } from "antd";
+import LoadingSpinner from "./LoadingSpinner";
 
 // socket io cleaning up socket.id after logout from online users client start to check
 // import io from "socket.io-client";
@@ -56,6 +57,7 @@ function SigninModal({ deactivatedScren }) {
   };
 
   const handleClose = () => {
+    setTabIndex(0);
     setShow(false);
   };
   const handleShow = () => {
@@ -86,7 +88,6 @@ function SigninModal({ deactivatedScren }) {
         updateUser(user);
         setError("");
         navigate("/home");
-        window.location.reload();
       })
       .catch((err) => {
         if (err.response !== undefined) {
@@ -169,6 +170,195 @@ function SigninModal({ deactivatedScren }) {
         console.log("Error =>", error);
       });
   };
+
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [tabIndex, setTabIndex] = useState(0);
+  const [startForgotPasswordProcess, setStartForgotPasswordProcess] =
+    useState(false);
+
+  const [verificationCodeInput, setVerificationCodeInput] = useState("");
+
+  const [checkedValue, setCheckedValue] = useState(false);
+
+  const redirectHomePage = () => {
+    navigate("/home");
+  };
+
+  const handleCloseLoginModal = () => {
+    setShowLoginModal(false);
+  };
+
+  const handleShowLoginModal = () => {
+    setShowLoginModal(true);
+  };
+
+  const { getToken } = useContext(UserContext);
+  const [findConnectifyAccount, setFindConnectifyAccount] = useState("");
+
+  const [forgotPasswordInProcessUser, setForgotPasswordInProcessUser] =
+    useState([]);
+
+  const getMaskedEmail = (str) => {
+    const atIndex = str.indexOf("@");
+    const userName = str.slice(0, atIndex);
+    const domainIndex = str.indexOf(".");
+    const domain = str.slice(atIndex + 1, domainIndex);
+
+    const maskedUsername = userName.slice(0, 2) + "*".repeat(10);
+    const maskedDomain = domain.charAt(0) + "*".repeat(4);
+    const maskedDot = "*".repeat(3);
+
+    return maskedUsername + "@" + maskedDomain + maskedDot;
+  };
+
+  const [tabLoading, setTabLoading] = useState(false);
+  const handleFindConnectifyAccount = () => {
+    axios
+      .post(`${API_URL}/check-find-account`, { findConnectifyAccount })
+      .then((response) => {
+        console.log("Response from server =>", response);
+
+        setTabLoading(true);
+        setForgotPasswordInProcessUser(response.data.user);
+        setTimeout(() => {
+          setFindConnectifyAccount("");
+          setTabLoading(false);
+          setTabIndex(tabIndex + 1);
+        }, 500);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+        catchErrorMessage("Sorry, we could not find your account.");
+      });
+  };
+
+  const [
+    receivedVerificationCodeForPasswordChange,
+    setReceivedVerificationCodeForPasswordChange,
+  ] = useState();
+  console.log("Verification code input =>", verificationCodeInput);
+
+  console.log(
+    "Received verification code for password change =>",
+    receivedVerificationCodeForPasswordChange
+  );
+
+  const [
+    isWaitingForConfirmationCodeSendingProcess,
+    setIsWaitingForConfirmationCodeSendingProcess,
+  ] = useState(false);
+  const handleSendForgotPasswordCodeToEmail = () => {
+    axios
+      .post(
+        `${API_URL}/send-forgot-password-code-to-email
+  `,
+        { forgotPasswordInProcessUser }
+      )
+      .then((response) => {
+        console.log(
+          "Response from server side after verification code send =>",
+          response
+        );
+
+        setReceivedVerificationCodeForPasswordChange(
+          response.data.result.verificationCode.toString()
+        );
+
+        setIsWaitingForConfirmationCodeSendingProcess(true);
+        setTimeout(() => {
+          setIsWaitingForConfirmationCodeSendingProcess(false);
+          setTabIndex(tabIndex + 1);
+        }, 500);
+        console.log(
+          "Received verification code for password change =>",
+          receivedVerificationCodeForPasswordChange
+        );
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  };
+
+  const [newPassword, setNewPasswordForgotPasswordProcess] = useState("");
+
+  const [confirmPassword, setNewPasswordForgotPasswordProcessConfirm] =
+    useState("");
+
+  const handleTabChange = () => {
+    setTabLoading(true);
+    setTimeout(() => {
+      setVerificationCodeInput("");
+      setTabLoading(false);
+      setTabIndex(tabIndex + 1);
+    }, 500);
+  };
+
+  const [errorMessageFirst, setErrorMessageFirst] = useState("");
+  const [errorMessageSecond, setErrorMessageSecond] = useState("");
+
+  const handleChangePassword = () => {
+    if (confirmPassword === newPassword) {
+      axios
+        .post(`${API_URL}/forgot-password-change-password`, {
+          forgotPasswordInProcessUser,
+          newPassword,
+        })
+        .then((response) => {
+          console.log("Response =>", response);
+          setErrorMessageFirst("");
+          setErrorMessageSecond("");
+          setTabLoading(true);
+          setTimeout(() => {
+            setTabLoading(false);
+            setTabIndex(tabIndex + 1);
+          }, 500);
+        })
+        .catch((error) => {
+          console.log("Error =>", error);
+          if (error.response.status === 402) {
+            setErrorMessageFirst(
+              "Password needs to have at least 6 chars and must contain at least one number, one lowercase and one uppercase letter."
+            );
+            setErrorMessageSecond("");
+          }
+        });
+    } else {
+      console.log("Here is working !");
+      setErrorMessageFirst("");
+      setErrorMessageSecond("Passwords do not match.");
+    }
+  };
+
+  const [forgotMyPasswordChecked, setForgotMyPasswordChecked] = useState(false);
+
+  const [suspiciousActivity, setSuspiciousActivityChecked] = useState(false);
+
+  const [differentReason, setDifferentReason] = useState(false);
+
+  const handleLoginAfterForgotPasswordProcess = () => {
+    console.log("Trying to log in !");
+
+    axios
+      .post(`${API_URL}/login-after-forgot-password-process`, {
+        newPassword,
+        user: forgotPasswordInProcessUser,
+      })
+      .then((response) => {
+        const { token, user } = response.data;
+
+        localStorage.setItem("userInfo", JSON.stringify(user));
+        localStorage.setItem("token", token);
+
+        updateUser(user);
+
+        console.log("Response =>", response);
+        navigate("/home");
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  };
+
   return (
     <>
       {contextHolder}
@@ -189,27 +379,6 @@ function SigninModal({ deactivatedScren }) {
           >
             {deactivatedScren ? (
               <>
-                {/* <div
-                  onClick={handleShow}
-                  style={{
-                    cursor: "pointer",
-                    minWidth: "76px",
-                    minHeight: "36px",
-                    textAlign: "center",
-                    border: "1px solid rgb(185, 202, 211)",
-                    paddingLeft: "16px",
-                    paddingRight: "16px",
-                    borderRadius: "9999px",
-                    lineHeight: "20px",
-                    fontSize: "15px",
-                    fontWeight: "700",
-                    padding: "5px",
-                    backgroundColor: "rgba(29,155,240,1.00)",
-                    color: "white",
-                  }}
-                >
-                  Log in
-                </div> */}
                 <Button
                   className="deactivated-footer-login"
                   style={{
@@ -259,7 +428,7 @@ function SigninModal({ deactivatedScren }) {
                 </p>
                 <Button
                   variant="light"
-                  onClick={handleShow}
+                  onClick={handleShowLoginModal}
                   className="sign-in"
                 >
                   Sign in
@@ -377,18 +546,20 @@ function SigninModal({ deactivatedScren }) {
             ) : (
               <>
                 <Modal
-                  show={show}
-                  onHide={handleClose}
+                  show={showLoginModal}
+                  onHide={handleCloseLoginModal}
                   size="lg"
                   centered={true}
+                  className="signin-modal-parent-non-reactivate"
                 >
                   <Modal.Header
+                    className="signin-modal-header-child-non-reactivate"
                     style={{
                       border: "none",
                     }}
                   >
                     <div
-                      onClick={handleClose}
+                      onClick={handleCloseLoginModal}
                       className="close-button"
                       style={{
                         borderRadius: "50%",
@@ -396,14 +567,14 @@ function SigninModal({ deactivatedScren }) {
                       }}
                     >
                       <div>
-                        {/* create message icon start to check  */}
+                        {/* close signin modal icon start to check  */}
                         <svg
                           style={{
                             border: "none",
                             fontSize: "15px",
                             margin: "5px",
                           }}
-                          onClick={handleClose}
+                          onClick={handleCloseLoginModal}
                           width={20}
                           height={20}
                           color="rgb(15,20,25)"
@@ -416,17 +587,20 @@ function SigninModal({ deactivatedScren }) {
                             <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
                           </g>
                         </svg>{" "}
-                        {/* create message icon finish to check  */}
+                        {/* close signin modal icon finish to check  */}
                       </div>
                     </div>
                   </Modal.Header>
 
-                  <Modal.Body>
+                  <Modal.Body className="signin-modal-body-child-non-reactivate">
                     <span className="sign-in-header mt-4 mb-4">
                       Sign in to Connectify
                     </span>
                     <InputGroup className="mb-2">
                       <Form.Control
+                        style={{
+                          boxShadow: "none",
+                        }}
                         aria-label="Default"
                         aria-describedby="inputGroup-sizing-default"
                         type="text"
@@ -435,7 +609,7 @@ function SigninModal({ deactivatedScren }) {
                         onChange={(e) => setUsername(e.target.value)}
                       />
                     </InputGroup>{" "}
-                    <InputGroup className="mb-2">
+                    <InputGroup className="mt-2">
                       <Form.Control
                         aria-label="Default"
                         aria-describedby="inputGroup-sizing-default"
@@ -452,29 +626,30 @@ function SigninModal({ deactivatedScren }) {
                       className="grid-container"
                     >
                       <div
+                        onClick={() => {
+                          setStartForgotPasswordProcess(true);
+                          setTabIndex(tabIndex + 1);
+                          setShowLoginModal(false);
+                          handleCloseLoginModal();
+                          console.log("Open forgot password tab !");
+                          setShow(true);
+                        }}
                         style={{
                           cursor: "pointer",
                           color: "rgb(29, 155, 240)",
                           fontSize: "13px",
                           lineHeight: "16px",
                           fontWeight: "400",
-                          marginLeft: "5px",
+                          marginLeft: "12px",
                         }}
-                        className="grid-item forgot-password-text"
+                        className="grid-item forgot-password-text mt-1"
                       >
                         Forgot password?
                       </div>
                     </div>
                     {error}
-                  </Modal.Body>
-
-                  <Modal.Footer
-                    style={{
-                      border: "none",
-                    }}
-                  >
                     <Button
-                      className="login-button"
+                      className="login-button mt-5"
                       variant="dark"
                       onClick={handleLogin}
                     >
@@ -495,17 +670,1143 @@ function SigninModal({ deactivatedScren }) {
                           fontWeight: "400",
                           marginLeft: "5px",
                         }}
-                        className="grid-item"
+                        className="grid-item mt-5"
                       >
                         <span>
                           Don&apos;t have an account? <a href="">Sign up</a>
                         </span>
                       </div>
                     </div>
-                  </Modal.Footer>
+                  </Modal.Body>
                 </Modal>
               </>
             )}
+
+            {tabIndex === 1 && startForgotPasswordProcess ? (
+              <>
+                <Modal
+                  show={show}
+                  onHide={handleClose}
+                  size="lg"
+                  centered={true}
+                  className="signin-modal-parent-non-reactivate"
+                >
+                  <Modal.Header
+                    className="signin-modal-header-child-non-reactivate"
+                    style={{
+                      border: "none",
+                    }}
+                  >
+                    <div
+                      onClick={handleClose}
+                      className="close-button"
+                      style={{
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <div>
+                        {/* close signin modal icon start to check  */}
+                        <svg
+                          style={{
+                            border: "none",
+                            fontSize: "15px",
+                            margin: "5px",
+                          }}
+                          onClick={handleClose}
+                          width={20}
+                          height={20}
+                          color="rgb(15,20,25)"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                        >
+                          <g>
+                            <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                          </g>
+                        </svg>{" "}
+                        {/* close signin modal icon finish to check  */}
+                      </div>
+                    </div>
+                  </Modal.Header>
+
+                  <Modal.Body className="signin-modal-body-child-non-reactivate">
+                    {tabLoading ? (
+                      <LoadingSpinner
+                        strokeColor={"rgb(29, 155, 240)"}
+                      ></LoadingSpinner>
+                    ) : (
+                      <>
+                        <div
+                          style={{
+                            padding: "16px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              lineHeight: "36px",
+                              fontWeight: "700",
+                              fontSize: "31px",
+                            }}
+                          >
+                            Find your Connectify account
+                          </div>
+                          <div
+                            className="mt-2"
+                            style={{
+                              color: "rgb(83, 100, 113)",
+                              lineHeight: "20px",
+
+                              fontSize: "15px",
+                              fontWeight: "400",
+                            }}
+                          >
+                            Enter the email, or username associated with your
+                            account to change your password.
+                          </div>
+                        </div>
+                        <InputGroup
+                          style={{
+                            width: "440px",
+                            height: "60px",
+                          }}
+                          className="mb-2 mt-5"
+                        >
+                          <Form.Control
+                            style={{
+                              boxShadow: "none",
+                            }}
+                            aria-label="Default"
+                            aria-describedby="inputGroup-sizing-default"
+                            type="text"
+                            placeholder="Email, or username"
+                            value={findConnectifyAccount}
+                            onChange={(e) =>
+                              setFindConnectifyAccount(e.target.value)
+                            }
+                          />
+                        </InputGroup>{" "}
+                        <Button
+                          style={{
+                            width: "440px",
+                            height: "52px",
+                            position: "absolute",
+                            bottom: "30px",
+                          }}
+                          onClick={() => handleFindConnectifyAccount()}
+                          className="login-button mt-5"
+                          variant="dark"
+                        >
+                          Next
+                        </Button>
+                      </>
+                    )}
+                  </Modal.Body>
+                </Modal>
+              </>
+            ) : tabIndex === 2 && startForgotPasswordProcess ? (
+              <>
+                <Modal
+                  show={show}
+                  onHide={handleClose}
+                  size="lg"
+                  centered={true}
+                  className="signin-modal-parent-non-reactivate"
+                >
+                  <Modal.Header
+                    className="signin-modal-header-child-non-reactivate"
+                    style={{
+                      border: "none",
+                    }}
+                  >
+                    <div
+                      onClick={handleClose}
+                      className="close-button"
+                      style={{
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <div>
+                        {/* close signin modal icon start to check  */}
+                        <svg
+                          style={{
+                            border: "none",
+                            fontSize: "15px",
+                            margin: "5px",
+                          }}
+                          onClick={handleClose}
+                          width={20}
+                          height={20}
+                          color="rgb(15,20,25)"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                        >
+                          <g>
+                            <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                          </g>
+                        </svg>{" "}
+                        {/* close signin modal icon finish to check  */}
+                      </div>
+                    </div>
+                  </Modal.Header>
+
+                  {isWaitingForConfirmationCodeSendingProcess ? (
+                    <Modal.Body className="signin-modal-body-child-non-reactivate">
+                      <LoadingSpinner
+                        strokeColor={"rgb(29, 155, 240)"}
+                      ></LoadingSpinner>
+                    </Modal.Body>
+                  ) : (
+                    <Modal.Body className="signin-modal-body-child-non-reactivate">
+                      <div>
+                        <div
+                          style={{
+                            lineHeight: "36px",
+                            fontWeight: "700",
+                            fontSize: "31px",
+                          }}
+                        >
+                          Where should we send a confirmation code?
+                        </div>
+                        <div
+                          className="mt-2"
+                          style={{
+                            color: "rgb(83, 100, 113)",
+                            lineHeight: "20px",
+
+                            fontSize: "15px",
+                            fontWeight: "400",
+                          }}
+                        >
+                          Before you can change your password, we need to make
+                          sure it’s really you.
+                        </div>
+                        <div
+                          className="mt-2"
+                          style={{
+                            color: "rgb(83, 100, 113)",
+                            lineHeight: "20px",
+
+                            fontSize: "15px",
+                            fontWeight: "400",
+                          }}
+                        >
+                          Start by choosing where to send a confirmation code.
+                        </div>
+                      </div>
+
+                      <Stack direction="horizontal" className="mt-5">
+                        <div
+                          style={{
+                            fontSize: "15px",
+                            lineHeight: "20px",
+                            fontWeight: "700",
+                          }}
+                        >
+                          Send an email to{" "}
+                          {getMaskedEmail(forgotPasswordInProcessUser.email)}
+                        </div>
+
+                        <div
+                          style={{
+                            width: "40px",
+                            height: "40px",
+                            borderRadius: "50%",
+                          }}
+                          className="hover-forgot-password-send-email-stack-svg-verified-email ms-auto"
+                        >
+                          <div
+                            style={{
+                              backgroundColor:
+                                "#1d9bf0                            ",
+                              width: "20px",
+                              height: "20px",
+                              position: "relative",
+                              left: "10px",
+                              top: "10px",
+                              borderRadius: "50%",
+                            }}
+                          >
+                            <svg
+                              style={{
+                                position: "relative",
+                                left: "2px",
+                                bottom: "4px",
+                              }}
+                              width={16}
+                              height={16}
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
+                              color="white"
+                              fill="currentColor"
+                            >
+                              <g>
+                                <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                              </g>
+                            </svg>
+                          </div>
+                        </div>
+                      </Stack>
+                      <div
+                        className="mt-4 connectify-support-forgot-password-screen"
+                        style={{
+                          textAlign: "left",
+                          lineHeight: "20px",
+                          fontSize: "15px",
+                          fontWeight: "400",
+                          width: "100%",
+                        }}
+                      >
+                        Contact{" "}
+                        <span
+                          className="connectify-support-forgot-password-screen"
+                          style={{
+                            color: "rgb(29, 155, 240)",
+                          }}
+                        >
+                          Connectify Support
+                        </span>{" "}
+                        if you don’t have access.
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "center",
+                          position: "absolute",
+                          bottom: "30px",
+                        }}
+                      >
+                        <Button
+                          style={{
+                            width: "440px",
+                            height: "57px",
+                          }}
+                          onClick={() => handleSendForgotPasswordCodeToEmail()}
+                          className="login-button mt-5 mb-3"
+                          variant="dark"
+                        >
+                          Next
+                        </Button>
+
+                        <Button
+                          className="cancel-btn-reactivate-tab"
+                          style={{
+                            width: "440px",
+                            minHeight: "52px",
+                            color: "black",
+                          }}
+                          // className="login-button"
+                          variant="light"
+                          onClick={() => {
+                            setTabIndex(0);
+                            handleClose();
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    </Modal.Body>
+                  )}
+                </Modal>
+              </>
+            ) : tabIndex === 3 && startForgotPasswordProcess ? (
+              <>
+                <Modal
+                  show={show}
+                  onHide={handleClose}
+                  size="lg"
+                  centered={true}
+                  className="signin-modal-parent-non-reactivate"
+                >
+                  <Modal.Header
+                    className="signin-modal-header-child-non-reactivate"
+                    style={{
+                      border: "none",
+                    }}
+                  >
+                    <div
+                      onClick={handleClose}
+                      className="close-button"
+                      style={{
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <div>
+                        {/* close signin modal icon start to check  */}
+                        <svg
+                          style={{
+                            border: "none",
+                            fontSize: "15px",
+                            margin: "5px",
+                          }}
+                          onClick={handleClose}
+                          width={20}
+                          height={20}
+                          color="rgb(15,20,25)"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                        >
+                          <g>
+                            <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                          </g>
+                        </svg>{" "}
+                        {/* close signin modal icon finish to check  */}
+                      </div>
+                    </div>
+                  </Modal.Header>
+
+                  {tabLoading ? (
+                    <Modal.Body className="signin-modal-body-child-non-reactivate">
+                      <LoadingSpinner
+                        strokeColor={"rgb(29, 155, 240)"}
+                      ></LoadingSpinner>
+                    </Modal.Body>
+                  ) : (
+                    <Modal.Body className="signin-modal-body-child-non-reactivate">
+                      <div>
+                        <div
+                          style={{
+                            lineHeight: "36px",
+                            fontWeight: "700",
+                            fontSize: "31px",
+                          }}
+                        >
+                          We sent you a code
+                        </div>
+                        <div
+                          className="mt-2"
+                          style={{
+                            color: "rgb(83, 100, 113)",
+                            lineHeight: "20px",
+
+                            fontSize: "15px",
+                            fontWeight: "400",
+                          }}
+                        >
+                          Check your email to get your confirmation code. If you
+                          need to request a new code, go back and reselect a
+                          confirmation.
+                        </div>{" "}
+                      </div>
+                      <InputGroup
+                        style={{
+                          width: "440px",
+                          height: "60px",
+                        }}
+                        className="mb-2 mt-5"
+                      >
+                        <Form.Control
+                          style={{
+                            boxShadow: "none",
+                          }}
+                          aria-label="Default"
+                          aria-describedby="inputGroup-sizing-default"
+                          type="text"
+                          placeholder="Enter your code"
+                          value={verificationCodeInput}
+                          onChange={(e) => {
+                            setVerificationCodeInput(e.target.value);
+                          }}
+                        />
+                      </InputGroup>{" "}
+                      {verificationCodeInput.length ? (
+                        <Button
+                          style={{
+                            position: "absolute",
+                            bottom: "30px",
+                            width: "440px",
+                            minHeight: "52px",
+                            color: "white",
+                          }}
+                          onClick={() => {
+                            verificationCodeInput ===
+                            receivedVerificationCodeForPasswordChange
+                              ? handleTabChange()
+                              : catchErrorMessage("Invalid verification code.");
+                          }}
+                          className="login-button"
+                          variant="dark"
+                        >
+                          Next
+                        </Button>
+                      ) : (
+                        <>
+                          <Button
+                            className={"cancel-btn-reactivate-tab"}
+                            style={{
+                              position: "absolute",
+                              bottom: "30px",
+                              width: "440px",
+                              minHeight: "52px",
+                              color: "black",
+                            }}
+                            // className="login-button"
+                            variant={"light"}
+                            onClick={() => setTabIndex(tabIndex - 1)}
+                          >
+                            Back
+                          </Button>
+                        </>
+                      )}
+                    </Modal.Body>
+                  )}
+                </Modal>
+              </>
+            ) : tabIndex === 4 && startForgotPasswordProcess ? (
+              <>
+                <Modal
+                  show={show}
+                  onHide={handleClose}
+                  size="lg"
+                  centered={true}
+                  className="signin-modal-parent-non-reactivate"
+                >
+                  <Modal.Header
+                    className="signin-modal-header-child-non-reactivate"
+                    style={{
+                      border: "none",
+                    }}
+                  >
+                    <div
+                      onClick={handleClose}
+                      className="close-button"
+                      style={{
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <div>
+                        {/* close signin modal icon start to check  */}
+                        <svg
+                          style={{
+                            border: "none",
+                            fontSize: "15px",
+                            margin: "5px",
+                          }}
+                          onClick={handleClose}
+                          width={20}
+                          height={20}
+                          color="rgb(15,20,25)"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                        >
+                          <g>
+                            <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                          </g>
+                        </svg>{" "}
+                        {/* close signin modal icon finish to check  */}
+                      </div>
+                    </div>
+                  </Modal.Header>
+
+                  {tabLoading ? (
+                    <Modal.Body className="signin-modal-body-child-non-reactivate">
+                      <LoadingSpinner
+                        strokeColor={"rgb(29, 155, 240)"}
+                      ></LoadingSpinner>
+                    </Modal.Body>
+                  ) : (
+                    <Modal.Body className="signin-modal-body-child-non-reactivate">
+                      <div
+                        style={{
+                          padding: "16px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            lineHeight: "36px",
+                            fontWeight: "700",
+                            fontSize: "31px",
+                          }}
+                        >
+                          Choose a new password
+                        </div>
+                        <div
+                          className="mt-2"
+                          style={{
+                            color: "rgb(83, 100, 113)",
+                            lineHeight: "20px",
+
+                            fontSize: "15px",
+                            fontWeight: "400",
+                          }}
+                        >
+                          Make sure your new password is 8 characters or more.
+                          Try including numbers, letters, and punctuation marks
+                          for a{" "}
+                          <span
+                            style={{
+                              color: "rgb(29, 155, 240)",
+                            }}
+                          >
+                            strong password.
+                          </span>
+                        </div>
+                        <div
+                          className="mt-2"
+                          style={{
+                            color: "rgb(83, 100, 113)",
+                            lineHeight: "20px",
+
+                            fontSize: "15px",
+                            fontWeight: "400",
+                          }}
+                        >
+                          {
+                            "You'll be logged out of all active Connectify sessions after your password is changed."
+                          }
+                        </div>
+                      </div>
+                      <InputGroup
+                        style={{
+                          width: "440px",
+                          height: "60px",
+                        }}
+                        className="mb-2 mt-2"
+                      >
+                        <Form.Control
+                          style={{
+                            boxShadow: "none",
+                          }}
+                          aria-label="Default"
+                          aria-describedby="inputGroup-sizing-default"
+                          type="password"
+                          placeholder="Enter a new password"
+                          value={newPassword}
+                          onChange={(e) =>
+                            setNewPasswordForgotPasswordProcess(e.target.value)
+                          }
+                        />
+                      </InputGroup>{" "}
+                      {errorMessageFirst ? (
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            color: "rgba(244,39,49,255)",
+                            fontSize: "13px",
+                            lineHeight: "16px",
+                            fontWeight: "400",
+                          }}
+                        >
+                          {errorMessageFirst}
+                        </div>
+                      ) : errorMessageSecond ? (
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            color: "rgba(244,39,49,255)",
+                            fontSize: "13px",
+                            lineHeight: "16px",
+                            fontWeight: "400",
+                          }}
+                        >
+                          {errorMessageSecond}
+                        </div>
+                      ) : null}
+                      <InputGroup
+                        style={{
+                          width: "440px",
+                          height: "60px",
+                        }}
+                        className="mb-2 mt-2"
+                      >
+                        <Form.Control
+                          style={{
+                            boxShadow: "none",
+                          }}
+                          aria-label="Default"
+                          aria-describedby="inputGroup-sizing-default"
+                          type="password"
+                          placeholder="Confirm your password"
+                          value={confirmPassword}
+                          onChange={(e) =>
+                            setNewPasswordForgotPasswordProcessConfirm(
+                              e.target.value
+                            )
+                          }
+                        />
+                      </InputGroup>{" "}
+                      <Button
+                        style={{
+                          width: "440px",
+                          height: "52px",
+                          position: "absolute",
+                          bottom: "30px",
+                        }}
+                        onClick={() => {
+                          handleChangePassword();
+                        }}
+                        className="login-button mt-5"
+                        variant="dark"
+                      >
+                        Change password
+                      </Button>
+                    </Modal.Body>
+                  )}
+                </Modal>
+              </>
+            ) : tabIndex === 5 && startForgotPasswordProcess ? (
+              <>
+                {" "}
+                <Modal
+                  show={show}
+                  onHide={handleClose}
+                  size="lg"
+                  centered={true}
+                  className="signin-modal-parent-non-reactivate"
+                >
+                  <Modal.Header
+                    className="signin-modal-header-child-non-reactivate"
+                    style={{
+                      border: "none",
+                    }}
+                  >
+                    <div
+                      onClick={handleClose}
+                      className="close-button"
+                      style={{
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <div>
+                        {/* close signin modal icon start to check  */}
+                        <svg
+                          style={{
+                            border: "none",
+                            fontSize: "15px",
+                            margin: "5px",
+                          }}
+                          onClick={handleClose}
+                          width={20}
+                          height={20}
+                          color="rgb(15,20,25)"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                        >
+                          <g>
+                            <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                          </g>
+                        </svg>{" "}
+                        {/* close signin modal icon finish to check  */}
+                      </div>
+                    </div>
+                  </Modal.Header>
+                  {tabLoading ? (
+                    <Modal.Body className="signin-modal-body-child-non-reactivate">
+                      <LoadingSpinner
+                        strokeColor={"rgb(29, 155, 240)"}
+                      ></LoadingSpinner>
+                    </Modal.Body>
+                  ) : (
+                    <Modal.Body className="signin-modal-body-child-non-reactivate">
+                      {" "}
+                      <div
+                        style={{
+                          padding: "16px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            lineHeight: "36px",
+                            fontWeight: "700",
+                            fontSize: "31px",
+                          }}
+                        >
+                          {"Why'd you change your password"}
+                        </div>
+                        <div
+                          className="mt-2"
+                          style={{
+                            color: "rgb(83, 100, 113)",
+                            lineHeight: "20px",
+
+                            fontSize: "15px",
+                            fontWeight: "400",
+                          }}
+                        >
+                          Your feedback helps us understand when and why people
+                          need to change their passwords.
+                        </div>
+                      </div>
+                      <Stack direction="horizontal" className="mt-5">
+                        <div
+                          style={{
+                            fontSize: "15px",
+                            lineHeight: "20px",
+                            fontWeight: "700",
+                          }}
+                        >
+                          I forgot my password
+                        </div>
+
+                        <div
+                          style={{
+                            width: "40px",
+                            height: "40px",
+                            borderRadius: "50%",
+                            cursor: "pointer",
+                          }}
+                          className={
+                            forgotMyPasswordChecked
+                              ? "ms-auto hover-forgot-password-send-email-stack-svg-verified-email"
+                              : "ms-auto hover-forgot-password-send-email-stack-svg-verified-email-variant-2"
+                          }
+                          onClick={() => {
+                            setForgotMyPasswordChecked(
+                              !forgotMyPasswordChecked
+                            );
+                            setSuspiciousActivityChecked(false);
+                            setDifferentReason(false);
+                            setCheckedValue(!forgotMyPasswordChecked);
+                          }}
+                        >
+                          <div
+                            style={{
+                              backgroundColor: forgotMyPasswordChecked
+                                ? "#1d9bf0"
+                                : "transparent",
+                              border: forgotMyPasswordChecked
+                                ? "none"
+                                : "1px solid black",
+                              width: "20px",
+                              height: "20px",
+                              position: "relative",
+                              left: "10px",
+                              top: "10px",
+                              borderRadius: "50%",
+                            }}
+                          >
+                            <svg
+                              style={{
+                                position: "relative",
+                                left: "2px",
+                                bottom: "4px",
+                                display: forgotMyPasswordChecked
+                                  ? "initial"
+                                  : "none",
+                              }}
+                              width={16}
+                              height={16}
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
+                              color="white"
+                              fill="currentColor"
+                            >
+                              <g>
+                                <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                              </g>
+                            </svg>
+                          </div>
+                        </div>
+                      </Stack>
+                      <Stack direction="horizontal" className="mt-2">
+                        <div
+                          style={{
+                            fontSize: "15px",
+                            lineHeight: "20px",
+                            fontWeight: "700",
+                          }}
+                        >
+                          There was suspicious activity on my account
+                        </div>
+
+                        <div
+                          style={{
+                            width: "40px",
+                            height: "40px",
+                            borderRadius: "50%",
+                            cursor: "pointer",
+                          }}
+                          className={
+                            suspiciousActivity
+                              ? "ms-auto hover-forgot-password-send-email-stack-svg-verified-email"
+                              : "ms-auto hover-forgot-password-send-email-stack-svg-verified-email-variant-2"
+                          }
+                          onClick={() => {
+                            setSuspiciousActivityChecked(!suspiciousActivity);
+                            setForgotMyPasswordChecked(false);
+                            setDifferentReason(false);
+                            setCheckedValue(!suspiciousActivity);
+                          }}
+                        >
+                          <div
+                            style={{
+                              backgroundColor: suspiciousActivity
+                                ? "#1d9bf0"
+                                : "transparent",
+                              border: suspiciousActivity
+                                ? "none"
+                                : "1px solid black",
+                              width: "20px",
+                              height: "20px",
+                              position: "relative",
+                              left: "10px",
+                              top: "10px",
+                              borderRadius: "50%",
+                            }}
+                          >
+                            <svg
+                              style={{
+                                position: "relative",
+                                left: "2px",
+                                bottom: "4px",
+                                display: suspiciousActivity
+                                  ? "initial"
+                                  : "none",
+                              }}
+                              width={16}
+                              height={16}
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
+                              color="white"
+                              fill="currentColor"
+                            >
+                              <g>
+                                <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                              </g>
+                            </svg>
+                          </div>
+                        </div>
+                      </Stack>
+                      <Stack direction="horizontal" className="mt-2">
+                        <div
+                          style={{
+                            fontSize: "15px",
+                            lineHeight: "20px",
+                            fontWeight: "700",
+                          }}
+                        >
+                          I changed my password for a different reason
+                        </div>
+
+                        <div
+                          style={{
+                            width: "40px",
+                            height: "40px",
+                            borderRadius: "50%",
+                            cursor: "pointer",
+                          }}
+                          className={
+                            differentReason
+                              ? "ms-auto hover-forgot-password-send-email-stack-svg-verified-email"
+                              : "ms-auto hover-forgot-password-send-email-stack-svg-verified-email-variant-2"
+                          }
+                          onClick={() => {
+                            setDifferentReason(!differentReason);
+                            setSuspiciousActivityChecked(false);
+                            setForgotMyPasswordChecked(false);
+                            setCheckedValue(!differentReason);
+                          }}
+                        >
+                          <div
+                            style={{
+                              backgroundColor: differentReason
+                                ? "#1d9bf0"
+                                : "transparent",
+                              border: differentReason
+                                ? "none"
+                                : "1px solid black",
+                              width: "20px",
+                              height: "20px",
+                              position: "relative",
+                              left: "10px",
+                              top: "10px",
+                              borderRadius: "50%",
+                            }}
+                          >
+                            <svg
+                              style={{
+                                position: "relative",
+                                left: "2px",
+                                bottom: "4px",
+                                display: differentReason ? "initial" : "none",
+                              }}
+                              width={16}
+                              height={16}
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
+                              color="white"
+                              fill="currentColor"
+                            >
+                              <g>
+                                <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                              </g>
+                            </svg>
+                          </div>
+                        </div>
+                      </Stack>
+                      <Button
+                        style={{
+                          width: "440px",
+                          height: "52px",
+                          position: "absolute",
+                          bottom: "30px",
+                          opacity: checkedValue ? "" : 0.5,
+                        }}
+                        onClick={() => {
+                          setTabLoading(true);
+                          setTimeout(() => {
+                            setTabLoading(false);
+                            checkedValue ? setTabIndex(tabIndex + 1) : null;
+                          }, 500);
+                        }}
+                        className="login-button mt-5"
+                        variant="dark"
+                      >
+                        Next
+                      </Button>
+                    </Modal.Body>
+                  )}
+                </Modal>
+              </>
+            ) : tabIndex === 6 && startForgotPasswordProcess ? (
+              <>
+                {" "}
+                <Modal
+                  show={show}
+                  onHide={handleClose}
+                  size="lg"
+                  centered={true}
+                  className="signin-modal-parent-non-reactivate"
+                >
+                  <Modal.Header
+                    className="signin-modal-header-child-non-reactivate"
+                    style={{
+                      border: "none",
+                    }}
+                  >
+                    <div
+                      onClick={handleClose}
+                      className="close-button"
+                      style={{
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <div>
+                        {/* close signin modal icon start to check  */}
+                        <svg
+                          style={{
+                            border: "none",
+                            fontSize: "15px",
+                            margin: "5px",
+                          }}
+                          onClick={handleClose}
+                          width={20}
+                          height={20}
+                          color="rgb(15,20,25)"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                        >
+                          <g>
+                            <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                          </g>
+                        </svg>{" "}
+                        {/* close signin modal icon finish to check  */}
+                      </div>
+                    </div>
+                  </Modal.Header>
+
+                  {tabLoading ? (
+                    <Modal.Body className="signin-modal-body-child-non-reactivate">
+                      <LoadingSpinner
+                        strokeColor={"rgb(29, 155, 240)"}
+                      ></LoadingSpinner>
+                    </Modal.Body>
+                  ) : (
+                    <Modal.Body className="signin-modal-body-child-non-reactivate">
+                      {" "}
+                      <div
+                        style={{
+                          padding: "16px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            lineHeight: "36px",
+                            fontWeight: "700",
+                            fontSize: "31px",
+                          }}
+                        >
+                          {"You're all set"}
+                        </div>
+                        <div
+                          className="mt-2"
+                          style={{
+                            color: "rgb(83, 100, 113)",
+                            lineHeight: "20px",
+
+                            fontSize: "15px",
+                            fontWeight: "400",
+                          }}
+                        >
+                          {"You've successfully changed your password."}
+                        </div>
+                        <div
+                          className="mt-2"
+                          style={{
+                            color: "rgb(83, 100, 113)",
+                            lineHeight: "20px",
+
+                            fontSize: "15px",
+                            fontWeight: "400",
+                          }}
+                        >
+                          Add an extra layer of security to your account with{" "}
+                          <span
+                            style={{
+                              color: "rgb(29, 155, 240)",
+                            }}
+                          >
+                            two-factor authentication
+                          </span>
+                          . Enable it in your settings to help make sure that
+                          you, and only you, can access your account.
+                        </div>
+                      </div>
+                      <Button
+                        style={{
+                          width: "440px",
+                          height: "52px",
+                        }}
+                        onClick={() => {
+                          setTabLoading(true);
+                          setTimeout(() => {
+                            setTabLoading(false);
+                            handleLoginAfterForgotPasswordProcess();
+                          }, 500);
+                        }}
+                        className="login-button mt-5"
+                        variant="dark"
+                      >
+                        Continue to X
+                      </Button>
+                    </Modal.Body>
+                  )}
+                </Modal>
+              </>
+            ) : null}
           </Col>
         </Row>
       </Container>
