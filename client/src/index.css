@@ -2257,3 +2257,20 @@ span > a:hover {
 .form-control {
   box-shadow: none !important;
 }
+
+.hover-forgot-password-send-email-stack-svg-verified-email:hover {
+  background-color: #ebf5fe;
+  transition-duration: 0.2s;
+}
+
+.hover-forgot-password-send-email-stack-svg-verified-email-variant-2:hover {
+  background-color: #e7e7e8;
+  transition-duration: 0.2s;
+}
+
+.connectify-support-forgot-password-screen span:hover {
+  cursor: pointer;
+  text-decoration: underline !important;
+  text-decoration-color: rgb(29, 155, 240) !important;
+  transition-duration: 0.2s;
+}
