@@ -789,7 +789,7 @@ function MainPage() {
             >
               <div className="p-2 mt-2">
                 {" "}
-                {userInfo.imageUrl.slice(0, 3) !== "../" ? (
+                {userInfo?.imageUrl?.slice(0, 3) !== "../" ? (
                   <img
                     src={userInfo.imageUrl}
                     width={40}

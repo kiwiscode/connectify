@@ -9,4 +9,5 @@ router.post(
   "/deactivate-user-back",
   authController.handleDeactivatedUserLoginBack
 );
+
 module.exports = router;

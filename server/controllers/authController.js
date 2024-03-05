@@ -8,6 +8,7 @@ const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const capitalize = require("../utils/capitalize");
 const Post = require("../models/Post.model");
+require("dotenv").config();
 let sendVerificationEmail;
 emailProcess();
 
@@ -447,6 +448,7 @@ const handleDeactivatedUserLoginBack = (req, res) => {
       res.status(404).json({ errorMessage: "User not found!" });
     });
 };
+
 module.exports = {
   handleSignup,
   handleLogin,

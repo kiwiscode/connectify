@@ -55,4 +55,7 @@ app.use("/", messageRoutes);
 const rightSideBarRoutes = require("./routes/right-side-bar.route");
 app.use("/", rightSideBarRoutes);
 
+const forgotPasswordRoutes = require("./routes/forgotPassword.routes.js");
+app.use("/", forgotPasswordRoutes);
+
 module.exports = app;
