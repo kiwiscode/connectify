@@ -444,7 +444,7 @@ function DeactivatedPage() {
               </div>
             </div>
             <div className="p-2 ms-auto deactivated-footer-login">
-              <SigninModal deactivatedScren={true} />
+              <SigninModal deactivatedScreen={true} />
             </div>
             <div className="p-0 deactivated-footer-signup">
               <Button

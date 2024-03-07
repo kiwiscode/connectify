@@ -228,10 +228,14 @@ const handleLogin = (req, res, next) => {
       bcrypt
         .compare(password, user.password)
         .then((isSamePassword) => {
-          console.log("Is same password ?", isSamePassword);
+          console.log(
+            "Is same password auth controller section ?",
+            isSamePassword
+          );
           if (!isSamePassword) {
             res.status(401).json({ errorMessage: "Wrong password!" });
           } else if (user.isDeactivated) {
+            console.log("Deactivated user is here !");
             res.status(400).json({
               errorMessage: "Deactivated user !",
               user: user,
