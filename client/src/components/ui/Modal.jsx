@@ -38,7 +38,7 @@ const API_URL = "http://localhost:3000";
 
 // const socket = io.connect(API_URL);
 
-function SigninModal({ deactivatedScren }) {
+function SigninModal({ deactivatedScreen }) {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -66,6 +66,15 @@ function SigninModal({ deactivatedScren }) {
 
   const [openDeactivateLoginModal, setOpenDeactivateLoginModal] =
     useState(false);
+
+  const handleShowReactivatedLoginScreen = () => {
+    setOpenDeactivateLoginModal(true);
+  };
+
+  const handleCloseReactivatedLoginScreen = () => {
+    setOpenDeactivateLoginModal(false);
+  };
+
   const [userdeactivateddatenomutation, setuserdeactivateddatenomutation] =
     useState(null);
   const [userdeactivateddate, setUserDeactivatedDate] = useState(null);
@@ -87,17 +96,32 @@ function SigninModal({ deactivatedScren }) {
         localStorage.setItem("token", token);
         updateUser(user);
         setError("");
-        navigate("/home");
+
+        setIsLoading(true);
+        setTimeout(() => {
+          navigate("/home");
+        }, 500);
       })
       .catch((err) => {
+        console.log("Error is running right now !");
+        console.log("Open deactivated modal =>", openDeactivateLoginModal);
         if (err.response !== undefined) {
           const { status } = err.response;
           const { errorMessage } = err.response.data;
-
           if (status === 400 && errorMessage === "Deactivated user !") {
-            setOpenDeactivateLoginModal(true);
+            setIsLoading(true);
+
+            setTimeout(() => {
+              setIsLoading(false);
+              setOpenDeactivateLoginModal(true);
+            }, 500);
+            handleShowReactivatedLoginScreen();
             setuserdeactivateddatenomutation(
               err.response.data.user.deactivatedDate
+            );
+            console.log(
+              "Open deactivated modal 2 =>",
+              openDeactivateLoginModal
             );
 
             // 1 month later start to check
@@ -156,15 +180,18 @@ function SigninModal({ deactivatedScren }) {
         password,
       })
       .then((response) => {
-        handleClose();
+        handleCloseReactivatedLoginScreen();
         const { token, user } = response.data;
 
         localStorage.setItem("userInfo", JSON.stringify(user));
         localStorage.setItem("token", token);
         updateUser(user);
         setError("");
-        navigate("/home");
-        window.location.reload();
+
+        setIsLoading(true);
+        setTimeout(() => {
+          navigate("/home");
+        }, 500);
       })
       .catch((error) => {
         console.log("Error =>", error);
@@ -188,8 +215,13 @@ function SigninModal({ deactivatedScren }) {
     setShowLoginModal(false);
   };
 
+  const [isLoading, setIsLoading] = useState(false);
   const handleShowLoginModal = () => {
-    setShowLoginModal(true);
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      setShowLoginModal(true);
+    }, 700);
   };
 
   const { getToken } = useContext(UserContext);
@@ -255,11 +287,6 @@ function SigninModal({ deactivatedScren }) {
         { forgotPasswordInProcessUser }
       )
       .then((response) => {
-        console.log(
-          "Response from server side after verification code send =>",
-          response
-        );
-
         setReceivedVerificationCodeForPasswordChange(
           response.data.result.verificationCode.toString()
         );
@@ -297,38 +324,49 @@ function SigninModal({ deactivatedScren }) {
   const [errorMessageSecond, setErrorMessageSecond] = useState("");
 
   const handleChangePassword = () => {
-    if (confirmPassword === newPassword) {
-      axios
-        .post(`${API_URL}/forgot-password-change-password`, {
-          forgotPasswordInProcessUser,
-          newPassword,
-        })
-        .then((response) => {
-          console.log("Response =>", response);
-          setErrorMessageFirst("");
-          setErrorMessageSecond("");
-          setTabLoading(true);
-          setTimeout(() => {
-            setTabLoading(false);
-            setTabIndex(tabIndex + 1);
-          }, 500);
-        })
-        .catch((error) => {
-          console.log("Error =>", error);
-          if (error.response.status === 402) {
-            setErrorMessageFirst(
-              "Password needs to have at least 6 chars and must contain at least one number, one lowercase and one uppercase letter."
-            );
-            setErrorMessageSecond("");
-          }
-        });
-    } else {
-      console.log("Here is working !");
-      setErrorMessageFirst("");
-      setErrorMessageSecond("Passwords do not match.");
-    }
+    console.log("Tab loading after change password click =>", tabLoading);
+    console.log("Tab index after click =>", tabIndex);
+    setTabLoading(true);
+    setTimeout(() => {
+      setTabLoading(false);
+      setTabIndex(tabIndex + 1);
+    }, 700);
+    // if (confirmPassword === newPassword) {
+    //   axios
+    //     .post(`${API_URL}/forgot-password-change-password`, {
+    //       forgotPasswordInProcessUser,
+    //       newPassword,
+    //     })
+    //     .then((response) => {
+    //       console.log("Response =>", response);
+    //       setErrorMessageFirst("");
+    //       setErrorMessageSecond("");
+    //       setTabLoading(true);
+    //       setTimeout(() => {
+    //         setTabLoading(false);
+    //         setTabIndex(tabIndex + 1);
+    //       }, 500);
+    //     })
+    //     .catch((error) => {
+    //       console.log("Error =>", error);
+    //       if (error.response.status === 402) {
+    //         setErrorMessageFirst(
+    //           "Password needs to have at least 6 chars and must contain at least one number, one lowercase and one uppercase letter."
+    //         );
+    //         setErrorMessageSecond("");
+    //       }
+    //     });
+    // } else {
+    //   console.log("Here is working !");
+    //   setErrorMessageFirst("");
+    //   setErrorMessageSecond("Passwords do not match.");
+    // }
   };
-
+  console.log(
+    "Tab loading after settimeout change password click =>",
+    tabLoading
+  );
+  console.log("Tab index after settimeout click =>", tabIndex);
   const [forgotMyPasswordChecked, setForgotMyPasswordChecked] = useState(false);
 
   const [suspiciousActivity, setSuspiciousActivityChecked] = useState(false);
@@ -352,7 +390,11 @@ function SigninModal({ deactivatedScren }) {
         updateUser(user);
 
         console.log("Response =>", response);
-        navigate("/home");
+
+        setTabLoading(true);
+        setTimeout(() => {
+          navigate("/home");
+        }, 500);
       })
       .catch((error) => {
         console.log("Error =>", error);
@@ -377,7 +419,7 @@ function SigninModal({ deactivatedScren }) {
               }
             }
           >
-            {deactivatedScren ? (
+            {deactivatedScreen ? (
               <>
                 <Button
                   className="deactivated-footer-login"
@@ -398,7 +440,7 @@ function SigninModal({ deactivatedScren }) {
                     color: "white",
                   }}
                   // variant="light"
-                  onClick={handleShow}
+                  onClick={handleShowLoginModal}
                   // className="sign-in "
                 >
                   Log in
@@ -435,14 +477,14 @@ function SigninModal({ deactivatedScren }) {
                 </Button>
               </>
             )}
-            {openDeactivateLoginModal ? (
+            {openDeactivateLoginModal && !isLoading ? (
               <>
                 <Modal
                   dialogClassName="signin-modal-dialog"
                   contentClassName="modal-content"
                   className="signin-modal"
-                  show={show}
-                  onHide={handleClose}
+                  show={openDeactivateLoginModal}
+                  onHide={handleCloseReactivatedLoginScreen}
                   size="lg"
                   centered={true}
                 >
@@ -452,7 +494,7 @@ function SigninModal({ deactivatedScren }) {
                     }}
                   >
                     <div
-                      onClick={handleClose}
+                      onClick={handleCloseReactivatedLoginScreen}
                       className="close-button"
                       style={{
                         borderRadius: "50%",
@@ -466,7 +508,7 @@ function SigninModal({ deactivatedScren }) {
                             fontSize: "15px",
                             margin: "5px",
                           }}
-                          onClick={handleClose}
+                          onClick={handleCloseReactivatedLoginScreen}
                           width={20}
                           height={20}
                           color="rgb(15,20,25)"
@@ -536,7 +578,7 @@ function SigninModal({ deactivatedScren }) {
                       }}
                       // className="login-button"
                       variant="light"
-                      onClick={handleClose}
+                      onClick={handleCloseReactivatedLoginScreen}
                     >
                       Cancel
                     </Button>
@@ -545,140 +587,196 @@ function SigninModal({ deactivatedScren }) {
               </>
             ) : (
               <>
-                <Modal
-                  show={showLoginModal}
-                  onHide={handleCloseLoginModal}
-                  size="lg"
-                  centered={true}
-                  className="signin-modal-parent-non-reactivate"
-                >
-                  <Modal.Header
-                    className="signin-modal-header-child-non-reactivate"
-                    style={{
-                      border: "none",
-                    }}
+                {showLoginModal && !isLoading ? (
+                  <Modal
+                    show={showLoginModal}
+                    onHide={handleCloseLoginModal}
+                    size="lg"
+                    centered={true}
+                    className="signin-modal-parent-non-reactivate"
                   >
-                    <div
-                      onClick={handleCloseLoginModal}
-                      className="close-button"
+                    <Modal.Header
+                      className="signin-modal-header-child-non-reactivate"
                       style={{
-                        borderRadius: "50%",
-                        cursor: "pointer",
+                        border: "none",
                       }}
                     >
-                      <div>
-                        {/* close signin modal icon start to check  */}
-                        <svg
-                          style={{
-                            border: "none",
-                            fontSize: "15px",
-                            margin: "5px",
-                          }}
-                          onClick={handleCloseLoginModal}
-                          width={20}
-                          height={20}
-                          color="rgb(15,20,25)"
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                          className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                        >
-                          <g>
-                            <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
-                          </g>
-                        </svg>{" "}
-                        {/* close signin modal icon finish to check  */}
+                      <div
+                        onClick={handleCloseLoginModal}
+                        className="close-button"
+                        style={{
+                          borderRadius: "50%",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <div>
+                          {/* close signin modal icon start to check  */}
+                          <svg
+                            style={{
+                              border: "none",
+                              fontSize: "15px",
+                              margin: "5px",
+                            }}
+                            onClick={handleCloseLoginModal}
+                            width={20}
+                            height={20}
+                            color="rgb(15,20,25)"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                          >
+                            <g>
+                              <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                            </g>
+                          </svg>{" "}
+                          {/* close signin modal icon finish to check  */}
+                        </div>
                       </div>
-                    </div>
-                  </Modal.Header>
+                    </Modal.Header>
 
-                  <Modal.Body className="signin-modal-body-child-non-reactivate">
-                    <span className="sign-in-header mt-4 mb-4">
-                      Sign in to Connectify
-                    </span>
-                    <InputGroup className="mb-2">
-                      <Form.Control
-                        style={{
-                          boxShadow: "none",
-                        }}
-                        aria-label="Default"
-                        aria-describedby="inputGroup-sizing-default"
-                        type="text"
-                        placeholder="Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                      />
-                    </InputGroup>{" "}
-                    <InputGroup className="mt-2">
-                      <Form.Control
-                        aria-label="Default"
-                        aria-describedby="inputGroup-sizing-default"
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                      />
-                    </InputGroup>
-                    <div
-                      style={{
-                        width: "300px",
-                      }}
-                      className="grid-container"
-                    >
-                      <div
-                        onClick={() => {
-                          setStartForgotPasswordProcess(true);
-                          setTabIndex(tabIndex + 1);
-                          setShowLoginModal(false);
-                          handleCloseLoginModal();
-                          console.log("Open forgot password tab !");
-                          setShow(true);
-                        }}
-                        style={{
-                          cursor: "pointer",
-                          color: "rgb(29, 155, 240)",
-                          fontSize: "13px",
-                          lineHeight: "16px",
-                          fontWeight: "400",
-                          marginLeft: "12px",
-                        }}
-                        className="grid-item forgot-password-text mt-1"
-                      >
-                        Forgot password?
-                      </div>
-                    </div>
-                    {error}
-                    <Button
-                      className="login-button mt-5"
-                      variant="dark"
-                      onClick={handleLogin}
-                    >
-                      Log in
-                    </Button>
-                    <div
-                      style={{
-                        width: "300px",
-                      }}
-                      className="grid-container"
-                    >
+                    <Modal.Body className="signin-modal-body-child-non-reactivate">
+                      <span className="sign-in-header mt-4 mb-4">
+                        Sign in to Connectify
+                      </span>
+                      <InputGroup className="mb-2">
+                        <Form.Control
+                          style={{
+                            boxShadow: "none",
+                          }}
+                          aria-label="Default"
+                          aria-describedby="inputGroup-sizing-default"
+                          type="text"
+                          placeholder="Username"
+                          value={username}
+                          onChange={(e) => setUsername(e.target.value)}
+                        />
+                      </InputGroup>{" "}
+                      <InputGroup className="mt-2">
+                        <Form.Control
+                          aria-label="Default"
+                          aria-describedby="inputGroup-sizing-default"
+                          type="password"
+                          placeholder="Password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                        />
+                      </InputGroup>
                       <div
                         style={{
-                          cursor: "pointer",
-                          color: "rgb(83, 100, 113)",
-                          fontSize: "15px",
-                          lineHeight: "20px",
-                          fontWeight: "400",
-                          marginLeft: "5px",
+                          width: "300px",
                         }}
-                        className="grid-item mt-5"
+                        className="grid-container"
                       >
-                        <span>
-                          Don&apos;t have an account? <a href="">Sign up</a>
-                        </span>
+                        <div
+                          onClick={() => {
+                            setStartForgotPasswordProcess(true);
+                            setTabIndex(tabIndex + 1);
+                            setShowLoginModal(false);
+                            handleCloseLoginModal();
+                            console.log("Open forgot password tab !");
+                            setShow(true);
+                          }}
+                          style={{
+                            cursor: "pointer",
+                            color: "rgb(29, 155, 240)",
+                            fontSize: "13px",
+                            lineHeight: "16px",
+                            fontWeight: "400",
+                            marginLeft: "12px",
+                          }}
+                          className="grid-item forgot-password-text mt-1"
+                        >
+                          Forgot password?
+                        </div>
                       </div>
-                    </div>
-                  </Modal.Body>
-                </Modal>
+                      {error}
+                      <Button
+                        className="login-button mt-5"
+                        variant="dark"
+                        onClick={handleLogin}
+                      >
+                        Log in
+                      </Button>
+                      <div
+                        style={{
+                          width: "300px",
+                        }}
+                        className="grid-container"
+                      >
+                        <div
+                          style={{
+                            cursor: "pointer",
+                            color: "rgb(83, 100, 113)",
+                            fontSize: "15px",
+                            lineHeight: "20px",
+                            fontWeight: "400",
+                            marginLeft: "5px",
+                          }}
+                          className="grid-item mt-5"
+                        >
+                          <span>
+                            Don&apos;t have an account? <a href="">Sign up</a>
+                          </span>
+                        </div>
+                      </div>
+                    </Modal.Body>
+                  </Modal>
+                ) : (
+                  <Modal
+                    show={isLoading}
+                    onHide={handleCloseLoginModal}
+                    size="lg"
+                    centered={true}
+                    className="signin-modal-parent-non-reactivate"
+                  >
+                    <Modal.Header
+                      className="signin-modal-header-child-non-reactivate"
+                      style={{
+                        border: "none",
+                      }}
+                    >
+                      <div
+                        onClick={handleCloseLoginModal}
+                        className="close-button"
+                        style={{
+                          borderRadius: "50%",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <div>
+                          {/* close signin modal icon start to check  */}
+                          <svg
+                            style={{
+                              border: "none",
+                              fontSize: "15px",
+                              margin: "5px",
+                            }}
+                            onClick={handleCloseLoginModal}
+                            width={20}
+                            height={20}
+                            color="rgb(15,20,25)"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                          >
+                            <g>
+                              <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                            </g>
+                          </svg>{" "}
+                          {/* close signin modal icon finish to check  */}
+                        </div>
+                      </div>
+                    </Modal.Header>
+
+                    <Modal.Body className="signin-modal-body-child-non-reactivate">
+                      <LoadingSpinner
+                        strokeColor={"rgb(29, 155, 240)"}
+                      ></LoadingSpinner>
+                    </Modal.Body>
+                  </Modal>
+                )}
               </>
             )}
 
@@ -1218,142 +1316,146 @@ function SigninModal({ deactivatedScren }) {
                     </Modal.Body>
                   ) : (
                     <Modal.Body className="signin-modal-body-child-non-reactivate">
-                      <div
-                        style={{
-                          padding: "16px",
-                        }}
-                      >
+                      <>
                         <div
                           style={{
-                            lineHeight: "36px",
-                            fontWeight: "700",
-                            fontSize: "31px",
+                            padding: "16px",
                           }}
                         >
-                          Choose a new password
-                        </div>
-                        <div
-                          className="mt-2"
-                          style={{
-                            color: "rgb(83, 100, 113)",
-                            lineHeight: "20px",
-
-                            fontSize: "15px",
-                            fontWeight: "400",
-                          }}
-                        >
-                          Make sure your new password is 8 characters or more.
-                          Try including numbers, letters, and punctuation marks
-                          for a{" "}
-                          <span
+                          <div
                             style={{
-                              color: "rgb(29, 155, 240)",
+                              lineHeight: "36px",
+                              fontWeight: "700",
+                              fontSize: "31px",
                             }}
                           >
-                            strong password.
-                          </span>
-                        </div>
-                        <div
-                          className="mt-2"
-                          style={{
-                            color: "rgb(83, 100, 113)",
-                            lineHeight: "20px",
+                            Choose a new password
+                          </div>
+                          <div
+                            className="mt-2"
+                            style={{
+                              color: "rgb(83, 100, 113)",
+                              lineHeight: "20px",
 
-                            fontSize: "15px",
-                            fontWeight: "400",
-                          }}
-                        >
-                          {
-                            "You'll be logged out of all active Connectify sessions after your password is changed."
-                          }
+                              fontSize: "15px",
+                              fontWeight: "400",
+                            }}
+                          >
+                            Make sure your new password is 8 characters or more.
+                            Try including numbers, letters, and punctuation
+                            marks for a{" "}
+                            <span
+                              style={{
+                                color: "rgb(29, 155, 240)",
+                              }}
+                            >
+                              strong password.
+                            </span>
+                          </div>
+                          <div
+                            className="mt-2"
+                            style={{
+                              color: "rgb(83, 100, 113)",
+                              lineHeight: "20px",
+
+                              fontSize: "15px",
+                              fontWeight: "400",
+                            }}
+                          >
+                            {
+                              "You'll be logged out of all active Connectify sessions after your password is changed."
+                            }
+                          </div>
                         </div>
-                      </div>
-                      <InputGroup
-                        style={{
-                          width: "440px",
-                          height: "60px",
-                        }}
-                        className="mb-2 mt-2"
-                      >
-                        <Form.Control
+                        <InputGroup
                           style={{
-                            boxShadow: "none",
+                            width: "440px",
+                            height: "60px",
                           }}
-                          aria-label="Default"
-                          aria-describedby="inputGroup-sizing-default"
-                          type="password"
-                          placeholder="Enter a new password"
-                          value={newPassword}
-                          onChange={(e) =>
-                            setNewPasswordForgotPasswordProcess(e.target.value)
-                          }
-                        />
-                      </InputGroup>{" "}
-                      {errorMessageFirst ? (
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            color: "rgba(244,39,49,255)",
-                            fontSize: "13px",
-                            lineHeight: "16px",
-                            fontWeight: "400",
-                          }}
+                          className="mb-2 mt-2"
                         >
-                          {errorMessageFirst}
-                        </div>
-                      ) : errorMessageSecond ? (
-                        <div
+                          <Form.Control
+                            style={{
+                              boxShadow: "none",
+                            }}
+                            aria-label="Default"
+                            aria-describedby="inputGroup-sizing-default"
+                            type="password"
+                            placeholder="Enter a new password"
+                            value={newPassword}
+                            onChange={(e) =>
+                              setNewPasswordForgotPasswordProcess(
+                                e.target.value
+                              )
+                            }
+                          />
+                        </InputGroup>{" "}
+                        {errorMessageFirst ? (
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                              color: "rgba(244,39,49,255)",
+                              fontSize: "13px",
+                              lineHeight: "16px",
+                              fontWeight: "400",
+                            }}
+                          >
+                            {errorMessageFirst}
+                          </div>
+                        ) : errorMessageSecond ? (
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                              color: "rgba(244,39,49,255)",
+                              fontSize: "13px",
+                              lineHeight: "16px",
+                              fontWeight: "400",
+                            }}
+                          >
+                            {errorMessageSecond}
+                          </div>
+                        ) : null}
+                        <InputGroup
                           style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            color: "rgba(244,39,49,255)",
-                            fontSize: "13px",
-                            lineHeight: "16px",
-                            fontWeight: "400",
+                            width: "440px",
+                            height: "60px",
                           }}
+                          className="mb-2 mt-2"
                         >
-                          {errorMessageSecond}
-                        </div>
-                      ) : null}
-                      <InputGroup
-                        style={{
-                          width: "440px",
-                          height: "60px",
-                        }}
-                        className="mb-2 mt-2"
-                      >
-                        <Form.Control
+                          <Form.Control
+                            style={{
+                              boxShadow: "none",
+                            }}
+                            aria-label="Default"
+                            aria-describedby="inputGroup-sizing-default"
+                            type="password"
+                            placeholder="Confirm your password"
+                            value={confirmPassword}
+                            onChange={(e) =>
+                              setNewPasswordForgotPasswordProcessConfirm(
+                                e.target.value
+                              )
+                            }
+                          />
+                        </InputGroup>{" "}
+                        <Button
                           style={{
-                            boxShadow: "none",
+                            width: "440px",
+                            height: "52px",
+                            position: "absolute",
+                            bottom: "30px",
                           }}
-                          aria-label="Default"
-                          aria-describedby="inputGroup-sizing-default"
-                          type="password"
-                          placeholder="Confirm your password"
-                          value={confirmPassword}
-                          onChange={(e) =>
-                            setNewPasswordForgotPasswordProcessConfirm(
-                              e.target.value
-                            )
-                          }
-                        />
-                      </InputGroup>{" "}
-                      <Button
-                        style={{
-                          width: "440px",
-                          height: "52px",
-                          position: "absolute",
-                          bottom: "30px",
-                        }}
-                        onClick={() => {
-                          handleChangePassword();
-                        }}
-                        className="login-button mt-5"
-                        variant="dark"
-                      >
-                        Change password
-                      </Button>
+                          onClick={() => {
+                            handleChangePassword();
+                          }}
+                          className="login-button mt-5"
+                          variant="dark"
+                        >
+                          Change password
+                        </Button>
+                      </>
                     </Modal.Body>
                   )}
                 </Modal>
@@ -1791,11 +1893,7 @@ function SigninModal({ deactivatedScren }) {
                           height: "52px",
                         }}
                         onClick={() => {
-                          setTabLoading(true);
-                          setTimeout(() => {
-                            setTabLoading(false);
-                            handleLoginAfterForgotPasswordProcess();
-                          }, 500);
+                          handleLoginAfterForgotPasswordProcess();
                         }}
                         className="login-button mt-5"
                         variant="dark"
