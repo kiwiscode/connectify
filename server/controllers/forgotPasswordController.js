@@ -60,18 +60,29 @@ function emailProcess() {
   });
 
   sendConfirmationCodeToEmail = (user, verificationCode) => {
+    // when working on local version
+    const accountSettingsLink = "http://localhost:5173/";
+
+    // when working on deployment version
+    // ??
+
     return new Promise((resolve, reject) => {
       const mailOptions = {
         from: process.env.AUTH_EMAIL,
         to: user.email,
         subject: "Password reset request",
+
         html: `
-    <h1>Reset your password?</h1>
-    <p>If you requested a password reset for @${user.username}, use the confirmation code below to complete the process. If you didn't make this request, ignore this email.</p>
-    <strong>${verificationCode}</strong>
-    <h3>Getting a lot of password reset emails?</h3>
-    <p>You can change your <a style="color: rgb(29, 155, 240); text-decoration: none;">account settings</a>
-    to require personal information to reset your password.</p>
+        <div style="background-color: #f6f8fa
+        ;  text-align: center;">
+        <div style="width: 40%; height: 100%; background-color: white; margin: 0 auto; text-align: left; color: #333; padding: 20px;">
+            <h1>Reset your password?</h1>
+            <p>If you requested a password reset for @${user.username}, use the confirmation code below to complete the process. If you didn't make this request, ignore this email.</p>
+            <strong style="font-size: 18px; padding: 10px; background-color: #ddd; border-radius: 5px; display: inline-block;">${verificationCode}</strong>
+            <h3>Getting a lot of password reset emails?</h3>
+            <p>You can change your <a href="${accountSettingsLink}" style="color: rgb(29, 155, 240); text-decoration: none; cursor: pointer; ">account settings</a> to require personal information to reset your password.</p>
+        </div>
+    </div>
           `,
       };
 
@@ -182,16 +193,24 @@ function emailProcessAfterChanginPassword() {
   });
 
   sendEmailAfterChanginPassword = (user) => {
+    const accountSettingsLink = "http://localhost:5173/";
+
     return new Promise((resolve, reject) => {
       const mailOptions = {
         from: process.env.AUTH_EMAIL,
         to: user.email,
         subject: "Your Connectify password has been changed",
         html: `
-      <p style="color: #66757f">Hi ${user.username},</p>
-      <p>	
-      You recently changed the password associated with your account @${user.username}. Based on this change, please be aware that additional changes to your account may be restricted temporarily.</p> 
-      <h5>If you did not make this change and believe your Connectify account has been compromised, please <span style="color: rgb(29, 155, 240); text-decoration: none;">contact Connectify support</span>.</h5>
+        <div style="background-color: #e1e8ec
+        ;  text-align: center;">
+        <div style="width: 40%; height: 100%; background-color: white; margin: 0 auto; text-align: left; color: #333; padding: 20px;">
+        <p style="color: #66757f">Hi ${user.username},</p>
+        <p>	
+        You recently changed the password associated with your account @${user.username}. Based on this change, please be aware that additional changes to your account may be restricted temporarily.</p> 
+        <h5>If you did not make this change and believe your Connectify account has been compromised, please <a href="${accountSettingsLink}" style="color: rgb(29, 155, 240); text-decoration: none; cursor: pointer; ">contact Connectify support</a>.</h5>
+        </div>
+    </div>
+   
             `,
       };
 
@@ -244,7 +263,10 @@ const handleLoginAfterForgotPasswordProcess = (req, res) => {
       bcrypt
         .compare(newPassword, userFromDB.password)
         .then((isSamePassword) => {
-          console.log("Is same password ?", isSamePassword);
+          console.log(
+            "Is same password forgot password section ?",
+            isSamePassword
+          );
           if (!isSamePassword) {
             res.status(401).json({ errorMessage: "Wrong password!" });
           } else if (userFromDB.isDeactivated) {
