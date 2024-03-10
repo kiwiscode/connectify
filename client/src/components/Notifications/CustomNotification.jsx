@@ -20,7 +20,7 @@ const CustomNotification = ({
     <>
       <div
         onClick={
-          contactHasBeenMade.image.url && !contactHasBeenMade.content
+          contactHasBeenMade?.image?.url && !contactHasBeenMade?.content
             ? redirectPostDetailIfNoContentOnlyImage
             : ""
         }

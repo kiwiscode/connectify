@@ -1,22 +1,20 @@
-import LogInPage from "../pages/LogInPage";
 import SignUpPage from "../pages/SignUpPage";
 import IndexFooter from "../components/IndexFooter/IndexFooter";
 import { Container, Col, Row } from "react-bootstrap";
+// when working on local version
+const API_URL = "http://localhost:3000";
 
+// when working on deployment version
+// ?
 function HomePage() {
   return (
     <>
-      <Container
-        style={{
-          marginTop: "243px",
-        }}
-      >
+      <Container fluid>
         <Row>
-          <Col>
-            <SignUpPage />
-            <LogInPage />
-            <IndexFooter />
-          </Col>
+          <Col></Col>
+          <SignUpPage />
+
+          <IndexFooter />
         </Row>
       </Container>
     </>

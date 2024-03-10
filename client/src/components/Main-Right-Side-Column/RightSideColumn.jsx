@@ -650,6 +650,7 @@ function RightSideColumn({
                                     to={`/profile/${eachUser._id}`}
                                     style={{
                                       textDecoration: "none",
+                                      borderRadius: "50%",
                                     }}
                                   >
                                     <img

@@ -37,7 +37,6 @@ const UserProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem("userInfo", JSON.stringify(userInfo));
     localStorage.setItem("socketId", userInfo.socketId);
-    console.log("User info socket id =>", userInfo.socketId);
   }, [userInfo]);
 
   const updateUser = (newUserInfo) => {
@@ -48,7 +47,6 @@ const UserProvider = ({ children }) => {
   };
 
   const logout = () => {
-    // Kullanıcının bağlantısını kapat
     socket.disconnect();
 
     setUserInfo({
@@ -67,13 +65,6 @@ const UserProvider = ({ children }) => {
     userInfo.active = false;
     localStorage.removeItem("userInfo");
     localStorage.removeItem("token");
-    localStorage.removeItem("following");
-    localStorage.removeItem("followers");
-    localStorage.removeItem("profileInfoPosts");
-    localStorage.removeItem("profileInfoFavorites");
-    localStorage.removeItem("profileFavorites");
-    localStorage.removeItem("profilePagePosts");
-    localStorage.removeItem("mainPagePosts");
     localStorage.removeItem("socketId");
   };
 
