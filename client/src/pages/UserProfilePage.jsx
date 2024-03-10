@@ -235,10 +235,6 @@ function UserProfile() {
         setFavoriteWindow("");
         setPostWindow("hide");
 
-        localStorage.setItem(
-          "profileFavorites",
-          JSON.stringify(response.data.favorites)
-        );
         setFavorites(response.data.favorites);
       })
       .catch((err) => {
@@ -273,10 +269,6 @@ function UserProfile() {
         setFavoriteWindow("hide");
         setPostWindow("");
 
-        localStorage.setItem(
-          "profilePagePosts",
-          JSON.stringify(response.data.posts)
-        );
         setProfile(response.data.user);
         setUserprofiledata(response.data.posts);
       })
@@ -560,45 +552,6 @@ function UserProfile() {
     }
   }, [profileImage, postsWindow, favoriteWindow]);
 
-  const [followingFollowersDetail, showFollowingFollowersDetail] =
-    useState("hide");
-
-  const [showMainColumn, setshowMainColumn] = useState("");
-
-  const [activeTab, setActiveTab] = useState("");
-
-  const [showFollowers, setShowFollowers] = useState(true);
-  const [showFollowing, setShowFollowing] = useState(false);
-
-  const [followers, setFollowers] = useState([]);
-  const [following, setFollowing] = useState([]);
-
-  const getTabStyle = (tab) => {
-    return {
-      color: activeTab === tab ? "rgb(29, 155, 240" : "rgb(83,100,113)",
-      fontWeight: activeTab === tab ? "700" : "400",
-      lineHeight: "20px",
-      fontSize: "15px",
-      cursor: "pointer",
-      flex: 1,
-      textAlign: "center",
-      transition: "background 0.3s",
-      textDecoration: "none",
-    };
-  };
-
-  const [isHovered, setIsHovered] = useState(false);
-  const [showUnfollowModal, setshowUnfollowModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState("");
-
-  const handleClose = () => setshowUnfollowModal(false);
-
-  const openUnfollowModal = (selectedUser) => {
-    setSelectedUser(selectedUser);
-
-    setshowUnfollowModal(true);
-  };
-
   const [activeUserFollowing, setactiveUserFollowing] = useState([]);
   const [activeUserFollowers, setactiveUserFollowers] = useState([]);
   useEffect(() => {
@@ -763,6 +716,7 @@ function UserProfile() {
                           <img
                             style={{
                               cursor: "pointer",
+                              borderRadius: "50%",
                             }}
                             src={userInfo.imageUrl}
                             alt=""
@@ -791,7 +745,7 @@ function UserProfile() {
                           fill="rgb(83, 100, 113)"
                           className="bi bi-person-circle"
                           viewBox="0 0 16 16"
-                          style={{ cursor: "pointer" }}
+                          style={{ cursor: "pointer", borderRadius: "50%" }}
                           onClick={() =>
                             document.getElementById("formuploadModal").click()
                           }
@@ -1691,6 +1645,9 @@ function UserProfile() {
                                         fill="rgb(83, 100, 113)"
                                         className="bi bi-person-circle"
                                         viewBox="0 0 16 16"
+                                        style={{
+                                          borderRadius: "50%",
+                                        }}
                                       >
                                         <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
                                         <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />

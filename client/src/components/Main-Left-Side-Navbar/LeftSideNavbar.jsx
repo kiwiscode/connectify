@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import { NavLink, redirect, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 import LogoutModal from "./LogoutModal";
 import axios from "axios";
@@ -424,7 +424,7 @@ function LeftSideNavBar({
           {/* Fourth  */}
           <NavLink
             className="messages-nav-link"
-            // onClick={redirectToMessages}
+            onClick={redirectToMessages}
             to={"/messages"}
           >
             <span
@@ -624,7 +624,11 @@ function LeftSideNavBar({
                         width={40}
                         height={40}
                         alt=""
-                        style={{ position: "relative", bottom: "30px" }}
+                        style={{
+                          position: "relative",
+                          bottom: "30px",
+                          borderRadius: "50%",
+                        }}
                       />
                     ) : (
                       <div>
@@ -635,7 +639,11 @@ function LeftSideNavBar({
                           fill="rgb(83, 100, 113)"
                           className="bi bi-person-circle"
                           viewBox="0 0 16 16"
-                          style={{ position: "relative", bottom: "30px" }}
+                          style={{
+                            position: "relative",
+                            bottom: "30px",
+                            borderRadius: "50%",
+                          }}
                         >
                           <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
                           <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />

@@ -39,13 +39,26 @@ const notificationSchema = new Schema(
 
 const userSchema = new Schema(
   {
+    signedUpWithGoogle: {
+      type: Boolean,
+      default: false,
+    },
+    signedUpWithGoogleUserId: {
+      type: String,
+      default: "",
+    },
     fullname: { type: String, required: true },
-    username: { type: String, required: true, unique: true },
+    username: { type: String, unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     verified: { type: Boolean, default: false },
     active: { type: Boolean, default: false },
     bio: String,
+    birthDate: {
+      month: { type: String },
+      day: { type: String },
+      year: { type: String },
+    },
     imageUrl: String,
     posts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
     favorites: [{ type: Schema.Types.ObjectId, ref: "Post" }],

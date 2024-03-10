@@ -166,141 +166,16 @@ function PostDetailPage() {
         }
       )
       .then(() => {
-        const posts = JSON.parse(localStorage.getItem("mainPagePosts"));
-
-        const findedPost = posts.find((element) => {
-          return element._id === postId;
-        });
-
-        const liker = findedPost.likes
-          ? findedPost.likes.find((eachLiker) => eachLiker._id === userInfo._id)
-          : null;
-        const likerIndex = findedPost.likes.indexOf(liker);
-
-        const updateDetailedPosts = () => {
-          findedPost.likes.splice(likerIndex, 1);
-
-          localStorage.setItem("mainPagePosts", JSON.stringify(posts));
-
-          if (findedPost.isComment) {
-            const detailedPostComment = detailedPost.comments.find(
-              (eachComment) => {
-                return eachComment.postId === postId;
-              }
-            );
-
-            const detailedPostCommentIndex =
-              detailedPost.comments.indexOf(detailedPostComment);
-
-            // let activeUserInsideLikes;
-            // let activeUserIndexInsideLikes;
-            // if (detailedPost.comments.length) {
-            //   activeUserInsideLikes = detailedPost.comments[
-            //     detailedPostCommentIndex
-            //   ].likes.find((eachLiker) => {
-            //     return eachLiker._id === userInfo._id;
-            //   });
-
-            //   activeUserIndexInsideLikes = detailedPost.comments[
-            //     detailedPostCommentIndex
-            //   ].likes.indexOf(activeUserInsideLikes);
-            // } else {
-            //   activeUserInsideLikes = detailedPost.likes.find((eachLiker) => {
-            //     return eachLiker._id === userInfo._id;
-            //   });
-
-            //   activeUserIndexInsideLikes = detailedPost.likes.indexOf(
-            //     activeUserInsideLikes
-            //   );
-            // }
-
-            let activeUserInsideLikes;
-            let activeUserIndexInsideLikes;
-
-            if (detailedPost.comments.length > 0) {
-              // Eğer comments array'i boş değilse
-              const targetComment =
-                detailedPost.comments[detailedPostCommentIndex];
-
-              if (targetComment) {
-                // Eğer hedeflenen yorum varsa, yorumun likes array'indeki kullanıcıyı bul
-                activeUserInsideLikes = targetComment.likes.find(
-                  (eachLiker) => eachLiker._id === userInfo._id
-                );
-
-                // Bulunan kullanıcının index'ini bul
-                activeUserIndexInsideLikes = targetComment.likes.indexOf(
-                  activeUserInsideLikes
-                );
-              }
-            } else {
-              // Eğer comments array'i boşsa, detailedPost.likes array'indeki kullanıcıyı bul
-              activeUserInsideLikes = detailedPost.likes.find(
-                (eachLiker) => eachLiker._id === userInfo._id
-              );
-
-              // Bulunan kullanıcının index'ini bul
-              activeUserIndexInsideLikes = detailedPost.likes.indexOf(
-                activeUserInsideLikes
-              );
-            }
-
-            setdetailedPost((prevDetailedPost) => {
-              const updatedDetailedPost = { ...prevDetailedPost };
-
-              if (updatedDetailedPost.comments.length > 0) {
-                const targetComment =
-                  updatedDetailedPost.comments[detailedPostCommentIndex];
-
-                if (targetComment) {
-                  targetComment.likes.splice(activeUserIndexInsideLikes, 1);
-                } else {
-                  updatedDetailedPost.likes.splice(
-                    activeUserIndexInsideLikes,
-                    1
-                  );
-                }
-              } else {
-                updatedDetailedPost.likes.splice(activeUserIndexInsideLikes, 1);
-              }
-
-              return updatedDetailedPost;
-            });
-          } else {
-            const activeUserInsideLikes = detailedPost.likes.find(
-              (eachLiker) => {
-                return eachLiker._id === userInfo._id;
-              }
-            );
-
-            const activeUserIndexInsideLikes = detailedPost.likes.indexOf(
-              activeUserInsideLikes
-            );
-
-            setdetailedPost((prevDetailedPost) => {
-              const updatedDetailedPost = { ...prevDetailedPost };
-
-              // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
-              updatedDetailedPost.likes.splice(activeUserIndexInsideLikes, 1);
-
-              return updatedDetailedPost;
-            });
-
-            // setcommentedForThisPost(findedPost);
-            // setcommentedForThisUsersPost(
-            //   detailedPost.commentedForThisUsersPost
-            // );
-          }
-        };
-
-        setTimeout(updateDetailedPosts, 500);
+        setTimeout(() => {
+          getImagePostDetail();
+        }, 500);
       })
       .catch((err) => {
         return err;
       });
   };
 
-  const handleRepost = (postId) => {
+  const handleRepost = (postId, findedPost) => {
     axios
       .post(
         `${API_URL}/repost`,
@@ -312,68 +187,10 @@ function PostDetailPage() {
         }
       )
       .then(() => {
-        const posts = JSON.parse(localStorage.getItem("mainPagePosts"));
-
-        const findedPost = posts.find((element) => {
-          return element._id === postId;
-        });
-
-        const index = posts.indexOf(findedPost);
-
-        const updateDetailedPosts = () => {
-          // socket io test start to check
+        setTimeout(() => {
+          getImagePostDetail();
           handleNotification(findedPost, userInfo, "repost");
-          // socket io test finish to check
-
-          posts[index].reposted.unshift(userInfo);
-
-          localStorage.setItem("mainPagePosts", JSON.stringify(posts));
-
-          if (findedPost.isComment) {
-            const detailedPostComment = detailedPost.comments.find(
-              (eachComment) => {
-                return eachComment.postId === postId;
-              }
-            );
-
-            const detailedPostCommentIndex =
-              detailedPost.comments.indexOf(detailedPostComment);
-
-            setdetailedPost((prevDetailedPost) => {
-              const updatedDetailedPost = { ...prevDetailedPost };
-
-              if (detailedPost.comments.length > 0) {
-                const targetComment =
-                  updatedDetailedPost.comments[detailedPostCommentIndex];
-                if (targetComment) {
-                  targetComment.reposted.unshift(userInfo);
-                } else {
-                  updatedDetailedPost.reposted.unshift(userInfo);
-                }
-              } else {
-                updatedDetailedPost.reposted.unshift(userInfo);
-              }
-
-              return updatedDetailedPost;
-            });
-          } else {
-            setdetailedPost((prevDetailedPost) => {
-              const updatedDetailedPost = { ...prevDetailedPost };
-
-              // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
-              updatedDetailedPost.reposted.unshift(userInfo);
-
-              return updatedDetailedPost;
-            });
-
-            // setcommentedForThisPost(findedPost);
-            // setcommentedForThisUsersPost(
-            //   detailedPost.commentedForThisUsersPost
-            // );
-          }
-        };
-
-        setTimeout(updateDetailedPosts, 500);
+        }, 500);
       })
       .catch((error) => {
         console.log(error);
@@ -392,123 +209,9 @@ function PostDetailPage() {
         }
       )
       .then(() => {
-        const posts = JSON.parse(localStorage.getItem("mainPagePosts"));
-
-        const findedPost = posts.find((element) => {
-          return element._id === postId;
-        });
-        let reposter;
-
-        if (findedPost.reposted.length) {
-          reposter = findedPost.reposted
-            ? findedPost.reposted.find((eachReposter) => {
-                return eachReposter._id === userInfo._id;
-              })
-            : null;
-        }
-
-        const reposterIndex = findedPost.reposted
-          ? findedPost.reposted.indexOf(reposter)
-          : null;
-
-        const updateDetailedPosts = () => {
-          findedPost.reposted.splice(reposterIndex, 1);
-
-          localStorage.setItem("mainPagePosts", JSON.stringify(posts));
-
-          if (findedPost.isComment) {
-            const detailedPostComment = detailedPost.comments.find(
-              (eachComment) => {
-                return eachComment.postId === postId;
-              }
-            );
-
-            const detailedPostCommentIndex =
-              detailedPost.comments.indexOf(detailedPostComment);
-
-            let activeUserInsideReposts;
-            let activeUserIndexInsideReposts;
-            if (detailedPost.comments.length) {
-              // Eğer comments array'i boş değilse
-              const targetComment =
-                detailedPost.comments[detailedPostCommentIndex];
-
-              if (targetComment) {
-                // Eğer hedeflenen yorum varsa, yorumun likes array'indeki kullanıcıyı bul
-                activeUserInsideReposts = targetComment.reposted.find(
-                  (eachLiker) => eachLiker._id === userInfo._id
-                );
-
-                // Bulunan kullanıcının index'ini bul
-                activeUserIndexInsideReposts = targetComment.reposted.indexOf(
-                  activeUserInsideReposts
-                );
-              }
-            } else {
-              // Eğer comments array'i boşsa, detailedPost.likes array'indeki kullanıcıyı bul
-              activeUserInsideReposts = detailedPost.reposted.find(
-                (eachLiker) => eachLiker._id === userInfo._id
-              );
-
-              // Bulunan kullanıcının index'ini bul
-              activeUserIndexInsideReposts = detailedPost.reposted.indexOf(
-                activeUserInsideReposts
-              );
-            }
-
-            setdetailedPost((prevDetailedPost) => {
-              const updatedDetailedPost = { ...prevDetailedPost };
-
-              if (updatedDetailedPost.comments.length > 0) {
-                const targetComment =
-                  updatedDetailedPost.comments[detailedPostCommentIndex];
-
-                if (targetComment) {
-                  targetComment.reposted.splice(
-                    activeUserIndexInsideReposts,
-                    1
-                  );
-                } else {
-                  updatedDetailedPost.reposted.splice(
-                    activeUserIndexInsideReposts,
-                    1
-                  );
-                }
-              } else {
-                updatedDetailedPost.reposted.splice(
-                  activeUserIndexInsideReposts,
-                  1
-                );
-              }
-
-              return updatedDetailedPost;
-            });
-          } else {
-            const activeUserInsideReposts = detailedPost.reposted.find(
-              (eachLiker) => {
-                return eachLiker._id === userInfo._id;
-              }
-            );
-
-            const activeUserIndexInsideReposts = detailedPost.reposted.indexOf(
-              activeUserInsideReposts
-            );
-
-            setdetailedPost((prevDetailedPost) => {
-              const updatedDetailedPost = { ...prevDetailedPost };
-
-              // İlgili comment'e ulaş ve reposted array'ine yeni like'ı ekle
-              updatedDetailedPost.reposted.splice(
-                activeUserIndexInsideReposts,
-                1
-              );
-
-              return updatedDetailedPost;
-            });
-          }
-        };
-
-        setTimeout(updateDetailedPosts, 500);
+        setTimeout(() => {
+          getImagePostDetail();
+        }, 500);
       })
       .then(() => {})
       .catch((error) => {
@@ -542,7 +245,7 @@ function PostDetailPage() {
       });
   };
 
-  const handleRepostCFTUP = (postId) => {
+  const handleRepostCFTUP = (postId, findedPost) => {
     axios
       .post(
         `${API_URL}/repost`,
@@ -554,54 +257,10 @@ function PostDetailPage() {
         }
       )
       .then(() => {
-        const posts = JSON.parse(localStorage.getItem("mainPagePosts"));
-
-        const findedPost = posts.find((element) => {
-          return element._id === postId;
-        });
-
-        const index = posts.indexOf(findedPost);
-
-        const updateDetailedPosts = () => {
-          // socket io test start to check
+        setTimeout(() => {
+          getImagePostDetail();
           handleNotification(findedPost, userInfo, "repost");
-          // socket io test finish to check
-
-          posts[index].reposted.unshift(userInfo);
-
-          localStorage.setItem("mainPagePosts", JSON.stringify(posts));
-
-          if (findedPost.isComment) {
-            setcommentedForThisPost((prevCommentedForThisPost) => {
-              const updatedCommentedForThisPost = {
-                ...prevCommentedForThisPost,
-              };
-
-              // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
-              updatedCommentedForThisPost.reposted.unshift(userInfo);
-
-              return updatedCommentedForThisPost;
-            });
-          } else {
-            setcommentedForThisPost((prevCommentedForThisPost) => {
-              const updatedCommentedForThisPost = {
-                ...prevCommentedForThisPost,
-              };
-
-              // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
-              updatedCommentedForThisPost.reposted.unshift(userInfo);
-
-              return updatedCommentedForThisPost;
-            });
-
-            // setcommentedForThisPost(findedPost);
-            // setcommentedForThisUsersPost(
-            //   detailedPost.commentedForThisUsersPost
-            // );
-          }
-        };
-
-        setTimeout(updateDetailedPosts, 500);
+        }, 500);
       })
       .catch((error) => {
         console.log(error);
@@ -628,65 +287,9 @@ function PostDetailPage() {
         }
       )
       .then(() => {
-        const posts = JSON.parse(localStorage.getItem("mainPagePosts"));
-
-        const findedPost = posts.find((element) => {
-          return element._id === postId;
-        });
-
-        const liker = findedPost.likes
-          ? findedPost.likes.find((eachLiker) => eachLiker._id === userInfo._id)
-          : null;
-        const likerIndex = findedPost.likes.indexOf(liker);
-
-        const updateDetailedPosts = () => {
-          findedPost.likes.splice(likerIndex, 1);
-
-          localStorage.setItem("mainPagePosts", JSON.stringify(posts));
-
-          const activeUserInsideLikes = commentedForThisPost.likes.find(
-            (eachLiker) => {
-              return eachLiker._id === userInfo._id;
-            }
-          );
-
-          const activeUserIndexInsideLikes = commentedForThisPost.likes.indexOf(
-            activeUserInsideLikes
-          );
-
-          if (findedPost.isComment) {
-            setcommentedForThisPost((prevDetailedPost) => {
-              const updatedCommentedForThisPost = { ...prevDetailedPost };
-
-              // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
-              updatedCommentedForThisPost.likes.splice(
-                activeUserIndexInsideLikes,
-                1
-              );
-
-              return updatedCommentedForThisPost;
-            });
-          } else {
-            setcommentedForThisPost((prevDetailedPost) => {
-              const updatedCommentedForThisPost = { ...prevDetailedPost };
-
-              // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
-              updatedCommentedForThisPost.likes.splice(
-                activeUserIndexInsideLikes,
-                1
-              );
-
-              return updatedCommentedForThisPost;
-            });
-
-            // setcommentedForThisPost(findedPost);
-            // setcommentedForThisUsersPost(
-            //   detailedPost.commentedForThisUsersPost
-            // );
-          }
-        };
-
-        setTimeout(updateDetailedPosts, 500);
+        setTimeout(() => {
+          getImagePostDetail();
+        }, 500);
       })
       .catch((err) => {
         return err;
@@ -705,70 +308,10 @@ function PostDetailPage() {
         }
       )
       .then(() => {
-        const posts = JSON.parse(localStorage.getItem("mainPagePosts"));
-
-        const findedPost = posts.find((element) => {
-          return element._id === postId;
-        });
-
-        const reposter = findedPost.reposted
-          ? findedPost.reposted.find((eachReposter) => {
-              return eachReposter._id === userInfo._id;
-            })
-          : null;
-
-        const reposterIndex = findedPost.reposted
-          ? findedPost.reposted.indexOf(reposter)
-          : null;
-
-        const updateDetailedPosts = () => {
-          findedPost.reposted.splice(reposterIndex, 1);
-
-          localStorage.setItem("mainPagePosts", JSON.stringify(posts));
-          const activeUserInsideReposts = commentedForThisPost.reposted.find(
-            (eachReposter) => {
-              return eachReposter._id === userInfo._id;
-            }
-          );
-
-          const activeUserIndexInsideReposts =
-            commentedForThisPost.reposted.indexOf(activeUserInsideReposts);
-
-          if (findedPost.isComment) {
-            setcommentedForThisPost((prevDetailedPost) => {
-              const updatedCommentedForThisPost = { ...prevDetailedPost };
-
-              // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
-              updatedCommentedForThisPost.reposted.splice(
-                activeUserIndexInsideReposts,
-                1
-              );
-
-              return updatedCommentedForThisPost;
-            });
-          } else {
-            setcommentedForThisPost((prevDetailedPost) => {
-              const updatedCommentedForThisPost = { ...prevDetailedPost };
-
-              // İlgili comment'e ulaş ve likes array'ine yeni like'ı ekle
-              updatedCommentedForThisPost.reposted.splice(
-                activeUserIndexInsideReposts,
-                1
-              );
-
-              return updatedCommentedForThisPost;
-            });
-
-            // setcommentedForThisPost(findedPost);
-            // setcommentedForThisUsersPost(
-            //   detailedPost.commentedForThisUsersPost
-            // );
-          }
-        };
-
-        setTimeout(updateDetailedPosts, 500);
+        setTimeout(() => {
+          getImagePostDetail();
+        }, 500);
       })
-      .then(() => {})
       .catch((error) => {
         console.log(error);
       });
@@ -1111,7 +654,9 @@ function PostDetailPage() {
                         style={{
                           cursor: "pointer",
                         }}
-                        onClick={() => handleRepost(detailedPost._id)}
+                        onClick={() =>
+                          handleRepost(detailedPost._id, detailedPost)
+                        }
                         width={`${1.5}em`}
                         height={`${1.5}em`}
                         viewBox="0 0 24 24"
@@ -1351,6 +896,7 @@ function PostDetailPage() {
                                     viewBox="0 0 16 16"
                                     style={{
                                       position: "relative",
+                                      borderRadius: "50%",
                                     }}
                                     onClick={() =>
                                       document
@@ -1653,7 +1199,10 @@ function PostDetailPage() {
                                     cursor: "pointer",
                                   }}
                                   onClick={() =>
-                                    handleRepostCFTUP(commentedForThisPost._id)
+                                    handleRepostCFTUP(
+                                      commentedForThisPost._id,
+                                      commentedForThisPost
+                                    )
                                   }
                                   width={`${1.25}em`}
                                   height={`${1.25}em`}
@@ -1688,7 +1237,10 @@ function PostDetailPage() {
                                   cursor: "pointer",
                                 }}
                                 onClick={() =>
-                                  handleRepostCFTUP(commentedForThisPost._id)
+                                  handleRepostCFTUP(
+                                    commentedForThisPost._id,
+                                    commentedForThisPost
+                                  )
                                 }
                                 width={`${1.25}em`}
                                 height={`${1.25}em`}
@@ -2238,7 +1790,9 @@ function PostDetailPage() {
                         style={{
                           cursor: "pointer",
                         }}
-                        onClick={() => handleRepost(detailedPost._id)}
+                        onClick={() =>
+                          handleRepost(detailedPost._id, detailedPost)
+                        }
                         width={`${1.5}em`}
                         height={`${1.5}em`}
                         viewBox="0 0 24 24"
@@ -2269,7 +1823,9 @@ function PostDetailPage() {
                       style={{
                         cursor: "pointer",
                       }}
-                      onClick={() => handleRepost(detailedPost._id)}
+                      onClick={() =>
+                        handleRepost(detailedPost._id, detailedPost)
+                      }
                       width={`${1.5}em`}
                       height={`${1.5}em`}
                       viewBox="0 0 24 24"
@@ -2776,7 +2332,10 @@ function PostDetailPage() {
                                                 cursor: "pointer",
                                               }}
                                               onClick={() =>
-                                                handleRepost(eachComment.postId)
+                                                handleRepost(
+                                                  eachComment.postId,
+                                                  eachComment
+                                                )
                                               }
                                               width={`${1.25}em`}
                                               height={`${1.25}em`}
@@ -3301,7 +2860,8 @@ function PostDetailPage() {
                                                 }}
                                                 onClick={() =>
                                                   handleRepost(
-                                                    eachComment.postId
+                                                    eachComment.postId,
+                                                    eachComment
                                                   )
                                                 }
                                                 width={`${1.25}em`}

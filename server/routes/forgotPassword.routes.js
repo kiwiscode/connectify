@@ -21,4 +21,9 @@ router.post(
   forgotPasswordController.handleLoginAfterForgotPasswordProcess
 );
 
+router.post(
+  "/change-password-forgot-password-process",
+  forgotPasswordController.changePasswordInForgotPasswordProcess
+);
+
 module.exports = router;

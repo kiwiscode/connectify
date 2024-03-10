@@ -108,8 +108,8 @@ function emailProcess() {
 }
 
 const generateRandomCode = () => {
-  const min = 10000000; // En küçük 6 haneli sayı
-  const max = 99999999; // En büyük 6 haneli sayı
+  const min = 10000000;
+  const max = 99999999;
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
@@ -234,6 +234,49 @@ function emailProcessAfterChanginPassword() {
   };
 }
 
+const saltRounds = 10;
+
+const changePasswordInForgotPasswordProcess = (req, res) => {
+  const { user, newPassword } = req.body;
+
+  console.log("User after forgot password process tries to log in =>", user);
+
+  console.log("New password =>", newPassword);
+
+  User.findOne({ email: user.email })
+    .then((findedUser) => {
+      console.log("Finded user =>", findedUser);
+
+      bcrypt
+        .genSalt(saltRounds)
+        .then((salt) => {
+          return bcrypt.hash(newPassword, salt);
+        })
+        .then((hash) => {
+          console.log("Hash =>", hash);
+
+          findedUser.password = hash;
+          findedUser
+            .save()
+            .then(() => {
+              res.status(201).json({
+                message:
+                  "User password hashed and saved successfully to the database !",
+              });
+            })
+            .catch(() => {
+              res.status(501).json({
+                message: "Internal server error while saving hash password",
+              });
+            });
+        })
+        .catch((err) => console.error(err.message));
+    })
+    .catch(() => {
+      res.status(404).json({ errorMessage: "User not found !" });
+    });
+};
+
 const handleLoginAfterForgotPasswordProcess = (req, res) => {
   const { user, newPassword } = req.body;
   console.log(
@@ -349,4 +392,5 @@ module.exports = {
   handleSendForgotPasswordProcessCodeToEmail,
   handleChangePasswordForgotPasswordTab,
   handleLoginAfterForgotPasswordProcess,
+  changePasswordInForgotPasswordProcess,
 };
