@@ -228,24 +228,7 @@ function FollowingDetailPage() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-  const [first3User, setFirst3User] = useState([]);
 
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/get-most-followed-3-user`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        console.log("Response =>", response);
-
-        setFirst3User(response.data.first3User);
-      })
-      .catch((error) => {
-        console.log("Error =>", error);
-      });
-  }, []);
   return (
     <>
       {contextHolder}
@@ -767,7 +750,7 @@ function FollowingDetailPage() {
           {/* following  detail finish to check  */}
 
           {/* 3.column burası olucak  */}
-          <RightSideColumn first3User={first3User} />
+          <RightSideColumn />
         </Row>
       </Container>
     </>

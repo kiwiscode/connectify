@@ -39,13 +39,20 @@ const notificationSchema = new Schema(
 
 const userSchema = new Schema(
   {
-    signedUpWithGoogle: {
-      type: Boolean,
-      default: false,
+    signedUpWithVariantOne: {
+      isSignedUpWithVariantOne: { type: Boolean, default: false },
+      isUsernameCustomized: { type: Boolean, default: false },
+      isUsernameCustomizationModalShown: { type: Boolean, default: false },
+      isProfileImageCustomizationModalShown: { type: Boolean, default: false },
     },
-    signedUpWithGoogleUserId: {
-      type: String,
-      default: "",
+    signedUpWithGoogle: {
+      isSignedUpWithGoogle: { type: Boolean, default: false },
+      isUsernameCustomized: { type: Boolean, default: false },
+      isUsernameCustomizationModalShown: { type: Boolean, default: false },
+      signedUpWithGoogleUserId: {
+        type: String,
+        default: "",
+      },
     },
     fullname: { type: String, required: true },
     username: { type: String, unique: true },

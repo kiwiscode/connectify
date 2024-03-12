@@ -99,59 +99,82 @@ const handleSignup = async (req, res, next) => {
 
   console.log(fullname, email, password, birthMonth, birthDay, birthYear);
 
-  const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
-  if (!regex.test(password) || password.length < 6) {
+  const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
+  if (!regex.test(password) || password.length < 8) {
     res.status(402).json({
       errorMessage:
-        "Password needs to have at least 6 chars and must contain at least one number, one lowercase and one uppercase letter.",
+        "Password needs to have at least 8 chars and must contain at least one number, one lowercase and one uppercase letter.",
     });
     return;
   }
 
-  try {
-    console.log("THIS LINE IS WORKING 1");
+  const allUsers = await User.find();
 
-    bcrypt
-      .genSalt(saltRounds)
-      .then((salt) => bcrypt.hash(password, salt))
-      .then((hashedPassword) => {
-        console.log("THIS LINE IS WORKING 2");
+  const allUserNames = allUsers.map((eachUser) => {
+    return eachUser.username.toLowerCase();
+  });
 
-        fullname = capitalize(fullname);
-        console.log("THIS LINE IS WORKING 3");
-        return User.create({
-          fullname,
-          username:
-            fullname.split(/\s+/).join("") +
-            generate5DifferentNumbers().join(""),
-          email,
-          password: hashedPassword,
-          verified: true,
-          imageUrl: "../assets/resume-pic.png",
-          birthDate: {
-            month: birthMonth,
-            day: birthDay,
-            year: birthYear,
-          },
+  const username = fullname.split(/\s+/).join("");
+
+  if (allUserNames.includes(username.toLowerCase())) {
+    res.status(409).json({
+      errorMessage: "This user name is already exist ! Use another one !",
+    });
+  } else {
+    try {
+      console.log("THIS LINE IS WORKING 1");
+
+      bcrypt
+        .genSalt(saltRounds)
+        .then((salt) => bcrypt.hash(password, salt))
+        .then((hashedPassword) => {
+          console.log("THIS LINE IS WORKING 2");
+
+          fullname = capitalize(fullname);
+          console.log("THIS LINE IS WORKING 3");
+          return User.create({
+            fullname,
+            username: username + generate5DifferentNumbers().join(""),
+            email,
+            password: hashedPassword,
+            verified: true,
+            imageUrl: "../assets/resume-pic.png",
+            birthDate: {
+              month: birthMonth,
+              day: birthDay,
+              year: birthYear,
+            },
+            signedUpWithVariantOne: {
+              isSignedUpWithVariantOne: true,
+              isUsernameCustomized: false,
+              isUsernameCustomizationModalShown: false,
+              isProfileImageCustomizationModalShown: false,
+            },
+          });
+        })
+        .then((user) => {
+          const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+            expiresIn: "24h",
+          });
+          res.status(201).json({ token: token });
+          console.log("THIS LINE IS WORKING 5");
+          console.log("Token =>", token);
+        })
+        .catch((error) => {
+          next(error);
         });
-      })
-      .then((user) => {
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-          expiresIn: "24h",
-        });
-        res.status(201).json({ token: token });
-        console.log("THIS LINE IS WORKING 5");
-      })
-      .catch((error) => {
-        next(error);
-      });
-  } catch (error) {
-    return res.status(error.response.status).json(error.response.data);
+    } catch (error) {
+      return res.status(error.response.status).json(error.response.data);
+    }
   }
 };
 
 const handleLogin = (req, res, next) => {
   const { authentication, password } = req.body;
+
+  console.log("Signed user =>", authentication);
+
+  const email = authentication.email;
 
   User.findOne({ email })
     // today changed 13 nov
@@ -183,33 +206,15 @@ const handleLogin = (req, res, next) => {
             });
           } else {
             user.active = true;
-            user.save().then((user) => {
-              const {
-                _id,
-                username,
-                email,
-                fullname,
-                verified,
-                active,
-                posts,
-                followers,
-                following,
-                messages,
-                createdAt,
-                updatedAt,
-                favorites,
-                imageUrl,
-                notifications,
-              } = user;
 
-              const token = jwt.sign({ userId: _id }, process.env.JWT_SECRET, {
-                expiresIn: "24h",
-              });
-
-              console.log("Logged in user username =>", username);
-              res.json({
-                token,
-                user: {
+            if (
+              user.signedUpWithVariantOne.isSignedUpWithVariantOne &&
+              !user.signedUpWithVariantOne
+                .isProfileImageCustomizationModalShown &&
+              !user.signedUpWithVariantOne.isUsernameCustomizationModalShown
+            ) {
+              user.save().then((user) => {
+                const {
                   _id,
                   username,
                   email,
@@ -225,9 +230,103 @@ const handleLogin = (req, res, next) => {
                   favorites,
                   imageUrl,
                   notifications,
-                },
+                  signedUpWithGoogle,
+                  signedUpWithVariantOne,
+                  bio,
+                } = user;
+
+                const token = jwt.sign(
+                  { userId: _id },
+                  process.env.JWT_SECRET,
+                  {
+                    expiresIn: "24h",
+                  }
+                );
+
+                console.log("Logged in user username =>", username);
+                res.json({
+                  token,
+                  user: {
+                    _id,
+                    username,
+                    email,
+                    fullname,
+                    verified,
+                    active,
+                    posts,
+                    followers,
+                    following,
+                    messages,
+                    createdAt,
+                    updatedAt,
+                    favorites,
+                    imageUrl,
+                    notifications,
+                    signedUpWithGoogle,
+                    signedUpWithVariantOne,
+                    bio,
+                  },
+                  message:
+                    "Show 2 modal, first => profile image customization modal, second => username customization modal",
+                });
               });
-            });
+            } else {
+              user.save().then((user) => {
+                const {
+                  _id,
+                  username,
+                  email,
+                  fullname,
+                  verified,
+                  active,
+                  posts,
+                  followers,
+                  following,
+                  messages,
+                  createdAt,
+                  updatedAt,
+                  favorites,
+                  imageUrl,
+                  notifications,
+                  signedUpWithGoogle,
+                  signedUpWithVariantOne,
+                  bio,
+                } = user;
+
+                const token = jwt.sign(
+                  { userId: _id },
+                  process.env.JWT_SECRET,
+                  {
+                    expiresIn: "24h",
+                  }
+                );
+
+                console.log("Logged in user username =>", username);
+                res.json({
+                  token,
+                  user: {
+                    _id,
+                    username,
+                    email,
+                    fullname,
+                    verified,
+                    active,
+                    posts,
+                    followers,
+                    following,
+                    messages,
+                    createdAt,
+                    updatedAt,
+                    favorites,
+                    imageUrl,
+                    notifications,
+                    signedUpWithGoogle,
+                    signedUpWithVariantOne,
+                    bio,
+                  },
+                });
+              });
+            }
           }
         })
         .catch(() => {
@@ -480,10 +579,148 @@ const handleEmailVerificationCode = (req, res) => {
     });
 };
 
+// start to check modal status changing for pick a profile picture and what should we call you modal
+const handleChangeModalStatusVariantOne = (req, res) => {
+  console.log(req.body);
+  const { userId } = req.body;
+
+  console.log("User id =>", userId);
+  User.findById(userId)
+    .then((user) => {
+      user.signedUpWithVariantOne.isProfileImageCustomizationModalShown = true;
+
+      user
+        .save()
+        .then(() => {
+          res.status(201).json({ user: user });
+        })
+        .catch(() => {
+          res.status(501).json({
+            errorMessage: "Error occured while trying to change status !",
+          });
+        });
+    })
+    .catch(() => {
+      res.status(404).json({ errorMessage: "User not found !" });
+    });
+};
+const handleChangeModalStatusVariantOneModal2 = (req, res) => {
+  console.log(req.body);
+  const { userId } = req.body;
+
+  console.log("User id =>", userId);
+  User.findById(userId)
+    .then((user) => {
+      user.signedUpWithVariantOne.isUsernameCustomizationModalShown = true;
+
+      user
+        .save()
+        .then(() => {
+          res.status(201).json({ user: user });
+        })
+        .catch(() => {
+          res.status(501).json({
+            errorMessage: "Error occured while trying to change status !",
+          });
+        });
+    })
+    .catch(() => {
+      res.status(404).json({ errorMessage: "User not found !" });
+    });
+};
+
+// finish to check modal status changing for pick a profile picture and what should we call you modal
+
+const handleUsernameCheck = async (req, res) => {
+  try {
+    const { username } = req.body;
+    const checkUserName = username.toLowerCase();
+    console.log("test");
+    const allUsers = await User.find();
+
+    const allUserNames = allUsers.map((eachUser) =>
+      eachUser.username.toLowerCase()
+    );
+
+    let countSpaces = 0;
+    for (let i = 0; i < username.length; i++) {
+      if (username[i] === " ") {
+        countSpaces++;
+      }
+    }
+
+    console.log("Username =>", username);
+
+    if (allUserNames.includes(checkUserName)) {
+      res.status(409).json({
+        errorMessage: "That username has been taken. Please choose another.",
+      });
+    } else {
+      console.log("Username not exist! You can choose this one!");
+
+      if (username.length <= 15 && username.length >= 4 && countSpaces < 1) {
+        res.status(200).json({
+          successMessage:
+            "Username is available. User username ready to update.",
+        });
+      } else if (username.length < 4) {
+        res.status(501).json({
+          errorMessage: "Username must be at least 4 characters long.",
+        });
+      } else if (username.length > 15) {
+        res.status(501).json({
+          errorMessage: "Username cannot exceed 15 characters.",
+        });
+      } else {
+        res.status(501).json({
+          errorMessage:
+            "Your username cannot contain spaces. Please choose a username without spaces.",
+        });
+      }
+    }
+
+    console.log("Username from front end =>", username);
+  } catch (error) {
+    console.error("Error during username check:", error);
+    res
+      .status(500)
+      .json({ errorMessage: "An error occurred during username check." });
+  }
+};
+const handleUsernameChange = async (req, res) => {
+  try {
+    const { username, userId } = req.body;
+
+    console.log("Username =>", username);
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    user.username = username;
+    user.signedUpWithVariantOne.isUsernameCustomized = true;
+    user.signedUpWithVariantOne.isUsernameCustomizationModalShown = true;
+    await user.save();
+
+    res.status(200).json({
+      user: user,
+      success: true,
+      message: "Username updated successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   handleSignup,
   handleLogin,
   handleDeactivatedUserLoginBack,
   handleEmailCheck,
   handleEmailVerificationCode,
+  handleUsernameCheck,
+  handleUsernameChange,
+  handleChangeModalStatusVariantOne,
+  handleChangeModalStatusVariantOneModal2,
 };

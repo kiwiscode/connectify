@@ -69,8 +69,12 @@ passport.use(
               "This user was not exist and now created with google profile !"
             );
             return User.create({
-              signedUpWithGoogle: true,
-              signedUpWithGoogleUserId: profile._json.sub,
+              signedUpWithGoogle: {
+                isSignedUpWithGoogle: true,
+                isUsernameCustomized: false,
+                isUsernameCustomizationModalShown: false,
+                signedUpWithGoogleUserId: profile._json.sub,
+              },
               fullname: profile._json.name,
               username:
                 profile._json.name.split(/\s+/).join("") +

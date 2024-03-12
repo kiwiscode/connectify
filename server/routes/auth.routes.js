@@ -26,4 +26,16 @@ router.get(
   })
 );
 
+router.post("/username-check", authController.handleUsernameCheck);
+router.post("/change-username", authController.handleUsernameChange);
+
+router.post(
+  "/change-modal-status",
+  authController.handleChangeModalStatusVariantOne
+);
+router.post(
+  "/change-modal-status-modal-2",
+  authController.handleChangeModalStatusVariantOneModal2
+);
+
 module.exports = router;
