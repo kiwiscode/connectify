@@ -1,3 +1,5 @@
+require("./models/User.model");
+require("./services/passport");
 require("dotenv").config();
 
 require("./db");
@@ -6,6 +8,23 @@ const app = express();
 
 const bodyParser = require("body-parser");
 const cors = require("cors");
+
+// passport js start to check
+let cookieSession = require("cookie-session");
+const passport = require("passport");
+
+/* ================ Creating Cookie Key and link with Passport JS: Start ================  */
+app.use(
+  cookieSession({
+    maxAge: 30 * 86400 * 1000, // expire in 30 days(milli seconds)
+    keys: ["kiwiscode"],
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+/* ================ Creating Cookie Key and link with Passport JS: End ================  */
+// passport js finish to check
 
 app.use(express.json({ limit: "15mb" }));
 app.use(bodyParser.urlencoded({ extended: true, limit: "15mb" }));

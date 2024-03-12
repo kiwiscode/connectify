@@ -680,11 +680,11 @@ function LogoutModal() {
         >
           <div className="p-2 profile-img-and-svg">
             {/* start to check */}
-            {userInfo.imageUrl.slice(0, 3) !== "../" ? (
+            {userInfo?.imageUrl.slice(0, 3) !== "../" ? (
               <div>
                 <img
                   className="profile-img logout-profile-img"
-                  src={userInfo.imageUrl}
+                  src={userInfo?.imageUrl}
                   width={40}
                   height={40}
                   alt=""

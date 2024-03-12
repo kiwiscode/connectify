@@ -189,28 +189,6 @@ function SpesificUserProfile() {
           }
         )
         .then(() => {
-          // delete after unfollow also from localstorage start to check
-          const userInfoFromLocalStorage = JSON.parse(
-            localStorage.getItem("userInfo")
-          );
-
-          const followedUser = userInfoFromLocalStorage.following.find(
-            (eachFollowing) => {
-              return eachFollowing._id === profileInfo._id;
-            }
-          );
-
-          const followedUserIndex =
-            userInfoFromLocalStorage.following.indexOf(followedUser);
-
-          userInfoFromLocalStorage.following.splice(followedUserIndex, 1);
-
-          localStorage.setItem(
-            "userInfo",
-            JSON.stringify(userInfoFromLocalStorage)
-          );
-          // delete after unfollow also from localstorage finish to check
-
           setTimeout(() => {
             // start to check animation basic
             if (postsWindow === "hide") {
@@ -357,6 +335,7 @@ function SpesificUserProfile() {
   // socket io 5 client finish to check
 
   const handleFollow = () => {
+    console.log("Button clicked !");
     if (getFollowerIds(profileInfo.followers).includes(userInfo._id)) {
       handleShow();
     } else {
@@ -375,21 +354,6 @@ function SpesificUserProfile() {
         )
         .then(() => {
           handleNotification(profileInfo, userInfo, "followed");
-
-          // change the userInfo who followed user start to check
-
-          const userInfoFromLocalStorage = JSON.parse(
-            localStorage.getItem("userInfo")
-          );
-
-          userInfoFromLocalStorage.following.unshift(profileInfo);
-
-          localStorage.setItem(
-            "userInfo",
-            JSON.stringify(userInfoFromLocalStorage)
-          );
-
-          // change the userInfo who followed user finish to check
 
           setTimeout(() => {
             // start to check animation basic
@@ -435,16 +399,12 @@ function SpesificUserProfile() {
         },
       })
       .then((response) => {
-        localStorage.setItem(
-          "profileInfoPosts",
-          JSON.stringify(response.data.posts)
+        console.log(
+          "After opening spesific user profile page response =>",
+          response
         );
 
-        const profileInfoPosts = JSON.parse(
-          localStorage.getItem("profileInfoPosts")
-        );
-
-        setprofileInfoPosts(profileInfoPosts);
+        setprofileInfoPosts(response.data.posts);
         setPostWindow("");
         setFavoriteWindow("hide");
         setProfileInfo(response.data);
@@ -463,11 +423,6 @@ function SpesificUserProfile() {
         },
       })
       .then((response) => {
-        localStorage.setItem(
-          "profileInfoFavorites",
-          JSON.stringify(response.data.favorites)
-        );
-
         setFavoriteWindow("");
         setPostWindow("hide");
         setFavorites(response.data.favorites);
@@ -761,23 +716,6 @@ function SpesificUserProfile() {
     };
   }, []);
 
-  const [first3User, setFirst3User] = useState([]);
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/get-most-followed-3-user`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        console.log("Response =>", response);
-
-        setFirst3User(response.data.first3User);
-      })
-      .catch((error) => {
-        console.log("Error =>", error);
-      });
-  }, []);
   return (
     <>
       {contextHolder}
@@ -952,6 +890,9 @@ function SpesificUserProfile() {
                             height={133}
                             src={profileInfo.imageUrl}
                             alt=""
+                            style={{
+                              borderRadius: "50%",
+                            }}
                           />
                         </div>
                       ) : (
@@ -963,7 +904,7 @@ function SpesificUserProfile() {
                             fill="rgb(83, 100, 113)"
                             className="bi bi-person-circle"
                             viewBox="0 0 16 16"
-                            style={{ cursor: "pointer" }}
+                            style={{ cursor: "pointer", borderRadius: "50%" }}
                             onClick={() =>
                               document.getElementById("formuploadModal").click()
                             }
@@ -1463,6 +1404,9 @@ function SpesificUserProfile() {
                                       fill="rgb(83, 100, 113)"
                                       className="bi bi-person-circle"
                                       viewBox="0 0 16 16"
+                                      style={{
+                                        borderRadius: "50%",
+                                      }}
                                     >
                                       <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
                                       <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
@@ -2081,6 +2025,9 @@ function SpesificUserProfile() {
                                           fill="rgb(83, 100, 113)"
                                           className="bi bi-person-circle"
                                           viewBox="0 0 16 16"
+                                          style={{
+                                            borderRadius: "50%",
+                                          }}
                                         >
                                           <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
                                           <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
@@ -2612,7 +2559,7 @@ function SpesificUserProfile() {
           </Col>
 
           {/* 3.column burası olucak */}
-          <RightSideColumn first3User={first3User} />
+          <RightSideColumn />
         </Row>
       </Container>
     </>
