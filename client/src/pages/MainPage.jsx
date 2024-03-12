@@ -9,6 +9,7 @@ import {
   Popover,
   OverlayTrigger,
   Accordion,
+  Modal,
 } from "react-bootstrap";
 import { CommentModal } from "../components/ui/Modal";
 
@@ -35,10 +36,12 @@ const API_URL = "http://localhost:3000";
 import io from "socket.io-client";
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
+import useWindowDimensions from "../hooks/getWindowDimensions";
+import { TextField } from "@mui/material";
 
 function MainPage() {
-  const [first3User, setFirst3User] = useState([]);
   const socket = io.connect(`${API_URL}`);
+
   // start to check
 
   const navigate = useNavigate();
@@ -98,8 +101,73 @@ function MainPage() {
 
   // use effect to grab current mouse click location finish to check
 
-  // const { userInfo, getToken, socket } = useContext(UserContext);
+  // create account variant 1 flow start to check
   const { userInfo, getToken } = useContext(UserContext);
+  const [signedUpWithVariantOne, setsignedUpWithVariantOne] = useState(false);
+  const [signedUpWithGoogle, setsignedUpWithGoogle] = useState(false);
+  const [
+    showModalForProfilePictureOrUsernameOrBoth,
+    setshowModalForProfilePictureOrUsernameOrBoth,
+  ] = useState(false);
+  const [showPickProfilePictureModal, setshowPickProfilePictureModal] =
+    useState(false);
+  const [showWhatShouldWeCallYouModal, setshowWhatShouldWeCallYouModal] =
+    useState(false);
+  const [tabIndex, setTabIndex] = useState(0);
+  const [tabLoading, setTabLoading] = useState(false);
+
+  const [activeUser, setActiveUser] = useState([]);
+  const refreshActiveUser = () => {
+    axios
+      .get(`${API_URL}/profile`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        console.log("Response user active =>", response.data.user);
+        setActiveUser(response.data.user);
+        localStorage.setItem("userInfo", JSON.stringify(response.data.user));
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  };
+
+  useEffect(() => {
+    refreshActiveUser();
+  }, []);
+
+  useEffect(() => {
+    if (
+      (userInfo.signedUpWithVariantOne.isSignedUpWithVariantOne &&
+        !userInfo.signedUpWithVariantOne
+          .isProfileImageCustomizationModalShown) ||
+      !userInfo.signedUpWithVariantOne.isUsernameCustomizationModalShown
+    ) {
+      console.log("We are here right now !");
+      setTabIndex(0);
+      setshowPickProfilePictureModal(true);
+      setshowModalForProfilePictureOrUsernameOrBoth(true);
+    } else if (
+      userInfo.signedUpWithGoogle.isSignedUpWithGoogle &&
+      !userInfo.signedUpWithGoogle.isUsernameCustomizationModalShown
+    ) {
+      setTabIndex(1);
+      setshowWhatShouldWeCallYouModal(true);
+      setshowModalForProfilePictureOrUsernameOrBoth(true);
+      console.log(
+        "User created account by using google show What should we call you modal for editing username !!"
+      );
+    } else {
+      console.log(
+        "User is already signed up with google or variant one and did or did not change profile picture or username !"
+      );
+    }
+  }, []);
+
+  // create account variant 1 flow finish to check
+
   const [posts, setPosts] = useState([]);
   const [postId, setpostId] = useState("");
   const [error, setError] = useState("");
@@ -110,6 +178,7 @@ function MainPage() {
   const maxCharacters = 140;
   const [isLoading, setIsLoading] = useState(false);
   const [shouldHide, setshouldHide] = useState(true);
+  const { height, width } = useWindowDimensions();
 
   const [image, setImage] = useState("");
   //handle and convert it in base 64
@@ -171,7 +240,6 @@ function MainPage() {
 
   // socket io 4 client start to check
   useEffect(() => {
-    console.log("Welcome to the main page !");
     setshouldHide(true);
     handleShowPostsHomePage();
     socket.on("socket_id_for_user", (socketId) => {
@@ -636,21 +704,6 @@ function MainPage() {
     };
   }, []);
 
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/get-most-followed-3-user`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        setFirst3User(response.data.first3User);
-      })
-      .catch((error) => {
-        console.log("Error =>", error);
-      });
-  }, []);
-
   // start to check right side search bar progress
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredSearchResult, setFilteredSearchResult] = useState([]);
@@ -680,9 +733,6 @@ function MainPage() {
           );
         });
 
-        console.log("Term", term);
-        console.log("Filtered users =>", filteredUsers);
-
         setFilteredSearchResult(filteredUsers);
       })
       .catch((error) => {
@@ -690,12 +740,686 @@ function MainPage() {
       });
   }, [searchTerm]);
 
-  console.log("Search term =>", searchTerm);
   // finish to check right side search bar progress
 
+  const [completedProfileImage, setcompletedProfileImage] = useState(false);
+
+  const [profileImage, setprofileImage] = useState("");
+  const changeProfileImage = () => {
+    axios
+      .post(
+        `${API_URL}/profile/add-profile-image`,
+        { profileImage },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log("Response =>", response);
+        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+
+        userInfo.imageUrl = response.data.imageInfo.url;
+
+        const updatedUserInfo = userInfo;
+        localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
+        setcompletedProfileImage(true);
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleChangeProfileImage = (e) => {
+    const file = e.target.files[0];
+    handleChangeProfileImageSetFileToBase(file);
+  };
+
+  const handleChangeProfileImageSetFileToBase = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setprofileImage(reader.result);
+    };
+  };
+
+  useEffect(() => {
+    changeProfileImage();
+  }, [profileImage, completedProfileImage]);
+
+  const [username, setUsername] = useState("");
+  const [usernameValidated, setusernameValidated] = useState(false);
+  const [usernameDuplicateError, setusernameDuplicateError] = useState("");
+
+  const [skipButtonActive, setskipButtonActive] = useState(true);
+  const [nextButtonActive, setnextButtonActive] = useState(false);
+
+  const [nextButtonDisabled, setnextButtonDisabled] = useState(false);
+  const checkUsernameDuplicate = () => {
+    console.log("tessst inside fonksiyon");
+    if (username.length >= 4 || username.length <= 15) {
+      setnextButtonActive(true);
+      setskipButtonActive(false);
+      console.log("tessst inside fonksiyon 2");
+    } else {
+      setnextButtonActive(true);
+      setskipButtonActive(false);
+      console.log("tessst inside fonksiyon 3");
+    }
+
+    axios
+      .post(
+        `${API_URL}/auth/username-check`,
+        { username },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log("tessst inside fonksiyon 4 then block");
+
+        console.log("Response =>", response);
+        if (response.status === 200) {
+          setusernameValidated(true);
+          setnextButtonActive(true);
+          setusernameDuplicateError("");
+          console.log("Hello world !");
+        } else {
+          console.log("Hello world hahahahaha ! ");
+        }
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+        if (error.response.data.errorMessage && username.length) {
+          console.log("Something went wrong during the process !");
+          setnextButtonDisabled(true);
+          setnextButtonActive(false);
+          setusernameValidated(false);
+          setusernameDuplicateError(error.response.data.errorMessage);
+        } else {
+          setskipButtonActive(true);
+          setnextButtonDisabled(false);
+          setnextButtonActive(false);
+          setusernameValidated(false);
+          setusernameDuplicateError("");
+        }
+      });
+  };
+
+  useEffect(() => {
+    checkUsernameDuplicate();
+  }, [username]);
+
+  const changeUsername = () => {
+    axios
+      .post(
+        `${API_URL}/auth/change-username`,
+        { username, userId: userInfo._id },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log("Response from server =>", response);
+        localStorage.setItem("userInfo", JSON.stringify(response.data.user));
+        setTabLoading(true);
+        window.location.reload();
+        setTimeout(() => {
+          setTabLoading(false);
+          setshowPickProfilePictureModal(false);
+          setshowWhatShouldWeCallYouModal(false);
+          setshowModalForProfilePictureOrUsernameOrBoth(false);
+        }, 300);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  };
+
+  const closeModals = () => {
+    axios
+      .post(`${API_URL}/auth/change-modal-status-modal-2`, {
+        userId: userInfo._id,
+      })
+      .then((response) => {
+        localStorage.setItem("userInfo", JSON.stringify(response.data.user));
+        setTabLoading(true);
+        setTimeout(() => {
+          setTabLoading(false);
+          setshowPickProfilePictureModal(false);
+          setshowWhatShouldWeCallYouModal(false);
+          setshowModalForProfilePictureOrUsernameOrBoth(false);
+        }, 300);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  };
+
+  console.log("Username =>", username);
+  console.log("Username validated =>", usernameValidated);
+
+  const changeModalStatusVariantOne = () => {
+    axios
+      .post(`${API_URL}/auth/change-modal-status`, {
+        userId: userInfo._id,
+      })
+      .then((response) => {
+        localStorage.setItem("userInfo", JSON.stringify(response.data.user));
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  };
   return (
     <>
       {contextHolder}
+      {width <= 700 ? (
+        <>
+          <Modal
+            style={{
+              height: "100%",
+              overflowY: "scroll",
+            }}
+            dialogClassName={"modal-fullscreen"}
+            show={showModalForProfilePictureOrUsernameOrBoth}
+            centered={true}
+          >
+            {/* start to check */}
+            {tabIndex === 0 ? (
+              <>
+                {tabLoading ? (
+                  <Modal.Body className="signin-modal-body-child-non-reactivate">
+                    <LoadingSpinner
+                      strokeColor={"rgb(29, 155, 240)"}
+                    ></LoadingSpinner>
+                  </Modal.Body>
+                ) : (
+                  <Modal.Body className="signin-modal-body-child-non-reactivate create-account-first-tab">
+                    <div
+                      className="mt-5"
+                      style={{
+                        width: "536px",
+                        lineHeight: "28px",
+                        fontWeight: "700",
+                        fontSize: "26px",
+                        letterSpacing: "0.5px",
+                      }}
+                    >
+                      Pick a profile picture
+                    </div>
+                    <div
+                      style={{
+                        width: "536px",
+                        lineHeight: "20px",
+                        fontWeight: "400",
+                        fontSize: "15px",
+                        color: "#536471",
+                      }}
+                      className="mt-2"
+                    >
+                      Have a favorite selfie? Upload it now.
+                    </div>
+                    {userInfo.imageUrl.slice(0, 3) !== "../" ? (
+                      <>
+                        <div
+                          style={{
+                            marginTop: "10rem",
+                          }}
+                        >
+                          <img
+                            style={{
+                              cursor: "pointer",
+                              borderRadius: "50%",
+                            }}
+                            src={userInfo.imageUrl}
+                            alt=""
+                            onClick={() =>
+                              document
+                                .getElementById("formuploadModal-profile-image")
+                                .click()
+                            }
+                          />
+                          <input
+                            onChange={handleChangeProfileImage}
+                            type="file"
+                            id="formuploadModal-profile-image"
+                            name="profileImage"
+                            className="form-control"
+                            style={{ display: "none" }}
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <div
+                        style={{
+                          marginTop: "10rem",
+                        }}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="133"
+                          height="133"
+                          fill="rgb(83, 100, 113)"
+                          className="bi bi-person-circle"
+                          viewBox="0 0 16 16"
+                          style={{ cursor: "pointer", borderRadius: "50%" }}
+                          onClick={() =>
+                            document
+                              .getElementById("formuploadModal-profile-image")
+                              .click()
+                          }
+                        >
+                          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                          <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                        </svg>
+                        <input
+                          onChange={handleChangeProfileImage}
+                          type="file"
+                          id="formuploadModal-profile-image"
+                          name="profileImage"
+                          className="form-control"
+                          style={{ display: "none" }}
+                        />
+                      </div>
+                    )}
+                    <Button
+                      style={{
+                        position: "absolute",
+                        bottom: "20px",
+                        width: "536px",
+                        height: "52px",
+                        backgroundColor:
+                          userInfo.imageUrl.slice(0, 3) !== "../"
+                            ? "#0f141a"
+                            : "transparent",
+                        color:
+                          userInfo.imageUrl.slice(0, 3) !== "../"
+                            ? "white"
+                            : "black",
+                        border: "1px solid rgba(0,0,0,0.1)",
+                      }}
+                      className={
+                        userInfo.imageUrl.slice(0, 3) !== "../"
+                          ? `next-btn`
+                          : "next-btn-skip-for-now"
+                      }
+                      onClick={() => {
+                        setTabLoading(true);
+                        setTimeout(() => {
+                          setTabLoading(false);
+                          setTabIndex(tabIndex + 1);
+                          changeModalStatusVariantOne();
+                        }, 300);
+                      }}
+                    >
+                      {userInfo.imageUrl.slice(0, 3) !== "../"
+                        ? "Next"
+                        : "Skip for now"}
+                    </Button>
+                  </Modal.Body>
+                )}
+              </>
+            ) : tabIndex === 1 ? (
+              <>
+                {tabLoading ? (
+                  <Modal.Body className="signin-modal-body-child-non-reactivate">
+                    <LoadingSpinner
+                      strokeColor={"rgb(29, 155, 240)"}
+                    ></LoadingSpinner>
+                  </Modal.Body>
+                ) : (
+                  <Modal.Body className="signin-modal-body-child-non-reactivate">
+                    <div
+                      className="mt-5"
+                      style={{
+                        width: "536px",
+                        lineHeight: "28px",
+                        fontWeight: "700",
+                        fontSize: "26px",
+                        letterSpacing: "0.5px",
+                      }}
+                    >
+                      What should we call you?
+                    </div>
+                    <div
+                      style={{
+                        width: "536px",
+                        lineHeight: "20px",
+                        fontWeight: "400",
+                        fontSize: "15px",
+                        color: "#536471",
+                      }}
+                      className="mt-2"
+                    >
+                      Your @username is unique. You can always change it later.
+                    </div>
+                    <TextField
+                      error={usernameDuplicateError ? "true" : ""}
+                      className="mt-5"
+                      type="text"
+                      id="outlined-basic"
+                      variant={"outlined"}
+                      label={`Username`}
+                      style={{
+                        width: "536px",
+                        height: "58px",
+                      }}
+                      onChange={(e) => {
+                        setUsername(e.target.value);
+                      }}
+                    />{" "}
+                    <span
+                      style={{
+                        width: "536px",
+
+                        color: "#f4222d",
+                        fontSize: "13px",
+                        fontWeight: "400",
+                        lineHeight: "20px",
+                        position: "relative",
+                        left: "10px",
+                      }}
+                    >
+                      {usernameDuplicateError}
+                    </span>
+                    <Button
+                      style={{
+                        position: "absolute",
+                        bottom: "20px",
+                        width: "440px",
+                        height: "52px",
+                        backgroundColor: skipButtonActive
+                          ? "transparent "
+                          : "#0f141a",
+                        color: skipButtonActive ? "black" : "white",
+                        border: "1px solid rgba(0,0,0,0.1)",
+                        opacity:
+                          skipButtonActive ||
+                          (nextButtonActive && usernameValidated)
+                            ? "1"
+                            : "0.5",
+                      }}
+                      className={
+                        nextButtonActive
+                          ? `next-btn`
+                          : nextButtonDisabled
+                          ? "next-btn"
+                          : "next-btn-skip-for-now"
+                      }
+                      onClick={
+                        usernameValidated
+                          ? () => {
+                              changeUsername();
+                            }
+                          : () => closeModals()
+                      }
+                    >
+                      {!skipButtonActive ? "Next" : "Skip for now"}
+                    </Button>
+                  </Modal.Body>
+                )}
+              </>
+            ) : (
+              <></>
+            )}
+            {/* finish to check  */}
+          </Modal>
+        </>
+      ) : (
+        <>
+          <Modal
+            className={"signin-modal-parent-non-reactivate"}
+            show={showModalForProfilePictureOrUsernameOrBoth}
+            centered={true}
+          >
+            {/* start to check  */}
+            {tabIndex === 0 ? (
+              <>
+                {tabLoading ? (
+                  <Modal.Body className="signin-modal-body-child-non-reactivate">
+                    <LoadingSpinner
+                      strokeColor={"rgb(29, 155, 240)"}
+                    ></LoadingSpinner>
+                  </Modal.Body>
+                ) : (
+                  <Modal.Body className="signin-modal-body-child-non-reactivate create-account-first-tab">
+                    <div
+                      className="mt-5"
+                      style={{
+                        width: "440px",
+                        lineHeight: "36px",
+                        fontWeight: "700",
+                        fontSize: "31px",
+                      }}
+                    >
+                      Pick a profile picture
+                    </div>
+                    <div
+                      style={{
+                        width: "440px",
+                        lineHeight: "20px",
+                        fontWeight: "400",
+                        fontSize: "15px",
+                        color: "#536471",
+                      }}
+                      className="mt-2"
+                    >
+                      Have a favorite selfie? Upload it now.
+                    </div>
+                    {userInfo.imageUrl.slice(0, 3) !== "../" ? (
+                      <>
+                        <div
+                          style={{
+                            marginTop: "10rem",
+                          }}
+                        >
+                          <img
+                            style={{
+                              cursor: "pointer",
+                              borderRadius: "50%",
+                            }}
+                            src={userInfo.imageUrl}
+                            alt=""
+                            onClick={() =>
+                              document
+                                .getElementById("formuploadModal-profile-image")
+                                .click()
+                            }
+                          />
+                          <input
+                            onChange={handleChangeProfileImage}
+                            type="file"
+                            id="formuploadModal-profile-image"
+                            name="profileImage"
+                            className="form-control"
+                            style={{ display: "none" }}
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <div
+                        style={{
+                          marginTop: "10rem",
+                        }}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="133"
+                          height="133"
+                          fill="rgb(83, 100, 113)"
+                          className="bi bi-person-circle"
+                          viewBox="0 0 16 16"
+                          style={{ cursor: "pointer", borderRadius: "50%" }}
+                          onClick={() =>
+                            document
+                              .getElementById("formuploadModal-profile-image")
+                              .click()
+                          }
+                        >
+                          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                          <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                        </svg>
+                        <input
+                          onChange={handleChangeProfileImage}
+                          type="file"
+                          id="formuploadModal-profile-image"
+                          name="profileImage"
+                          className="form-control"
+                          style={{ display: "none" }}
+                        />
+                      </div>
+                    )}
+                    <Button
+                      style={{
+                        position: "absolute",
+                        bottom: "20px",
+                        width: "440px",
+                        height: "52px",
+                        backgroundColor:
+                          userInfo.imageUrl.slice(0, 3) !== "../"
+                            ? "#0f141a"
+                            : "transparent",
+                        color:
+                          userInfo.imageUrl.slice(0, 3) !== "../"
+                            ? "white"
+                            : "black",
+                        border: "1px solid rgba(0,0,0,0.1)",
+                      }}
+                      className={
+                        userInfo.imageUrl.slice(0, 3) !== "../"
+                          ? `next-btn`
+                          : "next-btn-skip-for-now"
+                      }
+                      onClick={() => {
+                        setTabLoading(true);
+                        setTimeout(() => {
+                          setTabLoading(false);
+                          setTabIndex(tabIndex + 1);
+                          changeModalStatusVariantOne();
+                        }, 300);
+                      }}
+                    >
+                      {userInfo.imageUrl.slice(0, 3) !== "../"
+                        ? "Next"
+                        : "Skip for now"}
+                    </Button>
+                  </Modal.Body>
+                )}
+              </>
+            ) : tabIndex === 1 ? (
+              <>
+                {" "}
+                {tabLoading ? (
+                  <Modal.Body className="signin-modal-body-child-non-reactivate">
+                    <LoadingSpinner
+                      strokeColor={"rgb(29, 155, 240)"}
+                    ></LoadingSpinner>
+                  </Modal.Body>
+                ) : (
+                  <Modal.Body className="signin-modal-body-child-non-reactivate">
+                    <div
+                      className="mt-5"
+                      style={{
+                        width: "440px",
+                        lineHeight: "36px",
+                        fontWeight: "700",
+                        fontSize: "31px",
+                      }}
+                    >
+                      What should we call you?
+                    </div>
+                    <div
+                      style={{
+                        width: "440px",
+                        lineHeight: "20px",
+                        fontWeight: "400",
+                        fontSize: "15px",
+                        color: "#536471",
+                      }}
+                      className="mt-2"
+                    >
+                      Your @username is unique. You can always change it later.
+                    </div>
+                    <TextField
+                      className="mt-5"
+                      error={usernameDuplicateError ? "true" : ""}
+                      autoFocus={true}
+                      type="text"
+                      id="outlined-basic"
+                      variant={"outlined"}
+                      label={`Username`}
+                      sx={{
+                        color: "yellow",
+                        border: "none",
+                      }}
+                      style={{
+                        width: "440px",
+                        height: "58px",
+                      }}
+                      onChange={(e) => setUsername(e.target.value)}
+                    />{" "}
+                    <span
+                      style={{
+                        width: "440px",
+
+                        color: "#f4222d",
+                        fontSize: "13px",
+                        fontWeight: "400",
+                        lineHeight: "20px",
+                        position: "relative",
+                        left: "10px",
+                      }}
+                    >
+                      {usernameDuplicateError}
+                    </span>
+                    <Button
+                      style={{
+                        position: "absolute",
+                        bottom: "20px",
+                        width: "440px",
+                        height: "52px",
+                        backgroundColor: skipButtonActive
+                          ? "transparent "
+                          : "#0f141a",
+                        color: skipButtonActive ? "black" : "white",
+                        border: "1px solid rgba(0,0,0,0.1)",
+                        opacity:
+                          skipButtonActive ||
+                          (nextButtonActive && usernameValidated)
+                            ? "1"
+                            : "0.5",
+                      }}
+                      className={
+                        nextButtonActive
+                          ? `next-btn`
+                          : nextButtonDisabled
+                          ? "next-btn"
+                          : "next-btn-skip-for-now"
+                      }
+                      onClick={
+                        usernameValidated
+                          ? () => {
+                              changeUsername();
+                            }
+                          : () => closeModals()
+                      }
+                    >
+                      {!skipButtonActive ? "Next" : "Skip for now"}
+                    </Button>
+                  </Modal.Body>
+                )}
+              </>
+            ) : null}
+          </Modal>
+        </>
+      )}
       <ToastContainer />
       <ResponsiveNavigationBarBottom
         refreshPosts={() => handleShowPostsHomePage()}
@@ -703,7 +1427,6 @@ function MainPage() {
         setLoadingFalse={() => setLoadingFalse()}
       />
       <ResponsiveNavigationBarTop />
-
       <Container
         style={{
           overflowX: "hidden",
@@ -2002,6 +2725,9 @@ function MainPage() {
                                           fill="rgb(83, 100, 113)"
                                           className="bi bi-person-circle"
                                           viewBox="0 0 16 16"
+                                          style={{
+                                            borderRadius: "50%",
+                                          }}
                                         >
                                           <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
                                           <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
@@ -2571,7 +3297,6 @@ function MainPage() {
             searchTerm={searchTerm}
             setSearchTerm={setSearchTermEmpty}
             filteredSearchResult={filteredSearchResult}
-            first3User={first3User}
           />
         </Row>
       </Container>

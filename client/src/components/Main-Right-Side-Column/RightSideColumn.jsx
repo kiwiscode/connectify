@@ -10,7 +10,6 @@ const API_URL = "http://localhost:3000";
 // when working on deployment version
 // ?
 function RightSideColumn({
-  first3User,
   handleSetSearchTerm,
   searchTerm,
   setSearchTerm,
@@ -30,8 +29,22 @@ function RightSideColumn({
   const onFocusInActive = () => {
     setOnFocus(false);
   };
+  const [first3User, setFirst3User] = useState([]);
 
-  console.log("Search term =>", searchTerm);
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/get-most-followed-3-user`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        setFirst3User(response.data.first3User);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  }, []);
 
   useEffect(() => {
     const getClickedLocation = (e) => {
@@ -161,7 +174,6 @@ function RightSideColumn({
     setSelectedUser(selectedUser);
     setshowUnfollowModal(true);
   };
-  console.log("filtered search result =>", filteredSearchResult);
 
   const [isHoveredListItem, setIsHoveredListItem] = useState("");
   return (

@@ -37,6 +37,9 @@ function SignUpPage() {
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
 
+  const [signedUpWithGoogle, setsignedUpWithGoogle] = useState(false);
+  const [signedUpWithVariantOne, setsignedUpWithVariantOne] = useState(false);
+
   const catchErrorMessage = (message) => {
     messageApi.success({
       type: "success",
@@ -100,6 +103,7 @@ function SignUpPage() {
 
   const [showYearPicker, setshowYearPicker] = useState(false);
   const [selectedYear, setselectedYear] = useState(new Date().getFullYear());
+  const [displayedYear, setdisplayedYear] = useState("");
 
   const [styleOfBoxMonth, setStyleOfBoxMonth] = useState(false);
   const [styleOfBoxDay, setStyleOfBoxDay] = useState(false);
@@ -190,9 +194,13 @@ function SignUpPage() {
     setStyleOfBoxYear(true);
   };
 
-  const handleYearSelect = (day) => {
+  const [yearSelectedShow, setYearSelectedShow] = useState(false);
+
+  const handleYearSelect = (year) => {
     setTimeout(() => {
-      setselectedYear(day);
+      setselectedYear(year);
+      setdisplayedYear(year);
+      setYearSelectedShow(true);
       setshowYearPicker(false);
       setStyleOfBoxYear(false);
     }, 300);
@@ -530,6 +538,22 @@ function SignUpPage() {
   const [passwordError, setpasswordError] = useState(false);
   const [passwordIsValid, setpasswordIsValid] = useState(false);
 
+  const passwordRegex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
+
+  useEffect(() => {
+    if (passwordRegex.test(password) && password.length) {
+      setpasswordIsValid(true);
+    } else if (password.length && !passwordRegex.test(password)) {
+      setpasswordIsValid(false);
+      setError(
+        "Password needs to have at least 8 chars and must contain at least one number, one lowercase and one uppercase letter."
+      );
+    }
+  }, [password]);
+
+  console.log("Password.length =>", password.length);
+  console.log("Password is valid ? =>", passwordIsValid);
+
   const signedUserInfo = {
     fullname,
     email,
@@ -543,21 +567,24 @@ function SignUpPage() {
   const handleLogin = () => {
     axios
       .post(`${API_URL}/auth/login`, {
-        authentication: email,
+        authentication: signedUserInfo,
         password,
       })
       .then((response) => {
         const { token, user } = response.data;
 
+        console.log("Response data =>", response.data);
+        if (signedUpWithGoogle) {
+          console.log("Signed up with google !");
+        } else if (signedUpWithVariantOne) {
+          ("Signed up with variant one !");
+        }
+
         localStorage.setItem("userInfo", JSON.stringify(user));
         localStorage.setItem("token", token);
         updateUser(user);
         console.log("Response after log in =>", response);
-        setTabLoading(true);
-        setTimeout(() => {
-          setTabLoading(false);
-          navigate("/home");
-        }, 500);
+        navigate("/home");
       })
       .catch((error) => {
         console.log("Error =>", error);
@@ -574,16 +601,14 @@ function SignUpPage() {
         setTimeout(() => {
           setTabLoading(false);
           handleLogin();
-        }, 300);
+        }, 500);
       })
       .catch((err) => {
         console.log("Error =>", err);
         const { status } = err.response;
-        const { errorMessage } = err.response.data;
 
         if (status === 402) {
           setpasswordError(true);
-          setError(errorMessage);
           setSuccess("");
           setpasswordIsValid(false);
         }
@@ -903,13 +928,14 @@ function SignUpPage() {
                     >
                       <div
                         style={{
+                          width: "536px",
                           fontSize: "13px",
                           lineHeight: "16px",
                           fontWeight: "400",
                           color: "#f7555f",
                         }}
                       >
-                        {error ? error + "." : null}
+                        {error ? error : null}
                       </div>
                       <div
                         style={{
@@ -1133,7 +1159,7 @@ function SignUpPage() {
                                   color: "black",
                                 }}
                               >
-                                {selectedYear}
+                                {displayedYear}
                               </div>
                             </div>
                             <div
@@ -1173,12 +1199,20 @@ function SignUpPage() {
                         opacity:
                           checkFields.nameInput &&
                           checkFields.emailInput &&
-                          checkFields.dateofbirthInput
+                          checkFields.dateofbirthInput &&
+                          displayedYear &&
+                          email &&
+                          fullname
                             ? "1"
                             : "0.5",
                       }}
                       onClick={
-                        informationsAreCorrect
+                        informationsAreCorrect &&
+                        selectedMonth &&
+                        selectedDay &&
+                        displayedYear &&
+                        email &&
+                        fullname
                           ? () => {
                               setTabLoading(true);
                               setTimeout(() => {
@@ -1369,7 +1403,7 @@ function SignUpPage() {
                                   ? "none"
                                   : "2px solid #536471",
 
-                                borderWidth: "1px ",
+                                borderWidth: "2px ",
                                 width: "20px",
                                 height: "20px",
                                 position: "relative",
@@ -1462,7 +1496,7 @@ function SignUpPage() {
                                   ? "none"
                                   : "2px solid #536471",
 
-                                borderWidth: "1px ",
+                                borderWidth: "2px ",
                                 width: "20px",
                                 height: "20px",
                                 position: "relative",
@@ -1724,7 +1758,6 @@ function SignUpPage() {
                         Make sure it’s 8 characters or more.
                       </div>
                     </div>
-
                     <FormControl
                       sx={{ m: 1, width: "536px", height: "58px" }}
                       variant="outlined"
@@ -1732,7 +1765,10 @@ function SignUpPage() {
                       <InputLabel htmlFor="outlined-adornment-password">
                         <span
                           style={{
-                            color: passwordError ? "rgb(244, 33, 46)" : "",
+                            color:
+                              password.length && !passwordIsValid
+                                ? "rgb(244, 33, 46)"
+                                : "",
                           }}
                         >
                           Password
@@ -1740,7 +1776,9 @@ function SignUpPage() {
                       </InputLabel>
                       <OutlinedInput
                         onChange={(e) => setPassword(e.target.value)}
-                        error={passwordError ? true : false}
+                        error={
+                          password.length && !passwordIsValid ? true : false
+                        }
                         id="outlined-adornment-password"
                         type={showPassword ? "text" : "password"}
                         endAdornment={
@@ -1792,7 +1830,7 @@ function SignUpPage() {
                     <div
                       style={{
                         width: "536px",
-                        color: "rgb(244, 33, 46)                    ",
+                        color: "rgb(244, 33, 46)",
                         fontSize: "13px",
                         fontWeight: "400",
                         lineHeight: "16px",
@@ -1800,7 +1838,7 @@ function SignUpPage() {
                         left: "10px",
                       }}
                     >
-                      {error}
+                      {password.length && !passwordIsValid ? error : ""}
                     </div>
                     <div
                       style={{
@@ -1832,6 +1870,7 @@ function SignUpPage() {
                         Learn more
                       </span>
                     </div>
+                    {/* password.length && !passwordIsValid */}
                     <Button
                       style={{
                         position: "absolute",
@@ -1839,11 +1878,14 @@ function SignUpPage() {
                         width: "544px",
                         height: "52px",
                         backgroundColor: "#0f141a",
-                        opacity: password.length >= 8 ? "1" : "0.5",
+                        opacity:
+                          password.length >= 8 && passwordIsValid ? "1" : "0.5",
                       }}
-                      onClick={() => {
-                        handleSignUp();
-                      }}
+                      onClick={
+                        password.length >= 8 && passwordIsValid
+                          ? handleSignUp
+                          : null
+                      }
                       className="next-btn"
                     >
                       Next
@@ -1870,42 +1912,79 @@ function SignUpPage() {
                 border: "none",
               }}
             >
-              {tabIndex !== 0 && tabIndex !== 3 ? (
-                <div onClick={() => setTabIndex(tabIndex - 1)}>Test</div>
-              ) : (
-                <div
-                  onClick={handleCloseCreateAccountModal}
-                  className="close-button"
-                  style={{
-                    borderRadius: "50%",
-                    cursor: "pointer",
-                  }}
-                >
-                  <div>
-                    {/* close signin modal icon start to check  */}
-                    <svg
-                      style={{
-                        border: "none",
-                        fontSize: "15px",
-                        margin: "5px",
-                      }}
-                      onClick={handleCloseCreateAccountModal}
-                      width={20}
-                      height={20}
-                      color="rgb(15,20,25)"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                    >
-                      <g>
-                        <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
-                      </g>
-                    </svg>{" "}
-                    {/* close signin modal icon finish to check  */}
-                  </div>
-                </div>
-              )}
+              <>
+                {tabIndex !== 3 ? (
+                  <>
+                    {tabIndex !== 0 && tabIndex !== 3 ? (
+                      <div onClick={() => setTabIndex(tabIndex - 1)}>
+                        {" "}
+                        <div
+                          className="p-2 arrow"
+                          style={{
+                            position: "relative",
+                            width: "34px",
+                            height: " 34px",
+                            borderRadius: "50%",
+                            cursor: "pointer",
+                          }}
+                        >
+                          <svg
+                            style={{
+                              position: "absolute",
+                              bottom: "7px",
+                              border: "none",
+                              left: "7px",
+                              fontSize: "15px",
+                            }}
+                            width={20}
+                            height={20}
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                          >
+                            <g>
+                              <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                            </g>
+                          </svg>
+                        </div>
+                      </div>
+                    ) : (
+                      <div
+                        onClick={handleCloseCreateAccountModal}
+                        className="close-button"
+                        style={{
+                          borderRadius: "50%",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <div>
+                          {/* close signin modal icon start to check  */}
+                          <svg
+                            style={{
+                              border: "none",
+                              fontSize: "15px",
+                              margin: "5px",
+                            }}
+                            onClick={handleCloseCreateAccountModal}
+                            width={20}
+                            height={20}
+                            color="rgb(15,20,25)"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                          >
+                            <g>
+                              <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                            </g>
+                          </svg>{" "}
+                          {/* close signin modal icon finish to check  */}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : null}
+              </>
               <div
                 style={{
                   position: "absolute",
@@ -2108,13 +2187,14 @@ function SignUpPage() {
                     >
                       <div
                         style={{
+                          width: "440px",
                           fontSize: "13px",
                           lineHeight: "16px",
                           fontWeight: "400",
                           color: "#f7555f",
                         }}
                       >
-                        {error ? error + "." : null}
+                        {error ? error : null}
                       </div>
                       <div
                         style={{
@@ -2338,7 +2418,7 @@ function SignUpPage() {
                                   color: "black",
                                 }}
                               >
-                                {selectedYear}
+                                {displayedYear}
                               </div>
                             </div>
                             <div
@@ -2371,22 +2451,29 @@ function SignUpPage() {
                     <Button
                       style={{
                         position: "absolute",
-                        bottom: "30px",
+                        bottom: "20px",
                         width: "440px",
                         height: "52px",
                         backgroundColor: "#0f141a",
                         opacity:
                           checkFields.nameInput &&
                           checkFields.emailInput &&
-                          checkFields.dateofbirthInput
+                          checkFields.dateofbirthInput &&
+                          displayedYear &&
+                          email &&
+                          fullname
                             ? "1"
                             : "0.5",
                       }}
                       onClick={
-                        informationsAreCorrect
+                        informationsAreCorrect &&
+                        selectedMonth &&
+                        selectedDay &&
+                        displayedYear &&
+                        email &&
+                        fullname
                           ? () => {
                               setTabLoading(true);
-
                               setTimeout(() => {
                                 setTabLoading(false);
                                 setTabIndex(tabIndex + 1);
@@ -2573,7 +2660,7 @@ function SignUpPage() {
                                   ? "none"
                                   : "2px solid #536471",
 
-                                borderWidth: "1px ",
+                                borderWidth: "2px ",
                                 width: "20px",
                                 height: "20px",
                                 position: "relative",
@@ -2666,7 +2753,7 @@ function SignUpPage() {
                                   ? "none"
                                   : "2px solid #536471",
 
-                                borderWidth: "1px ",
+                                borderWidth: "2px ",
                                 width: "20px",
                                 height: "20px",
                                 position: "relative",
@@ -2935,7 +3022,10 @@ function SignUpPage() {
                       <InputLabel htmlFor="outlined-adornment-password">
                         <span
                           style={{
-                            color: passwordError ? "rgb(244, 33, 46)" : "",
+                            color:
+                              password.length && !passwordIsValid
+                                ? "rgb(244, 33, 46)"
+                                : "",
                           }}
                         >
                           Password
@@ -2943,7 +3033,9 @@ function SignUpPage() {
                       </InputLabel>
                       <OutlinedInput
                         onChange={(e) => setPassword(e.target.value)}
-                        error={passwordError ? true : false}
+                        error={
+                          password.length && !passwordIsValid ? true : false
+                        }
                         id="outlined-adornment-password"
                         type={showPassword ? "text" : "password"}
                         endAdornment={
@@ -2995,7 +3087,7 @@ function SignUpPage() {
                     <div
                       style={{
                         width: "440px",
-                        color: "rgb(244, 33, 46)                    ",
+                        color: "rgb(244, 33, 46)",
                         fontSize: "13px",
                         fontWeight: "400",
                         lineHeight: "16px",
@@ -3003,7 +3095,7 @@ function SignUpPage() {
                         left: "10px",
                       }}
                     >
-                      {error}
+                      {password.length && !passwordIsValid ? error : ""}
                     </div>
                     <div
                       style={{
@@ -3042,11 +3134,14 @@ function SignUpPage() {
                         width: "440px",
                         height: "52px",
                         backgroundColor: "#0f141a",
-                        opacity: password.length >= 8 ? "1" : "0.5",
+                        opacity:
+                          password.length >= 8 && passwordIsValid ? "1" : "0.5",
                       }}
-                      onClick={() => {
-                        handleSignUp();
-                      }}
+                      onClick={
+                        password.length >= 8 && passwordIsValid
+                          ? handleSignUp
+                          : null
+                      }
                       className="next-btn"
                     >
                       Next

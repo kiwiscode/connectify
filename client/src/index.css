@@ -2330,3 +2330,8 @@ span > a:hover {
   text-decoration: underline;
   text-decoration-color: rgb(29, 155, 240);
 }
+
+.next-btn-skip-for-now:hover {
+  background-color: #e7e7e8 !important;
+  transition-duration: 0.2s !important;
+}
