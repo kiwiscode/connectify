@@ -448,7 +448,7 @@ function LogoutModal() {
           className="logout-p logout-popover"
           onClick={handleLogout}
         >
-          Log out @{localeInfo.username}
+          Log out @{localeInfo?.username}
         </p>
       </div>
     </Popover>
@@ -680,7 +680,7 @@ function LogoutModal() {
         >
           <div className="p-2 profile-img-and-svg">
             {/* start to check */}
-            {userInfo?.imageUrl.slice(0, 3) !== "../" ? (
+            {userInfo?.imageUrl?.slice(0, 3) !== "../" ? (
               <div>
                 <img
                   className="profile-img logout-profile-img"
@@ -729,7 +729,7 @@ function LogoutModal() {
                   width: "120px",
                 }}
               >
-                {localeInfo.username}
+                {localeInfo?.username}
               </div>
               <div
                 className="localeInfo-username"
@@ -744,7 +744,7 @@ function LogoutModal() {
                   width: "120px",
                 }}
               >
-                @{localeInfo.username}
+                @{localeInfo?.username}
               </div>
             </div>
           </div>

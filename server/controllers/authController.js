@@ -154,7 +154,7 @@ const handleSignup = async (req, res, next) => {
         })
         .then((user) => {
           const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-            expiresIn: "24h",
+            expiresIn: "7d",
           });
           res.status(201).json({ token: token });
           console.log("THIS LINE IS WORKING 5");
@@ -239,7 +239,7 @@ const handleLogin = (req, res, next) => {
                   { userId: _id },
                   process.env.JWT_SECRET,
                   {
-                    expiresIn: "24h",
+                    expiresIn: "7d",
                   }
                 );
 
@@ -297,7 +297,7 @@ const handleLogin = (req, res, next) => {
                   { userId: _id },
                   process.env.JWT_SECRET,
                   {
-                    expiresIn: "24h",
+                    expiresIn: "7d",
                   }
                 );
 
@@ -451,7 +451,7 @@ const handleDeactivatedUserLoginBack = (req, res) => {
                   { userId: _id },
                   process.env.JWT_SECRET,
                   {
-                    expiresIn: "24h",
+                    expiresIn: "7d",
                   }
                 );
 
@@ -612,7 +612,7 @@ const handleChangeModalStatusVariantOneModal2 = (req, res) => {
   User.findById(userId)
     .then((user) => {
       user.signedUpWithVariantOne.isUsernameCustomizationModalShown = true;
-
+      user.signedUpWithGoogle.isUsernameCustomizationModalShown = true;
       user
         .save()
         .then(() => {
@@ -692,6 +692,7 @@ const handleUsernameChange = async (req, res) => {
     const { username, userId } = req.body;
 
     console.log("Username =>", username);
+    console.log("User id =>", userId);
     const user = await User.findById(userId);
 
     if (!user) {
@@ -699,8 +700,13 @@ const handleUsernameChange = async (req, res) => {
     }
 
     user.username = username;
-    user.signedUpWithVariantOne.isUsernameCustomized = true;
-    user.signedUpWithVariantOne.isUsernameCustomizationModalShown = true;
+    if (user.signedUpWithGoogle.isSignedUpWithGoogle) {
+      user.signedUpWithGoogle.isUsernameCustomizationModalShown = true;
+      user.signedUpWithGoogle.isUsernameCustomized = true;
+    } else {
+      user.signedUpWithVariantOne.isUsernameCustomized = true;
+      user.signedUpWithVariantOne.isUsernameCustomizationModalShown = true;
+    }
     await user.save();
 
     res.status(200).json({

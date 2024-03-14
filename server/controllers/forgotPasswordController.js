@@ -16,7 +16,8 @@ const handleGetForgotPasswordProcessUser = (req, res) => {
     "This user trying to find his/her password =>",
     findConnectifyAccount
   );
-
+  const emailRegex =
+    /^[a-zA-Z0-9._%+-]+@(gmail|outlook|hotmail|yahoo|proton|zoho|mail|aol|yandex)\.(com|org|net|gov|edu|mil|co|info|de|co.uk|ca|me|tr|com.tr)$/;
   User.find({
     $or: [
       { username: findConnectifyAccount },
@@ -30,7 +31,21 @@ const handleGetForgotPasswordProcessUser = (req, res) => {
       );
 
       if (userFromDB.length) {
-        res.status(201).json({ user: userFromDB[0] });
+        if (findConnectifyAccount.match(emailRegex)) {
+          res
+            .status(201)
+            .json({
+              user: userFromDB[0],
+              message: "The user entered an email address.",
+            });
+        } else {
+          res
+            .status(201)
+            .json({
+              user: userFromDB[0],
+              message: "The user entered an username.",
+            });
+        }
       } else {
         res.status(404).json({
           errorMessage: "Sorry, we could not find your account.        ",
@@ -346,7 +361,7 @@ const handleLoginAfterForgotPasswordProcess = (req, res) => {
               } = user;
 
               const token = jwt.sign({ userId: _id }, process.env.JWT_SECRET, {
-                expiresIn: "24h",
+                expiresIn: "7d",
               });
 
               console.log("Logged in user username =>", username);

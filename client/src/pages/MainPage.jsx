@@ -102,7 +102,7 @@ function MainPage() {
   // use effect to grab current mouse click location finish to check
 
   // create account variant 1 flow start to check
-  const { userInfo, getToken } = useContext(UserContext);
+  const { userInfo, getToken, updateUser } = useContext(UserContext);
   const [signedUpWithVariantOne, setsignedUpWithVariantOne] = useState(false);
   const [signedUpWithGoogle, setsignedUpWithGoogle] = useState(false);
   const [
@@ -115,6 +115,25 @@ function MainPage() {
     useState(false);
   const [tabIndex, setTabIndex] = useState(0);
   const [tabLoading, setTabLoading] = useState(false);
+
+  const [user, setUser] = useState(null);
+
+  const getUser = async () => {
+    try {
+      const url = `${API_URL}/auth/login-success`;
+      const { data } = await axios.get(url, { withCredentials: true });
+      updateUser(data.user);
+      setUser(data.user);
+      localStorage.setItem("userInfo", JSON.stringify(data.user));
+      localStorage.setItem("token", data.token);
+    } catch (err) {
+      console.log("Error =>", err);
+    }
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
 
   const [activeUser, setActiveUser] = useState([]);
   const refreshActiveUser = () => {
@@ -140,18 +159,18 @@ function MainPage() {
 
   useEffect(() => {
     if (
-      (userInfo.signedUpWithVariantOne.isSignedUpWithVariantOne &&
-        !userInfo.signedUpWithVariantOne
-          .isProfileImageCustomizationModalShown) ||
-      !userInfo.signedUpWithVariantOne.isUsernameCustomizationModalShown
+      userInfo?.signedUpWithVariantOne?.isSignedUpWithVariantOne &&
+      (!userInfo?.signedUpWithVariantOne
+        ?.isProfileImageCustomizationModalShown ||
+        !userInfo?.signedUpWithVariantOne?.isUsernameCustomizationModalShown)
     ) {
       console.log("We are here right now !");
       setTabIndex(0);
       setshowPickProfilePictureModal(true);
       setshowModalForProfilePictureOrUsernameOrBoth(true);
     } else if (
-      userInfo.signedUpWithGoogle.isSignedUpWithGoogle &&
-      !userInfo.signedUpWithGoogle.isUsernameCustomizationModalShown
+      userInfo?.signedUpWithGoogle?.isSignedUpWithGoogle &&
+      !userInfo?.signedUpWithGoogle?.isUsernameCustomizationModalShown
     ) {
       setTabIndex(1);
       setshowWhatShouldWeCallYouModal(true);
@@ -869,7 +888,6 @@ function MainPage() {
         console.log("Response from server =>", response);
         localStorage.setItem("userInfo", JSON.stringify(response.data.user));
         setTabLoading(true);
-        window.location.reload();
         setTimeout(() => {
           setTabLoading(false);
           setshowPickProfilePictureModal(false);
@@ -941,11 +959,16 @@ function MainPage() {
                     ></LoadingSpinner>
                   </Modal.Body>
                 ) : (
-                  <Modal.Body className="signin-modal-body-child-non-reactivate create-account-first-tab">
+                  <Modal.Body
+                    style={{
+                      overflowY: "auto",
+                    }}
+                    className="signin-modal-body-child-non-reactivate create-account-first-tab"
+                  >
                     <div
                       className="mt-5"
                       style={{
-                        width: "536px",
+                        width: "81.5%",
                         lineHeight: "28px",
                         fontWeight: "700",
                         fontSize: "26px",
@@ -956,7 +979,7 @@ function MainPage() {
                     </div>
                     <div
                       style={{
-                        width: "536px",
+                        width: "81.5%",
                         lineHeight: "20px",
                         fontWeight: "400",
                         fontSize: "15px",
@@ -1032,8 +1055,8 @@ function MainPage() {
                     <Button
                       style={{
                         position: "absolute",
-                        bottom: "20px",
-                        width: "536px",
+                        bottom: "150px",
+                        width: "81.5%",
                         height: "52px",
                         backgroundColor:
                           userInfo.imageUrl.slice(0, 3) !== "../"
@@ -1075,11 +1098,16 @@ function MainPage() {
                     ></LoadingSpinner>
                   </Modal.Body>
                 ) : (
-                  <Modal.Body className="signin-modal-body-child-non-reactivate">
+                  <Modal.Body
+                    style={{
+                      overflowX: "hidden",
+                    }}
+                    className="signin-modal-body-child-non-reactivate"
+                  >
                     <div
                       className="mt-5"
                       style={{
-                        width: "536px",
+                        width: "81.5%",
                         lineHeight: "28px",
                         fontWeight: "700",
                         fontSize: "26px",
@@ -1090,7 +1118,7 @@ function MainPage() {
                     </div>
                     <div
                       style={{
-                        width: "536px",
+                        width: "81.5%",
                         lineHeight: "20px",
                         fontWeight: "400",
                         fontSize: "15px",
@@ -1108,7 +1136,7 @@ function MainPage() {
                       variant={"outlined"}
                       label={`Username`}
                       style={{
-                        width: "536px",
+                        width: "81.5%",
                         height: "58px",
                       }}
                       onChange={(e) => {
@@ -1117,7 +1145,7 @@ function MainPage() {
                     />{" "}
                     <span
                       style={{
-                        width: "536px",
+                        width: "81.5%",
 
                         color: "#f4222d",
                         fontSize: "13px",
@@ -1132,8 +1160,8 @@ function MainPage() {
                     <Button
                       style={{
                         position: "absolute",
-                        bottom: "20px",
-                        width: "440px",
+                        bottom: "150px",
+                        width: "81.5%",
                         height: "52px",
                         backgroundColor: skipButtonActive
                           ? "transparent "
@@ -1193,7 +1221,7 @@ function MainPage() {
                     <div
                       className="mt-5"
                       style={{
-                        width: "440px",
+                        width: "81.5%",
                         lineHeight: "36px",
                         fontWeight: "700",
                         fontSize: "31px",
@@ -1203,7 +1231,7 @@ function MainPage() {
                     </div>
                     <div
                       style={{
-                        width: "440px",
+                        width: "81.5%",
                         lineHeight: "20px",
                         fontWeight: "400",
                         fontSize: "15px",
@@ -1213,7 +1241,7 @@ function MainPage() {
                     >
                       Have a favorite selfie? Upload it now.
                     </div>
-                    {userInfo.imageUrl.slice(0, 3) !== "../" ? (
+                    {userInfo?.imageUrl?.slice(0, 3) !== "../" ? (
                       <>
                         <div
                           style={{
@@ -1280,20 +1308,20 @@ function MainPage() {
                       style={{
                         position: "absolute",
                         bottom: "20px",
-                        width: "440px",
+                        width: "81.5%",
                         height: "52px",
                         backgroundColor:
-                          userInfo.imageUrl.slice(0, 3) !== "../"
+                          userInfo?.imageUrl?.slice(0, 3) !== "../"
                             ? "#0f141a"
                             : "transparent",
                         color:
-                          userInfo.imageUrl.slice(0, 3) !== "../"
+                          userInfo?.imageUrl?.slice(0, 3) !== "../"
                             ? "white"
                             : "black",
                         border: "1px solid rgba(0,0,0,0.1)",
                       }}
                       className={
-                        userInfo.imageUrl.slice(0, 3) !== "../"
+                        userInfo?.imageUrl?.slice(0, 3) !== "../"
                           ? `next-btn`
                           : "next-btn-skip-for-now"
                       }
@@ -1306,7 +1334,7 @@ function MainPage() {
                         }, 300);
                       }}
                     >
-                      {userInfo.imageUrl.slice(0, 3) !== "../"
+                      {userInfo?.imageUrl?.slice(0, 3) !== "../"
                         ? "Next"
                         : "Skip for now"}
                     </Button>
@@ -1327,7 +1355,7 @@ function MainPage() {
                     <div
                       className="mt-5"
                       style={{
-                        width: "440px",
+                        width: "81.5%",
                         lineHeight: "36px",
                         fontWeight: "700",
                         fontSize: "31px",
@@ -1337,7 +1365,7 @@ function MainPage() {
                     </div>
                     <div
                       style={{
-                        width: "440px",
+                        width: "81.5%",
                         lineHeight: "20px",
                         fontWeight: "400",
                         fontSize: "15px",
@@ -1360,14 +1388,14 @@ function MainPage() {
                         border: "none",
                       }}
                       style={{
-                        width: "440px",
+                        width: "81.5%",
                         height: "58px",
                       }}
                       onChange={(e) => setUsername(e.target.value)}
                     />{" "}
                     <span
                       style={{
-                        width: "440px",
+                        width: "81.5%",
 
                         color: "#f4222d",
                         fontSize: "13px",
@@ -1383,7 +1411,7 @@ function MainPage() {
                       style={{
                         position: "absolute",
                         bottom: "20px",
-                        width: "440px",
+                        width: "81.5%",
                         height: "52px",
                         backgroundColor: skipButtonActive
                           ? "transparent "

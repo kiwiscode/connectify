@@ -2,6 +2,7 @@ const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../models/User.model");
 require("dotenv").config();
+const jwt = require("jsonwebtoken");
 
 const nums = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
@@ -18,19 +19,6 @@ const generate5DifferentNumbers = () => {
   return shuffledNums.slice(0, 5);
 };
 
-/* =================== Handeling Infinite run: Start ===================  */
-passport.serializeUser((user, done) => {
-  console.log("1");
-  done(null, user.id);
-});
-
-passport.deserializeUser((id, done) => {
-  User.findById(id).then((user) => {
-    console.log("2");
-    done(null, user);
-  });
-});
-
 const crypto = require("crypto");
 
 // For Google
@@ -42,8 +30,7 @@ passport.use(
       callbackURL: "/auth/google/callback",
       scope: ["profile", "email"],
     },
-    (accessToken, refreshToken, profile, done) => {
-      console.log("User =>", profile);
+    (accessToken, refreshToken, profile, callback) => {
       // profile has all google login data
       /* ========= DATABASE CHECK PRE EXIST AND INSERT QUERY: START =========  */
       function generateRandomPassword(length) {
@@ -60,10 +47,15 @@ passport.use(
 
       const secureRandomPassword = generateRandomPassword(12);
 
-      User.findOne({ signedUpWithGoogleUserId: profile.id })
+      User.findOne({
+        "signedUpWithGoogle.signedUpWithGoogleUserId": profile.id,
+      })
         .then((existingUser) => {
           if (existingUser) {
             console.log("User is already exist !");
+            existingUser.active = true;
+            existingUser.save();
+            callback(null, existingUser);
           } else {
             console.log(
               "This user was not exist and now created with google profile !"
@@ -84,16 +76,34 @@ passport.use(
               verified: profile._json.email_verified,
               active: true,
               imageUrl: profile._json.picture,
-            }).then((user) => {
-              console.log("Created user =>", user);
-            });
+            })
+              .then((user) => {
+                console.log("Created user =>", user.username);
+                callback(null, user);
+              })
+              .catch((error) => {
+                callback(error);
+              });
           }
         })
         .catch(() => {
-          res.status(501).json({ errorMessage: "Internal server error !" });
+          console.log("Error occured !");
         });
 
       /* ========= DATABASE CHECK PRE EXIST AND INSERT QUERY: END =========  */
     }
   )
 );
+
+/* =================== Handeling Infinite run: Start ===================  */
+passport.serializeUser((user, done) => {
+  console.log("1", user);
+  done(null, user);
+});
+
+passport.deserializeUser((id, done) => {
+  User.findById(id).then((user) => {
+    console.log("2", user);
+    done(null, user);
+  });
+});
