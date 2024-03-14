@@ -256,14 +256,33 @@ function SigninModal({ deactivatedScreen }) {
       .post(`${API_URL}/check-find-account`, { findConnectifyAccount })
       .then((response) => {
         console.log("Response from server =>", response);
-
-        setTabLoading(true);
-        setForgotPasswordInProcessUser(response.data.user);
-        setTimeout(() => {
-          setFindConnectifyAccount("");
-          setTabLoading(false);
-          setTabIndex(tabIndex + 1);
-        }, 500);
+        if (
+          response.status === 201 &&
+          response.data.message === "The user entered an email address."
+        ) {
+          console.log("User entered an email, show confirm username tab.");
+          setTabLoading(true);
+          setForgotPasswordInProcessUser(response.data.user);
+          setTimeout(() => {
+            setFindConnectifyAccount("");
+            setTabLoading(false);
+            setTabIndex(tabIndex + 1);
+          }, 500);
+        } else if (
+          response.status === 201 &&
+          response.data.message === "The user entered an username."
+        ) {
+          console.log(
+            "User entered an username, show send email verification code direct."
+          );
+          setTabLoading(true);
+          setForgotPasswordInProcessUser(response.data.user);
+          setTimeout(() => {
+            setFindConnectifyAccount("");
+            setTabLoading(false);
+            setTabIndex(tabIndex + 2);
+          }, 500);
+        }
       })
       .catch((error) => {
         console.log("Error =>", error);
@@ -389,7 +408,6 @@ function SigninModal({ deactivatedScreen }) {
   return (
     <>
       {contextHolder}
-
       {deactivatedScreen ? (
         <>
           <Button
@@ -410,17 +428,19 @@ function SigninModal({ deactivatedScreen }) {
               backgroundColor: "rgba(29,155,240,1.00)",
               color: "white",
             }}
-            // variant="light"
             onClick={handleShowLoginModal}
-            // className="sign-in "
           >
             Log in
           </Button>
         </>
       ) : (
-        <div>
+        <div
+          style={{
+            margin: "50px 0px",
+          }}
+        >
           <div>
-            <p style={{}} className="have-account">
+            <p className="have-account">
               <span
                 className="  responsive-input-group-text
                 "
@@ -555,7 +575,6 @@ function SigninModal({ deactivatedScreen }) {
                   <Modal
                     style={{
                       height: "100%",
-                      overflowY: "scroll",
                     }}
                     dialogClassName={"modal-fullscreen"}
                     show={showLoginModal}
@@ -601,188 +620,454 @@ function SigninModal({ deactivatedScreen }) {
                         </div>
                       </div>
                     </Modal.Header>
-
-                    <Modal.Body className="signin-modal-body-child-non-reactivate">
-                      <span
-                        style={{
-                          fontSize: "26px",
-                          fontWeight: "700",
-                          lineHeight: "32px",
-                          letterSpacing: "0.5px",
-                        }}
-                        className="sign-in-header mt-4 mb-4"
-                      >
-                        Sign in to Connectify
-                      </span>
-
-                      <div>
-                        <Button
-                          onClick={googleAuth}
-                          style={{
-                            backgroundColor: "transparent",
-                            borderWidth: "1px",
-                            minWidth: "300px",
-                            minHeight: "40px",
-                            borderRadius: "9999px",
-                            borderColor: "rgba(0,0,0,0.1)",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                          }}
-                          variant="light"
-                          className="google-variant-sign-in"
-                        >
-                          <span
-                            style={{
-                              fontSize: "13px",
-                              fontWeight: "400",
-                              lineHeight: "16px",
-                              marginLeft: "10px",
-                              color: "black",
-                            }}
+                    {tabIndex === 0 ? (
+                      <>
+                        {tabLoading ? (
+                          <Modal.Body className="signin-modal-body-child-non-reactivate">
+                            <LoadingSpinner
+                              strokeColor={"rgb(29, 155, 240)"}
+                            ></LoadingSpinner>
+                          </Modal.Body>
+                        ) : (
+                          <Modal.Body
+                            className="signin-modal-body-child-non-reactivate"
+                            style={
+                              {
+                                // overflowY: "scroll",
+                              }
+                            }
                           >
-                            Sign in with Google
-                          </span>
-                          <svg
-                            width={16}
-                            height={16}
-                            version="1.1"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 48 48"
-                            className="LgbsSe-Bz112c"
-                          >
-                            <g>
-                              <path
-                                fill="#EA4335"
-                                d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
-                              ></path>
-                              <path
-                                fill="#4285F4"
-                                d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
-                              ></path>
-                              <path
-                                fill="#FBBC05"
-                                d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
-                              ></path>
-                              <path
-                                fill="#34A853"
-                                d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
-                              ></path>
-                              <path fill="none" d="M0 0h48v48H0z"></path>
-                            </g>
-                          </svg>
-                        </Button>
-                      </div>
-                      <Divider
-                        style={{
-                          width: "300px",
-                          minWidth: "300px",
-                        }}
-                        plain
-                      >
-                        or
-                      </Divider>
-                      <TextField
-                        className="mt-2"
-                        id="outlined-basic"
-                        label="Email, or username"
-                        variant="outlined"
-                        value={email}
-                        type="text"
-                        onChange={(e) => setEmail(e.target.value)}
-                        style={{
-                          width: "300px",
-                          height: "58px",
-                        }}
-                      />
-                      {/* <div
-                        style={{
-                          width: "300px",
-                        }}
-                        className="grid-container"
-                      >
-                        <div
-                          onClick={() => {
-                            setStartForgotPasswordProcess(true);
-                            setTabIndex(tabIndex + 1);
-                            setShowLoginModal(false);
-                            handleCloseLoginModal();
-                            console.log("Open forgot password tab !");
-                            setShow(true);
-                          }}
-                          style={{
-                            cursor: "pointer",
-                            color: "rgb(29, 155, 240)",
-                            fontSize: "13px",
-                            lineHeight: "16px",
-                            fontWeight: "400",
-                            marginLeft: "12px",
-                          }}
-                          className="grid-item forgot-password-text mt-1"
-                        >
-                          Forgot password?
-                        </div>
-                      </div> */}
-                      {error}
-                      <Button
-                        style={{
-                          width: "300px",
-                          height: "36px",
-                          fontSize: "15px",
-                          fontWeight: "700",
-                          lineHeight: "20px",
-                        }}
-                        className="login-button mt-4 next-btn"
-                        variant="dark"
-                        onClick={handleLogin}
-                      >
-                        Next
-                      </Button>
-                      <Button
-                        style={{
-                          width: "300px",
-                          height: "36px",
-                          color: "black",
-                          fontSize: "15px",
-                          fontWeight: "700",
-                          lineHeight: "20px",
-                        }}
-                        className="mt-4 "
-                        variant="light"
-                        onClick={() => {
-                          setStartForgotPasswordProcess(true);
-                          setTabIndex(tabIndex + 1);
-                          setShowLoginModal(false);
-                          handleCloseLoginModal();
-                          console.log("Open forgot password tab !");
-                          setShow(true);
-                        }}
-                      >
-                        Forgot password?
-                      </Button>
-                      <div
-                        style={{
-                          width: "300px",
-                        }}
-                        className="grid-container"
-                      >
-                        <div
-                          style={{
-                            cursor: "pointer",
-                            color: "rgb(83, 100, 113)",
-                            fontSize: "15px",
-                            lineHeight: "20px",
-                            fontWeight: "400",
-                            marginLeft: "5px",
-                          }}
-                          className="grid-item mt-5"
-                        >
-                          <span>
-                            Don&apos;t have an account? <a href="">Sign up</a>
-                          </span>
-                        </div>
-                      </div>
-                    </Modal.Body>
+                            <span
+                              style={{
+                                fontSize: "26px",
+                                fontWeight: "700",
+                                lineHeight: "32px",
+                                letterSpacing: "0.5px",
+                              }}
+                              className="sign-in-header mt-4 mb-4"
+                            >
+                              Sign in to Connectify
+                            </span>
+
+                            <div>
+                              <Button
+                                onClick={googleAuth}
+                                style={{
+                                  backgroundColor: "transparent",
+                                  borderWidth: "1px",
+                                  minWidth: "300px",
+                                  minHeight: "40px",
+                                  borderRadius: "9999px",
+                                  borderColor: "rgba(0,0,0,0.1)",
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                }}
+                                variant="light"
+                                className="google-variant-sign-in"
+                              >
+                                <span
+                                  style={{
+                                    fontSize: "13px",
+                                    fontWeight: "400",
+                                    lineHeight: "16px",
+                                    marginLeft: "10px",
+                                    color: "black",
+                                  }}
+                                >
+                                  Sign in with Google
+                                </span>
+                                <svg
+                                  width={16}
+                                  height={16}
+                                  version="1.1"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 48 48"
+                                  className="LgbsSe-Bz112c"
+                                >
+                                  <g>
+                                    <path
+                                      fill="#EA4335"
+                                      d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+                                    ></path>
+                                    <path
+                                      fill="#4285F4"
+                                      d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
+                                    ></path>
+                                    <path
+                                      fill="#FBBC05"
+                                      d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+                                    ></path>
+                                    <path
+                                      fill="#34A853"
+                                      d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+                                    ></path>
+                                    <path fill="none" d="M0 0h48v48H0z"></path>
+                                  </g>
+                                </svg>
+                              </Button>
+                            </div>
+                            <Divider
+                              style={{
+                                width: "300px",
+                                minWidth: "300px",
+                                margin: "5px",
+                              }}
+                              plain
+                            >
+                              or
+                            </Divider>
+                            <TextField
+                              className="mt-2"
+                              id="outlined-basic"
+                              label="Email, or username"
+                              variant="outlined"
+                              value={email}
+                              type="text"
+                              onChange={(e) => setEmail(e.target.value)}
+                              style={{
+                                width: "300px",
+                                height: "58px",
+                              }}
+                            />
+
+                            {error}
+                            <Button
+                              style={{
+                                width: "300px",
+                                minHeight: "36px",
+                                color: "white",
+                                fontSize: "15px",
+                                fontWeight: "700",
+                                lineHeight: "20px",
+                              }}
+                              className="login-button mt-4 next-btn"
+                              variant="dark"
+                              onClick={handleLogin}
+                            >
+                              Next
+                            </Button>
+                            <Button
+                              style={{
+                                width: "300px",
+                                height: "36px",
+                                color: "black",
+                                fontSize: "15px",
+                                fontWeight: "700",
+                                lineHeight: "20px",
+                              }}
+                              className="mt-4 forgot-password-btn"
+                              variant="light"
+                              onClick={() => {
+                                setTabLoading(true);
+                                setTimeout(() => {
+                                  setStartForgotPasswordProcess(true);
+                                  setTabIndex(tabIndex + 1);
+                                  setShow(true);
+                                  setTabLoading(false);
+                                }, 300);
+                              }}
+                            >
+                              Forgot password?
+                            </Button>
+                            <div
+                              style={{
+                                width: "300px",
+                              }}
+                              className="grid-container"
+                            >
+                              <div
+                                style={{
+                                  cursor: "pointer",
+                                  color: "rgb(83, 100, 113)",
+                                  fontSize: "15px",
+                                  lineHeight: "20px",
+                                  fontWeight: "400",
+                                  marginLeft: "5px",
+                                }}
+                                className="grid-item mt-5"
+                              >
+                                <span>
+                                  Don&apos;t have an account?{" "}
+                                  <a href="">Sign up</a>
+                                </span>
+                              </div>
+                            </div>
+                          </Modal.Body>
+                        )}
+                      </>
+                    ) : tabIndex === 1 ? (
+                      <>
+                        {tabLoading ? (
+                          <Modal.Body className="signin-modal-body-child-non-reactivate">
+                            <LoadingSpinner
+                              strokeColor={"rgb(29, 155, 240)"}
+                            ></LoadingSpinner>
+                          </Modal.Body>
+                        ) : (
+                          <>
+                            <Modal.Body
+                              className="signin-modal-body-child-non-reactivate"
+                              style={{
+                                overflowY: "auto",
+                                position: "relative",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  textAlign: "left",
+                                  width: "81.5%",
+                                  lineHeight: "28px",
+                                  fontWeight: "700",
+                                  fontSize: "26px",
+                                  letterSpacing: "0.5px",
+                                }}
+                              >
+                                Find your Connectify account
+                              </div>
+                              <div
+                                className="mt-2"
+                                style={{
+                                  color: "rgb(83, 100, 113)",
+                                  lineHeight: "20px",
+                                  width: "81.5%",
+                                  fontSize: "15px",
+                                  fontWeight: "400",
+                                }}
+                              >
+                                Enter the email, or username associated with
+                                your account to change your password.
+                              </div>
+                              <TextField
+                                className="mt-4"
+                                autoFocus={true}
+                                value={findConnectifyAccount}
+                                onChange={(e) =>
+                                  setFindConnectifyAccount(e.target.value)
+                                }
+                                type="text"
+                                id="outlined-basic"
+                                variant={"outlined"}
+                                label={`Email, or username`}
+                                style={{
+                                  width: "81.5%",
+                                  height: "58px",
+                                }}
+                              />
+
+                              <Button
+                                style={{
+                                  position: "absolute",
+                                  bottom: "20px",
+                                  width: "81.5%",
+                                  height: "52px",
+                                }}
+                                onClick={() => handleFindConnectifyAccount()}
+                                className="login-button mt-5"
+                                variant="dark"
+                              >
+                                Next
+                              </Button>
+                            </Modal.Body>
+                          </>
+                        )}
+                      </>
+                    ) : tabIndex === 2 ? (
+                      <>
+                        {tabLoading ? (
+                          <Modal.Body className="signin-modal-body-child-non-reactivate">
+                            <LoadingSpinner
+                              strokeColor={"rgb(29, 155, 240)"}
+                            ></LoadingSpinner>
+                          </Modal.Body>
+                        ) : (
+                          <>Tab 2</>
+                        )}
+                      </>
+                    ) : tabIndex === 3 ? (
+                      <>
+                        {tabLoading ? (
+                          <Modal.Body className="signin-modal-body-child-non-reactivate">
+                            <LoadingSpinner
+                              strokeColor={"rgb(29, 155, 240)"}
+                            ></LoadingSpinner>
+                          </Modal.Body>
+                        ) : (
+                          <Modal.Body className="signin-modal-body-child-non-reactivate">
+                            <div
+                              className="mb-4"
+                              style={{
+                                display: "flex",
+                                textAlign: "left",
+                                width: "81.5%",
+                                lineHeight: "28px",
+                                fontWeight: "700",
+                                fontSize: "26px",
+                                letterSpacing: "0.5px",
+                              }}
+                            >
+                              Where should we send a confirmation code?
+                            </div>
+                            <div
+                              className="mt-2"
+                              style={{
+                                color: "rgb(83, 100, 113)",
+                                lineHeight: "20px",
+                                fontSize: "15px",
+                                fontWeight: "400",
+                                display: "flex",
+                                textAlign: "left",
+                                width: "81.5%",
+                              }}
+                            >
+                              Before you can change your password, we need to
+                              make sure it’s really you.
+                            </div>
+                            <div
+                              className="mt-2"
+                              style={{
+                                color: "rgb(83, 100, 113)",
+                                lineHeight: "20px",
+                                fontSize: "15px",
+                                fontWeight: "400",
+                                display: "flex",
+                                textAlign: "left",
+                                width: "81.5%",
+                              }}
+                            >
+                              Start by choosing where to send a confirmation
+                              code.
+                            </div>
+
+                            <div
+                              className="mt-4"
+                              style={{
+                                display: "flex",
+                                width: "81.5%",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  fontSize: "15px",
+                                  lineHeight: "20px",
+                                  fontWeight: "700",
+                                }}
+                              >
+                                Send an email to{" "}
+                                {getMaskedEmail(
+                                  forgotPasswordInProcessUser.email
+                                )}
+                              </div>
+
+                              <div
+                                style={{
+                                  position: "relative",
+                                  width: "40px",
+                                  height: "40px",
+                                  borderRadius: "50%",
+                                  bottom: "5px",
+                                  left: "12%",
+                                }}
+                                className="hover-forgot-password-send-email-stack-svg-verified-email "
+                              >
+                                <div
+                                  style={{
+                                    backgroundColor:
+                                      "#1d9bf0                            ",
+                                    width: "20px",
+                                    height: "20px",
+                                    position: "relative",
+                                    left: "10px",
+                                    top: "10px",
+                                    borderRadius: "50%",
+                                  }}
+                                >
+                                  <svg
+                                    style={{
+                                      position: "relative",
+                                      left: "2px",
+                                      bottom: "4px",
+                                    }}
+                                    width={16}
+                                    height={16}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
+                                    color="white"
+                                    fill="currentColor"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div
+                              className="mt-4 connectify-support-forgot-password-screen"
+                              style={{
+                                textAlign: "left",
+                                lineHeight: "20px",
+                                fontSize: "15px",
+                                fontWeight: "400",
+                                width: "81.5%",
+                              }}
+                            >
+                              Contact{" "}
+                              <span
+                                className="connectify-support-forgot-password-screen"
+                                style={{
+                                  color: "rgb(29, 155, 240)",
+                                }}
+                              >
+                                Connectify Support
+                              </span>{" "}
+                              if you don’t have access.
+                            </div>
+
+                            <Button
+                              style={{
+                                position: "absolute",
+                                bottom: "70px",
+                                width: "81.5%",
+                                height: "52px",
+                              }}
+                              onClick={() =>
+                                handleSendForgotPasswordCodeToEmail()
+                              }
+                              className="login-button mt-5 mb-3"
+                              variant="dark"
+                            >
+                              Next
+                            </Button>
+
+                            <Button
+                              className="cancel-btn-reactivate-tab"
+                              style={{
+                                position: "absolute",
+                                bottom: "20px",
+                                height: "52px",
+                                width: "81.5%",
+                                color: "black",
+                              }}
+                              // className="login-button"
+                              variant="light"
+                              onClick={() => {
+                                setTabIndex(0);
+                                handleClose();
+                              }}
+                            >
+                              Cancel
+                            </Button>
+                          </Modal.Body>
+                        )}
+                      </>
+                    ) : (
+                      (<>
+                        <>Tab 4</>
+                      </>)()
+                    )}
                   </Modal>
                 </>
               ) : (
@@ -833,68 +1118,145 @@ function SigninModal({ deactivatedScreen }) {
                     </div>
                   </Modal.Header>
 
-                  <Modal.Body className="signin-modal-body-child-non-reactivate">
-                    <span className="sign-in-header mt-4 mb-4">
+                  <Modal.Body
+                    className="signin-modal-body-child-non-reactivate"
+                    style={
+                      {
+                        // overflowY: "scroll",
+                      }
+                    }
+                  >
+                    <span
+                      style={{
+                        fontSize: "31px",
+                        fontWeight: "700",
+                        lineHeight: "36px",
+                        letterSpacing: "0.5px",
+                      }}
+                      className="sign-in-header mt-4 mb-4"
+                    >
                       Sign in to Connectify
                     </span>
-                    <InputGroup className="mb-2">
-                      <Form.Control
+
+                    <div>
+                      <Button
+                        onClick={googleAuth}
                         style={{
-                          boxShadow: "none",
+                          backgroundColor: "transparent",
+                          borderWidth: "1px",
+                          minWidth: "300px",
+                          minHeight: "40px",
+                          borderRadius: "9999px",
+                          borderColor: "rgba(0,0,0,0.1)",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
                         }}
-                        aria-label="Default"
-                        aria-describedby="inputGroup-sizing-default"
-                        type="text"
-                        placeholder="Username"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                      />
-                    </InputGroup>{" "}
-                    <InputGroup className="mt-2">
-                      <Form.Control
-                        aria-label="Default"
-                        aria-describedby="inputGroup-sizing-default"
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                      />
-                    </InputGroup>
-                    <div
+                        variant="light"
+                        className="google-variant-sign-in"
+                      >
+                        <span
+                          style={{
+                            fontSize: "13px",
+                            fontWeight: "400",
+                            lineHeight: "16px",
+                            marginLeft: "10px",
+                            color: "black",
+                          }}
+                        >
+                          Sign in with Google
+                        </span>
+                        <svg
+                          width={16}
+                          height={16}
+                          version="1.1"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 48 48"
+                          className="LgbsSe-Bz112c"
+                        >
+                          <g>
+                            <path
+                              fill="#EA4335"
+                              d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+                            ></path>
+                            <path
+                              fill="#4285F4"
+                              d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
+                            ></path>
+                            <path
+                              fill="#FBBC05"
+                              d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+                            ></path>
+                            <path
+                              fill="#34A853"
+                              d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+                            ></path>
+                            <path fill="none" d="M0 0h48v48H0z"></path>
+                          </g>
+                        </svg>
+                      </Button>
+                    </div>
+                    <Divider
                       style={{
                         width: "300px",
+                        minWidth: "300px",
+                        margin: "5px",
                       }}
-                      className="grid-container"
+                      plain
                     >
-                      <div
-                        onClick={() => {
-                          setStartForgotPasswordProcess(true);
-                          setTabIndex(tabIndex + 1);
-                          setShowLoginModal(false);
-                          handleCloseLoginModal();
-                          console.log("Open forgot password tab !");
-                          setShow(true);
-                        }}
-                        style={{
-                          cursor: "pointer",
-                          color: "rgb(29, 155, 240)",
-                          fontSize: "13px",
-                          lineHeight: "16px",
-                          fontWeight: "400",
-                          marginLeft: "12px",
-                        }}
-                        className="grid-item forgot-password-text mt-1"
-                      >
-                        Forgot password?
-                      </div>
-                    </div>
+                      or
+                    </Divider>
+                    <TextField
+                      className="mt-1"
+                      id="outlined-basic"
+                      label="Email, or username"
+                      variant="outlined"
+                      value={email}
+                      type="text"
+                      onChange={(e) => setEmail(e.target.value)}
+                      style={{
+                        width: "300px",
+                        height: "58px",
+                      }}
+                    />
+
                     {error}
                     <Button
-                      className="login-button mt-5"
+                      style={{
+                        width: "300px",
+                        minHeight: "36px",
+                        color: "white",
+                        fontSize: "15px",
+                        fontWeight: "700",
+                        lineHeight: "20px",
+                      }}
+                      className="login-button mt-4 next-btn"
                       variant="dark"
                       onClick={handleLogin}
                     >
-                      Log in
+                      Next
+                    </Button>
+                    <Button
+                      style={{
+                        width: "300px",
+                        height: "36px",
+                        color: "black",
+                        fontSize: "15px",
+                        fontWeight: "700",
+                        lineHeight: "20px",
+                      }}
+                      className="mt-4 forgot-password-btn"
+                      variant="light"
+                      onClick={() => {
+                        setStartForgotPasswordProcess(true);
+                        setTabIndex(tabIndex + 1);
+                        setShowLoginModal(false);
+                        handleCloseLoginModal();
+                        console.log("Open forgot password tab !");
+                        setShow(true);
+                      }}
+                    >
+                      Forgot password?
                     </Button>
                     <div
                       style={{
@@ -979,8 +1341,8 @@ function SigninModal({ deactivatedScreen }) {
           )}
         </>
       )}
-
-      {tabIndex === 1 && startForgotPasswordProcess ? (
+      {/* start to check tab for forgotpassword process  */}
+      {tabIndex === 10 && startForgotPasswordProcess ? (
         <>
           <Modal
             show={show}
@@ -1029,13 +1391,15 @@ function SigninModal({ deactivatedScreen }) {
               </div>
             </Modal.Header>
 
-            <Modal.Body className="signin-modal-body-child-non-reactivate">
-              {tabLoading ? (
+            {tabLoading ? (
+              <Modal.Body className="signin-modal-body-child-non-reactivate">
                 <LoadingSpinner
                   strokeColor={"rgb(29, 155, 240)"}
                 ></LoadingSpinner>
-              ) : (
-                <>
+              </Modal.Body>
+            ) : (
+              <>
+                <Modal.Body className="signin-modal-body-child-non-reactivate">
                   <div
                     style={{
                       padding: "16px",
@@ -1096,12 +1460,12 @@ function SigninModal({ deactivatedScreen }) {
                   >
                     Next
                   </Button>
-                </>
-              )}
-            </Modal.Body>
+                </Modal.Body>
+              </>
+            )}
           </Modal>
         </>
-      ) : tabIndex === 2 && startForgotPasswordProcess ? (
+      ) : tabIndex === 20 && startForgotPasswordProcess ? (
         <>
           <Modal
             show={show}
@@ -1310,7 +1674,7 @@ function SigninModal({ deactivatedScreen }) {
             )}
           </Modal>
         </>
-      ) : tabIndex === 3 && startForgotPasswordProcess ? (
+      ) : tabIndex === 30 && startForgotPasswordProcess ? (
         <>
           <Modal
             show={show}
@@ -1455,7 +1819,7 @@ function SigninModal({ deactivatedScreen }) {
             )}
           </Modal>
         </>
-      ) : tabIndex === 4 && startForgotPasswordProcess ? (
+      ) : tabIndex === 40 && startForgotPasswordProcess ? (
         <>
           <Modal
             show={show}
@@ -1653,7 +2017,7 @@ function SigninModal({ deactivatedScreen }) {
             )}
           </Modal>
         </>
-      ) : tabIndex === 5 && startForgotPasswordProcess ? (
+      ) : tabIndex === 50 && startForgotPasswordProcess ? (
         <>
           {" "}
           <Modal
@@ -1963,7 +2327,7 @@ function SigninModal({ deactivatedScreen }) {
             )}
           </Modal>
         </>
-      ) : tabIndex === 6 && startForgotPasswordProcess ? (
+      ) : tabIndex === 60 && startForgotPasswordProcess ? (
         <>
           {" "}
           <Modal
@@ -2088,6 +2452,7 @@ function SigninModal({ deactivatedScreen }) {
           </Modal>
         </>
       ) : null}
+      {/* finish to check tab for forgotpassword process  */}
     </>
   );
 }

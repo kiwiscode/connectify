@@ -268,7 +268,7 @@ function PostModal({
           <Stack direction="horizontal" gap={1}>
             <div className="p-0">
               {" "}
-              {userInfo?.imageUrl.slice(0, 3) !== "../" ? (
+              {userInfo?.imageUrl?.slice(0, 3) !== "../" ? (
                 <img
                   src={userInfo.imageUrl}
                   width={40}

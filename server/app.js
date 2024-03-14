@@ -16,6 +16,7 @@ const passport = require("passport");
 /* ================ Creating Cookie Key and link with Passport JS: Start ================  */
 app.use(
   cookieSession({
+    name: "session",
     maxAge: 30 * 86400 * 1000, // expire in 30 days(milli seconds)
     keys: ["kiwiscode"],
   })
@@ -23,6 +24,7 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+
 /* ================ Creating Cookie Key and link with Passport JS: End ================  */
 // passport js finish to check
 

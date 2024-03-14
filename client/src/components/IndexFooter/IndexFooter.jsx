@@ -1,4 +1,3 @@
-import { Container, Col, Row } from "react-bootstrap";
 function IndexFooter() {
   return (
     <>
@@ -9,11 +8,16 @@ function IndexFooter() {
         style={{
           textAlign: "center",
           width: "100%",
+          minHeight: "72px",
+          padding: "12px 16px",
         }}
-        className="footer-container"
+        className="footer-container "
       >
         <a href="">
           <span>About</span>
+        </a>
+        <a href="">
+          <span>Download the C app</span>
         </a>
         <a href="">
           <span>Help Center</span>
@@ -28,18 +32,40 @@ function IndexFooter() {
           <span>Cookie Policy</span>
         </a>
         <a href="">
+          <span>MStV Transparenzangaben</span>
+        </a>
+        <a href="">
+          <span>Imprint</span>
+        </a>
+        <a href="">
+          <span>Accessibility</span>
+        </a>
+        <a href="">
+          <span>Ads info</span>
+        </a>
+        <a href="">
           <span>Blog</span>
         </a>
         <a href="">
           <span>Status</span>
         </a>
         <a href="">
+          <span>Careers</span>
+        </a>{" "}
+        <a href="">
+          <span>Brand Resources</span>
+        </a>
+        <a href="">
           <span>Advertising</span>
         </a>
+        <div></div>
         <a href="">
           <span>Marketing</span>
         </a>
         <a href="">
+          <span>C for Business</span>
+        </a>
+        <a href="https://www.linkedin.com/in/kavaykut/">
           <span>Developers</span>
         </a>
         <a href="">
@@ -52,9 +78,6 @@ function IndexFooter() {
           <span>© 2024 C kiwiscode</span>
         </a>
       </div>
-      {/* </Col>
-        </Row>
-      </Container> */}
     </>
   );
 }
