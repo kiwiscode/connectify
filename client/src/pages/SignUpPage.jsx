@@ -1,6 +1,13 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-import { Button, Col, Modal, Popover, OverlayTrigger } from "react-bootstrap";
+import {
+  Button,
+  Col,
+  Modal,
+  Popover,
+  OverlayTrigger,
+  Row,
+} from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../index.css";
 import { Divider } from "antd";
@@ -40,6 +47,10 @@ function SignUpPage() {
   const [signedUpWithGoogle, setsignedUpWithGoogle] = useState(false);
   const [signedUpWithVariantOne, setsignedUpWithVariantOne] = useState(false);
 
+  const googleAuth = () => {
+    window.open(`${API_URL}/auth/google/callback`, "_self");
+  };
+
   const catchErrorMessage = (message) => {
     messageApi.success({
       type: "success",
@@ -52,10 +63,6 @@ function SignUpPage() {
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (e) => {
     e.preventDefault();
-  };
-
-  const googleAuth = () => {
-    window.open(`${API_URL}/auth/google/callback`, "_self");
   };
 
   const [showCreateAccountModal, setshowCreateAccountModal] = useState(false);
@@ -628,7 +635,6 @@ function SignUpPage() {
           <Modal
             style={{
               height: "100%",
-              overflowY: "scroll",
             }}
             dialogClassName={"modal-fullscreen"}
             show={showCreateAccountModal}
@@ -781,14 +787,17 @@ function SignUpPage() {
                 ) : (
                   <Modal.Body
                     style={{
-                      overflowY: "scroll",
+                      overflowY: "auto",
+                      position: "relative",
                     }}
                     className="signin-modal-body-child-non-reactivate create-account-first-tab"
                   >
                     <div
                       className="mb-4"
                       style={{
-                        width: "536px",
+                        display: "flex",
+                        textAlign: "left",
+                        width: "81.5%",
                         lineHeight: "28px",
                         fontWeight: "700",
                         fontSize: "26px",
@@ -799,12 +808,15 @@ function SignUpPage() {
                     </div>
 
                     {onFocusedToFullNameField ? (
-                      <InputLabel>
+                      <InputLabel
+                        style={{
+                          width: "81.5%",
+                          textAlign: "right",
+                        }}
+                      >
                         <div
                           style={{
                             color: "rgb(83, 100, 113)",
-                            width: "536px",
-                            textAlign: "right",
                             fontSize: "13px",
                             fontWeight: "400",
                             lineHeight: "16px",
@@ -814,12 +826,15 @@ function SignUpPage() {
                         </div>
                       </InputLabel>
                     ) : (
-                      <InputLabel>
+                      <InputLabel
+                        style={{
+                          width: "81.5%",
+                          textAlign: "right",
+                        }}
+                      >
                         <div
                           style={{
-                            color: "white",
-                            width: "536px",
-                            textAlign: "right",
+                            color: "rgb(83, 100, 113)",
                             fontSize: "13px",
                             fontWeight: "400",
                             lineHeight: "16px",
@@ -848,7 +863,7 @@ function SignUpPage() {
                       variant={"outlined"}
                       label={`Name`}
                       style={{
-                        width: "536px",
+                        width: "81.5%",
                         height: "58px",
                       }}
                     />
@@ -857,7 +872,7 @@ function SignUpPage() {
                     !firstAppearence ? (
                       <div
                         style={{
-                          width: "536px",
+                          width: "81.5%",
                           color: "rgb(244, 33, 46)",
                           fontSize: "13px",
                           lineHeight: "16px",
@@ -885,7 +900,7 @@ function SignUpPage() {
                       type="text"
                       onChange={handleEmailChange}
                       style={{
-                        width: "536px",
+                        width: "81.5%",
                         height: "58px",
                       }}
                     />
@@ -893,7 +908,7 @@ function SignUpPage() {
                     {emailTypeError === 304 && email.length ? (
                       <div
                         style={{
-                          width: "536px",
+                          width: "81.5%",
                           color: "rgb(244, 33, 46)",
                           fontSize: "13px",
                           lineHeight: "16px",
@@ -907,7 +922,7 @@ function SignUpPage() {
                     ) : emailTypeError === 200 && email.length ? (
                       <div
                         style={{
-                          width: "536px",
+                          width: "81.5%",
                           color: "rgb(244, 33, 46)",
                           fontSize: "13px",
                           lineHeight: "16px",
@@ -928,7 +943,7 @@ function SignUpPage() {
                     >
                       <div
                         style={{
-                          width: "536px",
+                          width: "81.5%",
                           fontSize: "13px",
                           lineHeight: "16px",
                           fontWeight: "400",
@@ -951,7 +966,7 @@ function SignUpPage() {
                     <div
                       className="mt-4"
                       style={{
-                        width: "536px",
+                        width: "81.5%",
                       }}
                     >
                       <div
@@ -980,7 +995,7 @@ function SignUpPage() {
                       <div
                         className="mt-4"
                         style={{
-                          width: "536px",
+                          width: "100%",
                           height: "58px",
                           display: "flex",
                           justifyContent: "space-between",
@@ -1189,11 +1204,12 @@ function SignUpPage() {
 
                       {/* date of birth finish to check  */}
                     </div>
+
                     <Button
                       style={{
                         position: "absolute",
                         bottom: "20px",
-                        width: "544px",
+                        width: "81.5%",
                         height: "52px",
                         backgroundColor: "#0f141a",
                         opacity:
@@ -1239,11 +1255,17 @@ function SignUpPage() {
                     ></LoadingSpinner>
                   </Modal.Body>
                 ) : (
-                  <Modal.Body className="signin-modal-body-child-non-reactivate">
+                  <Modal.Body
+                    className="signin-modal-body-child-non-reactivate"
+                    style={{
+                      overflowY: "auto",
+                      position: "relative",
+                    }}
+                  >
                     <div
                       className="mb-4"
                       style={{
-                        width: "536px",
+                        width: "81.5%",
                         lineHeight: "32px",
                         fontWeight: "700",
                         fontSize: "26px",
@@ -1254,7 +1276,9 @@ function SignUpPage() {
                     </div>
                     <div
                       style={{
-                        width: "536px",
+                        overflowY: "auto",
+                        position: "relative",
+                        width: "81.5%",
                       }}
                     >
                       <div
@@ -1283,7 +1307,7 @@ function SignUpPage() {
                         >
                           <div
                             style={{
-                              width: "90%",
+                              width: "81.5%",
                             }}
                           >
                             {" "}
@@ -1372,7 +1396,7 @@ function SignUpPage() {
                         >
                           <div
                             style={{
-                              width: "90%",
+                              width: "81.5%",
                             }}
                           >
                             {" "}
@@ -1461,7 +1485,7 @@ function SignUpPage() {
                         >
                           <div
                             style={{
-                              width: "90%",
+                              width: "81.5%",
                             }}
                           >
                             {" "}
@@ -1533,7 +1557,7 @@ function SignUpPage() {
                     <div
                       className="mt-4"
                       style={{
-                        width: "536px",
+                        width: "81.5%",
                         color: "rgb(83, 100, 113)",
                         fontSize: "15px",
                         lineHeight: "20px",
@@ -1561,7 +1585,7 @@ function SignUpPage() {
                       style={{
                         position: "absolute",
                         bottom: "20px",
-                        width: "544px",
+                        width: "81.5%",
                         height: "52px",
                         backgroundColor: "#0f141a",
                         opacity:
@@ -1600,7 +1624,7 @@ function SignUpPage() {
                   </Modal.Body>
                 ) : (
                   <Modal.Body
-                    style={{}}
+                    style={{ overflowX: "hidden" }}
                     className="signin-modal-body-child-non-reactivate"
                   >
                     <div
@@ -1616,7 +1640,7 @@ function SignUpPage() {
                     <div
                       className="mb-4"
                       style={{
-                        width: "536px",
+                        width: "81.5%",
                         lineHeight: "32px",
                         fontWeight: "700",
                         fontSize: "26px",
@@ -1659,13 +1683,13 @@ function SignUpPage() {
                       variant={"outlined"}
                       label={`Verification code`}
                       style={{
-                        width: "536px",
+                        width: "81.5%",
                         height: "58px",
                       }}
                     />
                     <div
                       style={{
-                        width: "536px",
+                        width: "81.5%",
                       }}
                     >
                       <div
@@ -1689,7 +1713,7 @@ function SignUpPage() {
                       style={{
                         position: "absolute",
                         bottom: "20px",
-                        width: "544px",
+                        width: "81.5%",
                         height: "52px",
                         backgroundColor: "#0f141a",
                         opacity: confirmEmailVerificationCode.length
@@ -1726,13 +1750,13 @@ function SignUpPage() {
                   </Modal.Body>
                 ) : (
                   <Modal.Body
-                    style={{}}
+                    style={{ overflowX: "hidden" }}
                     className="signin-modal-body-child-non-reactivate"
                   >
                     <div
                       className="mb-4"
                       style={{
-                        width: "536px",
+                        width: "81.5%",
                         lineHeight: "32px",
                         fontWeight: "700",
                         fontSize: "26px",
@@ -1759,7 +1783,7 @@ function SignUpPage() {
                       </div>
                     </div>
                     <FormControl
-                      sx={{ m: 1, width: "536px", height: "58px" }}
+                      sx={{ m: 1, width: "81.5%", height: "58px" }}
                       variant="outlined"
                     >
                       <InputLabel htmlFor="outlined-adornment-password">
@@ -1829,7 +1853,7 @@ function SignUpPage() {
                     </FormControl>
                     <div
                       style={{
-                        width: "536px",
+                        width: "81.5%",
                         color: "rgb(244, 33, 46)",
                         fontSize: "13px",
                         fontWeight: "400",
@@ -1842,7 +1866,7 @@ function SignUpPage() {
                     </div>
                     <div
                       style={{
-                        width: "536px",
+                        width: "81.5%",
                         position: "absolute",
                         bottom: "100px",
                         color: "rgb(83, 100, 113)",
@@ -1875,7 +1899,7 @@ function SignUpPage() {
                       style={{
                         position: "absolute",
                         bottom: "20px",
-                        width: "544px",
+                        width: "81.5%",
                         height: "52px",
                         backgroundColor: "#0f141a",
                         opacity:
@@ -2050,11 +2074,18 @@ function SignUpPage() {
                     ></LoadingSpinner>
                   </Modal.Body>
                 ) : (
-                  <Modal.Body className="signin-modal-body-child-non-reactivate create-account-first-tab">
+                  <Modal.Body
+                    className="signin-modal-body-child-non-reactivate create-account-first-tab"
+                    style={{
+                      overflowY: "auto",
+                      position: "relative",
+                      overflowX: "hidden",
+                    }}
+                  >
                     <div
                       className="mb-4"
                       style={{
-                        width: "440px",
+                        width: "81.5%",
                         lineHeight: "36px",
                         fontWeight: "700",
                         fontSize: "31px",
@@ -2062,14 +2093,16 @@ function SignUpPage() {
                     >
                       Create your account
                     </div>
-
                     {onFocusedToFullNameField ? (
-                      <InputLabel>
+                      <InputLabel
+                        style={{
+                          width: "81.5%",
+                          textAlign: "right",
+                        }}
+                      >
                         <div
                           style={{
                             color: "rgb(83, 100, 113)",
-                            width: "440px",
-                            textAlign: "right",
                             fontSize: "13px",
                             fontWeight: "400",
                             lineHeight: "16px",
@@ -2079,12 +2112,15 @@ function SignUpPage() {
                         </div>
                       </InputLabel>
                     ) : (
-                      <InputLabel>
+                      <InputLabel
+                        style={{
+                          width: "81.5%",
+                          textAlign: "right",
+                        }}
+                      >
                         <div
                           style={{
-                            color: "white",
-                            width: "440px",
-                            textAlign: "right",
+                            color: "rgb(83, 100, 113)",
                             fontSize: "13px",
                             fontWeight: "400",
                             lineHeight: "16px",
@@ -2094,7 +2130,6 @@ function SignUpPage() {
                         </div>
                       </InputLabel>
                     )}
-
                     <TextField
                       error={
                         !fullnameFilled &&
@@ -2113,7 +2148,7 @@ function SignUpPage() {
                       variant={"outlined"}
                       label={`Name`}
                       style={{
-                        width: "440px",
+                        width: "81.5%",
                         height: "58px",
                       }}
                     />
@@ -2122,7 +2157,7 @@ function SignUpPage() {
                     !firstAppearence ? (
                       <div
                         style={{
-                          width: "420px",
+                          width: "81.5%",
                           color: "rgb(244, 33, 46)",
                           fontSize: "13px",
                           lineHeight: "16px",
@@ -2132,7 +2167,6 @@ function SignUpPage() {
                         {"What's your name?"}
                       </div>
                     ) : null}
-
                     <TextField
                       error={
                         (email.length && emailTypeError === 304) ||
@@ -2148,15 +2182,14 @@ function SignUpPage() {
                       type="text"
                       onChange={handleEmailChange}
                       style={{
-                        width: "440px",
+                        width: "81.5%",
                         height: "58px",
                       }}
                     />
-
                     {emailTypeError === 304 && email.length ? (
                       <div
                         style={{
-                          width: "420px",
+                          width: "81.5%",
                           color: "rgb(244, 33, 46)",
                           fontSize: "13px",
                           lineHeight: "16px",
@@ -2168,7 +2201,7 @@ function SignUpPage() {
                     ) : emailTypeError === 200 && email.length ? (
                       <div
                         style={{
-                          width: "420px",
+                          width: "81.5%",
                           color: "rgb(244, 33, 46)",
                           fontSize: "13px",
                           lineHeight: "16px",
@@ -2178,7 +2211,6 @@ function SignUpPage() {
                         {"Email has already been taken."}
                       </div>
                     ) : null}
-
                     <div
                       style={{
                         display: " flex",
@@ -2187,7 +2219,7 @@ function SignUpPage() {
                     >
                       <div
                         style={{
-                          width: "440px",
+                          width: "81.5%",
                           fontSize: "13px",
                           lineHeight: "16px",
                           fontWeight: "400",
@@ -2210,7 +2242,7 @@ function SignUpPage() {
                     <div
                       className="mt-4"
                       style={{
-                        width: "440px",
+                        width: "81.5%",
                       }}
                     >
                       <div
@@ -2447,12 +2479,12 @@ function SignUpPage() {
                       </div>
 
                       {/* date of birth finish to check  */}
-                    </div>
+                    </div>{" "}
                     <Button
                       style={{
                         position: "absolute",
                         bottom: "20px",
-                        width: "440px",
+                        width: "81.5%",
                         height: "52px",
                         backgroundColor: "#0f141a",
                         opacity:
@@ -2484,7 +2516,7 @@ function SignUpPage() {
                       className="next-btn"
                     >
                       Next
-                    </Button>
+                    </Button>{" "}
                   </Modal.Body>
                 )}
               </>
@@ -2502,7 +2534,7 @@ function SignUpPage() {
                     <div
                       className="mb-4"
                       style={{
-                        width: "440px",
+                        width: "81.5%",
                         lineHeight: "36px",
                         fontWeight: "700",
                         fontSize: "31px",
@@ -2512,7 +2544,9 @@ function SignUpPage() {
                     </div>
                     <div
                       style={{
-                        width: "440px",
+                        overflowY: "auto",
+                        position: "relative",
+                        width: "81.5%",
                       }}
                     >
                       <div
@@ -2541,7 +2575,7 @@ function SignUpPage() {
                         >
                           <div
                             style={{
-                              width: "90%",
+                              width: "81.5%",
                             }}
                           >
                             {" "}
@@ -2630,7 +2664,7 @@ function SignUpPage() {
                         >
                           <div
                             style={{
-                              width: "90%",
+                              width: "81.5%",
                             }}
                           >
                             {" "}
@@ -2718,7 +2752,7 @@ function SignUpPage() {
                         >
                           <div
                             style={{
-                              width: "90%",
+                              width: "81.5%",
                             }}
                           >
                             {" "}
@@ -2817,8 +2851,8 @@ function SignUpPage() {
                     <Button
                       style={{
                         position: "absolute",
-                        bottom: "30px",
-                        width: "440px",
+                        bottom: "20px",
+                        width: "81.5%",
                         height: "52px",
                         backgroundColor: "#0f141a",
                         opacity:
@@ -2857,7 +2891,7 @@ function SignUpPage() {
                   </Modal.Body>
                 ) : (
                   <Modal.Body
-                    style={{}}
+                    style={{ overflowX: "hidden" }}
                     className="signin-modal-body-child-non-reactivate"
                   >
                     <div
@@ -2873,7 +2907,7 @@ function SignUpPage() {
                     <div
                       className="mb-4"
                       style={{
-                        width: "440px",
+                        width: "81.5%",
                         lineHeight: "36px",
                         fontWeight: "700",
                         fontSize: "31px",
@@ -2887,6 +2921,7 @@ function SignUpPage() {
                           fontSize: "15px",
                           lineHeight: "20px",
                           fontWeight: "400",
+                          width: "81.5%",
                         }}
                       >
                         Enter it below to verify{" "}
@@ -2909,13 +2944,13 @@ function SignUpPage() {
                       variant={"outlined"}
                       label={`Verification code`}
                       style={{
-                        width: "440px",
+                        width: "81.5%",
                         height: "58px",
                       }}
                     />
                     <div
                       style={{
-                        width: "440px",
+                        width: "81.5%",
                       }}
                     >
                       <div
@@ -2938,8 +2973,8 @@ function SignUpPage() {
                     <Button
                       style={{
                         position: "absolute",
-                        bottom: "30px",
-                        width: "440px",
+                        bottom: "20px",
+                        width: "81.5%",
                         height: "52px",
                         backgroundColor: "#0f141a",
                         opacity:
@@ -2995,7 +3030,7 @@ function SignUpPage() {
                     <div
                       className="mb-4"
                       style={{
-                        width: "440px",
+                        width: "81.5%",
                         lineHeight: "36px",
                         fontWeight: "700",
                         fontSize: "31px",
@@ -3016,7 +3051,7 @@ function SignUpPage() {
                     </div>
 
                     <FormControl
-                      sx={{ m: 1, width: "440px", height: "58px" }}
+                      sx={{ m: 1, width: "81.5%", height: "58px" }}
                       variant="outlined"
                     >
                       <InputLabel htmlFor="outlined-adornment-password">
@@ -3086,7 +3121,7 @@ function SignUpPage() {
                     </FormControl>
                     <div
                       style={{
-                        width: "440px",
+                        width: "81.5%",
                         color: "rgb(244, 33, 46)",
                         fontSize: "13px",
                         fontWeight: "400",
@@ -3099,7 +3134,7 @@ function SignUpPage() {
                     </div>
                     <div
                       style={{
-                        width: "440px",
+                        width: "81.5%",
                         position: "absolute",
                         bottom: "100px",
                         color: "rgb(83, 100, 113)",
@@ -3130,8 +3165,8 @@ function SignUpPage() {
                     <Button
                       style={{
                         position: "absolute",
-                        bottom: "30px",
-                        width: "440px",
+                        bottom: "20px",
+                        width: "81.5%",
                         height: "52px",
                         backgroundColor: "#0f141a",
                         opacity:
@@ -3158,7 +3193,10 @@ function SignUpPage() {
       <Col
         style={{
           height: "100vh",
-          // padding: "16px",
+          maxHeight: "664px",
+          padding: "16px",
+          maxWidth: "623px",
+          minWidth: "380px",
         }}
         xxl={6}
         xl={6}
@@ -3169,17 +3207,43 @@ function SignUpPage() {
       >
         <div
           style={{
-            position: "relative",
-            top: "25%",
+            height: "100%",
+            padding: "20px",
           }}
         >
-          <div className="header-container">
-            <p>
-              <span className="header-first header">Happening now</span>
-            </p>
-            <p>
-              <span className="header-second header">Join today.</span>
-            </p>
+          <div
+            style={{
+              margin: "48px 0px",
+            }}
+          >
+            <span
+              style={{
+                letterSpacing: width < 501 ? "-0.8px" : "-1.2px",
+                fontSize: width < 501 ? "40px" : "64px",
+                lineHeight: width < 501 ? "52px" : "84px ",
+                fontWeight: "700",
+              }}
+              className="header-first header"
+            >
+              Happening now
+            </span>
+          </div>
+          <div
+            style={{
+              margin: "0px 0px 32px",
+            }}
+          >
+            <span
+              style={{
+                letterSpacing: width < 501 ? "-0.8px" : "-1.2px",
+                fontSize: width < 501 ? "23px" : "31px",
+                lineHeight: width < 501 ? "28px" : "36px",
+                fontWeight: "700",
+              }}
+              className="header-second header "
+            >
+              Join today.
+            </span>
           </div>
 
           <div className="responsive-input-group">
@@ -3209,7 +3273,7 @@ function SignUpPage() {
                     color: "black",
                   }}
                 >
-                  Sign in with Google
+                  Sign up with Google
                 </span>
                 <svg
                   width={16}
@@ -3240,18 +3304,20 @@ function SignUpPage() {
                   </g>
                 </svg>
               </Button>
-            </div>
-            <Divider
-              style={{
-                width: "300px",
-                minWidth: "300px",
-              }}
-              plain
-            >
-              or
-            </Divider>
 
-            <div>
+              <Divider
+                style={{
+                  margin: "5px 0px",
+                  padding: "0px",
+                  maxHeight: "20px",
+                  width: "300px",
+                  minWidth: "300px",
+                }}
+                plain
+              >
+                or
+              </Divider>
+
               <Button
                 onClick={handleShowCreateAccountModal}
                 className="create-btn"
@@ -3263,6 +3329,10 @@ function SignUpPage() {
                 style={{
                   // backgroundColor: "indianred",
                   textAlign: "start",
+                  lineHeight: "12px",
+                  fontSize: "11px",
+                  fontWeight: "400",
+                  margin: "10px 0px",
                 }}
                 className="by-signing"
               >
@@ -3281,9 +3351,7 @@ function SignUpPage() {
                 </a>
                 ,including{" "}
                 <a href="">
-                  <span style={{ color: " rgb(29, 155, 240)" }}>
-                    Cokkie Use
-                  </span>
+                  <span style={{ color: " rgb(29, 155, 240)" }}>Cokie Use</span>
                 </a>
                 .
               </p>

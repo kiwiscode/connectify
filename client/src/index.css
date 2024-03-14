@@ -237,7 +237,8 @@ body {
   padding-right: 16px;
   font-weight: 400;
   word-wrap: break-word;
-  font-size: 12px;
+  line-height: 16px;
+  font-size: 13px;
 }
 
 span > a {
@@ -2334,4 +2335,9 @@ span > a:hover {
 .next-btn-skip-for-now:hover {
   background-color: #e7e7e8 !important;
   transition-duration: 0.2s !important;
+}
+
+.forgot-password-btn:hover {
+  background-color: #eaeaea !important  ;
+  transition-duration: 0.2s;
 }
