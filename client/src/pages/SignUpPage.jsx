@@ -846,13 +846,6 @@ function SignUpPage() {
                     )}
 
                     <TextField
-                      error={
-                        !fullnameFilled &&
-                        fullname.length === 0 &&
-                        !firstAppearence
-                          ? "true"
-                          : ""
-                      }
                       autoFocus={true}
                       onMouseEnter={() => setonFocusedToFullNameField(true)}
                       onMouseLeave={() => setonFocusedToFullNameField(false)}
@@ -865,6 +858,32 @@ function SignUpPage() {
                       style={{
                         width: "81.5%",
                         height: "58px",
+                      }}
+                      sx={{
+                        "& .Mui-focused input + fieldset": {
+                          border:
+                            !fullnameFilled &&
+                            fullname.length === 0 &&
+                            !firstAppearence
+                              ? "2px solid rgb(244, 33, 46)!important"
+                              : "2px solid #1d9bf0 !important",
+                        },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor:
+                            !fullnameFilled &&
+                            fullname.length === 0 &&
+                            !firstAppearence
+                              ? "rgb(244, 33, 46)!important"
+                              : "#cfd9de !important",
+                        },
+                        "& .MuiInputLabel-shrink": {
+                          color:
+                            !fullnameFilled &&
+                            fullname.length === 0 &&
+                            !firstAppearence
+                              ? "rgb(244, 33, 46)!important"
+                              : "#1f9cf0 !important",
+                        },
                       }}
                     />
                     {!fullnameFilled &&
@@ -886,12 +905,6 @@ function SignUpPage() {
                     ) : null}
 
                     <TextField
-                      error={
-                        (email.length && emailTypeError === 304) ||
-                        (emailTypeError === 200 && email.length)
-                          ? "true"
-                          : ""
-                      }
                       className="mt-4"
                       id="outlined-basic"
                       label="Email"
@@ -902,6 +915,29 @@ function SignUpPage() {
                       style={{
                         width: "81.5%",
                         height: "58px",
+                      }}
+                      sx={{
+                        "& .Mui-focused input + fieldset": {
+                          border:
+                            emailTypeError === 304 ||
+                            (emailTypeError === 200 && email.length)
+                              ? "2px solid rgb(244, 33, 46)!important"
+                              : "2px solid #1d9bf0 !important",
+                        },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor:
+                            emailTypeError === 304 ||
+                            (emailTypeError === 200 && email.length)
+                              ? "rgb(244, 33, 46)!important"
+                              : "#cfd9de !important",
+                        },
+                        "& .MuiInputLabel-shrink": {
+                          color:
+                            emailTypeError === 304 ||
+                            (emailTypeError === 200 && email.length)
+                              ? "rgb(244, 33, 46)!important"
+                              : "#1f9cf0 !important",
+                        },
                       }}
                     />
 
@@ -1023,7 +1059,7 @@ function SignUpPage() {
                               borderWidth: styleOfBoxMonth ? "2px" : "1px",
                               borderColor: styleOfBoxMonth
                                 ? "#1d9bf0                          "
-                                : "rgb(207, 217, 222)",
+                                : "#cfd9de",
                             }}
                           >
                             <div
@@ -1089,7 +1125,7 @@ function SignUpPage() {
                               borderWidth: styleOfBoxDay ? "2px" : "1px",
                               borderColor: styleOfBoxDay
                                 ? "#1d9bf0                          "
-                                : "rgb(207, 217, 222)",
+                                : "#cfd9de",
                             }}
                           >
                             <div
@@ -1154,7 +1190,7 @@ function SignUpPage() {
                               borderWidth: styleOfBoxYear ? "2px" : "1px",
                               borderColor: styleOfBoxYear
                                 ? "#1d9bf0                          "
-                                : "rgb(207, 217, 222)",
+                                : "#cfd9de",
                             }}
                           >
                             <div
@@ -1652,7 +1688,7 @@ function SignUpPage() {
                           letterSpacing: "0.5px",
                         }}
                       >
-                        We sent you a code
+                        We sent you a codeasd
                       </div>
                       <div
                         className="mt-2"
@@ -1686,6 +1722,17 @@ function SignUpPage() {
                         width: "81.5%",
                         height: "58px",
                       }}
+                      sx={{
+                        "& .Mui-focused input + fieldset": {
+                          border: "2px solid #1d9bf0 !important",
+                        },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#cfd9de !important",
+                        },
+                        "& .MuiInputLabel-shrink": {
+                          color: "#1f9cf0 !important",
+                        },
+                      }}
                     />
                     <div
                       style={{
@@ -1701,7 +1748,7 @@ function SignUpPage() {
                           fontSize: "13px",
                           fontWeight: "400",
                           lineHeight: "16px",
-                          color: "rgb(29, 155, 240)                    ",
+                          color: "#1f9cf0",
                           display: "inline-block",
                           float: "left",
                         }}
@@ -1786,23 +1833,35 @@ function SignUpPage() {
                       sx={{ m: 1, width: "81.5%", height: "58px" }}
                       variant="outlined"
                     >
-                      <InputLabel htmlFor="outlined-adornment-password">
-                        <span
-                          style={{
+                      <InputLabel
+                        sx={{
+                          "&.MuiInputLabel-shrink": {
                             color:
-                              password.length && !passwordIsValid
-                                ? "rgb(244, 33, 46)"
-                                : "",
-                          }}
-                        >
-                          Password
-                        </span>
+                              !passwordIsValid && password.length
+                                ? "rgb(244, 33, 46) !important"
+                                : "#1f9cf0 !important",
+                          },
+                        }}
+                        htmlFor="outlined-adornment-password"
+                      >
+                        Password
                       </InputLabel>
                       <OutlinedInput
                         onChange={(e) => setPassword(e.target.value)}
-                        error={
-                          password.length && !passwordIsValid ? true : false
-                        }
+                        sx={{
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            borderColor:
+                              password.length && !passwordIsValid
+                                ? "rgb(244, 33, 46)!important"
+                                : "#cfd9de !important",
+                          },
+                          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                            border:
+                              password.length && !passwordIsValid
+                                ? "2px solid rgb(244, 33, 46)!important"
+                                : "2px solid #1d9bf0 !important",
+                          },
+                        }}
                         id="outlined-adornment-password"
                         type={showPassword ? "text" : "password"}
                         endAdornment={
@@ -2131,13 +2190,6 @@ function SignUpPage() {
                       </InputLabel>
                     )}
                     <TextField
-                      error={
-                        !fullnameFilled &&
-                        fullname.length === 0 &&
-                        !firstAppearence
-                          ? "true"
-                          : ""
-                      }
                       autoFocus={true}
                       onMouseEnter={() => setonFocusedToFullNameField(true)}
                       onMouseLeave={() => setonFocusedToFullNameField(false)}
@@ -2151,6 +2203,32 @@ function SignUpPage() {
                         width: "81.5%",
                         height: "58px",
                       }}
+                      sx={{
+                        "& .Mui-focused input + fieldset": {
+                          border:
+                            !fullnameFilled &&
+                            fullname.length === 0 &&
+                            !firstAppearence
+                              ? "2px solid rgb(244, 33, 46)!important"
+                              : "2px solid #1d9bf0 !important",
+                        },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor:
+                            !fullnameFilled &&
+                            fullname.length === 0 &&
+                            !firstAppearence
+                              ? "rgb(244, 33, 46)!important"
+                              : "#cfd9de !important",
+                        },
+                        "& .MuiInputLabel-shrink": {
+                          color:
+                            !fullnameFilled &&
+                            fullname.length === 0 &&
+                            !firstAppearence
+                              ? "rgb(244, 33, 46)!important"
+                              : "#1f9cf0 !important",
+                        },
+                      }}
                     />
                     {!fullnameFilled &&
                     fullname.length === 0 &&
@@ -2162,18 +2240,14 @@ function SignUpPage() {
                           fontSize: "13px",
                           lineHeight: "16px",
                           fontWeight: "400",
+                          position: "relative",
+                          left: "10px",
                         }}
                       >
                         {"What's your name?"}
                       </div>
                     ) : null}
                     <TextField
-                      error={
-                        (email.length && emailTypeError === 304) ||
-                        (emailTypeError === 200 && email.length)
-                          ? "true"
-                          : ""
-                      }
                       className="mt-4"
                       id="outlined-basic"
                       label="Email"
@@ -2185,6 +2259,29 @@ function SignUpPage() {
                         width: "81.5%",
                         height: "58px",
                       }}
+                      sx={{
+                        "& .Mui-focused input + fieldset": {
+                          border:
+                            emailTypeError === 304 ||
+                            (emailTypeError === 200 && email.length)
+                              ? "2px solid rgb(244, 33, 46)!important"
+                              : "2px solid #1d9bf0 !important",
+                        },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor:
+                            emailTypeError === 304 ||
+                            (emailTypeError === 200 && email.length)
+                              ? "rgb(244, 33, 46)!important"
+                              : "#cfd9de !important",
+                        },
+                        "& .MuiInputLabel-shrink": {
+                          color:
+                            emailTypeError === 304 ||
+                            (emailTypeError === 200 && email.length)
+                              ? "rgb(244, 33, 46)!important"
+                              : "#1f9cf0 !important",
+                        },
+                      }}
                     />
                     {emailTypeError === 304 && email.length ? (
                       <div
@@ -2194,6 +2291,8 @@ function SignUpPage() {
                           fontSize: "13px",
                           lineHeight: "16px",
                           fontWeight: "400",
+                          position: "relative",
+                          left: "10px",
                         }}
                       >
                         {"Please enter a valid email."}
@@ -2206,6 +2305,8 @@ function SignUpPage() {
                           fontSize: "13px",
                           lineHeight: "16px",
                           fontWeight: "400",
+                          position: "relative",
+                          left: "10px",
                         }}
                       >
                         {"Email has already been taken."}
@@ -2224,6 +2325,8 @@ function SignUpPage() {
                           lineHeight: "16px",
                           fontWeight: "400",
                           color: "#f7555f",
+                          position: "relative",
+                          left: "10px",
                         }}
                       >
                         {error ? error : null}
@@ -2822,9 +2925,9 @@ function SignUpPage() {
                     </div>
 
                     <div
-                      className="mt-4"
+                      className="mt-2"
                       style={{
-                        width: "440px",
+                        width: "81.5%",
                         color: "rgb(83, 100, 113)",
                         fontSize: "15px",
                         lineHeight: "20px",
@@ -2947,6 +3050,17 @@ function SignUpPage() {
                         width: "81.5%",
                         height: "58px",
                       }}
+                      sx={{
+                        "& .Mui-focused input + fieldset": {
+                          border: "2px solid #1d9bf0 !important",
+                        },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#cfd9de !important",
+                        },
+                        "& .MuiInputLabel-shrink": {
+                          color: "#1f9cf0 !important",
+                        },
+                      }}
                     />
                     <div
                       style={{
@@ -2962,7 +3076,7 @@ function SignUpPage() {
                           fontSize: "13px",
                           fontWeight: "400",
                           lineHeight: "16px",
-                          color: "rgb(29, 155, 240)                    ",
+                          color: "#1f9cf0                   ",
                           display: "inline-block",
                           float: "left",
                         }}
@@ -2977,12 +3091,9 @@ function SignUpPage() {
                         width: "81.5%",
                         height: "52px",
                         backgroundColor: "#0f141a",
-                        opacity:
-                          checkFields.nameInput &&
-                          checkFields.emailInput &&
-                          checkFields.dateofbirthInput
-                            ? "1"
-                            : "0.5",
+                        opacity: confirmEmailVerificationCode.length
+                          ? "1"
+                          : "0.5",
                       }}
                       onClick={
                         emailVerificationCode.length &&
@@ -3054,23 +3165,35 @@ function SignUpPage() {
                       sx={{ m: 1, width: "81.5%", height: "58px" }}
                       variant="outlined"
                     >
-                      <InputLabel htmlFor="outlined-adornment-password">
-                        <span
-                          style={{
+                      <InputLabel
+                        sx={{
+                          "&.MuiInputLabel-shrink": {
                             color:
-                              password.length && !passwordIsValid
-                                ? "rgb(244, 33, 46)"
-                                : "",
-                          }}
-                        >
-                          Password
-                        </span>
+                              !passwordIsValid && password.length
+                                ? "rgb(244, 33, 46)!important"
+                                : "#1f9cf0 !important",
+                          },
+                        }}
+                        htmlFor="outlined-adornment-password"
+                      >
+                        Password
                       </InputLabel>
                       <OutlinedInput
                         onChange={(e) => setPassword(e.target.value)}
-                        error={
-                          password.length && !passwordIsValid ? true : false
-                        }
+                        sx={{
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            borderColor:
+                              password.length && !passwordIsValid
+                                ? "rgb(244, 33, 46)!important"
+                                : "#cfd9de !important",
+                          },
+                          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                            border:
+                              password.length && !passwordIsValid
+                                ? "2px solid rgb(244, 33, 46)!important"
+                                : "2px solid #1d9bf0 !important",
+                          },
+                        }}
                         id="outlined-adornment-password"
                         type={showPassword ? "text" : "password"}
                         endAdornment={
