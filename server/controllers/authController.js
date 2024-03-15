@@ -735,7 +735,6 @@ const handleLoginVariantOne = (req, res, next) => {
     .populate("messages")
     .then((user) => {
       // variant one login implementation devam et !
-
       console.log("User =>", user);
     })
     .catch(() => {
