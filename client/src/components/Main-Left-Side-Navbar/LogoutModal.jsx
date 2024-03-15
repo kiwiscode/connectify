@@ -381,6 +381,25 @@ function LogoutModal() {
       });
   };
 
+  const handleLogoutFromGoogleAccount = () => {
+    console.log("This function should run !!");
+    axios
+      .get(`${API_URL}/auth/google-logout`)
+      .then((response) => {
+        console.log(response);
+
+        // navigate("https://accounts.google.com/logout");
+        setTimeout(() => {
+          logout();
+          // navigate("/");
+          navigate("https://mail.google.com/mail/u/0/?logout&hl=en");
+        }, 300);
+      })
+      .catch((err) => {
+        err;
+      });
+  };
+
   const [showlogoutPopup, setShowLogoutPopup] = useState(false);
 
   const handleShow = () => {
@@ -446,7 +465,11 @@ function LogoutModal() {
             width: "200px",
           }}
           className="logout-p logout-popover"
-          onClick={handleLogout}
+          onClick={() =>
+            userInfo.signedUpWithGoogle.isSignedUpWithGoogle
+              ? handleLogoutFromGoogleAccount()
+              : handleLogout()
+          }
         >
           Log out @{localeInfo?.username}
         </p>
@@ -656,6 +679,27 @@ function LogoutModal() {
     return () => {
       document.body.removeEventListener("click", getClickLocation);
     };
+  }, []);
+
+  const { updateUser } = useContext(UserContext);
+  const [user, setUser] = useState([]);
+
+  const getUser = async () => {
+    try {
+      const url = `${API_URL}/auth/login-success`;
+      const { data } = await axios.get(url, { withCredentials: true });
+      updateUser(data.user);
+      setUser(data.user);
+      console.log("data =>", data);
+      localStorage.setItem("userInfo", JSON.stringify(data.user));
+      localStorage.setItem("token", data.token);
+    } catch (err) {
+      console.log("Error =>", err);
+    }
+  };
+
+  useEffect(() => {
+    getUser();
   }, []);
 
   return (

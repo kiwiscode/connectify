@@ -1051,6 +1051,7 @@ function SignUpPage() {
                             className="child-div-after-overlay-trigger parent-div-month-content-over-flow-y"
                             onClick={handleMonthClick}
                             style={{
+                              borderRadius: "4px",
                               cursor: "pointer",
                               color: "#536471",
                               flex: "255.5px",
@@ -1116,6 +1117,8 @@ function SignUpPage() {
                             className="child-div-day-picker-after-overlay-trigger parent-div-day-picker-content-over-flow-y"
                             onClick={handleDayClick}
                             style={{
+                              borderRadius: "4px",
+
                               cursor: "pointer",
                               color: "#536471",
                               flex: "113.75px",
@@ -1181,6 +1184,8 @@ function SignUpPage() {
                             className="child-div-year-picker-after-overlay-trigger parent-div-year-picker-content-over-flow-y"
                             onClick={handleYearClick}
                             style={{
+                              borderRadius: "4px",
+
                               cursor: "pointer",
                               color: "#536471",
                               flex: "136.75px",
@@ -1688,7 +1693,7 @@ function SignUpPage() {
                           letterSpacing: "0.5px",
                         }}
                       >
-                        We sent you a codeasd
+                        We sent you a code
                       </div>
                       <div
                         className="mt-2"
@@ -2394,6 +2399,7 @@ function SignUpPage() {
                             className="child-div-after-overlay-trigger parent-div-month-content-over-flow-y"
                             onClick={handleMonthClick}
                             style={{
+                              borderRadius: "4px",
                               cursor: "pointer",
                               color: "#536471",
                               flex: "50%",
@@ -2459,6 +2465,7 @@ function SignUpPage() {
                             className="child-div-day-picker-after-overlay-trigger parent-div-day-picker-content-over-flow-y"
                             onClick={handleDayClick}
                             style={{
+                              borderRadius: "4px",
                               cursor: "pointer",
                               color: "#536471",
                               flex: "25%",
@@ -2524,6 +2531,8 @@ function SignUpPage() {
                             className="child-div-year-picker-after-overlay-trigger parent-div-year-picker-content-over-flow-y"
                             onClick={handleYearClick}
                             style={{
+                              borderRadius: "4px",
+
                               cursor: "pointer",
                               color: "#536471",
                               flex: "25%",
@@ -2633,7 +2642,14 @@ function SignUpPage() {
                     ></LoadingSpinner>
                   </Modal.Body>
                 ) : (
-                  <Modal.Body className="signin-modal-body-child-non-reactivate">
+                  <Modal.Body
+                    style={{
+                      overflowY: "auto",
+
+                      position: "relative",
+                    }}
+                    className="signin-modal-body-child-non-reactivate"
+                  >
                     <div
                       className="mb-4"
                       style={{
@@ -2925,7 +2941,7 @@ function SignUpPage() {
                     </div>
 
                     <div
-                      className="mt-2"
+                      className="mt-1"
                       style={{
                         width: "81.5%",
                         color: "rgb(83, 100, 113)",
@@ -2934,8 +2950,10 @@ function SignUpPage() {
                         fontWeight: "400",
                       }}
                     >
-                      By signing up, you agree to our{" "}
-                      <span className="customize-experience-tab">Terms</span>,{" "}
+                      <span>By signing up, you agree to our </span>
+                      <span className="customize-experience-tab">
+                        Terms
+                      </span>,{" "}
                       <span className="customize-experience-tab">
                         Privacy Policy
                       </span>
@@ -2953,7 +2971,7 @@ function SignUpPage() {
 
                     <Button
                       style={{
-                        position: "absolute",
+                        position: height < 700 ? "" : "absolute",
                         bottom: "20px",
                         width: "81.5%",
                         height: "52px",

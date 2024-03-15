@@ -9,9 +9,14 @@ router.post(
   "/send-email-verification-code",
   authController.handleEmailVerificationCode
 );
+
 router.post("/signup", authController.handleSignup);
 router.post("/login", authController.handleLogin);
 router.post("/login-variant-one", authController.handleLoginVariantOne);
+router.post(
+  "/login-variant-one-result",
+  authController.handleLoginVariantOneStep2
+);
 
 router.post(
   "/deactivate-user-back",
@@ -72,9 +77,26 @@ router.get("/login-failed", (req, res) => {
   });
 });
 
-router.get("/logout", (req, res) => {
+router.get("/google-logout", (req, res) => {
   req.logout();
-  res.redirect(process.env.CLIENT_URL);
+
+  console.log("logged out!");
+
+  res
+    .status(201)
+    .json({ message: "User logged out from his/her google account !!!" });
+
+  // req.session.destroy((err) => {
+  //   if (err) {
+  //     console.error("Session destroy error:", err);
+  //     res.status(500).json({ error: true, message: "Internal Server Error" });
+  //   } else {
+  //     res.clearCookie("connect.sid", { path: "/" });
+  //     res
+  //       .status(200)
+  //       .json({ success: true, message: "Logged out successfully" });
+  //   }
+  // });
 });
 // google authentication finish to check
 
