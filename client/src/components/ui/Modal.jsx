@@ -32,6 +32,7 @@ import {
   InputLabel,
   OutlinedInput,
   TextField,
+  Box,
 } from "@mui/material";
 
 // socket io cleaning up socket.id after logout from online users client start to check
@@ -51,7 +52,7 @@ function SigninModal({ deactivatedScreen }) {
     window.open(`${API_URL}/auth/google/callback`, "_self");
   };
   const navigate = useNavigate();
-  const [loginInput, setLoginInput] = useState("");
+
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const { updateUser } = useContext(UserContext);
@@ -113,7 +114,12 @@ function SigninModal({ deactivatedScreen }) {
 
   const { height, width } = useWindowDimensions();
 
-  const handleLogin = () => {
+  const [loginInput, setLoginInput] = useState({
+    usernameOrEmail: "",
+    password: "",
+  });
+
+  const handleLoginVariantOneStartProcess = () => {
     axios
       .post(`${API_URL}/auth/login-variant-one`, {
         authentication: loginInput,
@@ -121,95 +127,98 @@ function SigninModal({ deactivatedScreen }) {
       })
       .then((response) => {
         console.log("Response =>", response);
-        // handleClose();
-        // const { token, user } = response.data;
-
-        // localStorage.setItem("userInfo", JSON.stringify(user));
-        // localStorage.setItem("token", token);
-        // updateUser(user);
-        // setError("");
-
-        // setIsLoading(true);
-        // setTimeout(() => {
-        //   navigate("/home");
-        // }, 500);
+        if (response.status === 201) {
+          setTabLoading(true);
+          setTimeout(() => {
+            setTabIndex(8);
+            setShow(true);
+            setTabLoading(false);
+          }, 300);
+        }
       })
       .catch((err) => {
-        console.log("Error is running right now !");
-        // console.log("Open deactivated modal =>", openDeactivateLoginModal);
-        // if (err.response !== undefined) {
-        //   const { status } = err.response;
-        //   const { errorMessage } = err.response.data;
-        //   if (status === 400 && errorMessage === "Deactivated user !") {
-        //     setIsLoading(true);
+        console.log("Error is running right now !", err);
+        if (err) {
+          if (err.response.status === 400) {
+            catchErrorMessage("Sorry, we could not find your account.");
+          }
+        }
+      });
+  };
 
-        //     setTimeout(() => {
-        //       setIsLoading(false);
-        //       setOpenDeactivateLoginModal(true);
-        //     }, 500);
-        //     handleShowReactivatedLoginScreen();
-        //     setuserdeactivateddatenomutation(
-        //       err.response.data.user.deactivatedDate
-        //     );
-        //     console.log(
-        //       "Open deactivated modal 2 =>",
-        //       openDeactivateLoginModal
-        //     );
+  const handleLoginVariantOneStep2 = () => {
+    axios
+      .post(`${API_URL}/auth/login-variant-one-result`, {
+        authentication: loginInput,
+      })
+      .then((response) => {
+        console.log("Response =>", response);
+        const { token, user } = response.data;
+        if (response.status === 200) {
+          setTabLoading(true);
+          localStorage.setItem("userInfo", JSON.stringify(user));
+          localStorage.setItem("token", token);
+          updateUser(user);
+          console.log("Response after log in =>", response);
+          setTimeout(() => {
+            navigate("/home");
+            setTabLoading(false);
+          }, 300);
+        }
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+        if (error.response.status === 501) {
+          catchErrorMessage("Wrong password!");
+        } else if (error.response.status === 400) {
+          setTabLoading(true);
+          setTimeout(() => {
+            setTabLoading(false);
+            setOpenDeactivateLoginModal(true);
+          }, 300);
+          handleShowReactivatedLoginScreen();
+          setuserdeactivateddatenomutation(
+            error.response.data.user.deactivatedDate
+          );
+          console.log("Open deactivated modal 2 =>", openDeactivateLoginModal);
 
-        //     // 1 month later start to check
+          // 1 month later start to check
 
-        //     const inputDate2 = new Date(err.response.data.user.deactivatedDate);
+          const inputDate2 = new Date(error.response.data.user.deactivatedDate);
 
-        //     const thirtyDaysLater = new Date(
-        //       inputDate2.getTime() + 30 * 24 * 60 * 60 * 1000
-        //     );
+          const thirtyDaysLater = new Date(
+            inputDate2.getTime() + 30 * 24 * 60 * 60 * 1000
+          );
 
-        //     const options2 = {
-        //       year: "numeric",
-        //       month: "short",
-        //       day: "numeric",
-        //     };
+          const options2 = {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          };
 
-        //     const formattedDate2 = thirtyDaysLater.toLocaleDateString(
-        //       "en-US",
-        //       options2
-        //     );
+          const formattedDate2 = thirtyDaysLater.toLocaleDateString(
+            "en-US",
+            options2
+          );
 
-        //     // 1 month later finish to check
+          // 1 month later finish to check
 
-        //     const inputDate = new Date(err.response.data.user.deactivatedDate);
+          const inputDate = new Date(error.response.data.user.deactivatedDate);
 
-        //     const options = { year: "numeric", month: "short", day: "numeric" };
+          const options = { year: "numeric", month: "short", day: "numeric" };
 
-        //     const formattedDate = inputDate.toLocaleDateString(
-        //       "en-US",
-        //       options
-        //     );
-        //     setUserDeactivatedDate(formattedDate);
-        //     setUserdeletiondate(formattedDate2);
-        //   } else if (status === 400) {
-        //     catchErrorMessage(errorMessage);
-        //   }
-        //   if (status === 401) {
-        //     catchErrorMessage(errorMessage);
-        //   }
-        //   if (status === 402) {
-        //     catchErrorMessage(errorMessage);
-        //   }
-        //   if (status === 500) {
-        //     catchErrorMessage(errorMessage);
-        //   }
-        // } else {
-        //   return;
-        // }
+          const formattedDate = inputDate.toLocaleDateString("en-US", options);
+          setUserDeactivatedDate(formattedDate);
+          setUserdeletiondate(formattedDate2);
+        }
       });
   };
 
   const handleDeactivatedUserReturnLogin = () => {
+    console.log("Button clicked ");
     axios
       .post(`${API_URL}/auth/deactivate-user-back`, {
-        username,
-        password,
+        authentication: loginInput,
       })
       .then((response) => {
         handleCloseReactivatedLoginScreen();
@@ -239,13 +248,13 @@ function SigninModal({ deactivatedScreen }) {
 
   const [checkedValue, setCheckedValue] = useState(false);
 
-  const redirectHomePage = () => {
-    navigate("/home");
-  };
-
   const handleCloseLoginModal = () => {
     setTabIndex(0);
     setShowLoginModal(false);
+    setLoginInput({
+      usernameOrEmail: "",
+      password: "",
+    });
   };
 
   const [isLoading, setIsLoading] = useState(false);
@@ -580,111 +589,221 @@ function SigninModal({ deactivatedScreen }) {
       )}
       {openDeactivateLoginModal && !isLoading ? (
         <>
-          <Modal
-            dialogClassName="signin-modal-dialog"
-            contentClassName="modal-content"
-            className="signin-modal"
-            show={openDeactivateLoginModal}
-            onHide={handleCloseReactivatedLoginScreen}
-            size="lg"
-            centered={true}
-          >
-            <Modal.Header
-              style={{
-                border: "none",
-              }}
-            >
-              <div
-                onClick={handleCloseReactivatedLoginScreen}
-                className="close-button"
+          {width <= 700 ? (
+            <>
+              <Modal
                 style={{
-                  borderRadius: "50%",
-                  cursor: "pointer",
+                  height: "100%",
                 }}
+                dialogClassName={"modal-fullscreen"}
+                centered={true}
+                show={openDeactivateLoginModal}
+                onHide={handleCloseReactivatedLoginScreen}
               >
-                <div>
-                  <svg
-                    style={{
-                      border: "none",
-                      fontSize: "15px",
-                      margin: "5px",
-                    }}
-                    onClick={handleCloseReactivatedLoginScreen}
-                    width={20}
-                    height={20}
-                    color="rgb(15,20,25)"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                  >
-                    <g>
-                      <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
-                    </g>
-                  </svg>{" "}
-                </div>
-              </div>
-            </Modal.Header>
-
-            <Modal.Body>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  // width: "420px",
-                }}
-                className="sign-in-header mt-4 mb-4"
-              >
-                <div
+                <Modal.Header
+                  className="signin-modal-header-child-non-reactivate"
                   style={{
-                    textAlign: "left",
+                    border: "none",
                   }}
                 >
-                  Reactivate your account?
-                </div>
-                <div
+                  <div
+                    onClick={handleCloseReactivatedLoginScreen}
+                    className="close-button"
+                    style={{
+                      borderRadius: "50%",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <div>
+                      <svg
+                        style={{
+                          border: "none",
+                          fontSize: "15px",
+                          margin: "5px",
+                        }}
+                        onClick={handleCloseReactivatedLoginScreen}
+                        width={20}
+                        height={20}
+                        color="rgb(15,20,25)"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                      >
+                        <g>
+                          <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                        </g>
+                      </svg>{" "}
+                    </div>
+                  </div>
+                </Modal.Header>
+
+                <>
+                  {" "}
+                  <Modal.Body className="signin-modal-body-child-non-reactivate mt-5">
+                    <div
+                      style={{
+                        width: "81.5%",
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: "26px",
+                          fontWeight: "700",
+                          lineHeight: "32px",
+                          letterSpacing: "0.5px",
+                        }}
+                      >
+                        Reactivate your account?
+                      </div>
+                      <div
+                        style={{
+                          marginTop: "5px",
+                          color: "rgb(83, 100, 113)",
+                          fontSize: "15px",
+                          fontWeight: "400",
+                          lineHeight: "20px",
+                        }}
+                      >{`You deactivated your account on ${userdeactivateddate}.On ${userdeletiondate} it will no longer be possible for you to restore your Connectify account if it was accidentally or wrongfully deactivated. By clicking "Yes, reactivate", you will halt the deactivation process and reactivate your account.`}</div>
+                    </div>
+
+                    <Button
+                      style={{
+                        width: "81.5%",
+                        minHeight: "52px",
+                      }}
+                      className="login-button mt-4"
+                      onClick={handleDeactivatedUserReturnLogin}
+                    >
+                      Yes, reactivate
+                    </Button>
+                    <Button
+                      className="cancel-btn-reactivate-tab mt-3"
+                      style={{
+                        width: "81.5%",
+                        height: "52px",
+                        color: "black",
+                      }}
+                      variant="light"
+                      onClick={handleCloseReactivatedLoginScreen}
+                    >
+                      Cancel
+                    </Button>
+                  </Modal.Body>
+                </>
+              </Modal>
+            </>
+          ) : (
+            <>
+              <Modal
+                dialogClassName="signin-modal-dialog"
+                contentClassName="modal-content"
+                className="signin-modal"
+                show={openDeactivateLoginModal}
+                onHide={handleCloseReactivatedLoginScreen}
+              >
+                <Modal.Header
                   style={{
-                    marginTop: "5px",
-                    color: "rgb(83, 100, 113)",
-                    fontSize: "15px",
-                    fontWeight: "400",
-                    lineHeight: "20px",
-                    textAlign: "left",
+                    border: "none",
                   }}
-                >{`You deactivated your account on ${userdeactivateddate}.On ${userdeletiondate}, it will no longer be possible for you to restore your Connectify account if it was accidentally or wrongfully deactivated. By clicking "Yes, reactivate", you will halt the deactivation process and reactivate your account.`}</div>
-              </div>
-            </Modal.Body>
-            <Modal.Footer
-              style={{
-                border: "none",
-              }}
-            >
-              <Button
-                style={{
-                  // width: "400px",
-                  minHeight: "52px",
-                }}
-                className="login-button"
-                // variant="dark"
-                onClick={handleDeactivatedUserReturnLogin}
-              >
-                Yes, reactivate
-              </Button>
-              <Button
-                className="cancel-btn-reactivate-tab"
-                style={{
-                  // width: "400px",
-                  minHeight: "52px",
-                  color: "black",
-                }}
-                // className="login-button"
-                variant="light"
-                onClick={handleCloseReactivatedLoginScreen}
-              >
-                Cancel
-              </Button>
-            </Modal.Footer>
-          </Modal>
+                >
+                  <div
+                    onClick={handleCloseReactivatedLoginScreen}
+                    className="close-button"
+                    style={{
+                      borderRadius: "50%",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <div>
+                      <svg
+                        style={{
+                          border: "none",
+                          fontSize: "15px",
+                          margin: "5px",
+                        }}
+                        onClick={handleCloseReactivatedLoginScreen}
+                        width={20}
+                        height={20}
+                        color="rgb(15,20,25)"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                      >
+                        <g>
+                          <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                        </g>
+                      </svg>{" "}
+                    </div>
+                  </div>
+                </Modal.Header>
+
+                <>
+                  {" "}
+                  <Modal.Body>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        // width: "420px",
+                      }}
+                      className="sign-in-header mt-4 mb-4"
+                    >
+                      <div
+                        style={{
+                          textAlign: "left",
+                        }}
+                      >
+                        Reactivate your account?
+                      </div>
+                      <div
+                        style={{
+                          marginTop: "5px",
+                          color: "rgb(83, 100, 113)",
+                          fontSize: "15px",
+                          fontWeight: "400",
+                          lineHeight: "20px",
+                          textAlign: "left",
+                        }}
+                      >{`You deactivated your account on ${userdeactivateddate}.On ${userdeletiondate}, it will no longer be possible for you to restore your Connectify account if it was accidentally or wrongfully deactivated. By clicking "Yes, reactivate", you will halt the deactivation process and reactivate your account.`}</div>
+                    </div>
+                  </Modal.Body>
+                </>
+
+                <Modal.Footer
+                  style={{
+                    border: "none",
+                  }}
+                >
+                  <Button
+                    style={{
+                      // width: "400px",
+                      minHeight: "52px",
+                    }}
+                    className="login-button"
+                    // variant="dark"
+                    onClick={handleDeactivatedUserReturnLogin}
+                  >
+                    Yes, reactivate
+                  </Button>
+                  <Button
+                    className="cancel-btn-reactivate-tab"
+                    style={{
+                      // width: "400px",
+                      minHeight: "52px",
+                      color: "black",
+                    }}
+                    // className="login-button"
+                    variant="light"
+                    onClick={handleCloseReactivatedLoginScreen}
+                  >
+                    Cancel
+                  </Button>
+                </Modal.Footer>
+              </Modal>
+            </>
+          )}
         </>
       ) : (
         <>
@@ -697,9 +816,9 @@ function SigninModal({ deactivatedScreen }) {
                       height: "100%",
                     }}
                     dialogClassName={"modal-fullscreen"}
+                    centered={true}
                     show={showLoginModal}
                     onHide={handleCloseLoginModal}
-                    centered={true}
                   >
                     <Modal.Header
                       className="signin-modal-header-child-non-reactivate"
@@ -842,9 +961,14 @@ function SigninModal({ deactivatedScreen }) {
                               id="outlined-basic"
                               label="Email, or username"
                               variant="outlined"
-                              value={loginInput}
+                              value={loginInput.usernameOrEmail}
                               type="text"
-                              onChange={(e) => setLoginInput(e.target.value)}
+                              onChange={(e) =>
+                                setLoginInput((prevInfo) => ({
+                                  ...prevInfo,
+                                  usernameOrEmail: e.target.value,
+                                }))
+                              }
                               style={{
                                 width: "300px",
                                 height: "58px",
@@ -874,7 +998,7 @@ function SigninModal({ deactivatedScreen }) {
                               }}
                               className="login-button mt-4 next-btn"
                               variant="dark"
-                              onClick={handleLogin}
+                              onClick={handleLoginVariantOneStartProcess}
                             >
                               Next
                             </Button>
@@ -920,7 +1044,14 @@ function SigninModal({ deactivatedScreen }) {
                               >
                                 <span>
                                   Don&apos;t have an account?{" "}
-                                  <a href="">Sign up</a>
+                                  <a
+                                    style={{
+                                      cursor: "pointer",
+                                    }}
+                                    href=""
+                                  >
+                                    Sign up
+                                  </a>
                                 </span>
                               </div>
                             </div>
@@ -2076,6 +2207,229 @@ function SigninModal({ deactivatedScreen }) {
                           </Modal.Body>
                         )}
                       </>
+                    ) : tabIndex === 8 ? (
+                      <>
+                        {" "}
+                        <>
+                          {tabLoading ? (
+                            <Modal.Body className="signin-modal-body-child-non-reactivate">
+                              <LoadingSpinner
+                                strokeColor={"rgb(29, 155, 240)"}
+                              ></LoadingSpinner>
+                            </Modal.Body>
+                          ) : (
+                            <>
+                              <Modal.Body
+                                className="signin-modal-body-child-non-reactivate"
+                                style={{
+                                  overflowY: "auto",
+                                  position: "relative",
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    textAlign: "left",
+                                    width: "81.5%",
+                                    lineHeight: "28px",
+                                    fontWeight: "700",
+                                    fontSize: "26px",
+                                    letterSpacing: "0.5px",
+                                  }}
+                                >
+                                  Enter your password
+                                </div>
+
+                                <div
+                                  className="mt-5"
+                                  style={{
+                                    width: "81.5%",
+                                    height: "58px",
+                                  }}
+                                >
+                                  <TextField
+                                    style={{
+                                      width: "100%",
+                                    }}
+                                    disabled
+                                    id="filled-disabled"
+                                    label="Username"
+                                    defaultValue={loginInput.usernameOrEmail}
+                                    variant="filled"
+                                    InputProps={{
+                                      disableUnderline: true,
+                                    }}
+                                    sx={{
+                                      "& .MuiFilledInput-root": {
+                                        background: "#f7f9fa !important",
+                                      },
+                                    }}
+                                  />
+                                </div>
+                                <FormControl
+                                  className="mt-4"
+                                  sx={{
+                                    m: 1,
+                                    width: "81.5%",
+                                  }}
+                                  variant="outlined"
+                                >
+                                  <InputLabel
+                                    sx={{
+                                      "&.MuiInputLabel-shrink": {
+                                        color: "#1f9cf0 !important",
+                                      },
+                                    }}
+                                    htmlFor="outlined-adornment-password"
+                                  >
+                                    Password
+                                  </InputLabel>
+                                  <OutlinedInput
+                                    sx={{
+                                      "& .MuiOutlinedInput-notchedOutline": {
+                                        borderColor: "#cfd9de !important",
+                                      },
+                                      "&.Mui-focused .MuiOutlinedInput-notchedOutline":
+                                        {
+                                          border:
+                                            "2px solid #1d9bf0 !important",
+                                        },
+                                    }}
+                                    onChange={(e) =>
+                                      setLoginInput((prevInfo) => ({
+                                        ...prevInfo,
+                                        password: e.target.value,
+                                      }))
+                                    }
+                                    value={loginInput.password}
+                                    id="outlined-adornment-password"
+                                    type={showPassword ? "text" : "password"}
+                                    endAdornment={
+                                      <InputAdornment position="end">
+                                        {showPassword ? (
+                                          <svg
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={
+                                              handleMouseDownPassword
+                                            }
+                                            style={{
+                                              cursor: "pointer",
+                                            }}
+                                            color="rgb(15, 20, 25)"
+                                            fill="currentColor"
+                                            width={22}
+                                            height={22}
+                                            viewBox="0 0 24 24"
+                                            aria-hidden="true"
+                                            className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18yzcnr r-yc9v9c"
+                                          >
+                                            <g>
+                                              <path d="M3.693 21.707l-1.414-1.414 2.429-2.429c-2.479-2.421-3.606-5.376-3.658-5.513l-.131-.352.131-.352c.133-.353 3.331-8.648 10.937-8.648 2.062 0 3.989.621 5.737 1.85l2.556-2.557 1.414 1.414L3.693 21.707zm-.622-9.706c.356.797 1.354 2.794 3.051 4.449l2.417-2.418c-.361-.609-.553-1.306-.553-2.032 0-2.206 1.794-4 4-4 .727 0 1.424.192 2.033.554l2.263-2.264C14.953 5.434 13.512 5 11.986 5c-5.416 0-8.258 5.535-8.915 7.001zM11.986 10c-1.103 0-2 .897-2 2 0 .178.023.352.067.519l2.451-2.451c-.167-.044-.341-.067-.519-.067zm10.951 1.647l.131.352-.131.352c-.133.353-3.331 8.648-10.937 8.648-.709 0-1.367-.092-2-.223v-2.047c.624.169 1.288.27 2 .27 5.415 0 8.257-5.533 8.915-7-.252-.562-.829-1.724-1.746-2.941l1.438-1.438c1.53 1.971 2.268 3.862 2.33 4.027z"></path>
+                                            </g>
+                                          </svg>
+                                        ) : (
+                                          <svg
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={
+                                              handleMouseDownPassword
+                                            }
+                                            style={{
+                                              cursor: "pointer",
+                                            }}
+                                            width={22}
+                                            height={22}
+                                            color="rgb(15, 20, 25)"
+                                            fill="currentColor"
+                                            viewBox="0 0 24 24"
+                                            aria-hidden="true"
+                                            className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18yzcnr r-yc9v9c"
+                                          >
+                                            <g>
+                                              <path d="M12 21c-7.605 0-10.804-8.296-10.937-8.648L.932 12l.131-.352C1.196 11.295 4.394 3 12 3s10.804 8.296 10.937 8.648l.131.352-.131.352C22.804 12.705 19.606 21 12 21zm-8.915-9c.658 1.467 3.5 7 8.915 7s8.257-5.533 8.915-7c-.658-1.467-3.5-7-8.915-7s-8.257 5.533-8.915 7zM12 16c-2.206 0-4-1.794-4-4s1.794-4 4-4 4 1.794 4 4-1.794 4-4 4zm0-6c-1.103 0-2 .897-2 2s.897 2 2 2 2-.897 2-2-.897-2-2-2z"></path>
+                                            </g>
+                                          </svg>
+                                        )}
+                                      </InputAdornment>
+                                    }
+                                    label="Password"
+                                  />
+                                </FormControl>
+                                <div
+                                  className="forgot-password-login-variant-one-screen"
+                                  onClick={() => {
+                                    setTabLoading(true);
+                                    setTimeout(() => {
+                                      setStartForgotPasswordProcess(true);
+                                      setTabIndex(1);
+                                      setShow(true);
+                                      setTabLoading(false);
+                                    }, 300);
+                                  }}
+                                  style={{
+                                    cursor: "pointer",
+                                    position: "relative",
+                                    left: "10px",
+                                    bottom: "5px",
+                                    width: "81.5%",
+                                    color: "rgb(29, 155, 240)",
+                                    fontSize: "13px",
+                                    fontWeight: "400",
+                                    lineHeight: "16px",
+                                  }}
+                                >
+                                  Forgot password
+                                </div>
+
+                                <Button
+                                  style={{
+                                    position: "absolute",
+                                    bottom: "60px",
+                                    width: "81.5%",
+                                    height: "52px",
+                                    opacity: loginInput.password.length
+                                      ? "1"
+                                      : "0.5",
+                                  }}
+                                  onClick={() => handleLoginVariantOneStep2()}
+                                  className="login-button mt-5"
+                                  variant="dark"
+                                >
+                                  Log in
+                                </Button>
+                                <div
+                                  style={{
+                                    position: "absolute",
+                                    bottom: "15px",
+                                    width: "81.5%",
+                                    fontSize: "15px",
+                                    fontWeight: "400",
+                                    lineHeight: "20px",
+                                    color: "rgb(83, 100, 113)",
+                                    // height: "52px",
+                                  }}
+                                >
+                                  {"Don't have an account? "}
+                                  <span
+                                    onClick={() => {
+                                      navigate("/");
+                                    }}
+                                    className="sign-up-link-login-variant-one"
+                                    style={{
+                                      cursor: "pointer",
+                                      fontSize: "15px",
+                                      fontWeight: "400",
+                                      lineHeight: "20px",
+                                      color: "rgb(29, 155, 240)",
+                                    }}
+                                  >
+                                    <a href="">Sign up</a>
+                                  </span>
+                                </div>
+                              </Modal.Body>
+                            </>
+                          )}
+                        </>
+                      </>
                     ) : null}
                   </Modal>
                 </>
@@ -2228,9 +2582,14 @@ function SigninModal({ deactivatedScreen }) {
                             id="outlined-basic"
                             label="Email, or username"
                             variant="outlined"
-                            value={loginInput}
+                            value={loginInput.usernameOrEmail}
                             type="text"
-                            onChange={(e) => setLoginInput(e.target.value)}
+                            onChange={(e) =>
+                              setLoginInput((prevInfo) => ({
+                                ...prevInfo,
+                                usernameOrEmail: e.target.value,
+                              }))
+                            }
                             style={{
                               width: "300px",
                               height: "58px",
@@ -2249,6 +2608,7 @@ function SigninModal({ deactivatedScreen }) {
                           />
 
                           {error}
+                          {/* this button should check username or email coming from input from logininput start to check */}
                           <Button
                             style={{
                               width: "300px",
@@ -2260,10 +2620,20 @@ function SigninModal({ deactivatedScreen }) {
                             }}
                             className="login-button mt-4 next-btn"
                             variant="dark"
-                            onClick={handleLogin}
+                            // onClick={() => {
+                            //   setTabLoading(true);
+                            //   setTimeout(() => {
+                            //     setStartForgotPasswordProcess(true);
+                            //     setTabIndex(tabIndex + 1);
+                            //     setShow(true);
+                            //     setTabLoading(false);
+                            //   }, 300);
+                            // }}
+                            onClick={handleLoginVariantOneStartProcess}
                           >
                             Next
                           </Button>
+                          {/* this button should check username or email coming from input from logininput start to check */}
                           <Button
                             style={{
                               width: "300px",
@@ -3439,6 +3809,97 @@ function SigninModal({ deactivatedScreen }) {
                             Continue to X
                           </Button>
                         </Modal.Body>
+                      )}
+                    </>
+                  ) : tabIndex === 8 ? (
+                    <>
+                      {tabLoading ? (
+                        <Modal.Body className="signin-modal-body-child-non-reactivate">
+                          <LoadingSpinner
+                            strokeColor={"rgb(29, 155, 240)"}
+                          ></LoadingSpinner>
+                        </Modal.Body>
+                      ) : (
+                        <>
+                          <Modal.Body
+                            className="signin-modal-body-child-non-reactivate"
+                            style={{
+                              overflowY: "auto",
+                              position: "relative",
+                            }}
+                          >
+                            <div
+                              style={{
+                                width: "81.5%",
+                                lineHeight: "36px",
+                                fontWeight: "700",
+                                fontSize: "31px",
+                              }}
+                            >
+                              Find your Connectify account
+                            </div>
+                            <div
+                              className="mt-2"
+                              style={{
+                                color: "rgb(83, 100, 113)",
+                                lineHeight: "20px",
+                                width: "81.5%",
+                                fontSize: "15px",
+                                fontWeight: "400",
+                              }}
+                            >
+                              Enter the email, or username associated with your
+                              account to change your password.
+                            </div>
+                            <TextField
+                              className="mt-4"
+                              autoFocus={true}
+                              value={loginInput.password}
+                              onChange={(e) =>
+                                setLoginInput((prevInfo) => ({
+                                  ...prevInfo,
+                                  password: e.target.value,
+                                }))
+                              }
+                              type="text"
+                              id="outlined-basic"
+                              variant={"outlined"}
+                              label={`Email, or username`}
+                              style={{
+                                width: "81.5%",
+                                height: "58px",
+                              }}
+                              sx={{
+                                "& .Mui-focused input + fieldset": {
+                                  border: "2px solid #1d9bf0 !important",
+                                },
+                                "& .MuiOutlinedInput-notchedOutline": {
+                                  borderColor: "#cfd9de !important",
+                                },
+                                "& .MuiInputLabel-shrink": {
+                                  color: "#1f9cf0 !important",
+                                },
+                              }}
+                            />
+
+                            <Button
+                              style={{
+                                position: "absolute",
+                                bottom: "20px",
+                                width: "81.5%",
+                                height: "52px",
+                                opacity: findConnectifyAccount.length
+                                  ? "1"
+                                  : "0.5",
+                              }}
+                              onClick={() => handleFindConnectifyAccount()}
+                              className="login-button mt-5"
+                              variant="dark"
+                            >
+                              Log in
+                            </Button>
+                          </Modal.Body>
+                        </>
                       )}
                     </>
                   ) : null}

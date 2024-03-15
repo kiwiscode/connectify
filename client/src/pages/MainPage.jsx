@@ -124,14 +124,51 @@ function MainPage() {
       const { data } = await axios.get(url, { withCredentials: true });
       updateUser(data.user);
       setUser(data.user);
+      console.log("data =>", data);
       localStorage.setItem("userInfo", JSON.stringify(data.user));
       localStorage.setItem("token", data.token);
+      if (
+        data.user.signedUpWithVariantOne?.isSignedUpWithVariantOne &&
+        (!data.user.signedUpWithVariantOne
+          ?.isProfileImageCustomizationModalShown ||
+          !data.user.signedUpWithVariantOne?.isUsernameCustomizationModalShown)
+      ) {
+        console.log("We are here right now !");
+        setTabIndex(0);
+        setshowPickProfilePictureModal(true);
+        setshowModalForProfilePictureOrUsernameOrBoth(true);
+      } else if (
+        data.user.signedUpWithGoogle?.isSignedUpWithGoogle &&
+        !data.user.signedUpWithGoogle?.isUsernameCustomizationModalShown
+      ) {
+        setTabIndex(1);
+        setshowWhatShouldWeCallYouModal(true);
+        setshowModalForProfilePictureOrUsernameOrBoth(true);
+        console.log(
+          "User created account by using google show What should we call you modal for editing username !!"
+        );
+      } else {
+        console.log(
+          "User is already signed up with google or variant one and did or did not change profile picture or username !"
+        );
+      }
     } catch (err) {
       console.log("Error =>", err);
     }
   };
 
   useEffect(() => {
+    if (
+      userInfo?.signedUpWithVariantOne?.isSignedUpWithVariantOne &&
+      (!userInfo?.signedUpWithVariantOne
+        ?.isProfileImageCustomizationModalShown ||
+        !userInfo?.signedUpWithVariantOne?.isUsernameCustomizationModalShown)
+    ) {
+      console.log("We are here right now !");
+      setTabIndex(0);
+      setshowPickProfilePictureModal(true);
+      setshowModalForProfilePictureOrUsernameOrBoth(true);
+    }
     getUser();
   }, []);
 
@@ -157,33 +194,33 @@ function MainPage() {
     refreshActiveUser();
   }, []);
 
-  useEffect(() => {
-    if (
-      userInfo?.signedUpWithVariantOne?.isSignedUpWithVariantOne &&
-      (!userInfo?.signedUpWithVariantOne
-        ?.isProfileImageCustomizationModalShown ||
-        !userInfo?.signedUpWithVariantOne?.isUsernameCustomizationModalShown)
-    ) {
-      console.log("We are here right now !");
-      setTabIndex(0);
-      setshowPickProfilePictureModal(true);
-      setshowModalForProfilePictureOrUsernameOrBoth(true);
-    } else if (
-      userInfo?.signedUpWithGoogle?.isSignedUpWithGoogle &&
-      !userInfo?.signedUpWithGoogle?.isUsernameCustomizationModalShown
-    ) {
-      setTabIndex(1);
-      setshowWhatShouldWeCallYouModal(true);
-      setshowModalForProfilePictureOrUsernameOrBoth(true);
-      console.log(
-        "User created account by using google show What should we call you modal for editing username !!"
-      );
-    } else {
-      console.log(
-        "User is already signed up with google or variant one and did or did not change profile picture or username !"
-      );
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (
+  //     userInfo?.signedUpWithVariantOne?.isSignedUpWithVariantOne &&
+  //     (!userInfo?.signedUpWithVariantOne
+  //       ?.isProfileImageCustomizationModalShown ||
+  //       !userInfo?.signedUpWithVariantOne?.isUsernameCustomizationModalShown)
+  //   ) {
+  //     console.log("We are here right now !");
+  //     setTabIndex(0);
+  //     setshowPickProfilePictureModal(true);
+  //     setshowModalForProfilePictureOrUsernameOrBoth(true);
+  //   } else if (
+  //     userInfo?.signedUpWithGoogle?.isSignedUpWithGoogle &&
+  //     !userInfo?.signedUpWithGoogle?.isUsernameCustomizationModalShown
+  //   ) {
+  //     setTabIndex(1);
+  //     setshowWhatShouldWeCallYouModal(true);
+  //     setshowModalForProfilePictureOrUsernameOrBoth(true);
+  //     console.log(
+  //       "User created account by using google show What should we call you modal for editing username !!"
+  //     );
+  //   } else {
+  //     console.log(
+  //       "User is already signed up with google or variant one and did or did not change profile picture or username !"
+  //     );
+  //   }
+  // }, []);
 
   // create account variant 1 flow finish to check
 
@@ -989,7 +1026,7 @@ function MainPage() {
                     >
                       Have a favorite selfie? Upload it now.
                     </div>
-                    {userInfo.imageUrl.slice(0, 3) !== "../" ? (
+                    {userInfo?.imageUrl?.slice(0, 3) !== "../" ? (
                       <>
                         <div
                           style={{
@@ -1059,17 +1096,17 @@ function MainPage() {
                         width: "81.5%",
                         height: "52px",
                         backgroundColor:
-                          userInfo.imageUrl.slice(0, 3) !== "../"
+                          userInfo?.imageUrl?.slice(0, 3) !== "../"
                             ? "#0f141a"
                             : "transparent",
                         color:
-                          userInfo.imageUrl.slice(0, 3) !== "../"
+                          userInfo?.imageUrl?.slice(0, 3) !== "../"
                             ? "white"
                             : "black",
                         border: "1px solid rgba(0,0,0,0.1)",
                       }}
                       className={
-                        userInfo.imageUrl.slice(0, 3) !== "../"
+                        userInfo?.imageUrl?.slice(0, 3) !== "../"
                           ? `next-btn`
                           : "next-btn-skip-for-now"
                       }
@@ -1082,7 +1119,7 @@ function MainPage() {
                         }, 300);
                       }}
                     >
-                      {userInfo.imageUrl.slice(0, 3) !== "../"
+                      {userInfo?.imageUrl?.slice(0, 3) !== "../"
                         ? "Next"
                         : "Skip for now"}
                     </Button>

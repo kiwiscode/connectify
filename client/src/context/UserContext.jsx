@@ -30,6 +30,7 @@ const UserProvider = ({ children }) => {
         following: [],
         favorites: [],
         socketId: "",
+        imageuRL: "",
       }
     );
   });
@@ -61,6 +62,7 @@ const UserProvider = ({ children }) => {
       following: [],
       favorites: [],
       socketId: "",
+      imageuRL: "",
     });
     userInfo.active = false;
     localStorage.removeItem("userInfo");

@@ -2353,3 +2353,9 @@ span > a:hover {
   /* border: 2px solid #1d9bf0 !important; */
 }
 /* material ui styling in general finish to check  */
+
+.forgot-password-login-variant-one-screen:hover,
+.sign-up-link-login-variant-one:hover {
+  text-decoration: underline !important;
+  text-decoration-color: rgb(29, 155, 240);
+}

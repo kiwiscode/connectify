@@ -271,40 +271,17 @@ const handleLogin = (req, res, next) => {
                 });
               });
             } else {
-              user.save().then((user) => {
-                const {
-                  _id,
-                  username,
-                  email,
-                  fullname,
-                  verified,
-                  active,
-                  posts,
-                  followers,
-                  following,
-                  messages,
-                  createdAt,
-                  updatedAt,
-                  favorites,
-                  imageUrl,
-                  notifications,
-                  signedUpWithGoogle,
-                  signedUpWithVariantOne,
-                  bio,
-                } = user;
-
-                const token = jwt.sign(
-                  { userId: _id },
-                  process.env.JWT_SECRET,
-                  {
-                    expiresIn: "7d",
-                  }
+              if (user.isDeactivated) {
+                console.log(
+                  "This user deactivated user you need to do something else for him !"
                 );
-
-                console.log("Logged in user username =>", username);
-                res.json({
-                  token,
-                  user: {
+                res.status(501).json({
+                  errorMessage:
+                    "This user deactivated user you need to do something else for him/her!",
+                });
+              } else {
+                user.save().then((user) => {
+                  const {
                     _id,
                     username,
                     email,
@@ -323,9 +300,43 @@ const handleLogin = (req, res, next) => {
                     signedUpWithGoogle,
                     signedUpWithVariantOne,
                     bio,
-                  },
+                  } = user;
+
+                  const token = jwt.sign(
+                    { userId: _id },
+                    process.env.JWT_SECRET,
+                    {
+                      expiresIn: "7d",
+                    }
+                  );
+
+                  console.log("Logged in user username =>", username);
+
+                  res.json({
+                    token,
+                    user: {
+                      _id,
+                      username,
+                      email,
+                      fullname,
+                      verified,
+                      active,
+                      posts,
+                      followers,
+                      following,
+                      messages,
+                      createdAt,
+                      updatedAt,
+                      favorites,
+                      imageUrl,
+                      notifications,
+                      signedUpWithGoogle,
+                      signedUpWithVariantOne,
+                      bio,
+                    },
+                  });
                 });
-              });
+              }
             }
           }
         })
@@ -344,24 +355,23 @@ const handleLogin = (req, res, next) => {
 };
 
 const handleDeactivatedUserLoginBack = (req, res) => {
-  const { username, password } = req.body;
+  const { authentication } = req.body;
 
-  if (username === "" || password === "") {
+  if (!authentication.usernameOrEmail || !authentication.password) {
     res.status(403).json({
       errorMessage:
-        "All fields are mandatory.Please provide username,email,and password",
+        "All fields are mandatory.Please provide username or email,and password",
     });
     return;
   }
-
-  if (password.length < 6) {
-    return res.status(402).json({
-      errorMessage: "Your password needs to be at least 6 characters long.",
-    });
-  }
-
-  User.findOne({ username })
-    // today changed 13 nov
+  const userFirstInfoUsernameOrEmail = authentication.usernameOrEmail;
+  const userFirstInfoUserPassword = authentication.password;
+  User.findOne({
+    $or: [
+      { email: userFirstInfoUsernameOrEmail },
+      { username: userFirstInfoUsernameOrEmail },
+    ],
+  }) // today changed 13 nov
     .populate("posts")
     // today changed 13 nov
 
@@ -376,11 +386,11 @@ const handleDeactivatedUserLoginBack = (req, res) => {
       );
 
       bcrypt
-        .compare(password, userRequestingReactivation.password)
+        .compare(userFirstInfoUserPassword, userRequestingReactivation.password)
         .then((isSamePassword) => {
           if (
             !isSamePassword ||
-            userRequestingReactivation.username !== username
+            userRequestingReactivation.username !== userFirstInfoUsernameOrEmail
           ) {
             res.status(401).json({
               errorMessage: "Wrong credentials.",
@@ -721,10 +731,12 @@ const handleUsernameChange = async (req, res) => {
 };
 
 const handleLoginVariantOne = (req, res, next) => {
-  const { authentication, password } = req.body;
+  const { authentication } = req.body;
+  console.log("Authentication =>", authentication);
 
+  const userFirstInfo = authentication.usernameOrEmail;
   User.findOne({
-    $or: [{ email: authentication }, { username: authentication }],
+    $or: [{ email: userFirstInfo }, { username: userFirstInfo }],
   })
     // today changed 13 nov
     .populate("posts")
@@ -736,12 +748,127 @@ const handleLoginVariantOne = (req, res, next) => {
     .then((user) => {
       // variant one login implementation devam et !
       console.log("User =>", user);
+      if (!user) {
+        res.status(400).json({
+          errorMessage: "Sorry, we could not find your account.",
+        });
+      } else {
+        res.status(201).json({
+          message: "User according to the authentication input found!",
+        });
+      }
     })
     .catch(() => {
       res.status(400).json({
         errorMessage: "Sorry, we could not find your account.",
       });
     });
+};
+
+const handleLoginVariantOneStep2 = (req, res) => {
+  const { authentication } = req.body;
+
+  console.log("Authentication =>", authentication);
+  const userFirstInfoFromStepOne = authentication.usernameOrEmail;
+
+  const passwordFromReqBody = authentication.password;
+  User.findOne({
+    $or: [
+      { email: userFirstInfoFromStepOne },
+      { username: userFirstInfoFromStepOne },
+    ],
+  })
+    // today changed 13 nov
+    .populate("posts")
+    // today changed 13 nov
+    .populate("followers")
+    .populate("following")
+    .populate("favorites")
+    .populate("messages")
+    .then((user) => {
+      console.log("User =>", user.username);
+      console.log("User password =>", passwordFromReqBody);
+      bcrypt
+        .compare(passwordFromReqBody, user.password)
+        .then((result) => {
+          console.log("Result =>", result);
+          if (!result) {
+            res
+              .status(501)
+              .json({ errorMessage: "Wrong password!            " });
+          } else {
+            if (user.isDeactivated) {
+              console.log("Deactivated user is here !");
+              res.status(400).json({
+                errorMessage: "Deactivated user!",
+                user: user,
+              });
+            } else {
+              user.save().then((user) => {
+                const {
+                  _id,
+                  username,
+                  email,
+                  fullname,
+                  verified,
+                  active,
+                  posts,
+                  followers,
+                  following,
+                  messages,
+                  createdAt,
+                  updatedAt,
+                  favorites,
+                  imageUrl,
+                  notifications,
+                  signedUpWithGoogle,
+                  signedUpWithVariantOne,
+                  bio,
+                } = user;
+
+                const token = jwt.sign(
+                  { userId: _id },
+                  process.env.JWT_SECRET,
+                  {
+                    expiresIn: "7d",
+                  }
+                );
+
+                console.log("Logged in user username =>", username);
+                res.json({
+                  token,
+                  user: {
+                    _id,
+                    username,
+                    email,
+                    fullname,
+                    verified,
+                    active,
+                    posts,
+                    followers,
+                    following,
+                    messages,
+                    createdAt,
+                    updatedAt,
+                    favorites,
+                    imageUrl,
+                    notifications,
+                    signedUpWithGoogle,
+                    signedUpWithVariantOne,
+                    bio,
+                  },
+                  message:
+                    "Show 2 modal, first => profile image customization modal, second => username customization modal",
+                });
+              });
+            }
+          }
+        })
+        .catch((error) => {
+          console.log("Error =>", error);
+        });
+    })
+    .catch(() => {});
 };
 
 module.exports = {
@@ -755,4 +882,5 @@ module.exports = {
   handleChangeModalStatusVariantOne,
   handleChangeModalStatusVariantOneModal2,
   handleLoginVariantOne,
+  handleLoginVariantOneStep2,
 };
