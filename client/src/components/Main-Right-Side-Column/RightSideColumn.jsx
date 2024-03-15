@@ -15,7 +15,7 @@ function RightSideColumn({
   setSearchTerm,
   filteredSearchResult,
 }) {
-  const { getToken } = useContext(UserContext);
+  const { getToken, userInfo } = useContext(UserContext);
   const [onFocus, setOnFocus] = useState(false);
   const [user, setUser] = useState([]);
   const [isHovered, setIsHovered] = useState("");
@@ -26,25 +26,42 @@ function RightSideColumn({
     setOnFocus(true);
   };
 
+  const { updateUser } = useContext(UserContext);
+
+  const [first3User, setFirst3User] = useState([]);
+
+  const getUser = async () => {
+    try {
+      const url = `${API_URL}/auth/login-success`;
+      const { data } = await axios.get(url, { withCredentials: true });
+      updateUser(data.user);
+      console.log("data =>", data);
+      localStorage.setItem("userInfo", JSON.stringify(data.user));
+      localStorage.setItem("token", data.token);
+      axios
+        .get(`${API_URL}/get-most-followed-3-user`, {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        })
+        .then((response) => {
+          setFirst3User(response.data.first3User);
+        })
+        .catch((error) => {
+          console.log("Error =>", error);
+        });
+    } catch (err) {
+      console.log("Error =>", err);
+    }
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
   const onFocusInActive = () => {
     setOnFocus(false);
   };
-  const [first3User, setFirst3User] = useState([]);
-
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/get-most-followed-3-user`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        setFirst3User(response.data.first3User);
-      })
-      .catch((error) => {
-        console.log("Error =>", error);
-      });
-  }, []);
 
   useEffect(() => {
     const getClickedLocation = (e) => {
