@@ -1129,7 +1129,23 @@ function MainPage() {
                       Your @username is unique. You can always change it later.
                     </div>
                     <TextField
-                      error={usernameDuplicateError ? "true" : ""}
+                      sx={{
+                        "& .Mui-focused input + fieldset": {
+                          border: usernameDuplicateError
+                            ? "2px solid rgb(244, 33, 46)!important"
+                            : "2px solid #1d9bf0 !important",
+                        },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: usernameDuplicateError
+                            ? "rgb(244, 33, 46)!important"
+                            : "#cfd9de !important",
+                        },
+                        "& .MuiInputLabel-shrink": {
+                          color: usernameDuplicateError
+                            ? "rgb(244, 33, 46)!important"
+                            : "#1f9cf0 !important",
+                        },
+                      }}
                       className="mt-5"
                       type="text"
                       id="outlined-basic"
@@ -1377,16 +1393,28 @@ function MainPage() {
                     </div>
                     <TextField
                       className="mt-5"
-                      error={usernameDuplicateError ? "true" : ""}
+                      sx={{
+                        "& .Mui-focused input + fieldset": {
+                          border: usernameDuplicateError
+                            ? "2px solid rgb(244, 33, 46)!important"
+                            : "2px solid #1d9bf0 !important",
+                        },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: usernameDuplicateError
+                            ? "rgb(244, 33, 46)!important"
+                            : "#cfd9de !important",
+                        },
+                        "& .MuiInputLabel-shrink": {
+                          color: usernameDuplicateError
+                            ? "rgb(244, 33, 46)!important"
+                            : "#1f9cf0 !important",
+                        },
+                      }}
                       autoFocus={true}
                       type="text"
                       id="outlined-basic"
                       variant={"outlined"}
                       label={`Username`}
-                      sx={{
-                        color: "yellow",
-                        border: "none",
-                      }}
                       style={{
                         width: "81.5%",
                         height: "58px",
@@ -1396,7 +1424,6 @@ function MainPage() {
                     <span
                       style={{
                         width: "81.5%",
-
                         color: "#f4222d",
                         fontSize: "13px",
                         fontWeight: "400",

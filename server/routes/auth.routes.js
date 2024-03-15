@@ -11,6 +11,8 @@ router.post(
 );
 router.post("/signup", authController.handleSignup);
 router.post("/login", authController.handleLogin);
+router.post("/login-variant-one", authController.handleLoginVariantOne);
+
 router.post(
   "/deactivate-user-back",
   authController.handleDeactivatedUserLoginBack

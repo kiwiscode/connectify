@@ -26,4 +26,9 @@ router.post(
   forgotPasswordController.changePasswordInForgotPasswordProcess
 );
 
+router.post(
+  "/check-username",
+  forgotPasswordController.handleiSEmailAndUsernameMatchForgotPasswordProcess
+);
+
 module.exports = router;

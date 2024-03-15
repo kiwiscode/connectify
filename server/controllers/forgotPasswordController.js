@@ -32,19 +32,15 @@ const handleGetForgotPasswordProcessUser = (req, res) => {
 
       if (userFromDB.length) {
         if (findConnectifyAccount.match(emailRegex)) {
-          res
-            .status(201)
-            .json({
-              user: userFromDB[0],
-              message: "The user entered an email address.",
-            });
+          res.status(201).json({
+            user: userFromDB[0],
+            message: "The user entered an email address.",
+          });
         } else {
-          res
-            .status(201)
-            .json({
-              user: userFromDB[0],
-              message: "The user entered an username.",
-            });
+          res.status(201).json({
+            user: userFromDB[0],
+            message: "The user entered an username.",
+          });
         }
       } else {
         res.status(404).json({
@@ -402,10 +398,40 @@ const handleLoginAfterForgotPasswordProcess = (req, res) => {
     });
 };
 
+const handleiSEmailAndUsernameMatchForgotPasswordProcess = (req, res) => {
+  const { findConnectifyAccount, confirmUsername } = req.body;
+
+  console.log(
+    "email one step before =>",
+    findConnectifyAccount,
+    "username current step =>",
+    confirmUsername
+  );
+
+  User.find({ email: findConnectifyAccount })
+    .then((user) => {
+      console.log(
+        "User finded according to the req.body email:findConnectifyAccount",
+        user[0].email,
+        user[0].username
+      );
+
+      if (user[0].username === confirmUsername) {
+        res.status(201).json({ error: false, message: "Success!" });
+      } else {
+        res.status(501).json({ error: true, message: "Failed!" });
+      }
+    })
+    .catch(() => {
+      res.status(404).json({ errorMessage: "User not found !" });
+    });
+};
+
 module.exports = {
   handleGetForgotPasswordProcessUser,
   handleSendForgotPasswordProcessCodeToEmail,
   handleChangePasswordForgotPasswordTab,
   handleLoginAfterForgotPasswordProcess,
   changePasswordInForgotPasswordProcess,
+  handleiSEmailAndUsernameMatchForgotPasswordProcess,
 };
