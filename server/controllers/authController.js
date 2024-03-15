@@ -576,6 +576,7 @@ const handleEmailVerificationCode = (req, res) => {
       res.status(500).json({
         errorMessage: "Error sending verification email.",
       });
+      s;
     });
 };
 
@@ -719,6 +720,30 @@ const handleUsernameChange = async (req, res) => {
   }
 };
 
+const handleLoginVariantOne = (req, res, next) => {
+  const { authentication, password } = req.body;
+
+  User.findOne({
+    $or: [{ email: authentication }, { username: authentication }],
+  })
+    // today changed 13 nov
+    .populate("posts")
+    // today changed 13 nov
+    .populate("followers")
+    .populate("following")
+    .populate("favorites")
+    .populate("messages")
+    .then((user) => {
+      // variant one login implementation devam et !
+      console.log("User =>", user);
+    })
+    .catch(() => {
+      res.status(400).json({
+        errorMessage: "Sorry, we could not find your account.",
+      });
+    });
+};
+
 module.exports = {
   handleSignup,
   handleLogin,
@@ -729,4 +754,5 @@ module.exports = {
   handleUsernameChange,
   handleChangeModalStatusVariantOne,
   handleChangeModalStatusVariantOneModal2,
+  handleLoginVariantOne,
 };

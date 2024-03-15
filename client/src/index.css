@@ -2341,3 +2341,15 @@ span > a:hover {
   background-color: #eaeaea !important  ;
   transition-duration: 0.2s;
 }
+
+/* material ui styling in general start to check  */
+.MuiOutlinedInput-notchedOutline {
+}
+
+.MuiInputLabel-shrink {
+}
+
+.Mui-focused input + fieldset {
+  /* border: 2px solid #1d9bf0 !important; */
+}
+/* material ui styling in general finish to check  */
