@@ -154,7 +154,7 @@ function SigninModal({ deactivatedScreen }) {
       .then((response) => {
         console.log("Response =>", response);
         const { token, user } = response.data;
-        if (response.status === 200) {
+        if (response.status === 201) {
           setTabLoading(true);
           localStorage.setItem("userInfo", JSON.stringify(user));
           localStorage.setItem("token", token);
@@ -957,6 +957,7 @@ function SigninModal({ deactivatedScreen }) {
                               or
                             </Divider>
                             <TextField
+                              autoFocus
                               className="mt-2"
                               id="outlined-basic"
                               label="Email, or username"
@@ -2285,6 +2286,7 @@ function SigninModal({ deactivatedScreen }) {
                                     Password
                                   </InputLabel>
                                   <OutlinedInput
+                                    autoFocus
                                     sx={{
                                       "& .MuiOutlinedInput-notchedOutline": {
                                         borderColor: "#cfd9de !important",

@@ -367,7 +367,7 @@ function LogoutModal() {
 
   const handleLogout = () => {
     axios
-      .post(`${API_URL}/logout`, null, {
+      .post(`${API_URL}/auth/logout`, null, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
@@ -388,11 +388,9 @@ function LogoutModal() {
       .then((response) => {
         console.log(response);
 
-        // navigate("https://accounts.google.com/logout");
         setTimeout(() => {
           logout();
-          // navigate("/");
-          navigate("https://mail.google.com/mail/u/0/?logout&hl=en");
+          navigate("/");
         }, 300);
       })
       .catch((err) => {
