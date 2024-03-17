@@ -4,6 +4,7 @@ import axios from "axios";
 import { UserContext } from "../../context/UserContext";
 import { Link, useNavigate } from "react-router-dom";
 import { List, Typography, Divider } from "antd";
+import useWindowDimensions from "../../hooks/getWindowDimensions";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -65,13 +66,6 @@ function RightSideColumn({
 
   useEffect(() => {
     const getClickedLocation = (e) => {
-      console.log("E target class list =>", e.target.classList);
-      console.log(
-        "E target parent node class name =>",
-        e.srcElement.parentNode.className
-      );
-
-      console.log("Base val =>", e.srcElement.parentNode.className.baseVal);
       if (
         e.target.classList.contains("right-side-bar-input") ||
         e.target.classList.contains("search-bar-right-side-column") ||
@@ -193,8 +187,521 @@ function RightSideColumn({
   };
 
   const [isHoveredListItem, setIsHoveredListItem] = useState("");
+
+  const { height, width } = useWindowDimensions();
+
+  const [showSubscriptionModal, setshowSubscriptionModal] = useState(false);
+
+  const handleShowSubscriptionModal = () => {
+    console.log("Button clicked,test!");
+    setshowSubscriptionModal(true);
+  };
+
+  const handleCloseSubscriptionModal = () => {
+    setshowSubscriptionModal(false);
+  };
+
+  const [activeIndividualOptionTabStyle, setactiveIndividualOptionTabStyle] =
+    useState(false);
+
+  const [
+    activeOrganizationOptionTabStyle,
+    setactiveOrganizationOptionTabStyle,
+  ] = useState(false);
+
   return (
     <>
+      {width <= 700 ? (
+        <>
+          <Modal
+            style={{
+              height: "100%",
+            }}
+            dialogClassName={"modal-fullscreen"}
+            show={showSubscriptionModal}
+            onHide={handleCloseSubscriptionModal}
+            centered={true}
+          >
+            <Modal.Header
+              className="signin-modal-header-child-non-reactivate"
+              style={{
+                border: "none",
+              }}
+            >
+              <div
+                onClick={handleCloseSubscriptionModal}
+                className="close-button"
+                style={{
+                  borderRadius: "50%",
+                  cursor: "pointer",
+                }}
+              >
+                <div>
+                  {/* close signin modal icon start to check  */}
+                  <svg
+                    style={{
+                      border: "none",
+                      fontSize: "15px",
+                      margin: "5px",
+                    }}
+                    onClick={handleCloseSubscriptionModal}
+                    width={20}
+                    height={20}
+                    color="rgb(15,20,25)"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                  >
+                    <g>
+                      <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                    </g>
+                  </svg>{" "}
+                  {/* close signin modal icon finish to check  */}
+                </div>
+              </div>
+            </Modal.Header>
+            <Modal.Body>
+              <div
+                style={{
+                  lineHeight: "36px",
+                  fontSize: "31px",
+                  fontWeight: "800",
+                }}
+              >
+                Who are you?
+              </div>
+              <div
+                className="mt-3"
+                style={{
+                  lineHeight: "20px",
+                  fontSize: "15px",
+                  fontWeight: "400",
+                  color: "rgb(15, 20, 25)",
+                }}
+              >
+                Choose the right subscription for you:
+              </div>
+              <div
+                className="mt-4"
+                style={{
+                  display: "flex",
+                  gap: "2.5%",
+                  width: "81.5%",
+                }}
+              >
+                <div
+                  onClick={() => {
+                    setactiveIndividualOptionTabStyle(true);
+                    setactiveOrganizationOptionTabStyle(false);
+                  }}
+                  style={
+                    ({ activeIndividualOptionTabStyle },
+                    {
+                      flex: 1,
+                      backgroundColor: "white",
+                      minHeight: "112px",
+                      padding: "12px",
+                      cursor: "pointer",
+                      borderWidth: "1px",
+                      borderRadius: "16px",
+                      boxShadow:
+                        "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                      border: activeIndividualOptionTabStyle
+                        ? "2px solid #339bf0"
+                        : "2px solid transparent",
+                      transition: "transform 0.3s ease",
+                    })
+                  }
+                  className="individual-subscription-box"
+                >
+                  <div
+                    style={{
+                      position: "relative",
+                      top: "5px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        color: "#697884",
+                        fontSize: "15px",
+                        fontWeight: "400",
+                      }}
+                    >
+                      Premium
+                    </div>
+                    <div
+                      style={{
+                        color: "rgb(15, 20, 25)",
+                        fontSize: "18px",
+                        fontWeight: "600",
+                      }}
+                    >
+                      {" "}
+                      I am an individual
+                    </div>
+                    <div
+                      style={{
+                        color: "#697884",
+                        fontSize: "14px",
+                        fontWeight: "400",
+                      }}
+                    >
+                      {" "}
+                      For individuals and creators
+                    </div>
+                  </div>
+                </div>
+                <div
+                  onClick={() => {
+                    setactiveOrganizationOptionTabStyle(true);
+                    setactiveIndividualOptionTabStyle(false);
+                  }}
+                  style={
+                    ({ activeOrganizationOptionTabStyle },
+                    {
+                      flex: 1,
+                      backgroundColor: "white",
+                      minHeight: "112px",
+                      padding: "12px",
+                      cursor: "pointer",
+                      borderWidth: "1px",
+                      borderRadius: "16px",
+                      boxShadow:
+                        "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                      border: activeOrganizationOptionTabStyle
+                        ? "2px solid #339bf0"
+                        : "2px solid transparent",
+                      transition: "transform 0.3s ease",
+                    })
+                  }
+                  className="organization-subscription-box"
+                >
+                  <div
+                    style={{
+                      position: "relative",
+                    }}
+                  >
+                    <div
+                      style={{
+                        color: "#697884",
+                        fontSize: "15px",
+                        fontWeight: "400",
+                      }}
+                    >
+                      {" "}
+                      Verified Organizations
+                    </div>{" "}
+                    <div
+                      style={{
+                        color: "rgb(15, 20, 25)",
+                        fontSize: "18px",
+                        fontWeight: "600",
+                      }}
+                    >
+                      I am an organization
+                    </div>{" "}
+                    <div
+                      style={{
+                        color: "#697884",
+                        fontSize: "14px",
+                        fontWeight: "400",
+                      }}
+                    >
+                      For businesses, government agencies, and non-profits
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                style={{
+                  width: "81.5%",
+                  height: "54px",
+                  backgroundColor: "#0f141a",
+                }}
+                className="next-btn mt-4"
+              >
+                Subscribe
+              </Button>
+              <div
+                style={{
+                  fontSize: "15px",
+                  fontWeight: "400",
+                  lineHeight: "20px",
+                  color: "rgb(15, 20, 25)",
+                }}
+                className="mt-4"
+              >
+                Learn more about{" "}
+                <span
+                  className="subscription-underline-text"
+                  style={{
+                    cursor: "pointer",
+                    color: "rgb(29, 155, 240)",
+                  }}
+                >
+                  Premium
+                </span>{" "}
+                and{" "}
+                <span
+                  className="subscription-underline-text"
+                  style={{
+                    cursor: "pointer",
+                    color: "rgb(29, 155, 240)",
+                  }}
+                >
+                  Verified Organizations
+                </span>
+              </div>
+            </Modal.Body>
+          </Modal>
+        </>
+      ) : (
+        <>
+          <Modal
+            className={"signin-modal-parent-non-reactivate"}
+            show={showSubscriptionModal}
+            onHide={handleCloseSubscriptionModal}
+            centered={true}
+          >
+            <Modal.Header
+              className="signin-modal-header-child-non-reactivate"
+              style={{
+                border: "none",
+              }}
+            >
+              <div
+                onClick={handleCloseSubscriptionModal}
+                className="close-button"
+                style={{
+                  borderRadius: "50%",
+                  cursor: "pointer",
+                }}
+              >
+                <div>
+                  {/* close signin modal icon start to check  */}
+                  <svg
+                    style={{
+                      border: "none",
+                      fontSize: "15px",
+                      margin: "5px",
+                    }}
+                    onClick={handleCloseSubscriptionModal}
+                    width={20}
+                    height={20}
+                    color="rgb(15,20,25)"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                  >
+                    <g>
+                      <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                    </g>
+                  </svg>{" "}
+                  {/* close signin modal icon finish to check  */}
+                </div>
+              </div>
+            </Modal.Header>
+            <Modal.Body className="subscription-modal">
+              <div
+                style={{
+                  lineHeight: "36px",
+                  fontSize: "31px",
+                  fontWeight: "800",
+                }}
+              >
+                Who are you?
+              </div>
+              <div
+                className="mt-3"
+                style={{
+                  lineHeight: "20px",
+                  fontSize: "15px",
+                  fontWeight: "400",
+                  color: "rgb(15, 20, 25)",
+                }}
+              >
+                Choose the right subscription for you:
+              </div>
+              <div
+                className="mt-4"
+                style={{
+                  display: "flex",
+                  gap: "2.5%",
+                  width: "81.5%",
+                }}
+              >
+                <div
+                  onClick={() => {
+                    setactiveIndividualOptionTabStyle(true);
+                    setactiveOrganizationOptionTabStyle(false);
+                  }}
+                  style={
+                    ({ activeIndividualOptionTabStyle },
+                    {
+                      flex: 1,
+                      backgroundColor: "white",
+                      minHeight: "112px",
+                      padding: "12px",
+                      cursor: "pointer",
+                      borderWidth: "1px",
+                      borderRadius: "16px",
+                      boxShadow:
+                        "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                      border: activeIndividualOptionTabStyle
+                        ? "2px solid #339bf0"
+                        : "2px solid transparent",
+                      transition: "transform 0.3s ease",
+                    })
+                  }
+                  className="individual-subscription-box"
+                >
+                  <div
+                    style={{
+                      position: "relative",
+                      top: "5px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        color: "#697884",
+                        fontSize: "15px",
+                        fontWeight: "400",
+                      }}
+                    >
+                      Premium
+                    </div>
+                    <div
+                      style={{
+                        color: "rgb(15, 20, 25)",
+                        fontSize: "18px",
+                        fontWeight: "600",
+                      }}
+                    >
+                      {" "}
+                      I am an individual
+                    </div>
+                    <div
+                      style={{
+                        color: "#697884",
+                        fontSize: "14px",
+                        fontWeight: "400",
+                      }}
+                    >
+                      {" "}
+                      For individuals and creators
+                    </div>
+                  </div>
+                </div>
+                <div
+                  onClick={() => {
+                    setactiveOrganizationOptionTabStyle(true);
+                    setactiveIndividualOptionTabStyle(false);
+                  }}
+                  style={
+                    ({ activeOrganizationOptionTabStyle },
+                    {
+                      flex: 1,
+                      backgroundColor: "white",
+                      minHeight: "112px",
+                      padding: "12px",
+                      cursor: "pointer",
+                      borderWidth: "1px",
+                      borderRadius: "16px",
+                      boxShadow:
+                        "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                      border: activeOrganizationOptionTabStyle
+                        ? "2px solid #339bf0"
+                        : "2px solid transparent",
+                      transition: "transform 0.3s ease",
+                    })
+                  }
+                  className="organization-subscription-box"
+                >
+                  <div
+                    style={{
+                      position: "relative",
+                    }}
+                  >
+                    <div
+                      style={{
+                        color: "#697884",
+                        fontSize: "15px",
+                        fontWeight: "400",
+                      }}
+                    >
+                      {" "}
+                      Verified Organizations
+                    </div>{" "}
+                    <div
+                      style={{
+                        color: "rgb(15, 20, 25)",
+                        fontSize: "18px",
+                        fontWeight: "600",
+                      }}
+                    >
+                      I am an organization
+                    </div>{" "}
+                    <div
+                      style={{
+                        color: "#697884",
+                        fontSize: "14px",
+                        fontWeight: "400",
+                      }}
+                    >
+                      For businesses, government agencies, and non-profits
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                style={{
+                  width: "81.5%",
+                  height: "54px",
+                  backgroundColor: "#0f141a",
+                }}
+                className="next-btn mt-4"
+              >
+                Subscribe
+              </Button>
+              <div
+                style={{
+                  fontSize: "15px",
+                  fontWeight: "400",
+                  lineHeight: "20px",
+                  color: "rgb(15, 20, 25)",
+                }}
+                className="mt-4"
+              >
+                Learn more about{" "}
+                <span
+                  className="subscription-underline-text"
+                  style={{
+                    cursor: "pointer",
+                    color: "rgb(29, 155, 240)",
+                  }}
+                >
+                  Premium
+                </span>{" "}
+                and{" "}
+                <span
+                  className="subscription-underline-text"
+                  style={{
+                    cursor: "pointer",
+                    color: "rgb(29, 155, 240)",
+                  }}
+                >
+                  Verified Organizations
+                </span>
+              </div>
+            </Modal.Body>
+          </Modal>
+        </>
+      )}
+
       <Modal
         className="right-side-bar-unfollow-modal"
         show={showUnfollowModal}
@@ -613,6 +1120,7 @@ function RightSideColumn({
                 </div>
 
                 <Button
+                  onClick={handleShowSubscriptionModal}
                   style={{
                     display: "inline",
                     marginTop: "10px",
