@@ -231,12 +231,68 @@ module.exports = (app) => {
                           "User 2 message room length=>",
                           users[1].messages[user2RoomIndex].chat.length
                         );
-                        users[0].messages[user1RoomIndex].chat.push(
-                          newCreatedChatBetween2User._id
+
+                        const userOneChatCollectionIds = users[0].messages[
+                          user1RoomIndex
+                        ].chat.map((eachChatIndividualMessage) => {
+                          return eachChatIndividualMessage._id.toString();
+                        });
+                        const userSecondChatCollectionIds = users[1].messages[
+                          user2RoomIndex
+                        ].chat.map((eachChatIndividualMessage) => {
+                          return eachChatIndividualMessage._id.toString();
+                        });
+
+                        console.log(
+                          "User one chat collections between action user =>",
+                          userOneChatCollectionIds
                         );
-                        users[1].messages[user2RoomIndex].chat.push(
-                          newCreatedChatBetween2User._id
+                        console.log(
+                          "User second chat collections between action user =>",
+                          userSecondChatCollectionIds
                         );
+
+                        console.log(
+                          "New created chat between two user id =>",
+                          newCreatedChatBetween2User._id.toString()
+                        );
+
+                        console.log(
+                          "Condition result =>",
+                          !userOneChatCollectionIds.includes(
+                            newCreatedChatBetween2User._id.toString()
+                          ) &&
+                            !userSecondChatCollectionIds.includes(
+                              newCreatedChatBetween2User._id.toString()
+                            )
+                        );
+
+                        if (
+                          !userOneChatCollectionIds.includes(
+                            newCreatedChatBetween2User._id.toString()
+                          ) &&
+                          !userSecondChatCollectionIds.includes(
+                            newCreatedChatBetween2User._id.toString()
+                          )
+                        ) {
+                          users[0].messages[user1RoomIndex].chat.push(
+                            newCreatedChatBetween2User._id
+                          );
+
+                          users[1].messages[user2RoomIndex].chat.push(
+                            newCreatedChatBetween2User._id
+                          );
+                        } else {
+                          console.log(
+                            "This particular chat id exist already in users messages chat array !!!"
+                          );
+                        }
+                        // users[0].messages[user1RoomIndex].chat.push(
+                        //   newCreatedChatBetween2User._id
+                        // );
+                        // users[1].messages[user2RoomIndex].chat.push(
+                        //   newCreatedChatBetween2User._id
+                        // );
 
                         console.log(
                           "First user Room =>",
@@ -281,33 +337,35 @@ module.exports = (app) => {
                         // version error finish to check
 
                         // bug fix for version error start to check
-                        const updateUser1 = User.findOneAndUpdate(
-                          { _id: users[0]._id, "messages.room": data.room },
-                          {
-                            $push: {
-                              "messages.$.chat": newCreatedChatBetween2User._id,
-                            },
-                          },
-                          { new: true }
-                        );
+                        // IMPORTANT This lines were causing issue to save chat id 2 times to user spesific chat room chats array start to check
+                        // const updateUser1 = User.findOneAndUpdate(
+                        //   { _id: users[0]._id, "messages.room": data.room },
+                        //   {
+                        //     $push: {
+                        //       "messages.$.chat": newCreatedChatBetween2User._id,
+                        //     },
+                        //   },
+                        //   { new: true }
+                        // );
 
-                        const updateUser2 = User.findOneAndUpdate(
-                          { _id: users[1]._id, "messages.room": data.room },
-                          {
-                            $push: {
-                              "messages.$.chat": newCreatedChatBetween2User._id,
-                            },
-                          },
-                          { new: true }
-                        );
+                        // const updateUser2 = User.findOneAndUpdate(
+                        //   { _id: users[1]._id, "messages.room": data.room },
+                        //   {
+                        //     $push: {
+                        //       "messages.$.chat": newCreatedChatBetween2User._id,
+                        //     },
+                        //   },
+                        //   { new: true }
+                        // );
 
-                        Promise.all([updateUser1, updateUser2])
-                          .then((updatedUsers) => {
-                            console.log("Users updated successfully");
-                          })
-                          .catch((error) => {
-                            console.log("Error updating users:", error);
-                          });
+                        // Promise.all([updateUser1, updateUser2])
+                        //   .then((updatedUsers) => {
+                        //     console.log("Users updated successfully");
+                        //   })
+                        //   .catch((error) => {
+                        //     console.log("Error updating users:", error);
+                        //   });
+                        // IMPORTANT This lines were causing issue to save chat id 2 times to user spesific chat room chats array finish to check
                         // bug fix for version error finish to check
                       })
                       .catch((error) => {

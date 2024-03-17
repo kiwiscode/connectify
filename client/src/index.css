@@ -2249,6 +2249,10 @@ span > a:hover {
   height: 600px;
 }
 
+.subscription-modal {
+  height: 460px;
+}
+
 .signin-modal-body-child-non-reactivate input {
   height: auto;
   outline-style: none !important;
@@ -2369,4 +2373,15 @@ span > a:hover {
 .sign-up-link-login-variant-one:hover {
   text-decoration: underline !important;
   text-decoration-color: rgb(29, 155, 240);
+}
+
+.subscription-underline-text:hover {
+  text-decoration: underline !important;
+  text-decoration-color: rgb(29, 155, 240);
+}
+
+.individual-subscription-box:hover,
+.organization-subscription-box:hover {
+  background-color: #f7f9f9 !important  ;
+  transform: scale(1);
 }

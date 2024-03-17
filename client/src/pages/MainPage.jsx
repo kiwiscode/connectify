@@ -137,13 +137,9 @@ function MainPage() {
 
   const getUser = async () => {
     try {
-      console.log("Fonksiyon içi aktif 1 !");
       const url = `${API_URL}/auth/login-success`;
-      console.log("Fonksiyon içi aktif 2 !");
 
       const { data } = await axios.get(url, { withCredentials: true });
-      console.log("Fonksiyon içi aktif 3 !");
-      console.log("Fonksiyon içi aktif 4 ! => data check", data);
       updateUser(data.user);
       setUser(data.user);
       localStorage.setItem("userInfo", JSON.stringify(data.user));
@@ -154,7 +150,6 @@ function MainPage() {
           ?.isProfileImageCustomizationModalShown ||
           !data.user.signedUpWithVariantOne?.isUsernameCustomizationModalShown)
       ) {
-        console.log("We are here right now !");
         setTabIndex(0);
         setshowPickProfilePictureModal(true);
         setshowModalForProfilePictureOrUsernameOrBoth(true);
@@ -202,7 +197,6 @@ function MainPage() {
         },
       })
       .then((response) => {
-        console.log("Response user active =>", response.data.user);
         setActiveUser(response.data.user);
         localStorage.setItem("userInfo", JSON.stringify(response.data.user));
       })
@@ -784,7 +778,6 @@ function MainPage() {
         },
       })
       .then((response) => {
-        console.log("Filtered new array =>", response.data.allUsers);
         const term = searchTerm.split(" ").join("").toLowerCase();
 
         const filteredUsers = response.data.allUsers.filter((eachUser) => {
@@ -955,9 +948,6 @@ function MainPage() {
         console.log("Error =>", error);
       });
   };
-
-  console.log("Username =>", username);
-  console.log("Username validated =>", usernameValidated);
 
   const changeModalStatusVariantOne = () => {
     axios
@@ -2184,8 +2174,31 @@ function MainPage() {
                                       <span className="svg-three-dots-post-detail">
                                         {/* show if post owner userId !equal currentUserId */}
                                         {post.userId &&
-                                        post.userId._id !==
-                                          userInfo._id ? null : (
+                                        post.userId._id !== userInfo._id ? (
+                                          <svg
+                                            style={{
+                                              cursor: "pointer",
+                                              backgroundColor:
+                                                "rgb(29, 155, 240)",
+                                            }}
+                                            onClick={() =>
+                                              handleShowDetailPostFromHomePage(
+                                                post._id
+                                              )
+                                            }
+                                            color="rgb(83, 100, 113)"
+                                            fill="currentColor"
+                                            width={`${1.25}em`}
+                                            height={`${1.25}em`}
+                                            viewBox="0 0 24 24"
+                                            aria-hidden="true"
+                                            className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                          >
+                                            <g>
+                                              <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                                            </g>
+                                          </svg>
+                                        ) : (
                                           <svg
                                             style={{
                                               cursor: "pointer",
