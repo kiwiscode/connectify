@@ -192,7 +192,7 @@ const handleLoginSuccess = (req, res, next) => {
       isVariantOneResultRouteSuccess
     );
 
-    console.log("Req user =>", req.user.username);
+    console.log("Req user =>", req.user?.username);
     if (req.user) {
       // when working on local version
       res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
@@ -203,7 +203,7 @@ const handleLoginSuccess = (req, res, next) => {
         expiresIn: "7d",
       });
 
-      // req.session.user = req.user;
+      req.session.user = req.user;
       res.status(200).json({
         error: false,
         message: "Successfully Loged In",
