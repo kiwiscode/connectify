@@ -14,6 +14,7 @@ function HomePage() {
       <Container
         style={{
           overflowX: "hidden",
+          height: "100vh",
         }}
         fluid
       >
@@ -21,7 +22,7 @@ function HomePage() {
           <Col
             style={{
               display: width < 1001 ? "none" : "",
-              maxWidth: "746px",
+              maxWidth: "54.2%",
             }}
           ></Col>
           <SignUpPage />

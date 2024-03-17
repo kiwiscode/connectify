@@ -1,9 +1,6 @@
 function IndexFooter() {
   return (
     <>
-      {/* <Container className="text-center" fluid="true">
-        <Row>
-          <Col xxl={12} xl={12} lg={12} md={12} sm={12} xs={12}> */}
       <div
         style={{
           textAlign: "center",
@@ -11,7 +8,7 @@ function IndexFooter() {
           minHeight: "72px",
           padding: "12px 16px",
         }}
-        className="footer-container "
+        className="footer-container mt-3"
       >
         <a href="">
           <span>About</span>
