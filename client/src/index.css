@@ -2337,9 +2337,20 @@ span > a:hover {
   transition-duration: 0.2s !important;
 }
 
+.logout-modal-variant-parent-visible-mode-spinner div div {
+  border: none !important;
+}
+
 .forgot-password-btn:hover {
   background-color: #eaeaea !important  ;
   transition-duration: 0.2s;
+}
+
+.cancel-logout-variant-btn:hover {
+  outline-style: none !important;
+  border: none !important;
+  background-color: #eaeaea !important  ;
+  transition-duration: 0.2s !important;
 }
 
 /* material ui styling in general start to check  */

@@ -18,12 +18,13 @@ import "../../index.css";
 
 import { message, Steps } from "antd";
 import { Divider, List } from "antd";
+import LoadingSpinner from "../ui/LoadingSpinner";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-function LogoutModal() {
+function LogoutModal({ isLogoutActionActive }) {
   const [messageApi, contextHolder] = message.useMessage();
   const successMessage = () => {
     messageApi.success({
@@ -365,16 +366,22 @@ function LogoutModal() {
   const [show, setShow] = useState(false);
   const { getToken, logout, userInfo } = useContext(UserContext);
 
+  const [showLogoutSpinner, setshowLogoutSpinner] = useState(false);
   const handleLogout = () => {
     axios
-      .post(`${API_URL}/logout`, null, {
+      .post(`${API_URL}/auth/logout`, null, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
       })
       .then(() => {
-        navigate("/");
-        logout();
+        setshowLogoutSpinner(true);
+        setTimeout(() => {
+          logout();
+          navigate("/");
+          setshowLogoutSpinner(false);
+          setshowLogoutSpinner(false);
+        }, 1000);
       })
       .catch((err) => {
         err;
@@ -385,19 +392,22 @@ function LogoutModal() {
     console.log("This function should run !!");
     axios
       .get(`${API_URL}/auth/google-logout`)
-      .then((response) => {
-        console.log(response);
-
-        // navigate("https://accounts.google.com/logout");
+      .then(() => {
+        setshowLogoutSpinner(true);
         setTimeout(() => {
           logout();
-          // navigate("/");
-          navigate("https://mail.google.com/mail/u/0/?logout&hl=en");
-        }, 300);
+          navigate("/");
+          setshowLogoutSpinner(false);
+        }, 1000);
       })
       .catch((err) => {
         err;
       });
+  };
+
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const handleOpenLogoutModal = () => {
+    setShowLogoutModal(true);
   };
 
   const [showlogoutPopup, setShowLogoutPopup] = useState(false);
@@ -465,11 +475,7 @@ function LogoutModal() {
             width: "200px",
           }}
           className="logout-p logout-popover"
-          onClick={() =>
-            userInfo.signedUpWithGoogle.isSignedUpWithGoogle
-              ? handleLogoutFromGoogleAccount()
-              : handleLogout()
-          }
+          onClick={() => handleOpenLogoutModal()}
         >
           Log out @{localeInfo?.username}
         </p>
@@ -704,6 +710,115 @@ function LogoutModal() {
 
   return (
     <>
+      {showLogoutSpinner ? (
+        <>
+          <Modal
+            className="logout-modal-variant-parent-visible-mode-spinner"
+            style={{
+              backgroundColor: showLogoutSpinner ? "white" : "",
+            }}
+            size="sm"
+            centered={true}
+            show={showLogoutModal}
+          >
+            {/* start to check  */}
+
+            <Modal.Body
+              style={{
+                border: "2px solid black !important",
+              }}
+              className="logout-modal-variant"
+            >
+              <LoadingSpinner
+                strokeColor={"rgb(29, 155, 240)"}
+              ></LoadingSpinner>
+              <div
+                className="mt-4"
+                style={{
+                  color: "#536471",
+                  letterSpacing: "-1.1px",
+                  fontSize: "16px",
+                  fontWeight: "600",
+                  lineHeight: "20px",
+                }}
+              >
+                Logging out
+              </div>
+            </Modal.Body>
+          </Modal>
+        </>
+      ) : (
+        <></>
+      )}
+
+      <Modal
+        className="logout-modal-variant-parent"
+        style={{
+          backgroundColor: showLogoutModal ? "#999999" : "",
+        }}
+        size="sm"
+        centered={true}
+        show={showLogoutModal}
+      >
+        {/* start to check  */}
+
+        <Modal.Body style={{}} className="logout-modal-variant">
+          <div
+            className="mt-5"
+            style={{
+              lineHeight: "24px",
+              fontWeight: "700",
+              fontSize: "20px",
+            }}
+          >
+            Log out of Connectify?
+          </div>
+          <div
+            style={{
+              width: "81.5%",
+              lineHeight: "20px",
+              fontWeight: "400",
+              fontSize: "15px",
+              color: "#536471",
+            }}
+            className="mt-2"
+          >
+            You can always log back in at any time. If you just want to switch
+            accounts, you can do that by adding an existing account.
+          </div>
+
+          <Button
+            className="login-button mt-4 next-btn"
+            variant="dark"
+            style={{
+              width: "90%",
+              height: "42px",
+              color: "white",
+              backgroundColor: "#0f141a",
+            }}
+            onClick={() =>
+              userInfo.signedUpWithGoogle.isSignedUpWithGoogle
+                ? handleLogoutFromGoogleAccount()
+                : handleLogout()
+            }
+          >
+            Log out
+          </Button>
+          <Button
+            onClick={() => setShowLogoutModal(false)}
+            className="mt-3 forgot-password-btn"
+            variant="light"
+            style={{
+              width: "90%",
+              height: "42px",
+              color: "black",
+            }}
+          >
+            Cancel
+          </Button>
+        </Modal.Body>
+      </Modal>
+
       {contextHolder}
       {/* popover basic test start to check  */}
       <OverlayTrigger

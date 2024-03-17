@@ -3,6 +3,9 @@ const router = express.Router();
 const authController = require("../controllers/authController");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
+const User = require("../models/User.model");
+const bcrypt = require("bcrypt");
+
 router.post("/email-check", authController.handleEmailCheck);
 
 router.post(
@@ -13,10 +16,146 @@ router.post(
 router.post("/signup", authController.handleSignup);
 router.post("/login", authController.handleLogin);
 router.post("/login-variant-one", authController.handleLoginVariantOne);
-router.post(
-  "/login-variant-one-result",
-  authController.handleLoginVariantOneStep2
-);
+
+let isVariantOneResultRouteSuccess = false;
+
+router.post("/login-variant-one-result", (req, res) => {
+  const { authentication } = req.body;
+  isVariantOneResultRouteSuccess = true;
+  console.log("Authentication =>", authentication);
+  console.log(
+    "Variant one route akıbeti result route içerisi =>",
+    isVariantOneResultRouteSuccess
+  );
+
+  const userFirstInfoFromStepOne = authentication.usernameOrEmail;
+
+  const passwordFromReqBody = authentication.password;
+  User.findOne({
+    $or: [
+      { email: userFirstInfoFromStepOne },
+      { username: userFirstInfoFromStepOne },
+    ],
+  })
+    // today changed 13 nov
+    .populate("posts")
+    // today changed 13 nov
+    .populate("followers")
+    .populate("following")
+    .populate("favorites")
+    .populate("messages")
+    .then((user) => {
+      console.log("User =>", user.username);
+      console.log("User password =>", passwordFromReqBody);
+      bcrypt
+        .compare(passwordFromReqBody, user.password)
+        .then((result) => {
+          console.log("Result =>", result);
+          if (!result) {
+            res
+              .status(501)
+              .json({ errorMessage: "Wrong password!            " });
+          } else {
+            if (user.isDeactivated) {
+              console.log("Deactivated user is here !");
+              res.status(400).json({
+                errorMessage: "Deactivated user!",
+                user: user,
+              });
+            } else {
+              user.save().then((user) => {
+                const {
+                  _id,
+                  username,
+                  email,
+                  fullname,
+                  verified,
+                  active,
+                  posts,
+                  followers,
+                  following,
+                  messages,
+                  createdAt,
+                  updatedAt,
+                  favorites,
+                  imageUrl,
+                  notifications,
+                  signedUpWithGoogle,
+                  signedUpWithVariantOne,
+                  bio,
+                } = user;
+
+                const token = jwt.sign(
+                  { userId: _id },
+                  process.env.JWT_SECRET,
+                  {
+                    expiresIn: "7d",
+                  }
+                );
+
+                console.log("Logged in user username =>", username);
+                res.status(201).json({
+                  token,
+                  user: {
+                    _id,
+                    username,
+                    email,
+                    fullname,
+                    verified,
+                    active,
+                    posts,
+                    followers,
+                    following,
+                    messages,
+                    createdAt,
+                    updatedAt,
+                    favorites,
+                    imageUrl,
+                    notifications,
+                    signedUpWithGoogle,
+                    signedUpWithVariantOne,
+                    bio,
+                  },
+                  message:
+                    "Show 2 modal, first => profile image customization modal, second => username customization modal",
+                });
+              });
+            }
+          }
+        })
+        .catch((error) => {
+          console.log("Error =>", error);
+        });
+    })
+    .catch((error) => {
+      console.log("Error =>", error);
+    });
+});
+
+router.post("/logout", (req, res) => {
+  const token = req.headers.authorization.split(" ")[1];
+  isVariantOneResultRouteSuccess = false;
+
+  console.log("Req cookies =>", req.session);
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+
+    const userId = decoded.userId;
+    User.findByIdAndUpdate(userId, { active: false })
+      .then(() => {
+        res.sendStatus(200);
+      })
+      .catch(() => {
+        res.status(500).json({ message: "Error updating user" });
+      });
+  });
+});
 
 router.post(
   "/deactivate-user-back",
@@ -34,9 +173,7 @@ router.post(
   "/change-modal-status-modal-2",
   authController.handleChangeModalStatusVariantOneModal2
 );
-
 // google authentication start to check
-
 router.get("/google", passport.authenticate("google", ["profile", "email"]));
 
 router.get(
@@ -48,27 +185,47 @@ router.get(
   })
 );
 
-router.get("/login-success", (req, res) => {
-  console.log("req =>", req.user);
-  if (req.user) {
-    // when working on local version
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-    // when working on deployment version
-    // ??
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-    const token = jwt.sign({ userId: req.user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
-    res.status(200).json({
-      error: false,
-      message: "Successfully Loged In",
-      user: req.user,
-      token: token,
-    });
+const handleLoginSuccess = (req, res, next) => {
+  if (!isVariantOneResultRouteSuccess) {
+    console.log(
+      "Variant one route akıbeti google success route içerisi=>",
+      isVariantOneResultRouteSuccess
+    );
+
+    console.log("Req user =>", req.user?.username);
+    if (req.user) {
+      // when working on local version
+      res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+      // when working on deployment version
+      // ??
+      res.setHeader("Access-Control-Allow-Credentials", "true");
+      const token = jwt.sign({ userId: req.user._id }, process.env.JWT_SECRET, {
+        expiresIn: "7d",
+      });
+
+      req.session.user = req.user;
+      res.status(200).json({
+        error: false,
+        message: "Successfully Loged In",
+        user: req.user,
+        token: token,
+      });
+    } else {
+      res.status(403).json({ error: true, message: "Not Authorized" });
+    }
   } else {
-    res.status(403).json({ error: true, message: "Not Authorized" });
+    console.log(
+      "You cannot run because user already logged in by using variant one !"
+    );
+    res.status(403).json({
+      error: true,
+      message:
+        "You cannot run because user already logged in by using variant one !",
+    });
   }
-});
+};
+
+router.get("/login-success", handleLoginSuccess);
 
 router.get("/login-failed", (req, res) => {
   res.status(401).json({
@@ -81,23 +238,10 @@ router.get("/google-logout", (req, res) => {
   req.logout();
 
   console.log("logged out!");
-
   res
     .status(201)
     .json({ message: "User logged out from his/her google account !!!" });
-
-  // req.session.destroy((err) => {
-  //   if (err) {
-  //     console.error("Session destroy error:", err);
-  //     res.status(500).json({ error: true, message: "Internal Server Error" });
-  //   } else {
-  //     res.clearCookie("connect.sid", { path: "/" });
-  //     res
-  //       .status(200)
-  //       .json({ success: true, message: "Logged out successfully" });
-  //   }
-  // });
 });
-// google authentication finish to check
 
+// google authentication finish to check
 module.exports = router;

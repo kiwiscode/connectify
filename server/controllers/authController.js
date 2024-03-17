@@ -639,7 +639,6 @@ const handleChangeModalStatusVariantOneModal2 = (req, res) => {
       res.status(404).json({ errorMessage: "User not found !" });
     });
 };
-
 // finish to check modal status changing for pick a profile picture and what should we call you modal
 
 const handleUsernameCheck = async (req, res) => {
@@ -730,7 +729,7 @@ const handleUsernameChange = async (req, res) => {
   }
 };
 
-const handleLoginVariantOne = (req, res, next) => {
+const handleLoginVariantOne = (req, res) => {
   const { authentication } = req.body;
   console.log("Authentication =>", authentication);
 
@@ -765,112 +764,122 @@ const handleLoginVariantOne = (req, res, next) => {
     });
 };
 
-const handleLoginVariantOneStep2 = (req, res) => {
-  const { authentication } = req.body;
+// let isVariantOneResultRouteSuccess = false;
 
-  console.log("Authentication =>", authentication);
-  const userFirstInfoFromStepOne = authentication.usernameOrEmail;
+// const handleLoginVariantOneStep2 = (req, res, next) => {
+//   const { authentication } = req.body;
+//   isVariantOneResultRouteSuccess = true;
+//   console.log("Authentication =>", authentication);
+//   console.log(
+//     "Variant one route akıbeti result route içerisi =>",
+//     isVariantOneResultRouteSuccess
+//   );
 
-  const passwordFromReqBody = authentication.password;
-  User.findOne({
-    $or: [
-      { email: userFirstInfoFromStepOne },
-      { username: userFirstInfoFromStepOne },
-    ],
-  })
-    // today changed 13 nov
-    .populate("posts")
-    // today changed 13 nov
-    .populate("followers")
-    .populate("following")
-    .populate("favorites")
-    .populate("messages")
-    .then((user) => {
-      console.log("User =>", user.username);
-      console.log("User password =>", passwordFromReqBody);
-      bcrypt
-        .compare(passwordFromReqBody, user.password)
-        .then((result) => {
-          console.log("Result =>", result);
-          if (!result) {
-            res
-              .status(501)
-              .json({ errorMessage: "Wrong password!            " });
-          } else {
-            if (user.isDeactivated) {
-              console.log("Deactivated user is here !");
-              res.status(400).json({
-                errorMessage: "Deactivated user!",
-                user: user,
-              });
-            } else {
-              user.save().then((user) => {
-                const {
-                  _id,
-                  username,
-                  email,
-                  fullname,
-                  verified,
-                  active,
-                  posts,
-                  followers,
-                  following,
-                  messages,
-                  createdAt,
-                  updatedAt,
-                  favorites,
-                  imageUrl,
-                  notifications,
-                  signedUpWithGoogle,
-                  signedUpWithVariantOne,
-                  bio,
-                } = user;
+//   const userFirstInfoFromStepOne = authentication.usernameOrEmail;
 
-                const token = jwt.sign(
-                  { userId: _id },
-                  process.env.JWT_SECRET,
-                  {
-                    expiresIn: "7d",
-                  }
-                );
+//   const passwordFromReqBody = authentication.password;
+//   User.findOne({
+//     $or: [
+//       { email: userFirstInfoFromStepOne },
+//       { username: userFirstInfoFromStepOne },
+//     ],
+//   })
+//     // today changed 13 nov
+//     .populate("posts")
+//     // today changed 13 nov
+//     .populate("followers")
+//     .populate("following")
+//     .populate("favorites")
+//     .populate("messages")
+//     .then((user) => {
+//       console.log("User =>", user.username);
+//       console.log("User password =>", passwordFromReqBody);
+//       bcrypt
+//         .compare(passwordFromReqBody, user.password)
+//         .then((result) => {
+//           console.log("Result =>", result);
+//           if (!result) {
+//             res
+//               .status(501)
+//               .json({ errorMessage: "Wrong password!            " });
+//           } else {
+//             if (user.isDeactivated) {
+//               console.log("Deactivated user is here !");
+//               res.status(400).json({
+//                 errorMessage: "Deactivated user!",
+//                 user: user,
+//               });
+//             } else {
+//               user.save().then((user) => {
+//                 const {
+//                   _id,
+//                   username,
+//                   email,
+//                   fullname,
+//                   verified,
+//                   active,
+//                   posts,
+//                   followers,
+//                   following,
+//                   messages,
+//                   createdAt,
+//                   updatedAt,
+//                   favorites,
+//                   imageUrl,
+//                   notifications,
+//                   signedUpWithGoogle,
+//                   signedUpWithVariantOne,
+//                   bio,
+//                 } = user;
 
-                console.log("Logged in user username =>", username);
-                res.json({
-                  token,
-                  user: {
-                    _id,
-                    username,
-                    email,
-                    fullname,
-                    verified,
-                    active,
-                    posts,
-                    followers,
-                    following,
-                    messages,
-                    createdAt,
-                    updatedAt,
-                    favorites,
-                    imageUrl,
-                    notifications,
-                    signedUpWithGoogle,
-                    signedUpWithVariantOne,
-                    bio,
-                  },
-                  message:
-                    "Show 2 modal, first => profile image customization modal, second => username customization modal",
-                });
-              });
-            }
-          }
-        })
-        .catch((error) => {
-          console.log("Error =>", error);
-        });
-    })
-    .catch(() => {});
-};
+//                 const token = jwt.sign(
+//                   { userId: _id },
+//                   process.env.JWT_SECRET,
+//                   {
+//                     expiresIn: "7d",
+//                   }
+//                 );
 
+//                 console.log("Logged in user username =>", username);
+//                 res.status(201).json({
+//                   token,
+//                   user: {
+//                     _id,
+//                     username,
+//                     email,
+//                     fullname,
+//                     verified,
+//                     active,
+//                     posts,
+//                     followers,
+//                     following,
+//                     messages,
+//                     createdAt,
+//                     updatedAt,
+//                     favorites,
+//                     imageUrl,
+//                     notifications,
+//                     signedUpWithGoogle,
+//                     signedUpWithVariantOne,
+//                     bio,
+//                   },
+//                   message:
+//                     "Show 2 modal, first => profile image customization modal, second => username customization modal",
+//                 });
+//               });
+//             }
+//           }
+//         })
+//         .catch((error) => {
+//           console.log("Error =>", error);
+//           next();
+//         });
+//     })
+//     .catch((error) => {
+//       console.log("Error =>", error);
+//       next();
+//     });
+// };
 module.exports = {
   handleSignup,
   handleLogin,
@@ -882,5 +891,6 @@ module.exports = {
   handleChangeModalStatusVariantOne,
   handleChangeModalStatusVariantOneModal2,
   handleLoginVariantOne,
-  handleLoginVariantOneStep2,
+  // handleLoginVariantOneStep2,
+  // isVariantOneResultRouteSuccess,
 };

@@ -118,13 +118,34 @@ function MainPage() {
 
   const [user, setUser] = useState(null);
 
+  // socket io 1 client start to check
+  const [notificationTest, setnotificationTest] = useState([]);
+  const [notificationText, setnotificationText] = useState([]);
+  // socket io 1 client finish to check
+
+  // socket io 4 client start to check
+  useEffect(() => {
+    setshouldHide(true);
+    handleShowPostsHomePage();
+    socket.on("socket_id_for_user", (socketId) => {
+      localStorage.setItem("socketId", socketId);
+    });
+
+    socket.emit("setUsername", userInfo.username);
+  }, []);
+  // socket io 4 client finish to check
+
   const getUser = async () => {
     try {
+      console.log("Fonksiyon içi aktif 1 !");
       const url = `${API_URL}/auth/login-success`;
+      console.log("Fonksiyon içi aktif 2 !");
+
       const { data } = await axios.get(url, { withCredentials: true });
+      console.log("Fonksiyon içi aktif 3 !");
+      console.log("Fonksiyon içi aktif 4 ! => data check", data);
       updateUser(data.user);
       setUser(data.user);
-      console.log("data =>", data);
       localStorage.setItem("userInfo", JSON.stringify(data.user));
       localStorage.setItem("token", data.token);
       if (
@@ -288,23 +309,6 @@ function MainPage() {
     });
   };
   // finish to check shared post view message
-
-  // socket io 1 client start to check
-  const [notificationTest, setnotificationTest] = useState([]);
-  const [notificationText, setnotificationText] = useState([]);
-  // socket io 1 client finish to check
-
-  // socket io 4 client start to check
-  useEffect(() => {
-    setshouldHide(true);
-    handleShowPostsHomePage();
-    socket.on("socket_id_for_user", (socketId) => {
-      localStorage.setItem("socketId", socketId);
-    });
-
-    socket.emit("setUsername", userInfo.username);
-  }, []);
-  // socket io 4 client finish to check
 
   const getOnlyFollowingPosts = () => {
     axios
@@ -854,15 +858,12 @@ function MainPage() {
 
   const [nextButtonDisabled, setnextButtonDisabled] = useState(false);
   const checkUsernameDuplicate = () => {
-    console.log("tessst inside fonksiyon");
     if (username.length >= 4 || username.length <= 15) {
       setnextButtonActive(true);
       setskipButtonActive(false);
-      console.log("tessst inside fonksiyon 2");
     } else {
       setnextButtonActive(true);
       setskipButtonActive(false);
-      console.log("tessst inside fonksiyon 3");
     }
 
     axios
@@ -876,8 +877,6 @@ function MainPage() {
         }
       )
       .then((response) => {
-        console.log("tessst inside fonksiyon 4 then block");
-
         console.log("Response =>", response);
         if (response.status === 200) {
           setusernameValidated(true);
@@ -923,14 +922,14 @@ function MainPage() {
       )
       .then((response) => {
         console.log("Response from server =>", response);
-        localStorage.setItem("userInfo", JSON.stringify(response.data.user));
         setTabLoading(true);
         setTimeout(() => {
           setTabLoading(false);
           setshowPickProfilePictureModal(false);
           setshowWhatShouldWeCallYouModal(false);
           setshowModalForProfilePictureOrUsernameOrBoth(false);
-        }, 300);
+          localStorage.setItem("userInfo", JSON.stringify(response.data.user));
+        }, 500);
       })
       .catch((error) => {
         console.log("Error =>", error);
@@ -950,7 +949,7 @@ function MainPage() {
           setshowPickProfilePictureModal(false);
           setshowWhatShouldWeCallYouModal(false);
           setshowModalForProfilePictureOrUsernameOrBoth(false);
-        }, 300);
+        }, 500);
       })
       .catch((error) => {
         console.log("Error =>", error);
@@ -972,8 +971,10 @@ function MainPage() {
         console.log("Error =>", error);
       });
   };
+
   return (
     <>
+      {" "}
       {contextHolder}
       {width <= 700 ? (
         <>
@@ -990,7 +991,14 @@ function MainPage() {
             {tabIndex === 0 ? (
               <>
                 {tabLoading ? (
-                  <Modal.Body className="signin-modal-body-child-non-reactivate">
+                  <Modal.Body
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                    className="signin-modal-body-child-non-reactivate"
+                  >
                     <LoadingSpinner
                       strokeColor={"rgb(29, 155, 240)"}
                     ></LoadingSpinner>
@@ -1116,7 +1124,7 @@ function MainPage() {
                           setTabLoading(false);
                           setTabIndex(tabIndex + 1);
                           changeModalStatusVariantOne();
-                        }, 300);
+                        }, 500);
                       }}
                     >
                       {userInfo?.imageUrl?.slice(0, 3) !== "../"
@@ -1129,7 +1137,14 @@ function MainPage() {
             ) : tabIndex === 1 ? (
               <>
                 {tabLoading ? (
-                  <Modal.Body className="signin-modal-body-child-non-reactivate">
+                  <Modal.Body
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                    className="signin-modal-body-child-non-reactivate"
+                  >
                     <LoadingSpinner
                       strokeColor={"rgb(29, 155, 240)"}
                     ></LoadingSpinner>
@@ -1264,7 +1279,14 @@ function MainPage() {
             {tabIndex === 0 ? (
               <>
                 {tabLoading ? (
-                  <Modal.Body className="signin-modal-body-child-non-reactivate">
+                  <Modal.Body
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                    className="signin-modal-body-child-non-reactivate"
+                  >
                     <LoadingSpinner
                       strokeColor={"rgb(29, 155, 240)"}
                     ></LoadingSpinner>
@@ -1384,7 +1406,7 @@ function MainPage() {
                           setTabLoading(false);
                           setTabIndex(tabIndex + 1);
                           changeModalStatusVariantOne();
-                        }, 300);
+                        }, 500);
                       }}
                     >
                       {userInfo?.imageUrl?.slice(0, 3) !== "../"
@@ -1398,7 +1420,14 @@ function MainPage() {
               <>
                 {" "}
                 {tabLoading ? (
-                  <Modal.Body className="signin-modal-body-child-non-reactivate">
+                  <Modal.Body
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                    className="signin-modal-body-child-non-reactivate"
+                  >
                     <LoadingSpinner
                       strokeColor={"rgb(29, 155, 240)"}
                     ></LoadingSpinner>
@@ -2155,31 +2184,8 @@ function MainPage() {
                                       <span className="svg-three-dots-post-detail">
                                         {/* show if post owner userId !equal currentUserId */}
                                         {post.userId &&
-                                        post.userId._id !== userInfo._id ? (
-                                          <svg
-                                            style={{
-                                              cursor: "pointer",
-                                              backgroundColor:
-                                                "rgb(29, 155, 240)",
-                                            }}
-                                            onClick={() =>
-                                              handleShowDetailPostFromHomePage(
-                                                post._id
-                                              )
-                                            }
-                                            color="rgb(83, 100, 113)"
-                                            fill="currentColor"
-                                            width={`${1.25}em`}
-                                            height={`${1.25}em`}
-                                            viewBox="0 0 24 24"
-                                            aria-hidden="true"
-                                            className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                          >
-                                            <g>
-                                              <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                            </g>
-                                          </svg>
-                                        ) : (
+                                        post.userId._id !==
+                                          userInfo._id ? null : (
                                           <svg
                                             style={{
                                               cursor: "pointer",

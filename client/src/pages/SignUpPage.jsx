@@ -1,13 +1,6 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-import {
-  Button,
-  Col,
-  Modal,
-  Popover,
-  OverlayTrigger,
-  Row,
-} from "react-bootstrap";
+import { Button, Col, Modal, Popover, OverlayTrigger } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../index.css";
 import { Divider } from "antd";
@@ -645,6 +638,7 @@ function SignUpPage() {
               className="signin-modal-header-child-non-reactivate"
               style={{
                 border: "none",
+                visibility: tabLoading ? "hidden" : "visible",
               }}
             >
               <>
@@ -779,7 +773,14 @@ function SignUpPage() {
             {tabIndex === 0 ? (
               <>
                 {tabLoading ? (
-                  <Modal.Body className="signin-modal-body-child-non-reactivate">
+                  <Modal.Body
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                    className="signin-modal-body-child-non-reactivate"
+                  >
                     <LoadingSpinner
                       strokeColor={"rgb(29, 155, 240)"}
                     ></LoadingSpinner>
@@ -1275,7 +1276,7 @@ function SignUpPage() {
                               setTimeout(() => {
                                 setTabLoading(false);
                                 setTabIndex(tabIndex + 1);
-                              }, 300);
+                              }, 500);
                             }
                           : null
                       }
@@ -1290,7 +1291,14 @@ function SignUpPage() {
               <>
                 {" "}
                 {tabLoading ? (
-                  <Modal.Body className="signin-modal-body-child-non-reactivate">
+                  <Modal.Body
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                    className="signin-modal-body-child-non-reactivate"
+                  >
                     <LoadingSpinner
                       strokeColor={"rgb(29, 155, 240)"}
                     ></LoadingSpinner>
@@ -1644,7 +1652,7 @@ function SignUpPage() {
                               setTimeout(() => {
                                 setTabLoading(false);
                                 setTabIndex(tabIndex + 1);
-                              }, 300);
+                              }, 500);
                             }
                           : null
                       }
@@ -1658,7 +1666,14 @@ function SignUpPage() {
             ) : tabIndex === 2 ? (
               <>
                 {tabLoading ? (
-                  <Modal.Body className="signin-modal-body-child-non-reactivate">
+                  <Modal.Body
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                    className="signin-modal-body-child-non-reactivate"
+                  >
                     <LoadingSpinner
                       strokeColor={"rgb(29, 155, 240)"}
                     ></LoadingSpinner>
@@ -1781,7 +1796,7 @@ function SignUpPage() {
                               setTimeout(() => {
                                 setTabLoading(false);
                                 setTabIndex(tabIndex + 1);
-                              }, 300);
+                              }, 500);
                             }
                           : () => errorMessageAndCleanTextInput()
                       }
@@ -1795,7 +1810,14 @@ function SignUpPage() {
             ) : tabIndex === 3 ? (
               <>
                 {tabLoading ? (
-                  <Modal.Body className="signin-modal-body-child-non-reactivate">
+                  <Modal.Body
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                    className="signin-modal-body-child-non-reactivate"
+                  >
                     <LoadingSpinner
                       strokeColor={"rgb(29, 155, 240)"}
                     ></LoadingSpinner>
@@ -1998,6 +2020,7 @@ function SignUpPage() {
               className="signin-modal-header-child-non-reactivate"
               style={{
                 border: "none",
+                visibility: tabLoading ? "hidden" : "visible",
               }}
             >
               <>
@@ -2132,7 +2155,14 @@ function SignUpPage() {
             {tabIndex === 0 ? (
               <>
                 {tabLoading ? (
-                  <Modal.Body className="signin-modal-body-child-non-reactivate">
+                  <Modal.Body
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                    className="signin-modal-body-child-non-reactivate"
+                  >
                     <LoadingSpinner
                       strokeColor={"rgb(29, 155, 240)"}
                     ></LoadingSpinner>
@@ -2621,7 +2651,7 @@ function SignUpPage() {
                               setTimeout(() => {
                                 setTabLoading(false);
                                 setTabIndex(tabIndex + 1);
-                              }, 300);
+                              }, 500);
                             }
                           : null
                       }
@@ -2636,7 +2666,14 @@ function SignUpPage() {
               <>
                 {" "}
                 {tabLoading ? (
-                  <Modal.Body className="signin-modal-body-child-non-reactivate">
+                  <Modal.Body
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                    className="signin-modal-body-child-non-reactivate"
+                  >
                     <LoadingSpinner
                       strokeColor={"rgb(29, 155, 240)"}
                     ></LoadingSpinner>
@@ -2991,7 +3028,7 @@ function SignUpPage() {
                               setTimeout(() => {
                                 setTabLoading(false);
                                 setTabIndex(tabIndex + 1);
-                              }, 300);
+                              }, 500);
                             }
                           : null
                       }
@@ -3005,7 +3042,14 @@ function SignUpPage() {
             ) : tabIndex === 2 ? (
               <>
                 {tabLoading ? (
-                  <Modal.Body className="signin-modal-body-child-non-reactivate">
+                  <Modal.Body
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                    className="signin-modal-body-child-non-reactivate"
+                  >
                     <LoadingSpinner
                       strokeColor={"rgb(29, 155, 240)"}
                     ></LoadingSpinner>
@@ -3122,7 +3166,7 @@ function SignUpPage() {
                               setTimeout(() => {
                                 setTabLoading(false);
                                 setTabIndex(tabIndex + 1);
-                              }, 300);
+                              }, 500);
                             }
                           : () => errorMessageAndCleanTextInput()
                       }
@@ -3136,7 +3180,14 @@ function SignUpPage() {
             ) : tabIndex === 3 ? (
               <>
                 {tabLoading ? (
-                  <Modal.Body className="signin-modal-body-child-non-reactivate">
+                  <Modal.Body
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                    className="signin-modal-body-child-non-reactivate"
+                  >
                     <LoadingSpinner
                       strokeColor={"rgb(29, 155, 240)"}
                     ></LoadingSpinner>
@@ -3333,11 +3384,14 @@ function SignUpPage() {
       )}
       <Col
         style={{
-          height: "100vh",
-          maxHeight: "664px",
-          padding: "16px",
-          maxWidth: "623px",
+          height: "92.2vh",
+          maxHeight: "100%",
+          padding: "32px",
+          maxWidth: "45.9%",
           minWidth: "380px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
         }}
         xxl={6}
         xl={6}
@@ -3348,15 +3402,12 @@ function SignUpPage() {
       >
         <div
           style={{
-            height: "100%",
-            padding: "20px",
+            position: "relative",
+            left: "10px",
+            top: "20px",
           }}
         >
-          <div
-            style={{
-              margin: "48px 0px",
-            }}
-          >
+          <div style={{}}>
             <span
               style={{
                 letterSpacing: width < 501 ? "-0.8px" : "-1.2px",
@@ -3370,6 +3421,7 @@ function SignUpPage() {
             </span>
           </div>
           <div
+            className="mt-5"
             style={{
               margin: "0px 0px 32px",
             }}
