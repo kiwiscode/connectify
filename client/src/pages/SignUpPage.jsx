@@ -470,12 +470,6 @@ function SignUpPage() {
       const classList = e.target?.classList;
       const parentNodeClassName = e.srcElement?.parentNode.className;
       const svgGroupClassName = e.srcElement?.parentNode.className.baseVal;
-      console.log("Target classlist =>", classList);
-      console.log("Target parent classlist =>", parentNodeClassName);
-      console.log(
-        "Target classlist parent node base value =>",
-        svgGroupClassName
-      );
 
       if (classList.contains("didn-t-receive-email-text")) {
         setShowOptionsReceivedEmail(!showOptionsReceivedEmail);
