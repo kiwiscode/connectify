@@ -418,7 +418,7 @@ function MainPage() {
         return err;
       });
   };
-
+  console.log("All posts in main page =>", posts);
   const setLoadingTrue = () => {
     setIsLoading(true);
     setContent("");
@@ -2036,8 +2036,8 @@ function MainPage() {
                                             width={40}
                                             height={40}
                                             src={
-                                              post.userId.imageUrl
-                                                ? post.userId.imageUrl
+                                              post?.userId?.imageUrl
+                                                ? post?.userId?.imageUrl
                                                 : null
                                             }
                                             alt="??"

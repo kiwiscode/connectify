@@ -2385,3 +2385,82 @@ span > a:hover {
   background-color: #f7f9f9 !important  ;
   transform: scale(1);
 }
+
+.basic-plan-parent-div div div span {
+  margin-left: 10px;
+}
+
+.basic-plan-parent-div div div {
+  margin-top: 5px;
+}
+
+.learn-more-basic-plan:hover,
+.learn-more-full-access-plan:hover {
+  text-decoration: underline;
+  text-decoration-color: rgb(29, 155, 240);
+}
+
+.text-decoration-thickness-2px:hover {
+  text-decoration-thickness: 2px;
+}
+
+.subscribe-btn-basic-plan:hover,
+.subscribe-btn-full-access-plan:hover {
+  background-color: #262b30 !important;
+  transition-duration: 0.2s;
+}
+
+/* slider test by using package start to check  */
+.premium-btn-back:hover {
+  background-color: #25282e !important;
+  transition-duration: 0.2s !important;
+  cursor: pointer !important;
+}
+
+/* start to check do not override css class if you are going to use react-slick again IMPORTANT */
+.slick-prev {
+  background-color: indianred !important;
+  display: none !important;
+}
+.slick-next {
+  background-color: indianred !important;
+  display: none !important;
+}
+/* finish to check do not override css class if you are going to use react-slick again IMPORTANT */
+
+/* slider test by using  package finish to check  */
+
+.premium-plus-header {
+  font-weight: 700;
+  line-height: 20px;
+  font-size: 17px;
+}
+
+.premium-plus-parent-div span {
+  /* background-color: yellow; */
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 400;
+}
+.premium-plus-parent-div svg {
+  position: relative;
+  height: 1.25em;
+  width: 1.25em;
+}
+
+.premium-plus-parent-div div div {
+  margin: 2px 0px;
+}
+
+.exclamation {
+  position: relative;
+  left: 8px;
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.basic-plan-footer-btn:hover {
+  background-color: #272c30 !important;
+  border: none !important;
+  outline-style: none !important;
+}
