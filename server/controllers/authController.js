@@ -586,7 +586,6 @@ const handleEmailVerificationCode = (req, res) => {
       res.status(500).json({
         errorMessage: "Error sending verification email.",
       });
-      s;
     });
 };
 
