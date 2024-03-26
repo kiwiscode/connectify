@@ -973,7 +973,7 @@ function MainPage() {
               height: "100%",
               overflowY: "scroll",
             }}
-            dialogClassName={"modal-fullscreen"}
+            dialogClassName={"scrollbar-add modal-fullscreen"}
             show={showModalForProfilePictureOrUsernameOrBoth}
             centered={true}
           >
@@ -998,7 +998,7 @@ function MainPage() {
                     style={{
                       overflowY: "auto",
                     }}
-                    className="signin-modal-body-child-non-reactivate create-account-first-tab"
+                    className="scrollbar-add signin-modal-body-child-non-reactivate create-account-first-tab"
                   >
                     <div
                       className="mt-5"
