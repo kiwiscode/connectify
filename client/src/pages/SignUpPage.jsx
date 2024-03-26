@@ -223,7 +223,7 @@ function SignUpPage() {
   // later finish to check
   const popoverContent = (
     <Popover
-      className="testt !"
+      className="testt ! scrollbar-add"
       style={{
         height: "250px",
         width: "150px",
@@ -258,6 +258,7 @@ function SignUpPage() {
   const [hoveredIndexDay, setIshoveredIndexDay] = useState(null);
   const popoverDayContent = (
     <Popover
+      className="scrollbar-add"
       style={{
         height: "250px",
         width: "150px",
@@ -290,6 +291,7 @@ function SignUpPage() {
   const [hoveredIndexYear, setIshoveredIndexYear] = useState(null);
   const popoverYearContent = (
     <Popover
+      className="scrollbar-add"
       style={{
         height: "250px",
         width: "150px",
@@ -785,7 +787,7 @@ function SignUpPage() {
                       overflowY: "auto",
                       position: "relative",
                     }}
-                    className="signin-modal-body-child-non-reactivate create-account-first-tab"
+                    className="scrollbar-add signin-modal-body-child-non-reactivate create-account-first-tab"
                   >
                     <div
                       className="mb-4"
@@ -1299,7 +1301,7 @@ function SignUpPage() {
                   </Modal.Body>
                 ) : (
                   <Modal.Body
-                    className="signin-modal-body-child-non-reactivate"
+                    className="scrollbar-add signin-modal-body-child-non-reactivate"
                     style={{
                       overflowY: "auto",
                       position: "relative",
@@ -1318,6 +1320,7 @@ function SignUpPage() {
                       Customize your experience
                     </div>
                     <div
+                      className="scrollbar-add"
                       style={{
                         overflowY: "auto",
                         position: "relative",
@@ -2163,7 +2166,7 @@ function SignUpPage() {
                   </Modal.Body>
                 ) : (
                   <Modal.Body
-                    className="signin-modal-body-child-non-reactivate create-account-first-tab"
+                    className="scrollbar-add signin-modal-body-child-non-reactivate create-account-first-tab"
                     style={{
                       overflowY: "auto",
                       position: "relative",
@@ -2679,7 +2682,7 @@ function SignUpPage() {
 
                       position: "relative",
                     }}
-                    className="signin-modal-body-child-non-reactivate"
+                    className="scrollbar-add signin-modal-body-child-non-reactivate"
                   >
                     <div
                       className="mb-4"
@@ -2693,6 +2696,7 @@ function SignUpPage() {
                       Customize your experience
                     </div>
                     <div
+                      className="scrollbar-add"
                       style={{
                         overflowY: "auto",
                         position: "relative",

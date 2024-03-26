@@ -1553,10 +1553,6 @@ span > a:hover {
   background-color: #e7e7e8;
 }
 
-.modal-content {
-  border-radius: 16px;
-}
-
 .following-followers-link:hover {
   text-decoration: underline !important;
   text-decoration-color: black;
@@ -2401,7 +2397,7 @@ span > a:hover {
 }
 
 .text-decoration-thickness-2px:hover {
-  text-decoration-thickness: 2px;
+  text-decoration-thickness: 2px !important;
 }
 
 .subscribe-btn-basic-plan:hover,
@@ -2418,14 +2414,33 @@ span > a:hover {
 }
 
 /* start to check do not override css class if you are going to use react-slick again IMPORTANT */
-.slick-prev {
+/* .slick-prev {
   background-color: indianred !important;
-  display: none !important;
+  text-indent: -9999px;
+  background: url("https://cdns.iconmonstr.com/wp-content/releases/preview/2018/240/iconmonstr-arrow-right-thin.png")
+    no-repeat center !important;
+
+  position: absolute !important;
+  top: 0px !important;
+  left: 15px !important;
+  z-index: 9999 !important;
+  border-radius: 50%;
+  width: 30px !important;
+  height: 30px !important;
 }
+
 .slick-next {
   background-color: indianred !important;
-  display: none !important;
-}
+  text-indent: -9999px;
+  background: url("your-next-arrow-icon.png") no-repeat center;
+  position: absolute !important;
+  top: 0px !important;
+
+  z-index: 9999 !important;
+  border-radius: 50%;
+  width: 30px !important;
+  height: 30px !important;
+} */
 /* finish to check do not override css class if you are going to use react-slick again IMPORTANT */
 
 /* slider test by using  package finish to check  */
@@ -2463,4 +2478,51 @@ span > a:hover {
   background-color: #272c30 !important;
   border: none !important;
   outline-style: none !important;
+}
+
+/* test slider start to check  */
+.subscription-modal-basic-width-smaller-700 div {
+  /* max-width: 550px !important; */
+  /* height: 100% !important; */
+}
+
+.subscription-modal-basic-width-smaller-700 div div {
+  height: 100% !important;
+}
+
+.slick-slider {
+  /* overflow-y: auto !important; */
+  max-height: 500px !important;
+  /* width: 520px !important; */
+}
+
+.sub-modal-text-footer:hover {
+  cursor: pointer;
+  text-decoration-color: rgb(29, 155, 240);
+  text-decoration: underline;
+}
+
+/* test slider finish to check  */
+
+/* scrollbar styling general start to check  */
+.scrollbar-add::-webkit-scrollbar {
+  width: 1em;
+}
+
+.scrollbar-add::-webkit-scrollbar-track {
+  background: #f7f9f9;
+  border-top-right-radius: 100vw;
+  border-bottom-right-radius: 100vw;
+  margin-block: 0.5em;
+}
+
+.scrollbar-add::-webkit-scrollbar-thumb {
+  background: #b9cad3;
+  border-radius: 100vw;
+  width: 5px;
+  border: 0.25em solid #f7f9f9;
+}
+/* scrollbar styling general finish to check  */
+.modal-content {
+  border-radius: 16px;
 }

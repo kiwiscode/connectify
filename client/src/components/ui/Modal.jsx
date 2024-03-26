@@ -1083,7 +1083,7 @@ function SigninModal({ deactivatedScreen }) {
                         ) : (
                           <>
                             <Modal.Body
-                              className="signin-modal-body-child-non-reactivate"
+                              className="scrollbar-add signin-modal-body-child-non-reactivate"
                               style={{
                                 overflowY: "auto",
                                 position: "relative",
@@ -1182,7 +1182,7 @@ function SigninModal({ deactivatedScreen }) {
                           <>
                             {/* start to check confirm username */}
                             <Modal.Body
-                              className="signin-modal-body-child-non-reactivate"
+                              className="scrollbar-add signin-modal-body-child-non-reactivate"
                               style={{
                                 overflowY: "auto",
                                 position: "relative",
@@ -1468,7 +1468,7 @@ function SigninModal({ deactivatedScreen }) {
                               overflowY: "auto",
                               position: "relative",
                             }}
-                            className="signin-modal-body-child-non-reactivate"
+                            className="scrollbar-add signin-modal-body-child-non-reactivate"
                           >
                             <div
                               style={{
@@ -1912,7 +1912,7 @@ function SigninModal({ deactivatedScreen }) {
                               people need to change their passwords.
                             </div>
                             <div
-                              className="mt-5"
+                              className="mt-5 scrollbar-add "
                               style={{
                                 overflowY: "auto",
                                 position: "relative",
@@ -1993,7 +1993,7 @@ function SigninModal({ deactivatedScreen }) {
                               </div>
                             </div>
                             <div
-                              className="mt-3"
+                              className="mt-3 scrollbar-add "
                               style={{
                                 overflowY: "auto",
                                 position: "relative",
@@ -2074,7 +2074,7 @@ function SigninModal({ deactivatedScreen }) {
                               </div>
                             </div>
                             <div
-                              className="mt-3"
+                              className="mt-3 scrollbar-add "
                               style={{
                                 overflowY: "auto",
                                 position: "relative",
@@ -2282,7 +2282,7 @@ function SigninModal({ deactivatedScreen }) {
                           ) : (
                             <>
                               <Modal.Body
-                                className="signin-modal-body-child-non-reactivate"
+                                className="scrollbar-add signin-modal-body-child-non-reactivate"
                                 style={{
                                   overflowY: "auto",
                                   position: "relative",
@@ -2772,7 +2772,7 @@ function SigninModal({ deactivatedScreen }) {
                       ) : (
                         <>
                           <Modal.Body
-                            className="signin-modal-body-child-non-reactivate"
+                            className="scrollbar-add signin-modal-body-child-non-reactivate"
                             style={{
                               overflowY: "auto",
                               position: "relative",
@@ -2869,7 +2869,7 @@ function SigninModal({ deactivatedScreen }) {
                         <>
                           {/* start to check confirm username */}
                           <Modal.Body
-                            className="signin-modal-body-child-non-reactivate"
+                            className="scrollbar-add signin-modal-body-child-non-reactivate"
                             style={{
                               overflowY: "auto",
                               position: "relative",
@@ -3150,7 +3150,7 @@ function SigninModal({ deactivatedScreen }) {
                             overflowY: "auto",
                             position: "relative",
                           }}
-                          className="signin-modal-body-child-non-reactivate"
+                          className="scrollbar-add signin-modal-body-child-non-reactivate"
                         >
                           <div
                             style={{
@@ -3581,7 +3581,7 @@ function SigninModal({ deactivatedScreen }) {
                             people need to change their passwords.
                           </div>
                           <div
-                            className="mt-5"
+                            className="mt-5 scrollbar-add "
                             style={{
                               overflowY: "auto",
                               position: "relative",
@@ -3662,7 +3662,7 @@ function SigninModal({ deactivatedScreen }) {
                             </div>
                           </div>
                           <div
-                            className="mt-3"
+                            className="mt-3 scrollbar-add "
                             style={{
                               overflowY: "auto",
                               position: "relative",
@@ -3743,7 +3743,7 @@ function SigninModal({ deactivatedScreen }) {
                             </div>
                           </div>
                           <div
-                            className="mt-3"
+                            className="scrollbar-add mt-3"
                             style={{
                               overflowY: "auto",
                               position: "relative",
@@ -3950,7 +3950,7 @@ function SigninModal({ deactivatedScreen }) {
                         ) : (
                           <>
                             <Modal.Body
-                              className="signin-modal-body-child-non-reactivate"
+                              className="scrollbar-add signin-modal-body-child-non-reactivate"
                               style={{
                                 overflowY: "auto",
                                 position: "relative",
