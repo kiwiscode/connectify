@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { Button, Col, Stack, Modal } from "react-bootstrap";
+import { Button, Col, Stack, Modal, Row } from "react-bootstrap";
 import axios from "axios";
 import { UserContext } from "../../context/UserContext";
 import { Link, useNavigate } from "react-router-dom";
@@ -8,6 +8,7 @@ import useWindowDimensions from "../../hooks/getWindowDimensions";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import LoadingSpinner from "../ui/LoadingSpinner";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -19,8 +20,10 @@ function RightSideColumn({
   searchTerm,
   setSearchTerm,
   filteredSearchResult,
+  onModalToggle,
+  tabIndexValue,
 }) {
-  const { getToken, userInfo } = useContext(UserContext);
+  const { getToken, userInfo, logout } = useContext(UserContext);
   const [onFocus, setOnFocus] = useState(false);
   const [user, setUser] = useState([]);
   const [isHovered, setIsHovered] = useState("");
@@ -197,8 +200,12 @@ function RightSideColumn({
   const [showSubscriptionModal, setshowSubscriptionModal] = useState(false);
 
   const handleShowSubscriptionModal = () => {
-    console.log("Button clicked,test!");
     setshowSubscriptionModal(true);
+    setTabIndex(0);
+    // props from child to parent then parent to another component start to check
+    onModalToggle(true);
+    tabIndexValue(0);
+    // props from child to parent then parent to another component finish to check
   };
 
   const [activeIndividualOptionTabStyle, setactiveIndividualOptionTabStyle] =
@@ -216,44 +223,76 @@ function RightSideColumn({
     setisOrganizationSubscriptionClicked,
   ] = useState(false);
 
-  const [tabIndex, setTabIndex] = useState(0);
+  const [tabIndex, setTabIndex] = useState(null);
 
   const [selectedOption, setselectedOption] = useState("");
-
+  const [helperStateSelectedOption, sethelperStateSelectedOption] =
+    useState("");
   const handleCloseSubscriptionModal = () => {
-    setselectedOption("");
     setindividualSubOptionTab(null);
+    setindividualSubOptionTab(2);
+
     if (tabIndex >= 1) {
       setTabIndex(tabIndex - 1);
-    } else {
+    } else if ((tabIndex === 2 && !phoneVerified) || phoneVerified) {
+      setTabIndex(tabIndex - 1);
+      setisOrganizationSubscriptionClicked(false);
+      setactiveOrganizationOptionTabStyle(false);
+      setactiveIndividualOptionTabStyle(true);
+      setisIndividualSubscriptionClicked(true);
+    } else if (tabIndex === null) {
+      onModalToggle(false);
+      tabIndexValue(null);
+    } else if (tabIndex === 0) {
+      onModalToggle(false);
+      tabIndexValue(null);
       setshowSubscriptionModal(false);
-      selectedOption("");
       setisOrganizationSubscriptionClicked(false);
       setactiveOrganizationOptionTabStyle(false);
       setactiveIndividualOptionTabStyle(true);
       setisIndividualSubscriptionClicked(true);
       setTimeout(() => {
-        setTabIndex(0);
+        setTabIndex(null);
+      }, 500);
+    } else {
+      onModalToggle(false);
+      tabIndexValue(null);
+      setshowSubscriptionModal(false);
+      setisOrganizationSubscriptionClicked(false);
+      setactiveOrganizationOptionTabStyle(false);
+      setactiveIndividualOptionTabStyle(true);
+      setisIndividualSubscriptionClicked(true);
+      setTimeout(() => {
+        setTabIndex(null);
       }, 500);
     }
   };
+  useEffect(() => {
+    if (tabIndex === 1 || tabIndex === 2) {
+      setselectedOption(helperStateSelectedOption);
+      sethelperStateSelectedOption(selectedOption);
+    } else {
+      setselectedOption("");
+      sethelperStateSelectedOption("");
+    }
+  }, [tabIndex]);
+
   const [individualSubOptionTab, setindividualSubOptionTab] = useState(2);
   const handleChooseActionForSubscriptionModal = (individual, organization) => {
     if (individual) {
       setselectedOption("individual");
+      sethelperStateSelectedOption("individual");
       setTabIndex(1);
       setindividualSubOptionTab(2);
     } else if (organization) {
       setselectedOption("organization");
+      sethelperStateSelectedOption("organization");
       setTabIndex(1);
       setindividualSubOptionTab(2);
     } else {
       return 404;
     }
   };
-
-  console.log("Selected option =>", selectedOption);
-  console.log("Tab index current =>", tabIndex);
 
   const [tabStyleOrganizationBasicPlan, setTabStyleOrganizationBasicPlan] =
     useState(true);
@@ -332,10 +371,6 @@ function RightSideColumn({
 
   const [sliderAnimation, setSliderAnimation] = useState(false);
 
-  console.log(premiumPlusTabIndividualSubIndex === 0);
-  console.log(premiumPlusTabIndividualSubIndex === 1);
-  console.log(premiumPlusTabIndividualSubIndex === 2);
-
   const settings = {
     dots: false,
     infinite: true,
@@ -410,11 +445,114 @@ function RightSideColumn({
     }
   };
 
-  console.log("Slider ref CURRENT outside functions =>", sliderRef.current);
-  console.log(
-    "Individual sub option OUTSIDE NEXT || PREVIOUS index tab =>",
-    individualSubOptionTab
-  );
+  const [phoneVerified, setphoneVerified] = useState(false);
+  const [phoneVerifiedErrorMessage, setPhoneVerifiedErrorMessage] =
+    useState(null);
+
+  const [subErrorPhoneVerifiedTabLoading, setsubErrorPhoneVerifiedTabLoading] =
+    useState(false);
+
+  const [phoneVerifiedStatus, setphoneVerifiedStatus] = useState(null);
+
+  const handlePhoneVerifiedCheck = () => {
+    console.log("Button clicked !");
+
+    axios
+      .post(`${API_URL}/is-phone-verified`, {
+        isPhoneVerifiedThisUser: userInfo,
+      })
+      .then((isPhoneVerifiedResponse) => {
+        setsubErrorPhoneVerifiedTabLoading(true);
+        setTabIndex(tabIndex + 1);
+        // setphoneVerified(??)
+        console.log("Is phone verified =>", isPhoneVerifiedResponse);
+      })
+      .catch((error) => {
+        const { status } = error.response;
+        sethelperStateSelectedOption(selectedOption);
+        setselectedOption(helperStateSelectedOption);
+        setphoneVerified(status);
+        setTabIndex(tabIndex + 1);
+        setsubErrorPhoneVerifiedTabLoading(true);
+        setTimeout(() => {
+          setsubErrorPhoneVerifiedTabLoading(false);
+          setphoneVerified(false);
+          setPhoneVerifiedErrorMessage(true);
+        }, 500);
+      });
+  };
+
+  const [
+    subscriptionPremiumPlusPaymentScreen,
+    setsubscriptionPremiumPlusPaymentScreen,
+  ] = useState(false);
+  const [
+    subscriptionPremiumPaymentScreen,
+    setsubscriptionPremiumPaymentScreen,
+  ] = useState(false);
+  const [subscriptionBasicPaymentScreen, setsubscriptionBasicPaymentScreen] =
+    useState(false);
+
+  const showPremiumPlusPaymentScreen = () => {
+    setsubscriptionPremiumPlusPaymentScreen(true);
+    setsubscriptionBasicPaymentScreen(false);
+    setsubscriptionPremiumPaymentScreen(false);
+  };
+
+  const showPremiumPaymentScreen = () => {
+    setsubscriptionPremiumPaymentScreen(true);
+    setsubscriptionPremiumPlusPaymentScreen(false);
+    setsubscriptionBasicPaymentScreen(false);
+  };
+
+  const showBasicPaymentScreen = () => {
+    console.log("Show basic payment screen !");
+    setsubscriptionBasicPaymentScreen(true);
+    setsubscriptionPremiumPaymentScreen(false);
+    setsubscriptionPremiumPlusPaymentScreen(false);
+  };
+
+  const handleClosePremiumPlusPaymentScreen = () => {
+    setsubscriptionPremiumPlusPaymentScreen(false);
+  };
+
+  const handleClosePremiumPaymentScreen = () => {
+    setsubscriptionPremiumPaymentScreen(false);
+  };
+
+  const handleCloseBasicPaymentScreen = () => {
+    setsubscriptionBasicPaymentScreen(false);
+  };
+
+  const handleCheckoutStripeApi = (priceBasic, paymentPeriodBasic) => {
+    axios
+      .post(
+        `${API_URL}/stripe/create-checkout-session`,
+        {
+          subscriptionOption: {
+            price: priceBasic,
+            description: paymentPeriodBasic,
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log("Response =>", response);
+        if (response.data.url) {
+          window.location.href = response.data.url;
+        }
+      })
+      .catch((err) => window.alert("Error !!!", err ? err : null));
+  };
+
+  const handleFullAccessOrganizationPlanModal = () => {
+    window.alert("Apply for Full Access");
+  };
+
   return (
     <>
       {width <= 700 ? (
@@ -429,6 +567,7 @@ function RightSideColumn({
             show={showSubscriptionModal}
             onHide={handleCloseSubscriptionModal}
             centered={true}
+            className="widthsmallerthan700-sub-modal"
           >
             <>
               <Modal.Header
@@ -436,6 +575,8 @@ function RightSideColumn({
                 style={{
                   border: "none",
                   zIndex: 999,
+                  backgroundColor: "white",
+                  width: "97%",
                 }}
               >
                 <div
@@ -483,7 +624,12 @@ function RightSideColumn({
                     lineHeight: "24px",
                     position: "absolute",
                     left: "15%",
-                    display: selectedOption === "individual" ? "" : "none",
+                    display:
+                      (selectedOption === "individual" ||
+                        helperStateSelectedOption === "individual") &&
+                      tabIndex !== 2
+                        ? ""
+                        : "none",
                   }}
                 >
                   Subscribe
@@ -496,7 +642,12 @@ function RightSideColumn({
                     margin: "0 auto",
                     position: "relative",
                     right: "15px",
-                    display: selectedOption === "organization" ? "" : "none",
+                    display:
+                      (selectedOption === "organization" ||
+                        helperStateSelectedOption === "organization") &&
+                      tabIndex !== 2
+                        ? ""
+                        : "none",
                   }}
                 >
                   Verified Organizations
@@ -722,13 +873,21 @@ function RightSideColumn({
             ) : tabIndex === 1 && isIndividualSubscriptionClicked ? (
               <>
                 <Modal.Body
+                  className="scrollbar-add"
                   style={{
-                    borderLeft: "2px solid white",
+                    overflowY: "auto",
+                    overflowX: "hidden",
+                    opacity:
+                      subscriptionPremiumPlusPaymentScreen ||
+                      subscriptionPremiumPaymentScreen ||
+                      subscriptionBasicPaymentScreen
+                        ? "0.5"
+                        : "1",
                   }}
                 >
                   <div
                     style={{
-                      width: "81.5%",
+                      width: "100%",
                       margin: "0 auto",
                     }}
                   >
@@ -736,7 +895,7 @@ function RightSideColumn({
                       {/* first div basic plan start to check   */}
                       <div
                         style={{
-                          width: "81.5%",
+                          width: "100%",
                           margin: "0px auto",
                         }}
                       >
@@ -3868,22 +4027,728 @@ function RightSideColumn({
                     </Slider>
                   </div>
                 </Modal.Body>
+                {subscriptionPremiumPlusPaymentScreen ? (
+                  <>
+                    <Modal
+                      onHide={handleClosePremiumPlusPaymentScreen}
+                      show={subscriptionPremiumPlusPaymentScreen}
+                      style={{
+                        overflowX: "hidden",
+                        overflowY: "hidden",
+                      }}
+                      className="modal-sub-modal-payment-screen-parent"
+                      dialogClassName="modal-body-sub-modal-payment-screen"
+                    >
+                      <Modal.Body
+                        style={{
+                          height: setPhoneVerifiedErrorMessage
+                            ? "530px"
+                            : "490px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: "95%",
+                            fontSize: "23px",
+                            fontWeight: "700",
+                            lineHeight: "28px",
+                            margin: "0 auto",
+                          }}
+                        >
+                          Premium+
+                        </div>
 
+                        <div
+                          onClick={() => {
+                            setindividualSubOptionPremiumPlusAnnualTab(true);
+                            setindividualSubOptionPremiumPlusMonthlyTab(false);
+                          }}
+                          className="individual-subscription-box mt-4"
+                          style={{
+                            width: "95%",
+
+                            backgroundColor: "white",
+                            minHeight: "96px",
+                            padding: "12px",
+                            cursor: "pointer",
+                            borderWidth: "1px",
+                            borderRadius: "16px",
+                            boxShadow:
+                              "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                            border: individualSubOptionPremiumPlusAnnualTab
+                              ? "2px solid #339bf0"
+                              : "2px solid transparent",
+                            transition: "transform 0.3s ease",
+                          }}
+                        >
+                          <span
+                            style={{
+                              color: "#697884",
+                              fontSize: "14px",
+                              fontWeight: "400",
+                              lineHeight: "16px",
+                            }}
+                          >
+                            Annual Plan{" "}
+                            <span
+                              style={{
+                                fontSize: "11px",
+                                backgroundColor: "#dcf8eb",
+                                borderRadius: "9999px",
+                                color: "black",
+                                position: "relative",
+                                bottom: "1px",
+                                fontWeight: "700",
+                                lineHeight: "12px",
+                                padding: "4px",
+                                height: "20px",
+                              }}
+                            >
+                              <span>Save 12%</span>
+                            </span>
+                          </span>
+
+                          <span
+                            style={{
+                              color: "rgb(15, 20, 25)",
+                              fontSize: "17px",
+                              fontWeight: "700",
+                              lineHeight: "20px",
+                              display: "block",
+                            }}
+                          >
+                            €199.92 / year
+                          </span>
+                          <div
+                            style={{
+                              color: "rgb(83, 100, 113)",
+                              fontSize: "13px",
+                              fontWeight: "400",
+                              lineHeight: "16px",
+                            }}
+                          >
+                            €199.92 per year billed annually
+                          </div>
+                        </div>
+                        <div
+                          className="organization-subscription-box mt-3"
+                          onClick={() => {
+                            setindividualSubOptionPremiumPlusMonthlyTab(true);
+                            setindividualSubOptionPremiumPlusAnnualTab(false);
+                          }}
+                          style={{
+                            width: "95%",
+                            backgroundColor: "white",
+                            minHeight: "96px",
+                            padding: "12px",
+                            cursor: "pointer",
+                            borderWidth: "1px",
+                            borderRadius: "16px",
+                            boxShadow:
+                              "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                            border: individualSubOptionPremiumPlusMonthlyTab
+                              ? "2px solid #339bf0"
+                              : "2px solid transparent",
+                            transition: "transform 0.3s ease",
+                          }}
+                        >
+                          <span
+                            style={{
+                              color: "#697884",
+                              fontSize: "14px",
+                              fontWeight: "400",
+                              lineHeight: "16px",
+                            }}
+                          >
+                            Monthly Plan{" "}
+                          </span>
+
+                          <div
+                            style={{
+                              color: "rgb(15, 20, 25)",
+                              fontSize: "17px",
+                              fontWeight: "700",
+                              lineHeight: "20px",
+                            }}
+                          >
+                            €19.04 / month
+                            <div
+                              style={{
+                                color: "rgb(83, 100, 113)",
+                                fontSize: "13px",
+                                fontWeight: "400",
+                                lineHeight: "16px",
+                              }}
+                            >
+                              €228.48 per year billed monthly
+                            </div>
+                          </div>
+                        </div>
+                        {setPhoneVerifiedErrorMessage ? (
+                          <div
+                            style={{
+                              borderRadius: "8px",
+                              color: "rgb(15, 20, 25)",
+                              lineHeight: "16px",
+                              fontSize: "14px",
+                              fontWeight: "400",
+                              backgroundColor: "#fef1f1",
+                              width: "95%",
+                              marginTop: "10px",
+                              height: "40px",
+                              display: "flex",
+                              justifyContent: "left",
+                              alignItems: "center",
+                            }}
+                          >
+                            <span
+                              style={{
+                                position: "relative",
+                                left: "15px",
+                              }}
+                            >
+                              Something went wrong. Please try again.
+                            </span>
+                          </div>
+                        ) : null}
+                        <Button
+                          onClick={() => handlePhoneVerifiedCheck()}
+                          className={`login-button next-btn ${
+                            setPhoneVerifiedErrorMessage ? "mt-2" : "mt-4"
+                          }`}
+                          variant="dark"
+                          style={{
+                            width: "95%",
+                            height: "36px",
+                            color: "white",
+                            backgroundColor: "#0f141a",
+                          }}
+                        >
+                          Subscribe & Pay
+                        </Button>
+
+                        <div
+                          className="mt-3"
+                          style={{
+                            width: "95%",
+                            fontSize: "13px",
+                            lineHeight: "16px",
+                            fontWeight: "400",
+                            border: "1px solid black",
+                            borderRadius: "8px",
+                            padding: "6px",
+                          }}
+                        >
+                          {`By subscribing, you agree to our `}
+                          <span
+                            className="sub-modal-text-footer"
+                            style={{
+                              color: "rgb(29, 155, 240)",
+                            }}
+                          >
+                            Purchaser Terms of Service
+                          </span>
+                          {`. Subscriptions auto-renew until canceled, as described in the Terms.`}{" "}
+                          <span
+                            className="sub-modal-text-footer"
+                            style={{
+                              color: "rgb(29, 155, 240)",
+                            }}
+                          >
+                            Cancel anytime
+                          </span>
+                          {`. Cancel at least 24 hours prior to renewal to avoid additional charges. A verified phone number is required to subscribe. If you've subscribed on another platform, manage your subscription through that platform.`}
+                        </div>
+                      </Modal.Body>
+                    </Modal>
+                  </>
+                ) : subscriptionPremiumPaymentScreen ? (
+                  <>
+                    <Modal
+                      onHide={handleClosePremiumPaymentScreen}
+                      show={subscriptionPremiumPaymentScreen}
+                      style={{
+                        overflowX: "hidden",
+                        overflowY: "hidden",
+                      }}
+                      className="modal-sub-modal-payment-screen-parent"
+                      dialogClassName="modal-body-sub-modal-payment-screen"
+                    >
+                      <Modal.Body
+                        style={{
+                          height: setPhoneVerifiedErrorMessage
+                            ? "530px"
+                            : "490px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: "95%",
+                            fontSize: "23px",
+                            fontWeight: "700",
+                            lineHeight: "28px",
+                            margin: "0 auto",
+                          }}
+                        >
+                          Premium
+                        </div>
+
+                        <div
+                          onClick={() => {
+                            setindividualSubOptionPremiumPlusAnnualTab(true);
+                            setindividualSubOptionPremiumPlusMonthlyTab(false);
+                          }}
+                          className="individual-subscription-box mt-4"
+                          style={{
+                            width: "95%",
+
+                            backgroundColor: "white",
+                            minHeight: "96px",
+                            padding: "12px",
+                            cursor: "pointer",
+                            borderWidth: "1px",
+                            borderRadius: "16px",
+                            boxShadow:
+                              "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                            border: individualSubOptionPremiumPlusAnnualTab
+                              ? "2px solid #339bf0"
+                              : "2px solid transparent",
+                            transition: "transform 0.3s ease",
+                          }}
+                        >
+                          <span
+                            style={{
+                              color: "#697884",
+                              fontSize: "14px",
+                              fontWeight: "400",
+                              lineHeight: "16px",
+                            }}
+                          >
+                            Annual Plan{" "}
+                            <span
+                              style={{
+                                fontSize: "11px",
+                                backgroundColor: "#dcf8eb",
+                                borderRadius: "9999px",
+                                color: "black",
+                                position: "relative",
+                                bottom: "1px",
+                                fontWeight: "700",
+                                lineHeight: "12px",
+                                padding: "4px",
+                                height: "20px",
+                              }}
+                            >
+                              <span>Save 12%</span>
+                            </span>
+                          </span>
+
+                          <span
+                            style={{
+                              color: "rgb(15, 20, 25)",
+                              fontSize: "17px",
+                              fontWeight: "700",
+                              lineHeight: "20px",
+                              display: "block",
+                            }}
+                          >
+                            €99.96 / year
+                          </span>
+                          <div
+                            style={{
+                              color: "rgb(83, 100, 113)",
+                              fontSize: "13px",
+                              fontWeight: "400",
+                              lineHeight: "16px",
+                            }}
+                          >
+                            €99.96 per year billed annually
+                          </div>
+                        </div>
+                        <div
+                          className="organization-subscription-box mt-3"
+                          onClick={() => {
+                            setindividualSubOptionPremiumPlusMonthlyTab(true);
+                            setindividualSubOptionPremiumPlusAnnualTab(false);
+                          }}
+                          style={{
+                            width: "95%",
+                            backgroundColor: "white",
+                            minHeight: "96px",
+                            padding: "12px",
+                            cursor: "pointer",
+                            borderWidth: "1px",
+                            borderRadius: "16px",
+                            boxShadow:
+                              "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                            border: individualSubOptionPremiumPlusMonthlyTab
+                              ? "2px solid #339bf0"
+                              : "2px solid transparent",
+                            transition: "transform 0.3s ease",
+                          }}
+                        >
+                          <span
+                            style={{
+                              color: "#697884",
+                              fontSize: "14px",
+                              fontWeight: "400",
+                              lineHeight: "16px",
+                            }}
+                          >
+                            Monthly Plan{" "}
+                          </span>
+
+                          <div
+                            style={{
+                              color: "rgb(15, 20, 25)",
+                              fontSize: "17px",
+                              fontWeight: "700",
+                              lineHeight: "20px",
+                            }}
+                          >
+                            €9.52 / month
+                            <div
+                              style={{
+                                color: "rgb(83, 100, 113)",
+                                fontSize: "13px",
+                                fontWeight: "400",
+                                lineHeight: "16px",
+                              }}
+                            >
+                              €114.24 per year billed monthly
+                            </div>
+                          </div>
+                        </div>
+                        {setPhoneVerifiedErrorMessage ? (
+                          <div
+                            style={{
+                              borderRadius: "8px",
+                              color: "rgb(15, 20, 25)",
+                              lineHeight: "16px",
+                              fontSize: "14px",
+                              fontWeight: "400",
+                              backgroundColor: "#fef1f1",
+                              width: "95%",
+                              marginTop: "10px",
+                              height: "40px",
+                              display: "flex",
+                              justifyContent: "left",
+                              alignItems: "center",
+                            }}
+                          >
+                            <span
+                              style={{
+                                position: "relative",
+                                left: "15px",
+                              }}
+                            >
+                              Something went wrong. Please try again.
+                            </span>
+                          </div>
+                        ) : null}
+                        <Button
+                          onClick={() => handlePhoneVerifiedCheck()}
+                          className={`login-button next-btn ${
+                            setPhoneVerifiedErrorMessage ? "mt-2" : "mt-4"
+                          }`}
+                          variant="dark"
+                          style={{
+                            width: "95%",
+                            height: "36px",
+                            color: "white",
+                            backgroundColor: "#0f141a",
+                          }}
+                        >
+                          Subscribe & Pay
+                        </Button>
+
+                        <div
+                          className="mt-3"
+                          style={{
+                            width: "95%",
+                            fontSize: "13px",
+                            lineHeight: "16px",
+                            fontWeight: "400",
+                            border: "1px solid black",
+                            borderRadius: "8px",
+                            padding: "6px",
+                          }}
+                        >
+                          {`By subscribing, you agree to our `}
+                          <span
+                            className="sub-modal-text-footer"
+                            style={{
+                              color: "rgb(29, 155, 240)",
+                            }}
+                          >
+                            Purchaser Terms of Service
+                          </span>
+                          {`. Subscriptions auto-renew until canceled, as described in the Terms.`}{" "}
+                          <span
+                            className="sub-modal-text-footer"
+                            style={{
+                              color: "rgb(29, 155, 240)",
+                            }}
+                          >
+                            Cancel anytime
+                          </span>
+                          {`. Cancel at least 24 hours prior to renewal to avoid additional charges. A verified phone number is required to subscribe. If you've subscribed on another platform, manage your subscription through that platform.`}
+                        </div>
+                      </Modal.Body>
+                    </Modal>
+                  </>
+                ) : subscriptionBasicPaymentScreen ? (
+                  <>
+                    <Modal
+                      onHide={handleCloseBasicPaymentScreen}
+                      show={subscriptionBasicPaymentScreen}
+                      style={{
+                        overflowX: "hidden",
+                        overflowY: "hidden",
+                      }}
+                      className="modal-sub-modal-payment-screen-parent"
+                      dialogClassName="modal-body-sub-modal-payment-screen"
+                    >
+                      <Modal.Body
+                        style={{
+                          height: setPhoneVerifiedErrorMessage
+                            ? "530px"
+                            : "490px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: "95%",
+                            fontSize: "23px",
+                            fontWeight: "700",
+                            lineHeight: "28px",
+                            margin: "0 auto",
+                          }}
+                        >
+                          Basic
+                        </div>
+
+                        <div
+                          onClick={() => {
+                            setindividualSubOptionPremiumPlusAnnualTab(true);
+                            setindividualSubOptionPremiumPlusMonthlyTab(false);
+                          }}
+                          className="individual-subscription-box mt-4"
+                          style={{
+                            width: "95%",
+
+                            backgroundColor: "white",
+                            minHeight: "96px",
+                            padding: "12px",
+                            cursor: "pointer",
+                            borderWidth: "1px",
+                            borderRadius: "16px",
+                            boxShadow:
+                              "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                            border: individualSubOptionPremiumPlusAnnualTab
+                              ? "2px solid #339bf0"
+                              : "2px solid transparent",
+                            transition: "transform 0.3s ease",
+                          }}
+                        >
+                          <span
+                            style={{
+                              color: "#697884",
+                              fontSize: "14px",
+                              fontWeight: "400",
+                              lineHeight: "16px",
+                            }}
+                          >
+                            Annual Plan{" "}
+                            <span
+                              style={{
+                                fontSize: "11px",
+                                backgroundColor: "#dcf8eb",
+                                borderRadius: "9999px",
+                                color: "black",
+                                position: "relative",
+                                bottom: "1px",
+                                fontWeight: "700",
+                                lineHeight: "12px",
+                                padding: "4px",
+                                height: "20px",
+                              }}
+                            >
+                              <span>Save 11%</span>
+                            </span>
+                          </span>
+
+                          <span
+                            style={{
+                              color: "rgb(15, 20, 25)",
+                              fontSize: "17px",
+                              fontWeight: "700",
+                              lineHeight: "20px",
+                              display: "block",
+                            }}
+                          >
+                            €38.08 / year
+                          </span>
+                          <div
+                            style={{
+                              color: "rgb(83, 100, 113)",
+                              fontSize: "13px",
+                              fontWeight: "400",
+                              lineHeight: "16px",
+                            }}
+                          >
+                            €38.08 per year billed annually
+                          </div>
+                        </div>
+                        <div
+                          className="organization-subscription-box mt-3"
+                          onClick={() => {
+                            setindividualSubOptionPremiumPlusMonthlyTab(true);
+                            setindividualSubOptionPremiumPlusAnnualTab(false);
+                          }}
+                          style={{
+                            width: "95%",
+                            backgroundColor: "white",
+                            minHeight: "96px",
+                            padding: "12px",
+                            cursor: "pointer",
+                            borderWidth: "1px",
+                            borderRadius: "16px",
+                            boxShadow:
+                              "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                            border: individualSubOptionPremiumPlusMonthlyTab
+                              ? "2px solid #339bf0"
+                              : "2px solid transparent",
+                            transition: "transform 0.3s ease",
+                          }}
+                        >
+                          <span
+                            style={{
+                              color: "#697884",
+                              fontSize: "14px",
+                              fontWeight: "400",
+                              lineHeight: "16px",
+                            }}
+                          >
+                            Monthly Plan{" "}
+                          </span>
+
+                          <div
+                            style={{
+                              color: "rgb(15, 20, 25)",
+                              fontSize: "17px",
+                              fontWeight: "700",
+                              lineHeight: "20px",
+                            }}
+                          >
+                            €3.57 / month
+                            <div
+                              style={{
+                                color: "rgb(83, 100, 113)",
+                                fontSize: "13px",
+                                fontWeight: "400",
+                                lineHeight: "16px",
+                              }}
+                            >
+                              €42.84 per year billed monthly
+                            </div>
+                          </div>
+                        </div>
+                        {setPhoneVerifiedErrorMessage ? (
+                          <div
+                            style={{
+                              borderRadius: "8px",
+                              color: "rgb(15, 20, 25)",
+                              lineHeight: "16px",
+                              fontSize: "14px",
+                              fontWeight: "400",
+                              backgroundColor: "#fef1f1",
+                              width: "95%",
+                              marginTop: "10px",
+                              height: "40px",
+                              display: "flex",
+                              justifyContent: "left",
+                              alignItems: "center",
+                            }}
+                          >
+                            <span
+                              style={{
+                                position: "relative",
+                                left: "15px",
+                              }}
+                            >
+                              Something went wrong. Please try again.
+                            </span>
+                          </div>
+                        ) : null}
+
+                        <Button
+                          onClick={() => handlePhoneVerifiedCheck()}
+                          className={`login-button next-btn ${
+                            setPhoneVerifiedErrorMessage ? "mt-2" : "mt-4"
+                          }`}
+                          variant="dark"
+                          style={{
+                            width: "95%",
+                            height: "36px",
+                            color: "white",
+                            backgroundColor: "#0f141a",
+                          }}
+                        >
+                          Subscribe & Pay
+                        </Button>
+
+                        <div
+                          className="mt-3"
+                          style={{
+                            width: "95%",
+                            fontSize: "13px",
+                            lineHeight: "16px",
+                            fontWeight: "400",
+                            border: "1px solid black",
+                            borderRadius: "8px",
+                            padding: "6px",
+                          }}
+                        >
+                          {`By subscribing, you agree to our `}
+                          <span
+                            className="sub-modal-text-footer"
+                            style={{
+                              color: "rgb(29, 155, 240)",
+                            }}
+                          >
+                            Purchaser Terms of Service
+                          </span>
+                          {`. Subscriptions auto-renew until canceled, as described in the Terms.`}{" "}
+                          <span
+                            className="sub-modal-text-footer"
+                            style={{
+                              color: "rgb(29, 155, 240)",
+                            }}
+                          >
+                            Cancel anytime
+                          </span>
+                          {`. Cancel at least 24 hours prior to renewal to avoid additional charges. A verified phone number is required to subscribe. If you've subscribed on another platform, manage your subscription through that platform.`}
+                        </div>
+                      </Modal.Body>
+                    </Modal>
+                  </>
+                ) : null}
                 {individualSubOptionTab === 2 ? (
                   <Modal.Footer
                     style={{
                       height: "69px",
                       backgroundColor: "#fdfdfe",
+                      position: "relative",
+                      right: "15px",
                     }}
                   >
                     <div
                       style={{
-                        // padding: "32px",
                         width: "90%",
                         height: "69px",
                         padding: "22px 0px",
                         position: "relative",
-                        right: "5px",
                         borderRight: "1px solid rgba(0,0,0,0.1)",
                         borderLeft: "1px solid rgba(0,0,0,0.1)",
                         top: "17px",
@@ -3895,6 +4760,7 @@ function RightSideColumn({
                       }}
                     >
                       <Button
+                        onClick={showPremiumPlusPaymentScreen}
                         className="login-button next-btn"
                         variant="dark"
                         style={{
@@ -3912,16 +4778,16 @@ function RightSideColumn({
                     style={{
                       height: "69px",
                       backgroundColor: "#fdfdfe",
+                      position: "relative",
+                      right: "15px",
                     }}
                   >
                     <div
                       style={{
-                        // padding: "32px",
                         width: "90%",
                         height: "69px",
                         padding: "22px 0px",
                         position: "relative",
-                        right: "5px",
                         borderRight: "1px solid rgba(0,0,0,0.1)",
                         borderLeft: "1px solid rgba(0,0,0,0.1)",
                         top: "17px",
@@ -3933,6 +4799,7 @@ function RightSideColumn({
                       }}
                     >
                       <Button
+                        onClick={showPremiumPaymentScreen}
                         className="login-button next-btn"
                         variant="dark"
                         style={{
@@ -3950,16 +4817,16 @@ function RightSideColumn({
                     style={{
                       height: "69px",
                       backgroundColor: "#fdfdfe",
+                      position: "relative",
+                      right: "15px",
                     }}
                   >
                     <div
                       style={{
-                        // padding: "32px",
                         width: "90%",
                         height: "69px",
                         padding: "22px 0px",
                         position: "relative",
-                        right: "5px",
                         borderRight: "1px solid rgba(0,0,0,0.1)",
                         borderLeft: "1px solid rgba(0,0,0,0.1)",
                         top: "17px",
@@ -3971,6 +4838,7 @@ function RightSideColumn({
                       }}
                     >
                       <Button
+                        onClick={showBasicPaymentScreen}
                         className="login-button next-btn"
                         variant="dark"
                         style={{
@@ -3990,6 +4858,7 @@ function RightSideColumn({
                 {" "}
                 <>
                   <Modal.Body
+                    className="scrollbar-add"
                     style={{
                       position: "relative",
                       bottom: "35px",
@@ -3997,7 +4866,7 @@ function RightSideColumn({
                     }}
                   >
                     <div
-                      className="mt-3"
+                      className="mt-4"
                       style={{
                         backgroundColor: "black",
                         borderRadius: "9999px",
@@ -4044,7 +4913,7 @@ function RightSideColumn({
                         <div
                           className="mt-2"
                           style={{
-                            width: "81.5%",
+                            width: "100%",
                             backgroundColor: "rgba(247, 249, 249, 1.00)",
                             borderRadius: "16px",
                             padding: "16px",
@@ -4245,15 +5114,16 @@ function RightSideColumn({
                             </span>
                           </div>
                         </div>
-                        <footer
+                        <div
                           style={{
-                            width: "77.3%",
-                            position: "absolute",
-                            bottom: "0px",
+                            width: "100%",
+                            // position: "absolute",
+                            // bottom: "0px",
+                            // backgroundColor: "yellow",
                           }}
                         >
                           <div
-                            className="mt-5"
+                            className="mt-4"
                             style={{
                               display: "flex",
                               gap: "2.5%",
@@ -4421,6 +5291,16 @@ function RightSideColumn({
                             </span>
                           </div>
                           <Button
+                            onClick={() =>
+                              handleCheckoutStripeApi(
+                                basicAnnualTabStyle
+                                  ? yearlyFee
+                                  : basicMonthlyTabStyle
+                                  ? monthyleFee
+                                  : null,
+                                basicAnnualTabStyle ? "per year" : "per month"
+                              )
+                            }
                             className="mt-4 subscribe-btn-basic-plan"
                             style={{
                               backgroundColor: "#0f1518",
@@ -4481,7 +5361,7 @@ function RightSideColumn({
                             Subscriptions auto-renew until canceled. All
                             accounts that sign up must pass manual approval.
                           </div>
-                        </footer>
+                        </div>
                       </>
                     ) : subTabIndexFromOrganizatonSelect === 2 &&
                       tabStyleOrganizationFullAccessPlan ? (
@@ -4490,9 +5370,8 @@ function RightSideColumn({
                         <div
                           className="mt-2"
                           style={{
-                            width: "81.5%",
+                            width: "100%",
                             backgroundColor: "rgba(247, 249, 249, 1.00)",
-
                             borderRadius: "16px",
                             padding: "16px",
                           }}
@@ -4692,15 +5571,16 @@ function RightSideColumn({
                             </span>
                           </div>
                         </div>
-                        <footer
+                        <div
                           style={{
-                            width: "77.3%",
-                            position: "absolute",
-                            bottom: "0px",
+                            width: "100%",
+                            // position: "absolute",
+                            // bottom: "0px",
+                            // backgroundColor: "yellow",
                           }}
                         >
                           <div
-                            className="mt-5"
+                            className="mt-4"
                             style={{
                               display: "flex",
                               gap: "2.5%",
@@ -4873,6 +5753,9 @@ function RightSideColumn({
                             </span>
                           </div>
                           <Button
+                            onClick={() =>
+                              handleFullAccessOrganizationPlanModal()
+                            }
                             className="mt-4 subscribe-btn-full-access-plan"
                             style={{
                               backgroundColor: "#0f1518",
@@ -4934,16 +5817,118 @@ function RightSideColumn({
                             account signs up and is not an organization, you
                             will be rejected and not refunded.
                           </div>
-                        </footer>
+                        </div>
                       </>
                     ) : null}
                   </Modal.Body>
                 </>
               </>
-            ) : tabIndex === 2 ? (
-              <>Tab index 2 </>
-            ) : tabIndex === 3 ? (
-              <>Tab index 3</>
+            ) : tabIndex === 2 && !phoneVerified ? (
+              <>
+                {subErrorPhoneVerifiedTabLoading ? (
+                  <Modal.Body
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                    className="signin-modal-body-child-non-reactivate sub-modal"
+                  >
+                    <LoadingSpinner
+                      strokeColor={"rgb(29, 155, 240)"}
+                    ></LoadingSpinner>
+                  </Modal.Body>
+                ) : (
+                  <Modal.Body
+                    style={{
+                      margin: "0px",
+                      padding: "0px",
+                    }}
+                    className="signin-modal-body-child-non-reactivate sub-modal"
+                  >
+                    <img
+                      className="mt-0"
+                      width={"100%"}
+                      style={{
+                        maxHeight: "300px",
+                        minHeight: "270px",
+                      }}
+                      src="https://ton.twimg.com/onboarding/subscriptions_product/twitter_blue_verified_full_v1.png"
+                      alt=""
+                    />
+                    <div
+                      style={{
+                        width: "70%",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        marginTop: "100px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: "26px",
+                          lineHeight: "32px",
+                          fontWeight: "800",
+                        }}
+                      >
+                        Verify your phone number
+                      </div>
+                      <div
+                        className="mt-2"
+                        style={{
+                          fontSize: "15px",
+                          fontWeight: "400",
+                          lineHeight: "20px",
+                          color: "rgb(83, 100, 113)",
+                        }}
+                      >
+                        Verify your phone number to subscribe for Premium. It
+                        should just take a few minutes.
+                      </div>
+                      <Button
+                        className="login-button next-btn mt-4"
+                        variant="dark"
+                        style={{
+                          width: "100%",
+                          height: "52px",
+                          color: "white",
+                          backgroundColor: "#0f141a",
+                        }}
+                      >
+                        Verify your phone number
+                      </Button>
+                    </div>
+                  </Modal.Body>
+                )}
+              </>
+            ) : tabIndex === 2 && phoneVerified ? (
+              <>
+                {subErrorPhoneVerifiedTabLoading ? (
+                  <Modal.Body
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                    className="signin-modal-body-child-non-reactivate sub-modal"
+                  >
+                    <LoadingSpinner
+                      strokeColor={"rgb(29, 155, 240)"}
+                    ></LoadingSpinner>
+                  </Modal.Body>
+                ) : (
+                  <Modal.Body
+                    style={{
+                      margin: "0px",
+                      padding: "0px",
+                    }}
+                    className="signin-modal-body-child-non-reactivate sub-modal"
+                  >
+                    <div>Phone verified !</div>
+                  </Modal.Body>
+                )}
+              </>
             ) : tabIndex === 4 ? (
               <>Tab 4 </>
             ) : (
@@ -5250,7 +6235,7 @@ function RightSideColumn({
             ) : tabIndex === 1 && isIndividualSubscriptionClicked ? (
               <>
                 <Modal.Body
-                  className="scrollbar-add"
+                  className="scrollbar-add individual-bigger-than-700-width"
                   style={{
                     overflowY: "auto",
                     width: "100%",
@@ -5338,7 +6323,7 @@ function RightSideColumn({
                               backgroundSize: "cover",
                               borderRadius: "16px",
                               color: "white",
-                              height: "60px",
+                              minHeight: "60px",
                             }}
                             direction="horizontal"
                             gap={1}
@@ -6425,7 +7410,7 @@ function RightSideColumn({
                               backgroundSize: "cover",
                               borderRadius: "16px",
                               color: "white",
-                              height: "60px",
+                              minHeight: "60px",
                             }}
                             direction="horizontal"
                             gap={1}
@@ -7458,7 +8443,7 @@ function RightSideColumn({
                               backgroundSize: "cover",
                               borderRadius: "16px",
                               color: "white",
-                              height: "60px",
+                              minHeight: "60px",
                             }}
                             direction="horizontal"
                             gap={1}
@@ -8466,14 +9451,22 @@ function RightSideColumn({
 
                 {individualSubOptionTab === 2 ? (
                   <div
+                    className="mt-3"
                     style={{
                       position: "relative",
                       boxShadow:
                         "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
-                      minHeight: "260px",
+                      minHeight: setPhoneVerifiedErrorMessage
+                        ? "305px"
+                        : "260px",
+
                       borderBottomLeftRadius: "16px",
                       borderBottomRightRadius: "16px",
                       backgroundColor: "#fdfdfe",
+
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
                     }}
                   >
                     <div
@@ -8484,6 +9477,7 @@ function RightSideColumn({
                         gap: "2.5%",
                         padding: "16px",
                         maxHeight: "120px",
+                        width: "87%",
                       }}
                     >
                       <div
@@ -8516,7 +9510,7 @@ function RightSideColumn({
                             lineHeight: "16px",
                           }}
                         >
-                          Annual Plan{" "}
+                          Annual Plan
                           <span
                             style={{
                               fontSize: "11px",
@@ -8531,7 +9525,7 @@ function RightSideColumn({
                               height: "20px",
                             }}
                           >
-                            <span>SAVE 12%</span>
+                            <span>Save 12%</span>
                           </span>
                         </span>
 
@@ -8541,6 +9535,7 @@ function RightSideColumn({
                             fontSize: "17px",
                             fontWeight: "700",
                             lineHeight: "20px",
+                            display: "block",
                           }}
                         >
                           €199.92 / year
@@ -8614,14 +9609,42 @@ function RightSideColumn({
 
                     <div
                       style={{
-                        width: "95%",
+                        width: "81.5%",
                         position: "relative",
                         top: "115px",
                         margin: "0 auto",
                       }}
                     >
+                      {setPhoneVerifiedErrorMessage ? (
+                        <div
+                          style={{
+                            borderRadius: "8px",
+                            color: "rgb(15, 20, 25)",
+                            lineHeight: "16px",
+                            fontSize: "14px",
+                            fontWeight: "400",
+                            backgroundColor: "#fef1f1",
+                            minHeight: "40px",
+                            display: "flex",
+                            justifyContent: "left",
+                            alignItems: "center",
+                          }}
+                        >
+                          <span
+                            style={{
+                              position: "relative",
+                              left: "15px",
+                            }}
+                          >
+                            Something went wrong. Please try again.
+                          </span>
+                        </div>
+                      ) : null}
                       <Button
-                        className="login-button next-btn"
+                        onClick={() => handlePhoneVerifiedCheck()}
+                        className={`login-button next-btn ${
+                          setPhoneVerifiedErrorMessage ? "mt-2" : "mt-4"
+                        }`}
                         variant="dark"
                         style={{
                           width: "100%",
@@ -8634,8 +9657,9 @@ function RightSideColumn({
                       </Button>
                     </div>
                     <div
+                      className="mt-1"
                       style={{
-                        width: "95%",
+                        width: "81.5%",
                         margin: "0 auto",
                         fontSize: "13px",
                         lineHeight: "16px",
@@ -8670,14 +9694,20 @@ function RightSideColumn({
                   </div>
                 ) : individualSubOptionTab === 1 ? (
                   <div
+                    className="mt-3"
                     style={{
                       position: "relative",
                       boxShadow:
                         "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
-                      minHeight: "260px",
+                      minHeight: setPhoneVerifiedErrorMessage
+                        ? "305px"
+                        : "260px",
                       borderBottomLeftRadius: "16px",
                       borderBottomRightRadius: "16px",
                       backgroundColor: "#fdfdfe",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
                     }}
                   >
                     <div
@@ -8688,6 +9718,7 @@ function RightSideColumn({
                         gap: "2.5%",
                         padding: "16px",
                         maxHeight: "120px",
+                        width: "87%",
                       }}
                     >
                       <div
@@ -8735,7 +9766,7 @@ function RightSideColumn({
                               height: "20px",
                             }}
                           >
-                            <span>SAVE 12%</span>
+                            <span>Save 12%</span>
                           </span>
                         </span>
 
@@ -8745,6 +9776,7 @@ function RightSideColumn({
                             fontSize: "17px",
                             fontWeight: "700",
                             lineHeight: "20px",
+                            display: "block",
                           }}
                         >
                           €99.96 / year
@@ -8818,14 +9850,44 @@ function RightSideColumn({
 
                     <div
                       style={{
-                        width: "95%",
+                        width: "81.5%",
+
                         position: "relative",
                         top: "115px",
                         margin: "0 auto",
                       }}
                     >
+                      {" "}
+                      {setPhoneVerifiedErrorMessage ? (
+                        <div
+                          style={{
+                            borderRadius: "8px",
+                            color: "rgb(15, 20, 25)",
+                            lineHeight: "16px",
+                            fontSize: "14px",
+                            fontWeight: "400",
+                            backgroundColor: "#fef1f1",
+                            minHeight: "40px",
+                            display: "flex",
+                            justifyContent: "left",
+                            alignItems: "center",
+                          }}
+                        >
+                          <span
+                            style={{
+                              position: "relative",
+                              left: "15px",
+                            }}
+                          >
+                            Something went wrong. Please try again.
+                          </span>
+                        </div>
+                      ) : null}
                       <Button
-                        className="login-button next-btn"
+                        onClick={() => handlePhoneVerifiedCheck()}
+                        className={`login-button next-btn ${
+                          setPhoneVerifiedErrorMessage ? "mt-2" : "mt-4"
+                        }`}
                         variant="dark"
                         style={{
                           width: "100%",
@@ -8838,8 +9900,10 @@ function RightSideColumn({
                       </Button>
                     </div>
                     <div
+                      className="mt-1"
                       style={{
-                        width: "95%",
+                        width: "81.5%",
+
                         margin: "0 auto",
                         fontSize: "13px",
                         lineHeight: "16px",
@@ -8874,14 +9938,20 @@ function RightSideColumn({
                   </div>
                 ) : individualSubOptionTab === 0 ? (
                   <div
+                    className="mt-3"
                     style={{
                       position: "relative",
                       boxShadow:
                         "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
-                      minHeight: "260px",
+                      minHeight: setPhoneVerifiedErrorMessage
+                        ? "305px"
+                        : "260px",
                       borderBottomLeftRadius: "16px",
                       borderBottomRightRadius: "16px",
                       backgroundColor: "#fdfdfe",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
                     }}
                   >
                     <div
@@ -8892,6 +9962,7 @@ function RightSideColumn({
                         gap: "2.5%",
                         padding: "16px",
                         maxHeight: "120px",
+                        width: "87%",
                       }}
                     >
                       <div
@@ -8945,6 +10016,7 @@ function RightSideColumn({
 
                         <span
                           style={{
+                            display: "block",
                             color: "rgb(15, 20, 25)",
                             fontSize: "17px",
                             fontWeight: "700",
@@ -9022,14 +10094,43 @@ function RightSideColumn({
 
                     <div
                       style={{
-                        width: "95%",
+                        width: "81.5%",
                         position: "relative",
                         top: "115px",
                         margin: "0 auto",
                       }}
                     >
+                      {" "}
+                      {setPhoneVerifiedErrorMessage ? (
+                        <div
+                          style={{
+                            borderRadius: "8px",
+                            color: "rgb(15, 20, 25)",
+                            lineHeight: "16px",
+                            fontSize: "14px",
+                            fontWeight: "400",
+                            backgroundColor: "#fef1f1",
+                            minHeight: "40px",
+                            display: "flex",
+                            justifyContent: "left",
+                            alignItems: "center",
+                          }}
+                        >
+                          <span
+                            style={{
+                              position: "relative",
+                              left: "15px",
+                            }}
+                          >
+                            Something went wrong. Please try again.
+                          </span>
+                        </div>
+                      ) : null}
                       <Button
-                        className="login-button next-btn"
+                        onClick={() => handlePhoneVerifiedCheck()}
+                        className={`login-button next-btn ${
+                          setPhoneVerifiedErrorMessage ? "mt-2" : "mt-4"
+                        }`}
                         variant="dark"
                         style={{
                           width: "100%",
@@ -9042,8 +10143,9 @@ function RightSideColumn({
                       </Button>
                     </div>
                     <div
+                      className="mt-1"
                       style={{
-                        width: "95%",
+                        width: "81.5%",
                         margin: "0 auto",
                         fontSize: "13px",
                         lineHeight: "16px",
@@ -9575,6 +10677,16 @@ function RightSideColumn({
                             </span>
                           </div>
                           <Button
+                            onClick={() =>
+                              handleCheckoutStripeApi(
+                                basicAnnualTabStyle
+                                  ? yearlyFee
+                                  : basicMonthlyTabStyle
+                                  ? monthyleFee
+                                  : null,
+                                basicAnnualTabStyle ? "per year" : "per month"
+                              )
+                            }
                             className="mt-4 subscribe-btn-basic-plan"
                             style={{
                               backgroundColor: "#0f1518",
@@ -10010,6 +11122,9 @@ function RightSideColumn({
                             </span>
                           </div>
                           <Button
+                            onClick={() =>
+                              handleFullAccessOrganizationPlanModal()
+                            }
                             className="mt-4 subscribe-btn-basic-plan"
                             style={{
                               backgroundColor: "#0f1518",
@@ -10079,7 +11194,153 @@ function RightSideColumn({
                   </Modal.Body>
                 </>
               </>
-            ) : null}
+            ) : tabIndex === 2 && !phoneVerified ? (
+              <>
+                {subErrorPhoneVerifiedTabLoading ? (
+                  <Modal.Body
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                    className="signin-modal-body-child-non-reactivate sub-modal-loading-spinner"
+                  >
+                    <LoadingSpinner
+                      strokeColor={"rgb(29, 155, 240)"}
+                    ></LoadingSpinner>
+                  </Modal.Body>
+                ) : (
+                  <Modal.Body
+                    style={{
+                      margin: "0px",
+                      padding: "0px",
+                    }}
+                    className="signin-modal-body-child-non-reactivate sub-modal"
+                  >
+                    <div
+                      onClick={handleCloseSubscriptionModal}
+                      style={{
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                        position: "relative",
+                        top: "15px",
+                        left: "10px",
+                        width: "100%",
+                      }}
+                    >
+                      <div
+                        className="close-button"
+                        style={{
+                          display: " flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          width: "30px",
+                          height: "30px",
+                          borderRadius: "50%",
+                        }}
+                      >
+                        {/* close signin modal icon start to check  */}
+                        <svg
+                          style={{
+                            border: "none",
+                            fontSize: "15px",
+                            margin: "5px",
+                          }}
+                          onClick={handleCloseSubscriptionModal}
+                          width={20}
+                          height={20}
+                          color="rgb(15,20,25)"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                        >
+                          <g>
+                            <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                          </g>
+                        </svg>{" "}
+                        {/* close signin modal icon finish to check  */}
+                      </div>{" "}
+                    </div>{" "}
+                    <img
+                      className="mt-4"
+                      style={{}}
+                      width={"100%"}
+                      height={300}
+                      src="https://ton.twimg.com/onboarding/subscriptions_product/twitter_blue_verified_full_v1.png"
+                      alt=""
+                    />
+                    <div
+                      className="mt-5"
+                      style={{
+                        width: "70%",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: "26px",
+                          lineHeight: "32px",
+                          fontWeight: "800",
+                        }}
+                      >
+                        Verify your phone number
+                      </div>
+                      <div
+                        className="mt-2"
+                        style={{
+                          fontSize: "15px",
+                          fontWeight: "400",
+                          lineHeight: "20px",
+                          color: "rgb(83, 100, 113)",
+                        }}
+                      >
+                        Verify your phone number to subscribe for Premium. It
+                        should just take a few minutes.
+                      </div>
+                      <Button
+                        className="login-button next-btn mt-4 mb-5"
+                        variant="dark"
+                        style={{
+                          width: "100%",
+                          height: "52px",
+                          color: "white",
+                          backgroundColor: "#0f141a",
+                        }}
+                      >
+                        Verify your phone number
+                      </Button>
+                    </div>
+                  </Modal.Body>
+                )}
+              </>
+            ) : tabIndex === 2 && phoneVerified ? (
+              <>
+                {subErrorPhoneVerifiedTabLoading ? (
+                  <Modal.Body
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                    className="signin-modal-body-child-non-reactivate sub-modal-loading-spinner"
+                  >
+                    <LoadingSpinner
+                      strokeColor={"rgb(29, 155, 240)"}
+                    ></LoadingSpinner>
+                  </Modal.Body>
+                ) : (
+                  <Modal.Body>
+                    <div>Phone verified...</div>
+                  </Modal.Body>
+                )}
+              </>
+            ) : (
+              <>null</>
+            )}
           </Modal>
         </>
       )}
