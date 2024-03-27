@@ -301,7 +301,6 @@ function PostModal({
                 </div>
               )}
             </div>
-
             <div className="p-0 ">
               <textarea
                 onChange={handleChange}

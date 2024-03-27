@@ -139,6 +139,7 @@ const handleSignup = async (req, res, next) => {
             password: hashedPassword,
             verified: true,
             imageUrl: "../assets/resume-pic.png",
+
             birthDate: {
               month: birthMonth,
               day: birthDay,
