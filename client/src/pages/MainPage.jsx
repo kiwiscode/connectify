@@ -41,7 +41,15 @@ import { TextField } from "@mui/material";
 
 function MainPage() {
   const socket = io.connect(`${API_URL}`);
+  const [isSubModalOpened, setIsSubModalOpened] = useState(false);
+  const [tabIndexValue, settabIndexValue] = useState(null);
+  const handleModalToggle = (modalOpen) => {
+    setIsSubModalOpened(modalOpen);
+  };
 
+  const handleReceiveTabIndexValue = (value) => {
+    settabIndexValue(value);
+  };
   // start to check
 
   const navigate = useNavigate();
@@ -917,6 +925,7 @@ function MainPage() {
         console.log("Response from server =>", response);
         setTabLoading(true);
         setTimeout(() => {
+          window.location.reload();
           setTabLoading(false);
           setshowPickProfilePictureModal(false);
           setshowWhatShouldWeCallYouModal(false);
@@ -938,6 +947,7 @@ function MainPage() {
         localStorage.setItem("userInfo", JSON.stringify(response.data.user));
         setTabLoading(true);
         setTimeout(() => {
+          window.location.reload();
           setTabLoading(false);
           setshowPickProfilePictureModal(false);
           setshowWhatShouldWeCallYouModal(false);
@@ -1536,6 +1546,8 @@ function MainPage() {
         refreshPosts={() => handleShowPostsHomePage()}
         setLoadingTrue={() => setLoadingTrue()}
         setLoadingFalse={() => setLoadingFalse()}
+        isSubModalOpened={isSubModalOpened}
+        isSubModalTabIndexNull={tabIndexValue}
       />
       <ResponsiveNavigationBarTop />
       <Container
@@ -3408,6 +3420,8 @@ function MainPage() {
             searchTerm={searchTerm}
             setSearchTerm={setSearchTermEmpty}
             filteredSearchResult={filteredSearchResult}
+            onModalToggle={handleModalToggle}
+            tabIndexValue={handleReceiveTabIndexValue}
           />
         </Row>
       </Container>

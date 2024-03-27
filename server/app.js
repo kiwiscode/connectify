@@ -82,4 +82,10 @@ app.use("/", rightSideBarRoutes);
 const forgotPasswordRoutes = require("./routes/forgotPassword.routes.js");
 app.use("/", forgotPasswordRoutes);
 
+const subscriptionRoutes = require("./routes/subscription.routes.js");
+app.use("/", subscriptionRoutes);
+
+const stripeRoutes = require("./routes/stripe.routes.js");
+app.use("/stripe", stripeRoutes);
+
 module.exports = app;

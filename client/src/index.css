@@ -2526,3 +2526,47 @@ span > a:hover {
 .modal-content {
   border-radius: 16px;
 }
+
+.widthsmallerthan700-sub-modal {
+  background-color: white;
+  width: 100vh !important;
+}
+
+/* phone verified start to check  */
+/* .signin-modal-parent-non-reactivate div {
+  max-width: 600px !important;
+}
+.signin-modal-parent-non-reactivate div div {
+  max-height: 90vh !important;
+  max-width: 80vw !important;
+} */
+.subscription-modal-basic-width-smaller-700 > .modal-dialog {
+  max-width: 600px !important;
+}
+
+.sub-modal-loading-spinner {
+  min-height: 600px !important;
+  min-width: 600px !important;
+}
+/* phone verified finish to check  */
+
+.individual-bigger-than-700-width {
+  /* height: 0% !important; */
+  max-height: 350px !important;
+}
+
+/* payment screens start to check */
+
+.modal-body-sub-modal-payment-screen {
+  position: fixed !important;
+  bottom: -32px;
+}
+
+.modal-body-sub-modal-payment-screen > div {
+  border-top-right-radius: 32px !important;
+  border-top-left-radius: 32px !important;
+  /* border-bottom-left-radius: 0px !important;
+  border-bottom-right-radius: 0px !important; */
+  width: 100vw;
+}
+/* payment screens finish to check */

@@ -96,6 +96,14 @@ const userSchema = new Schema(
       default: null,
     },
     notifications: [notificationSchema],
+    isPhoneVerified: {
+      type: Boolean,
+      default: false,
+    },
+    phoneNumber: {
+      type: Number,
+      default: null,
+    },
   },
   {
     timestamps: true,
