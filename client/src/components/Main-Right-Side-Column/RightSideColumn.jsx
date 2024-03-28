@@ -1,5 +1,12 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { Button, Col, Stack, Modal, Row } from "react-bootstrap";
+import {
+  Button,
+  Col,
+  Stack,
+  Modal,
+  Popover,
+  OverlayTrigger,
+} from "react-bootstrap";
 import axios from "axios";
 import { UserContext } from "../../context/UserContext";
 import { Link, useNavigate } from "react-router-dom";
@@ -9,6 +16,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import LoadingSpinner from "../ui/LoadingSpinner";
+import { TextField } from "@mui/material";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -302,8 +310,8 @@ function RightSideColumn({
   ] = useState(false);
 
   const [
-    subTabIndexFromOrganizatonSelect,
-    setSubTabIndexFromOrganizatonSelect,
+    subTabIndexFromOrganizationSelect,
+    setSubTabIndexFromOrganizationSelect,
   ] = useState(1);
 
   const tabStyleOrganizationBasicStyle = {
@@ -330,14 +338,14 @@ function RightSideColumn({
   const basicPlanClick = () => {
     setTabStyleOrganizationBasicPlan(true);
     setTabStyleOrganizationFullAccessPlan(false);
-    setSubTabIndexFromOrganizatonSelect(1);
+    setSubTabIndexFromOrganizationSelect(1);
     console.log("Show basic plan options !");
   };
 
   const fullAccessPlanClick = () => {
     setTabStyleOrganizationBasicPlan(false);
     setTabStyleOrganizationFullAccessPlan(true);
-    setSubTabIndexFromOrganizatonSelect(2);
+    setSubTabIndexFromOrganizationSelect(2);
     console.log("Show full access plan options !");
   };
 
@@ -524,7 +532,12 @@ function RightSideColumn({
     setsubscriptionBasicPaymentScreen(false);
   };
 
+  const [checkoutProcessLoadingBar, setCheckoutProcessLoadingBar] =
+    useState(false);
+
   const handleCheckoutStripeApi = (priceBasic, paymentPeriodBasic) => {
+    setCheckoutProcessLoadingBar(true);
+
     axios
       .post(
         `${API_URL}/stripe/create-checkout-session`,
@@ -542,16 +555,149 @@ function RightSideColumn({
       )
       .then((response) => {
         console.log("Response =>", response);
-        if (response.data.url) {
-          window.location.href = response.data.url;
-        }
+
+        setTimeout(() => {
+          setCheckoutProcessLoadingBar(false);
+          if (response.data.url) {
+            window.location.href = response.data.url;
+          }
+        }, 1000);
       })
       .catch((err) => window.alert("Error !!!", err ? err : null));
   };
 
   const handleFullAccessOrganizationPlanModal = () => {
-    window.alert("Apply for Full Access");
+    // window.alert("Apply for Full Access");
+    setSubTabIndexFromOrganizationSelect(subTabIndexFromOrganizationSelect + 1);
   };
+
+  const [showOrganizationTypeContent, setshowOrganizationTypeContent] =
+    useState(false);
+  const [hoveredOrganizationType, sethoveredOrganizationType] = useState(null);
+  const [displayedOrganizationType, setdisplayedOrganizationType] =
+    useState("");
+
+  const [animatedPopover, setanimatedPopover] = useState(false);
+  const handleShowOrganizationTypeClick = () => {
+    setshowOrganizationTypeContent(!showOrganizationTypeContent);
+  };
+  const popoverOrganizationType = (
+    <Popover
+      className={`scrollbar-add ${
+        animatedPopover ? "animate-popover-organization-type" : ""
+      }`}
+      style={{
+        padding: "8px",
+        height: "auto",
+        width: "175px",
+        border: "none",
+        overflowY: "scroll",
+        backgroundColor: "#e2e1e4",
+        boxShadow:
+          "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+        animation: showOrganizationTypeContent
+          ? "fadeInOrganizationType 0.3s ease"
+          : "fadeOut 0.3s ease",
+      }}
+      id="organizationTypePopover"
+    >
+      <div
+        onMouseEnter={() => {
+          sethoveredOrganizationType("business");
+        }}
+        onClick={() => {
+          setshowOrganizationTypeContent(false);
+          setTimeout(() => {
+            setanimatedPopover(true);
+            setdisplayedOrganizationType("Business");
+          }, 300);
+        }}
+        style={{
+          padding: "8px",
+          cursor: "pointer",
+          backgroundColor:
+            hoveredOrganizationType === "business" ? "#5aa0ff" : "",
+          borderRadius: "4px",
+        }}
+      >
+        Business
+      </div>
+      <div
+        onMouseEnter={() => {
+          sethoveredOrganizationType("government");
+        }}
+        onClick={() => {
+          setshowOrganizationTypeContent(false);
+
+          setTimeout(() => {
+            setanimatedPopover(true);
+            setdisplayedOrganizationType("Government");
+          }, 300);
+        }}
+        style={{
+          padding: "8px",
+          cursor: "pointer",
+          backgroundColor:
+            hoveredOrganizationType === "government" ? "#5aa0ff" : "",
+          borderRadius: "4px",
+        }}
+      >
+        Government
+      </div>
+    </Popover>
+  );
+  const [clicked, setClicked] = useState(false);
+
+  const [organizationName, setOrganizationName] = useState("");
+  const [yourFullName, setYourFullName] = useState(null);
+  const [organizationEmailAdress, setOrganizationEmailAdress] = useState("");
+  const [organizationWebSite, setOrganizationWebSite] = useState(null);
+
+  const [allTextFieldsFilled, setallTextFieldsFilled] = useState("unknown");
+
+  const emailRegex =
+    /^[a-zA-Z0-9._%+-]+@(gmail|outlook|hotmail|yahoo|proton|zoho|mail|aol|yandex)\.(com|org|net|gov|edu|mil|co|info|de|co.uk|ca|me|tr|com.tr)$/;
+
+  const [invalidEmailError, setInvalidEmailError] = useState("");
+
+  const [submitClicked, setsubmitClicked] = useState(false);
+  const handleSubmitOrganizationInformationForFullAccessSubscription = (
+    organizationName,
+    yourFullName,
+    organizationEmailAdress,
+    organizationWebSite,
+    organizationType
+  ) => {
+    setsubmitClicked(true);
+    if (
+      (!organizationName ||
+        !yourFullName ||
+        !organizationEmailAdress ||
+        !organizationWebSite ||
+        !organizationType) &&
+      !organizationEmailAdress.match(emailRegex)
+    ) {
+      setInvalidEmailError("Invalid Email");
+      setallTextFieldsFilled("no");
+    } else {
+      setallTextFieldsFilled("unknown");
+      handleCheckoutStripeApi(
+        fullAccessAnnualTabStyle
+          ? yearlyFeeFullAccess
+          : fullAccessMonthlyTabStyle
+          ? monthyleFeeFullAccess
+          : null,
+        fullAccessAnnualTabStyle ? "per year" : "per month"
+      );
+    }
+  };
+
+  console.log(
+    !organizationEmailAdress.match(emailRegex),
+    organizationEmailAdress.length
+  );
+
+  console.log("organization name =>", organizationName);
 
   return (
     <>
@@ -569,7 +715,93 @@ function RightSideColumn({
             centered={true}
             className="widthsmallerthan700-sub-modal"
           >
-            <>
+            {subTabIndexFromOrganizationSelect !== 3 ? (
+              <>
+                <Modal.Header
+                  className="signin-modal-header-child-non-reactivate"
+                  style={{
+                    border: "none",
+                    zIndex: 999,
+                    backgroundColor: "white",
+                    width: "97%",
+                  }}
+                >
+                  <div
+                    onClick={handleCloseSubscriptionModal}
+                    className="close-button"
+                    style={{
+                      borderRadius: "50%",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: " flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      {/* close signin modal icon start to check  */}
+                      <svg
+                        style={{
+                          border: "none",
+                          fontSize: "15px",
+                          margin: "5px",
+                        }}
+                        onClick={handleCloseSubscriptionModal}
+                        width={20}
+                        height={20}
+                        color="rgb(15,20,25)"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                      >
+                        <g>
+                          <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                        </g>
+                      </svg>{" "}
+                      {/* close signin modal icon finish to check  */}
+                    </div>
+                  </div>{" "}
+                  <span
+                    style={{
+                      fontWeight: "700",
+                      fontSize: "20px",
+                      lineHeight: "24px",
+                      position: "absolute",
+                      left: "15%",
+                      display:
+                        (selectedOption === "individual" ||
+                          helperStateSelectedOption === "individual") &&
+                        tabIndex !== 2
+                          ? ""
+                          : "none",
+                    }}
+                  >
+                    Subscribe
+                  </span>
+                  <div
+                    style={{
+                      fontWeight: "700",
+                      fontSize: "20px",
+                      lineHeight: "24px",
+                      margin: "0 auto",
+                      position: "relative",
+                      right: "15px",
+                      display:
+                        (selectedOption === "organization" ||
+                          helperStateSelectedOption === "organization") &&
+                        tabIndex !== 2
+                          ? ""
+                          : "none",
+                    }}
+                  >
+                    Verified Organizations
+                  </div>
+                </Modal.Header>
+              </>
+            ) : (
               <Modal.Header
                 className="signin-modal-header-child-non-reactivate"
                 style={{
@@ -580,80 +812,57 @@ function RightSideColumn({
                 }}
               >
                 <div
-                  onClick={handleCloseSubscriptionModal}
-                  className="close-button"
+                  onClick={() => {
+                    setSubTabIndexFromOrganizationSelect(
+                      subTabIndexFromOrganizationSelect - 1
+                    );
+                    setTabStyleOrganizationFullAccessPlan(true);
+                    console.log("Button clicked !");
+                  }}
                   style={{
                     borderRadius: "50%",
                     cursor: "pointer",
+                    position: "relative",
+                    width: "100%",
                   }}
                 >
                   <div
+                    onClick={() => {
+                      setSubTabIndexFromOrganizationSelect(
+                        subTabIndexFromOrganizationSelect - 1
+                      );
+                      setTabStyleOrganizationFullAccessPlan(true);
+                    }}
+                    className="close-button"
                     style={{
                       display: " flex",
                       flexDirection: "row",
                       alignItems: "center",
+                      justifyContent: "center",
+                      width: "36px",
+                      height: "36px",
+                      borderRadius: "50%",
                     }}
                   >
                     {/* close signin modal icon start to check  */}
                     <svg
-                      style={{
-                        border: "none",
-                        fontSize: "15px",
-                        margin: "5px",
-                      }}
-                      onClick={handleCloseSubscriptionModal}
-                      width={20}
-                      height={20}
                       color="rgb(15,20,25)"
                       fill="currentColor"
+                      width={20}
+                      height={20}
                       viewBox="0 0 24 24"
                       aria-hidden="true"
-                      className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                      className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
                     >
                       <g>
-                        <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                        <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
                       </g>
-                    </svg>{" "}
+                    </svg>
                     {/* close signin modal icon finish to check  */}
-                  </div>
-                </div>{" "}
-                <span
-                  style={{
-                    fontWeight: "700",
-                    fontSize: "20px",
-                    lineHeight: "24px",
-                    position: "absolute",
-                    left: "15%",
-                    display:
-                      (selectedOption === "individual" ||
-                        helperStateSelectedOption === "individual") &&
-                      tabIndex !== 2
-                        ? ""
-                        : "none",
-                  }}
-                >
-                  Subscribe
-                </span>
-                <div
-                  style={{
-                    fontWeight: "700",
-                    fontSize: "20px",
-                    lineHeight: "24px",
-                    margin: "0 auto",
-                    position: "relative",
-                    right: "15px",
-                    display:
-                      (selectedOption === "organization" ||
-                        helperStateSelectedOption === "organization") &&
-                      tabIndex !== 2
-                        ? ""
-                        : "none",
-                  }}
-                >
-                  Verified Organizations
+                  </div>{" "}
                 </div>
               </Modal.Header>
-            </>
+            )}
 
             {tabIndex === 0 ? (
               <>
@@ -4041,9 +4250,7 @@ function RightSideColumn({
                     >
                       <Modal.Body
                         style={{
-                          height: setPhoneVerifiedErrorMessage
-                            ? "530px"
-                            : "490px",
+                          height: phoneVerifiedErrorMessage ? "530px" : "490px",
                         }}
                       >
                         <div
@@ -4184,7 +4391,7 @@ function RightSideColumn({
                             </div>
                           </div>
                         </div>
-                        {setPhoneVerifiedErrorMessage ? (
+                        {phoneVerifiedErrorMessage ? (
                           <div
                             style={{
                               borderRadius: "8px",
@@ -4214,7 +4421,7 @@ function RightSideColumn({
                         <Button
                           onClick={() => handlePhoneVerifiedCheck()}
                           className={`login-button next-btn ${
-                            setPhoneVerifiedErrorMessage ? "mt-2" : "mt-4"
+                            phoneVerifiedErrorMessage ? "mt-2" : "mt-4"
                           }`}
                           variant="dark"
                           style={{
@@ -4276,9 +4483,7 @@ function RightSideColumn({
                     >
                       <Modal.Body
                         style={{
-                          height: setPhoneVerifiedErrorMessage
-                            ? "530px"
-                            : "490px",
+                          height: phoneVerifiedErrorMessage ? "530px" : "490px",
                         }}
                       >
                         <div
@@ -4419,7 +4624,7 @@ function RightSideColumn({
                             </div>
                           </div>
                         </div>
-                        {setPhoneVerifiedErrorMessage ? (
+                        {phoneVerifiedErrorMessage ? (
                           <div
                             style={{
                               borderRadius: "8px",
@@ -4449,7 +4654,7 @@ function RightSideColumn({
                         <Button
                           onClick={() => handlePhoneVerifiedCheck()}
                           className={`login-button next-btn ${
-                            setPhoneVerifiedErrorMessage ? "mt-2" : "mt-4"
+                            phoneVerifiedErrorMessage ? "mt-2" : "mt-4"
                           }`}
                           variant="dark"
                           style={{
@@ -4511,9 +4716,7 @@ function RightSideColumn({
                     >
                       <Modal.Body
                         style={{
-                          height: setPhoneVerifiedErrorMessage
-                            ? "530px"
-                            : "490px",
+                          height: phoneVerifiedErrorMessage ? "530px" : "490px",
                         }}
                       >
                         <div
@@ -4654,7 +4857,7 @@ function RightSideColumn({
                             </div>
                           </div>
                         </div>
-                        {setPhoneVerifiedErrorMessage ? (
+                        {phoneVerifiedErrorMessage ? (
                           <div
                             style={{
                               borderRadius: "8px",
@@ -4685,7 +4888,7 @@ function RightSideColumn({
                         <Button
                           onClick={() => handlePhoneVerifiedCheck()}
                           className={`login-button next-btn ${
-                            setPhoneVerifiedErrorMessage ? "mt-2" : "mt-4"
+                            phoneVerifiedErrorMessage ? "mt-2" : "mt-4"
                           }`}
                           variant="dark"
                           style={{
@@ -4865,49 +5068,53 @@ function RightSideColumn({
                       zIndex: 1,
                     }}
                   >
-                    <div
-                      className="mt-4"
-                      style={{
-                        backgroundColor: "black",
-                        borderRadius: "9999px",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: "184px",
-                          height: "40px",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <button
-                          onClick={() => {
-                            basicPlanClick();
+                    {subTabIndexFromOrganizationSelect !== 3 ? (
+                      <>
+                        <div
+                          className="mt-4"
+                          style={{
+                            backgroundColor: "black",
+                            borderRadius: "9999px",
+                            display: "flex",
+                            alignItems: "center",
                           }}
-                          style={tabStyleOrganizationBasicStyle}
                         >
-                          <span
+                          <div
                             style={{
-                              padding: "6px",
+                              width: "184px",
+                              height: "40px",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
                             }}
                           >
-                            Basic
-                          </span>
-                        </button>
-                        <button
-                          onClick={() => {
-                            fullAccessPlanClick();
-                          }}
-                          style={tabStyleOrganizationFullAccessStyle}
-                        >
-                          <span style={{}}>Full Access</span>
-                        </button>
-                      </div>
-                    </div>
-                    {subTabIndexFromOrganizatonSelect === 1 &&
+                            <button
+                              onClick={() => {
+                                basicPlanClick();
+                              }}
+                              style={tabStyleOrganizationBasicStyle}
+                            >
+                              <span
+                                style={{
+                                  padding: "6px",
+                                }}
+                              >
+                                Basic
+                              </span>
+                            </button>
+                            <button
+                              onClick={() => {
+                                fullAccessPlanClick();
+                              }}
+                              style={tabStyleOrganizationFullAccessStyle}
+                            >
+                              <span style={{}}>Full Access</span>
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    ) : null}
+                    {subTabIndexFromOrganizationSelect === 1 &&
                     tabStyleOrganizationBasicPlan ? (
                       <>
                         <div
@@ -4946,7 +5153,7 @@ function RightSideColumn({
                               fontSize: "15px",
                             }}
                           >
-                            <div>
+                            <div className="mt-2">
                               Try advertising and grow your business with
                               priority support and ads credits.
                             </div>
@@ -5309,31 +5516,47 @@ function RightSideColumn({
                               width: "100%",
                               borderRadius: "9999px",
                               border: " none",
+                              opacity: !checkoutProcessLoadingBar ? "1" : "0.5",
                             }}
                             variant="info"
                           >
-                            <div
-                              style={{
-                                fontSize: "15px",
-                                lineHeight: "20px",
-                                fontWeight: "700",
-                              }}
-                            >
-                              <span>Subscribe</span>
-                              <span
+                            {checkoutProcessLoadingBar ? (
+                              <div
                                 style={{
-                                  marginLeft: "5px",
+                                  fontSize: "15px",
                                 }}
                               >
-                                &middot;
-                              </span>
-                              <span>
-                                {" "}
-                                {basicAnnualTabStyle
-                                  ? `${yearlyFee} per year`
-                                  : `${monthyleFee} per month`}{" "}
-                              </span>
-                            </div>
+                                <LoadingSpinner
+                                  isCheckoutProcess={true}
+                                  strokeColor={"rgb(29, 155, 240)"}
+                                ></LoadingSpinner>
+                              </div>
+                            ) : (
+                              <>
+                                <div
+                                  style={{
+                                    fontSize: "15px",
+                                    lineHeight: "20px",
+                                    fontWeight: "700",
+                                  }}
+                                >
+                                  <span>Subscribe</span>
+                                  <span
+                                    style={{
+                                      marginLeft: "5px",
+                                    }}
+                                  >
+                                    &middot;
+                                  </span>
+                                  <span>
+                                    {" "}
+                                    {basicAnnualTabStyle
+                                      ? `${yearlyFee} per year`
+                                      : `${monthyleFee} per month`}{" "}
+                                  </span>
+                                </div>
+                              </>
+                            )}
                           </Button>
                           <div
                             className="mt-4"
@@ -5363,7 +5586,7 @@ function RightSideColumn({
                           </div>
                         </div>
                       </>
-                    ) : subTabIndexFromOrganizatonSelect === 2 &&
+                    ) : subTabIndexFromOrganizationSelect === 2 &&
                       tabStyleOrganizationFullAccessPlan ? (
                       <>
                         {" "}
@@ -5403,7 +5626,7 @@ function RightSideColumn({
                               fontSize: "15px",
                             }}
                           >
-                            <div>
+                            <div className="mt-2">
                               Reach more customers organically, affiliate your
                               network, or find your next hire.
                             </div>
@@ -5723,7 +5946,7 @@ function RightSideColumn({
                           >
                             {" "}
                             <span>
-                              Full Access is asd
+                              Full Access is
                               {fullAccessAnnualTabStyle
                                 ? yearlyFeeFullAccess
                                 : monthyleFeeFullAccess
@@ -5764,6 +5987,7 @@ function RightSideColumn({
                               width: "100%",
                               borderRadius: "9999px",
                               border: " none",
+                              opacity: !checkoutProcessLoadingBar ? "1" : "0.5",
                             }}
                             variant="info"
                           >
@@ -5818,6 +6042,479 @@ function RightSideColumn({
                             will be rejected and not refunded.
                           </div>
                         </div>
+                      </>
+                    ) : subTabIndexFromOrganizationSelect === 3 ? (
+                      <>
+                        {" "}
+                        <div
+                          className="mt-4"
+                          style={{
+                            width: "100%",
+                            lineHeight: "36px",
+                            fontWeight: "800",
+                            fontSize: "31px",
+                          }}
+                        >
+                          Apply for Full Access
+                        </div>
+                        <div
+                          className="mt-3"
+                          style={{
+                            width: "100%",
+                            color: "rgb(83, 100, 113)",
+                            fontSize: "15px",
+                            lineHeight: "20px",
+                            fontWeight: "400",
+                          }}
+                        >
+                          We’ll use this information to assess your application.
+                          Upon receipt of payment and if eligible, you’ll be
+                          invited to activate your account. For information
+                          learn more{" "}
+                          <span
+                            className="apply-for-access-text-underline"
+                            style={{
+                              color: "rgb(29, 155, 240)",
+                              cursor: "pointer",
+                            }}
+                          >
+                            here
+                          </span>
+                          .
+                        </div>
+                        {/* text fields start to check  */}
+                        <TextField
+                          className="mt-3"
+                          value={organizationName}
+                          onChange={(e) => setOrganizationName(e.target.value)}
+                          type="text"
+                          id="outlined-basic"
+                          variant={"outlined"}
+                          label={`Organization name`}
+                          style={{
+                            width: "100%",
+                            height: "58px",
+                          }}
+                          error={
+                            allTextFieldsFilled === "no" && !organizationName
+                              ? "true"
+                              : ""
+                          }
+                          sx={{
+                            "& .Mui-focused input + fieldset": {
+                              border:
+                                allTextFieldsFilled === "no" &&
+                                !organizationName
+                                  ? "2px solid rgb(244, 33, 46)!important"
+                                  : "2px solid #1d9bf0 !important",
+                            },
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderColor:
+                                allTextFieldsFilled === "no" &&
+                                !organizationName
+                                  ? "rgb(244, 33, 46)!important"
+                                  : "#cfd9de !important",
+                            },
+                            "& .MuiInputLabel-shrink": {
+                              color:
+                                allTextFieldsFilled === "no" &&
+                                !organizationName
+                                  ? "rgb(244, 33, 46)!important"
+                                  : "#1f9cf0 !important",
+                            },
+                          }}
+                        />
+                        <div
+                          className="mt-3"
+                          style={{
+                            width: "100%",
+                          }}
+                        >
+                          <TextField
+                            style={{
+                              width: "100%",
+                              height: "60px",
+                            }}
+                            disabled
+                            id="filled-disabled"
+                            label="Organization @handle"
+                            defaultValue={`@${userInfo.username}`}
+                            variant="filled"
+                            InputProps={{
+                              disableUnderline: true,
+                            }}
+                            sx={{
+                              "& .MuiFilledInput-root": {
+                                background: "#f7f9fa !important",
+                              },
+                            }}
+                          />
+                        </div>
+                        <TextField
+                          className="mt-3"
+                          type="text"
+                          id="outlined-basic"
+                          variant={"outlined"}
+                          label={`Your full name`}
+                          style={{
+                            width: "100%",
+                            height: "58px",
+                          }}
+                          value={yourFullName}
+                          onChange={(e) => setYourFullName(e.target.value)}
+                          error={allTextFieldsFilled === "no" && !yourFullName}
+                          sx={{
+                            "& .Mui-focused input + fieldset": {
+                              border:
+                                allTextFieldsFilled === "no" && !yourFullName
+                                  ? "2px solid rgb(244, 33, 46)!important"
+                                  : "2px solid #1d9bf0 !important",
+                            },
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderColor:
+                                allTextFieldsFilled === "no" && !yourFullName
+                                  ? "rgb(244, 33, 46)!important"
+                                  : "#cfd9de !important",
+                            },
+                            "& .MuiInputLabel-shrink": {
+                              color:
+                                allTextFieldsFilled === "no" && !yourFullName
+                                  ? "rgb(244, 33, 46)!important"
+                                  : "#1f9cf0 !important",
+                            },
+                          }}
+                        />
+                        <TextField
+                          className="mt-3"
+                          type="text"
+                          id="outlined-basic"
+                          variant={"outlined"}
+                          label={`Organization email address`}
+                          style={{
+                            width: "100%",
+                            height: "58px",
+                          }}
+                          value={organizationEmailAdress}
+                          onChange={(e) =>
+                            setOrganizationEmailAdress(e.target.value)
+                          }
+                          error={
+                            allTextFieldsFilled === "no" &&
+                            !organizationEmailAdress
+                          }
+                          sx={{
+                            "& .Mui-focused input + fieldset": {
+                              border:
+                                allTextFieldsFilled === "no" &&
+                                !organizationEmailAdress
+                                  ? "2px solid rgb(244, 33, 46)!important"
+                                  : "2px solid #1d9bf0 !important",
+                            },
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderColor:
+                                allTextFieldsFilled === "no" &&
+                                !organizationEmailAdress
+                                  ? "rgb(244, 33, 46) !important"
+                                  : "#cfd9de !important",
+                            },
+                            "& .MuiInputLabel-shrink": {
+                              color:
+                                allTextFieldsFilled === "no" &&
+                                !organizationEmailAdress
+                                  ? "rgb(244, 33, 46)!important"
+                                  : "#1f9cf0 !important",
+                            },
+                          }}
+                        />
+                        {invalidEmailError && !organizationEmailAdress ? (
+                          <div
+                            style={{
+                              color: "rgb(244, 33, 46)",
+                              fontSize: "13px",
+                              fontWeight: "400",
+                              lineHeight: "16px",
+                              width: "100%",
+                              position: "relative",
+                              left: "10px",
+                              top: "2px",
+                            }}
+                          >
+                            {invalidEmailError}
+                          </div>
+                        ) : null}
+                        <TextField
+                          className="mt-3"
+                          type="text"
+                          id="outlined-basic"
+                          variant={"outlined"}
+                          label={`Organization website`}
+                          style={{
+                            width: "100%",
+                            height: "58px",
+                          }}
+                          value={organizationWebSite}
+                          onChange={(e) =>
+                            setOrganizationWebSite(e.target.value)
+                          }
+                          error={
+                            allTextFieldsFilled === "no" && !organizationWebSite
+                          }
+                          sx={{
+                            "& .Mui-focused input + fieldset": {
+                              border:
+                                allTextFieldsFilled === "no" &&
+                                !organizationWebSite
+                                  ? "2px solid rgb(244, 33, 46)!important"
+                                  : "2px solid #1d9bf0 !important",
+                            },
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderColor:
+                                allTextFieldsFilled === "no" &&
+                                !organizationWebSite
+                                  ? "rgb(244, 33, 46)!important"
+                                  : "#cfd9de !important",
+                            },
+                            "& .MuiInputLabel-shrink": {
+                              color:
+                                allTextFieldsFilled === "no" &&
+                                !organizationWebSite
+                                  ? "rgb(244, 33, 46)!important"
+                                  : "#1f9cf0 !important",
+                            },
+                          }}
+                        />
+                        {/* organization type  start to check  */}
+                        <OverlayTrigger
+                          show={showOrganizationTypeContent}
+                          trigger="click"
+                          placement="top"
+                          overlay={popoverOrganizationType}
+                        >
+                          <div
+                            className="mt-3"
+                            onClick={handleShowOrganizationTypeClick}
+                            style={{
+                              borderRadius: "4px",
+                              cursor: "pointer",
+                              color: "#536471",
+                              width: "100%",
+                              minHeight: "58px",
+                              padding: "4px",
+                              border: "1px solid rgb(207, 217, 222)",
+                              borderWidth: showOrganizationTypeContent
+                                ? "2px"
+                                : "1px",
+                              borderColor:
+                                allTextFieldsFilled === "no" &&
+                                !displayedOrganizationType
+                                  ? "rgb(244, 33, 46)"
+                                  : showOrganizationTypeContent
+                                  ? "#1d9bf0"
+                                  : "#cfd9de",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "inline-block",
+                                float: "left",
+                              }}
+                            >
+                              <div
+                                className="main-outline-text-year-picker"
+                                style={{
+                                  position: "relative",
+                                  left: "10px",
+                                  top: "5px",
+                                  fontSize: "14px",
+                                  lineHeight: "16px",
+                                  fontWeight: "400",
+                                  color: showOrganizationTypeContent
+                                    ? "#1d9bf0"
+                                    : "rgba(83,100,113,1.00)",
+                                }}
+                              >
+                                <span
+                                  style={{
+                                    color:
+                                      allTextFieldsFilled === "no" &&
+                                      !displayedOrganizationType
+                                        ? "rgb(244, 33, 46)"
+                                        : "",
+                                  }}
+                                >
+                                  Organization Type
+                                </span>
+                              </div>
+                              <div
+                                className="mt-2 selected-year-string-parent-div"
+                                style={{
+                                  position: "relative",
+                                  left: "10px",
+                                  fontSize: "17px",
+                                  lineHeight: "20px",
+                                  color: "black",
+                                }}
+                              >
+                                {displayedOrganizationType}
+                              </div>
+                            </div>
+                            <div
+                              style={{
+                                float: "right",
+                                position: "relative",
+                                top: "30%",
+                                minHeight: "50px",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                              }}
+                            >
+                              <svg
+                                width={`${1.5}em`}
+                                height={`${1.5}em`}
+                                color={
+                                  showOrganizationTypeContent
+                                    ? "#1d9bf0"
+                                    : "rgba(83,100,113,1.00)"
+                                }
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                className="svg-year-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-1plcrui r-lrvibr r-14j79pv r-1pgswnq r-50lct3 r-fdch1b r-633pao r-u8s1d r-1v2oles"
+                              >
+                                <g className="path-parent-g-year-picker">
+                                  <path d="M3.543 8.96l1.414-1.42L12 14.59l7.043-7.05 1.414 1.42L12 17.41 3.543 8.96z"></path>
+                                </g>
+                              </svg>
+                            </div>
+                          </div>
+                        </OverlayTrigger>
+                        {/* </div> */}
+                        {/* organization type  finish to check  */}
+                        {/* text fields finish to check  */}
+                        <div
+                          className="mt-3"
+                          style={{
+                            width: "100%",
+                            gap: "2%",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <div
+                            onClick={() => setClicked(!clicked)}
+                            style={{
+                              width: "56px",
+                              height: "34px",
+                              borderRadius: "50%",
+                              cursor: "pointer",
+                            }}
+                            className={
+                              clicked
+                                ? "hover-customize-your-experience-tab-get-more-out-of-variant"
+                                : "hover-customize-your-experience-tab-get-more-out-of-variant-2"
+                            }
+                          >
+                            <div
+                              style={{
+                                backgroundColor: clicked
+                                  ? "#1d9bf0"
+                                  : "transparent",
+                                border: clicked ? "none" : "2px solid #536471",
+
+                                borderWidth: "2px ",
+                                width: "20px",
+                                height: "20px",
+                                position: "relative",
+                                left: "6.5px",
+                                top: "7px",
+                                borderRadius: "3px",
+                              }}
+                            >
+                              <svg
+                                style={{
+                                  position: "relative",
+                                  left: "2px",
+                                  bottom: "4px",
+                                  display: clicked ? "initial" : "none",
+                                }}
+                                width={16}
+                                height={16}
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
+                                color="white"
+                                fill="currentColor"
+                              >
+                                <g>
+                                  <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                </g>
+                              </svg>
+                            </div>
+                          </div>
+                          <div
+                            className="mt-2"
+                            style={{
+                              color: "rgb(83, 100, 113)",
+                              fontSize: "15px",
+                              lineHeight: "20px",
+                              fontWeight: "400",
+                              position: "relative",
+                              bottom: "4px",
+                            }}
+                          >
+                            By checking this box you indicate you have read and
+                            agree to the terms and conditions available{" "}
+                            <span
+                              style={{
+                                color: "rgb(29, 155, 240)",
+                                cursor: "pointer",
+                              }}
+                            >
+                              here
+                            </span>
+                            .
+                          </div>
+                        </div>
+                        <Button
+                          onClick={() =>
+                            handleSubmitOrganizationInformationForFullAccessSubscription(
+                              organizationName,
+                              yourFullName,
+                              organizationEmailAdress,
+                              organizationWebSite,
+                              displayedOrganizationType
+                            )
+                          }
+                          className={`login-button next-btn mt-4 mb-5
+                          }`}
+                          variant="dark"
+                          style={{
+                            width: "100%",
+                            height: "36px",
+                            color: "white",
+                            backgroundColor: "#0f141a",
+                            opacity:
+                              clicked && !checkoutProcessLoadingBar
+                                ? "1"
+                                : "0.5",
+                          }}
+                        >
+                          {checkoutProcessLoadingBar ? (
+                            <div
+                              style={{
+                                fontSize: "15px",
+                              }}
+                            >
+                              <LoadingSpinner
+                                isCheckoutProcess={true}
+                                strokeColor={"rgb(29, 155, 240)"}
+                              ></LoadingSpinner>
+                            </div>
+                          ) : (
+                            <span>Submit</span>
+                          )}
+                        </Button>
                       </>
                     ) : null}
                   </Modal.Body>
@@ -9456,9 +10153,7 @@ function RightSideColumn({
                       position: "relative",
                       boxShadow:
                         "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
-                      minHeight: setPhoneVerifiedErrorMessage
-                        ? "305px"
-                        : "260px",
+                      minHeight: phoneVerifiedErrorMessage ? "305px" : "270px",
 
                       borderBottomLeftRadius: "16px",
                       borderBottomRightRadius: "16px",
@@ -9615,7 +10310,7 @@ function RightSideColumn({
                         margin: "0 auto",
                       }}
                     >
-                      {setPhoneVerifiedErrorMessage ? (
+                      {phoneVerifiedErrorMessage ? (
                         <div
                           style={{
                             borderRadius: "8px",
@@ -9643,7 +10338,7 @@ function RightSideColumn({
                       <Button
                         onClick={() => handlePhoneVerifiedCheck()}
                         className={`login-button next-btn ${
-                          setPhoneVerifiedErrorMessage ? "mt-2" : "mt-4"
+                          phoneVerifiedErrorMessage ? "mt-2" : ""
                         }`}
                         variant="dark"
                         style={{
@@ -9699,9 +10394,7 @@ function RightSideColumn({
                       position: "relative",
                       boxShadow:
                         "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
-                      minHeight: setPhoneVerifiedErrorMessage
-                        ? "305px"
-                        : "260px",
+                      minHeight: phoneVerifiedErrorMessage ? "305px" : "270px",
                       borderBottomLeftRadius: "16px",
                       borderBottomRightRadius: "16px",
                       backgroundColor: "#fdfdfe",
@@ -9858,7 +10551,7 @@ function RightSideColumn({
                       }}
                     >
                       {" "}
-                      {setPhoneVerifiedErrorMessage ? (
+                      {phoneVerifiedErrorMessage ? (
                         <div
                           style={{
                             borderRadius: "8px",
@@ -9886,7 +10579,7 @@ function RightSideColumn({
                       <Button
                         onClick={() => handlePhoneVerifiedCheck()}
                         className={`login-button next-btn ${
-                          setPhoneVerifiedErrorMessage ? "mt-2" : "mt-4"
+                          phoneVerifiedErrorMessage ? "mt-2" : ""
                         }`}
                         variant="dark"
                         style={{
@@ -9943,9 +10636,7 @@ function RightSideColumn({
                       position: "relative",
                       boxShadow:
                         "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
-                      minHeight: setPhoneVerifiedErrorMessage
-                        ? "305px"
-                        : "260px",
+                      minHeight: phoneVerifiedErrorMessage ? "305px" : "270px",
                       borderBottomLeftRadius: "16px",
                       borderBottomRightRadius: "16px",
                       backgroundColor: "#fdfdfe",
@@ -10101,7 +10792,7 @@ function RightSideColumn({
                       }}
                     >
                       {" "}
-                      {setPhoneVerifiedErrorMessage ? (
+                      {phoneVerifiedErrorMessage ? (
                         <div
                           style={{
                             borderRadius: "8px",
@@ -10129,7 +10820,7 @@ function RightSideColumn({
                       <Button
                         onClick={() => handlePhoneVerifiedCheck()}
                         className={`login-button next-btn ${
-                          setPhoneVerifiedErrorMessage ? "mt-2" : "mt-4"
+                          phoneVerifiedErrorMessage ? "mt-2" : ""
                         }`}
                         variant="dark"
                         style={{
@@ -10185,114 +10876,172 @@ function RightSideColumn({
                 {" "}
                 <>
                   <Modal.Body
-                    className="scrollbar-add"
+                    className="scrollbar-add full-access-sub-index-first"
                     style={{
                       height: "100%",
                       overflowY: "auto",
                     }}
                   >
-                    <div
-                      onClick={handleCloseSubscriptionModal}
-                      style={{
-                        borderRadius: "50%",
-                        cursor: "pointer",
-                        position: "relative",
-                        // right: "30px",
-                        width: "100%",
-                      }}
-                    >
-                      <div
-                        className="close-button"
-                        style={{
-                          display: " flex",
-                          flexDirection: "row",
-                          alignItems: "center",
-                          justifyContent: "center",
-
-                          width: "36px",
-                          height: "36px",
-                          borderRadius: "50%",
-                        }}
-                      >
-                        {/* close signin modal icon start to check  */}
-                        <svg
-                          style={{
-                            border: "none",
-                            fontSize: "15px",
-                            margin: "5px",
-                          }}
+                    {subTabIndexFromOrganizationSelect !== 3 ? (
+                      <>
+                        <div
                           onClick={handleCloseSubscriptionModal}
-                          width={20}
-                          height={20}
-                          color="rgb(15,20,25)"
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                          className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                        >
-                          <g>
-                            <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
-                          </g>
-                        </svg>{" "}
-                        {/* close signin modal icon finish to check  */}
-                      </div>{" "}
-                    </div>{" "}
-                    <div
-                      style={{
-                        fontWeight: "700",
-                        fontSize: "20px",
-                        lineHeight: "24px",
-                        position: "relative",
-                        bottom: "27px",
-                      }}
-                    >
-                      Verified Organizations
-                    </div>
-                    <div
-                      className=""
-                      style={{
-                        backgroundColor: "black",
-                        borderRadius: "9999px",
-                        display: "flex",
-                        alignItems: "center",
-                        position: "relative",
-                        bottom: "15px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: "184px",
-                          height: "40px",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <button
-                          onClick={() => {
-                            basicPlanClick();
+                          style={{
+                            borderRadius: "50%",
+                            cursor: "pointer",
+                            position: "relative",
+                            // right: "30px",
+                            width: "100%",
                           }}
-                          style={tabStyleOrganizationBasicStyle}
                         >
-                          <span
+                          <div
+                            className="close-button"
                             style={{
-                              padding: "6px",
+                              display: " flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                              justifyContent: "center",
+
+                              width: "36px",
+                              height: "36px",
+                              borderRadius: "50%",
                             }}
                           >
-                            Basic
-                          </span>
-                        </button>
-                        <button
-                          onClick={() => {
-                            fullAccessPlanClick();
+                            {/* close signin modal icon start to check  */}
+                            <svg
+                              style={{
+                                border: "none",
+                                fontSize: "15px",
+                                margin: "5px",
+                              }}
+                              onClick={handleCloseSubscriptionModal}
+                              width={20}
+                              height={20}
+                              color="rgb(15,20,25)"
+                              fill="currentColor"
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                              className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                            >
+                              <g>
+                                <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                              </g>
+                            </svg>{" "}
+                            {/* close signin modal icon finish to check  */}
+                          </div>{" "}
+                        </div>
+                        <div
+                          style={{
+                            fontWeight: "700",
+                            fontSize: "20px",
+                            lineHeight: "24px",
+                            position: "relative",
+                            bottom: "27px",
                           }}
-                          style={tabStyleOrganizationFullAccessStyle}
                         >
-                          <span style={{}}>Full Access</span>
-                        </button>
+                          Verified Organizations
+                        </div>
+                        <div
+                          className=""
+                          style={{
+                            backgroundColor: "black",
+                            borderRadius: "9999px",
+                            display: "flex",
+                            alignItems: "center",
+                            position: "relative",
+                            bottom: "15px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: "184px",
+                              height: "40px",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            <button
+                              onClick={() => {
+                                basicPlanClick();
+                              }}
+                              style={tabStyleOrganizationBasicStyle}
+                            >
+                              <span
+                                style={{
+                                  padding: "6px",
+                                }}
+                              >
+                                Basic
+                              </span>
+                            </button>
+                            <button
+                              onClick={() => {
+                                fullAccessPlanClick();
+                              }}
+                              style={tabStyleOrganizationFullAccessStyle}
+                            >
+                              <span style={{}}>Full Access</span>
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <div
+                        onClick={() => {
+                          setSubTabIndexFromOrganizationSelect(
+                            subTabIndexFromOrganizationSelect - 1
+                          );
+                          setTabStyleOrganizationFullAccessPlan(true);
+                        }}
+                        style={{
+                          borderRadius: "50%",
+                          cursor: "pointer",
+                          position: "relative",
+                          // right: "30px",
+                          width: "100%",
+                        }}
+                      >
+                        <div
+                          onClick={() => {
+                            setSubTabIndexFromOrganizationSelect(
+                              subTabIndexFromOrganizationSelect - 1
+                            );
+                            setTabStyleOrganizationFullAccessPlan(true);
+                          }}
+                          className="close-button"
+                          style={{
+                            display: " flex",
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "center",
+
+                            width: "36px",
+                            height: "36px",
+                            borderRadius: "50%",
+                          }}
+                        >
+                          {/* close signin modal icon start to check  */}
+                          <svg
+                            color="rgb(15,20,25)"
+                            fill="currentColor"
+                            width={20}
+                            height={20}
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                          >
+                            <g>
+                              <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                            </g>
+                          </svg>
+                          {/* close signin modal icon finish to check  */}
+                        </div>{" "}
                       </div>
-                    </div>
-                    {subTabIndexFromOrganizatonSelect === 1 &&
+                    )}
+
+                    {/* seperator  */}
+                    {subTabIndexFromOrganizationSelect === 1 &&
                     tabStyleOrganizationBasicPlan ? (
                       <>
                         <div
@@ -10330,7 +11079,7 @@ function RightSideColumn({
                               fontSize: "15px",
                             }}
                           >
-                            <div>
+                            <div className="mt-2">
                               Try advertising and grow your business with
                               priority support and ads credits.
                             </div>
@@ -10677,15 +11426,20 @@ function RightSideColumn({
                             </span>
                           </div>
                           <Button
-                            onClick={() =>
-                              handleCheckoutStripeApi(
-                                basicAnnualTabStyle
-                                  ? yearlyFee
-                                  : basicMonthlyTabStyle
-                                  ? monthyleFee
-                                  : null,
-                                basicAnnualTabStyle ? "per year" : "per month"
-                              )
+                            onClick={
+                              !checkoutProcessLoadingBar
+                                ? () =>
+                                    handleCheckoutStripeApi(
+                                      basicAnnualTabStyle
+                                        ? yearlyFee
+                                        : basicMonthlyTabStyle
+                                        ? monthyleFee
+                                        : null,
+                                      basicAnnualTabStyle
+                                        ? "per year"
+                                        : "per month"
+                                    )
+                                : null
                             }
                             className="mt-4 subscribe-btn-basic-plan"
                             style={{
@@ -10695,31 +11449,47 @@ function RightSideColumn({
                               width: "100%",
                               borderRadius: "9999px",
                               border: " none",
+                              opacity: !checkoutProcessLoadingBar ? "1" : "0.5",
                             }}
                             variant="info"
                           >
-                            <div
-                              style={{
-                                fontSize: "15px",
-                                lineHeight: "20px",
-                                fontWeight: "700",
-                              }}
-                            >
-                              <span>Subscribe</span>
-                              <span
+                            {checkoutProcessLoadingBar ? (
+                              <div
                                 style={{
-                                  marginLeft: "5px",
+                                  fontSize: "15px",
                                 }}
                               >
-                                &middot;
-                              </span>
-                              <span>
-                                {" "}
-                                {basicAnnualTabStyle
-                                  ? `${yearlyFee} per year`
-                                  : `${monthyleFee} per month`}{" "}
-                              </span>
-                            </div>
+                                <LoadingSpinner
+                                  isCheckoutProcess={true}
+                                  strokeColor={"rgb(29, 155, 240)"}
+                                ></LoadingSpinner>
+                              </div>
+                            ) : (
+                              <>
+                                <div
+                                  style={{
+                                    fontSize: "15px",
+                                    lineHeight: "20px",
+                                    fontWeight: "700",
+                                  }}
+                                >
+                                  <span>Subscribe</span>
+                                  <span
+                                    style={{
+                                      marginLeft: "5px",
+                                    }}
+                                  >
+                                    &middot;
+                                  </span>
+                                  <span>
+                                    {" "}
+                                    {basicAnnualTabStyle
+                                      ? `${yearlyFee} per year`
+                                      : `${monthyleFee} per month`}{" "}
+                                  </span>
+                                </div>
+                              </>
+                            )}
                           </Button>
                           <div
                             className="mt-3"
@@ -10749,7 +11519,7 @@ function RightSideColumn({
                           </div>
                         </div>{" "}
                       </>
-                    ) : subTabIndexFromOrganizatonSelect === 2 &&
+                    ) : subTabIndexFromOrganizationSelect === 2 &&
                       tabStyleOrganizationFullAccessPlan ? (
                       <>
                         <div
@@ -10787,7 +11557,7 @@ function RightSideColumn({
                               fontSize: "15px",
                             }}
                           >
-                            <div>
+                            <div className="mt-2">
                               Reach more customers organically, affiliate your
                               network, or find your next hire.
                             </div>
@@ -10968,6 +11738,8 @@ function RightSideColumn({
                               onClick={() => {
                                 setbasicAnnualTabStyle(true);
                                 setbasicMonthlyTabStyle(false);
+                                setfullAccessAnnualTabStyle(true);
+                                setfullAccessMonthlyTabStyle(false);
                               }}
                               style={
                                 ({ activeIndividualOptionTabStyle },
@@ -11043,6 +11815,8 @@ function RightSideColumn({
                               onClick={() => {
                                 setbasicMonthlyTabStyle(true);
                                 setbasicAnnualTabStyle(false);
+                                setfullAccessAnnualTabStyle(false);
+                                setfullAccessMonthlyTabStyle(true);
                               }}
                               style={
                                 ({ activeOrganizationOptionTabStyle },
@@ -11103,13 +11877,26 @@ function RightSideColumn({
                           >
                             {" "}
                             <span>
-                              {basicAnnualTabStyle
-                                ? `Full Access is €11,305/year (tax inclusive). Each
-                              additional affiliated account is €714 per handle
-                              per year (tax inclusive).`
-                                : `Full Access is €1,130.50/month (tax inclusive). Each
-                              additional affiliated account is €59.50 per handle
-                              per month (tax inclusive).`}{" "}
+                              Full Access is{" "}
+                              {fullAccessAnnualTabStyle
+                                ? yearlyFeeFullAccess
+                                : monthyleFeeFullAccess
+                                ? monthyleFeeFullAccess
+                                : null}
+                              /
+                              {fullAccessAnnualTabStyle
+                                ? "year"
+                                : monthyleFeeFullAccess
+                                ? "month"
+                                : null}{" "}
+                              (tax inclusive). Each additional affiliated
+                              account is{" "}
+                              {fullAccessAnnualTabStyle
+                                ? "€714 per handle per year"
+                                : fullAccessMonthlyTabStyle
+                                ? "€59.50 per handle per month"
+                                : ""}{" "}
+                              (tax inclusive).{" "}
                             </span>
                             <span
                               className="learn-more-basic-plan"
@@ -11153,7 +11940,7 @@ function RightSideColumn({
                               </span>
                               <span>
                                 {" "}
-                                {basicAnnualTabStyle
+                                {fullAccessAnnualTabStyle
                                   ? `€11,305 per year`
                                   : `€1,130.50 per month`}{" "}
                               </span>
@@ -11189,6 +11976,479 @@ function RightSideColumn({
                             you will be rejected and not refunded.
                           </div>
                         </div>{" "}
+                      </>
+                    ) : subTabIndexFromOrganizationSelect === 3 ? (
+                      <>
+                        {" "}
+                        <div
+                          className="mt-4"
+                          style={{
+                            width: "81.5%",
+                            lineHeight: "36px",
+                            fontWeight: "800",
+                            fontSize: "31px",
+                          }}
+                        >
+                          Apply for Full Access
+                        </div>
+                        <div
+                          className="mt-3"
+                          style={{
+                            width: "81.5%",
+                            color: "rgb(83, 100, 113)",
+                            fontSize: "15px",
+                            lineHeight: "20px",
+                            fontWeight: "400",
+                          }}
+                        >
+                          We’ll use this information to assess your application.
+                          Upon receipt of payment and if eligible, you’ll be
+                          invited to activate your account. For information
+                          learn more{" "}
+                          <span
+                            className="apply-for-access-text-underline"
+                            style={{
+                              color: "rgb(29, 155, 240)",
+                              cursor: "pointer",
+                            }}
+                          >
+                            here
+                          </span>
+                          .
+                        </div>
+                        {/* text fields start to check  */}
+                        <TextField
+                          className="mt-3"
+                          value={organizationName}
+                          onChange={(e) => setOrganizationName(e.target.value)}
+                          type="text"
+                          id="outlined-basic"
+                          variant={"outlined"}
+                          label={`Organization name`}
+                          style={{
+                            width: "81.5%",
+                            height: "58px",
+                          }}
+                          error={
+                            allTextFieldsFilled === "no" && !organizationName
+                              ? "true"
+                              : ""
+                          }
+                          sx={{
+                            "& .Mui-focused input + fieldset": {
+                              border:
+                                allTextFieldsFilled === "no" &&
+                                !organizationName
+                                  ? "2px solid rgb(244, 33, 46)!important"
+                                  : "2px solid #1d9bf0 !important",
+                            },
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderColor:
+                                allTextFieldsFilled === "no" &&
+                                !organizationName
+                                  ? "rgb(244, 33, 46)!important"
+                                  : "#cfd9de !important",
+                            },
+                            "& .MuiInputLabel-shrink": {
+                              color:
+                                allTextFieldsFilled === "no" &&
+                                !organizationName
+                                  ? "rgb(244, 33, 46)!important"
+                                  : "#1f9cf0 !important",
+                            },
+                          }}
+                        />
+                        <div
+                          className="mt-3"
+                          style={{
+                            width: "81.5%",
+                          }}
+                        >
+                          <TextField
+                            style={{
+                              width: "100%",
+                              height: "60px",
+                            }}
+                            disabled
+                            id="filled-disabled"
+                            label="Organization @handle"
+                            defaultValue={`@${userInfo.username}`}
+                            variant="filled"
+                            InputProps={{
+                              disableUnderline: true,
+                            }}
+                            sx={{
+                              "& .MuiFilledInput-root": {
+                                background: "#f7f9fa !important",
+                              },
+                            }}
+                          />
+                        </div>
+                        <TextField
+                          className="mt-3"
+                          type="text"
+                          id="outlined-basic"
+                          variant={"outlined"}
+                          label={`Your full name`}
+                          style={{
+                            width: "81.5%",
+                            height: "58px",
+                          }}
+                          value={yourFullName}
+                          onChange={(e) => setYourFullName(e.target.value)}
+                          error={allTextFieldsFilled === "no" && !yourFullName}
+                          sx={{
+                            "& .Mui-focused input + fieldset": {
+                              border:
+                                allTextFieldsFilled === "no" && !yourFullName
+                                  ? "2px solid rgb(244, 33, 46)!important"
+                                  : "2px solid #1d9bf0 !important",
+                            },
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderColor:
+                                allTextFieldsFilled === "no" && !yourFullName
+                                  ? "rgb(244, 33, 46)!important"
+                                  : "#cfd9de !important",
+                            },
+                            "& .MuiInputLabel-shrink": {
+                              color:
+                                allTextFieldsFilled === "no" && !yourFullName
+                                  ? "rgb(244, 33, 46)!important"
+                                  : "#1f9cf0 !important",
+                            },
+                          }}
+                        />
+                        <TextField
+                          className="mt-3"
+                          type="text"
+                          id="outlined-basic"
+                          variant={"outlined"}
+                          label={`Organization email address`}
+                          style={{
+                            width: "81.5%",
+                            height: "58px",
+                          }}
+                          value={organizationEmailAdress}
+                          onChange={(e) =>
+                            setOrganizationEmailAdress(e.target.value)
+                          }
+                          error={
+                            allTextFieldsFilled === "no" &&
+                            !organizationEmailAdress
+                          }
+                          sx={{
+                            "& .Mui-focused input + fieldset": {
+                              border:
+                                allTextFieldsFilled === "no" &&
+                                !organizationEmailAdress
+                                  ? "2px solid rgb(244, 33, 46)!important"
+                                  : "2px solid #1d9bf0 !important",
+                            },
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderColor:
+                                allTextFieldsFilled === "no" &&
+                                !organizationEmailAdress
+                                  ? "rgb(244, 33, 46) !important"
+                                  : "#cfd9de !important",
+                            },
+                            "& .MuiInputLabel-shrink": {
+                              color:
+                                allTextFieldsFilled === "no" &&
+                                !organizationEmailAdress
+                                  ? "rgb(244, 33, 46)!important"
+                                  : "#1f9cf0 !important",
+                            },
+                          }}
+                        />
+                        {invalidEmailError && !organizationEmailAdress ? (
+                          <div
+                            style={{
+                              color: "rgb(244, 33, 46)",
+                              fontSize: "13px",
+                              fontWeight: "400",
+                              lineHeight: "16px",
+                              width: "81.5%",
+                              position: "relative",
+                              left: "10px",
+                              top: "2px",
+                            }}
+                          >
+                            {invalidEmailError}
+                          </div>
+                        ) : null}
+                        <TextField
+                          className="mt-3"
+                          type="text"
+                          id="outlined-basic"
+                          variant={"outlined"}
+                          label={`Organization website`}
+                          style={{
+                            width: "81.5%",
+                            height: "58px",
+                          }}
+                          value={organizationWebSite}
+                          onChange={(e) =>
+                            setOrganizationWebSite(e.target.value)
+                          }
+                          error={
+                            allTextFieldsFilled === "no" && !organizationWebSite
+                          }
+                          sx={{
+                            "& .Mui-focused input + fieldset": {
+                              border:
+                                allTextFieldsFilled === "no" &&
+                                !organizationWebSite
+                                  ? "2px solid rgb(244, 33, 46)!important"
+                                  : "2px solid #1d9bf0 !important",
+                            },
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderColor:
+                                allTextFieldsFilled === "no" &&
+                                !organizationWebSite
+                                  ? "rgb(244, 33, 46)!important"
+                                  : "#cfd9de !important",
+                            },
+                            "& .MuiInputLabel-shrink": {
+                              color:
+                                allTextFieldsFilled === "no" &&
+                                !organizationWebSite
+                                  ? "rgb(244, 33, 46)!important"
+                                  : "#1f9cf0 !important",
+                            },
+                          }}
+                        />
+                        {/* organization type  start to check  */}
+                        <OverlayTrigger
+                          show={showOrganizationTypeContent}
+                          trigger="click"
+                          placement="top"
+                          overlay={popoverOrganizationType}
+                        >
+                          <div
+                            className="mt-3"
+                            onClick={handleShowOrganizationTypeClick}
+                            style={{
+                              borderRadius: "4px",
+                              cursor: "pointer",
+                              color: "#536471",
+                              width: "81.5%",
+                              minHeight: "58px",
+                              padding: "4px",
+                              border: "1px solid rgb(207, 217, 222)",
+                              borderWidth: showOrganizationTypeContent
+                                ? "2px"
+                                : "1px",
+                              borderColor:
+                                allTextFieldsFilled === "no" &&
+                                !displayedOrganizationType
+                                  ? "rgb(244, 33, 46)"
+                                  : showOrganizationTypeContent
+                                  ? "#1d9bf0"
+                                  : "#cfd9de",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "inline-block",
+                                float: "left",
+                              }}
+                            >
+                              <div
+                                className="main-outline-text-year-picker"
+                                style={{
+                                  position: "relative",
+                                  left: "10px",
+                                  top: "5px",
+                                  fontSize: "14px",
+                                  lineHeight: "16px",
+                                  fontWeight: "400",
+                                  color: showOrganizationTypeContent
+                                    ? "#1d9bf0"
+                                    : "rgba(83,100,113,1.00)",
+                                }}
+                              >
+                                <span
+                                  style={{
+                                    color:
+                                      allTextFieldsFilled === "no" &&
+                                      !displayedOrganizationType
+                                        ? "rgb(244, 33, 46)"
+                                        : "",
+                                  }}
+                                >
+                                  Organization Type
+                                </span>
+                              </div>
+                              <div
+                                className="mt-2 selected-year-string-parent-div"
+                                style={{
+                                  position: "relative",
+                                  left: "10px",
+                                  fontSize: "17px",
+                                  lineHeight: "20px",
+                                  color: "black",
+                                }}
+                              >
+                                {displayedOrganizationType}
+                              </div>
+                            </div>
+                            <div
+                              style={{
+                                float: "right",
+                                position: "relative",
+                                top: "30%",
+                                minHeight: "50px",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                              }}
+                            >
+                              <svg
+                                width={`${1.5}em`}
+                                height={`${1.5}em`}
+                                color={
+                                  showOrganizationTypeContent
+                                    ? "#1d9bf0"
+                                    : "rgba(83,100,113,1.00)"
+                                }
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                className="svg-year-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-1plcrui r-lrvibr r-14j79pv r-1pgswnq r-50lct3 r-fdch1b r-633pao r-u8s1d r-1v2oles"
+                              >
+                                <g className="path-parent-g-year-picker">
+                                  <path d="M3.543 8.96l1.414-1.42L12 14.59l7.043-7.05 1.414 1.42L12 17.41 3.543 8.96z"></path>
+                                </g>
+                              </svg>
+                            </div>
+                          </div>
+                        </OverlayTrigger>
+                        {/* </div> */}
+                        {/* organization type  finish to check  */}
+                        {/* text fields finish to check  */}
+                        <div
+                          className="mt-3"
+                          style={{
+                            width: "81.5%",
+                            gap: "2%",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <div
+                            onClick={() => setClicked(!clicked)}
+                            style={{
+                              width: "56px",
+                              height: "34px",
+                              borderRadius: "50%",
+                              cursor: "pointer",
+                            }}
+                            className={
+                              clicked
+                                ? "hover-customize-your-experience-tab-get-more-out-of-variant"
+                                : "hover-customize-your-experience-tab-get-more-out-of-variant-2"
+                            }
+                          >
+                            <div
+                              style={{
+                                backgroundColor: clicked
+                                  ? "#1d9bf0"
+                                  : "transparent",
+                                border: clicked ? "none" : "2px solid #536471",
+
+                                borderWidth: "2px ",
+                                width: "20px",
+                                height: "20px",
+                                position: "relative",
+                                left: "6.5px",
+                                top: "7px",
+                                borderRadius: "3px",
+                              }}
+                            >
+                              <svg
+                                style={{
+                                  position: "relative",
+                                  left: "2px",
+                                  bottom: "4px",
+                                  display: clicked ? "initial" : "none",
+                                }}
+                                width={16}
+                                height={16}
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
+                                color="white"
+                                fill="currentColor"
+                              >
+                                <g>
+                                  <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                </g>
+                              </svg>
+                            </div>
+                          </div>
+                          <div
+                            className="mt-2"
+                            style={{
+                              color: "rgb(83, 100, 113)",
+                              fontSize: "15px",
+                              lineHeight: "20px",
+                              fontWeight: "400",
+                              position: "relative",
+                              bottom: "4px",
+                            }}
+                          >
+                            By checking this box you indicate you have read and
+                            agree to the terms and conditions available{" "}
+                            <span
+                              style={{
+                                color: "rgb(29, 155, 240)",
+                                cursor: "pointer",
+                              }}
+                            >
+                              here
+                            </span>
+                            .
+                          </div>
+                        </div>
+                        <Button
+                          onClick={() =>
+                            handleSubmitOrganizationInformationForFullAccessSubscription(
+                              organizationName,
+                              yourFullName,
+                              organizationEmailAdress,
+                              organizationWebSite,
+                              displayedOrganizationType
+                            )
+                          }
+                          className={`login-button next-btn mt-4 mb-5
+                          }`}
+                          variant="dark"
+                          style={{
+                            width: "81.5%",
+                            height: "36px",
+                            color: "white",
+                            backgroundColor: "#0f141a",
+                            opacity:
+                              clicked && !checkoutProcessLoadingBar
+                                ? "1"
+                                : "0.5",
+                          }}
+                        >
+                          {checkoutProcessLoadingBar ? (
+                            <div
+                              style={{
+                                fontSize: "15px",
+                              }}
+                            >
+                              <LoadingSpinner
+                                isCheckoutProcess={true}
+                                strokeColor={"rgb(29, 155, 240)"}
+                              ></LoadingSpinner>
+                            </div>
+                          ) : (
+                            <span>Submit</span>
+                          )}
+                        </Button>
                       </>
                     ) : null}
                   </Modal.Body>

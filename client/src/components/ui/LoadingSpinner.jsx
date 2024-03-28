@@ -1,11 +1,11 @@
-const LoadingSpinner = ({ strokeColor }) => {
+const LoadingSpinner = ({ strokeColor, isCheckoutProcess }) => {
   return (
     <>
       <div
         style={{
           display: "flex",
           justifyContent: "center",
-          padding: "16px 0px",
+          padding: isCheckoutProcess ? "" : "16px 0px",
         }}
       >
         <div className="spinner bottomSpinner">

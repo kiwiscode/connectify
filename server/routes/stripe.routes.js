@@ -17,10 +17,26 @@ router.post(
         price_data: {
           currency: "eur",
           product_data: {
-            name: "Subscribe to Verified Organizations Starter",
+            name:
+              subscriptionOption.price === "€2,261" ||
+              subscriptionOption.price === "€226.10"
+                ? "Subscribe to Verified Organizations Starter"
+                : subscriptionOption.price === "€11,305" ||
+                  subscriptionOption.price === "€1,130.50"
+                ? "Subscribe to Verified Organizations"
+                : "",
             description: subscriptionOption.description,
           },
-          unit_amount: subscriptionOption.price === "€2,261" ? 226100 : 22610,
+          unit_amount:
+            subscriptionOption.price === "€2,261"
+              ? 226100
+              : subscriptionOption.price === "€226.10"
+              ? 22610
+              : subscriptionOption.price === "€11,305"
+              ? 1130500
+              : subscriptionOption.price === "€1,130.50"
+              ? 113050
+              : "",
         },
         quantity: 1,
       },
