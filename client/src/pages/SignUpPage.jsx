@@ -223,10 +223,11 @@ function SignUpPage() {
   // later finish to check
   const popoverContent = (
     <Popover
-      className="testt ! scrollbar-add"
+      className="scrollbar-add"
       style={{
+        padding: "8px",
         height: "250px",
-        width: "150px",
+        width: "175px",
         overflowY: "scroll",
         backgroundColor: "#e4e2e9",
         border: "none",
@@ -246,7 +247,8 @@ function SignUpPage() {
           style={{
             padding: "8px",
             cursor: "pointer",
-            backgroundColor: hoveredIndexMonth === index ? "#3c90fa" : "",
+            backgroundColor: hoveredIndexMonth === index ? "#5aa0ff" : "",
+            borderRadius: "4px",
           }}
         >
           {month}
@@ -260,8 +262,9 @@ function SignUpPage() {
     <Popover
       className="scrollbar-add"
       style={{
+        padding: "8px",
         height: "250px",
-        width: "150px",
+        width: "175px",
         border: "none",
         overflowY: "scroll",
         backgroundColor: "#e4e2e9",
@@ -280,7 +283,8 @@ function SignUpPage() {
           style={{
             padding: "8px",
             cursor: "pointer",
-            backgroundColor: hoveredIndexDay === index ? "#3c90fa" : "",
+            backgroundColor: hoveredIndexDay === index ? "#5aa0ff" : "",
+            borderRadius: "4px",
           }}
         >
           {day}
@@ -293,8 +297,9 @@ function SignUpPage() {
     <Popover
       className="scrollbar-add"
       style={{
+        padding: "8px",
         height: "250px",
-        width: "150px",
+        width: "175px",
         border: "none",
         overflowY: "scroll",
         backgroundColor: "#e4e2e9",
@@ -313,7 +318,8 @@ function SignUpPage() {
           style={{
             padding: "8px",
             cursor: "pointer",
-            backgroundColor: hoveredIndexYear === index ? "#3c90fa" : "",
+            backgroundColor: hoveredIndexYear === index ? "#5aa0ff" : "",
+            borderRadius: "4px",
           }}
         >
           {year}
@@ -1041,7 +1047,7 @@ function SignUpPage() {
                         <OverlayTrigger
                           show={showMonthPicker}
                           trigger="click"
-                          placement="bottom"
+                          placement="top"
                           overlay={popoverContent}
                         >
                           <div
@@ -1107,7 +1113,7 @@ function SignUpPage() {
                         <OverlayTrigger
                           show={showDayPicker}
                           trigger="click"
-                          placement="bottom"
+                          placement="top"
                           overlay={popoverDayContent}
                         >
                           <div
@@ -1174,7 +1180,7 @@ function SignUpPage() {
                         <OverlayTrigger
                           show={showYearPicker}
                           trigger="click"
-                          placement="bottom"
+                          placement="top"
                           overlay={popoverYearContent}
                         >
                           <div
@@ -2419,7 +2425,7 @@ function SignUpPage() {
                         <OverlayTrigger
                           show={showMonthPicker}
                           trigger="click"
-                          placement="bottom"
+                          placement="top"
                           overlay={popoverContent}
                         >
                           <div
@@ -2485,7 +2491,7 @@ function SignUpPage() {
                         <OverlayTrigger
                           show={showDayPicker}
                           trigger="click"
-                          placement="bottom"
+                          placement="top"
                           overlay={popoverDayContent}
                         >
                           <div
@@ -2551,7 +2557,7 @@ function SignUpPage() {
                         <OverlayTrigger
                           show={showYearPicker}
                           trigger="click"
-                          placement="bottom"
+                          placement="top"
                           overlay={popoverYearContent}
                         >
                           <div
@@ -2976,7 +2982,7 @@ function SignUpPage() {
                     </div>
 
                     <div
-                      className="mt-1"
+                      className="mt-2"
                       style={{
                         width: "81.5%",
                         color: "rgb(83, 100, 113)",
