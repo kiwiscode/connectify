@@ -1380,17 +1380,6 @@ span > a:hover {
   text-decoration-color: black;
 }
 
-@keyframes fadeOut {
-  from {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateY(10px); /* veya başka bir değer */
-    opacity: 0;
-  }
-}
-
 @media (min-width: 1602px) {
   .responsive-comment-line-image-post-detail {
     margin: 5px 0px 5px 2px;
@@ -2320,6 +2309,28 @@ span > a:hover {
     transform: scale(1);
   }
 }
+@keyframes fadeOut {
+  from {
+    /* transform: translateY(0); */
+    opacity: 1;
+  }
+  to {
+    /* transform: translateY(10px);  */
+    opacity: 0;
+  }
+}
+@keyframes fadeInOrganizationType {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.popover-arrow {
+  display: none !important;
+}
 
 .last-step-account-create-password-tab {
   color: rgb(29, 155, 240);
@@ -2570,3 +2581,26 @@ span > a:hover {
   width: 100vw;
 }
 /* payment screens finish to check */
+
+/* organization popover closing animation start to check  */
+.animate-popover-organization-type {
+}
+/* organization popover closing animation finish to check  */
+
+.animate-popover-organization-type > .popover-arrow {
+  display: block !important;
+  color: #e2e1e4 !important;
+}
+
+.bs-popover-auto[data-popper-placement^="top"] > .popover-arrow::after,
+.bs-popover-top > .popover-arrow::after {
+  bottom: var(--bs-popover-border-width);
+  border-top-color: #e2e1e4;
+  background-color: #e2e1e4;
+}
+
+.apply-for-access-text-underline:hover {
+  text-decoration-thickness: 1px;
+  text-decoration: underline;
+  text-decoration-color: rgb(29, 155, 240);
+}

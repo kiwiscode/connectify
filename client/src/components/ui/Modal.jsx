@@ -533,6 +533,9 @@ function SigninModal({ deactivatedScreen }) {
       });
   };
 
+  const emailRegex =
+    /^[a-zA-Z0-9._%+-]+@(gmail|outlook|hotmail|yahoo|proton|zoho|mail|aol|yandex)\.(com|org|net|gov|edu|mil|co|info|de|co.uk|ca|me|tr|com.tr)$/;
+
   return (
     <>
       {contextHolder}
@@ -2316,7 +2319,13 @@ function SigninModal({ deactivatedScreen }) {
                                     disabled
                                     id="filled-disabled"
                                     label="Username"
-                                    defaultValue={loginInput.usernameOrEmail}
+                                    defaultValue={
+                                      loginInput.usernameOrEmail.match(
+                                        emailRegex
+                                      )
+                                        ? `${loginInput.usernameOrEmail}`
+                                        : `@${loginInput.usernameOrEmail}`
+                                    }
                                     variant="filled"
                                     InputProps={{
                                       disableUnderline: true,
@@ -3983,7 +3992,11 @@ function SigninModal({ deactivatedScreen }) {
                                   disabled
                                   id="filled-disabled"
                                   label="Username"
-                                  defaultValue={loginInput.usernameOrEmail}
+                                  defaultValue={
+                                    loginInput.usernameOrEmail.match(emailRegex)
+                                      ? `${loginInput.usernameOrEmail}`
+                                      : `@${loginInput.usernameOrEmail}`
+                                  }
                                   variant="filled"
                                   InputProps={{
                                     disableUnderline: true,
