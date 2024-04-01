@@ -33,6 +33,13 @@ body {
   font-family: "cloneFont" sans-serif;
 }
 
+/* html {
+  font-family: TwitterChirp, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  font: 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+} */
+
 .logout-three-dots {
   position: relative;
 }
@@ -2601,6 +2608,36 @@ span > a:hover {
 
 .apply-for-access-text-underline:hover {
   text-decoration-thickness: 1px;
+  text-decoration: underline;
+  text-decoration-color: rgb(29, 155, 240);
+}
+
+/* select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: transparent;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+  background-repeat: no-repeat;
+  background-position-x: 100%;
+  background-position-y: 5px;
+  border: 1px solid #dfdfdf;
+  border-radius: 2px;
+  margin-right: 2rem;
+  padding: 1rem;
+  padding-right: 2rem;
+} */
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: transparent;
+  background-image: url("data:image/svg+xml;utf8,<svg color='rgba(83,100,113,1.00)' fill='currentColor' aria-hidden='true' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg' className='svg-year-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-1plcrui r-lrvibr r-14j79pv r-1pgswnq r-50lct3 r-fdch1b r-633pao r-u8s1d r-1v2oles'> <g className='path-parent-g-year-picker'><path d='M3.543 8.96l1.414-1.42L12 14.59l7.043-7.05 1.414 1.42L12 17.41 3.543 8.96z'></path></g></svg>");
+  background-repeat: no-repeat;
+  background-position-x: 99%;
+  background-position-y: 15px;
+}
+
+.learn-more-add-phone-number:hover {
   text-decoration: underline;
   text-decoration-color: rgb(29, 155, 240);
 }

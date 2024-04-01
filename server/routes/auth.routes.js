@@ -163,6 +163,7 @@ router.post(
 );
 
 router.post("/username-check", authController.handleUsernameCheck);
+router.post("/password-check", authController.handleUserPasswordCheck);
 router.post("/change-username", authController.handleUsernameChange);
 
 router.post(
