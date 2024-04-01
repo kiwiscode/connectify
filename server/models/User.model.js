@@ -100,18 +100,25 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    phoneNumber: {
-      type: Number,
-      default: null,
-    },
+    phoneNumber: [
+      {
+        type: Object,
+        default: {},
+      },
+    ],
     verifiedPhoneNumberDetail: {
-      countryCode: { type: String },
-      country: { type: String },
-      countryPhoneCode: { type: String },
       user: { type: Schema.Types.ObjectId, ref: "User" },
-      qrCodeCreatedDate: { type: Date, default: Date.now },
-      qrValueRandomCode: { type: String },
+      countryCode: { type: String },
+      countryPhoneCode: { type: String },
+      phoneNumberIssuedBy: { type: String },
+      qrCodeCreatedDate: { type: Date },
+      qrCodeTextValueForVerification: { type: String },
     },
+    hasSubscription: {
+      type: Boolean,
+      default: false,
+    },
+    subscriptions: [{ type: Schema.Types.ObjectId, ref: "Subscription" }],
   },
   {
     timestamps: true,

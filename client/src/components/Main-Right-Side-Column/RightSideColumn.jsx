@@ -248,6 +248,8 @@ function RightSideColumn({
   const [helperStateSelectedOption, sethelperStateSelectedOption] =
     useState("");
   const [phoneVerified, setphoneVerified] = useState(false);
+  const [phoneVerifiedErrorMessage, setPhoneVerifiedErrorMessage] =
+    useState(null);
   const handleCloseSubscriptionModal = () => {
     setindividualSubOptionTab(null);
     setindividualSubOptionTab(2);
@@ -441,11 +443,13 @@ function RightSideColumn({
     initialSlide: 2,
   };
 
+  const [premiumRole, setpremiumRole] = useState("Individual");
   const [premiumType, setpremiumType] = useState(null);
   const [planType, setplanType] = useState(null);
   const [planPrice, setplanPrice] = useState(null);
   const [premiumInfo, setpremiumInfo] = useState({
     user: userInfo,
+    premiumRole: premiumRole,
     premiumType: premiumType,
     planType: planType,
     planPrice: planPrice,
@@ -533,9 +537,6 @@ function RightSideColumn({
     individualSubOptionPremiumPlusMonthlyTab,
   ]);
 
-  const [phoneVerifiedErrorMessage, setPhoneVerifiedErrorMessage] =
-    useState(null);
-
   const [subErrorPhoneVerifiedTabLoading, setsubErrorPhoneVerifiedTabLoading] =
     useState(false);
 
@@ -549,6 +550,7 @@ function RightSideColumn({
       setpremiumInfo((prevPremiumInfo) => {
         return {
           ...prevPremiumInfo,
+          premiumRole: premiumRole,
           premiumType: premiumType,
           planType: planType,
           planPrice: planPrice,
@@ -560,16 +562,16 @@ function RightSideColumn({
       .post(`${API_URL}/is-phone-verified`, {
         isPhoneVerifiedThisUser: userInfo,
       })
-      .then((isPhoneVerifiedResponse) => {
+      .then(() => {
         setsubErrorPhoneVerifiedTabLoading(true);
         setTimeout(() => {
           setTabIndex(tabIndex + 1);
           setsubErrorPhoneVerifiedTabLoading(false);
         }, 500);
-        // setphoneVerified(??)
       })
       .catch((error) => {
         const { status } = error.response;
+        console.log("Status =>", status);
         sethelperStateSelectedOption(selectedOption);
         setselectedOption(helperStateSelectedOption);
         setphoneVerified(status);
@@ -816,7 +818,23 @@ function RightSideColumn({
     });
   };
 
+  const generateRandomCode = () => {
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const length = 10;
+
+    let phoneCode = "";
+    for (let i = 0; i < length; i++) {
+      phoneCode += characters.charAt(
+        Math.floor(Math.random() * characters.length)
+      );
+    }
+
+    return phoneCode;
+  };
+
   const [correctPassword, setcorrectPassword] = useState(false);
+  const [verifyPhoneCode, setrandomCode] = useState(null);
 
   const handleCheckIsPasswordInputCorrect = () => {
     axios
@@ -825,13 +843,14 @@ function RightSideColumn({
         verifyPasswordInput,
       })
       .then(() => {
+        setrandomCode(generateRandomCode());
         setsubErrorPhoneVerifiedTabLoading(true);
         setcorrectPassword(true);
         setTimeout(() => {
           setsubErrorPhoneVerifiedTabLoading(false);
         }, 500);
       })
-      .catch((error) => {
+      .catch(() => {
         catchErrorMessage("Wrong password!");
       });
   };
@@ -890,26 +909,8 @@ function RightSideColumn({
   const [showgeneratedQrCodeModal, setshowgeneratedQrCodeModal] =
     useState(false);
 
-  const generateRandomCode = () => {
-    const characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    const length = 10; // Oluşturulacak dize uzunluğu
-
-    let verifyPhoneCode = "";
-    for (let i = 0; i < length; i++) {
-      verifyPhoneCode += characters.charAt(
-        Math.floor(Math.random() * characters.length)
-      );
-    }
-
-    return verifyPhoneCode;
-  };
-
-  const [verifyPhoneCode, setrandomCode] = useState(null);
-
   const openQrCodeModal = () => {
     setshowgeneratedQrCodeModal(true);
-    setrandomCode(generateRandomCode());
     setsubErrorPhoneVerifiedTabLoading(true);
     setTimeout(() => {
       setsubErrorPhoneVerifiedTabLoading(false);
@@ -917,12 +918,16 @@ function RightSideColumn({
   };
 
   const handleSubscriptionInfoNonPhoneVerifiedUser = () => {
-    console.log("Phone clicked !");
+    openQrCodeModal();
+
+    console.log("inside function verify phone code !", verifyPhoneCode);
+
     axios
       .post(
         `${API_URL}/premium-info-verify-phone-number`,
         {
           premiumInfo,
+          premiumRole,
           verifyPhoneCode,
           countryShortCut: country ? country : "DE",
           countryPhoneCode: country
@@ -954,6 +959,25 @@ function RightSideColumn({
   );
   console.log("Selected country =>,", country ? en[country] : en["DE"]);
   console.log("Phone number =>", phoneNumber);
+
+  const handleVerifyPhoneForSubscription = () => {
+    axios
+      .post(
+        `${API_URL}/verify-phone-for-subscription`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log("Response =>", response);
+      })
+      .catch((error) => {
+        console.error("Error =>", error);
+      });
+  };
 
   return (
     <>
@@ -7078,6 +7102,7 @@ function RightSideColumn({
                           setisIndividualSubscriptionClicked(true);
                           setactiveOrganizationOptionTabStyle(false);
                           setisOrganizationSubscriptionClicked(false);
+                          setpremiumRole("Individual");
                         }}
                         style={
                           ({ activeIndividualOptionTabStyle },
@@ -7145,6 +7170,7 @@ function RightSideColumn({
                           setTabStyleOrganizationBasicPlan(false);
                           setTabStyleOrganizationFullAccessPlan(true);
                           setSubTabIndexFromOrganizationSelect(2);
+                          setpremiumRole("Organization");
                         }}
                         style={
                           ({ activeOrganizationOptionTabStyle },
@@ -13514,7 +13540,7 @@ function RightSideColumn({
                             className="login-button next-btn"
                             variant="dark"
                             onClick={() => {
-                              openQrCodeModal();
+                              handleSubscriptionInfoNonPhoneVerifiedUser();
                             }}
                           >
                             Next
@@ -13708,7 +13734,7 @@ function RightSideColumn({
                             className="login-button next-btn"
                             variant="dark"
                             onClick={() => {
-                              handleSubscriptionInfoNonPhoneVerifiedUser();
+                              handleVerifyPhoneForSubscription();
                             }}
                           >
                             Next
