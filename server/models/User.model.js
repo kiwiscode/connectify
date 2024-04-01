@@ -104,6 +104,14 @@ const userSchema = new Schema(
       type: Number,
       default: null,
     },
+    verifiedPhoneNumberDetail: {
+      countryCode: { type: String },
+      country: { type: String },
+      countryPhoneCode: { type: String },
+      user: { type: Schema.Types.ObjectId, ref: "User" },
+      qrCodeCreatedDate: { type: Date, default: Date.now },
+      qrValueRandomCode: { type: String },
+    },
   },
   {
     timestamps: true,

@@ -16,8 +16,6 @@ import FollowerDetailPage from "./pages/FollowersDetailPage";
 import ImagePostDetailPage from "./pages/ImagePostDetailPage";
 import DeactivatedPage from "./pages/DeactivatedPage";
 function App() {
-  const localeInfo = JSON.parse(localStorage.getItem("userInfo"));
-  // localeInfo?.active ? <Navigate to="/home" /> :
   return (
     <UserProvider>
       <Routes>

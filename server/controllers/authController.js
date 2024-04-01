@@ -697,6 +697,35 @@ const handleUsernameCheck = async (req, res) => {
       .json({ errorMessage: "An error occurred during username check." });
   }
 };
+
+const handleUserPasswordCheck = async (req, res) => {
+  try {
+    const { premiumInfo, verifyPasswordInput } = req.body;
+
+    const userInfo = premiumInfo.user;
+
+    const user = await User.findById(userInfo._id);
+
+    const isPasswordMatch = await bcrypt.compare(
+      verifyPasswordInput,
+      user.password
+    );
+
+    console.log("Premium info =>", premiumInfo);
+
+    if (isPasswordMatch) {
+      res.status(200).json({ success: true, message: "Compliant password" });
+    } else {
+      throw new Error();
+    }
+  } catch (error) {
+    console.error("Error during username check:", error);
+    res
+      .status(500)
+      .json({ errorMessage: "An error occurred during password check." });
+  }
+};
+
 const handleUsernameChange = async (req, res) => {
   try {
     const { username, userId } = req.body;
@@ -764,122 +793,6 @@ const handleLoginVariantOne = (req, res) => {
     });
 };
 
-// let isVariantOneResultRouteSuccess = false;
-
-// const handleLoginVariantOneStep2 = (req, res, next) => {
-//   const { authentication } = req.body;
-//   isVariantOneResultRouteSuccess = true;
-//   console.log("Authentication =>", authentication);
-//   console.log(
-//     "Variant one route akıbeti result route içerisi =>",
-//     isVariantOneResultRouteSuccess
-//   );
-
-//   const userFirstInfoFromStepOne = authentication.usernameOrEmail;
-
-//   const passwordFromReqBody = authentication.password;
-//   User.findOne({
-//     $or: [
-//       { email: userFirstInfoFromStepOne },
-//       { username: userFirstInfoFromStepOne },
-//     ],
-//   })
-//     // today changed 13 nov
-//     .populate("posts")
-//     // today changed 13 nov
-//     .populate("followers")
-//     .populate("following")
-//     .populate("favorites")
-//     .populate("messages")
-//     .then((user) => {
-//       console.log("User =>", user.username);
-//       console.log("User password =>", passwordFromReqBody);
-//       bcrypt
-//         .compare(passwordFromReqBody, user.password)
-//         .then((result) => {
-//           console.log("Result =>", result);
-//           if (!result) {
-//             res
-//               .status(501)
-//               .json({ errorMessage: "Wrong password!            " });
-//           } else {
-//             if (user.isDeactivated) {
-//               console.log("Deactivated user is here !");
-//               res.status(400).json({
-//                 errorMessage: "Deactivated user!",
-//                 user: user,
-//               });
-//             } else {
-//               user.save().then((user) => {
-//                 const {
-//                   _id,
-//                   username,
-//                   email,
-//                   fullname,
-//                   verified,
-//                   active,
-//                   posts,
-//                   followers,
-//                   following,
-//                   messages,
-//                   createdAt,
-//                   updatedAt,
-//                   favorites,
-//                   imageUrl,
-//                   notifications,
-//                   signedUpWithGoogle,
-//                   signedUpWithVariantOne,
-//                   bio,
-//                 } = user;
-
-//                 const token = jwt.sign(
-//                   { userId: _id },
-//                   process.env.JWT_SECRET,
-//                   {
-//                     expiresIn: "7d",
-//                   }
-//                 );
-
-//                 console.log("Logged in user username =>", username);
-//                 res.status(201).json({
-//                   token,
-//                   user: {
-//                     _id,
-//                     username,
-//                     email,
-//                     fullname,
-//                     verified,
-//                     active,
-//                     posts,
-//                     followers,
-//                     following,
-//                     messages,
-//                     createdAt,
-//                     updatedAt,
-//                     favorites,
-//                     imageUrl,
-//                     notifications,
-//                     signedUpWithGoogle,
-//                     signedUpWithVariantOne,
-//                     bio,
-//                   },
-//                   message:
-//                     "Show 2 modal, first => profile image customization modal, second => username customization modal",
-//                 });
-//               });
-//             }
-//           }
-//         })
-//         .catch((error) => {
-//           console.log("Error =>", error);
-//           next();
-//         });
-//     })
-//     .catch((error) => {
-//       console.log("Error =>", error);
-//       next();
-//     });
-// };
 module.exports = {
   handleSignup,
   handleLogin,
@@ -887,10 +800,9 @@ module.exports = {
   handleEmailCheck,
   handleEmailVerificationCode,
   handleUsernameCheck,
+  handleUserPasswordCheck,
   handleUsernameChange,
   handleChangeModalStatusVariantOne,
   handleChangeModalStatusVariantOneModal2,
   handleLoginVariantOne,
-  // handleLoginVariantOneStep2,
-  // isVariantOneResultRouteSuccess,
 };
