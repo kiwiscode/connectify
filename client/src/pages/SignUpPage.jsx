@@ -1877,6 +1877,7 @@ function SignUpPage() {
                         Password
                       </InputLabel>
                       <OutlinedInput
+                        autoFocus
                         onChange={(e) => setPassword(e.target.value)}
                         sx={{
                           "& .MuiOutlinedInput-notchedOutline": {
@@ -3252,6 +3253,7 @@ function SignUpPage() {
                         Password
                       </InputLabel>
                       <OutlinedInput
+                        autoFocus
                         onChange={(e) => setPassword(e.target.value)}
                         sx={{
                           "& .MuiOutlinedInput-notchedOutline": {
