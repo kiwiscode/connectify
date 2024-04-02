@@ -223,6 +223,7 @@ function RightSideColumn({
   const handleShowSubscriptionModal = () => {
     setshowSubscriptionModal(true);
     setTabIndex(0);
+    setshowVerifyingCodeModal(false);
     // props from child to parent then parent to another component start to check
     onModalToggle(true);
     tabIndexValue(0);
@@ -584,8 +585,14 @@ function RightSideColumn({
         }, 500);
       });
   };
+
+  const [
+    verifyPasswordInputSectionActive,
+    setverifyPasswordInputSectionActive,
+  ] = useState(false);
   const handleVerifyYourPasswordModalAfterVerifyYourPhoneNumberClick = () => {
     setsubErrorPhoneVerifiedTabLoading(true);
+    setverifyPasswordInputSectionActive(true);
     setTimeout(() => {
       setsubErrorPhoneVerifiedTabLoading(false);
       setshowVerifyPhoneNumberPasswordModal(true);
@@ -914,8 +921,11 @@ function RightSideColumn({
     setsubErrorPhoneVerifiedTabLoading(true);
     setTimeout(() => {
       setsubErrorPhoneVerifiedTabLoading(false);
+      setQrCodeScreenOpened(true);
     }, 500);
   };
+
+  const [qrCodeScreenOpened, setQrCodeScreenOpened] = useState(false);
 
   const handleSubscriptionInfoNonPhoneVerifiedUser = () => {
     openQrCodeModal();
@@ -960,6 +970,8 @@ function RightSideColumn({
   console.log("Selected country =>,", country ? en[country] : en["DE"]);
   console.log("Phone number =>", phoneNumber);
 
+  const [showVerifyingCodeModal, setshowVerifyingCodeModal] = useState(false);
+
   const handleVerifyPhoneForSubscription = () => {
     axios
       .post(
@@ -972,9 +984,13 @@ function RightSideColumn({
         }
       )
       .then((response) => {
+        setshowVerifyingCodeModal(true);
+
         console.log("Response =>", response);
       })
       .catch((error) => {
+        setshowVerifyingCodeModal(true);
+
         console.error("Error =>", error);
       });
   };
@@ -984,4864 +1000,5885 @@ function RightSideColumn({
       {contextHolder}
       {width <= 700 ? (
         <>
-          <Modal
-            style={{
-              height: "100%",
-              overflowX: "hidden",
-              overflowY: "hidden",
-            }}
-            dialogClassName={"modal-fullscreen"}
-            show={showSubscriptionModal}
-            onHide={handleCloseSubscriptionModal}
-            centered={true}
-            className="widthsmallerthan700-sub-modal"
-          >
-            {subTabIndexFromOrganizationSelect !== 3 ? (
-              <>
-                <Modal.Header
-                  className="signin-modal-header-child-non-reactivate"
-                  style={{
-                    border: "none",
-                    zIndex: 999,
-                    backgroundColor: "white",
-                    width: "97%",
-                  }}
-                >
-                  <div
-                    onClick={handleCloseSubscriptionModal}
-                    className="close-button"
+          {showSubscriptionModal ? (
+            <Modal
+              style={{
+                height: "100%",
+                overflowX: "hidden",
+                overflowY: "hidden",
+              }}
+              dialogClassName={"modal-fullscreen"}
+              show={showSubscriptionModal}
+              onHide={handleCloseSubscriptionModal}
+              centered={true}
+              className="widthsmallerthan700-sub-modal"
+            >
+              {subTabIndexFromOrganizationSelect !== 3 ? (
+                <>
+                  <Modal.Header
+                    className="signin-modal-header-child-non-reactivate"
                     style={{
-                      borderRadius: "50%",
-                      cursor: "pointer",
+                      border: "none",
+                      zIndex: 999,
+                      backgroundColor: "white",
+                      width: "97%",
                     }}
                   >
                     <div
+                      onClick={handleCloseSubscriptionModal}
+                      className="close-button"
                       style={{
-                        display: " flex",
-                        flexDirection: "row",
-                        alignItems: "center",
+                        borderRadius: "50%",
+                        cursor: "pointer",
                       }}
-                    >
-                      {/* close signin modal icon start to check  */}
-                      <svg
-                        style={{
-                          border: "none",
-                          fontSize: "15px",
-                          margin: "5px",
-                        }}
-                        onClick={handleCloseSubscriptionModal}
-                        width={20}
-                        height={20}
-                        color="rgb(15,20,25)"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                        className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                      >
-                        <g>
-                          <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
-                        </g>
-                      </svg>{" "}
-                      {/* close signin modal icon finish to check  */}
-                    </div>
-                  </div>{" "}
-                  <span
-                    style={{
-                      fontWeight: "700",
-                      fontSize: "20px",
-                      lineHeight: "24px",
-                      position: "absolute",
-                      left: "15%",
-                      display:
-                        (selectedOption === "individual" ||
-                          helperStateSelectedOption === "individual") &&
-                        tabIndex !== 2
-                          ? ""
-                          : "none",
-                    }}
-                  >
-                    Subscribe
-                  </span>
-                  <div
-                    style={{
-                      fontWeight: "700",
-                      fontSize: "20px",
-                      lineHeight: "24px",
-                      margin: "0 auto",
-                      position: "relative",
-                      right: "15px",
-                      display:
-                        (selectedOption === "organization" ||
-                          helperStateSelectedOption === "organization") &&
-                        tabIndex !== 2
-                          ? ""
-                          : "none",
-                    }}
-                  >
-                    Verified Organizations
-                  </div>
-                </Modal.Header>
-              </>
-            ) : (
-              <Modal.Header
-                className="signin-modal-header-child-non-reactivate"
-                style={{
-                  border: "none",
-                  zIndex: 999,
-                  backgroundColor: "white",
-                  width: "97%",
-                }}
-              >
-                <div
-                  style={{
-                    position: "relative",
-                    width: "100%",
-                  }}
-                >
-                  <div
-                    onClick={() => {
-                      setSubTabIndexFromOrganizationSelect(
-                        subTabIndexFromOrganizationSelect - 1
-                      );
-                      setTabStyleOrganizationFullAccessPlan(true);
-                    }}
-                    className="close-button"
-                    style={{
-                      display: " flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      width: "36px",
-                      height: "36px",
-                      borderRadius: "50%",
-                      cursor: "pointer",
-                    }}
-                  >
-                    {" "}
-                    {/* close signin modal icon start to check  */}
-                    <svg
-                      color="rgb(15,20,25)"
-                      fill="currentColor"
-                      width={20}
-                      height={20}
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                    >
-                      <g>
-                        <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
-                      </g>
-                    </svg>
-                    {/* close signin modal icon finish to check  */}
-                  </div>{" "}
-                </div>
-              </Modal.Header>
-            )}
-
-            {tabIndex === 0 ? (
-              <>
-                <Modal.Body
-                  // className="mt-5"
-                  style={{
-                    position: "relative",
-                    top: "4.8%",
-                  }}
-                >
-                  <div
-                    style={{
-                      lineHeight: "36px",
-                      fontSize: "31px",
-                      fontWeight: "800",
-                    }}
-                  >
-                    Who are you?
-                  </div>
-
-                  <div
-                    className="mt-3"
-                    style={{
-                      lineHeight: "20px",
-                      fontSize: "15px",
-                      fontWeight: "400",
-                      color: "rgb(15, 20, 25)",
-                    }}
-                  >
-                    Choose the right subscription for you:
-                  </div>
-                  <div
-                    className="mt-4"
-                    style={{
-                      display: "flex",
-                      gap: "2.5%",
-                      width: "81.5%",
-                    }}
-                  >
-                    <div
-                      onClick={() => {
-                        setactiveIndividualOptionTabStyle(true);
-                        setisIndividualSubscriptionClicked(true);
-                        setactiveOrganizationOptionTabStyle(false);
-                        setisOrganizationSubscriptionClicked(false);
-                        setindividualSubOptionTab(2);
-                      }}
-                      style={
-                        ({ activeIndividualOptionTabStyle },
-                        {
-                          flex: 1,
-                          backgroundColor: "white",
-                          minHeight: "112px",
-                          padding: "12px",
-                          cursor: "pointer",
-                          borderWidth: "1px",
-                          borderRadius: "16px",
-                          boxShadow:
-                            "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
-                          border: activeIndividualOptionTabStyle
-                            ? "2px solid #339bf0"
-                            : "2px solid transparent",
-                          transition: "transform 0.3s ease",
-                        })
-                      }
-                      className="individual-subscription-box"
                     >
                       <div
                         style={{
-                          position: "relative",
-                          top: "5px",
+                          display:
+                            (!verifyPasswordInputSectionActive ||
+                              qrCodeScreenOpened) &&
+                            !subErrorPhoneVerifiedTabLoading
+                              ? "flex"
+                              : "none",
+                          flexDirection: "row",
+                          alignItems: "center",
                         }}
                       >
-                        <div
+                        {/* close signin modal icon start to check  */}
+                        <svg
                           style={{
-                            color: "#697884",
+                            border: "none",
                             fontSize: "15px",
-                            fontWeight: "400",
+                            margin: "5px",
                           }}
+                          onClick={handleCloseSubscriptionModal}
+                          width={20}
+                          height={20}
+                          color="rgb(15,20,25)"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
                         >
-                          Premium
-                        </div>
-                        <div
-                          style={{
-                            color: "rgb(15, 20, 25)",
-                            fontSize: "18px",
-                            fontWeight: "600",
-                          }}
-                        >
-                          {" "}
-                          I am an individual
-                        </div>
-                        <div
-                          style={{
-                            color: "#697884",
-                            fontSize: "14px",
-                            fontWeight: "400",
-                          }}
-                        >
-                          {" "}
-                          For individuals and creators
-                        </div>
+                          <g>
+                            <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                          </g>
+                        </svg>{" "}
+                        {/* close signin modal icon finish to check  */}
                       </div>
-                    </div>
+                    </div>{" "}
+                    <span
+                      style={{
+                        fontWeight: "700",
+                        fontSize: "20px",
+                        lineHeight: "24px",
+                        position: "absolute",
+                        left: "15%",
+                        display:
+                          (selectedOption === "individual" ||
+                            helperStateSelectedOption === "individual") &&
+                          tabIndex !== 2
+                            ? ""
+                            : "none",
+                      }}
+                    >
+                      Subscribe
+                    </span>
                     <div
-                      onClick={() => {
-                        setactiveOrganizationOptionTabStyle(true);
-                        setisOrganizationSubscriptionClicked(true);
-                        setactiveIndividualOptionTabStyle(false);
-                        setisIndividualSubscriptionClicked(false);
-                      }}
-                      style={
-                        ({ activeOrganizationOptionTabStyle },
-                        {
-                          flex: 1,
-                          backgroundColor: "white",
-                          minHeight: "112px",
-                          padding: "12px",
-                          cursor: "pointer",
-                          borderWidth: "1px",
-                          borderRadius: "16px",
-                          boxShadow:
-                            "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
-                          border: activeOrganizationOptionTabStyle
-                            ? "2px solid #339bf0"
-                            : "2px solid transparent",
-                          transition: "transform 0.3s ease",
-                        })
-                      }
-                      className="organization-subscription-box"
-                    >
-                      <div
-                        style={{
-                          position: "relative",
-                        }}
-                      >
-                        <div
-                          style={{
-                            color: "#697884",
-                            fontSize: "15px",
-                            fontWeight: "400",
-                          }}
-                        >
-                          {" "}
-                          Verified Organizations
-                        </div>{" "}
-                        <div
-                          style={{
-                            color: "rgb(15, 20, 25)",
-                            fontSize: "18px",
-                            fontWeight: "600",
-                          }}
-                        >
-                          I am an organization
-                        </div>{" "}
-                        <div
-                          style={{
-                            color: "#697884",
-                            fontSize: "14px",
-                            fontWeight: "400",
-                          }}
-                        >
-                          For businesses, government agencies, and non-profits
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <Button
-                    onClick={() => {
-                      handleChooseActionForSubscriptionModal(
-                        isIndividualSubscriptionClicked,
-                        isOrganizationSubscriptionClicked
-                      );
-                    }}
-                    style={{
-                      width: "81.5%",
-                      height: "54px",
-                      backgroundColor: "#0f141a",
-                    }}
-                    className="next-btn mt-4"
-                  >
-                    Subscribe
-                  </Button>
-                  <div
-                    style={{
-                      fontSize: "15px",
-                      fontWeight: "400",
-                      lineHeight: "20px",
-                      color: "rgb(15, 20, 25)",
-                    }}
-                    className="mt-4"
-                  >
-                    Learn more about{" "}
-                    <span
-                      className="subscription-underline-text"
                       style={{
-                        cursor: "pointer",
-                        color: "rgb(29, 155, 240)",
-                      }}
-                    >
-                      Premium
-                    </span>{" "}
-                    and{" "}
-                    <span
-                      className="subscription-underline-text"
-                      style={{
-                        cursor: "pointer",
-                        color: "rgb(29, 155, 240)",
+                        fontWeight: "700",
+                        fontSize: "20px",
+                        lineHeight: "24px",
+                        margin: "0 auto",
+                        position: "relative",
+                        right: "15px",
+                        display:
+                          (selectedOption === "organization" ||
+                            helperStateSelectedOption === "organization") &&
+                          tabIndex !== 2
+                            ? ""
+                            : "none",
                       }}
                     >
                       Verified Organizations
-                    </span>
-                  </div>
-                </Modal.Body>
-              </>
-            ) : tabIndex === 1 && isIndividualSubscriptionClicked ? (
-              <>
-                <Modal.Body
-                  className="scrollbar-add"
-                  style={{
-                    overflowY: "auto",
-                    overflowX: "hidden",
-                    opacity:
-                      subscriptionPremiumPlusPaymentScreen ||
-                      subscriptionPremiumPaymentScreen ||
-                      subscriptionBasicPaymentScreen
-                        ? "0.5"
-                        : "1",
-                  }}
-                >
-                  <div
+                    </div>
+                  </Modal.Header>
+                </>
+              ) : (
+                <>
+                  <Modal.Header
+                    className="signin-modal-header-child-non-reactivate"
                     style={{
-                      width: "100%",
-                      margin: "0 auto",
-                    }}
-                  >
-                    <Slider ref={sliderRef} {...settings}>
-                      {/* first div basic plan start to check   */}
-                      <div
-                        style={{
-                          width: "100%",
-                          margin: "0px auto",
-                        }}
-                      >
-                        <Stack
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            backgroundImage:
-                              "url(https://abs.twimg.com/responsive-web/client-web/background-basic-web@3x.0f5af6ea.png)",
-                            backgroundPosition: "center",
-                            backgroundSize: "cover",
-                            borderRadius: "16px",
-                            color: "white",
-                            height: "60px",
-                          }}
-                          direction="horizontal"
-                          gap={1}
-                        >
-                          <div
-                            className="p-2"
-                            style={{
-                              visibility: "hidden",
-                            }}
-                          >
-                            {" "}
-                            <span
-                              onClick={() => {
-                                previous();
-                              }}
-                              className="premium-btn-back"
-                              style={{
-                                color: "white",
-                                backgroundColor: "#13181c",
-                                width: "30px",
-                                height: "30px",
-                                borderRadius: "50%",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                              }}
-                            >
-                              <svg
-                                width={20}
-                                height={20}
-                                color="white"
-                                fill="currentColor"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03 r-jwli3a"
-                              >
-                                <g>
-                                  <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
-                                </g>
-                              </svg>
-                            </span>
-                          </div>
-                          <div style={{}}>
-                            {" "}
-                            <span
-                              style={{
-                                color: "white",
-                                lineHeight: "20px",
-                                fontWeight: "500",
-                                fontSize: "17px",
-                                position: "relative",
-                                left: "5px",
-                              }}
-                            >
-                              Basic
-                              <span
-                                span
-                                style={{
-                                  visibility: "hidden",
-                                }}
-                              >
-                                +
-                              </span>
-                            </span>
-                          </div>
-                          <div className="p-2" style={{}}>
-                            {" "}
-                            <span
-                              onClick={() => {
-                                next();
-                              }}
-                              className="premium-btn-back"
-                              style={{
-                                color: "white",
-                                backgroundColor: "#13181c",
-                                width: "30px",
-                                height: "30px",
-                                borderRadius: "50%",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                              }}
-                            >
-                              <svg
-                                width={20}
-                                height={20}
-                                color="white"
-                                fill="currentColor"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03 r-jwli3a"
-                              >
-                                <g>
-                                  <path d="M12.957 4.54L20.414 12l-7.457 7.46-1.414-1.42L16.586 13H3v-2h13.586l-5.043-5.04 1.414-1.42z"></path>
-                                </g>
-                              </svg>
-                            </span>
-                          </div>
-                        </Stack>{" "}
-                        {/* enhanced experience start to check  */}
-                        <div
-                          className="mt-3 premium-plus-parent-div"
-                          style={{
-                            padding: "32px",
-                            borderRadius: "16px",
-                            backgroundColor: "#eff3f4",
-                          }}
-                        >
-                          <div className="premium-plus-header">
-                            Enhanced Experience
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Ads in For You</span>
-                                <svg
-                                  width={16}
-                                  height={16}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>Full</div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Reply boost</span>
-                              </div>
-                              <div>Largest</div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Smallest</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Longer posts</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Undo post</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Post longer videos</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Top Articles</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          {/* reader check  */}
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Reader</span>{" "}
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          {/* reader check  */}
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Background video playback</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Download videos</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        {/* enhanced experience finish to check  */}
-                        {/* creator hub start to check  */}
-                        <div
-                          className="mt-3 premium-plus-parent-div"
-                          style={{
-                            padding: "32px",
-                            borderRadius: "16px",
-                            backgroundColor: "#eff3f4",
-                          }}
-                        >
-                          <div className="premium-plus-header">Creator Hub</div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span
-                                  style={{
-                                    color:
-                                      "rgb(83, 100, 113)                                  ",
-                                  }}
-                                >
-                                  Write Articles
-                                </span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span
-                                  style={{
-                                    color:
-                                      "rgb(83, 100, 113)                                  ",
-                                  }}
-                                >
-                                  Get paid to post
-                                </span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span
-                                  style={{
-                                    color:
-                                      "rgb(83, 100, 113)                                  ",
-                                  }}
-                                >
-                                  Creator Subscriptions
-                                </span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span
-                                  style={{
-                                    color:
-                                      "rgb(83, 100, 113)                                  ",
-                                  }}
-                                >
-                                  X Pro
-                                </span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span
-                                  style={{
-                                    color:
-                                      "rgb(83, 100, 113)                                  ",
-                                  }}
-                                >
-                                  Media Studio
-                                </span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span
-                                  style={{
-                                    color:
-                                      "rgb(83, 100, 113)                                  ",
-                                  }}
-                                >
-                                  Analytics
-                                </span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        {/* creator hub finish to check  */}
-                        {/* Verification and security start to check */}
-                        <div
-                          className="mt-3 premium-plus-parent-div"
-                          style={{
-                            padding: "32px",
-                            borderRadius: "16px",
-                            backgroundColor: "#eff3f4",
-                          }}
-                        >
-                          <div className="premium-plus-header">
-                            Verification & Security
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span
-                                  style={{
-                                    color:
-                                      "rgb(83, 100, 113)                                  ",
-                                  }}
-                                >
-                                  {" "}
-                                  Checkmark
-                                </span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Encrypted direct messages</span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span
-                                  style={{
-                                    color:
-                                      "rgb(83, 100, 113)                                  ",
-                                  }}
-                                >
-                                  Optional ID verification
-                                </span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        {/* verification and security finish to check */}
-                        {/* Customization start to check  */}
-                        <div
-                          className="mt-3 premium-plus-parent-div"
-                          style={{
-                            padding: "32px",
-                            borderRadius: "16px",
-                            backgroundColor: "#eff3f4",
-                          }}
-                        >
-                          <div className="premium-plus-header">
-                            Customization
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>App icons</span>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Bookmark folders</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Customize navigation</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Highlights tab</span>{" "}
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Hide your likes</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Hide your checkmark</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          {/* reader check  */}
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>Hide your subscriptions</div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          {/* reader check  */}
-                        </div>
-                        {/* Customization finish to check  */}
-                      </div>
-                      {/* first div basic plan finish to check   */}
-                      {/* second div premium plan start to check  */}
-                      <div
-                        style={{
-                          width: "81.5%",
-                          margin: "0px auto",
-                        }}
-                      >
-                        <Stack
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            backgroundImage:
-                              "url(https://abs.twimg.com/responsive-web/client-web/background-premium-web@3x.44f5419a.png)",
-                            backgroundPosition: "center",
-                            backgroundSize: "cover",
-                            borderRadius: "16px",
-                            color: "white",
-                            height: "60px",
-                          }}
-                          direction="horizontal"
-                          gap={1}
-                        >
-                          <div className="p-2" style={{}}>
-                            {" "}
-                            <span
-                              onClick={() => {
-                                previous();
-                              }}
-                              className="premium-btn-back"
-                              style={{
-                                color: "white",
-                                backgroundColor: "#13181c",
-                                width: "30px",
-                                height: "30px",
-                                borderRadius: "50%",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                              }}
-                            >
-                              <svg
-                                width={20}
-                                height={20}
-                                color="white"
-                                fill="currentColor"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03 r-jwli3a"
-                              >
-                                <g>
-                                  <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
-                                </g>
-                              </svg>
-                            </span>
-                          </div>
-                          <div style={{}}>
-                            {" "}
-                            <span
-                              style={{
-                                color: "white",
-                                lineHeight: "20px",
-                                fontWeight: "500",
-                                fontSize: "17px",
-                                position: "relative",
-                                left: "5px",
-                              }}
-                            >
-                              Premium
-                              <span
-                                span
-                                style={{
-                                  visibility: "hidden",
-                                }}
-                              >
-                                +
-                              </span>
-                            </span>
-                          </div>
-                          <div className="p-2" style={{}}>
-                            {" "}
-                            <span
-                              onClick={() => {
-                                next();
-                              }}
-                              className="premium-btn-back"
-                              style={{
-                                color: "white",
-                                backgroundColor: "#13181c",
-                                width: "30px",
-                                height: "30px",
-                                borderRadius: "50%",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                              }}
-                            >
-                              <svg
-                                width={20}
-                                height={20}
-                                color="white"
-                                fill="currentColor"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03 r-jwli3a"
-                              >
-                                <g>
-                                  <path d="M12.957 4.54L20.414 12l-7.457 7.46-1.414-1.42L16.586 13H3v-2h13.586l-5.043-5.04 1.414-1.42z"></path>
-                                </g>
-                              </svg>
-                            </span>
-                          </div>
-                        </Stack>{" "}
-                        {/* enhanced experience start to check  */}
-                        <div
-                          className="mt-3 premium-plus-parent-div"
-                          style={{
-                            padding: "32px",
-                            borderRadius: "16px",
-                            backgroundColor: "#eff3f4",
-                          }}
-                        >
-                          <div className="premium-plus-header">
-                            Enhanced Experience
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Ads in For You</span>
-                                <svg
-                                  width={16}
-                                  height={16}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>Half</div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Reply boost</span>
-                              </div>
-                              <div>Larger</div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Edit post</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Longer posts</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Undo post</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Post longer videos</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Top Articles</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          {/* reader check  */}
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Reader</span>{" "}
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          {/* reader check  */}
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Background video playback</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Download videos</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        {/* enhanced experience finish to check  */}
-                        {/* creator hub start to check  */}
-                        <div
-                          className="mt-3 premium-plus-parent-div"
-                          style={{
-                            padding: "32px",
-                            borderRadius: "16px",
-                            backgroundColor: "#eff3f4",
-                          }}
-                        >
-                          <div className="premium-plus-header">Creator Hub</div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span
-                                  style={{
-                                    color:
-                                      "rgb(83, 100, 113)                                  ",
-                                  }}
-                                >
-                                  Write Articles
-                                </span>
-
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Get paid to post</span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Creator Subscriptions</span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>X Pro</span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Media Studio</span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Analytics</span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        {/* creator hub finish to check  */}
-                        {/* Verification and security start to check */}
-                        <div
-                          className="mt-3 premium-plus-parent-div"
-                          style={{
-                            padding: "32px",
-                            borderRadius: "16px",
-                            backgroundColor: "#eff3f4",
-                          }}
-                        >
-                          <div className="premium-plus-header">
-                            Verification & Security
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Checkmark</span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Encrypted direct messages</span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Optional ID verification</span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        {/* verification and security finish to check */}
-                        {/* Customization start to check  */}
-                        <div
-                          className="mt-3 premium-plus-parent-div"
-                          style={{
-                            padding: "32px",
-                            borderRadius: "16px",
-                            backgroundColor: "#eff3f4",
-                          }}
-                        >
-                          <div className="premium-plus-header">
-                            Customization
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>App icons</span>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Bookmark folders</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Customize navigation</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Highlights tab</span>{" "}
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Hide your likes</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Hide your checkmark</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          {/* reader check  */}
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>Hide your subscriptions</div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          {/* reader check  */}
-                        </div>
-                        {/* Customization finish to check  */}
-                      </div>
-                      {/* second div premium plan finish to check  */}
-                      {/* third div premium plus plan start to check   */}
-                      <div
-                        style={{
-                          width: "81.5%",
-                          margin: "0px auto",
-                        }}
-                      >
-                        <Stack
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            backgroundImage:
-                              "url(https://abs.twimg.com/responsive-web/client-web/background-premiumplus-web@3x.f3a57bda.png)",
-                            backgroundPosition: "center",
-                            backgroundSize: "cover",
-                            borderRadius: "16px",
-                            color: "white",
-                            height: "60px",
-                          }}
-                          direction="horizontal"
-                          gap={1}
-                        >
-                          <div className="p-2" style={{}}>
-                            {" "}
-                            <span
-                              onClick={() => {
-                                previous();
-                              }}
-                              className="premium-btn-back"
-                              style={{
-                                color: "white",
-                                backgroundColor: "#13181c",
-                                width: "30px",
-                                height: "30px",
-                                borderRadius: "50%",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                              }}
-                            >
-                              <svg
-                                width={20}
-                                height={20}
-                                color="white"
-                                fill="currentColor"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03 r-jwli3a"
-                              >
-                                <g>
-                                  <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
-                                </g>
-                              </svg>
-                            </span>
-                          </div>
-                          <div style={{}}>
-                            {" "}
-                            <span
-                              style={{
-                                color: "white",
-                                lineHeight: "20px",
-                                fontWeight: "500",
-                                fontSize: "17px",
-                                position: "relative",
-                                left: "5px",
-                              }}
-                            >
-                              Premium+
-                            </span>
-                          </div>
-                          <div className="p-2" style={{}}>
-                            {" "}
-                            <span
-                              onClick={() => {
-                                next();
-                              }}
-                              className="premium-btn-back"
-                              style={{
-                                color: "white",
-                                backgroundColor: "#13181c",
-                                width: "30px",
-                                height: "30px",
-                                borderRadius: "50%",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                visibility: "hidden",
-                              }}
-                            >
-                              <svg
-                                width={20}
-                                height={20}
-                                color="white"
-                                fill="currentColor"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03 r-jwli3a"
-                              >
-                                <g>
-                                  <path d="M12.957 4.54L20.414 12l-7.457 7.46-1.414-1.42L16.586 13H3v-2h13.586l-5.043-5.04 1.414-1.42z"></path>
-                                </g>
-                              </svg>
-                            </span>
-                          </div>
-                        </Stack>{" "}
-                        {/* enhanced experience start to check  */}
-                        <div
-                          className="mt-3 premium-plus-parent-div"
-                          style={{
-                            padding: "32px",
-                            borderRadius: "16px",
-                            backgroundColor: "#eff3f4",
-                          }}
-                        >
-                          <div className="premium-plus-header">
-                            Enhanced Experience
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Ads in For You</span>
-                                <svg
-                                  width={16}
-                                  height={16}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>None</div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Reply boost</span>
-                              </div>
-                              <div>Largest</div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Edit post</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Longer posts</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Undo post</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Post longer videos</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Top Articles</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          {/* reader check  */}
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Reader</span>{" "}
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          {/* reader check  */}
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Background video playback</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Download videos</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        {/* enhanced experience finish to check  */}
-                        {/* creator hub start to check  */}
-                        <div
-                          className="mt-3 premium-plus-parent-div"
-                          style={{
-                            padding: "32px",
-                            borderRadius: "16px",
-                            backgroundColor: "#eff3f4",
-                          }}
-                        >
-                          <div className="premium-plus-header">Creator Hub</div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Write Articles</span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Get paid to post</span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Creator Subscriptions</span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>X Pro</span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Media Studio</span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Analytics</span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        {/* creator hub finish to check  */}
-                        {/* Verification and security start to check */}
-                        <div
-                          className="mt-3 premium-plus-parent-div"
-                          style={{
-                            padding: "32px",
-                            borderRadius: "16px",
-                            backgroundColor: "#eff3f4",
-                          }}
-                        >
-                          <div className="premium-plus-header">
-                            Verification & Security
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Checkmark</span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Encrypted direct messages</span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Optional ID verification</span>
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        {/* verification and security finish to check */}
-                        {/* Customization start to check  */}
-                        <div
-                          className="mt-3 premium-plus-parent-div"
-                          style={{
-                            padding: "32px",
-                            borderRadius: "16px",
-                            backgroundColor: "#eff3f4",
-                          }}
-                        >
-                          <div className="premium-plus-header">
-                            Customization
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>App icons</span>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Bookmark folders</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Customize navigation</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Highlights tab</span>{" "}
-                                <svg
-                                  width={20}
-                                  height={20}
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Hide your likes</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <span>Hide your checkmark</span>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          {/* reader check  */}
-                          <div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>Hide your subscriptions</div>
-                              <div>
-                                {" "}
-                                <svg
-                                  color="rgb(0, 186, 124)"
-                                  fill="currentColor"
-                                  width={20}
-                                  height={20}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                          {/* reader check  */}
-                        </div>
-                        {/* Customization finish to check  */}
-                      </div>
-                      {/* third div premium plus plan finish to check   */}
-                    </Slider>
-                  </div>
-                </Modal.Body>
-                {subscriptionPremiumPlusPaymentScreen ? (
-                  <>
-                    <Modal
-                      onHide={handleClosePremiumPlusPaymentScreen}
-                      show={subscriptionPremiumPlusPaymentScreen}
-                      style={{
-                        overflowX: "hidden",
-                        overflowY: "hidden",
-                      }}
-                      className="modal-sub-modal-payment-screen-parent"
-                      dialogClassName="modal-body-sub-modal-payment-screen"
-                    >
-                      <Modal.Body
-                        style={{
-                          height: phoneVerifiedErrorMessage ? "530px" : "490px",
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: "95%",
-                            fontSize: "23px",
-                            fontWeight: "700",
-                            lineHeight: "28px",
-                            margin: "0 auto",
-                          }}
-                        >
-                          Premium+
-                        </div>
-
-                        <div
-                          onClick={() => {
-                            setindividualSubOptionPremiumPlusAnnualTab(true);
-                            setindividualSubOptionPremiumPlusMonthlyTab(false);
-                          }}
-                          className="individual-subscription-box mt-4"
-                          style={{
-                            width: "95%",
-
-                            backgroundColor: "white",
-                            minHeight: "96px",
-                            padding: "12px",
-                            cursor: "pointer",
-                            borderWidth: "1px",
-                            borderRadius: "16px",
-                            boxShadow:
-                              "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
-                            border: individualSubOptionPremiumPlusAnnualTab
-                              ? "2px solid #339bf0"
-                              : "2px solid transparent",
-                            transition: "transform 0.3s ease",
-                          }}
-                        >
-                          <span
-                            style={{
-                              color: "#697884",
-                              fontSize: "14px",
-                              fontWeight: "400",
-                              lineHeight: "16px",
-                            }}
-                          >
-                            Annual Plan{" "}
-                            <span
-                              style={{
-                                fontSize: "11px",
-                                backgroundColor: "#dcf8eb",
-                                borderRadius: "9999px",
-                                color: "black",
-                                position: "relative",
-                                bottom: "1px",
-                                fontWeight: "700",
-                                lineHeight: "12px",
-                                padding: "4px",
-                                height: "20px",
-                              }}
-                            >
-                              <span>Save 12%</span>
-                            </span>
-                          </span>
-
-                          <span
-                            style={{
-                              color: "rgb(15, 20, 25)",
-                              fontSize: "17px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
-                              display: "block",
-                            }}
-                          >
-                            €199.92 / year
-                          </span>
-                          <div
-                            style={{
-                              color: "rgb(83, 100, 113)",
-                              fontSize: "13px",
-                              fontWeight: "400",
-                              lineHeight: "16px",
-                            }}
-                          >
-                            €199.92 per year billed annually
-                          </div>
-                        </div>
-                        <div
-                          className="organization-subscription-box mt-3"
-                          onClick={() => {
-                            setindividualSubOptionPremiumPlusMonthlyTab(true);
-                            setindividualSubOptionPremiumPlusAnnualTab(false);
-                          }}
-                          style={{
-                            width: "95%",
-                            backgroundColor: "white",
-                            minHeight: "96px",
-                            padding: "12px",
-                            cursor: "pointer",
-                            borderWidth: "1px",
-                            borderRadius: "16px",
-                            boxShadow:
-                              "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
-                            border: individualSubOptionPremiumPlusMonthlyTab
-                              ? "2px solid #339bf0"
-                              : "2px solid transparent",
-                            transition: "transform 0.3s ease",
-                          }}
-                        >
-                          <span
-                            style={{
-                              color: "#697884",
-                              fontSize: "14px",
-                              fontWeight: "400",
-                              lineHeight: "16px",
-                            }}
-                          >
-                            Monthly Plan{" "}
-                          </span>
-
-                          <div
-                            style={{
-                              color: "rgb(15, 20, 25)",
-                              fontSize: "17px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
-                            }}
-                          >
-                            €19.04 / month
-                            <div
-                              style={{
-                                color: "rgb(83, 100, 113)",
-                                fontSize: "13px",
-                                fontWeight: "400",
-                                lineHeight: "16px",
-                              }}
-                            >
-                              €228.48 per year billed monthly
-                            </div>
-                          </div>
-                        </div>
-                        {phoneVerifiedErrorMessage ? (
-                          <div
-                            style={{
-                              borderRadius: "8px",
-                              color: "rgb(15, 20, 25)",
-                              lineHeight: "16px",
-                              fontSize: "14px",
-                              fontWeight: "400",
-                              backgroundColor: "#fef1f1",
-                              width: "95%",
-                              marginTop: "10px",
-                              height: "40px",
-                              display: "flex",
-                              justifyContent: "left",
-                              alignItems: "center",
-                            }}
-                          >
-                            <span
-                              style={{
-                                position: "relative",
-                                left: "15px",
-                              }}
-                            >
-                              Something went wrong. Please try again.
-                            </span>
-                          </div>
-                        ) : null}
-                        <Button
-                          onClick={() => handlePhoneVerifiedCheck()}
-                          className={`login-button next-btn ${
-                            phoneVerifiedErrorMessage ? "mt-2" : "mt-4"
-                          }`}
-                          variant="dark"
-                          style={{
-                            width: "95%",
-                            height: "36px",
-                            color: "white",
-                            backgroundColor: "#0f141a",
-                            opacity: subErrorPhoneVerifiedTabLoading
-                              ? "0.5"
-                              : "1",
-                          }}
-                        >
-                          {subErrorPhoneVerifiedTabLoading ? (
-                            <div
-                              style={{
-                                fontSize: "15px",
-                              }}
-                            >
-                              <LoadingSpinner
-                                isCheckoutProcess={true}
-                                strokeColor={"rgb(29, 155, 240)"}
-                              ></LoadingSpinner>
-                            </div>
-                          ) : (
-                            <span>Subscribe & Pay</span>
-                          )}
-                        </Button>
-
-                        <div
-                          className="mt-3"
-                          style={{
-                            width: "95%",
-                            fontSize: "13px",
-                            lineHeight: "16px",
-                            fontWeight: "400",
-                            border: "1px solid black",
-                            borderRadius: "8px",
-                            padding: "6px",
-                          }}
-                        >
-                          {`By subscribing, you agree to our `}
-                          <span
-                            className="sub-modal-text-footer"
-                            style={{
-                              color: "rgb(29, 155, 240)",
-                            }}
-                          >
-                            Purchaser Terms of Service
-                          </span>
-                          {`. Subscriptions auto-renew until canceled, as described in the Terms.`}{" "}
-                          <span
-                            className="sub-modal-text-footer"
-                            style={{
-                              color: "rgb(29, 155, 240)",
-                            }}
-                          >
-                            Cancel anytime
-                          </span>
-                          {`. Cancel at least 24 hours prior to renewal to avoid additional charges. A verified phone number is required to subscribe. If you've subscribed on another platform, manage your subscription through that platform.`}
-                        </div>
-                      </Modal.Body>
-                    </Modal>
-                  </>
-                ) : subscriptionPremiumPaymentScreen ? (
-                  <>
-                    <Modal
-                      onHide={handleClosePremiumPaymentScreen}
-                      show={subscriptionPremiumPaymentScreen}
-                      style={{
-                        overflowX: "hidden",
-                        overflowY: "hidden",
-                      }}
-                      className="modal-sub-modal-payment-screen-parent"
-                      dialogClassName="modal-body-sub-modal-payment-screen"
-                    >
-                      <Modal.Body
-                        style={{
-                          height: phoneVerifiedErrorMessage ? "530px" : "490px",
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: "95%",
-                            fontSize: "23px",
-                            fontWeight: "700",
-                            lineHeight: "28px",
-                            margin: "0 auto",
-                          }}
-                        >
-                          Premium
-                        </div>
-
-                        <div
-                          onClick={() => {
-                            setindividualSubOptionPremiumPlusAnnualTab(true);
-                            setindividualSubOptionPremiumPlusMonthlyTab(false);
-                          }}
-                          className="individual-subscription-box mt-4"
-                          style={{
-                            width: "95%",
-
-                            backgroundColor: "white",
-                            minHeight: "96px",
-                            padding: "12px",
-                            cursor: "pointer",
-                            borderWidth: "1px",
-                            borderRadius: "16px",
-                            boxShadow:
-                              "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
-                            border: individualSubOptionPremiumPlusAnnualTab
-                              ? "2px solid #339bf0"
-                              : "2px solid transparent",
-                            transition: "transform 0.3s ease",
-                          }}
-                        >
-                          <span
-                            style={{
-                              color: "#697884",
-                              fontSize: "14px",
-                              fontWeight: "400",
-                              lineHeight: "16px",
-                            }}
-                          >
-                            Annual Plan{" "}
-                            <span
-                              style={{
-                                fontSize: "11px",
-                                backgroundColor: "#dcf8eb",
-                                borderRadius: "9999px",
-                                color: "black",
-                                position: "relative",
-                                bottom: "1px",
-                                fontWeight: "700",
-                                lineHeight: "12px",
-                                padding: "4px",
-                                height: "20px",
-                              }}
-                            >
-                              <span>Save 12%</span>
-                            </span>
-                          </span>
-
-                          <span
-                            style={{
-                              color: "rgb(15, 20, 25)",
-                              fontSize: "17px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
-                              display: "block",
-                            }}
-                          >
-                            €99.96 / year
-                          </span>
-                          <div
-                            style={{
-                              color: "rgb(83, 100, 113)",
-                              fontSize: "13px",
-                              fontWeight: "400",
-                              lineHeight: "16px",
-                            }}
-                          >
-                            €99.96 per year billed annually
-                          </div>
-                        </div>
-                        <div
-                          className="organization-subscription-box mt-3"
-                          onClick={() => {
-                            setindividualSubOptionPremiumPlusMonthlyTab(true);
-                            setindividualSubOptionPremiumPlusAnnualTab(false);
-                          }}
-                          style={{
-                            width: "95%",
-                            backgroundColor: "white",
-                            minHeight: "96px",
-                            padding: "12px",
-                            cursor: "pointer",
-                            borderWidth: "1px",
-                            borderRadius: "16px",
-                            boxShadow:
-                              "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
-                            border: individualSubOptionPremiumPlusMonthlyTab
-                              ? "2px solid #339bf0"
-                              : "2px solid transparent",
-                            transition: "transform 0.3s ease",
-                          }}
-                        >
-                          <span
-                            style={{
-                              color: "#697884",
-                              fontSize: "14px",
-                              fontWeight: "400",
-                              lineHeight: "16px",
-                            }}
-                          >
-                            Monthly Plan{" "}
-                          </span>
-
-                          <div
-                            style={{
-                              color: "rgb(15, 20, 25)",
-                              fontSize: "17px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
-                            }}
-                          >
-                            €9.52 / month
-                            <div
-                              style={{
-                                color: "rgb(83, 100, 113)",
-                                fontSize: "13px",
-                                fontWeight: "400",
-                                lineHeight: "16px",
-                              }}
-                            >
-                              €114.24 per year billed monthly
-                            </div>
-                          </div>
-                        </div>
-                        {phoneVerifiedErrorMessage ? (
-                          <div
-                            style={{
-                              borderRadius: "8px",
-                              color: "rgb(15, 20, 25)",
-                              lineHeight: "16px",
-                              fontSize: "14px",
-                              fontWeight: "400",
-                              backgroundColor: "#fef1f1",
-                              width: "95%",
-                              marginTop: "10px",
-                              height: "40px",
-                              display: "flex",
-                              justifyContent: "left",
-                              alignItems: "center",
-                            }}
-                          >
-                            <span
-                              style={{
-                                position: "relative",
-                                left: "15px",
-                              }}
-                            >
-                              Something went wrong. Please try again.
-                            </span>
-                          </div>
-                        ) : null}
-                        <Button
-                          onClick={() => handlePhoneVerifiedCheck()}
-                          className={`login-button next-btn ${
-                            phoneVerifiedErrorMessage ? "mt-2" : "mt-4"
-                          }`}
-                          variant="dark"
-                          style={{
-                            width: "95%",
-                            height: "36px",
-                            color: "white",
-                            backgroundColor: "#0f141a",
-                            opacity: subErrorPhoneVerifiedTabLoading
-                              ? "0.5"
-                              : "1",
-                          }}
-                        >
-                          {subErrorPhoneVerifiedTabLoading ? (
-                            <div
-                              style={{
-                                fontSize: "15px",
-                              }}
-                            >
-                              <LoadingSpinner
-                                isCheckoutProcess={true}
-                                strokeColor={"rgb(29, 155, 240)"}
-                              ></LoadingSpinner>
-                            </div>
-                          ) : (
-                            <span>Subscribe & Pay</span>
-                          )}
-                        </Button>
-
-                        <div
-                          className="mt-3"
-                          style={{
-                            width: "95%",
-                            fontSize: "13px",
-                            lineHeight: "16px",
-                            fontWeight: "400",
-                            border: "1px solid black",
-                            borderRadius: "8px",
-                            padding: "6px",
-                          }}
-                        >
-                          {`By subscribing, you agree to our `}
-                          <span
-                            className="sub-modal-text-footer"
-                            style={{
-                              color: "rgb(29, 155, 240)",
-                            }}
-                          >
-                            Purchaser Terms of Service
-                          </span>
-                          {`. Subscriptions auto-renew until canceled, as described in the Terms.`}{" "}
-                          <span
-                            className="sub-modal-text-footer"
-                            style={{
-                              color: "rgb(29, 155, 240)",
-                            }}
-                          >
-                            Cancel anytime
-                          </span>
-                          {`. Cancel at least 24 hours prior to renewal to avoid additional charges. A verified phone number is required to subscribe. If you've subscribed on another platform, manage your subscription through that platform.`}
-                        </div>
-                      </Modal.Body>
-                    </Modal>
-                  </>
-                ) : subscriptionBasicPaymentScreen ? (
-                  <>
-                    <Modal
-                      onHide={handleCloseBasicPaymentScreen}
-                      show={subscriptionBasicPaymentScreen}
-                      style={{
-                        overflowX: "hidden",
-                        overflowY: "hidden",
-                      }}
-                      className="modal-sub-modal-payment-screen-parent"
-                      dialogClassName="modal-body-sub-modal-payment-screen"
-                    >
-                      <Modal.Body
-                        style={{
-                          height: phoneVerifiedErrorMessage ? "530px" : "490px",
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: "95%",
-                            fontSize: "23px",
-                            fontWeight: "700",
-                            lineHeight: "28px",
-                            margin: "0 auto",
-                          }}
-                        >
-                          Basic
-                        </div>
-
-                        <div
-                          onClick={() => {
-                            setindividualSubOptionPremiumPlusAnnualTab(true);
-                            setindividualSubOptionPremiumPlusMonthlyTab(false);
-                          }}
-                          className="individual-subscription-box mt-4"
-                          style={{
-                            width: "95%",
-
-                            backgroundColor: "white",
-                            minHeight: "96px",
-                            padding: "12px",
-                            cursor: "pointer",
-                            borderWidth: "1px",
-                            borderRadius: "16px",
-                            boxShadow:
-                              "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
-                            border: individualSubOptionPremiumPlusAnnualTab
-                              ? "2px solid #339bf0"
-                              : "2px solid transparent",
-                            transition: "transform 0.3s ease",
-                          }}
-                        >
-                          <span
-                            style={{
-                              color: "#697884",
-                              fontSize: "14px",
-                              fontWeight: "400",
-                              lineHeight: "16px",
-                            }}
-                          >
-                            Annual Plan{" "}
-                            <span
-                              style={{
-                                fontSize: "11px",
-                                backgroundColor: "#dcf8eb",
-                                borderRadius: "9999px",
-                                color: "black",
-                                position: "relative",
-                                bottom: "1px",
-                                fontWeight: "700",
-                                lineHeight: "12px",
-                                padding: "4px",
-                                height: "20px",
-                              }}
-                            >
-                              <span>Save 11%</span>
-                            </span>
-                          </span>
-
-                          <span
-                            style={{
-                              color: "rgb(15, 20, 25)",
-                              fontSize: "17px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
-                              display: "block",
-                            }}
-                          >
-                            €38.08 / year
-                          </span>
-                          <div
-                            style={{
-                              color: "rgb(83, 100, 113)",
-                              fontSize: "13px",
-                              fontWeight: "400",
-                              lineHeight: "16px",
-                            }}
-                          >
-                            €38.08 per year billed annually
-                          </div>
-                        </div>
-                        <div
-                          className="organization-subscription-box mt-3"
-                          onClick={() => {
-                            setindividualSubOptionPremiumPlusMonthlyTab(true);
-                            setindividualSubOptionPremiumPlusAnnualTab(false);
-                          }}
-                          style={{
-                            width: "95%",
-                            backgroundColor: "white",
-                            minHeight: "96px",
-                            padding: "12px",
-                            cursor: "pointer",
-                            borderWidth: "1px",
-                            borderRadius: "16px",
-                            boxShadow:
-                              "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
-                            border: individualSubOptionPremiumPlusMonthlyTab
-                              ? "2px solid #339bf0"
-                              : "2px solid transparent",
-                            transition: "transform 0.3s ease",
-                          }}
-                        >
-                          <span
-                            style={{
-                              color: "#697884",
-                              fontSize: "14px",
-                              fontWeight: "400",
-                              lineHeight: "16px",
-                            }}
-                          >
-                            Monthly Plan{" "}
-                          </span>
-
-                          <div
-                            style={{
-                              color: "rgb(15, 20, 25)",
-                              fontSize: "17px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
-                            }}
-                          >
-                            €3.57 / month
-                            <div
-                              style={{
-                                color: "rgb(83, 100, 113)",
-                                fontSize: "13px",
-                                fontWeight: "400",
-                                lineHeight: "16px",
-                              }}
-                            >
-                              €42.84 per year billed monthly
-                            </div>
-                          </div>
-                        </div>
-                        {phoneVerifiedErrorMessage ? (
-                          <div
-                            style={{
-                              borderRadius: "8px",
-                              color: "rgb(15, 20, 25)",
-                              lineHeight: "16px",
-                              fontSize: "14px",
-                              fontWeight: "400",
-                              backgroundColor: "#fef1f1",
-                              width: "95%",
-                              marginTop: "10px",
-                              height: "40px",
-                              display: "flex",
-                              justifyContent: "left",
-                              alignItems: "center",
-                            }}
-                          >
-                            <span
-                              style={{
-                                position: "relative",
-                                left: "15px",
-                              }}
-                            >
-                              Something went wrong. Please try again.
-                            </span>
-                          </div>
-                        ) : null}
-
-                        <Button
-                          onClick={() => handlePhoneVerifiedCheck()}
-                          className={`login-button next-btn ${
-                            phoneVerifiedErrorMessage ? "mt-2" : "mt-4"
-                          }`}
-                          variant="dark"
-                          style={{
-                            width: "95%",
-                            height: "36px",
-                            color: "white",
-                            backgroundColor: "#0f141a",
-                            opacity: subErrorPhoneVerifiedTabLoading
-                              ? "0.5"
-                              : "1",
-                          }}
-                        >
-                          {subErrorPhoneVerifiedTabLoading ? (
-                            <div
-                              style={{
-                                fontSize: "15px",
-                              }}
-                            >
-                              <LoadingSpinner
-                                isCheckoutProcess={true}
-                                strokeColor={"rgb(29, 155, 240)"}
-                              ></LoadingSpinner>
-                            </div>
-                          ) : (
-                            <span>Subscribe & Pay</span>
-                          )}
-                        </Button>
-
-                        <div
-                          className="mt-3"
-                          style={{
-                            width: "95%",
-                            fontSize: "13px",
-                            lineHeight: "16px",
-                            fontWeight: "400",
-                            border: "1px solid black",
-                            borderRadius: "8px",
-                            padding: "6px",
-                          }}
-                        >
-                          {`By subscribing, you agree to our `}
-                          <span
-                            className="sub-modal-text-footer"
-                            style={{
-                              color: "rgb(29, 155, 240)",
-                            }}
-                          >
-                            Purchaser Terms of Service
-                          </span>
-                          {`. Subscriptions auto-renew until canceled, as described in the Terms.`}{" "}
-                          <span
-                            className="sub-modal-text-footer"
-                            style={{
-                              color: "rgb(29, 155, 240)",
-                            }}
-                          >
-                            Cancel anytime
-                          </span>
-                          {`. Cancel at least 24 hours prior to renewal to avoid additional charges. A verified phone number is required to subscribe. If you've subscribed on another platform, manage your subscription through that platform.`}
-                        </div>
-                      </Modal.Body>
-                    </Modal>
-                  </>
-                ) : null}
-                {individualSubOptionTab === 2 ? (
-                  <Modal.Footer
-                    style={{
-                      height: "69px",
-                      backgroundColor: "#fdfdfe",
-                      position: "relative",
-                      right: "15px",
+                      border: "none",
+                      zIndex: 999,
+                      backgroundColor: "white",
+                      width: "97%",
                     }}
                   >
                     <div
                       style={{
-                        width: "90%",
-                        height: "69px",
-                        padding: "22px 0px",
                         position: "relative",
-                        borderRight: "1px solid rgba(0,0,0,0.1)",
-                        borderLeft: "1px solid rgba(0,0,0,0.1)",
-                        top: "17px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: "#ffffff",
-                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                        width: "100%",
                       }}
                     >
-                      <Button
-                        onClick={showPremiumPlusPaymentScreen}
-                        className="login-button next-btn"
-                        variant="dark"
+                      <div
+                        onClick={() => {
+                          setSubTabIndexFromOrganizationSelect(
+                            subTabIndexFromOrganizationSelect - 1
+                          );
+                          setTabStyleOrganizationFullAccessPlan(true);
+                        }}
+                        className="close-button"
                         style={{
-                          width: "75%",
-                          color: "white",
-                          backgroundColor: "#0f141a",
+                          display: " flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          width: "36px",
+                          height: "36px",
+                          borderRadius: "50%",
+                          cursor: "pointer",
                         }}
                       >
-                        Starting at €19.04
-                      </Button>
+                        {/* close signin modal icon start to check  */}
+                        <svg
+                          color="rgb(15,20,25)"
+                          fill="currentColor"
+                          width={20}
+                          height={20}
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                        >
+                          <g>
+                            <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                          </g>
+                        </svg>
+                        {/* close signin modal icon finish to check  */}
+                      </div>{" "}
                     </div>
-                  </Modal.Footer>
-                ) : individualSubOptionTab === 1 ? (
-                  <Modal.Footer
+                  </Modal.Header>
+                </>
+              )}
+              {tabIndex === 0 ? (
+                <>
+                  <Modal.Body
+                    // className="mt-5"
                     style={{
-                      height: "69px",
-                      backgroundColor: "#fdfdfe",
                       position: "relative",
-                      right: "15px",
+                      top: "4.8%",
                     }}
                   >
                     <div
                       style={{
-                        width: "90%",
-                        height: "69px",
-                        padding: "22px 0px",
-                        position: "relative",
-                        borderRight: "1px solid rgba(0,0,0,0.1)",
-                        borderLeft: "1px solid rgba(0,0,0,0.1)",
-                        top: "17px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: "#ffffff",
-                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                        lineHeight: "36px",
+                        fontSize: "31px",
+                        fontWeight: "800",
                       }}
                     >
-                      <Button
-                        onClick={showPremiumPaymentScreen}
-                        className="login-button next-btn"
-                        variant="dark"
-                        style={{
-                          width: "75%",
-                          color: "white",
-                          backgroundColor: "#0f141a",
-                        }}
-                      >
-                        Starting at €9.60
-                      </Button>
+                      Who are you?
                     </div>
-                  </Modal.Footer>
-                ) : individualSubOptionTab === 0 ? (
-                  <Modal.Footer
-                    style={{
-                      height: "69px",
-                      backgroundColor: "#fdfdfe",
-                      position: "relative",
-                      right: "15px",
-                    }}
-                  >
+
+                    <div
+                      className="mt-3"
+                      style={{
+                        lineHeight: "20px",
+                        fontSize: "15px",
+                        fontWeight: "400",
+                        color: "rgb(15, 20, 25)",
+                      }}
+                    >
+                      Choose the right subscription for you:
+                    </div>
+                    <div
+                      className="mt-4"
+                      style={{
+                        display: "flex",
+                        gap: "2.5%",
+                        width: "81.5%",
+                      }}
+                    >
+                      <div
+                        onClick={() => {
+                          setactiveIndividualOptionTabStyle(true);
+                          setisIndividualSubscriptionClicked(true);
+                          setactiveOrganizationOptionTabStyle(false);
+                          setisOrganizationSubscriptionClicked(false);
+                          setindividualSubOptionTab(2);
+                        }}
+                        style={
+                          ({ activeIndividualOptionTabStyle },
+                          {
+                            flex: 1,
+                            backgroundColor: "white",
+                            minHeight: "112px",
+                            padding: "12px",
+                            cursor: "pointer",
+                            borderWidth: "1px",
+                            borderRadius: "16px",
+                            boxShadow:
+                              "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                            border: activeIndividualOptionTabStyle
+                              ? "2px solid #339bf0"
+                              : "2px solid transparent",
+                            transition: "transform 0.3s ease",
+                          })
+                        }
+                        className="individual-subscription-box"
+                      >
+                        <div
+                          style={{
+                            position: "relative",
+                            top: "5px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              color: "#697884",
+                              fontSize: "15px",
+                              fontWeight: "400",
+                            }}
+                          >
+                            Premium
+                          </div>
+                          <div
+                            style={{
+                              color: "rgb(15, 20, 25)",
+                              fontSize: "18px",
+                              fontWeight: "600",
+                            }}
+                          >
+                            {" "}
+                            I am an individual
+                          </div>
+                          <div
+                            style={{
+                              color: "#697884",
+                              fontSize: "14px",
+                              fontWeight: "400",
+                            }}
+                          >
+                            {" "}
+                            For individuals and creators
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        onClick={() => {
+                          setactiveOrganizationOptionTabStyle(true);
+                          setisOrganizationSubscriptionClicked(true);
+                          setactiveIndividualOptionTabStyle(false);
+                          setisIndividualSubscriptionClicked(false);
+                        }}
+                        style={
+                          ({ activeOrganizationOptionTabStyle },
+                          {
+                            flex: 1,
+                            backgroundColor: "white",
+                            minHeight: "112px",
+                            padding: "12px",
+                            cursor: "pointer",
+                            borderWidth: "1px",
+                            borderRadius: "16px",
+                            boxShadow:
+                              "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                            border: activeOrganizationOptionTabStyle
+                              ? "2px solid #339bf0"
+                              : "2px solid transparent",
+                            transition: "transform 0.3s ease",
+                          })
+                        }
+                        className="organization-subscription-box"
+                      >
+                        <div
+                          style={{
+                            position: "relative",
+                          }}
+                        >
+                          <div
+                            style={{
+                              color: "#697884",
+                              fontSize: "15px",
+                              fontWeight: "400",
+                            }}
+                          >
+                            {" "}
+                            Verified Organizations
+                          </div>{" "}
+                          <div
+                            style={{
+                              color: "rgb(15, 20, 25)",
+                              fontSize: "18px",
+                              fontWeight: "600",
+                            }}
+                          >
+                            I am an organization
+                          </div>{" "}
+                          <div
+                            style={{
+                              color: "#697884",
+                              fontSize: "14px",
+                              fontWeight: "400",
+                            }}
+                          >
+                            For businesses, government agencies, and non-profits
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <Button
+                      onClick={() => {
+                        handleChooseActionForSubscriptionModal(
+                          isIndividualSubscriptionClicked,
+                          isOrganizationSubscriptionClicked
+                        );
+                      }}
+                      style={{
+                        width: "81.5%",
+                        height: "54px",
+                        backgroundColor: "#0f141a",
+                      }}
+                      className="next-btn mt-4"
+                    >
+                      Subscribe
+                    </Button>
                     <div
                       style={{
-                        width: "90%",
-                        height: "69px",
-                        padding: "22px 0px",
-                        position: "relative",
-                        borderRight: "1px solid rgba(0,0,0,0.1)",
-                        borderLeft: "1px solid rgba(0,0,0,0.1)",
-                        top: "17px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: "#ffffff",
-                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                        fontSize: "15px",
+                        fontWeight: "400",
+                        lineHeight: "20px",
+                        color: "rgb(15, 20, 25)",
                       }}
+                      className="mt-4"
                     >
-                      <Button
-                        onClick={showBasicPaymentScreen}
-                        className="login-button next-btn"
-                        variant="dark"
+                      Learn more about{" "}
+                      <span
+                        className="subscription-underline-text"
                         style={{
-                          width: "75%",
-                          color: "white",
-                          backgroundColor: "#0f141a",
+                          cursor: "pointer",
+                          color: "rgb(29, 155, 240)",
                         }}
                       >
-                        Starting at €3.57
-                      </Button>
+                        Premium
+                      </span>{" "}
+                      and{" "}
+                      <span
+                        className="subscription-underline-text"
+                        style={{
+                          cursor: "pointer",
+                          color: "rgb(29, 155, 240)",
+                        }}
+                      >
+                        Verified Organizations
+                      </span>
                     </div>
-                  </Modal.Footer>
-                ) : null}
-              </>
-            ) : tabIndex === 1 && isOrganizationSubscriptionClicked ? (
-              <>
-                {" "}
+                  </Modal.Body>
+                </>
+              ) : tabIndex === 1 && isIndividualSubscriptionClicked ? (
                 <>
                   <Modal.Body
                     className="scrollbar-add"
                     style={{
-                      position: "relative",
-                      bottom: "35px",
-                      zIndex: 1,
+                      overflowY: "auto",
+                      overflowX: "hidden",
+                      opacity:
+                        subscriptionPremiumPlusPaymentScreen ||
+                        subscriptionPremiumPaymentScreen ||
+                        subscriptionBasicPaymentScreen
+                          ? "0.5"
+                          : "1",
                     }}
                   >
-                    {subTabIndexFromOrganizationSelect !== 3 ? (
-                      <>
+                    <div
+                      style={{
+                        width: "100%",
+                        margin: "0 auto",
+                      }}
+                    >
+                      <Slider ref={sliderRef} {...settings}>
+                        {/* first div basic plan start to check   */}
                         <div
-                          className="mt-4"
                           style={{
-                            backgroundColor: "black",
-                            borderRadius: "9999px",
-                            display: "flex",
-                            alignItems: "center",
+                            width: "100%",
+                            margin: "0px auto",
                           }}
                         >
-                          <div
+                          <Stack
                             style={{
-                              width: "184px",
-                              height: "40px",
                               display: "flex",
-                              justifyContent: "center",
-                              alignItems: "center",
+                              justifyContent: "space-between",
+                              backgroundImage:
+                                "url(https://abs.twimg.com/responsive-web/client-web/background-basic-web@3x.0f5af6ea.png)",
+                              backgroundPosition: "center",
+                              backgroundSize: "cover",
+                              borderRadius: "16px",
+                              color: "white",
+                              height: "60px",
                             }}
+                            direction="horizontal"
+                            gap={1}
                           >
-                            <button
-                              onClick={() => {
-                                basicPlanClick();
+                            <div
+                              className="p-2"
+                              style={{
+                                visibility: "hidden",
                               }}
-                              style={tabStyleOrganizationBasicStyle}
                             >
+                              {" "}
+                              <span
+                                onClick={() => {
+                                  previous();
+                                }}
+                                className="premium-btn-back"
+                                style={{
+                                  color: "white",
+                                  backgroundColor: "#13181c",
+                                  width: "30px",
+                                  height: "30px",
+                                  borderRadius: "50%",
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <svg
+                                  width={20}
+                                  height={20}
+                                  color="white"
+                                  fill="currentColor"
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03 r-jwli3a"
+                                >
+                                  <g>
+                                    <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                                  </g>
+                                </svg>
+                              </span>
+                            </div>
+                            <div style={{}}>
+                              {" "}
                               <span
                                 style={{
-                                  padding: "6px",
+                                  color: "white",
+                                  lineHeight: "20px",
+                                  fontWeight: "500",
+                                  fontSize: "17px",
+                                  position: "relative",
+                                  left: "5px",
                                 }}
                               >
                                 Basic
+                                <span
+                                  span
+                                  style={{
+                                    visibility: "hidden",
+                                  }}
+                                >
+                                  +
+                                </span>
                               </span>
-                            </button>
-                            <button
-                              onClick={() => {
-                                fullAccessPlanClick();
-                              }}
-                              style={tabStyleOrganizationFullAccessStyle}
-                            >
-                              <span style={{}}>Full Access</span>
-                            </button>
+                            </div>
+                            <div className="p-2" style={{}}>
+                              {" "}
+                              <span
+                                onClick={() => {
+                                  next();
+                                }}
+                                className="premium-btn-back"
+                                style={{
+                                  color: "white",
+                                  backgroundColor: "#13181c",
+                                  width: "30px",
+                                  height: "30px",
+                                  borderRadius: "50%",
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <svg
+                                  width={20}
+                                  height={20}
+                                  color="white"
+                                  fill="currentColor"
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03 r-jwli3a"
+                                >
+                                  <g>
+                                    <path d="M12.957 4.54L20.414 12l-7.457 7.46-1.414-1.42L16.586 13H3v-2h13.586l-5.043-5.04 1.414-1.42z"></path>
+                                  </g>
+                                </svg>
+                              </span>
+                            </div>
+                          </Stack>{" "}
+                          {/* enhanced experience start to check  */}
+                          <div
+                            className="mt-3 premium-plus-parent-div"
+                            style={{
+                              padding: "32px",
+                              borderRadius: "16px",
+                              backgroundColor: "#eff3f4",
+                            }}
+                          >
+                            <div className="premium-plus-header">
+                              Enhanced Experience
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Ads in For You</span>
+                                  <svg
+                                    width={16}
+                                    height={16}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>Full</div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Reply boost</span>
+                                </div>
+                                <div>Largest</div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Smallest</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Longer posts</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Undo post</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Post longer videos</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Top Articles</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            {/* reader check  */}
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Reader</span>{" "}
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            {/* reader check  */}
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Background video playback</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Download videos</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
                           </div>
+                          {/* enhanced experience finish to check  */}
+                          {/* creator hub start to check  */}
+                          <div
+                            className="mt-3 premium-plus-parent-div"
+                            style={{
+                              padding: "32px",
+                              borderRadius: "16px",
+                              backgroundColor: "#eff3f4",
+                            }}
+                          >
+                            <div className="premium-plus-header">
+                              Creator Hub
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span
+                                    style={{
+                                      color:
+                                        "rgb(83, 100, 113)                                  ",
+                                    }}
+                                  >
+                                    Write Articles
+                                  </span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span
+                                    style={{
+                                      color:
+                                        "rgb(83, 100, 113)                                  ",
+                                    }}
+                                  >
+                                    Get paid to post
+                                  </span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span
+                                    style={{
+                                      color:
+                                        "rgb(83, 100, 113)                                  ",
+                                    }}
+                                  >
+                                    Creator Subscriptions
+                                  </span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span
+                                    style={{
+                                      color:
+                                        "rgb(83, 100, 113)                                  ",
+                                    }}
+                                  >
+                                    X Pro
+                                  </span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span
+                                    style={{
+                                      color:
+                                        "rgb(83, 100, 113)                                  ",
+                                    }}
+                                  >
+                                    Media Studio
+                                  </span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span
+                                    style={{
+                                      color:
+                                        "rgb(83, 100, 113)                                  ",
+                                    }}
+                                  >
+                                    Analytics
+                                  </span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          {/* creator hub finish to check  */}
+                          {/* Verification and security start to check */}
+                          <div
+                            className="mt-3 premium-plus-parent-div"
+                            style={{
+                              padding: "32px",
+                              borderRadius: "16px",
+                              backgroundColor: "#eff3f4",
+                            }}
+                          >
+                            <div className="premium-plus-header">
+                              Verification & Security
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span
+                                    style={{
+                                      color:
+                                        "rgb(83, 100, 113)                                  ",
+                                    }}
+                                  >
+                                    {" "}
+                                    Checkmark
+                                  </span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Encrypted direct messages</span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span
+                                    style={{
+                                      color:
+                                        "rgb(83, 100, 113)                                  ",
+                                    }}
+                                  >
+                                    Optional ID verification
+                                  </span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          {/* verification and security finish to check */}
+                          {/* Customization start to check  */}
+                          <div
+                            className="mt-3 premium-plus-parent-div"
+                            style={{
+                              padding: "32px",
+                              borderRadius: "16px",
+                              backgroundColor: "#eff3f4",
+                            }}
+                          >
+                            <div className="premium-plus-header">
+                              Customization
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>App icons</span>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Bookmark folders</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Customize navigation</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Highlights tab</span>{" "}
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Hide your likes</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Hide your checkmark</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            {/* reader check  */}
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>Hide your subscriptions</div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            {/* reader check  */}
+                          </div>
+                          {/* Customization finish to check  */}
                         </div>
-                      </>
-                    ) : null}
-                    {subTabIndexFromOrganizationSelect === 1 &&
-                    tabStyleOrganizationBasicPlan ? (
-                      <>
+                        {/* first div basic plan finish to check   */}
+                        {/* second div premium plan start to check  */}
                         <div
-                          className="mt-2"
                           style={{
-                            width: "100%",
-                            backgroundColor: "rgba(247, 249, 249, 1.00)",
-                            borderRadius: "16px",
-                            padding: "16px",
+                            width: "81.5%",
+                            margin: "0px auto",
+                          }}
+                        >
+                          <Stack
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              backgroundImage:
+                                "url(https://abs.twimg.com/responsive-web/client-web/background-premium-web@3x.44f5419a.png)",
+                              backgroundPosition: "center",
+                              backgroundSize: "cover",
+                              borderRadius: "16px",
+                              color: "white",
+                              height: "60px",
+                            }}
+                            direction="horizontal"
+                            gap={1}
+                          >
+                            <div className="p-2" style={{}}>
+                              {" "}
+                              <span
+                                onClick={() => {
+                                  previous();
+                                }}
+                                className="premium-btn-back"
+                                style={{
+                                  color: "white",
+                                  backgroundColor: "#13181c",
+                                  width: "30px",
+                                  height: "30px",
+                                  borderRadius: "50%",
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <svg
+                                  width={20}
+                                  height={20}
+                                  color="white"
+                                  fill="currentColor"
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03 r-jwli3a"
+                                >
+                                  <g>
+                                    <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                                  </g>
+                                </svg>
+                              </span>
+                            </div>
+                            <div style={{}}>
+                              {" "}
+                              <span
+                                style={{
+                                  color: "white",
+                                  lineHeight: "20px",
+                                  fontWeight: "500",
+                                  fontSize: "17px",
+                                  position: "relative",
+                                  left: "5px",
+                                }}
+                              >
+                                Premium
+                                <span
+                                  span
+                                  style={{
+                                    visibility: "hidden",
+                                  }}
+                                >
+                                  +
+                                </span>
+                              </span>
+                            </div>
+                            <div className="p-2" style={{}}>
+                              {" "}
+                              <span
+                                onClick={() => {
+                                  next();
+                                }}
+                                className="premium-btn-back"
+                                style={{
+                                  color: "white",
+                                  backgroundColor: "#13181c",
+                                  width: "30px",
+                                  height: "30px",
+                                  borderRadius: "50%",
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <svg
+                                  width={20}
+                                  height={20}
+                                  color="white"
+                                  fill="currentColor"
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03 r-jwli3a"
+                                >
+                                  <g>
+                                    <path d="M12.957 4.54L20.414 12l-7.457 7.46-1.414-1.42L16.586 13H3v-2h13.586l-5.043-5.04 1.414-1.42z"></path>
+                                  </g>
+                                </svg>
+                              </span>
+                            </div>
+                          </Stack>{" "}
+                          {/* enhanced experience start to check  */}
+                          <div
+                            className="mt-3 premium-plus-parent-div"
+                            style={{
+                              padding: "32px",
+                              borderRadius: "16px",
+                              backgroundColor: "#eff3f4",
+                            }}
+                          >
+                            <div className="premium-plus-header">
+                              Enhanced Experience
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Ads in For You</span>
+                                  <svg
+                                    width={16}
+                                    height={16}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>Half</div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Reply boost</span>
+                                </div>
+                                <div>Larger</div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Edit post</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Longer posts</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Undo post</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Post longer videos</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Top Articles</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            {/* reader check  */}
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Reader</span>{" "}
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            {/* reader check  */}
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Background video playback</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Download videos</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          {/* enhanced experience finish to check  */}
+                          {/* creator hub start to check  */}
+                          <div
+                            className="mt-3 premium-plus-parent-div"
+                            style={{
+                              padding: "32px",
+                              borderRadius: "16px",
+                              backgroundColor: "#eff3f4",
+                            }}
+                          >
+                            <div className="premium-plus-header">
+                              Creator Hub
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span
+                                    style={{
+                                      color:
+                                        "rgb(83, 100, 113)                                  ",
+                                    }}
+                                  >
+                                    Write Articles
+                                  </span>
+
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Get paid to post</span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Creator Subscriptions</span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>X Pro</span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Media Studio</span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Analytics</span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          {/* creator hub finish to check  */}
+                          {/* Verification and security start to check */}
+                          <div
+                            className="mt-3 premium-plus-parent-div"
+                            style={{
+                              padding: "32px",
+                              borderRadius: "16px",
+                              backgroundColor: "#eff3f4",
+                            }}
+                          >
+                            <div className="premium-plus-header">
+                              Verification & Security
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Checkmark</span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Encrypted direct messages</span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Optional ID verification</span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          {/* verification and security finish to check */}
+                          {/* Customization start to check  */}
+                          <div
+                            className="mt-3 premium-plus-parent-div"
+                            style={{
+                              padding: "32px",
+                              borderRadius: "16px",
+                              backgroundColor: "#eff3f4",
+                            }}
+                          >
+                            <div className="premium-plus-header">
+                              Customization
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>App icons</span>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Bookmark folders</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Customize navigation</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Highlights tab</span>{" "}
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Hide your likes</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Hide your checkmark</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            {/* reader check  */}
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>Hide your subscriptions</div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            {/* reader check  */}
+                          </div>
+                          {/* Customization finish to check  */}
+                        </div>
+                        {/* second div premium plan finish to check  */}
+                        {/* third div premium plus plan start to check   */}
+                        <div
+                          style={{
+                            width: "81.5%",
+                            margin: "0px auto",
+                          }}
+                        >
+                          <Stack
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              backgroundImage:
+                                "url(https://abs.twimg.com/responsive-web/client-web/background-premiumplus-web@3x.f3a57bda.png)",
+                              backgroundPosition: "center",
+                              backgroundSize: "cover",
+                              borderRadius: "16px",
+                              color: "white",
+                              height: "60px",
+                            }}
+                            direction="horizontal"
+                            gap={1}
+                          >
+                            <div className="p-2" style={{}}>
+                              {" "}
+                              <span
+                                onClick={() => {
+                                  previous();
+                                }}
+                                className="premium-btn-back"
+                                style={{
+                                  color: "white",
+                                  backgroundColor: "#13181c",
+                                  width: "30px",
+                                  height: "30px",
+                                  borderRadius: "50%",
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <svg
+                                  width={20}
+                                  height={20}
+                                  color="white"
+                                  fill="currentColor"
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03 r-jwli3a"
+                                >
+                                  <g>
+                                    <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                                  </g>
+                                </svg>
+                              </span>
+                            </div>
+                            <div style={{}}>
+                              {" "}
+                              <span
+                                style={{
+                                  color: "white",
+                                  lineHeight: "20px",
+                                  fontWeight: "500",
+                                  fontSize: "17px",
+                                  position: "relative",
+                                  left: "5px",
+                                }}
+                              >
+                                Premium+
+                              </span>
+                            </div>
+                            <div className="p-2" style={{}}>
+                              {" "}
+                              <span
+                                onClick={() => {
+                                  next();
+                                }}
+                                className="premium-btn-back"
+                                style={{
+                                  color: "white",
+                                  backgroundColor: "#13181c",
+                                  width: "30px",
+                                  height: "30px",
+                                  borderRadius: "50%",
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                  visibility: "hidden",
+                                }}
+                              >
+                                <svg
+                                  width={20}
+                                  height={20}
+                                  color="white"
+                                  fill="currentColor"
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03 r-jwli3a"
+                                >
+                                  <g>
+                                    <path d="M12.957 4.54L20.414 12l-7.457 7.46-1.414-1.42L16.586 13H3v-2h13.586l-5.043-5.04 1.414-1.42z"></path>
+                                  </g>
+                                </svg>
+                              </span>
+                            </div>
+                          </Stack>{" "}
+                          {/* enhanced experience start to check  */}
+                          <div
+                            className="mt-3 premium-plus-parent-div"
+                            style={{
+                              padding: "32px",
+                              borderRadius: "16px",
+                              backgroundColor: "#eff3f4",
+                            }}
+                          >
+                            <div className="premium-plus-header">
+                              Enhanced Experience
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Ads in For You</span>
+                                  <svg
+                                    width={16}
+                                    height={16}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>None</div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Reply boost</span>
+                                </div>
+                                <div>Largest</div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Edit post</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Longer posts</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Undo post</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Post longer videos</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Top Articles</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            {/* reader check  */}
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Reader</span>{" "}
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            {/* reader check  */}
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Background video playback</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Download videos</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          {/* enhanced experience finish to check  */}
+                          {/* creator hub start to check  */}
+                          <div
+                            className="mt-3 premium-plus-parent-div"
+                            style={{
+                              padding: "32px",
+                              borderRadius: "16px",
+                              backgroundColor: "#eff3f4",
+                            }}
+                          >
+                            <div className="premium-plus-header">
+                              Creator Hub
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Write Articles</span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Get paid to post</span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Creator Subscriptions</span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>X Pro</span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Media Studio</span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Analytics</span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          {/* creator hub finish to check  */}
+                          {/* Verification and security start to check */}
+                          <div
+                            className="mt-3 premium-plus-parent-div"
+                            style={{
+                              padding: "32px",
+                              borderRadius: "16px",
+                              backgroundColor: "#eff3f4",
+                            }}
+                          >
+                            <div className="premium-plus-header">
+                              Verification & Security
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Checkmark</span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Encrypted direct messages</span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Optional ID verification</span>
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          {/* verification and security finish to check */}
+                          {/* Customization start to check  */}
+                          <div
+                            className="mt-3 premium-plus-parent-div"
+                            style={{
+                              padding: "32px",
+                              borderRadius: "16px",
+                              backgroundColor: "#eff3f4",
+                            }}
+                          >
+                            <div className="premium-plus-header">
+                              Customization
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>App icons</span>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Bookmark folders</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Customize navigation</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Highlights tab</span>{" "}
+                                  <svg
+                                    width={20}
+                                    height={20}
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="exclamation r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-10ptun7 r-1janqcz r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Hide your likes</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <span>Hide your checkmark</span>{" "}
+                                </div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            {/* reader check  */}
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>Hide your subscriptions</div>
+                                <div>
+                                  {" "}
+                                  <svg
+                                    color="rgb(0, 186, 124)"
+                                    fill="currentColor"
+                                    width={20}
+                                    height={20}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            {/* reader check  */}
+                          </div>
+                          {/* Customization finish to check  */}
+                        </div>
+                        {/* third div premium plus plan finish to check   */}
+                      </Slider>
+                    </div>
+                  </Modal.Body>
+                  {subscriptionPremiumPlusPaymentScreen ? (
+                    <>
+                      <Modal
+                        onHide={handleClosePremiumPlusPaymentScreen}
+                        show={subscriptionPremiumPlusPaymentScreen}
+                        style={{
+                          overflowX: "hidden",
+                          overflowY: "hidden",
+                        }}
+                        className="modal-sub-modal-payment-screen-parent"
+                        dialogClassName="modal-body-sub-modal-payment-screen"
+                      >
+                        <Modal.Body
+                          style={{
+                            height: phoneVerifiedErrorMessage
+                              ? "530px"
+                              : "490px",
                           }}
                         >
                           <div
                             style={{
-                              color: "rgb(83, 100, 113)",
-                              lineHeight: "28px",
-                              fontWeight: "700",
+                              width: "95%",
                               fontSize: "23px",
+                              fontWeight: "700",
+                              lineHeight: "28px",
+                              margin: "0 auto",
+                            }}
+                          >
+                            Premium+
+                          </div>
+
+                          <div
+                            onClick={() => {
+                              setindividualSubOptionPremiumPlusAnnualTab(true);
+                              setindividualSubOptionPremiumPlusMonthlyTab(
+                                false
+                              );
+                            }}
+                            className="individual-subscription-box mt-4"
+                            style={{
+                              width: "95%",
+
+                              backgroundColor: "white",
+                              minHeight: "96px",
+                              padding: "12px",
+                              cursor: "pointer",
+                              borderWidth: "1px",
+                              borderRadius: "16px",
+                              boxShadow:
+                                "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                              border: individualSubOptionPremiumPlusAnnualTab
+                                ? "2px solid #339bf0"
+                                : "2px solid transparent",
+                              transition: "transform 0.3s ease",
+                            }}
+                          >
+                            <span
+                              style={{
+                                color: "#697884",
+                                fontSize: "14px",
+                                fontWeight: "400",
+                                lineHeight: "16px",
+                              }}
+                            >
+                              Annual Plan{" "}
+                              <span
+                                style={{
+                                  fontSize: "11px",
+                                  backgroundColor: "#dcf8eb",
+                                  borderRadius: "9999px",
+                                  color: "black",
+                                  position: "relative",
+                                  bottom: "1px",
+                                  fontWeight: "700",
+                                  lineHeight: "12px",
+                                  padding: "4px",
+                                  height: "20px",
+                                }}
+                              >
+                                <span>Save 12%</span>
+                              </span>
+                            </span>
+
+                            <span
+                              style={{
+                                color: "rgb(15, 20, 25)",
+                                fontSize: "17px",
+                                fontWeight: "700",
+                                lineHeight: "20px",
+                                display: "block",
+                              }}
+                            >
+                              €199.92 / year
+                            </span>
+                            <div
+                              style={{
+                                color: "rgb(83, 100, 113)",
+                                fontSize: "13px",
+                                fontWeight: "400",
+                                lineHeight: "16px",
+                              }}
+                            >
+                              €199.92 per year billed annually
+                            </div>
+                          </div>
+                          <div
+                            className="organization-subscription-box mt-3"
+                            onClick={() => {
+                              setindividualSubOptionPremiumPlusMonthlyTab(true);
+                              setindividualSubOptionPremiumPlusAnnualTab(false);
+                            }}
+                            style={{
+                              width: "95%",
+                              backgroundColor: "white",
+                              minHeight: "96px",
+                              padding: "12px",
+                              cursor: "pointer",
+                              borderWidth: "1px",
+                              borderRadius: "16px",
+                              boxShadow:
+                                "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                              border: individualSubOptionPremiumPlusMonthlyTab
+                                ? "2px solid #339bf0"
+                                : "2px solid transparent",
+                              transition: "transform 0.3s ease",
+                            }}
+                          >
+                            <span
+                              style={{
+                                color: "#697884",
+                                fontSize: "14px",
+                                fontWeight: "400",
+                                lineHeight: "16px",
+                              }}
+                            >
+                              Monthly Plan{" "}
+                            </span>
+
+                            <div
+                              style={{
+                                color: "rgb(15, 20, 25)",
+                                fontSize: "17px",
+                                fontWeight: "700",
+                                lineHeight: "20px",
+                              }}
+                            >
+                              €19.04 / month
+                              <div
+                                style={{
+                                  color: "rgb(83, 100, 113)",
+                                  fontSize: "13px",
+                                  fontWeight: "400",
+                                  lineHeight: "16px",
+                                }}
+                              >
+                                €228.48 per year billed monthly
+                              </div>
+                            </div>
+                          </div>
+                          {phoneVerifiedErrorMessage ? (
+                            <div
+                              style={{
+                                borderRadius: "8px",
+                                color: "rgb(15, 20, 25)",
+                                lineHeight: "16px",
+                                fontSize: "14px",
+                                fontWeight: "400",
+                                backgroundColor: "#fef1f1",
+                                width: "95%",
+                                marginTop: "10px",
+                                height: "40px",
+                                display: "flex",
+                                justifyContent: "left",
+                                alignItems: "center",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  position: "relative",
+                                  left: "15px",
+                                }}
+                              >
+                                Something went wrong. Please try again.
+                              </span>
+                            </div>
+                          ) : null}
+                          <Button
+                            onClick={() => handlePhoneVerifiedCheck()}
+                            className={`login-button next-btn ${
+                              phoneVerifiedErrorMessage ? "mt-2" : "mt-4"
+                            }`}
+                            variant="dark"
+                            style={{
+                              width: "95%",
+                              height: "36px",
+                              color: "white",
+                              backgroundColor: "#0f141a",
+                              opacity: subErrorPhoneVerifiedTabLoading
+                                ? "0.5"
+                                : "1",
+                            }}
+                          >
+                            {subErrorPhoneVerifiedTabLoading ? (
+                              <div
+                                style={{
+                                  fontSize: "15px",
+                                }}
+                              >
+                                <LoadingSpinner
+                                  isCheckoutProcess={true}
+                                  strokeColor={"rgb(29, 155, 240)"}
+                                ></LoadingSpinner>
+                              </div>
+                            ) : (
+                              <span>Subscribe & Pay</span>
+                            )}
+                          </Button>
+
+                          <div
+                            className="mt-3"
+                            style={{
+                              width: "95%",
+                              fontSize: "13px",
+                              lineHeight: "16px",
+                              fontWeight: "400",
+                              border: "1px solid black",
+                              borderRadius: "8px",
+                              padding: "6px",
+                            }}
+                          >
+                            {`By subscribing, you agree to our `}
+                            <span
+                              className="sub-modal-text-footer"
+                              style={{
+                                color: "rgb(29, 155, 240)",
+                              }}
+                            >
+                              Purchaser Terms of Service
+                            </span>
+                            {`. Subscriptions auto-renew until canceled, as described in the Terms.`}{" "}
+                            <span
+                              className="sub-modal-text-footer"
+                              style={{
+                                color: "rgb(29, 155, 240)",
+                              }}
+                            >
+                              Cancel anytime
+                            </span>
+                            {`. Cancel at least 24 hours prior to renewal to avoid additional charges. A verified phone number is required to subscribe. If you've subscribed on another platform, manage your subscription through that platform.`}
+                          </div>
+                        </Modal.Body>
+                      </Modal>
+                    </>
+                  ) : subscriptionPremiumPaymentScreen ? (
+                    <>
+                      <Modal
+                        onHide={handleClosePremiumPaymentScreen}
+                        show={subscriptionPremiumPaymentScreen}
+                        style={{
+                          overflowX: "hidden",
+                          overflowY: "hidden",
+                        }}
+                        className="modal-sub-modal-payment-screen-parent"
+                        dialogClassName="modal-body-sub-modal-payment-screen"
+                      >
+                        <Modal.Body
+                          style={{
+                            height: phoneVerifiedErrorMessage
+                              ? "530px"
+                              : "490px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: "95%",
+                              fontSize: "23px",
+                              fontWeight: "700",
+                              lineHeight: "28px",
+                              margin: "0 auto",
+                            }}
+                          >
+                            Premium
+                          </div>
+
+                          <div
+                            onClick={() => {
+                              setindividualSubOptionPremiumPlusAnnualTab(true);
+                              setindividualSubOptionPremiumPlusMonthlyTab(
+                                false
+                              );
+                            }}
+                            className="individual-subscription-box mt-4"
+                            style={{
+                              width: "95%",
+
+                              backgroundColor: "white",
+                              minHeight: "96px",
+                              padding: "12px",
+                              cursor: "pointer",
+                              borderWidth: "1px",
+                              borderRadius: "16px",
+                              boxShadow:
+                                "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                              border: individualSubOptionPremiumPlusAnnualTab
+                                ? "2px solid #339bf0"
+                                : "2px solid transparent",
+                              transition: "transform 0.3s ease",
+                            }}
+                          >
+                            <span
+                              style={{
+                                color: "#697884",
+                                fontSize: "14px",
+                                fontWeight: "400",
+                                lineHeight: "16px",
+                              }}
+                            >
+                              Annual Plan{" "}
+                              <span
+                                style={{
+                                  fontSize: "11px",
+                                  backgroundColor: "#dcf8eb",
+                                  borderRadius: "9999px",
+                                  color: "black",
+                                  position: "relative",
+                                  bottom: "1px",
+                                  fontWeight: "700",
+                                  lineHeight: "12px",
+                                  padding: "4px",
+                                  height: "20px",
+                                }}
+                              >
+                                <span>Save 12%</span>
+                              </span>
+                            </span>
+
+                            <span
+                              style={{
+                                color: "rgb(15, 20, 25)",
+                                fontSize: "17px",
+                                fontWeight: "700",
+                                lineHeight: "20px",
+                                display: "block",
+                              }}
+                            >
+                              €99.96 / year
+                            </span>
+                            <div
+                              style={{
+                                color: "rgb(83, 100, 113)",
+                                fontSize: "13px",
+                                fontWeight: "400",
+                                lineHeight: "16px",
+                              }}
+                            >
+                              €99.96 per year billed annually
+                            </div>
+                          </div>
+                          <div
+                            className="organization-subscription-box mt-3"
+                            onClick={() => {
+                              setindividualSubOptionPremiumPlusMonthlyTab(true);
+                              setindividualSubOptionPremiumPlusAnnualTab(false);
+                            }}
+                            style={{
+                              width: "95%",
+                              backgroundColor: "white",
+                              minHeight: "96px",
+                              padding: "12px",
+                              cursor: "pointer",
+                              borderWidth: "1px",
+                              borderRadius: "16px",
+                              boxShadow:
+                                "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                              border: individualSubOptionPremiumPlusMonthlyTab
+                                ? "2px solid #339bf0"
+                                : "2px solid transparent",
+                              transition: "transform 0.3s ease",
+                            }}
+                          >
+                            <span
+                              style={{
+                                color: "#697884",
+                                fontSize: "14px",
+                                fontWeight: "400",
+                                lineHeight: "16px",
+                              }}
+                            >
+                              Monthly Plan{" "}
+                            </span>
+
+                            <div
+                              style={{
+                                color: "rgb(15, 20, 25)",
+                                fontSize: "17px",
+                                fontWeight: "700",
+                                lineHeight: "20px",
+                              }}
+                            >
+                              €9.52 / month
+                              <div
+                                style={{
+                                  color: "rgb(83, 100, 113)",
+                                  fontSize: "13px",
+                                  fontWeight: "400",
+                                  lineHeight: "16px",
+                                }}
+                              >
+                                €114.24 per year billed monthly
+                              </div>
+                            </div>
+                          </div>
+                          {phoneVerifiedErrorMessage ? (
+                            <div
+                              style={{
+                                borderRadius: "8px",
+                                color: "rgb(15, 20, 25)",
+                                lineHeight: "16px",
+                                fontSize: "14px",
+                                fontWeight: "400",
+                                backgroundColor: "#fef1f1",
+                                width: "95%",
+                                marginTop: "10px",
+                                height: "40px",
+                                display: "flex",
+                                justifyContent: "left",
+                                alignItems: "center",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  position: "relative",
+                                  left: "15px",
+                                }}
+                              >
+                                Something went wrong. Please try again.
+                              </span>
+                            </div>
+                          ) : null}
+                          <Button
+                            onClick={() => handlePhoneVerifiedCheck()}
+                            className={`login-button next-btn ${
+                              phoneVerifiedErrorMessage ? "mt-2" : "mt-4"
+                            }`}
+                            variant="dark"
+                            style={{
+                              width: "95%",
+                              height: "36px",
+                              color: "white",
+                              backgroundColor: "#0f141a",
+                              opacity: subErrorPhoneVerifiedTabLoading
+                                ? "0.5"
+                                : "1",
+                            }}
+                          >
+                            {subErrorPhoneVerifiedTabLoading ? (
+                              <div
+                                style={{
+                                  fontSize: "15px",
+                                }}
+                              >
+                                <LoadingSpinner
+                                  isCheckoutProcess={true}
+                                  strokeColor={"rgb(29, 155, 240)"}
+                                ></LoadingSpinner>
+                              </div>
+                            ) : (
+                              <span>Subscribe & Pay</span>
+                            )}
+                          </Button>
+
+                          <div
+                            className="mt-3"
+                            style={{
+                              width: "95%",
+                              fontSize: "13px",
+                              lineHeight: "16px",
+                              fontWeight: "400",
+                              border: "1px solid black",
+                              borderRadius: "8px",
+                              padding: "6px",
+                            }}
+                          >
+                            {`By subscribing, you agree to our `}
+                            <span
+                              className="sub-modal-text-footer"
+                              style={{
+                                color: "rgb(29, 155, 240)",
+                              }}
+                            >
+                              Purchaser Terms of Service
+                            </span>
+                            {`. Subscriptions auto-renew until canceled, as described in the Terms.`}{" "}
+                            <span
+                              className="sub-modal-text-footer"
+                              style={{
+                                color: "rgb(29, 155, 240)",
+                              }}
+                            >
+                              Cancel anytime
+                            </span>
+                            {`. Cancel at least 24 hours prior to renewal to avoid additional charges. A verified phone number is required to subscribe. If you've subscribed on another platform, manage your subscription through that platform.`}
+                          </div>
+                        </Modal.Body>
+                      </Modal>
+                    </>
+                  ) : subscriptionBasicPaymentScreen ? (
+                    <>
+                      <Modal
+                        onHide={handleCloseBasicPaymentScreen}
+                        show={subscriptionBasicPaymentScreen}
+                        style={{
+                          overflowX: "hidden",
+                          overflowY: "hidden",
+                        }}
+                        className="modal-sub-modal-payment-screen-parent"
+                        dialogClassName="modal-body-sub-modal-payment-screen"
+                      >
+                        <Modal.Body
+                          style={{
+                            height: phoneVerifiedErrorMessage
+                              ? "530px"
+                              : "490px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: "95%",
+                              fontSize: "23px",
+                              fontWeight: "700",
+                              lineHeight: "28px",
+                              margin: "0 auto",
                             }}
                           >
                             Basic
                           </div>
+
                           <div
+                            onClick={() => {
+                              setindividualSubOptionPremiumPlusAnnualTab(true);
+                              setindividualSubOptionPremiumPlusMonthlyTab(
+                                false
+                              );
+                            }}
+                            className="individual-subscription-box mt-4"
                             style={{
-                              fontSize: "34px",
-                              lineHeight: "40px",
-                              fontWeight: "700",
+                              width: "95%",
+
+                              backgroundColor: "white",
+                              minHeight: "96px",
+                              padding: "12px",
+                              cursor: "pointer",
+                              borderWidth: "1px",
+                              borderRadius: "16px",
+                              boxShadow:
+                                "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                              border: individualSubOptionPremiumPlusAnnualTab
+                                ? "2px solid #339bf0"
+                                : "2px solid transparent",
+                              transition: "transform 0.3s ease",
                             }}
                           >
-                            Find your customers and grow your business
-                          </div>
-                          <div
-                            className="basic-plan-parent-div"
-                            style={{
-                              lineHeight: "20px",
-                              fontWeight: "500",
-                              fontSize: "15px",
-                            }}
-                          >
-                            <div className="mt-2">
-                              Try advertising and grow your business with
-                              priority support and ads credits.
-                            </div>
-                            <div>
-                              <div
-                                style={{
-                                  display: "flex",
-                                }}
-                              >
-                                <svg
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                                <span>Gold checkmark</span>
-                              </div>
-                            </div>
-                            <div>
-                              {" "}
-                              <div
-                                style={{
-                                  display: "flex",
-                                }}
-                              >
-                                <svg
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                                <span>Priority support</span>
-                              </div>{" "}
-                            </div>
-                            <div>
-                              {" "}
-                              <div
-                                style={{
-                                  display: "flex",
-                                }}
-                              >
-                                <svg
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                                <span>Premium+</span>
-                              </div>
-                            </div>
-                            <div>
-                              {" "}
-                              <div
-                                style={{
-                                  display: "flex",
-                                }}
-                              >
-                                <svg
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                                <span>Hiring</span>
-                              </div>
-                            </div>
-                            <div>
-                              {" "}
-                              <div
-                                style={{
-                                  display: "flex",
-                                }}
-                              >
-                                <svg
-                                  color="rgba(83, 100, 113, 1.00)"
-                                  fill="currentColor"
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
-                                  </g>
-                                </svg>
-                                <span>2x boost</span>
-                              </div>
-                            </div>
-                            <div>
-                              {" "}
-                              <div
-                                style={{
-                                  display: "flex",
-                                }}
-                              >
-                                <svg
-                                  color="rgba(83, 100, 113, 1.00)"
-                                  fill="currentColor"
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
-                                  </g>
-                                </svg>
-                                <span>Affiliations</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div
-                            style={{
-                              fontSize: "15px",
-                              fontWeight: "400",
-                              lineHeight: "20px",
-                            }}
-                            className="mt-1"
-                          >
-                            + For a limited time, advertising credit to spend on
-                            your organization{" "}
                             <span
                               style={{
-                                lineHeight: "20px",
-                                fontSize: "15px",
-                                fontWeight: "700",
-                                textDecoration: "underline",
+                                color: "#697884",
+                                fontSize: "14px",
+                                fontWeight: "400",
+                                lineHeight: "16px",
                               }}
                             >
-                              {basicAnnualTabStyle
-                                ? "every year"
-                                : "every month"}
-                            </span>{" "}
-                            with dedicated support.{" "}
+                              Annual Plan{" "}
+                              <span
+                                style={{
+                                  fontSize: "11px",
+                                  backgroundColor: "#dcf8eb",
+                                  borderRadius: "9999px",
+                                  color: "black",
+                                  position: "relative",
+                                  bottom: "1px",
+                                  fontWeight: "700",
+                                  lineHeight: "12px",
+                                  padding: "4px",
+                                  height: "20px",
+                                }}
+                              >
+                                <span>Save 11%</span>
+                              </span>
+                            </span>
+
                             <span
-                              className="learn-more-basic-plan"
                               style={{
-                                cursor: "pointer",
+                                color: "rgb(15, 20, 25)",
+                                fontSize: "17px",
+                                fontWeight: "700",
+                                lineHeight: "20px",
+                                display: "block",
+                              }}
+                            >
+                              €38.08 / year
+                            </span>
+                            <div
+                              style={{
+                                color: "rgb(83, 100, 113)",
+                                fontSize: "13px",
+                                fontWeight: "400",
+                                lineHeight: "16px",
+                              }}
+                            >
+                              €38.08 per year billed annually
+                            </div>
+                          </div>
+                          <div
+                            className="organization-subscription-box mt-3"
+                            onClick={() => {
+                              setindividualSubOptionPremiumPlusMonthlyTab(true);
+                              setindividualSubOptionPremiumPlusAnnualTab(false);
+                            }}
+                            style={{
+                              width: "95%",
+                              backgroundColor: "white",
+                              minHeight: "96px",
+                              padding: "12px",
+                              cursor: "pointer",
+                              borderWidth: "1px",
+                              borderRadius: "16px",
+                              boxShadow:
+                                "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                              border: individualSubOptionPremiumPlusMonthlyTab
+                                ? "2px solid #339bf0"
+                                : "2px solid transparent",
+                              transition: "transform 0.3s ease",
+                            }}
+                          >
+                            <span
+                              style={{
+                                color: "#697884",
+                                fontSize: "14px",
+                                fontWeight: "400",
+                                lineHeight: "16px",
+                              }}
+                            >
+                              Monthly Plan{" "}
+                            </span>
+
+                            <div
+                              style={{
+                                color: "rgb(15, 20, 25)",
+                                fontSize: "17px",
+                                fontWeight: "700",
+                                lineHeight: "20px",
+                              }}
+                            >
+                              €3.57 / month
+                              <div
+                                style={{
+                                  color: "rgb(83, 100, 113)",
+                                  fontSize: "13px",
+                                  fontWeight: "400",
+                                  lineHeight: "16px",
+                                }}
+                              >
+                                €42.84 per year billed monthly
+                              </div>
+                            </div>
+                          </div>
+                          {phoneVerifiedErrorMessage ? (
+                            <div
+                              style={{
+                                borderRadius: "8px",
+                                color: "rgb(15, 20, 25)",
+                                lineHeight: "16px",
+                                fontSize: "14px",
+                                fontWeight: "400",
+                                backgroundColor: "#fef1f1",
+                                width: "95%",
+                                marginTop: "10px",
+                                height: "40px",
+                                display: "flex",
+                                justifyContent: "left",
+                                alignItems: "center",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  position: "relative",
+                                  left: "15px",
+                                }}
+                              >
+                                Something went wrong. Please try again.
+                              </span>
+                            </div>
+                          ) : null}
+
+                          <Button
+                            onClick={() => handlePhoneVerifiedCheck()}
+                            className={`login-button next-btn ${
+                              phoneVerifiedErrorMessage ? "mt-2" : "mt-4"
+                            }`}
+                            variant="dark"
+                            style={{
+                              width: "95%",
+                              height: "36px",
+                              color: "white",
+                              backgroundColor: "#0f141a",
+                              opacity: subErrorPhoneVerifiedTabLoading
+                                ? "0.5"
+                                : "1",
+                            }}
+                          >
+                            {subErrorPhoneVerifiedTabLoading ? (
+                              <div
+                                style={{
+                                  fontSize: "15px",
+                                }}
+                              >
+                                <LoadingSpinner
+                                  isCheckoutProcess={true}
+                                  strokeColor={"rgb(29, 155, 240)"}
+                                ></LoadingSpinner>
+                              </div>
+                            ) : (
+                              <span>Subscribe & Pay</span>
+                            )}
+                          </Button>
+
+                          <div
+                            className="mt-3"
+                            style={{
+                              width: "95%",
+                              fontSize: "13px",
+                              lineHeight: "16px",
+                              fontWeight: "400",
+                              border: "1px solid black",
+                              borderRadius: "8px",
+                              padding: "6px",
+                            }}
+                          >
+                            {`By subscribing, you agree to our `}
+                            <span
+                              className="sub-modal-text-footer"
+                              style={{
                                 color: "rgb(29, 155, 240)",
                               }}
                             >
-                              Learn more
+                              Purchaser Terms of Service
                             </span>
+                            {`. Subscriptions auto-renew until canceled, as described in the Terms.`}{" "}
+                            <span
+                              className="sub-modal-text-footer"
+                              style={{
+                                color: "rgb(29, 155, 240)",
+                              }}
+                            >
+                              Cancel anytime
+                            </span>
+                            {`. Cancel at least 24 hours prior to renewal to avoid additional charges. A verified phone number is required to subscribe. If you've subscribed on another platform, manage your subscription through that platform.`}
                           </div>
-                        </div>
-                        <div
+                        </Modal.Body>
+                      </Modal>
+                    </>
+                  ) : null}
+                  {individualSubOptionTab === 2 ? (
+                    <Modal.Footer
+                      style={{
+                        height: "69px",
+                        backgroundColor: "#fdfdfe",
+                        position: "relative",
+                        right: "15px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "90%",
+                          height: "69px",
+                          padding: "22px 0px",
+                          position: "relative",
+                          borderRight: "1px solid rgba(0,0,0,0.1)",
+                          borderLeft: "1px solid rgba(0,0,0,0.1)",
+                          top: "17px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          backgroundColor: "#ffffff",
+                          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                        }}
+                      >
+                        <Button
+                          onClick={showPremiumPlusPaymentScreen}
+                          className="login-button next-btn"
+                          variant="dark"
                           style={{
-                            width: "100%",
-                            // position: "absolute",
-                            // bottom: "0px",
-                            // backgroundColor: "yellow",
+                            width: "75%",
+                            color: "white",
+                            backgroundColor: "#0f141a",
                           }}
                         >
+                          Starting at €19.04
+                        </Button>
+                      </div>
+                    </Modal.Footer>
+                  ) : individualSubOptionTab === 1 ? (
+                    <Modal.Footer
+                      style={{
+                        height: "69px",
+                        backgroundColor: "#fdfdfe",
+                        position: "relative",
+                        right: "15px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "90%",
+                          height: "69px",
+                          padding: "22px 0px",
+                          position: "relative",
+                          borderRight: "1px solid rgba(0,0,0,0.1)",
+                          borderLeft: "1px solid rgba(0,0,0,0.1)",
+                          top: "17px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          backgroundColor: "#ffffff",
+                          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                        }}
+                      >
+                        <Button
+                          onClick={showPremiumPaymentScreen}
+                          className="login-button next-btn"
+                          variant="dark"
+                          style={{
+                            width: "75%",
+                            color: "white",
+                            backgroundColor: "#0f141a",
+                          }}
+                        >
+                          Starting at €9.60
+                        </Button>
+                      </div>
+                    </Modal.Footer>
+                  ) : individualSubOptionTab === 0 ? (
+                    <Modal.Footer
+                      style={{
+                        height: "69px",
+                        backgroundColor: "#fdfdfe",
+                        position: "relative",
+                        right: "15px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "90%",
+                          height: "69px",
+                          padding: "22px 0px",
+                          position: "relative",
+                          borderRight: "1px solid rgba(0,0,0,0.1)",
+                          borderLeft: "1px solid rgba(0,0,0,0.1)",
+                          top: "17px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          backgroundColor: "#ffffff",
+                          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                        }}
+                      >
+                        <Button
+                          onClick={showBasicPaymentScreen}
+                          className="login-button next-btn"
+                          variant="dark"
+                          style={{
+                            width: "75%",
+                            color: "white",
+                            backgroundColor: "#0f141a",
+                          }}
+                        >
+                          Starting at €3.57
+                        </Button>
+                      </div>
+                    </Modal.Footer>
+                  ) : null}
+                </>
+              ) : tabIndex === 1 && isOrganizationSubscriptionClicked ? (
+                <>
+                  {" "}
+                  <>
+                    <Modal.Body
+                      className="scrollbar-add"
+                      style={{
+                        position: "relative",
+                        bottom: "35px",
+                        zIndex: 1,
+                      }}
+                    >
+                      {subTabIndexFromOrganizationSelect !== 3 ? (
+                        <>
                           <div
                             className="mt-4"
                             style={{
+                              backgroundColor: "black",
+                              borderRadius: "9999px",
                               display: "flex",
-                              gap: "2.5%",
+                              alignItems: "center",
                             }}
                           >
-                            {/* annual plan start to check  */}
                             <div
-                              onClick={() => {
-                                setbasicAnnualTabStyle(true);
-                                setbasicMonthlyTabStyle(false);
+                              style={{
+                                width: "184px",
+                                height: "40px",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
                               }}
-                              style={
-                                ({ activeIndividualOptionTabStyle },
-                                {
-                                  flex: 1,
-                                  backgroundColor: "white",
-                                  maxHeight: "72px",
-                                  padding: "12px",
-                                  cursor: "pointer",
-                                  borderWidth: "1px",
-                                  borderRadius: "16px",
-                                  boxShadow:
-                                    "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
-                                  border: basicAnnualTabStyle
-                                    ? "2px solid #339bf0"
-                                    : "2px solid transparent",
-                                  transition: "transform 0.3s ease",
-                                })
-                              }
-                              className="individual-subscription-box"
                             >
+                              <button
+                                onClick={() => {
+                                  basicPlanClick();
+                                }}
+                                style={tabStyleOrganizationBasicStyle}
+                              >
+                                <span
+                                  style={{
+                                    padding: "6px",
+                                  }}
+                                >
+                                  Basic
+                                </span>
+                              </button>
+                              <button
+                                onClick={() => {
+                                  fullAccessPlanClick();
+                                }}
+                                style={tabStyleOrganizationFullAccessStyle}
+                              >
+                                <span style={{}}>Full Access</span>
+                              </button>
+                            </div>
+                          </div>
+                        </>
+                      ) : null}
+                      {subTabIndexFromOrganizationSelect === 1 &&
+                      tabStyleOrganizationBasicPlan ? (
+                        <>
+                          <div
+                            className="mt-2"
+                            style={{
+                              width: "100%",
+                              backgroundColor: "rgba(247, 249, 249, 1.00)",
+                              borderRadius: "16px",
+                              padding: "16px",
+                            }}
+                          >
+                            <div
+                              style={{
+                                color: "rgb(83, 100, 113)",
+                                lineHeight: "28px",
+                                fontWeight: "700",
+                                fontSize: "23px",
+                              }}
+                            >
+                              Basic
+                            </div>
+                            <div
+                              style={{
+                                fontSize: "34px",
+                                lineHeight: "40px",
+                                fontWeight: "700",
+                              }}
+                            >
+                              Find your customers and grow your business
+                            </div>
+                            <div
+                              className="basic-plan-parent-div"
+                              style={{
+                                lineHeight: "20px",
+                                fontWeight: "500",
+                                fontSize: "15px",
+                              }}
+                            >
+                              <div className="mt-2">
+                                Try advertising and grow your business with
+                                priority support and ads credits.
+                              </div>
                               <div>
                                 <div
                                   style={{
-                                    color: "rgb(15, 20, 25)",
-                                    fontSize: "18px",
-                                    fontWeight: "600",
-                                    display: " flex",
+                                    display: "flex",
                                   }}
                                 >
-                                  {" "}
-                                  <div>{yearlyFee} / year</div>
-                                  <div
-                                    style={{
-                                      fontSize: "12px",
-                                      backgroundColor: "#dcf8eb",
-                                      borderRadius: "9999px",
-                                      height: "20px",
-                                      display: "flex",
-                                      justifyContent: "center",
-                                      alignItems: "center",
-                                      position: "relative",
-                                      top: "5px",
-                                      left: "3px",
-                                    }}
+                                  <svg
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
                                   >
-                                    <span
-                                      style={{
-                                        padding: "4px 4px",
-                                      }}
-                                    >
-                                      Save 16%
-                                    </span>
-                                  </div>
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                  <span>Gold checkmark</span>
                                 </div>
+                              </div>
+                              <div>
+                                {" "}
                                 <div
                                   style={{
-                                    color: "#697884",
-                                    fontSize: "14px",
-                                    fontWeight: "400",
+                                    display: "flex",
                                   }}
                                 >
-                                  {" "}
-                                  Annual plan
+                                  <svg
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                  <span>Priority support</span>
+                                </div>{" "}
+                              </div>
+                              <div>
+                                {" "}
+                                <div
+                                  style={{
+                                    display: "flex",
+                                  }}
+                                >
+                                  <svg
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                  <span>Premium+</span>
+                                </div>
+                              </div>
+                              <div>
+                                {" "}
+                                <div
+                                  style={{
+                                    display: "flex",
+                                  }}
+                                >
+                                  <svg
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                  <span>Hiring</span>
+                                </div>
+                              </div>
+                              <div>
+                                {" "}
+                                <div
+                                  style={{
+                                    display: "flex",
+                                  }}
+                                >
+                                  <svg
+                                    color="rgba(83, 100, 113, 1.00)"
+                                    fill="currentColor"
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
+                                    </g>
+                                  </svg>
+                                  <span>2x boost</span>
+                                </div>
+                              </div>
+                              <div>
+                                {" "}
+                                <div
+                                  style={{
+                                    display: "flex",
+                                  }}
+                                >
+                                  <svg
+                                    color="rgba(83, 100, 113, 1.00)"
+                                    fill="currentColor"
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
+                                    </g>
+                                  </svg>
+                                  <span>Affiliations</span>
                                 </div>
                               </div>
                             </div>
-                            {/* annual plan finish to check  */}
-                            {/* monthly plan start to check  */}
                             <div
-                              onClick={() => {
-                                setbasicMonthlyTabStyle(true);
-                                setbasicAnnualTabStyle(false);
+                              style={{
+                                fontSize: "15px",
+                                fontWeight: "400",
+                                lineHeight: "20px",
                               }}
-                              style={
-                                ({ activeOrganizationOptionTabStyle },
-                                {
-                                  flex: 1,
-                                  backgroundColor: "white",
-                                  maxHeight: "72px",
-                                  padding: "12px",
-                                  cursor: "pointer",
-                                  borderWidth: "1px",
-                                  borderRadius: "16px",
-                                  boxShadow:
-                                    "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
-                                  border: basicMonthlyTabStyle
-                                    ? "2px solid #339bf0"
-                                    : "2px solid transparent",
-                                  transition: "transform 0.3s ease",
-                                })
-                              }
-                              className="organization-subscription-box"
+                              className="mt-1"
                             >
-                              <div
+                              + For a limited time, advertising credit to spend
+                              on your organization{" "}
+                              <span
                                 style={{
-                                  position: "relative",
+                                  lineHeight: "20px",
+                                  fontSize: "15px",
+                                  fontWeight: "700",
+                                  textDecoration: "underline",
                                 }}
+                              >
+                                {basicAnnualTabStyle
+                                  ? "every year"
+                                  : "every month"}
+                              </span>{" "}
+                              with dedicated support.{" "}
+                              <span
+                                className="learn-more-basic-plan"
+                                style={{
+                                  cursor: "pointer",
+                                  color: "rgb(29, 155, 240)",
+                                }}
+                              >
+                                Learn more
+                              </span>
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              width: "100%",
+                              // position: "absolute",
+                              // bottom: "0px",
+                              // backgroundColor: "yellow",
+                            }}
+                          >
+                            <div
+                              className="mt-4"
+                              style={{
+                                display: "flex",
+                                gap: "2.5%",
+                              }}
+                            >
+                              {/* annual plan start to check  */}
+                              <div
+                                onClick={() => {
+                                  setbasicAnnualTabStyle(true);
+                                  setbasicMonthlyTabStyle(false);
+                                }}
+                                style={
+                                  ({ activeIndividualOptionTabStyle },
+                                  {
+                                    flex: 1,
+                                    backgroundColor: "white",
+                                    maxHeight: "72px",
+                                    padding: "12px",
+                                    cursor: "pointer",
+                                    borderWidth: "1px",
+                                    borderRadius: "16px",
+                                    boxShadow:
+                                      "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                                    border: basicAnnualTabStyle
+                                      ? "2px solid #339bf0"
+                                      : "2px solid transparent",
+                                    transition: "transform 0.3s ease",
+                                  })
+                                }
+                                className="individual-subscription-box"
+                              >
+                                <div>
+                                  <div
+                                    style={{
+                                      color: "rgb(15, 20, 25)",
+                                      fontSize: "18px",
+                                      fontWeight: "600",
+                                      display: " flex",
+                                    }}
+                                  >
+                                    {" "}
+                                    <div>{yearlyFee} / year</div>
+                                    <div
+                                      style={{
+                                        fontSize: "12px",
+                                        backgroundColor: "#dcf8eb",
+                                        borderRadius: "9999px",
+                                        height: "20px",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        position: "relative",
+                                        top: "5px",
+                                        left: "3px",
+                                      }}
+                                    >
+                                      <span
+                                        style={{
+                                          padding: "4px 4px",
+                                        }}
+                                      >
+                                        Save 16%
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div
+                                    style={{
+                                      color: "#697884",
+                                      fontSize: "14px",
+                                      fontWeight: "400",
+                                    }}
+                                  >
+                                    {" "}
+                                    Annual plan
+                                  </div>
+                                </div>
+                              </div>
+                              {/* annual plan finish to check  */}
+                              {/* monthly plan start to check  */}
+                              <div
+                                onClick={() => {
+                                  setbasicMonthlyTabStyle(true);
+                                  setbasicAnnualTabStyle(false);
+                                }}
+                                style={
+                                  ({ activeOrganizationOptionTabStyle },
+                                  {
+                                    flex: 1,
+                                    backgroundColor: "white",
+                                    maxHeight: "72px",
+                                    padding: "12px",
+                                    cursor: "pointer",
+                                    borderWidth: "1px",
+                                    borderRadius: "16px",
+                                    boxShadow:
+                                      "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                                    border: basicMonthlyTabStyle
+                                      ? "2px solid #339bf0"
+                                      : "2px solid transparent",
+                                    transition: "transform 0.3s ease",
+                                  })
+                                }
+                                className="organization-subscription-box"
                               >
                                 <div
                                   style={{
-                                    color: "rgb(15, 20, 25)",
-                                    fontSize: "18px",
-                                    fontWeight: "600",
+                                    position: "relative",
                                   }}
                                 >
-                                  {monthyleFee} / month
-                                </div>{" "}
+                                  <div
+                                    style={{
+                                      color: "rgb(15, 20, 25)",
+                                      fontSize: "18px",
+                                      fontWeight: "600",
+                                    }}
+                                  >
+                                    {monthyleFee} / month
+                                  </div>{" "}
+                                  <div
+                                    style={{
+                                      color: "#697884",
+                                      fontSize: "14px",
+                                      fontWeight: "400",
+                                    }}
+                                  >
+                                    Monthly plan
+                                  </div>
+                                </div>
+                              </div>
+                              {/* monthly plan finish to check  */}
+                            </div>
+                            <div
+                              className="mt-3"
+                              style={{
+                                color: "rgb(83, 100, 113)",
+                                fontSize: "11px",
+                                lineHeight: "12px",
+                                fontWeight: "400",
+                                height: "20px",
+                              }}
+                            >
+                              {" "}
+                              <span>
+                                Basic is{" "}
+                                {basicAnnualTabStyle
+                                  ? yearlyFee
+                                  : monthyleFee
+                                  ? monthyleFee
+                                  : null}
+                                /
+                                {basicAnnualTabStyle
+                                  ? "year"
+                                  : monthyleFee
+                                  ? "month"
+                                  : null}{" "}
+                                (tax inclusive).{" "}
+                              </span>
+                              <span
+                                className="learn-more-basic-plan"
+                                style={{
+                                  color: "rgb(29, 155, 240)",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                Learn more
+                              </span>
+                            </div>
+                            <Button
+                              onClick={() =>
+                                handleCheckoutStripeApi(
+                                  basicAnnualTabStyle
+                                    ? yearlyFee
+                                    : basicMonthlyTabStyle
+                                    ? monthyleFee
+                                    : null,
+                                  basicAnnualTabStyle ? "per year" : "per month"
+                                )
+                              }
+                              className="mt-4 subscribe-btn-basic-plan"
+                              style={{
+                                backgroundColor: "#0f1518",
+                                color: "white",
+                                height: "34px",
+                                width: "100%",
+                                borderRadius: "9999px",
+                                border: " none",
+                                opacity: !checkoutProcessLoadingBar
+                                  ? "1"
+                                  : "0.5",
+                              }}
+                              variant="info"
+                            >
+                              {checkoutProcessLoadingBar ? (
                                 <div
                                   style={{
-                                    color: "#697884",
-                                    fontSize: "14px",
-                                    fontWeight: "400",
+                                    fontSize: "15px",
                                   }}
                                 >
-                                  Monthly plan
+                                  <LoadingSpinner
+                                    isCheckoutProcess={true}
+                                    strokeColor={"rgb(29, 155, 240)"}
+                                  ></LoadingSpinner>
+                                </div>
+                              ) : (
+                                <>
+                                  <div
+                                    style={{
+                                      fontSize: "15px",
+                                      lineHeight: "20px",
+                                      fontWeight: "700",
+                                    }}
+                                  >
+                                    <span>Subscribe</span>
+                                    <span
+                                      style={{
+                                        marginLeft: "5px",
+                                      }}
+                                    >
+                                      &middot;
+                                    </span>
+                                    <span>
+                                      {" "}
+                                      {basicAnnualTabStyle
+                                        ? `${yearlyFee} per year`
+                                        : `${monthyleFee} per month`}{" "}
+                                    </span>
+                                  </div>
+                                </>
+                              )}
+                            </Button>
+                            <div
+                              className="mt-4"
+                              style={{
+                                width: "100%",
+                                color: "rgb(83, 100, 113)",
+                                fontSize: "11px",
+                                fontWeight: "400",
+                                lineHeight: "12px",
+                                height: "40px",
+                              }}
+                            >
+                              By clicking Subscribe, you agree to our{" "}
+                              <span
+                                className="text-decoration-thickness-2px"
+                                style={{
+                                  cursor: "pointer",
+                                  color: "rgb(15, 20, 25)",
+                                  textDecoration: "underline",
+                                  textDecorationColor: "rgb(15, 20, 25)",
+                                }}
+                              >
+                                Purchaser Terms of Service.
+                              </span>
+                              Subscriptions auto-renew until canceled. All
+                              accounts that sign up must pass manual approval.
+                            </div>
+                          </div>
+                        </>
+                      ) : subTabIndexFromOrganizationSelect === 2 &&
+                        tabStyleOrganizationFullAccessPlan ? (
+                        <>
+                          {" "}
+                          <div
+                            className="mt-2"
+                            style={{
+                              width: "100%",
+                              backgroundColor: "rgba(247, 249, 249, 1.00)",
+                              borderRadius: "16px",
+                              padding: "16px",
+                            }}
+                          >
+                            <div
+                              style={{
+                                color: "rgb(83, 100, 113)",
+                                lineHeight: "28px",
+                                fontWeight: "700",
+                                fontSize: "23px",
+                              }}
+                            >
+                              Full Access
+                            </div>
+                            <div
+                              style={{
+                                fontSize: "34px",
+                                lineHeight: "40px",
+                                fontWeight: "700",
+                              }}
+                            >
+                              Find your customers and grow your business
+                            </div>
+                            <div
+                              className="basic-plan-parent-div"
+                              style={{
+                                lineHeight: "20px",
+                                fontWeight: "500",
+                                fontSize: "15px",
+                              }}
+                            >
+                              <div className="mt-2">
+                                Reach more customers organically, affiliate your
+                                network, or find your next hire.
+                              </div>
+                              <div>
+                                <div
+                                  style={{
+                                    display: "flex",
+                                  }}
+                                >
+                                  <svg
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                  <span>Gold checkmark</span>
+                                </div>
+                              </div>
+                              <div>
+                                {" "}
+                                <div
+                                  style={{
+                                    display: "flex",
+                                  }}
+                                >
+                                  <svg
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                  <span>Priority support</span>
+                                </div>{" "}
+                              </div>
+                              <div>
+                                {" "}
+                                <div
+                                  style={{
+                                    display: "flex",
+                                  }}
+                                >
+                                  <svg
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                  <span>Premium+</span>
+                                </div>
+                              </div>
+                              <div>
+                                {" "}
+                                <div
+                                  style={{
+                                    display: "flex",
+                                  }}
+                                >
+                                  <svg
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                  <span>Hiring</span>
+                                </div>
+                              </div>
+                              <div>
+                                {" "}
+                                <div
+                                  style={{
+                                    display: "flex",
+                                  }}
+                                >
+                                  <svg
+                                    color="rgba(83, 100, 113, 1.00)"
+                                    fill="currentColor"
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
+                                    </g>
+                                  </svg>
+                                  <span>2x boost</span>
+                                </div>
+                              </div>
+                              <div>
+                                {" "}
+                                <div
+                                  style={{
+                                    display: "flex",
+                                  }}
+                                >
+                                  <svg
+                                    color="rgba(83, 100, 113, 1.00)"
+                                    fill="currentColor"
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
+                                    </g>
+                                  </svg>
+                                  <span>Affiliations</span>
                                 </div>
                               </div>
                             </div>
-                            {/* monthly plan finish to check  */}
+                            <div
+                              style={{
+                                fontSize: "15px",
+                                fontWeight: "400",
+                                lineHeight: "20px",
+                              }}
+                              className="mt-1"
+                            >
+                              + For a limited time, advertising credit to spend
+                              on your organization any of its affiliates{" "}
+                              <span
+                                style={{
+                                  lineHeight: "20px",
+                                  fontSize: "15px",
+                                  fontWeight: "700",
+                                  textDecoration: "underline",
+                                }}
+                              >
+                                {fullAccessAnnualTabStyle
+                                  ? "every year"
+                                  : "every month"}
+                              </span>{" "}
+                              with dedicated support.{" "}
+                              <span
+                                className="learn-more-full-access-plan"
+                                style={{
+                                  cursor: "pointer",
+                                  color: "rgb(29, 155, 240)",
+                                }}
+                              >
+                                Learn more
+                              </span>
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              width: "100%",
+                              // position: "absolute",
+                              // bottom: "0px",
+                              // backgroundColor: "yellow",
+                            }}
+                          >
+                            <div
+                              className="mt-4"
+                              style={{
+                                display: "flex",
+                                gap: "2.5%",
+                              }}
+                            >
+                              {/* annual plan start to check  */}
+                              <div
+                                onClick={() => {
+                                  setfullAccessAnnualTabStyle(true);
+                                  setfullAccessMonthlyTabStyle(false);
+                                }}
+                                style={
+                                  ({ activeIndividualOptionTabStyle },
+                                  {
+                                    flex: 1,
+                                    backgroundColor: "white",
+                                    maxHeight: "72px",
+                                    padding: "12px",
+                                    cursor: "pointer",
+                                    borderWidth: "1px",
+                                    borderRadius: "16px",
+                                    boxShadow:
+                                      "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                                    border: fullAccessAnnualTabStyle
+                                      ? "2px solid #339bf0"
+                                      : "2px solid transparent",
+                                    transition: "transform 0.3s ease",
+                                  })
+                                }
+                                className="individual-subscription-box"
+                              >
+                                <div>
+                                  <div
+                                    style={{
+                                      color: "rgb(15, 20, 25)",
+                                      fontSize: "18px",
+                                      fontWeight: "600",
+                                      display: " flex",
+                                    }}
+                                  >
+                                    {" "}
+                                    <div>{yearlyFeeFullAccess} / year</div>
+                                    <div
+                                      style={{
+                                        fontSize: "12px",
+                                        backgroundColor: "#dcf8eb",
+                                        borderRadius: "9999px",
+                                        height: "20px",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        position: "relative",
+                                        top: "5px",
+                                        left: "3px",
+                                      }}
+                                    >
+                                      <span
+                                        style={{
+                                          padding: "4px 4px",
+                                        }}
+                                      >
+                                        Save 16%
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div
+                                    style={{
+                                      color: "#697884",
+                                      fontSize: "14px",
+                                      fontWeight: "400",
+                                    }}
+                                  >
+                                    {" "}
+                                    Annual plan
+                                  </div>
+                                </div>
+                              </div>
+                              {/* annual plan finish to check  */}
+                              {/* monthly plan start to check  */}
+                              <div
+                                onClick={() => {
+                                  setfullAccessMonthlyTabStyle(true);
+                                  setfullAccessAnnualTabStyle(false);
+                                }}
+                                style={
+                                  ({ activeOrganizationOptionTabStyle },
+                                  {
+                                    flex: 1,
+                                    backgroundColor: "white",
+                                    maxHeight: "72px",
+                                    padding: "12px",
+                                    cursor: "pointer",
+                                    borderWidth: "1px",
+                                    borderRadius: "16px",
+                                    boxShadow:
+                                      "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                                    border: fullAccessMonthlyTabStyle
+                                      ? "2px solid #339bf0"
+                                      : "2px solid transparent",
+                                    transition: "transform 0.3s ease",
+                                  })
+                                }
+                                className="organization-subscription-box"
+                              >
+                                <div
+                                  style={{
+                                    position: "relative",
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      color: "rgb(15, 20, 25)",
+                                      fontSize: "18px",
+                                      fontWeight: "600",
+                                    }}
+                                  >
+                                    {monthyleFeeFullAccess} / month
+                                  </div>{" "}
+                                  <div
+                                    style={{
+                                      color: "#697884",
+                                      fontSize: "14px",
+                                      fontWeight: "400",
+                                    }}
+                                  >
+                                    Monthly plan
+                                  </div>
+                                </div>
+                              </div>
+                              {/* monthly plan finish to check  */}
+                            </div>
+                            <div
+                              className="mt-3"
+                              style={{
+                                color: "rgb(83, 100, 113)",
+                                fontSize: "11px",
+                                lineHeight: "12px",
+                                fontWeight: "400",
+                                height: "20px",
+                              }}
+                            >
+                              {" "}
+                              <span>
+                                Full Access is{" "}
+                                {fullAccessAnnualTabStyle
+                                  ? yearlyFeeFullAccess
+                                  : monthyleFeeFullAccess
+                                  ? monthyleFeeFullAccess
+                                  : null}
+                                /
+                                {fullAccessAnnualTabStyle
+                                  ? "year"
+                                  : monthyleFeeFullAccess
+                                  ? "month"
+                                  : null}{" "}
+                                (tax inclusive). Each additional affiliated
+                                account is{" "}
+                                {fullAccessAnnualTabStyle
+                                  ? "€714 per handle per year"
+                                  : "€59.50 per handle per month"}{" "}
+                                (tax inclusive)
+                              </span>
+                              <span
+                                className="learn-more-basic-plan"
+                                style={{
+                                  color: "rgb(29, 155, 240)",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                Learn more
+                              </span>
+                            </div>
+                            <Button
+                              onClick={() =>
+                                handleFullAccessOrganizationPlanModal()
+                              }
+                              className="mt-4 subscribe-btn-full-access-plan"
+                              style={{
+                                backgroundColor: "#0f1518",
+                                color: "white",
+                                height: "34px",
+                                width: "100%",
+                                borderRadius: "9999px",
+                                border: " none",
+                                opacity: !checkoutProcessLoadingBar
+                                  ? "1"
+                                  : "0.5",
+                              }}
+                              variant="info"
+                            >
+                              <div
+                                style={{
+                                  fontSize: "15px",
+                                  lineHeight: "20px",
+                                  fontWeight: "700",
+                                }}
+                              >
+                                <span>Subscribe</span>
+                                <span
+                                  style={{
+                                    marginLeft: "5px",
+                                  }}
+                                >
+                                  &middot;
+                                </span>
+                                <span>
+                                  {" "}
+                                  {fullAccessAnnualTabStyle
+                                    ? `${yearlyFeeFullAccess} per year`
+                                    : `${monthyleFeeFullAccess} per month`}{" "}
+                                </span>
+                              </div>
+                            </Button>
+                            <div
+                              className="mt-4"
+                              style={{
+                                color: "rgb(83, 100, 113)",
+                                fontSize: "11px",
+                                fontWeight: "400",
+                                lineHeight: "12px",
+                                height: "40px",
+                              }}
+                            >
+                              By clicking Subscribe, you agree to our{" "}
+                              <span
+                                className="text-decoration-thickness-2px"
+                                style={{
+                                  cursor: "pointer",
+                                  color: "rgb(15, 20, 25)",
+                                  textDecoration: "underline",
+                                  textDecorationColor: "rgb(15, 20, 25)",
+                                }}
+                              >
+                                Purchaser Terms of Service.
+                              </span>
+                              Subscriptions auto-renew until canceled. Accounts
+                              that sign up are reviewed for authenticity. If an
+                              account signs up and is not an organization, you
+                              will be rejected and not refunded.
+                            </div>
+                          </div>
+                        </>
+                      ) : subTabIndexFromOrganizationSelect === 3 ? (
+                        <>
+                          {" "}
+                          <div
+                            className="mt-4"
+                            style={{
+                              width: "100%",
+                              lineHeight: "36px",
+                              fontWeight: "800",
+                              fontSize: "31px",
+                            }}
+                          >
+                            Apply for Full Access
                           </div>
                           <div
                             className="mt-3"
                             style={{
+                              width: "100%",
                               color: "rgb(83, 100, 113)",
-                              fontSize: "11px",
-                              lineHeight: "12px",
+                              fontSize: "15px",
+                              lineHeight: "20px",
                               fontWeight: "400",
-                              height: "20px",
                             }}
                           >
-                            {" "}
-                            <span>
-                              Basic is{" "}
-                              {basicAnnualTabStyle
-                                ? yearlyFee
-                                : monthyleFee
-                                ? monthyleFee
-                                : null}
-                              /
-                              {basicAnnualTabStyle
-                                ? "year"
-                                : monthyleFee
-                                ? "month"
-                                : null}{" "}
-                              (tax inclusive).{" "}
-                            </span>
+                            We’ll use this information to assess your
+                            application. Upon receipt of payment and if
+                            eligible, you’ll be invited to activate your
+                            account. For information learn more{" "}
                             <span
-                              className="learn-more-basic-plan"
+                              className="apply-for-access-text-underline"
                               style={{
                                 color: "rgb(29, 155, 240)",
                                 cursor: "pointer",
                               }}
                             >
-                              Learn more
+                              here
                             </span>
+                            .
+                          </div>
+                          {/* text fields start to check  */}
+                          <TextField
+                            className="mt-3"
+                            value={organizationName}
+                            onChange={(e) =>
+                              setOrganizationName(e.target.value)
+                            }
+                            type="text"
+                            id="outlined-basic"
+                            variant={"outlined"}
+                            label={`Organization name`}
+                            style={{
+                              width: "100%",
+                              height: "58px",
+                            }}
+                            error={
+                              allTextFieldsFilled === "no" && !organizationName
+                                ? "true"
+                                : ""
+                            }
+                            sx={{
+                              "& .Mui-focused input + fieldset": {
+                                border:
+                                  allTextFieldsFilled === "no" &&
+                                  !organizationName
+                                    ? "2px solid rgb(244, 33, 46)!important"
+                                    : "2px solid #1d9bf0 !important",
+                              },
+                              "& .MuiOutlinedInput-notchedOutline": {
+                                borderColor:
+                                  allTextFieldsFilled === "no" &&
+                                  !organizationName
+                                    ? "rgb(244, 33, 46)!important"
+                                    : "#cfd9de !important",
+                              },
+                              "& .MuiInputLabel-shrink": {
+                                color:
+                                  allTextFieldsFilled === "no" &&
+                                  !organizationName
+                                    ? "rgb(244, 33, 46)!important"
+                                    : "#1f9cf0 !important",
+                              },
+                            }}
+                          />
+                          <div
+                            className="mt-3"
+                            style={{
+                              width: "100%",
+                            }}
+                          >
+                            <TextField
+                              style={{
+                                width: "100%",
+                                height: "60px",
+                              }}
+                              disabled
+                              id="filled-disabled"
+                              label="Organization @handle"
+                              defaultValue={`@${userInfo.username}`}
+                              variant="filled"
+                              InputProps={{
+                                disableUnderline: true,
+                              }}
+                              sx={{
+                                "& .MuiFilledInput-root": {
+                                  background: "#f7f9fa !important",
+                                },
+                              }}
+                            />
+                          </div>
+                          <TextField
+                            className="mt-3"
+                            type="text"
+                            id="outlined-basic"
+                            variant={"outlined"}
+                            label={`Your full name`}
+                            style={{
+                              width: "100%",
+                              height: "58px",
+                            }}
+                            value={yourFullName}
+                            onChange={(e) => setYourFullName(e.target.value)}
+                            error={
+                              allTextFieldsFilled === "no" && !yourFullName
+                            }
+                            sx={{
+                              "& .Mui-focused input + fieldset": {
+                                border:
+                                  allTextFieldsFilled === "no" && !yourFullName
+                                    ? "2px solid rgb(244, 33, 46)!important"
+                                    : "2px solid #1d9bf0 !important",
+                              },
+                              "& .MuiOutlinedInput-notchedOutline": {
+                                borderColor:
+                                  allTextFieldsFilled === "no" && !yourFullName
+                                    ? "rgb(244, 33, 46)!important"
+                                    : "#cfd9de !important",
+                              },
+                              "& .MuiInputLabel-shrink": {
+                                color:
+                                  allTextFieldsFilled === "no" && !yourFullName
+                                    ? "rgb(244, 33, 46)!important"
+                                    : "#1f9cf0 !important",
+                              },
+                            }}
+                          />
+                          <TextField
+                            className="mt-3"
+                            type="text"
+                            id="outlined-basic"
+                            variant={"outlined"}
+                            label={`Organization email address`}
+                            style={{
+                              width: "100%",
+                              height: "58px",
+                            }}
+                            value={organizationEmailAdress}
+                            onChange={(e) =>
+                              setOrganizationEmailAdress(e.target.value)
+                            }
+                            error={
+                              allTextFieldsFilled === "no" &&
+                              !organizationEmailAdress
+                            }
+                            sx={{
+                              "& .Mui-focused input + fieldset": {
+                                border:
+                                  allTextFieldsFilled === "no" &&
+                                  !organizationEmailAdress
+                                    ? "2px solid rgb(244, 33, 46)!important"
+                                    : "2px solid #1d9bf0 !important",
+                              },
+                              "& .MuiOutlinedInput-notchedOutline": {
+                                borderColor:
+                                  allTextFieldsFilled === "no" &&
+                                  !organizationEmailAdress
+                                    ? "rgb(244, 33, 46) !important"
+                                    : "#cfd9de !important",
+                              },
+                              "& .MuiInputLabel-shrink": {
+                                color:
+                                  allTextFieldsFilled === "no" &&
+                                  !organizationEmailAdress
+                                    ? "rgb(244, 33, 46)!important"
+                                    : "#1f9cf0 !important",
+                              },
+                            }}
+                          />
+                          {invalidEmailError && !organizationEmailAdress ? (
+                            <div
+                              style={{
+                                color: "rgb(244, 33, 46)",
+                                fontSize: "13px",
+                                fontWeight: "400",
+                                lineHeight: "16px",
+                                width: "100%",
+                                position: "relative",
+                                left: "10px",
+                                top: "2px",
+                              }}
+                            >
+                              {invalidEmailError}
+                            </div>
+                          ) : null}
+                          <TextField
+                            className="mt-3"
+                            type="text"
+                            id="outlined-basic"
+                            variant={"outlined"}
+                            label={`Organization website`}
+                            style={{
+                              width: "100%",
+                              height: "58px",
+                            }}
+                            value={organizationWebSite}
+                            onChange={(e) =>
+                              setOrganizationWebSite(e.target.value)
+                            }
+                            error={
+                              allTextFieldsFilled === "no" &&
+                              !organizationWebSite
+                            }
+                            sx={{
+                              "& .Mui-focused input + fieldset": {
+                                border:
+                                  allTextFieldsFilled === "no" &&
+                                  !organizationWebSite
+                                    ? "2px solid rgb(244, 33, 46)!important"
+                                    : "2px solid #1d9bf0 !important",
+                              },
+                              "& .MuiOutlinedInput-notchedOutline": {
+                                borderColor:
+                                  allTextFieldsFilled === "no" &&
+                                  !organizationWebSite
+                                    ? "rgb(244, 33, 46)!important"
+                                    : "#cfd9de !important",
+                              },
+                              "& .MuiInputLabel-shrink": {
+                                color:
+                                  allTextFieldsFilled === "no" &&
+                                  !organizationWebSite
+                                    ? "rgb(244, 33, 46)!important"
+                                    : "#1f9cf0 !important",
+                              },
+                            }}
+                          />
+                          {/* organization type  start to check  */}
+                          <OverlayTrigger
+                            show={showOrganizationTypeContent}
+                            trigger="click"
+                            placement="top"
+                            overlay={popoverOrganizationType}
+                          >
+                            <div
+                              className="mt-3"
+                              onClick={handleShowOrganizationTypeClick}
+                              style={{
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                                color: "#536471",
+                                width: "100%",
+                                minHeight: "58px",
+                                padding: "4px",
+                                border: "1px solid rgb(207, 217, 222)",
+                                borderWidth: showOrganizationTypeContent
+                                  ? "2px"
+                                  : "1px",
+                                borderColor:
+                                  allTextFieldsFilled === "no" &&
+                                  !displayedOrganizationType
+                                    ? "rgb(244, 33, 46)"
+                                    : showOrganizationTypeContent
+                                    ? "#1d9bf0"
+                                    : "#cfd9de",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: "inline-block",
+                                  float: "left",
+                                }}
+                              >
+                                <div
+                                  className="main-outline-text-year-picker"
+                                  style={{
+                                    position: "relative",
+                                    left: "10px",
+                                    top: "5px",
+                                    fontSize: "14px",
+                                    lineHeight: "16px",
+                                    fontWeight: "400",
+                                    color: showOrganizationTypeContent
+                                      ? "#1d9bf0"
+                                      : "rgba(83,100,113,1.00)",
+                                  }}
+                                >
+                                  <span
+                                    style={{
+                                      color:
+                                        allTextFieldsFilled === "no" &&
+                                        !displayedOrganizationType
+                                          ? "rgb(244, 33, 46)"
+                                          : "",
+                                    }}
+                                  >
+                                    Organization Type
+                                  </span>
+                                </div>
+                                <div
+                                  className="mt-2 selected-year-string-parent-div"
+                                  style={{
+                                    position: "relative",
+                                    left: "10px",
+                                    fontSize: "17px",
+                                    lineHeight: "20px",
+                                    color: "black",
+                                  }}
+                                >
+                                  {displayedOrganizationType}
+                                </div>
+                              </div>
+                              <div
+                                style={{
+                                  float: "right",
+                                  position: "relative",
+                                  top: "30%",
+                                  minHeight: "50px",
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <svg
+                                  width={`${1.5}em`}
+                                  height={`${1.5}em`}
+                                  color={
+                                    showOrganizationTypeContent
+                                      ? "#1d9bf0"
+                                      : "rgba(83,100,113,1.00)"
+                                  }
+                                  fill="currentColor"
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="svg-year-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-1plcrui r-lrvibr r-14j79pv r-1pgswnq r-50lct3 r-fdch1b r-633pao r-u8s1d r-1v2oles"
+                                >
+                                  <g className="path-parent-g-year-picker">
+                                    <path d="M3.543 8.96l1.414-1.42L12 14.59l7.043-7.05 1.414 1.42L12 17.41 3.543 8.96z"></path>
+                                  </g>
+                                </svg>
+                              </div>
+                            </div>
+                          </OverlayTrigger>
+                          {/* organization type  finish to check  */}
+                          {/* text fields finish to check  */}
+                          <div
+                            className="mt-3"
+                            style={{
+                              width: "100%",
+                              gap: "2.5%",
+                              display: "flex",
+                            }}
+                          >
+                            <div
+                              style={{
+                                width: "50px",
+                              }}
+                            >
+                              <div
+                                onClick={() => setClicked(!clicked)}
+                                style={{
+                                  width: "36px",
+                                  height: "36px",
+                                  borderRadius: "50%",
+                                  cursor: "pointer",
+                                  marginBlock: "0.5em",
+                                }}
+                                className={
+                                  clicked
+                                    ? "hover-customize-your-experience-tab-get-more-out-of-variant"
+                                    : "hover-customize-your-experience-tab-get-more-out-of-variant-2"
+                                }
+                              >
+                                <div
+                                  style={{
+                                    backgroundColor: clicked
+                                      ? "#1d9bf0"
+                                      : "transparent",
+                                    border: clicked
+                                      ? "none"
+                                      : "2px solid #536471",
+
+                                    borderWidth: "2px ",
+                                    width: "20px",
+                                    height: "20px",
+                                    position: "relative",
+                                    left: "8px",
+                                    top: "8px",
+                                    borderRadius: "3px",
+                                  }}
+                                >
+                                  <svg
+                                    style={{
+                                      position: "relative",
+                                      left: "2px",
+                                      bottom: "4px",
+                                      display: clicked ? "initial" : "none",
+                                    }}
+                                    width={16}
+                                    height={16}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
+                                    color="white"
+                                    fill="currentColor"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div
+                              className="mt-2"
+                              style={{
+                                color: "rgb(83, 100, 113)",
+                                fontSize: "15px",
+                                lineHeight: "20px",
+                                fontWeight: "400",
+                                position: "relative",
+                                bottom: "4px",
+                              }}
+                            >
+                              By checking this box you indicate you have read
+                              andss agree to the terms and conditions available{" "}
+                              <span
+                                style={{
+                                  color: "rgb(29, 155, 240)",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                here
+                              </span>
+                              .
+                            </div>
                           </div>
                           <Button
                             onClick={() =>
-                              handleCheckoutStripeApi(
-                                basicAnnualTabStyle
-                                  ? yearlyFee
-                                  : basicMonthlyTabStyle
-                                  ? monthyleFee
-                                  : null,
-                                basicAnnualTabStyle ? "per year" : "per month"
+                              handleSubmitOrganizationInformationForFullAccessSubscription(
+                                organizationName,
+                                yourFullName,
+                                organizationEmailAdress,
+                                organizationWebSite,
+                                displayedOrganizationType
                               )
                             }
-                            className="mt-4 subscribe-btn-basic-plan"
+                            className={`login-button next-btn mt-4 mb-5
+                          }`}
+                            variant="dark"
                             style={{
-                              backgroundColor: "#0f1518",
-                              color: "white",
-                              height: "34px",
                               width: "100%",
-                              borderRadius: "9999px",
-                              border: " none",
-                              opacity: !checkoutProcessLoadingBar ? "1" : "0.5",
+                              height: "36px",
+                              color: "white",
+                              backgroundColor: "#0f141a",
+                              opacity:
+                                clicked && !checkoutProcessLoadingBar
+                                  ? "1"
+                                  : "0.5",
                             }}
-                            variant="info"
                           >
                             {checkoutProcessLoadingBar ? (
                               <div
@@ -5855,768 +6892,347 @@ function RightSideColumn({
                                 ></LoadingSpinner>
                               </div>
                             ) : (
-                              <>
-                                <div
-                                  style={{
-                                    fontSize: "15px",
-                                    lineHeight: "20px",
-                                    fontWeight: "700",
-                                  }}
-                                >
-                                  <span>Subscribe</span>
-                                  <span
-                                    style={{
-                                      marginLeft: "5px",
-                                    }}
-                                  >
-                                    &middot;
-                                  </span>
-                                  <span>
-                                    {" "}
-                                    {basicAnnualTabStyle
-                                      ? `${yearlyFee} per year`
-                                      : `${monthyleFee} per month`}{" "}
-                                  </span>
-                                </div>
-                              </>
+                              <span>Submit</span>
                             )}
                           </Button>
-                          <div
-                            className="mt-4"
-                            style={{
-                              width: "100%",
-                              color: "rgb(83, 100, 113)",
-                              fontSize: "11px",
-                              fontWeight: "400",
-                              lineHeight: "12px",
-                              height: "40px",
-                            }}
-                          >
-                            By clicking Subscribe, you agree to our{" "}
-                            <span
-                              className="text-decoration-thickness-2px"
-                              style={{
-                                cursor: "pointer",
-                                color: "rgb(15, 20, 25)",
-                                textDecoration: "underline",
-                                textDecorationColor: "rgb(15, 20, 25)",
-                              }}
-                            >
-                              Purchaser Terms of Service.
-                            </span>
-                            Subscriptions auto-renew until canceled. All
-                            accounts that sign up must pass manual approval.
-                          </div>
+                        </>
+                      ) : null}
+                    </Modal.Body>
+                  </>
+                </>
+              ) : tabIndex === 2 &&
+                !phoneVerified &&
+                !showVerifyPhoneNumberPasswordModal ? (
+                <>
+                  {subErrorPhoneVerifiedTabLoading ? (
+                    <Modal.Body
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                      }}
+                      className="signin-modal-body-child-non-reactivate sub-modal"
+                    >
+                      <LoadingSpinner
+                        strokeColor={"rgb(29, 155, 240)"}
+                      ></LoadingSpinner>
+                    </Modal.Body>
+                  ) : (
+                    <Modal.Body
+                      style={{
+                        margin: "0px",
+                        padding: "0px",
+                      }}
+                      className="signin-modal-body-child-non-reactivate sub-modal"
+                    >
+                      <img
+                        className="mt-0"
+                        width={"100%"}
+                        style={{
+                          maxHeight: "300px",
+                          minHeight: "270px",
+                        }}
+                        src="https://ton.twimg.com/onboarding/subscriptions_product/twitter_blue_verified_full_v1.png"
+                        alt=""
+                      />
+                      <div
+                        style={{
+                          width: "81.5%",
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "center",
+                          position: "absolute",
+                          bottom: "50px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontSize: "26px",
+                            lineHeight: "32px",
+                            fontWeight: "800",
+                          }}
+                        >
+                          Verify your phone number
                         </div>
-                      </>
-                    ) : subTabIndexFromOrganizationSelect === 2 &&
-                      tabStyleOrganizationFullAccessPlan ? (
-                      <>
-                        {" "}
                         <div
                           className="mt-2"
                           style={{
-                            width: "100%",
-                            backgroundColor: "rgba(247, 249, 249, 1.00)",
-                            borderRadius: "16px",
-                            padding: "16px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              color: "rgb(83, 100, 113)",
-                              lineHeight: "28px",
-                              fontWeight: "700",
-                              fontSize: "23px",
-                            }}
-                          >
-                            Full Access
-                          </div>
-                          <div
-                            style={{
-                              fontSize: "34px",
-                              lineHeight: "40px",
-                              fontWeight: "700",
-                            }}
-                          >
-                            Find your customers and grow your business
-                          </div>
-                          <div
-                            className="basic-plan-parent-div"
-                            style={{
-                              lineHeight: "20px",
-                              fontWeight: "500",
-                              fontSize: "15px",
-                            }}
-                          >
-                            <div className="mt-2">
-                              Reach more customers organically, affiliate your
-                              network, or find your next hire.
-                            </div>
-                            <div>
-                              <div
-                                style={{
-                                  display: "flex",
-                                }}
-                              >
-                                <svg
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                                <span>Gold checkmark</span>
-                              </div>
-                            </div>
-                            <div>
-                              {" "}
-                              <div
-                                style={{
-                                  display: "flex",
-                                }}
-                              >
-                                <svg
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                                <span>Priority support</span>
-                              </div>{" "}
-                            </div>
-                            <div>
-                              {" "}
-                              <div
-                                style={{
-                                  display: "flex",
-                                }}
-                              >
-                                <svg
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                                <span>Premium+</span>
-                              </div>
-                            </div>
-                            <div>
-                              {" "}
-                              <div
-                                style={{
-                                  display: "flex",
-                                }}
-                              >
-                                <svg
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                                <span>Hiring</span>
-                              </div>
-                            </div>
-                            <div>
-                              {" "}
-                              <div
-                                style={{
-                                  display: "flex",
-                                }}
-                              >
-                                <svg
-                                  color="rgba(83, 100, 113, 1.00)"
-                                  fill="currentColor"
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
-                                  </g>
-                                </svg>
-                                <span>2x boost</span>
-                              </div>
-                            </div>
-                            <div>
-                              {" "}
-                              <div
-                                style={{
-                                  display: "flex",
-                                }}
-                              >
-                                <svg
-                                  color="rgba(83, 100, 113, 1.00)"
-                                  fill="currentColor"
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
-                                >
-                                  <g>
-                                    <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
-                                  </g>
-                                </svg>
-                                <span>Affiliations</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div
-                            style={{
-                              fontSize: "15px",
-                              fontWeight: "400",
-                              lineHeight: "20px",
-                            }}
-                            className="mt-1"
-                          >
-                            + For a limited time, advertising credit to spend on
-                            your organization any of its affiliates{" "}
-                            <span
-                              style={{
-                                lineHeight: "20px",
-                                fontSize: "15px",
-                                fontWeight: "700",
-                                textDecoration: "underline",
-                              }}
-                            >
-                              {fullAccessAnnualTabStyle
-                                ? "every year"
-                                : "every month"}
-                            </span>{" "}
-                            with dedicated support.{" "}
-                            <span
-                              className="learn-more-full-access-plan"
-                              style={{
-                                cursor: "pointer",
-                                color: "rgb(29, 155, 240)",
-                              }}
-                            >
-                              Learn more
-                            </span>
-                          </div>
-                        </div>
-                        <div
-                          style={{
-                            width: "100%",
-                            // position: "absolute",
-                            // bottom: "0px",
-                            // backgroundColor: "yellow",
-                          }}
-                        >
-                          <div
-                            className="mt-4"
-                            style={{
-                              display: "flex",
-                              gap: "2.5%",
-                            }}
-                          >
-                            {/* annual plan start to check  */}
-                            <div
-                              onClick={() => {
-                                setfullAccessAnnualTabStyle(true);
-                                setfullAccessMonthlyTabStyle(false);
-                              }}
-                              style={
-                                ({ activeIndividualOptionTabStyle },
-                                {
-                                  flex: 1,
-                                  backgroundColor: "white",
-                                  maxHeight: "72px",
-                                  padding: "12px",
-                                  cursor: "pointer",
-                                  borderWidth: "1px",
-                                  borderRadius: "16px",
-                                  boxShadow:
-                                    "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
-                                  border: fullAccessAnnualTabStyle
-                                    ? "2px solid #339bf0"
-                                    : "2px solid transparent",
-                                  transition: "transform 0.3s ease",
-                                })
-                              }
-                              className="individual-subscription-box"
-                            >
-                              <div>
-                                <div
-                                  style={{
-                                    color: "rgb(15, 20, 25)",
-                                    fontSize: "18px",
-                                    fontWeight: "600",
-                                    display: " flex",
-                                  }}
-                                >
-                                  {" "}
-                                  <div>{yearlyFeeFullAccess} / year</div>
-                                  <div
-                                    style={{
-                                      fontSize: "12px",
-                                      backgroundColor: "#dcf8eb",
-                                      borderRadius: "9999px",
-                                      height: "20px",
-                                      display: "flex",
-                                      justifyContent: "center",
-                                      alignItems: "center",
-                                      position: "relative",
-                                      top: "5px",
-                                      left: "3px",
-                                    }}
-                                  >
-                                    <span
-                                      style={{
-                                        padding: "4px 4px",
-                                      }}
-                                    >
-                                      Save 16%
-                                    </span>
-                                  </div>
-                                </div>
-                                <div
-                                  style={{
-                                    color: "#697884",
-                                    fontSize: "14px",
-                                    fontWeight: "400",
-                                  }}
-                                >
-                                  {" "}
-                                  Annual plan
-                                </div>
-                              </div>
-                            </div>
-                            {/* annual plan finish to check  */}
-                            {/* monthly plan start to check  */}
-                            <div
-                              onClick={() => {
-                                setfullAccessMonthlyTabStyle(true);
-                                setfullAccessAnnualTabStyle(false);
-                              }}
-                              style={
-                                ({ activeOrganizationOptionTabStyle },
-                                {
-                                  flex: 1,
-                                  backgroundColor: "white",
-                                  maxHeight: "72px",
-                                  padding: "12px",
-                                  cursor: "pointer",
-                                  borderWidth: "1px",
-                                  borderRadius: "16px",
-                                  boxShadow:
-                                    "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
-                                  border: fullAccessMonthlyTabStyle
-                                    ? "2px solid #339bf0"
-                                    : "2px solid transparent",
-                                  transition: "transform 0.3s ease",
-                                })
-                              }
-                              className="organization-subscription-box"
-                            >
-                              <div
-                                style={{
-                                  position: "relative",
-                                }}
-                              >
-                                <div
-                                  style={{
-                                    color: "rgb(15, 20, 25)",
-                                    fontSize: "18px",
-                                    fontWeight: "600",
-                                  }}
-                                >
-                                  {monthyleFeeFullAccess} / month
-                                </div>{" "}
-                                <div
-                                  style={{
-                                    color: "#697884",
-                                    fontSize: "14px",
-                                    fontWeight: "400",
-                                  }}
-                                >
-                                  Monthly plan
-                                </div>
-                              </div>
-                            </div>
-                            {/* monthly plan finish to check  */}
-                          </div>
-                          <div
-                            className="mt-3"
-                            style={{
-                              color: "rgb(83, 100, 113)",
-                              fontSize: "11px",
-                              lineHeight: "12px",
-                              fontWeight: "400",
-                              height: "20px",
-                            }}
-                          >
-                            {" "}
-                            <span>
-                              Full Access is{" "}
-                              {fullAccessAnnualTabStyle
-                                ? yearlyFeeFullAccess
-                                : monthyleFeeFullAccess
-                                ? monthyleFeeFullAccess
-                                : null}
-                              /
-                              {fullAccessAnnualTabStyle
-                                ? "year"
-                                : monthyleFeeFullAccess
-                                ? "month"
-                                : null}{" "}
-                              (tax inclusive). Each additional affiliated
-                              account is{" "}
-                              {fullAccessAnnualTabStyle
-                                ? "€714 per handle per year"
-                                : "€59.50 per handle per month"}{" "}
-                              (tax inclusive)
-                            </span>
-                            <span
-                              className="learn-more-basic-plan"
-                              style={{
-                                color: "rgb(29, 155, 240)",
-                                cursor: "pointer",
-                              }}
-                            >
-                              Learn more
-                            </span>
-                          </div>
-                          <Button
-                            onClick={() =>
-                              handleFullAccessOrganizationPlanModal()
-                            }
-                            className="mt-4 subscribe-btn-full-access-plan"
-                            style={{
-                              backgroundColor: "#0f1518",
-                              color: "white",
-                              height: "34px",
-                              width: "100%",
-                              borderRadius: "9999px",
-                              border: " none",
-                              opacity: !checkoutProcessLoadingBar ? "1" : "0.5",
-                            }}
-                            variant="info"
-                          >
-                            <div
-                              style={{
-                                fontSize: "15px",
-                                lineHeight: "20px",
-                                fontWeight: "700",
-                              }}
-                            >
-                              <span>Subscribe</span>
-                              <span
-                                style={{
-                                  marginLeft: "5px",
-                                }}
-                              >
-                                &middot;
-                              </span>
-                              <span>
-                                {" "}
-                                {fullAccessAnnualTabStyle
-                                  ? `${yearlyFeeFullAccess} per year`
-                                  : `${monthyleFeeFullAccess} per month`}{" "}
-                              </span>
-                            </div>
-                          </Button>
-                          <div
-                            className="mt-4"
-                            style={{
-                              color: "rgb(83, 100, 113)",
-                              fontSize: "11px",
-                              fontWeight: "400",
-                              lineHeight: "12px",
-                              height: "40px",
-                            }}
-                          >
-                            By clicking Subscribe, you agree to our{" "}
-                            <span
-                              className="text-decoration-thickness-2px"
-                              style={{
-                                cursor: "pointer",
-                                color: "rgb(15, 20, 25)",
-                                textDecoration: "underline",
-                                textDecorationColor: "rgb(15, 20, 25)",
-                              }}
-                            >
-                              Purchaser Terms of Service.
-                            </span>
-                            Subscriptions auto-renew until canceled. Accounts
-                            that sign up are reviewed for authenticity. If an
-                            account signs up and is not an organization, you
-                            will be rejected and not refunded.
-                          </div>
-                        </div>
-                      </>
-                    ) : subTabIndexFromOrganizationSelect === 3 ? (
-                      <>
-                        {" "}
-                        <div
-                          className="mt-4"
-                          style={{
-                            width: "100%",
-                            lineHeight: "36px",
-                            fontWeight: "800",
-                            fontSize: "31px",
-                          }}
-                        >
-                          Apply for Full Access
-                        </div>
-                        <div
-                          className="mt-3"
-                          style={{
-                            width: "100%",
-                            color: "rgb(83, 100, 113)",
                             fontSize: "15px",
-                            lineHeight: "20px",
                             fontWeight: "400",
+                            lineHeight: "20px",
+                            color: "rgb(83, 100, 113)",
                           }}
                         >
-                          We’ll use this information to assess your application.
-                          Upon receipt of payment and if eligible, you’ll be
-                          invited to activate your account. For information
-                          learn more{" "}
-                          <span
-                            className="apply-for-access-text-underline"
-                            style={{
-                              color: "rgb(29, 155, 240)",
-                              cursor: "pointer",
-                            }}
-                          >
-                            here
-                          </span>
-                          .
+                          Verify your phone number to subscribe for Premium. It
+                          should just take a few minutes.
                         </div>
-                        {/* text fields start to check  */}
-                        <TextField
-                          className="mt-3"
-                          value={organizationName}
-                          onChange={(e) => setOrganizationName(e.target.value)}
-                          type="text"
-                          id="outlined-basic"
-                          variant={"outlined"}
-                          label={`Organization name`}
+                        <Button
+                          onClick={() => {
+                            handleVerifyYourPasswordModalAfterVerifyYourPhoneNumberClick();
+                          }}
+                          className="login-button next-btn mt-4"
+                          variant="dark"
                           style={{
                             width: "100%",
-                            height: "58px",
+                            height: "52px",
+                            color: "white",
+                            backgroundColor: "#0f141a",
                           }}
-                          error={
-                            allTextFieldsFilled === "no" && !organizationName
-                              ? "true"
-                              : ""
-                          }
-                          sx={{
-                            "& .Mui-focused input + fieldset": {
-                              border:
-                                allTextFieldsFilled === "no" &&
-                                !organizationName
-                                  ? "2px solid rgb(244, 33, 46)!important"
-                                  : "2px solid #1d9bf0 !important",
-                            },
-                            "& .MuiOutlinedInput-notchedOutline": {
-                              borderColor:
-                                allTextFieldsFilled === "no" &&
-                                !organizationName
-                                  ? "rgb(244, 33, 46)!important"
-                                  : "#cfd9de !important",
-                            },
-                            "& .MuiInputLabel-shrink": {
-                              color:
-                                allTextFieldsFilled === "no" &&
-                                !organizationName
-                                  ? "rgb(244, 33, 46)!important"
-                                  : "#1f9cf0 !important",
-                            },
-                          }}
-                        />
+                        >
+                          Verify your phone number
+                        </Button>
+                      </div>
+                    </Modal.Body>
+                  )}
+                </>
+              ) : tabIndex === 2 &&
+                showVerifyPhoneNumberPasswordModal &&
+                !correctPassword ? (
+                <>
+                  {subErrorPhoneVerifiedTabLoading ? (
+                    <Modal.Body
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                      }}
+                      className="signin-modal-body-child-non-reactivate sub-modal-loading-spinner"
+                    >
+                      <LoadingSpinner
+                        strokeColor={"rgb(29, 155, 240)"}
+                      ></LoadingSpinner>
+                    </Modal.Body>
+                  ) : (
+                    <>
+                      {" "}
+                      <Modal.Body
+                        style={{
+                          margin: "0px",
+                          padding: "0px",
+                        }}
+                        className="verify-password-tab-sub-modal"
+                      >
                         <div
-                          className="mt-3"
+                          className="mt-2"
                           style={{
-                            width: "100%",
+                            width: "90%",
+                            minHeight: "530px",
                           }}
                         >
-                          <TextField
-                            style={{
-                              width: "100%",
-                              height: "60px",
-                            }}
-                            disabled
-                            id="filled-disabled"
-                            label="Organization @handle"
-                            defaultValue={`@${userInfo.username}`}
-                            variant="filled"
-                            InputProps={{
-                              disableUnderline: true,
-                            }}
-                            sx={{
-                              "& .MuiFilledInput-root": {
-                                background: "#f7f9fa !important",
-                              },
-                            }}
-                          />
-                        </div>
-                        <TextField
-                          className="mt-3"
-                          type="text"
-                          id="outlined-basic"
-                          variant={"outlined"}
-                          label={`Your full name`}
-                          style={{
-                            width: "100%",
-                            height: "58px",
-                          }}
-                          value={yourFullName}
-                          onChange={(e) => setYourFullName(e.target.value)}
-                          error={allTextFieldsFilled === "no" && !yourFullName}
-                          sx={{
-                            "& .Mui-focused input + fieldset": {
-                              border:
-                                allTextFieldsFilled === "no" && !yourFullName
-                                  ? "2px solid rgb(244, 33, 46)!important"
-                                  : "2px solid #1d9bf0 !important",
-                            },
-                            "& .MuiOutlinedInput-notchedOutline": {
-                              borderColor:
-                                allTextFieldsFilled === "no" && !yourFullName
-                                  ? "rgb(244, 33, 46)!important"
-                                  : "#cfd9de !important",
-                            },
-                            "& .MuiInputLabel-shrink": {
-                              color:
-                                allTextFieldsFilled === "no" && !yourFullName
-                                  ? "rgb(244, 33, 46)!important"
-                                  : "#1f9cf0 !important",
-                            },
-                          }}
-                        />
-                        <TextField
-                          className="mt-3"
-                          type="text"
-                          id="outlined-basic"
-                          variant={"outlined"}
-                          label={`Organization email address`}
-                          style={{
-                            width: "100%",
-                            height: "58px",
-                          }}
-                          value={organizationEmailAdress}
-                          onChange={(e) =>
-                            setOrganizationEmailAdress(e.target.value)
-                          }
-                          error={
-                            allTextFieldsFilled === "no" &&
-                            !organizationEmailAdress
-                          }
-                          sx={{
-                            "& .Mui-focused input + fieldset": {
-                              border:
-                                allTextFieldsFilled === "no" &&
-                                !organizationEmailAdress
-                                  ? "2px solid rgb(244, 33, 46)!important"
-                                  : "2px solid #1d9bf0 !important",
-                            },
-                            "& .MuiOutlinedInput-notchedOutline": {
-                              borderColor:
-                                allTextFieldsFilled === "no" &&
-                                !organizationEmailAdress
-                                  ? "rgb(244, 33, 46) !important"
-                                  : "#cfd9de !important",
-                            },
-                            "& .MuiInputLabel-shrink": {
-                              color:
-                                allTextFieldsFilled === "no" &&
-                                !organizationEmailAdress
-                                  ? "rgb(244, 33, 46)!important"
-                                  : "#1f9cf0 !important",
-                            },
-                          }}
-                        />
-                        {invalidEmailError && !organizationEmailAdress ? (
                           <div
                             style={{
-                              color: "rgb(244, 33, 46)",
-                              fontSize: "13px",
-                              fontWeight: "400",
-                              lineHeight: "16px",
-                              width: "100%",
-                              position: "relative",
-                              left: "10px",
-                              top: "2px",
+                              lineHeight: "32px",
+                              fontWeight: "700",
+                              fontSize: "26px",
                             }}
                           >
-                            {invalidEmailError}
+                            Verify your password
                           </div>
-                        ) : null}
-                        <TextField
-                          className="mt-3"
-                          type="text"
-                          id="outlined-basic"
-                          variant={"outlined"}
-                          label={`Organization website`}
+                          <div
+                            style={{
+                              color: "rgb(83, 100, 113)",
+                              lineHeight: "20px",
+                              fontWeight: "400",
+                              fontSize: "15px",
+                            }}
+                            className="mt-2"
+                          >
+                            Re-enter your Connectify password to continue.
+                          </div>
+                          {/* start to check verify your password  */}
+                          <FormControl
+                            className="mt-5"
+                            sx={{
+                              width: "90%",
+                            }}
+                            variant="outlined"
+                          >
+                            <InputLabel
+                              sx={{
+                                "&.MuiInputLabel-shrink": {
+                                  color: verifyPasswordErrorMessage
+                                    ? "rgb(244, 33, 46)!important"
+                                    : "#1f9cf0 !important",
+                                },
+                              }}
+                              htmlFor="outlined-adornment-password"
+                            >
+                              Password{" "}
+                            </InputLabel>
+                            <OutlinedInput
+                              autoFocus
+                              sx={{
+                                "& .MuiOutlinedInput-notchedOutline": {
+                                  borderColor: verifyPasswordErrorMessage
+                                    ? "rgb(244, 33, 46)!important"
+                                    : "#cfd9de !important",
+                                },
+                                "&.Mui-focused .MuiOutlinedInput-notchedOutline":
+                                  {
+                                    border: verifyPasswordErrorMessage
+                                      ? "2px solid rgb(244, 33, 46)!important"
+                                      : "2px solid #1d9bf0 !important",
+                                  },
+                              }}
+                              onChange={(e) => handleNewPasswordChange(e)}
+                              value={verifyPasswordInput}
+                              id="outlined-adornment-password"
+                              type={showPassword ? "text" : "password"}
+                              endAdornment={
+                                <InputAdornment position="end">
+                                  {showPassword ? (
+                                    <svg
+                                      onClick={handleClickShowPassword}
+                                      onMouseDown={handleMouseDownPassword}
+                                      style={{
+                                        cursor: "pointer",
+                                      }}
+                                      color="rgb(15, 20, 25)"
+                                      fill="currentColor"
+                                      width={22}
+                                      height={22}
+                                      viewBox="0 0 24 24"
+                                      aria-hidden="true"
+                                      className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18yzcnr r-yc9v9c"
+                                    >
+                                      <g>
+                                        <path d="M3.693 21.707l-1.414-1.414 2.429-2.429c-2.479-2.421-3.606-5.376-3.658-5.513l-.131-.352.131-.352c.133-.353 3.331-8.648 10.937-8.648 2.062 0 3.989.621 5.737 1.85l2.556-2.557 1.414 1.414L3.693 21.707zm-.622-9.706c.356.797 1.354 2.794 3.051 4.449l2.417-2.418c-.361-.609-.553-1.306-.553-2.032 0-2.206 1.794-4 4-4 .727 0 1.424.192 2.033.554l2.263-2.264C14.953 5.434 13.512 5 11.986 5c-5.416 0-8.258 5.535-8.915 7.001zM11.986 10c-1.103 0-2 .897-2 2 0 .178.023.352.067.519l2.451-2.451c-.167-.044-.341-.067-.519-.067zm10.951 1.647l.131.352-.131.352c-.133.353-3.331 8.648-10.937 8.648-.709 0-1.367-.092-2-.223v-2.047c.624.169 1.288.27 2 .27 5.415 0 8.257-5.533 8.915-7-.252-.562-.829-1.724-1.746-2.941l1.438-1.438c1.53 1.971 2.268 3.862 2.33 4.027z"></path>
+                                      </g>
+                                    </svg>
+                                  ) : (
+                                    <svg
+                                      onClick={handleClickShowPassword}
+                                      onMouseDown={handleMouseDownPassword}
+                                      style={{
+                                        cursor: "pointer",
+                                      }}
+                                      width={22}
+                                      height={22}
+                                      color="rgb(15, 20, 25)"
+                                      fill="currentColor"
+                                      viewBox="0 0 24 24"
+                                      aria-hidden="true"
+                                      className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18yzcnr r-yc9v9c"
+                                    >
+                                      <g>
+                                        <path d="M12 21c-7.605 0-10.804-8.296-10.937-8.648L.932 12l.131-.352C1.196 11.295 4.394 3 12 3s10.804 8.296 10.937 8.648l.131.352-.131.352C22.804 12.705 19.606 21 12 21zm-8.915-9c.658 1.467 3.5 7 8.915 7s8.257-5.533 8.915-7c-.658-1.467-3.5-7-8.915-7s-8.257 5.533-8.915 7zM12 16c-2.206 0-4-1.794-4-4s1.794-4 4-4 4 1.794 4 4-1.794 4-4 4zm0-6c-1.103 0-2 .897-2 2s.897 2 2 2 2-.897 2-2-.897-2-2-2z"></path>
+                                      </g>
+                                    </svg>
+                                  )}
+                                </InputAdornment>
+                              }
+                              label="Password"
+                            />
+                          </FormControl>
+                          {/* finish to check verify your password  */}
+                        </div>
+
+                        {verifyPasswordInput ? (
+                          <Button
+                            style={{
+                              width: "81.5%",
+                              height: "52px",
+                              color: "white",
+                              fontSize: "17px",
+                              fontWeight: "700",
+                              lineHeight: "20px",
+                              position: "absolute",
+                              bottom: "20px",
+                            }}
+                            className="login-button next-btn"
+                            variant="dark"
+                            onClick={() => {
+                              handleCheckIsPasswordInputCorrect();
+                            }}
+                          >
+                            Next
+                          </Button>
+                        ) : (
+                          <Button
+                            style={{
+                              width: "81.5%",
+                              height: "52px",
+                              color: "black",
+                              fontSize: "17px",
+                              fontWeight: "700",
+                              lineHeight: "20px",
+                              position: "absolute",
+                              bottom: "20px",
+                            }}
+                            className="forgot-password-btn"
+                            variant="light"
+                            onClick={() => {
+                              setsubErrorPhoneVerifiedTabLoading(true);
+                              setTimeout(() => {
+                                setTabIndex(null);
+                                setshowVerifyPhoneNumberPasswordModal(false);
+                                setphoneVerified(false);
+                                setPhoneVerifiedErrorMessage(null);
+                                setshowSubscriptionModal(false);
+                                setsubErrorPhoneVerifiedTabLoading(false);
+                              }, 500);
+                            }}
+                          >
+                            Cancel
+                          </Button>
+                        )}
+                      </Modal.Body>
+                    </>
+                  )}
+                </>
+              ) : tabIndex === 2 &&
+                showVerifyPhoneNumberPasswordModal &&
+                correctPassword &&
+                !showgeneratedQrCodeModal ? (
+                <>
+                  {subErrorPhoneVerifiedTabLoading ? (
+                    <Modal.Body
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                      }}
+                      className="signin-modal-body-child-non-reactivate sub-modal-loading-spinner"
+                    >
+                      <LoadingSpinner
+                        strokeColor={"rgb(29, 155, 240)"}
+                      ></LoadingSpinner>
+                    </Modal.Body>
+                  ) : (
+                    <>
+                      <Modal.Body className="verify-password-tab-sub-modal">
+                        <div
                           style={{
-                            width: "100%",
-                            height: "58px",
+                            width: "90%",
+                            minHeight: "500px",
                           }}
-                          value={organizationWebSite}
-                          onChange={(e) =>
-                            setOrganizationWebSite(e.target.value)
-                          }
-                          error={
-                            allTextFieldsFilled === "no" && !organizationWebSite
-                          }
-                          sx={{
-                            "& .Mui-focused input + fieldset": {
-                              border:
-                                allTextFieldsFilled === "no" &&
-                                !organizationWebSite
-                                  ? "2px solid rgb(244, 33, 46)!important"
-                                  : "2px solid #1d9bf0 !important",
-                            },
-                            "& .MuiOutlinedInput-notchedOutline": {
-                              borderColor:
-                                allTextFieldsFilled === "no" &&
-                                !organizationWebSite
-                                  ? "rgb(244, 33, 46)!important"
-                                  : "#cfd9de !important",
-                            },
-                            "& .MuiInputLabel-shrink": {
-                              color:
-                                allTextFieldsFilled === "no" &&
-                                !organizationWebSite
-                                  ? "rgb(244, 33, 46)!important"
-                                  : "#1f9cf0 !important",
-                            },
-                          }}
-                        />
-                        {/* organization type  start to check  */}
-                        <OverlayTrigger
-                          show={showOrganizationTypeContent}
-                          trigger="click"
-                          placement="top"
-                          overlay={popoverOrganizationType}
                         >
                           <div
-                            className="mt-3"
-                            onClick={handleShowOrganizationTypeClick}
+                            style={{
+                              lineHeight: "32px",
+                              fontWeight: "700",
+                              fontSize: "26px",
+                              letterSpacing: "0.5px",
+                            }}
+                          >
+                            Add a phone number
+                          </div>
+                          <div
+                            style={{
+                              color: "rgb(83, 100, 113)",
+                              lineHeight: "20px",
+                              fontWeight: "400",
+                              fontSize: "15px",
+                            }}
+                            className="mt-2"
+                          >
+                            Enter the phone number you’d like to associate with
+                            your Connectify account.
+                          </div>
+                          {/* start to check your phone number */}
+                          <div
+                            className="mt-5"
+                            onClick={handleShowOptions}
                             style={{
                               borderRadius: "4px",
                               cursor: "pointer",
@@ -6625,344 +7241,491 @@ function RightSideColumn({
                               minHeight: "58px",
                               padding: "4px",
                               border: "1px solid rgb(207, 217, 222)",
-                              borderWidth: showOrganizationTypeContent
+                              borderWidth: showpopoverCountriesAndTheirPhoneCode
                                 ? "2px"
                                 : "1px",
-                              borderColor:
-                                allTextFieldsFilled === "no" &&
-                                !displayedOrganizationType
-                                  ? "rgb(244, 33, 46)"
-                                  : showOrganizationTypeContent
-                                  ? "#1d9bf0"
-                                  : "#cfd9de",
+                              borderColor: showpopoverCountriesAndTheirPhoneCode
+                                ? "#1d9bf0"
+                                : "#cfd9de",
                             }}
                           >
                             <div
+                              onClick={handleShowOptions}
                               style={{
-                                display: "inline-block",
-                                float: "left",
+                                display: "flex",
+                                justifyContent: "space-between",
                               }}
                             >
                               <div
+                                onClick={handleShowOptions}
                                 className="main-outline-text-year-picker"
                                 style={{
-                                  position: "relative",
-                                  left: "10px",
-                                  top: "5px",
+                                  padding: "0px 8px",
                                   fontSize: "14px",
                                   lineHeight: "16px",
                                   fontWeight: "400",
-                                  color: showOrganizationTypeContent
+                                  color: showpopoverCountriesAndTheirPhoneCode
                                     ? "#1d9bf0"
                                     : "rgba(83,100,113,1.00)",
                                 }}
                               >
-                                <span
+                                <span>Country code</span>
+                                <div
+                                  onClick={handleShowOptions}
+                                  className="mt-2 selected-year-string-parent-div"
                                   style={{
-                                    color:
-                                      allTextFieldsFilled === "no" &&
-                                      !displayedOrganizationType
-                                        ? "rgb(244, 33, 46)"
-                                        : "",
+                                    fontSize: "17px",
+                                    lineHeight: "20px",
+                                    color: "black",
                                   }}
                                 >
-                                  Organization Type
-                                </span>
+                                  {country ? (
+                                    <>
+                                      +{getCountryCallingCode(country)}{" "}
+                                      {en[country]}
+                                    </>
+                                  ) : (
+                                    <>
+                                      +{getCountryCallingCode("DE")} {en["DE"]}
+                                    </>
+                                  )}
+                                </div>
                               </div>
                               <div
-                                className="mt-2 selected-year-string-parent-div"
+                                onClick={handleShowOptions}
                                 style={{
                                   position: "relative",
-                                  left: "10px",
-                                  fontSize: "17px",
-                                  lineHeight: "20px",
-                                  color: "black",
-                                }}
-                              >
-                                {displayedOrganizationType}
-                              </div>
-                            </div>
-                            <div
-                              style={{
-                                float: "right",
-                                position: "relative",
-                                top: "30%",
-                                minHeight: "50px",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                              }}
-                            >
-                              <svg
-                                width={`${1.5}em`}
-                                height={`${1.5}em`}
-                                color={
-                                  showOrganizationTypeContent
-                                    ? "#1d9bf0"
-                                    : "rgba(83,100,113,1.00)"
-                                }
-                                fill="currentColor"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                                className="svg-year-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-1plcrui r-lrvibr r-14j79pv r-1pgswnq r-50lct3 r-fdch1b r-633pao r-u8s1d r-1v2oles"
-                              >
-                                <g className="path-parent-g-year-picker">
-                                  <path d="M3.543 8.96l1.414-1.42L12 14.59l7.043-7.05 1.414 1.42L12 17.41 3.543 8.96z"></path>
-                                </g>
-                              </svg>
-                            </div>
-                          </div>
-                        </OverlayTrigger>
-                        {/* organization type  finish to check  */}
-                        {/* text fields finish to check  */}
-                        <div
-                          className="mt-3"
-                          style={{
-                            width: "100%",
-                            gap: "2.5%",
-                            display: "flex",
-                          }}
-                        >
-                          <div
-                            style={{
-                              width: "50px",
-                            }}
-                          >
-                            <div
-                              onClick={() => setClicked(!clicked)}
-                              style={{
-                                width: "36px",
-                                height: "36px",
-                                borderRadius: "50%",
-                                cursor: "pointer",
-                                marginBlock: "0.5em",
-                              }}
-                              className={
-                                clicked
-                                  ? "hover-customize-your-experience-tab-get-more-out-of-variant"
-                                  : "hover-customize-your-experience-tab-get-more-out-of-variant-2"
-                              }
-                            >
-                              <div
-                                style={{
-                                  backgroundColor: clicked
-                                    ? "#1d9bf0"
-                                    : "transparent",
-                                  border: clicked
-                                    ? "none"
-                                    : "2px solid #536471",
-
-                                  borderWidth: "2px ",
-                                  width: "20px",
-                                  height: "20px",
-                                  position: "relative",
-                                  left: "8px",
-                                  top: "8px",
-                                  borderRadius: "3px",
+                                  top: "10px",
                                 }}
                               >
                                 <svg
-                                  style={{
-                                    position: "relative",
-                                    left: "2px",
-                                    bottom: "4px",
-                                    display: clicked ? "initial" : "none",
-                                  }}
-                                  width={16}
-                                  height={16}
+                                  onClick={handleShowOptions}
+                                  width="24"
+                                  height="24"
+                                  color={
+                                    showpopoverCountriesAndTheirPhoneCode
+                                      ? "#1d9bf0"
+                                      : "rgba(83,100,113,1.00)"
+                                  }
+                                  fill="currentColor"
                                   viewBox="0 0 24 24"
                                   aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
-                                  color="white"
-                                  fill="currentColor"
+                                  className="svg-year-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-1plcrui r-lrvibr r-14j79pv r-1pgswnq r-50lct3 r-fdch1b r-633pao r-u8s1d r-1v2oles"
                                 >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                  <g
+                                    onClick={handleShowOptions}
+                                    className="path-parent-g-year-picker"
+                                  >
+                                    <path
+                                      onClick={handleShowOptions}
+                                      d="M3.543 8.96l1.414-1.42L12 14.59l7.043-7.05 1.414 1.42L12 17.41 3.543 8.96z"
+                                    ></path>
                                   </g>
                                 </svg>
                               </div>
                             </div>
-                          </div>
-                          <div
-                            className="mt-2"
+                          </div>{" "}
+                          <select
+                            onClick={handleShowOptions}
+                            onBlur={() =>
+                              setpopoverCountriesAndTheirPhoneCode(false)
+                            }
+                            ref={selectRef}
                             style={{
-                              color: "rgb(83, 100, 113)",
-                              fontSize: "15px",
-                              lineHeight: "20px",
+                              position: "relative",
+                              bottom: "58px",
+                              borderRadius: "4px",
+                              cursor: "pointer",
+                              color: "#536471",
+                              width: "100%",
+                              minHeight: "58px",
+                              padding: "4px",
+                              border: "1px solid rgb(207, 217, 222)",
+                              borderWidth: showpopoverCountriesAndTheirPhoneCode
+                                ? "2px"
+                                : "1px",
+                              opacity: 0,
+                            }}
+                            value={country}
+                            onChange={handleSelectChange}
+                          >
+                            <option value="">{en["ZZ"]}</option>
+                            {sortedCountries.map((country) => (
+                              <option key={country} value={country}>
+                                +{getCountryCallingCode(country)} {en[country]}
+                              </option>
+                            ))}
+                          </select>
+                          <TextField
+                            error={validPhoneNumber && phoneNumber?.length}
+                            autoFocus={true}
+                            onMouseEnter={() =>
+                              setonFocusedToPhoneNumberField(true)
+                            }
+                            onMouseLeave={() =>
+                              setonFocusedToPhoneNumberField(false)
+                            }
+                            value={phoneNumber}
+                            onChange={(e) => setphoneNumber(e.target.value)}
+                            type="text"
+                            id="outlined-basic"
+                            variant={"outlined"}
+                            label={`Your phone number`}
+                            style={{
+                              width: "100%",
+                              height: "58px",
+                              position: "relative",
+                              bottom: "45px",
+                            }}
+                            sx={{
+                              "& .Mui-focused input + fieldset": {
+                                border: !validPhoneNumber
+                                  ? "2px solid rgb(244, 33, 46)!important"
+                                  : "2px solid #1d9bf0 !important",
+                              },
+                              "& .MuiOutlinedInput-notchedOutline": {
+                                borderColor: !validPhoneNumber
+                                  ? "rgb(244, 33, 46)!important"
+                                  : "#cfd9de !important",
+                              },
+                              "& .MuiInputLabel-shrink": {
+                                color: !validPhoneNumber
+                                  ? "rgb(244, 33, 46)!important"
+                                  : "#1f9cf0 !important",
+                              },
+                            }}
+                          />
+                          <div
+                            style={{
+                              color: "rgb(244, 33, 46)",
+                              fontSize: "13px",
+                              lineHeight: "16px",
                               fontWeight: "400",
                               position: "relative",
-                              bottom: "4px",
+                              left: "10px",
+                              bottom: "45px",
                             }}
                           >
-                            By checking this box you indicate you have read
-                            andss agree to the terms and conditions available{" "}
-                            <span
+                            {errorPhoneInValidMessage
+                              ? errorPhoneInValidMessage
+                              : null}
+                          </div>
+                          {/* finish to check your phone number  */}
+                          {/* footer text and check box  start to check */}
+                          <div
+                            style={{
+                              width: "100%",
+                              gap: "2.5%",
+                              display: "flex",
+                              position: "relative",
+                              bottom: "20px",
+                            }}
+                          >
+                            <div
+                              className="mt-2"
                               style={{
-                                color: "rgb(29, 155, 240)",
-                                cursor: "pointer",
+                                color: "rgb(83, 100, 113)",
+                                fontSize: "15px",
+                                lineHeight: "20px",
+                                fontWeight: "400",
+                                position: "relative",
+                                bottom: "4px",
                               }}
                             >
-                              here
-                            </span>
-                            .
-                          </div>
-                        </div>
-                        <Button
-                          onClick={() =>
-                            handleSubmitOrganizationInformationForFullAccessSubscription(
-                              organizationName,
-                              yourFullName,
-                              organizationEmailAdress,
-                              organizationWebSite,
-                              displayedOrganizationType
-                            )
-                          }
-                          className={`login-button next-btn mt-4 mb-5
-                          }`}
-                          variant="dark"
-                          style={{
-                            width: "100%",
-                            height: "36px",
-                            color: "white",
-                            backgroundColor: "#0f141a",
-                            opacity:
-                              clicked && !checkoutProcessLoadingBar
-                                ? "1"
-                                : "0.5",
-                          }}
-                        >
-                          {checkoutProcessLoadingBar ? (
+                              Let people who have your phone number find and
+                              connect with you on Connectify.{" "}
+                              <span
+                                className="learn-more-add-phone-number"
+                                style={{
+                                  color: "rgb(29, 155, 240)",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                Learn more
+                              </span>
+                            </div>
                             <div
                               style={{
-                                fontSize: "15px",
+                                width: "50px",
+                                minHeight: "50px",
                               }}
                             >
-                              <LoadingSpinner
-                                isCheckoutProcess={true}
-                                strokeColor={"rgb(29, 155, 240)"}
-                              ></LoadingSpinner>
+                              <div
+                                onClick={() => setClicked(!clicked)}
+                                style={{
+                                  width: "36px",
+                                  minHeight: "36px",
+                                  borderRadius: "50%",
+                                  cursor: "pointer",
+                                  marginBlock: "0.5em",
+                                }}
+                                className={
+                                  clicked
+                                    ? "hover-customize-your-experience-tab-get-more-out-of-variant"
+                                    : "hover-customize-your-experience-tab-get-more-out-of-variant-2"
+                                }
+                              >
+                                <div
+                                  style={{
+                                    backgroundColor: clicked
+                                      ? "#1d9bf0"
+                                      : "transparent",
+                                    border: clicked
+                                      ? "none"
+                                      : "2px solid #536471",
+
+                                    borderWidth: "2px ",
+                                    width: "20px",
+                                    minHeight: "20px",
+                                    position: "relative",
+                                    left: "8px",
+                                    top: "8px",
+                                    borderRadius: "3px",
+                                  }}
+                                >
+                                  <svg
+                                    style={{
+                                      position: "relative",
+                                      left: clicked ? "2px" : "",
+                                      top: clicked ? "2px" : "",
+                                      display: clicked ? "block" : "none",
+                                    }}
+                                    width={16}
+                                    height={16}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
+                                    color="white"
+                                    fill="currentColor"
+                                  >
+                                    <g>
+                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
                             </div>
-                          ) : (
-                            <span>Submit</span>
-                          )}
-                        </Button>
-                      </>
-                    ) : null}
-                  </Modal.Body>
+                          </div>
+                          {/* footer text and check box  finish to check */}
+                        </div>
+                        {validPhoneNumber &&
+                        phoneNumber?.length &&
+                        validPhoneNumber !== "unknown" ? (
+                          <Button
+                            style={{
+                              width: "90%",
+                              height: "52px",
+                              color: "white",
+                              fontSize: "17px",
+                              fontWeight: "700",
+                              lineHeight: "20px",
+                              position: "absolute",
+                              bottom: "20px",
+                            }}
+                            className="login-button next-btn"
+                            variant="dark"
+                            onClick={() => {
+                              handleSubscriptionInfoNonPhoneVerifiedUser();
+                            }}
+                          >
+                            Next
+                          </Button>
+                        ) : (
+                          <Button
+                            style={{
+                              width: "90%",
+                              height: "52px",
+                              color: "black",
+                              fontSize: "17px",
+                              fontWeight: "700",
+                              lineHeight: "20px",
+                              position: "absolute",
+                              bottom: "20px",
+                            }}
+                            className="forgot-password-btn"
+                            variant="light"
+                            onClick={() => {
+                              setsubErrorPhoneVerifiedTabLoading(true);
+                              setTimeout(() => {
+                                setshowVerifyPhoneNumberPasswordModal(false);
+                                setshowSubscriptionModal(false);
+                                setphoneVerified(false);
+                                setTabIndex(null);
+                                setCountry("");
+                                setPhoneVerifiedErrorMessage("");
+                                setsubErrorPhoneVerifiedTabLoading(false);
+                                setQrCodeScreenOpened(false);
+                              }, 500);
+                            }}
+                          >
+                            Cancel
+                          </Button>
+                        )}
+                      </Modal.Body>
+                    </>
+                  )}
                 </>
-              </>
-            ) : tabIndex === 2 && !phoneVerified ? (
-              <>
-                {subErrorPhoneVerifiedTabLoading ? (
-                  <Modal.Body
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                    }}
-                    className="signin-modal-body-child-non-reactivate sub-modal"
-                  >
-                    <LoadingSpinner
-                      strokeColor={"rgb(29, 155, 240)"}
-                    ></LoadingSpinner>
-                  </Modal.Body>
-                ) : (
-                  <Modal.Body
-                    style={{
-                      margin: "0px",
-                      padding: "0px",
-                    }}
-                    className="signin-modal-body-child-non-reactivate sub-modal"
-                  >
-                    <img
-                      className="mt-0"
-                      width={"100%"}
+              ) : tabIndex === 2 &&
+                showVerifyPhoneNumberPasswordModal &&
+                correctPassword &&
+                showgeneratedQrCodeModal &&
+                !showVerifyingCodeModal ? (
+                <>
+                  {subErrorPhoneVerifiedTabLoading ? (
+                    <Modal.Body
                       style={{
-                        maxHeight: "300px",
-                        minHeight: "270px",
-                      }}
-                      src="https://ton.twimg.com/onboarding/subscriptions_product/twitter_blue_verified_full_v1.png"
-                      alt=""
-                    />
-                    <div
-                      style={{
-                        width: "70%",
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "center",
-                        marginTop: "100px",
+                      }}
+                      className="signin-modal-body-child-non-reactivate sub-modal-loading-spinner"
+                    >
+                      <LoadingSpinner
+                        strokeColor={"rgb(29, 155, 240)"}
+                      ></LoadingSpinner>
+                    </Modal.Body>
+                  ) : (
+                    <Modal.Body>
+                      <div
+                        style={{
+                          minHeight: "550px",
+                          width: "100%",
+                        }}
+                      >
+                        <div
+                          style={{
+                            lineHeight: "32px",
+                            fontWeight: "700",
+                            fontSize: "26px",
+                            letterSpacing: "0.5px",
+                          }}
+                        >
+                          Verify your phone number
+                        </div>
+                        <div
+                          className="mt-3"
+                          style={{
+                            color: "rgb(83, 100, 113)",
+                            lineHeight: "20px",
+                            fontSize: "15px",
+                            fontWeight: "400",
+                          }}
+                        >
+                          Use the camera app on your phone to scan this QR code.
+                          Send the auto-generated text message to verify your
+                          phone number. Standard SMS fees may apply.
+                        </div>
+                        <div
+                          className="mt-5"
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <div>
+                            {" "}
+                            <QRCodeSVG
+                              value={`sms:+13343453935&body=${verifyPhoneCode}`}
+                            />
+                          </div>
+                          <div
+                            className="mt-5"
+                            style={{
+                              textAlign: "left",
+                            }}
+                          >
+                            <div
+                              style={{
+                                color: "rgb(15, 20, 25)",
+                                fontSize: "15px",
+                                lineHeight: "20px",
+                                fontWeight: "400",
+                              }}
+                            >
+                              {"Can't scan the QR code?"}
+                            </div>
+                            <div
+                              style={{
+                                color: "rgb(15, 20, 25)",
+                                fontSize: "15px",
+                                lineHeight: "20px",
+                                fontWeight: "400",
+                              }}
+                            >{`Text ${verifyPhoneCode} to +13343453935.`}</div>
+                          </div>
+                        </div>
+                        <div
+                          className="mt-5"
+                          style={{
+                            backgroundColor: "green",
+                          }}
+                        >
+                          {" "}
+                          <Button
+                            style={{
+                              width: "90%",
+                              height: "52px",
+                              color: "white",
+                              fontSize: "17px",
+                              fontWeight: "700",
+                              lineHeight: "20px",
+                              position: "absolute",
+                              bottom: "20px",
+                            }}
+                            className="login-button next-btn"
+                            variant="dark"
+                            onClick={() => {
+                              handleVerifyPhoneForSubscription();
+                            }}
+                          >
+                            Next
+                          </Button>
+                        </div>
+                      </div>
+                    </Modal.Body>
+                  )}
+                </>
+              ) : tabIndex === 2 &&
+                showVerifyPhoneNumberPasswordModal &&
+                correctPassword &&
+                showgeneratedQrCodeModal &&
+                showVerifyingCodeModal ? (
+                <Modal.Body>
+                  <div
+                    // className="mt-5"
+                    style={{
+                      minHeight: "550px",
+                      width: "100%",
+                    }}
+                  >
+                    <div
+                      style={{
+                        lineHeight: "32px",
+                        fontWeight: "700",
+                        fontSize: "26px",
+                        letterSpacing: "0.5px",
                       }}
                     >
-                      <div
-                        style={{
-                          fontSize: "26px",
-                          lineHeight: "32px",
-                          fontWeight: "800",
-                        }}
-                      >
-                        Verify your phone number
-                      </div>
-                      <div
-                        className="mt-2"
-                        style={{
-                          fontSize: "15px",
-                          fontWeight: "400",
-                          lineHeight: "20px",
-                          color: "rgb(83, 100, 113)",
-                        }}
-                      >
-                        Verify your phone number to subscribe for Premium. It
-                        should just take a few minutes.
-                      </div>
-                      <Button
-                        className="login-button next-btn mt-4"
-                        variant="dark"
-                        style={{
-                          width: "100%",
-                          height: "52px",
-                          color: "white",
-                          backgroundColor: "#0f141a",
-                        }}
-                      >
-                        Verify your phone number
-                      </Button>
+                      Verifying code...
                     </div>
-                  </Modal.Body>
-                )}
-              </>
-            ) : tabIndex === 2 && phoneVerified ? (
-              <>
-                {subErrorPhoneVerifiedTabLoading ? (
-                  <Modal.Body
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                    }}
-                    className="signin-modal-body-child-non-reactivate sub-modal"
-                  >
-                    <LoadingSpinner
-                      strokeColor={"rgb(29, 155, 240)"}
-                    ></LoadingSpinner>
-                  </Modal.Body>
-                ) : (
-                  <Modal.Body
-                    style={{
-                      margin: "0px",
-                      padding: "0px",
-                    }}
-                    className="signin-modal-body-child-non-reactivate sub-modal"
-                  >
-                    <div>Phone verified !</div>
-                  </Modal.Body>
-                )}
-              </>
-            ) : tabIndex === 4 ? (
-              <>Tab 4 </>
-            ) : (
-              <></>
-            )}
-          </Modal>
+                    <div
+                      className="mt-3"
+                      style={{
+                        color: "rgb(83, 100, 113)",
+                        lineHeight: "20px",
+                        fontSize: "15px",
+                        fontWeight: "400",
+                      }}
+                    >
+                      Please do not close this screen.
+                    </div>
+                  </div>
+                </Modal.Body>
+              ) : null}
+            </Modal>
+          ) : null}
         </>
       ) : (
         <>
@@ -13580,7 +14343,8 @@ function RightSideColumn({
               ) : tabIndex === 2 &&
                 showVerifyPhoneNumberPasswordModal &&
                 correctPassword &&
-                showgeneratedQrCodeModal ? (
+                showgeneratedQrCodeModal &&
+                !showVerifyingCodeModal ? (
                 <>
                   {subErrorPhoneVerifiedTabLoading ? (
                     <Modal.Body
@@ -13744,6 +14508,87 @@ function RightSideColumn({
                     </Modal.Body>
                   )}
                 </>
+              ) : tabIndex === 2 &&
+                showVerifyPhoneNumberPasswordModal &&
+                correctPassword &&
+                showgeneratedQrCodeModal &&
+                showVerifyingCodeModal ? (
+                <Modal.Body>
+                  <div
+                    className="mt-5"
+                    style={{
+                      minHeight: "550px",
+                      width: "81.5%",
+                    }}
+                  >
+                    {/* start to check close svg  */}
+                    <div
+                      onClick={handleCloseSubscriptionModal}
+                      className="close-button"
+                      style={{
+                        cursor: "pointer",
+                        position: "absolute",
+                        top: "15px",
+                        left: "15px",
+                        maxHeight: "36px",
+                        minWidth: "36px",
+                        borderRadius: "50%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <div>
+                        {/* close signin modal icon start to check  */}
+                        <svg
+                          style={{
+                            border: "none",
+                            fontSize: "15px",
+                            margin: "5px",
+                            position: "relative",
+                            top: "2.5px",
+                            left: "0.5px",
+                          }}
+                          onClick={handleCloseSubscriptionModal}
+                          width={20}
+                          height={20}
+                          color="rgb(15,20,25)"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                        >
+                          <g>
+                            <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                          </g>
+                        </svg>{" "}
+                        {/* close signin modal icon finish to check  */}
+                      </div>
+                    </div>{" "}
+                    {/* finish to check close svg  */}
+                    <div
+                      style={{
+                        lineHeight: "36px",
+                        fontWeight: "700",
+                        fontSize: "31px",
+                        letterSpacing: "0.5px",
+                      }}
+                    >
+                      Verifying code...
+                    </div>
+                    <div
+                      className="mt-3"
+                      style={{
+                        color: "rgb(83, 100, 113)",
+                        lineHeight: "20px",
+                        fontSize: "15px",
+                        fontWeight: "400",
+                      }}
+                    >
+                      Please do not close this screen.
+                    </div>
+                  </div>
+                </Modal.Body>
               ) : null}
             </Modal>
           ) : null}
