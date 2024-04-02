@@ -64,10 +64,40 @@ router.post("/sms", (req, res) => {
 
   console.log("User verify phone number code input =>", userMessageContent);
 
+  console.log("Received number from user =>", req.body.From);
+  console.log(
+    "Received number from verify phone number input by user with plus sign and without plus sign =>",
+    resultPhoneNumberGlobal ? resultPhoneNumberGlobal : null
+  );
+
+  console.log(
+    "After sms ! =>",
+    premiumInfoGlobal,
+    premiumRoleGlobal,
+    verifyPhoneCodeGlobal,
+    countryShortCutGlobal,
+    countryPhoneCodeGlobal,
+    selectedCountryGlobal,
+    phoneNumberGlobal
+  );
+  console.log(
+    "After sms ! =>",
+    resultPhoneNumberGlobal ? resultPhoneNumberGlobal : null
+  );
+
+  // console.log(
+  //   "Received number from verify phone number input by user with plus sign and without plus sign =>",
+  //   resultPhoneNumberGlobal.withPlusSign,
+  //   resultPhoneNumberGlobal.withoutPlusSign
+  // );
+
+  // console.log("QR Code for phone verification =>", verifyPhoneCodeGlobal);
+  // console.log("QR Code received from user message =>", userMessageContent);
+
   if (
-    (userMessageContent === verifyPhoneCodeGlobal &&
-      userPhoneNumber === resultPhoneNumberGlobal[0]) ||
-    userPhoneNumber === resultPhoneNumberGlobal[1]
+    userMessageContent === verifyPhoneCodeGlobal &&
+    (userPhoneNumber === resultPhoneNumberGlobal.withPlusSign ||
+      userPhoneNumber === resultPhoneNumberGlobal.withoutPlusSign)
   ) {
     isVerifyCodeCorrect = true;
     isPhoneNumberMatch = true;
@@ -89,6 +119,21 @@ router.post("/sms", (req, res) => {
 
 router.post("/verify-phone-for-subscription", async (req, res) => {
   try {
+    console.log(
+      "After finishing sms process ! =>",
+      premiumInfoGlobal,
+      premiumRoleGlobal,
+      verifyPhoneCodeGlobal,
+      countryShortCutGlobal,
+      countryPhoneCodeGlobal,
+      selectedCountryGlobal,
+      phoneNumberGlobal
+    );
+    console.log(
+      "After finishing sms process ! =>",
+      resultPhoneNumberGlobal ? resultPhoneNumberGlobal : null
+    );
+
     if (isVerifyCodeCorrect && isPhoneNumberMatch) {
       res.status(200).json({
         success: true,
