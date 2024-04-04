@@ -56,6 +56,54 @@ function MainPage() {
 
   // finish to check
 
+  const [subscriptionCompletedStatus, setsubscriptionCompletedStatus] =
+    useState(null);
+
+  useEffect(() => {
+    console.log("Works !!");
+    axios
+      .get(`${API_URL}/basic-subscribe-checkout-success`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        console.log("Response for subscription =>", response);
+        if (response.status === 200) {
+          setsubscriptionCompletedStatus(200);
+        }
+      })
+      .catch((error) => {
+        console.log("Error for subscription =>", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    console.log(
+      "Subscription completed status =>",
+      subscriptionCompletedStatus
+    );
+    axios
+      .post(
+        `${API_URL}/change-subscription-modal-status`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log("Response show modal =>", response);
+        if (response.status === 200) {
+          window.alert("Subscription completed!");
+        }
+      })
+      .catch((error) => {
+        console.log("Error do not show modal =>", error);
+      });
+  }, [subscriptionCompletedStatus]);
+
   // use effect to grab current mouse click location start to check
   const [clickedPostBox, setclickedPostBox] = useState(null);
   useEffect(() => {
