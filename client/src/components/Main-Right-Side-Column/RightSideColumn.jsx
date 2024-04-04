@@ -972,6 +972,32 @@ function RightSideColumn({
 
   const [showVerifyingCodeModal, setshowVerifyingCodeModal] = useState(false);
 
+  const [
+    showSubscriptionProcessNotCompletedModal,
+    setShowSubscriptionProcessNotCompletedModal,
+  ] = useState(null);
+
+  const handleIndividualSubscriptionCheckoutStripeApi = () => {
+    axios
+      .post(
+        `${API_URL}/basic-subscribe-checkout`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then((response) => {
+        setTimeout(() => {
+          if (response.data.url) {
+            window.location.href = response.data.url;
+          }
+        }, 1000);
+      })
+      .catch((err) => window.alert("Error !!!", err ? err : null));
+  };
+
   const handleVerifyPhoneForSubscription = () => {
     axios
       .post(
@@ -985,13 +1011,28 @@ function RightSideColumn({
       )
       .then((response) => {
         setshowVerifyingCodeModal(true);
-
+        setTimeout(() => {
+          handleIndividualSubscriptionCheckoutStripeApi();
+        }, 3000);
         console.log("Response =>", response);
+        console.log("Response =>", showSubscriptionProcessNotCompletedModal);
       })
       .catch((error) => {
         setshowVerifyingCodeModal(true);
+        const { status } = error.response;
 
+        if (status === 400 || status === 500) {
+          console.log("Show error screen !");
+          setTimeout(() => {
+            setShowSubscriptionProcessNotCompletedModal(true);
+            console.log(
+              "Response =>",
+              showSubscriptionProcessNotCompletedModal
+            );
+          }, 3000);
+        }
         console.error("Error =>", error);
+        console.error("Error status =>", status);
       });
   };
 
@@ -7691,7 +7732,8 @@ function RightSideColumn({
                 showVerifyPhoneNumberPasswordModal &&
                 correctPassword &&
                 showgeneratedQrCodeModal &&
-                showVerifyingCodeModal ? (
+                showVerifyingCodeModal &&
+                showSubscriptionProcessNotCompletedModal === null ? (
                 <Modal.Body>
                   <div
                     // className="mt-5"
@@ -7721,6 +7763,32 @@ function RightSideColumn({
                     >
                       Please do not close this screen.
                     </div>
+                  </div>
+                </Modal.Body>
+              ) : tabIndex === 2 &&
+                showVerifyPhoneNumberPasswordModal &&
+                correctPassword &&
+                showgeneratedQrCodeModal &&
+                showVerifyingCodeModal &&
+                showSubscriptionProcessNotCompletedModal ? (
+                <>
+                  <Modal.Body>
+                    <div>
+                      Error occured while trying to complete phone verify
+                      process !!!
+                    </div>
+                  </Modal.Body>
+                </>
+              ) : tabIndex === 2 &&
+                showVerifyPhoneNumberPasswordModal &&
+                correctPassword &&
+                showgeneratedQrCodeModal &&
+                showVerifyingCodeModal &&
+                !showSubscriptionProcessNotCompletedModal ? (
+                <Modal.Body>
+                  <div>
+                    Phone verification process done, redirect to stripe process
+                    payment process...
                   </div>
                 </Modal.Body>
               ) : null}
@@ -14512,7 +14580,8 @@ function RightSideColumn({
                 showVerifyPhoneNumberPasswordModal &&
                 correctPassword &&
                 showgeneratedQrCodeModal &&
-                showVerifyingCodeModal ? (
+                showVerifyingCodeModal &&
+                showSubscriptionProcessNotCompletedModal === null ? (
                 <Modal.Body>
                   <div
                     className="mt-5"
@@ -14587,6 +14656,43 @@ function RightSideColumn({
                     >
                       Please do not close this screen.
                     </div>
+                  </div>
+                </Modal.Body>
+              ) : tabIndex === 2 &&
+                showVerifyPhoneNumberPasswordModal &&
+                correctPassword &&
+                showgeneratedQrCodeModal &&
+                showVerifyingCodeModal &&
+                showSubscriptionProcessNotCompletedModal ? (
+                <>
+                  <Modal.Body>
+                    <div
+                      className="mt-5"
+                      style={{
+                        minHeight: "550px",
+                        width: "81.5%",
+                      }}
+                    >
+                      Error occured while trying to complete phone verify
+                      process !!!
+                    </div>
+                  </Modal.Body>
+                </>
+              ) : tabIndex === 2 &&
+                showVerifyPhoneNumberPasswordModal &&
+                correctPassword &&
+                showgeneratedQrCodeModal &&
+                showVerifyingCodeModal &&
+                !showSubscriptionProcessNotCompletedModal ? (
+                <Modal.Body>
+                  <div
+                    style={{
+                      minHeight: "550px",
+                      width: "81.5%",
+                    }}
+                  >
+                    Phone verification process done, redirect to stripe process
+                    payment process...
                   </div>
                 </Modal.Body>
               ) : null}

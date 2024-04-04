@@ -57,6 +57,7 @@ router.post(
             "By confirming your subscription, you allow Connectify (formerly ?!🧐) to charge you for future payments in accordance with their terms. You can always cancel your subscription.",
         },
       },
+
       // when working on locally
       success_url: "http://localhost:5173/checkout-success",
       cancel_url: "http://localhost:5173/home",
