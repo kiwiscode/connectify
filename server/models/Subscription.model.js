@@ -13,6 +13,14 @@ const subscriptionSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    organizationDetails: {
+      organizationName: String,
+      organizationHandle: String,
+      organizationFullName: String,
+      organizationEmailAddress: String,
+      organizationWebSite: String,
+      organizationType: String,
+    },
   },
   {
     timestamps: true,
