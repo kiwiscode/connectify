@@ -2261,7 +2261,7 @@ function SigninModal({ deactivatedScreen }) {
                               className="login-button mt-5"
                               variant="dark"
                             >
-                              Continue to X
+                              Continue to Connectify
                             </Button>
                           </Modal.Body>
                         )}
@@ -3935,7 +3935,7 @@ function SigninModal({ deactivatedScreen }) {
                             className="login-button mt-5"
                             variant="dark"
                           >
-                            Continue to X
+                            Continue to Connectify
                           </Button>
                         </Modal.Body>
                       )}
@@ -5350,7 +5350,7 @@ function SigninModal({ deactivatedScreen }) {
                   className="login-button mt-5"
                   variant="dark"
                 >
-                  Continue to X
+                  Continue to Connectify
                 </Button>
               </Modal.Body>
             )}

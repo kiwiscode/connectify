@@ -47,6 +47,7 @@ function RightSideColumn({
   filteredSearchResult,
   onModalToggle,
   tabIndexValue,
+  isSubscriptionCompleted,
 }) {
   const { getToken, userInfo } = useContext(UserContext);
   const [onFocus, setOnFocus] = useState(false);
@@ -254,7 +255,13 @@ function RightSideColumn({
   const handleCloseSubscriptionModal = () => {
     setindividualSubOptionTab(null);
     setindividualSubOptionTab(2);
+    setShowSubscriptionProcessNotCompletedModal(null);
+    setpremiumRole("Individual");
+    setpremiumType(null);
+    setplanType(null);
+    setplanPrice(null);
 
+    console.log("Aktif burası !");
     if (
       tabIndex === 2 &&
       showVerifyPhoneNumberPasswordModal &&
@@ -313,21 +320,6 @@ function RightSideColumn({
   }, [tabIndex]);
 
   const [individualSubOptionTab, setindividualSubOptionTab] = useState(2);
-  const handleChooseActionForSubscriptionModal = (individual, organization) => {
-    if (individual) {
-      setselectedOption("individual");
-      sethelperStateSelectedOption("individual");
-      setTabIndex(1);
-      setindividualSubOptionTab(2);
-    } else if (organization) {
-      setselectedOption("organization");
-      sethelperStateSelectedOption("organization");
-      setTabIndex(1);
-      setindividualSubOptionTab(2);
-    } else {
-      return 404;
-    }
-  };
 
   const [tabStyleOrganizationBasicPlan, setTabStyleOrganizationBasicPlan] =
     useState(true);
@@ -360,18 +352,6 @@ function RightSideColumn({
     borderRadius: "9999px",
     border: "none",
     height: "32px",
-  };
-
-  const basicPlanClick = () => {
-    setTabStyleOrganizationBasicPlan(true);
-    setTabStyleOrganizationFullAccessPlan(false);
-    setSubTabIndexFromOrganizationSelect(1);
-  };
-
-  const fullAccessPlanClick = () => {
-    setTabStyleOrganizationBasicPlan(false);
-    setTabStyleOrganizationFullAccessPlan(true);
-    setSubTabIndexFromOrganizationSelect(2);
   };
 
   const [basicAnnualTabStyle, setbasicAnnualTabStyle] = useState(true);
@@ -450,11 +430,92 @@ function RightSideColumn({
   const [planPrice, setplanPrice] = useState(null);
   const [premiumInfo, setpremiumInfo] = useState({
     user: userInfo,
-    premiumRole: premiumRole,
-    premiumType: premiumType,
-    planType: planType,
-    planPrice: planPrice,
+    premiumRole: !isSubscriptionCompleted ? premiumRole : "Individual",
+    premiumType: !isSubscriptionCompleted ? premiumType : null,
+    planType: !isSubscriptionCompleted ? planType : null,
+    planPrice: !isSubscriptionCompleted ? planPrice : null,
   });
+
+  const [organizationSubPremiumRole, setorganizationSubPremiumRole] =
+    useState("Organization");
+  const [organizationSubPremiumType, setorganizationSubPremiumType] =
+    useState("Full Access");
+  const [
+    organizationSubPlanTypeFullAccess,
+    setorganizationSubPlanTypeFullAccess,
+  ] = useState("Annual Plan");
+  const [organizationSubPlanTypeBasic, setorganizationSubPlanTypeBasic] =
+    useState("");
+  const [
+    organizationSubPlanPriceFullAccess,
+    setorganizationSubPlanPriceFullAccess,
+  ] = useState("€11,305");
+  const [organizationSubPlanPriceBasic, setorganizationSubPlanPriceBasic] =
+    useState("");
+
+  const basicPlanClick = () => {
+    setTabStyleOrganizationBasicPlan(true);
+    setTabStyleOrganizationFullAccessPlan(false);
+    setSubTabIndexFromOrganizationSelect(1);
+    setorganizationSubPremiumType("Basic");
+    setorganizationSubPlanPriceFullAccess("");
+    setorganizationSubPlanTypeFullAccess("");
+    if (basicAnnualTabStyle) {
+      setorganizationSubPlanPriceBasic("€2,261");
+      setorganizationSubPlanTypeBasic("Annual Plan");
+    } else if (basicMonthlyTabStyle) {
+      setorganizationSubPlanPriceBasic("€226.10");
+      setorganizationSubPlanTypeBasic("Monthly Plan");
+    } else {
+      return;
+    }
+  };
+  const fullAccessPlanClick = () => {
+    setTabStyleOrganizationBasicPlan(false);
+    setTabStyleOrganizationFullAccessPlan(true);
+    setSubTabIndexFromOrganizationSelect(2);
+    setorganizationSubPremiumType("Full Access");
+    setorganizationSubPlanPriceBasic("");
+    setorganizationSubPlanTypeBasic("");
+
+    if (fullAccessAnnualTabStyle) {
+      setorganizationSubPlanPriceFullAccess("€11,305");
+      setorganizationSubPlanTypeFullAccess("Annual Plan");
+    } else if (fullAccessMonthlyTabStyle) {
+      setorganizationSubPlanPriceFullAccess("€1,130.50");
+      setorganizationSubPlanTypeFullAccess("Monthly Plan");
+    } else {
+      return;
+    }
+  };
+
+  console.log("Organization premium role =>", organizationSubPremiumRole);
+  console.log("Organization premium type =>", organizationSubPremiumType);
+  console.log(
+    "Organization premium plan type =>",
+    organizationSubPlanTypeBasic || organizationSubPlanTypeFullAccess
+  );
+  console.log(
+    "Organization premium plan price =>",
+    organizationSubPlanPriceBasic || organizationSubPlanPriceFullAccess
+  );
+
+  const handleChooseActionForSubscriptionModal = (individual, organization) => {
+    if (individual) {
+      setselectedOption("individual");
+      sethelperStateSelectedOption("individual");
+      setTabIndex(1);
+      setindividualSubOptionTab(2);
+    } else if (organization) {
+      setselectedOption("organization");
+      sethelperStateSelectedOption("organization");
+      setTabIndex(1);
+      setindividualSubOptionTab(2);
+      setorganizationSubPremiumRole("Organization");
+    } else {
+      return 404;
+    }
+  };
 
   let sliderRef2 = useRef(null);
   const next2 = () => {
@@ -483,7 +544,10 @@ function RightSideColumn({
   };
 
   useEffect(() => {
-    if (individualSubOptionTab === 0) {
+    if (
+      individualSubOptionTab === 0 &&
+      (!tabStyleOrganizationBasicPlan || !tabStyleOrganizationFullAccessPlan)
+    ) {
       setpremiumType("Basic"),
         setplanType(
           individualSubOptionPremiumPlusAnnualTab
@@ -499,7 +563,10 @@ function RightSideColumn({
           ? "€3.57"
           : null
       );
-    } else if (individualSubOptionTab === 1) {
+    } else if (
+      individualSubOptionTab === 1 &&
+      (!tabStyleOrganizationBasicPlan || !tabStyleOrganizationFullAccessPlan)
+    ) {
       setpremiumType("Premium"),
         setplanType(
           individualSubOptionPremiumPlusAnnualTab
@@ -515,7 +582,10 @@ function RightSideColumn({
           ? "€9.52"
           : null
       );
-    } else if (individualSubOptionTab === 2) {
+    } else if (
+      individualSubOptionTab === 2 &&
+      (!tabStyleOrganizationBasicPlan || !tabStyleOrganizationFullAccessPlan)
+    ) {
       setpremiumType("Premium+"),
         setplanType(
           individualSubOptionPremiumPlusAnnualTab
@@ -645,17 +715,18 @@ function RightSideColumn({
   const [checkoutProcessLoadingBar, setCheckoutProcessLoadingBar] =
     useState(false);
 
-  const handleCheckoutStripeApi = (priceBasic, paymentPeriodBasic) => {
-    setCheckoutProcessLoadingBar(true);
+  const handleCheckoutStripeApiOrganizationBasic = () => {
+    // setCheckoutProcessLoadingBar(true);
 
     axios
       .post(
-        `${API_URL}/stripe/create-checkout-session`,
+        `${API_URL}/organization-basic-subscribe-create-checkout-session`,
         {
-          subscriptionOption: {
-            price: priceBasic,
-            description: paymentPeriodBasic,
-          },
+          userInfo,
+          organizationSubPremiumRole,
+          organizationSubPremiumType,
+          organizationSubPlanTypeBasic,
+          organizationSubPlanPriceBasic,
         },
         {
           headers: {
@@ -664,18 +735,33 @@ function RightSideColumn({
         }
       )
       .then((response) => {
-        setTimeout(() => {
-          setCheckoutProcessLoadingBar(false);
-          if (response.data.url) {
-            window.location.href = response.data.url;
-          }
-        }, 1000);
+        // setTimeout(() => {
+        //   setCheckoutProcessLoadingBar(false);
+        //   if (response.data.url) {
+        //     window.location.href = response.data.url;
+        //   }
+        // }, 1000);
       })
       .catch((err) => window.alert("Error !!!", err ? err : null));
   };
 
   const handleFullAccessOrganizationPlanModal = () => {
-    // window.alert("Apply for Full Access");
+    console.log(
+      "Apply for Full Access premium role =>",
+      organizationSubPremiumRole
+    );
+    console.log(
+      "Apply for Full Access premium type =>",
+      organizationSubPremiumType
+    );
+    console.log(
+      "Apply for Full Access plan type =>",
+      organizationSubPlanTypeFullAccess
+    );
+    console.log(
+      "Apply for Full Access plan price =>",
+      organizationSubPlanPriceFullAccess
+    );
     setSubTabIndexFromOrganizationSelect(subTabIndexFromOrganizationSelect + 1);
   };
 
@@ -760,13 +846,48 @@ function RightSideColumn({
   const [yourFullName, setYourFullName] = useState(null);
   const [organizationEmailAdress, setOrganizationEmailAdress] = useState("");
   const [organizationWebSite, setOrganizationWebSite] = useState(null);
-
   const [allTextFieldsFilled, setallTextFieldsFilled] = useState("unknown");
 
   const emailRegex =
     /^[a-zA-Z0-9._%+-]+@(gmail|outlook|hotmail|yahoo|proton|zoho|mail|aol|yandex)\.(com|org|net|gov|edu|mil|co|info|de|co.uk|ca|me|tr|com.tr)$/;
 
   const [invalidEmailError, setInvalidEmailError] = useState("");
+
+  const handleCheckoutStripeApiOrganizationFullAccess = () => {
+    setCheckoutProcessLoadingBar(true);
+
+    axios
+      .post(
+        `${API_URL}/organization-full-access-subscribe-create-checkout-session`,
+        {
+          userInfo,
+          organizationSubPremiumRole,
+          organizationSubPremiumType,
+          organizationSubPlanTypeFullAccess,
+          organizationSubPlanPriceFullAccess,
+          organizationName,
+          yourFullName,
+          organizationEmailAdress,
+          organizationWebSite,
+          displayedOrganizationType,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log("Response =>", response);
+        setTimeout(() => {
+          setCheckoutProcessLoadingBar(false);
+          if (response.data.url) {
+            window.location.href = response.data.url;
+          }
+        }, 1000);
+      })
+      .catch((err) => window.alert("Error !!!", err ? err : null));
+  };
 
   const [submitClicked, setsubmitClicked] = useState(false);
   const handleSubmitOrganizationInformationForFullAccessSubscription = (
@@ -789,14 +910,7 @@ function RightSideColumn({
       setallTextFieldsFilled("no");
     } else {
       setallTextFieldsFilled("unknown");
-      handleCheckoutStripeApi(
-        fullAccessAnnualTabStyle
-          ? yearlyFeeFullAccess
-          : fullAccessMonthlyTabStyle
-          ? monthyleFeeFullAccess
-          : null,
-        fullAccessAnnualTabStyle ? "per year" : "per month"
-      );
+      handleCheckoutStripeApiOrganizationFullAccess();
     }
   };
 
@@ -934,7 +1048,7 @@ function RightSideColumn({
 
     axios
       .post(
-        `${API_URL}/premium-info-verify-phone-number`,
+        `${API_URL}/premium-info-verify-phone-number-individual-subscription`,
         {
           premiumInfo,
           premiumRole,
@@ -960,18 +1074,7 @@ function RightSideColumn({
       });
   };
 
-  console.log("Premium info =>", premiumInfo);
-  console.log("Random code =>", verifyPhoneCode);
-  console.log("Selected country shortcut =>", country ? country : "DE");
-  console.log(
-    "Selected country code =>",
-    country ? getCountryCallingCode(country) : getCountryCallingCode("DE")
-  );
-  console.log("Selected country =>,", country ? en[country] : en["DE"]);
-  console.log("Phone number =>", phoneNumber);
-
   const [showVerifyingCodeModal, setshowVerifyingCodeModal] = useState(false);
-
   const [
     showSubscriptionProcessNotCompletedModal,
     setShowSubscriptionProcessNotCompletedModal,
@@ -980,7 +1083,7 @@ function RightSideColumn({
   const handleIndividualSubscriptionCheckoutStripeApi = () => {
     axios
       .post(
-        `${API_URL}/basic-subscribe-checkout`,
+        `${API_URL}/individual-subscribe-checkout`,
         {},
         {
           headers: {
@@ -999,9 +1102,12 @@ function RightSideColumn({
   };
 
   const handleVerifyPhoneForSubscription = () => {
+    setshowVerifyingCodeModal(true);
+    setShowSubscriptionProcessNotCompletedModal(null);
+
     axios
       .post(
-        `${API_URL}/verify-phone-for-subscription`,
+        `${API_URL}/verify-phone-for-individual-subscription`,
         {},
         {
           headers: {
@@ -1010,7 +1116,6 @@ function RightSideColumn({
         }
       )
       .then((response) => {
-        setshowVerifyingCodeModal(true);
         setTimeout(() => {
           handleIndividualSubscriptionCheckoutStripeApi();
         }, 3000);
@@ -1018,11 +1123,12 @@ function RightSideColumn({
         console.log("Response =>", showSubscriptionProcessNotCompletedModal);
       })
       .catch((error) => {
-        setshowVerifyingCodeModal(true);
+        console.error(error);
         const { status } = error.response;
 
         if (status === 400 || status === 500) {
           console.log("Show error screen !");
+
           setTimeout(() => {
             setShowSubscriptionProcessNotCompletedModal(true);
             console.log(
@@ -1310,6 +1416,7 @@ function RightSideColumn({
                           setisOrganizationSubscriptionClicked(true);
                           setactiveIndividualOptionTabStyle(false);
                           setisIndividualSubscriptionClicked(false);
+                          setorganizationSubPremiumRole("Organization");
                         }}
                         style={
                           ({ activeOrganizationOptionTabStyle },
@@ -5744,6 +5851,12 @@ function RightSideColumn({
                                 onClick={() => {
                                   setbasicAnnualTabStyle(true);
                                   setbasicMonthlyTabStyle(false);
+                                  setorganizationSubPlanPriceBasic("€2,261");
+                                  setorganizationSubPlanTypeBasic(
+                                    "Annual Plan"
+                                  );
+                                  setorganizationSubPlanPriceFullAccess("");
+                                  setorganizationSubPlanTypeFullAccess("");
                                 }}
                                 style={
                                   ({ activeIndividualOptionTabStyle },
@@ -5815,8 +5928,14 @@ function RightSideColumn({
                               {/* monthly plan start to check  */}
                               <div
                                 onClick={() => {
-                                  setbasicMonthlyTabStyle(true);
                                   setbasicAnnualTabStyle(false);
+                                  setbasicMonthlyTabStyle(true);
+                                  setorganizationSubPlanPriceBasic("€226.10");
+                                  setorganizationSubPlanTypeBasic(
+                                    "Monthly Plan"
+                                  );
+                                  setorganizationSubPlanPriceFullAccess("");
+                                  setorganizationSubPlanTypeFullAccess("");
                                 }}
                                 style={
                                   ({ activeOrganizationOptionTabStyle },
@@ -5903,14 +6022,7 @@ function RightSideColumn({
                             </div>
                             <Button
                               onClick={() =>
-                                handleCheckoutStripeApi(
-                                  basicAnnualTabStyle
-                                    ? yearlyFee
-                                    : basicMonthlyTabStyle
-                                    ? monthyleFee
-                                    : null,
-                                  basicAnnualTabStyle ? "per year" : "per month"
-                                )
+                                handleCheckoutStripeApiOrganizationBasic()
                               }
                               className="mt-4 subscribe-btn-basic-plan"
                               style={{
@@ -6220,6 +6332,14 @@ function RightSideColumn({
                                 onClick={() => {
                                   setfullAccessAnnualTabStyle(true);
                                   setfullAccessMonthlyTabStyle(false);
+                                  setorganizationSubPlanPriceFullAccess(
+                                    "€11,305"
+                                  );
+                                  setorganizationSubPlanTypeFullAccess(
+                                    "Annual Plan"
+                                  );
+                                  setorganizationSubPlanPriceBasic("");
+                                  setorganizationSubPlanTypeBasic("");
                                 }}
                                 style={
                                   ({ activeIndividualOptionTabStyle },
@@ -6291,8 +6411,16 @@ function RightSideColumn({
                               {/* monthly plan start to check  */}
                               <div
                                 onClick={() => {
-                                  setfullAccessMonthlyTabStyle(true);
                                   setfullAccessAnnualTabStyle(false);
+                                  setfullAccessMonthlyTabStyle(true);
+                                  setorganizationSubPlanPriceFullAccess(
+                                    "€1,130.50"
+                                  );
+                                  setorganizationSubPlanTypeFullAccess(
+                                    "Monthly Plan"
+                                  );
+                                  setorganizationSubPlanPriceBasic("");
+                                  setorganizationSubPlanTypeBasic("");
                                 }}
                                 style={
                                   ({ activeOrganizationOptionTabStyle },
@@ -7772,25 +7900,74 @@ function RightSideColumn({
                 showVerifyingCodeModal &&
                 showSubscriptionProcessNotCompletedModal ? (
                 <>
-                  <Modal.Body>
-                    <div>
-                      Error occured while trying to complete phone verify
-                      process !!!
-                    </div>
+                  <Modal.Body
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      minHeight: "600px",
+                    }}
+                  >
+                    <h1
+                      style={{
+                        lineHeight: "36px",
+                        fontSize: "31px",
+                        fontWeight: "800",
+                      }}
+                    >
+                      Subscription Error!
+                    </h1>{" "}
+                    <svg
+                      width={`175`}
+                      height={`175`}
+                      viewBox="0 0 22 22"
+                      aria-label="Error"
+                      role="img"
+                      className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                      data-testid="icon-error"
+                    >
+                      <defs>
+                        <linearGradient
+                          id="gradient"
+                          x1="0%"
+                          y1="0%"
+                          x2="100%"
+                          y2="100%"
+                        >
+                          <stop offset="0%" stopColor="#FF1000" />
+                          <stop offset="20%" stopColor="#FF5500" />
+                          <stop offset="40%" stopColor="#FF6447" />
+                          <stop offset="60%" stopColor="#FF8F50" />
+                          <stop offset="80%" stopColor="#FFA08A" />
+                          <stop offset="100%" stopColor="#FFC1CB" />
+                        </linearGradient>
+                      </defs>
+                      <circle cx="11" cy="11" r="10" fill="url(#gradient)" />
+                      <text
+                        x="50%"
+                        y="50%"
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        fontSize="12"
+                        fill="#FFF"
+                      >
+                        X
+                      </text>
+                    </svg>
+                    <Button
+                      onClick={handleCloseSubscriptionModal}
+                      style={{
+                        width: "65%",
+                        height: "52px",
+                      }}
+                      className="login-button mt-5"
+                      variant="dark"
+                    >
+                      Continue to Connectify
+                    </Button>{" "}
                   </Modal.Body>
                 </>
-              ) : tabIndex === 2 &&
-                showVerifyPhoneNumberPasswordModal &&
-                correctPassword &&
-                showgeneratedQrCodeModal &&
-                showVerifyingCodeModal &&
-                !showSubscriptionProcessNotCompletedModal ? (
-                <Modal.Body>
-                  <div>
-                    Phone verification process done, redirect to stripe process
-                    payment process...
-                  </div>
-                </Modal.Body>
               ) : null}
             </Modal>
           ) : null}
@@ -8001,7 +8178,7 @@ function RightSideColumn({
                           setTabStyleOrganizationBasicPlan(false);
                           setTabStyleOrganizationFullAccessPlan(true);
                           setSubTabIndexFromOrganizationSelect(2);
-                          setpremiumRole("Organization");
+                          setorganizationSubPremiumRole("Organization");
                         }}
                         style={
                           ({ activeOrganizationOptionTabStyle },
@@ -12498,6 +12675,12 @@ function RightSideColumn({
                                 onClick={() => {
                                   setbasicAnnualTabStyle(true);
                                   setbasicMonthlyTabStyle(false);
+                                  setorganizationSubPlanPriceBasic("€2,261");
+                                  setorganizationSubPlanTypeBasic(
+                                    "Annual Plan"
+                                  );
+                                  setorganizationSubPlanPriceFullAccess("");
+                                  setorganizationSubPlanTypeFullAccess("");
                                 }}
                                 style={
                                   ({ activeIndividualOptionTabStyle },
@@ -12572,8 +12755,14 @@ function RightSideColumn({
                               {/* monthly plan start to check  */}
                               <div
                                 onClick={() => {
-                                  setbasicMonthlyTabStyle(true);
                                   setbasicAnnualTabStyle(false);
+                                  setbasicMonthlyTabStyle(true);
+                                  setorganizationSubPlanPriceBasic("€226.10");
+                                  setorganizationSubPlanTypeBasic(
+                                    "Monthly Plan"
+                                  );
+                                  setorganizationSubPlanPriceFullAccess("");
+                                  setorganizationSubPlanTypeFullAccess("");
                                 }}
                                 style={
                                   ({ activeOrganizationOptionTabStyle },
@@ -12662,16 +12851,7 @@ function RightSideColumn({
                               onClick={
                                 !checkoutProcessLoadingBar
                                   ? () =>
-                                      handleCheckoutStripeApi(
-                                        basicAnnualTabStyle
-                                          ? yearlyFee
-                                          : basicMonthlyTabStyle
-                                          ? monthyleFee
-                                          : null,
-                                        basicAnnualTabStyle
-                                          ? "per year"
-                                          : "per month"
-                                      )
+                                      handleCheckoutStripeApiOrganizationBasic()
                                   : null
                               }
                               className="mt-4 subscribe-btn-basic-plan"
@@ -12971,10 +13151,16 @@ function RightSideColumn({
                               {/* annual plan start to check  */}
                               <div
                                 onClick={() => {
-                                  setbasicAnnualTabStyle(true);
-                                  setbasicMonthlyTabStyle(false);
                                   setfullAccessAnnualTabStyle(true);
                                   setfullAccessMonthlyTabStyle(false);
+                                  setorganizationSubPlanPriceFullAccess(
+                                    "€11,305"
+                                  );
+                                  setorganizationSubPlanTypeFullAccess(
+                                    "Annual Plan"
+                                  );
+                                  setorganizationSubPlanPriceBasic("");
+                                  setorganizationSubPlanTypeBasic("");
                                 }}
                                 style={
                                   ({ activeIndividualOptionTabStyle },
@@ -12988,7 +13174,7 @@ function RightSideColumn({
                                     borderRadius: "16px",
                                     boxShadow:
                                       "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
-                                    border: basicAnnualTabStyle
+                                    border: fullAccessAnnualTabStyle
                                       ? "2px solid #339bf0"
                                       : "2px solid transparent",
                                     transition: "transform 0.3s ease",
@@ -13049,10 +13235,16 @@ function RightSideColumn({
                               {/* monthly plan start to check  */}
                               <div
                                 onClick={() => {
-                                  setbasicMonthlyTabStyle(true);
-                                  setbasicAnnualTabStyle(false);
                                   setfullAccessAnnualTabStyle(false);
                                   setfullAccessMonthlyTabStyle(true);
+                                  setorganizationSubPlanPriceFullAccess(
+                                    "€1,130.50"
+                                  );
+                                  setorganizationSubPlanTypeFullAccess(
+                                    "Monthly Plan"
+                                  );
+                                  setorganizationSubPlanPriceBasic("");
+                                  setorganizationSubPlanTypeBasic("");
                                 }}
                                 style={
                                   ({ activeOrganizationOptionTabStyle },
@@ -13066,7 +13258,7 @@ function RightSideColumn({
                                     borderRadius: "16px",
                                     boxShadow:
                                       "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
-                                    border: basicMonthlyTabStyle
+                                    border: fullAccessMonthlyTabStyle
                                       ? "2px solid #339bf0"
                                       : "2px solid transparent",
                                     transition: "transform 0.3s ease",
@@ -14665,36 +14857,74 @@ function RightSideColumn({
                 showVerifyingCodeModal &&
                 showSubscriptionProcessNotCompletedModal ? (
                 <>
-                  <Modal.Body>
-                    <div
-                      className="mt-5"
-                      style={{
-                        minHeight: "550px",
-                        width: "81.5%",
-                      }}
-                    >
-                      Error occured while trying to complete phone verify
-                      process !!!
-                    </div>
-                  </Modal.Body>
-                </>
-              ) : tabIndex === 2 &&
-                showVerifyPhoneNumberPasswordModal &&
-                correctPassword &&
-                showgeneratedQrCodeModal &&
-                showVerifyingCodeModal &&
-                !showSubscriptionProcessNotCompletedModal ? (
-                <Modal.Body>
-                  <div
+                  <Modal.Body
                     style={{
-                      minHeight: "550px",
-                      width: "81.5%",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      minHeight: "600px",
                     }}
                   >
-                    Phone verification process done, redirect to stripe process
-                    payment process...
-                  </div>
-                </Modal.Body>
+                    <h1
+                      style={{
+                        lineHeight: "36px",
+                        fontSize: "31px",
+                        fontWeight: "800",
+                      }}
+                    >
+                      Subscription Error!
+                    </h1>{" "}
+                    <svg
+                      width={`175`}
+                      height={`175`}
+                      viewBox="0 0 22 22"
+                      aria-label="Error"
+                      role="img"
+                      className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                      data-testid="icon-error"
+                    >
+                      <defs>
+                        <linearGradient
+                          id="gradient"
+                          x1="0%"
+                          y1="0%"
+                          x2="100%"
+                          y2="100%"
+                        >
+                          <stop offset="0%" stopColor="#FF1000" />
+                          <stop offset="20%" stopColor="#FF5500" />
+                          <stop offset="40%" stopColor="#FF6447" />
+                          <stop offset="60%" stopColor="#FF8F50" />
+                          <stop offset="80%" stopColor="#FFA08A" />
+                          <stop offset="100%" stopColor="#FFC1CB" />
+                        </linearGradient>
+                      </defs>
+                      <circle cx="11" cy="11" r="10" fill="url(#gradient)" />
+                      <text
+                        x="50%"
+                        y="50%"
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        fontSize="12"
+                        fill="#FFF"
+                      >
+                        X
+                      </text>
+                    </svg>
+                    <Button
+                      onClick={handleCloseSubscriptionModal}
+                      style={{
+                        width: "65%",
+                        height: "52px",
+                      }}
+                      className="login-button mt-5"
+                      variant="dark"
+                    >
+                      Continue to Connectify
+                    </Button>{" "}
+                  </Modal.Body>
+                </>
               ) : null}
             </Modal>
           ) : null}
