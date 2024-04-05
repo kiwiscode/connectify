@@ -599,9 +599,9 @@ function SignUpPage() {
       })
       .then((response) => {
         console.log("Response =>", response);
+
         setTabLoading(true);
         setTimeout(() => {
-          setTabLoading(false);
           handleLogin();
         }, 500);
       })
@@ -3202,16 +3202,6 @@ function SignUpPage() {
                     style={{}}
                     className="signin-modal-body-child-non-reactivate"
                   >
-                    <div
-                      style={{
-                        position: "absolute",
-                        right: "0px",
-                        top: "0px",
-                        display: clickedReceiveEmail ? "block" : "none",
-                      }}
-                    >
-                      Test
-                    </div>
                     <div
                       className="mb-4"
                       style={{

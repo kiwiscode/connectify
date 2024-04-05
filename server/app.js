@@ -85,10 +85,4 @@ app.use("/", forgotPasswordRoutes);
 const subscriptionRoutes = require("./routes/subscription.routes.js");
 app.use("/", subscriptionRoutes);
 
-const stripeRoutes = require("./routes/stripe.routes.js");
-app.use("/stripe", stripeRoutes);
-
-const twilioRoutes = require("./routes/twilio.routes.js");
-app.use("/", twilioRoutes);
-
 module.exports = app;
