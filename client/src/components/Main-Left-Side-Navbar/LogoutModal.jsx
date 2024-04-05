@@ -451,6 +451,7 @@ function LogoutModal({ isLogoutActionActive }) {
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
+            cursor: "pointer",
           }}
         >
           <svg

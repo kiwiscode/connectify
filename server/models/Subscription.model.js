@@ -21,6 +21,10 @@ const subscriptionSchema = new Schema(
       organizationWebSite: String,
       organizationType: String,
     },
+    cancelledDate: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
