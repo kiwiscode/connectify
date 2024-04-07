@@ -286,8 +286,8 @@ function RightSideColumn({
       onModalToggle(false);
       tabIndexValue(null);
     } else if (tabIndex === 0) {
-      onModalToggle(false);
-      tabIndexValue(null);
+      // onModalToggle(false);
+      // tabIndexValue(null);
       setshowSubscriptionModal(false);
       setisOrganizationSubscriptionClicked(false);
       setactiveOrganizationOptionTabStyle(false);
@@ -781,7 +781,7 @@ function RightSideColumn({
   };
   const popoverOrganizationType = (
     <Popover
-      className={`scrollbar-add ${
+      className={` ${
         animatedPopover ? "animate-popover-organization-type" : ""
       }`}
       style={{
@@ -789,7 +789,7 @@ function RightSideColumn({
         height: "auto",
         width: "175px",
         border: "none",
-        overflowY: "scroll",
+
         backgroundColor: "#e2e1e4",
         boxShadow:
           "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
@@ -883,11 +883,11 @@ function RightSideColumn({
       )
       .then((response) => {
         console.log("Response =>", response);
-        // setTimeout(() => {
-        //   if (response.data.url) {
-        //     window.location.href = response.data.url;
-        //   }
-        // }, 1000);
+        setTimeout(() => {
+          if (response.data.url) {
+            window.location.href = response.data.url;
+          }
+        }, 1000);
       })
       .catch((err) => window.alert("Error !!!", err ? err : null));
   };
