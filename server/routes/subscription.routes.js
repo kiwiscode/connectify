@@ -267,7 +267,6 @@ router.get(
           });
           findedUser.subscriptions.unshift(createdSubscription._id.toString());
           await findedUser.save();
-
           premiumInfoGlobal = undefined;
           premiumRoleGlobal = undefined;
           verifyPhoneCodeGlobal = undefined;
@@ -276,6 +275,8 @@ router.get(
           selectedCountryGlobal = undefined;
           phoneNumberGlobal = undefined;
           resultPhoneNumberGlobal = undefined;
+          isVerifyCodeCorrect = undefined;
+          isPhoneNumberMatch = undefined;
           response.status(200).json({
             message: {
               success: true,
@@ -308,6 +309,7 @@ router.get(
             activeSubscription[0].isActive = false;
             activeSubscription[0].cancelledDate = new Date();
             await activeSubscription[0].save();
+
             const createdSubscription = await Subscription.create({
               owner: findedUser._id.toString(),
               role: premiumRoleGlobal,
@@ -330,6 +332,8 @@ router.get(
             selectedCountryGlobal = undefined;
             phoneNumberGlobal = undefined;
             resultPhoneNumberGlobal = undefined;
+            isVerifyCodeCorrect = undefined;
+            isPhoneNumberMatch = undefined;
             response.status(200).json({
               message: {
                 success: true,
@@ -347,7 +351,6 @@ router.get(
       }
     } catch (error) {
       console.error("Error occured:", error);
-
       response.status(500).json({
         errorMessage:
           "An error occurred. Subscription process could not be completed.",
@@ -375,8 +378,6 @@ router.post(
   "/organization-basic-subscribe-create-checkout-session",
   authenticateToken,
   async (request, response) => {
-    console.log("Request body =>", request.body);
-
     const {
       userInfo,
       organizationSubPremiumRole,
@@ -394,6 +395,7 @@ router.post(
     console.log(
       "Global variable values =>",
       userInfoGlobal.username,
+      userInfoGlobal._id,
       organizationSubPremiumRoleGlobal,
       organizationSubPremiumTypeGlobal,
       organizationSubPlanTypeBasicGlobal,
@@ -455,6 +457,101 @@ router.post(
   }
 );
 
+router.get(
+  "/organization-basic-subscribe-checkout-success",
+  authenticateToken,
+  async (request, response) => {
+    try {
+      // eğer userda aktif bir subscription varsa bu active subscription bire bir aşşağıda kayıt edilen subscription ile aynı ise tekrar kayıt etme
+
+      const userId = userInfoGlobal._id;
+      const findedUser = await User.findById(userId);
+
+      const activeSubscription = await Subscription.find({
+        owner: userId,
+        isActive: true,
+      });
+
+      if (!findedUser.hasSubscription) {
+        findedUser.hasSubscription = true;
+
+        const createdSubscription = await Subscription.create({
+          owner: findedUser._id.toString(),
+          role: organizationSubPremiumRoleGlobal,
+          subscriptionDetails: {
+            premiumType: organizationSubPremiumTypeGlobal,
+            billingCycle: organizationSubPlanTypeBasicGlobal,
+            subscriptionPrice: organizationSubPlanPriceBasicGlobal,
+          },
+          isActive: true,
+        });
+        findedUser.subscriptions.unshift(createdSubscription._id.toString());
+        await findedUser.save();
+
+        userInfoGlobal = undefined;
+        organizationSubPremiumRoleGlobal = undefined;
+        organizationSubPremiumTypeGlobal = undefined;
+        organizationSubPlanTypeBasicGlobal = undefined;
+        organizationSubPlanPriceBasicGlobal = undefined;
+        response.status(200).json({
+          message: {
+            success: true,
+            message: "Subscription process completed successfully. Thank you!",
+          },
+        });
+      } else {
+        if (
+          userInfoGlobal &&
+          organizationSubPremiumRoleGlobal &&
+          organizationSubPremiumTypeGlobal &&
+          organizationSubPlanTypeBasicGlobal &&
+          organizationSubPlanPriceBasicGlobal
+        ) {
+          findedUser.successSubscriptionModalShown = false;
+          activeSubscription[0].isActive = false;
+          activeSubscription[0].cancelledDate = new Date();
+          await activeSubscription[0].save();
+          const createdSubscription = await Subscription.create({
+            owner: findedUser._id.toString(),
+            role: organizationSubPremiumRoleGlobal,
+            subscriptionDetails: {
+              premiumType: organizationSubPremiumTypeGlobal,
+              billingCycle: organizationSubPlanTypeBasicGlobal,
+              subscriptionPrice: organizationSubPlanPriceBasicGlobal,
+            },
+            isActive: true,
+          });
+          findedUser.subscriptions.unshift(createdSubscription._id.toString());
+          await findedUser.save();
+          userInfoGlobal = undefined;
+          organizationSubPremiumRoleGlobal = undefined;
+          organizationSubPremiumTypeGlobal = undefined;
+          organizationSubPlanTypeBasicGlobal = undefined;
+          organizationSubPlanPriceBasicGlobal = undefined;
+          response.status(200).json({
+            message: {
+              success: true,
+              message:
+                "Your subscription has been successfully renewed. Thank you for continuing to use our service.",
+            },
+          });
+        } else {
+          response.status(500).json({
+            errorMessage:
+              "An error occurred. Subscription process could not be completed.",
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error occured:", error);
+      response.status(500).json({
+        errorMessage:
+          "An error occurred. Subscription process could not be completed.",
+      });
+    }
+  }
+);
+
 router.post(
   "/organization-full-access-subscribe-create-checkout-session",
   authenticateToken,
@@ -497,66 +594,58 @@ router.post(
       organizationWebSiteGlobal,
       displayedOrganizationTypeGlobal
     );
-    const line_items = [
-      {
-        price_data: {
-          currency: "eur",
-          product_data: {
-            name: "Subscribe to Verified Organizations",
-            description:
-              organizationSubPlanTypeFullAccess === "Annual Plan"
-                ? "per year"
-                : "per month",
-          },
-          unit_amount:
-            organizationSubPlanPriceFullAccess === "€2,261"
-              ? 226100
-              : organizationSubPlanPriceFullAccess === "€226.10"
-              ? 22610
-              : organizationSubPlanPriceFullAccess === "€11,305"
-              ? 1130500
-              : organizationSubPlanPriceFullAccess === "€1,130.50"
-              ? 113050
-              : "",
-        },
-        quantity: 1,
-      },
-    ];
+    // const line_items = [
+    //   {
+    //     price_data: {
+    //       currency: "eur",
+    //       product_data: {
+    //         name: "Subscribe to Verified Organizations",
+    //         description:
+    //           organizationSubPlanTypeFullAccess === "Annual Plan"
+    //             ? "per year"
+    //             : "per month",
+    //       },
+    //       unit_amount:
+    //         organizationSubPlanPriceFullAccess === "€2,261"
+    //           ? 226100
+    //           : organizationSubPlanPriceFullAccess === "€226.10"
+    //           ? 22610
+    //           : organizationSubPlanPriceFullAccess === "€11,305"
+    //           ? 1130500
+    //           : organizationSubPlanPriceFullAccess === "€1,130.50"
+    //           ? 113050
+    //           : "",
+    //     },
+    //     quantity: 1,
+    //   },
+    // ];
 
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      mode: "payment",
-      line_items,
+    // const session = await stripe.checkout.sessions.create({
+    //   payment_method_types: ["card"],
+    //   mode: "payment",
+    //   line_items,
 
-      custom_text: {
-        submit: {
-          message:
-            "All payments for Paid Services are final and not refundable or exchangeable, except as required by applicable law. Misuse of Verified Organizations such as fraud, spam, etc., will result in your account’s off-boarding from the program, suspension from Connectify, or other action as Connectify may deem appropriate.",
-        },
-        after_submit: {
-          message:
-            "By confirming your subscription, you allow Connectify (formerly ?!🧐) to charge you for future payments in accordance with their terms. You can always cancel your subscription.",
-        },
-      },
+    //   custom_text: {
+    //     submit: {
+    //       message:
+    //         "All payments for Paid Services are final and not refundable or exchangeable, except as required by applicable law. Misuse of Verified Organizations such as fraud, spam, etc., will result in your account’s off-boarding from the program, suspension from Connectify, or other action as Connectify may deem appropriate.",
+    //     },
+    //     after_submit: {
+    //       message:
+    //         "By confirming your subscription, you allow Connectify (formerly ?!🧐) to charge you for future payments in accordance with their terms. You can always cancel your subscription.",
+    //     },
+    //   },
 
-      // when working on locally
-      success_url: "http://localhost:5173/home",
-      cancel_url: "http://localhost:5173/home",
+    //   // when working on locally
+    //   success_url: "http://localhost:5173/home",
+    //   cancel_url: "http://localhost:5173/home",
 
-      // when working on deployment version
-      // success_url: "?",
-      // cancel_url: "?",
-    });
+    //   // when working on deployment version
+    //   // success_url: "?",
+    //   // cancel_url: "?",
+    // });
 
-    response.send({ url: session.url });
-  }
-);
-
-router.get(
-  "/organization-subscribe-checkout-success",
-  authenticateToken,
-  (request, response) => {
-    res.send("Checkout successfull !!!");
+    // response.send({ url: session.url });
   }
 );
 

@@ -67,10 +67,27 @@ function MainPage() {
   };
 
   useEffect(() => {
-    console.log("Works !!");
-
     axios
       .get(`${API_URL}/individual-subscribe-checkout-success`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        console.log("Response for subscription =>", response);
+        if (response.status === 200) {
+          setsubscriptionCompletedStatus(200);
+        }
+      })
+      .catch((error) => {
+        setsubscriptionCompletedStatus(500);
+        console.log("Error for subscription =>", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/organization-basic-subscribe-checkout-success`, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
