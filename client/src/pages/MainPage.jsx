@@ -105,6 +105,25 @@ function MainPage() {
   }, []);
 
   useEffect(() => {
+    axios
+      .get(`${API_URL}/organization-full-access-subscribe-checkout-success`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        console.log("Response for subscription =>", response);
+        if (response.status === 200) {
+          setsubscriptionCompletedStatus(200);
+        }
+      })
+      .catch((error) => {
+        setsubscriptionCompletedStatus(500);
+        console.log("Error for subscription =>", error);
+      });
+  }, []);
+
+  useEffect(() => {
     console.log(
       "Subscription completed status =>",
       subscriptionCompletedStatus

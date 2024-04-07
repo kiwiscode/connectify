@@ -36,6 +36,8 @@ app.use(passport.session());
 
 app.use(express.json({ limit: "15mb" }));
 app.use(bodyParser.urlencoded({ extended: true, limit: "15mb" }));
+app.use(bodyParser.json({ type: "application/vnd.api+json" })); // parse application/vnd.api+json as json
+
 app.use(cors());
 
 require("./config")(app);
