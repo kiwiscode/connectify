@@ -636,6 +636,8 @@ function RightSideColumn({
       .then(() => {
         setsubErrorPhoneVerifiedTabLoading(true);
         setTimeout(() => {
+          setindividualSubOptionTab(2);
+          showPremiumPlusPaymentScreen();
           setTabIndex(tabIndex + 1);
           setsubErrorPhoneVerifiedTabLoading(false);
         }, 500);
@@ -716,7 +718,7 @@ function RightSideColumn({
     useState(false);
 
   const handleCheckoutStripeApiOrganizationBasic = () => {
-    // setCheckoutProcessLoadingBar(true);
+    setCheckoutProcessLoadingBar(true);
 
     axios
       .post(
@@ -735,14 +737,16 @@ function RightSideColumn({
         }
       )
       .then((response) => {
-        // setTimeout(() => {
-        //   setCheckoutProcessLoadingBar(false);
-        //   if (response.data.url) {
-        //     window.location.href = response.data.url;
-        //   }
-        // }, 1000);
+        setTimeout(() => {
+          if (response.data.url) {
+            window.location.href = response.data.url;
+          }
+        }, 1000);
       })
-      .catch((err) => window.alert("Error !!!", err ? err : null));
+      .catch((err) => {
+        window.alert("Error !!!", err ? err : null);
+        setCheckoutProcessLoadingBar(false);
+      });
   };
 
   const handleFullAccessOrganizationPlanModal = () => {
@@ -879,12 +883,11 @@ function RightSideColumn({
       )
       .then((response) => {
         console.log("Response =>", response);
-        setTimeout(() => {
-          setCheckoutProcessLoadingBar(false);
-          if (response.data.url) {
-            window.location.href = response.data.url;
-          }
-        }, 1000);
+        // setTimeout(() => {
+        //   if (response.data.url) {
+        //     window.location.href = response.data.url;
+        //   }
+        // }, 1000);
       })
       .catch((err) => window.alert("Error !!!", err ? err : null));
   };
@@ -6021,8 +6024,11 @@ function RightSideColumn({
                               </span>
                             </div>
                             <Button
-                              onClick={() =>
-                                handleCheckoutStripeApiOrganizationBasic()
+                              onClick={
+                                !checkoutProcessLoadingBar
+                                  ? () =>
+                                      handleCheckoutStripeApiOrganizationBasic()
+                                  : null
                               }
                               className="mt-4 subscribe-btn-basic-plan"
                               style={{
