@@ -28,8 +28,15 @@ import io from "socket.io-client";
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
+import { ThemeContext } from "../context/ThemeContext";
 
 function SpesificUserProfile() {
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
   const socket = io.connect(`${API_URL}`);
 
   const { id } = useParams();
@@ -746,12 +753,13 @@ function SpesificUserProfile() {
       <Container
         style={{
           overflowX: "hidden",
+          overflowY: "hidden",
         }}
         fluid
       >
         <Row
           style={{
-            height: "100vh",
+            height: "100%",
             borderTop: "none",
             borderBottom: "none",
           }}
@@ -777,8 +785,18 @@ function SpesificUserProfile() {
             xxl={5} // 1400px ve sonrası aralığı
             className={`main-column `}
             style={{
-              border: "1px solid rgba(0, 0, 0, 0.1)",
-              borderTop: "none",
+              borderLeft:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
+
+              borderRight:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
+              borderTop: "none ",
               borderBottom: "none",
               padding: "0px",
               position: "relative",
@@ -845,19 +863,21 @@ function SpesificUserProfile() {
               <Row>
                 <Stack direction="horizontal" gap={0}>
                   <div
-                    onClick={() => handleGoBack()}
-                    className="p-2 arrow"
+                    onClick={handleGoBack}
+                    // className="p-2 arrow"
+                    className={`p-2 arrow arrow-${themeName}`}
                     style={{
                       position: "relative",
+                      bottom: "15px",
                       width: "30px",
                       height: " 30px",
-                      bottom: "15px",
-                      // border: "1px solid purple",
                       borderRadius: "50%",
                       cursor: "pointer",
                     }}
                   >
                     <svg
+                      color={themeName === "dark-theme" ? "white" : ""}
+                      fill="currentColor"
                       style={{
                         position: "absolute",
                         bottom: "5px",
@@ -953,11 +973,17 @@ function SpesificUserProfile() {
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
-                          border: "1px solid rgb(185, 202, 211)",
+                          border:
+                            themeName !== "dark-theme"
+                              ? "1px solid rgb(185, 202, 211)"
+                              : // : "0.1px solid rgb(70, 70, 70)",
+                                "1px solid rgb(70, 70, 70)",
                         }}
-                        className="spesific-profile-svg-three-dots"
+                        className={`spesific-profile-svg-three-dots spesific-profile-svg-three-dots-${themeName}`}
                       >
                         <svg
+                          color={themeName === "dark-theme" ? "white" : ""}
+                          fill="currentColor"
                           width={20}
                           height={20}
                           style={{}}
@@ -980,9 +1006,13 @@ function SpesificUserProfile() {
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
-                          border: "1px solid rgb(185, 202, 211)",
+                          border:
+                            themeName !== "dark-theme"
+                              ? "1px solid rgb(185, 202, 211)"
+                              : // : "0.1px solid rgb(70, 70, 70)",
+                                "1px solid rgb(70, 70, 70)",
                         }}
-                        className="spesific-profile-svg-dm"
+                        className={`spesific-profile-svg-dm spesific-profile-svg-dm-${themeName}`}
                       >
                         <svg
                           style={{}}
@@ -1016,9 +1046,10 @@ function SpesificUserProfile() {
                         style={{
                           display: "inline",
                           maxWidth: "107px",
-                          border: isHovered
-                            ? "1px solid rgba(253,201,206,255)"
-                            : "1px solid rgb(185, 202, 211)",
+                          border:
+                            isHovered && themeName !== "dark-theme"
+                              ? "1px solid rgba(253,201,206,255)"
+                              : "1px solid rgb(185, 202, 211)",
                           backgroundColor: isHovered
                             ? "rgba(255,234,235,255)"
                             : profileInfo.followers
@@ -1127,20 +1158,26 @@ function SpesificUserProfile() {
                       profileInfo.createdAt
                     )}
                   </div>
-                  <div>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "3%",
+                    }}
+                  >
                     <Link
-                      to={`/profile/${profileInfo._id}/following`}
-                      className="following-followers-link"
+                      to={`/profile/${userInfo._id}/following`}
                       style={{
                         textDecoration: "none",
-                        color: "black",
+                        color: themeName === "dark-theme" ? "white" : "black",
                       }}
+                      className="following-followers-link"
                     >
                       <span
                         style={{
+                          cursor: "pointer",
+                          fontSize: "14px",
+                          lineHeight: "16px",
                           fontWeight: "700",
-                          fontSize: "15px",
-                          lineHeight: "20px",
                         }}
                       >
                         {profileInfo.following && (
@@ -1149,6 +1186,7 @@ function SpesificUserProfile() {
                       </span>{" "}
                       <span
                         style={{
+                          cursor: "pointer",
                           color: "rgb(83, 100, 113)",
                           fontSize: "14px",
                           lineHeight: "16px",
@@ -1159,18 +1197,19 @@ function SpesificUserProfile() {
                       </span>{" "}
                     </Link>
                     <Link
-                      to={`/profile/${profileInfo._id}/followers`}
-                      className="following-followers-link"
+                      to={`/profile/${userInfo._id}/following`}
                       style={{
                         textDecoration: "none",
-                        color: "black",
+                        color: themeName === "dark-theme" ? "white" : "black",
                       }}
+                      className="following-followers-link"
                     >
                       <span
                         style={{
+                          cursor: "pointer",
+                          fontSize: "14px",
+                          lineHeight: "16px",
                           fontWeight: "700",
-                          fontSize: "15px",
-                          lineHeight: "20px",
                         }}
                       >
                         {profileInfo.followers && (
@@ -1204,54 +1243,115 @@ function SpesificUserProfile() {
             {/* start */}
             <div
               style={{
-                borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
+                borderBottom:
+                  themeName !== "dark-theme"
+                    ? "1px solid rgba(0, 0, 0, 0.1)"
+                    : // : "0.1px solid rgb(70, 70, 70)",
+                      "1px solid rgb(70, 70, 70)",
               }}
             ></div>
-            <ButtonGroup
+            <div
               aria-label="Basic example"
               style={{
                 display: "flex",
+                justifyContent: "space-around",
+                width: "100%",
+                height: "40px",
               }}
             >
               {/* NOTE */}
-              <Button
+              <div
                 onClick={() => handleShowSpesificUserProfilePagePosts()}
-                variant="secondary"
                 style={{
-                  backgroundColor: "white",
-                  color: "black",
-                  border: "none",
-                  borderRight: "1px solid rgba(0,0,0,0.1)",
+                  cursor: "pointer",
+                  width: "50%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRight:
+                    themeName !== "dark-theme"
+                      ? "1px solid rgba(0, 0, 0, 0.1)"
+                      : "1px solid rgb(70, 70, 70)",
                 }}
               >
-                {favoriteWindow === "" ? (
-                  <span>Posts</span>
-                ) : (
-                  <span style={{ color: "rgb(29, 155, 240)" }}>Posts</span>
-                )}
-              </Button>
+                <div
+                  style={{
+                    border: "none",
+                  }}
+                >
+                  {favoriteWindow === "" ? (
+                    <span
+                      style={{
+                        fontWeight: "400",
+                        color: "rgb(83,100,113)",
+                      }}
+                    >
+                      Posts
+                    </span>
+                  ) : (
+                    <span
+                      style={{
+                        fontWeight: "700",
+                        color:
+                          themeName === "dark-theme"
+                            ? "white"
+                            : "rgb(29, 155, 240)",
+                      }}
+                    >
+                      Posts
+                    </span>
+                  )}
+                </div>
+              </div>
 
-              <Button
+              <div
                 onClick={() => handleShowSpesificUserProfilePageFavorites()}
-                variant="secondary"
                 style={{
-                  backgroundColor: "white",
-                  color: "black",
-                  border: "none",
-                  borderLeft: "1px solid rgba(0,0,0,0.1)",
+                  cursor: "pointer",
+                  width: "50%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
-                {favoriteWindow === "" ? (
-                  <span style={{ color: "rgb(29, 155, 240)" }}>Likes</span>
-                ) : (
-                  <span>Likes </span>
-                )}
-              </Button>
-            </ButtonGroup>
+                <div
+                  style={{
+                    border: "none",
+                  }}
+                >
+                  {postsWindow === "" ? (
+                    <span
+                      style={{
+                        fontWeight: "400",
+                        color: "rgb(83,100,113)",
+                      }}
+                    >
+                      Likes
+                    </span>
+                  ) : (
+                    <span
+                      style={{
+                        fontWeight: "700",
+                        color:
+                          themeName === "dark-theme"
+                            ? "white"
+                            : "rgb(29, 155, 240)",
+                      }}
+                    >
+                      Likes
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
             {postsWindow || favoriteWindow ? (
               <div
                 style={{
-                  borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
+                  borderBottom:
+                    themeName !== "dark-theme"
+                      ? "1px solid rgba(0, 0, 0, 0.1)"
+                      : // : "0.1px solid rgb(70, 70, 70)",
+                        "1px solid rgb(70, 70, 70)",
                 }}
               ></div>
             ) : null}
@@ -1278,7 +1378,11 @@ function SpesificUserProfile() {
                         console.log("Post box parent class =>", post);
                         setclickedPostBox(post);
                       }}
-                      className="each-post"
+                      className={
+                        themeName === "dark-theme"
+                          ? `each-post-${themeName}`
+                          : "each-post"
+                      }
                       key={post._id}
                     >
                       {post.deactivatedOwner ? null : (
@@ -1468,6 +1572,10 @@ function SpesificUserProfile() {
                                           fontWeight: "700",
                                           fontSize: "15px",
                                           lineHeight: "20px",
+                                          color:
+                                            themeName === "dark-theme"
+                                              ? "white"
+                                              : "",
                                         }}
                                       >
                                         {post.authorFullName}
@@ -1672,6 +1780,8 @@ function SpesificUserProfile() {
                                     overflowWrap: "break-word",
                                     maxWidth: "100%",
                                     cursor: "pointer",
+                                    color:
+                                      themeName === "dark-theme" ? "white" : "",
                                   }}
                                   className="p-2"
                                 >
@@ -1900,7 +2010,11 @@ function SpesificUserProfile() {
                             }}
                             className="border-extra"
                             style={{
-                              borderBottom: "1px solid rgba(0,0,0,0.1)",
+                              borderBottom:
+                                themeName !== "dark-theme"
+                                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                                  : // : "0.1px solid rgb(70, 70, 70)",
+                                    "1px solid rgb(70, 70, 70)",
                             }}
                           ></div>
                         </>
@@ -1991,7 +2105,11 @@ function SpesificUserProfile() {
                           console.log("Post box parent class =>", favorite);
                           setclickedPostBox(favorite);
                         }}
-                        className="each-post"
+                        className={
+                          themeName === "dark-theme"
+                            ? `each-post-${themeName}`
+                            : "each-post"
+                        }
                         key={favorite._id}
                       >
                         {favorite.deactivatedOwner ? null : (
@@ -2088,6 +2206,10 @@ function SpesificUserProfile() {
                                               fontWeight: "700",
                                               fontSize: "15px",
                                               lineHeight: "20px",
+                                              color:
+                                                themeName === "dark-theme"
+                                                  ? "white"
+                                                  : "",
                                             }}
                                           >
                                             {favorite.authorFullName}
@@ -2258,6 +2380,10 @@ function SpesificUserProfile() {
                                       lineHeight: "20px",
                                       overflowWrap: "break-word",
                                       maxWidth: "100%",
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "white"
+                                          : "",
                                     }}
                                     className="p-2"
                                   >
@@ -2508,7 +2634,11 @@ function SpesificUserProfile() {
                               }}
                               className="border-extra"
                               style={{
-                                borderBottom: "1px solid rgba(0,0,0,0.1)",
+                                borderBottom:
+                                  themeName !== "dark-theme"
+                                    ? "1px solid rgba(0, 0, 0, 0.1)"
+                                    : // : "0.1px solid rgb(70, 70, 70)",
+                                      "1px solid rgb(70, 70, 70)",
                               }}
                             ></div>
                           </>

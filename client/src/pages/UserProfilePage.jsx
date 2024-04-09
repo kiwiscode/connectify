@@ -1,15 +1,7 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserContext";
-import {
-  Container,
-  Row,
-  Col,
-  Stack,
-  Button,
-  ButtonGroup,
-  Accordion,
-} from "react-bootstrap";
+import { Container, Row, Col, Stack, Button, Accordion } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { CommentModal } from "../components/ui/Modal";
 
@@ -939,30 +931,27 @@ function UserProfile() {
               style={{
                 display: "flex",
                 justifyContent: "space-around",
-                // backgroundColor: "yellow",
                 width: "100%",
+                height: "40px",
               }}
             >
               <div
+                onClick={() => handleShowPostsProfilePage()}
                 style={{
+                  cursor: "pointer",
                   width: "50%",
-                  textAlign: "center",
-                  // backgroundColor: "black",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
                   borderRight:
                     themeName !== "dark-theme"
                       ? "1px solid rgba(0, 0, 0, 0.1)"
-                      : // : "0.1px solid rgb(70, 70, 70)",
-                        "1px solid rgb(70, 70, 70)",
+                      : "1px solid rgb(70, 70, 70)",
                 }}
               >
-                <Button
-                  onClick={() => handleShowPostsProfilePage()}
-                  variant="secondary"
+                <div
                   style={{
-                    backgroundColor:
-                      themeName === "dark-theme" ? "black" : "white",
                     border: "none",
-                    // borderRight: "1px solid rgba(0,0,0,0.1)",
                   }}
                 >
                   {favoriteWindow === "" ? (
@@ -987,20 +976,20 @@ function UserProfile() {
                       Posts
                     </span>
                   )}
-                </Button>
+                </div>
               </div>
               <div
+                onClick={() => handleGetFavorites()}
                 style={{
+                  cursor: "pointer",
                   width: "50%",
-                  textAlign: "center",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
-                <Button
-                  onClick={() => handleGetFavorites()}
-                  variant="secondary"
+                <div
                   style={{
-                    backgroundColor:
-                      themeName === "dark-theme" ? "black" : "white",
                     border: "none",
                   }}
                 >
@@ -1026,7 +1015,7 @@ function UserProfile() {
                       Likes
                     </span>
                   )}
-                </Button>
+                </div>
               </div>
             </div>
 
