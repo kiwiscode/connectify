@@ -625,11 +625,11 @@ function ChatDetailsPage() {
               ))}
             </div>
 
-            <Row
+            <div
               style={{
                 borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
               }}
-            ></Row>
+            ></div>
             <div
               style={{
                 position: "relative",

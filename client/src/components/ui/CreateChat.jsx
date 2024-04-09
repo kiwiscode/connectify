@@ -4,6 +4,7 @@ import io from "socket.io-client";
 import { UserContext } from "../../context/UserContext";
 import { Link, useNavigate } from "react-router-dom";
 import { Stack } from "react-bootstrap";
+import { ThemeContext } from "../../context/ThemeContext";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -78,6 +79,13 @@ function CreateChat({ writeMessageButton }) {
     }
   }, [messageRoomId]);
   // problem buradan kaynaklanıyor olabilir finish to check
+
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
 
   const filterUsers = (users, term) => {
     const filtered = users.filter((user) =>
@@ -175,7 +183,8 @@ function CreateChat({ writeMessageButton }) {
       )} */}
       <div
         onClick={handleShow}
-        className="p-2 chat-create-icon"
+        // className="p-2 chat-create-icon"
+        className={`p-2 chat-create-icon chat-create-icon-${themeName}`}
         style={{
           cursor: "pointer",
           borderRadius: "50%",
@@ -186,13 +195,14 @@ function CreateChat({ writeMessageButton }) {
         }}
       >
         <svg
+          color={themeName === "dark-theme" ? "white" : ""}
+          fill="currentColor"
           width={20}
           height={20}
           viewBox="0 0 24 24"
           aria-hidden="true"
           className={`messages-create-chat r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03`}
           style={{
-            color: "rgb(15, 20, 25)",
             lineHeight: "20px",
             fontSize: "15px",
             fontWeight: "700",

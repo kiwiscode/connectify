@@ -20,6 +20,7 @@ import { List, message } from "antd";
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
+import { ThemeContext } from "../context/ThemeContext";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -60,7 +61,12 @@ function MessagesPage() {
   const [room, setRoom] = useState("");
   const [showThreeDots, setShowThreeDots] = useState(false);
   const navigate = useNavigate();
-
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
   useEffect(() => {
     socket.on("receive_specific_user_message_rooms", (data) => {
       setfilteredRooms(data.messages);
@@ -207,25 +213,41 @@ function MessagesPage() {
     </Modal>,
   ];
 
-  const popoverBottom = (
+  const popoverLeft = (
     <Popover
-      id="popover-positioned-scrolling-bottom"
+      style={{
+        filter:
+          themeName === "dark-theme"
+            ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+            : "",
+        boxShadow:
+          "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+        backgroundColor: themeName === "dark-theme" ? "black" : "",
+      }}
+      id="popover-positioned-left"
       title="Popover left"
       className={`${
         showMessageDeletePopover ? "" : "hideshowMessageDeletePopover"
       }`}
     >
       <div>
-        <List size="small" bordered>
+        <List size="small">
           <List.Item
             style={{
               padding: "12px 16px",
+
               opacity: "0.5",
+              borderBottom:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : "1px solid rgb(70, 70, 70)",
             }}
           >
             <Stack direction="horizontal" gap={2}>
               <svg
-                color="rgba(15,20,25,1.00)"
+                color={
+                  themeName === "dark-theme" ? "white" : "rgba(15,20,25,1.00)"
+                }
                 fill="currentcolor"
                 width={`${1.25}em`}
                 height={`${1.25}em`}
@@ -242,6 +264,7 @@ function MessagesPage() {
                   lineHeight: "20px",
                   fontWeight: "700",
                   fontSize: "15px",
+                  color: themeName === "dark-theme" ? "white" : "black ",
                 }}
               >
                 Pin conversation
@@ -252,11 +275,17 @@ function MessagesPage() {
             style={{
               padding: "12px 16px",
               opacity: "0.5",
+              borderBottom:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : "1px solid rgb(70, 70, 70)",
             }}
           >
             <Stack direction="horizontal" gap={2}>
               <svg
-                color="rgba(15,20,25,1.00)"
+                color={
+                  themeName === "dark-theme" ? "white" : "rgba(15,20,25,1.00)"
+                }
                 fill="currentcolor"
                 width={`${1.25}em`}
                 height={`${1.25}em`}
@@ -273,6 +302,11 @@ function MessagesPage() {
                   lineHeight: "20px",
                   fontWeight: "700",
                   fontSize: "15px",
+
+                  color:
+                    themeName === "dark-theme"
+                      ? "white"
+                      : "rgba(15,20,25,1.00)",
                 }}
               >
                 Snooze conversation
@@ -283,11 +317,17 @@ function MessagesPage() {
             style={{
               padding: "12px 16px",
               opacity: "0.5",
+              borderBottom:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : "1px solid rgb(70, 70, 70)",
             }}
           >
             <Stack direction="horizontal" gap={2}>
               <svg
-                color="rgba(15,20,25,1.00)"
+                color={
+                  themeName === "dark-theme" ? "white" : "rgba(15,20,25,1.00)"
+                }
                 fill="currentcolor"
                 width={`${1.25}em`}
                 height={`${1.25}em`}
@@ -304,6 +344,10 @@ function MessagesPage() {
                   lineHeight: "20px",
                   fontWeight: "700",
                   fontSize: "15px",
+                  color:
+                    themeName === "dark-theme"
+                      ? "white"
+                      : "rgba(15,20,25,1.00)",
                 }}
               >
                 Report conversation
@@ -311,10 +355,13 @@ function MessagesPage() {
             </Stack>
           </List.Item>
           <List.Item
-            className="message-popoover"
+            // className="message-popoover"
+            className={`message-popoover message-popoover-${themeName}`}
             style={{
               padding: "12px 16px",
               cursor: "pointer",
+              borderBottomLeftRadius: "6px",
+              borderBottomRightRadius: "6px",
             }}
             onClick={() => handleShowDeleteConversationModal()}
           >
@@ -322,7 +369,8 @@ function MessagesPage() {
             <Stack direction="horizontal" gap={2}>
               <svg
                 style={{}}
-                color="rgba(244,33,46,1.00)"
+                color="#f2212e
+                "
                 fill="currentcolor"
                 width={`${1.25}em`}
                 height={`${1.25}em`}
@@ -336,7 +384,7 @@ function MessagesPage() {
               </svg>
               <span
                 style={{
-                  color: "rgb(244, 33, 46)",
+                  color: "#f2212e",
                   lineHeight: "20px",
                   fontWeight: "700",
                   fontSize: "15px",
@@ -529,6 +577,8 @@ function MessagesPage() {
   };
   // finish to check filtering rooms
 
+  console.log("Message rooms =>", messageRooms);
+
   const checkIfAllFilteredRoomsChatEmpty = (array) => {
     const allChatLengths = array.map((eachMessageRoom) => {
       return eachMessageRoom.chat.length;
@@ -611,14 +661,175 @@ function MessagesPage() {
 
   const [messagesLoadingbar, setmessagesLoadingbar] = useState(true);
 
+  const [showEmptyInboxMessage, setshowEmptyInboxMessage] = useState(false);
+
   useEffect(() => {
     setTimeout(() => {
       setmessagesLoadingbar(false);
-    }, 1500);
-  }, [messagesLoadingbar, filteredRooms]);
+    }, 500);
+  }, []);
 
   return (
     <>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header
+          closeButton={false} // closeButton'u devre dışı bırak
+          style={{
+            border: "none",
+          }}
+        >
+          <div
+            className="close-button"
+            style={{ borderRadius: "50%", cursor: "pointer" }}
+          >
+            <div>
+              <svg
+                style={{
+                  border: "none",
+                  fontSize: "15px",
+                  margin: "5px",
+                }}
+                onClick={handleClose}
+                width={20}
+                height={20}
+                color="rgb(15,20,25)"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+              >
+                <g>
+                  <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                </g>
+              </svg>{" "}
+            </div>
+          </div>
+          <span
+            style={{
+              position: "relative",
+              marginLeft: "25px",
+            }}
+          >
+            New message
+          </span>
+        </Modal.Header>
+        <div className="joinChatContainer">
+          <div>
+            <input
+              type="text"
+              placeholder="Search people"
+              value={searchString}
+              onChange={handleSearchTermChange}
+              style={{
+                fontSize: "14px",
+                width: "100%",
+                outline: "none",
+                border: "none",
+                borderRadius: "0px",
+                borderBottom: "1px solid rgba(0,0,0,0.1)",
+              }}
+            />
+          </div>
+          {!showEmptyInboxMessage &&
+          filteredRooms.length &&
+          !messagesLoadingbar ? (
+            <>
+              {filteredUsers.map((user) => (
+                <>
+                  <div className="selected-user-for-dm">
+                    <Link
+                      onClick={() => selectedUser(user)}
+                      style={{
+                        cursor: "pointer",
+                        textDecoration: "none",
+                      }}
+                      // to={`/messages/${messageRoomId}`}
+                    >
+                      <Stack
+                        style={{
+                          margin: "5px",
+                          padding: "5px",
+                        }}
+                        direction="horizontal"
+                      >
+                        <div className="p-0">
+                          {" "}
+                          {user.imageUrl.slice(0, 3) !== "../" ? (
+                            <img
+                              style={{
+                                borderRadius: "50%",
+                              }}
+                              width={40}
+                              height={40}
+                              src={user.imageUrl}
+                              alt=""
+                            />
+                          ) : (
+                            <div>
+                              <svg
+                                style={{
+                                  borderRadius: "50%",
+                                }}
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="40"
+                                height="40"
+                                fill="rgb(83, 100, 113)"
+                                className="bi bi-person-circle"
+                                viewBox="0 0 16 16"
+                              >
+                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+                        <div
+                          style={{
+                            marginLeft: "10px",
+                          }}
+                          className="p-0"
+                        >
+                          {" "}
+                          <div
+                            style={{
+                              color: "rgb(15, 20, 25)",
+                              fontSize: "15px",
+                              lineHeight: "20px",
+                              fontWeight: "700",
+                            }}
+                          >
+                            {user.fullname}
+                          </div>
+                          <div
+                            style={{
+                              marginRight:
+                                user.imageUrl.slice(0, 3) !== "../"
+                                  ? ""
+                                  : "32px",
+                              color: "rgb(83, 100, 113)",
+                              lineHeight: "20px",
+                              fontSize: "15px",
+                              fontWeight: "400",
+                            }}
+                          >
+                            @{user.username}
+                          </div>
+                        </div>
+                      </Stack>
+                    </Link>
+                  </div>
+                </>
+              ))}
+            </>
+          ) : null}
+        </div>
+        <Modal.Body>
+          {/* start to check  search create message search bar*/}
+
+          {/* finish to check  */}
+        </Modal.Body>
+      </Modal>
+
       {/* start to check delete conversation modal  */}
       {deleteModalOutput[0]}
       {/* finish to check delete conversation modal  */}
@@ -664,14 +875,31 @@ function MessagesPage() {
             xxl={5} // 1400px ve sonrası aralığı
             className={`main-column `}
             style={{
-              border: "1px solid rgba(0, 0, 0, 0.1)",
-              borderTop: "none",
+              borderLeft:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
+
+              borderRight:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
+              borderTop: "none ",
               borderBottom: "none",
               padding: "0px",
               position: "relative",
             }}
           >
-            <Stack direction="horizontal" gap={3}>
+            <Stack
+              style={{
+                paddingLeft: "12px",
+                paddingRight: "12px",
+              }}
+              direction="horizontal"
+              gap={3}
+            >
               <Link className="responsive-home-arrow" to={"/home"}>
                 <svg
                   width={20}
@@ -696,7 +924,8 @@ function MessagesPage() {
               </div>
               {/* settings icon start to check  */}
               <div
-                className="p-2 ms-auto settings-icon"
+                // className="p-2 ms-auto settings-icon"
+                className={`p-2 ms-auto settings-icon settings-icon-${themeName}`}
                 style={{
                   cursor: "pointer",
                   borderRadius: "50%",
@@ -707,12 +936,13 @@ function MessagesPage() {
               >
                 <svg
                   style={{
-                    color: "rgb(15, 20, 25)",
                     lineHeight: "20px",
                     fontSize: "15px",
                     fontWeight: "700",
                     cursor: "pointer",
                   }}
+                  color={themeName === "dark-theme" ? "white" : ""}
+                  fill="currentColor"
                   width={20}
                   height={20}
                   viewBox="0 0 24 24"
@@ -742,18 +972,65 @@ function MessagesPage() {
             {/* start to check here we gonna render filtered rooms */}
             {filteredRooms.length &&
             checkIfAllFilteredRoomsChatEmpty(filteredRooms) !== 0 ? (
-              <div className="App">
+              <div
+                style={{
+                  paddingLeft: "12px",
+                  paddingRight: "12px",
+                }}
+                className="App mt-3"
+              >
                 {/* test */}
                 <div className="joinChatContainer">
-                  <div>
+                  <div
+                    style={{
+                      position: "relative",
+                    }}
+                  >
+                    <div
+                      style={{
+                        position: "absolute",
+                        paddingLeft: "16px",
+                        height: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <svg
+                        color={"#6c7175"}
+                        style={{
+                          display: "inline-block",
+                        }}
+                        fill="currentColor"
+                        width={`16px`}
+                        height={`16px`}
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className="search-bar-right-side-column r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-4wgw6l r-f727ji"
+                      >
+                        <g className="search-bar-right-side-column-group">
+                          <path d="M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781c-1.447 1.142-3.276 1.824-5.262 1.824-4.694 0-8.5-3.806-8.5-8.5z"></path>
+                        </g>
+                      </svg>
+                    </div>
                     <input
                       type="text"
-                      placeholder="Search direct messages"
+                      placeholder="Search Direct Messages"
                       value={searchTerm}
                       onChange={handleSearchTerm}
                       style={{
+                        color: themeName === "dark-theme" ? "white" : "black",
+                        paddingLeft: "36px",
                         fontSize: "14px",
+                        lineHeight: "16px",
                         width: "100%",
+                        backgroundColor:
+                          themeName !== "dark-theme" ? "white" : "black",
+                        border:
+                          themeName !== "dark-theme"
+                            ? "1px solid rgba(0, 0, 0, 0.1)"
+                            : // : "0.1px solid rgb(70, 70, 70)",
+                              "1px solid rgb(70, 70, 70)",
                       }}
                     />
                   </div>
@@ -763,514 +1040,430 @@ function MessagesPage() {
             {/* finish to check here we gonna render filtered rooms */}
 
             {/* mainpage yani messages rotasına tüm messagelerin gösterileceği column burası !  */}
-
-            <>
-              {filteredRooms?.length &&
-              checkIfAllFilteredRoomsChatEmpty(filteredRooms) !== 0 ? (
-                <div>
-                  {filteredRooms.map((eachMessageRoom) => (
-                    <>
-                      <div key={eachMessageRoom._id}>
-                        {eachMessageRoom.deactivatedMember ? null : (
-                          <>
-                            {eachMessageRoom.chat.length > 0 ? (
-                              <Link
-                                onMouseEnter={() => {
-                                  setShowThreeDots(eachMessageRoom._id);
-                                }}
-                                onMouseLeave={() => {
-                                  setShowThreeDots(false);
-                                  setshowMessageDeletePopover(false);
-                                }}
-                                key={eachMessageRoom._id}
-                                style={{
-                                  position: "relative",
-                                  // bottom: "20px",
-                                  margin: "5px",
-                                  cursor: "pointer",
-                                  listStyleType: "none",
-                                  textDecoration: "none",
-                                }}
-                                to={
-                                  isHovered !== eachMessageRoom._id &&
-                                  !showMessageDeletePopover
-                                    ? `/messages/${eachMessageRoom._id}`
-                                    : null
-                                }
-                                onClick={() =>
-                                  isHovered !== eachMessageRoom._id &&
-                                  !showMessageDeletePopover
-                                    ? redirectToChatDetailPage(
-                                        eachMessageRoom._id
-                                      )
-                                    : null
-                                }
-                              >
+            {!messagesLoadingbar && messageRooms.length ? (
+              <>
+                {filteredRooms?.length &&
+                checkIfAllFilteredRoomsChatEmpty(filteredRooms) !== 0 ? (
+                  <div className="mt-3">
+                    {filteredRooms.map((eachMessageRoom) => (
+                      <>
+                        <div key={eachMessageRoom._id}>
+                          {eachMessageRoom.deactivatedMember ? null : (
+                            <div>
+                              {eachMessageRoom.chat.length > 0 ? (
                                 <div
-                                  style={{
-                                    backgroundColor: eachMessageRoom.readed
-                                      ? "white"
-                                      : "#F7F9F9",
-                                    border: eachMessageRoom.chat.length
-                                      ? "1px solid #e1e8ed"
-                                      : "",
-                                    borderRadius: "8px",
+                                  onMouseEnter={() => {
+                                    setShowThreeDots(eachMessageRoom._id);
                                   }}
+                                  onMouseLeave={() => {
+                                    setShowThreeDots(false);
+                                    setshowMessageDeletePopover(false);
+                                  }}
+                                  key={eachMessageRoom._id}
+                                  style={{
+                                    position: "relative",
+                                    cursor: "pointer",
+                                    listStyleType: "none",
+                                    textDecoration: "none",
+                                  }}
+                                  to={
+                                    isHovered !== eachMessageRoom._id &&
+                                    !showMessageDeletePopover
+                                      ? `/messages/${eachMessageRoom._id}`
+                                      : null
+                                  }
+                                  onClick={() =>
+                                    isHovered !== eachMessageRoom._id &&
+                                    !showMessageDeletePopover
+                                      ? redirectToChatDetailPage(
+                                          eachMessageRoom._id
+                                        )
+                                      : null
+                                  }
                                 >
-                                  {eachMessageRoom.chat &&
-                                    eachMessageRoom.chat.length > 0 && (
-                                      <>
-                                        <Stack
-                                          style={{
-                                            margin: "5px",
-                                            padding: "5px",
-                                          }}
-                                          direction="horizontal"
-                                        >
-                                          <div className="p-0">
-                                            {" "}
-                                            {getMemberNotEqualActiveUser(
-                                              eachMessageRoom
-                                            ) ? (
-                                              <>
-                                                {getMemberNotEqualActiveUser(
-                                                  eachMessageRoom
-                                                ).imageUrl.slice(0, 3) !==
-                                                "../" ? (
-                                                  <>
-                                                    <img
-                                                      width={40}
-                                                      height={40}
-                                                      style={{
-                                                        borderRadius: "50%",
-                                                      }}
-                                                      src={
-                                                        getMemberNotEqualActiveUser(
-                                                          eachMessageRoom
-                                                        ).imageUrl
-                                                      }
-                                                      alt=""
-                                                    />
-                                                  </>
-                                                ) : (
-                                                  <>
-                                                    <svg
-                                                      xmlns="http://www.w3.org/2000/svg"
-                                                      width="40"
-                                                      height="40"
-                                                      fill="rgb(83, 100, 113)"
-                                                      className="bi bi-person-circle"
-                                                      viewBox="0 0 16 16"
-                                                      style={{
-                                                        borderRadius: "50%",
-                                                      }}
-                                                    >
-                                                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                                      <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                                    </svg>
-                                                  </>
-                                                )}
-                                              </>
-                                            ) : null}
-                                          </div>
-                                          <div
+                                  <div
+                                    className={`each-message-parent-div each-message-parent-div-${themeName}`}
+                                    style={{
+                                      minHeight: "73px",
+                                      paddingLeft: "12px",
+                                      paddingRight: "12px",
+                                      backgroundColor:
+                                        eachMessageRoom.readed &&
+                                        themeName !== "dark-theme"
+                                          ? "white"
+                                          : !eachMessageRoom.readed &&
+                                            themeName !== "dark-theme"
+                                          ? ""
+                                          : eachMessageRoom.readed &&
+                                            themeName === "dark-theme"
+                                          ? "black"
+                                          : !eachMessageRoom.readed &&
+                                            themeName === "dark-theme"
+                                          ? "black"
+                                          : "",
+                                    }}
+                                  >
+                                    {eachMessageRoom.chat &&
+                                      eachMessageRoom.chat.length > 0 && (
+                                        <>
+                                          <Stack
                                             style={{
-                                              marginLeft: "10px",
+                                              margin: "5px",
+                                              padding: "5px",
                                             }}
-                                            className="p-0"
+                                            direction="horizontal"
                                           >
-                                            <span
-                                              style={{
-                                                color: "rgb(15, 20, 25)",
-
-                                                fontSize: "15px",
-                                                fontWeight: "700",
-                                                lineHeight: "20px",
-                                              }}
-                                            >
-                                              {eachMessageRoom.members[1] &&
-                                              eachMessageRoom.members[0] ? (
-                                                <>
-                                                  {eachMessageRoom.members[1]
-                                                    .fullname !==
-                                                  userInfo.fullname
-                                                    ? eachMessageRoom.members[1]
-                                                        .fullname
-                                                    : eachMessageRoom.members[0]
-                                                        .fullname}{" "}
-                                                </>
-                                              ) : null}
-                                            </span>
-                                            <span
-                                              style={{
-                                                color: "rgb(83, 100, 113)",
-                                                fontSize: "15px",
-                                                lineHeight: "20px",
-                                                fontWeight: "400",
-                                              }}
-                                            >
-                                              @
-                                              {eachMessageRoom.members[1] &&
-                                              eachMessageRoom.members[0] ? (
-                                                <>
-                                                  {eachMessageRoom.members[1]
-                                                    .username !==
-                                                  userInfo.username
-                                                    ? eachMessageRoom.members[1]
-                                                        .username
-                                                    : eachMessageRoom.members[0]
-                                                        .username}{" "}
-                                                </>
-                                              ) : null}
-                                            </span>
-                                            <span
-                                              style={{
-                                                color: "rgb(83, 100, 113)",
-                                                fontSize: "15px",
-                                                lineHeight: "20px",
-                                                fontWeight: "400",
-                                              }}
-                                            >
-                                              {" "}
-                                              ·{" "}
-                                              {eachMessageRoom.chat[0]
-                                                ? getCreatedRoomDate(
-                                                    eachMessageRoom.chat[0]
-                                                      .messages[0].timestamp
-                                                  )
-                                                : ""}
-                                            </span>
                                             <div className="p-0">
                                               {" "}
+                                              {getMemberNotEqualActiveUser(
+                                                eachMessageRoom
+                                              ) ? (
+                                                <>
+                                                  {getMemberNotEqualActiveUser(
+                                                    eachMessageRoom
+                                                  ).imageUrl.slice(0, 3) !==
+                                                  "../" ? (
+                                                    <>
+                                                      <img
+                                                        width={40}
+                                                        height={40}
+                                                        style={{
+                                                          borderRadius: "50%",
+                                                        }}
+                                                        src={
+                                                          getMemberNotEqualActiveUser(
+                                                            eachMessageRoom
+                                                          ).imageUrl
+                                                        }
+                                                        alt=""
+                                                      />
+                                                    </>
+                                                  ) : (
+                                                    <>
+                                                      <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        width="40"
+                                                        height="40"
+                                                        fill="rgb(83, 100, 113)"
+                                                        className="bi bi-person-circle"
+                                                        viewBox="0 0 16 16"
+                                                        style={{
+                                                          borderRadius: "50%",
+                                                        }}
+                                                      >
+                                                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                                        <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                                      </svg>
+                                                    </>
+                                                  )}
+                                                </>
+                                              ) : null}
+                                            </div>
+                                            <div
+                                              style={{
+                                                marginLeft: "10px",
+                                              }}
+                                              className="p-0"
+                                            >
                                               <span
                                                 style={{
-                                                  color: "rgb(83, 100, 113)",
+                                                  color:
+                                                    themeName === "dark-theme"
+                                                      ? "white"
+                                                      : "rgb(15, 20, 25)",
+
+                                                  fontSize: "15px",
+                                                  fontWeight: "700",
+                                                  lineHeight: "20px",
                                                 }}
                                               >
-                                                {
-                                                  eachMessageRoom.chat[
-                                                    eachMessageRoom.chat
-                                                      .length - 1
-                                                  ].messages[0].text
-                                                }
+                                                {eachMessageRoom.members[1] &&
+                                                eachMessageRoom.members[0] ? (
+                                                  <>
+                                                    {eachMessageRoom.members[1]
+                                                      .fullname !==
+                                                    userInfo.fullname
+                                                      ? eachMessageRoom
+                                                          .members[1].fullname
+                                                      : eachMessageRoom
+                                                          .members[0]
+                                                          .fullname}{" "}
+                                                  </>
+                                                ) : null}
                                               </span>
-                                            </div>
-                                          </div>
-                                          {/* <div className="p-0 ms-auto">asd</div> */}
-                                          <div
-                                            onClick={() =>
-                                              grabTheMessageRoom(
-                                                eachMessageRoom
-                                              )
-                                            }
-                                            onMouseEnter={() => {
-                                              console.log(
-                                                "Message room id =>",
-                                                eachMessageRoom._id
-                                              );
-                                              setIsHovered(eachMessageRoom._id);
-                                              // setshowMessageDeletePopover(true);
-                                            }}
-                                            onMouseLeave={() => {
-                                              setIsHovered(false);
-                                              setshowMessageDeletePopover(
-                                                false
-                                              );
-                                            }}
-                                            className={`p-2 ms-auto message-icon`}
-                                          >
-                                            <OverlayTrigger
-                                              trigger="click"
-                                              placement="left"
-                                              overlay={popoverBottom}
-                                            >
-                                              <div
-                                                className={
-                                                  isHovered ===
-                                                  eachMessageRoom._id
-                                                    ? `message-delete-three-dots-parent message-delete-three-dots-parent-hovered`
-                                                    : `message-delete-three-dots-parent`
-                                                }
+                                              <span
                                                 style={{
-                                                  cursor: "pointer",
-                                                  borderRadius: "50%",
+                                                  color:
+                                                    themeName === "dark-theme"
+                                                      ? "#6c7175"
+                                                      : "rgb(83, 100, 113)",
+                                                  fontSize: "15px",
+                                                  lineHeight: "20px",
+                                                  fontWeight: "400",
                                                 }}
                                               >
-                                                <svg
+                                                @
+                                                {eachMessageRoom.members[1] &&
+                                                eachMessageRoom.members[0] ? (
+                                                  <>
+                                                    {eachMessageRoom.members[1]
+                                                      .username !==
+                                                    userInfo.username
+                                                      ? eachMessageRoom
+                                                          .members[1].username
+                                                      : eachMessageRoom
+                                                          .members[0]
+                                                          .username}{" "}
+                                                  </>
+                                                ) : null}
+                                              </span>
+                                              <span
+                                                style={{
+                                                  color:
+                                                    themeName === "dark-theme"
+                                                      ? "#6c7175"
+                                                      : "rgb(83, 100, 113)",
+                                                  fontSize: "15px",
+                                                  lineHeight: "20px",
+                                                  fontWeight: "400",
+                                                }}
+                                              >
+                                                {" "}
+                                                ·{" "}
+                                                {eachMessageRoom.chat[0]
+                                                  ? getCreatedRoomDate(
+                                                      eachMessageRoom.chat[0]
+                                                        .messages[0].timestamp
+                                                    )
+                                                  : ""}
+                                              </span>
+                                              <div className="p-0">
+                                                {" "}
+                                                <span
+                                                  style={{
+                                                    color:
+                                                      themeName === "dark-theme"
+                                                        ? "#6c7175"
+                                                        : "rgb(83, 100, 113)",
+                                                  }}
+                                                >
+                                                  {
+                                                    eachMessageRoom.chat[
+                                                      eachMessageRoom.chat
+                                                        .length - 1
+                                                    ].messages[0].text
+                                                  }
+                                                </span>
+                                              </div>
+                                            </div>
+                                            {/* <div className="p-0 ms-auto">asd</div> */}
+                                            <div
+                                              style={{
+                                                marginTop: "5px",
+                                              }}
+                                              onClick={() =>
+                                                grabTheMessageRoom(
+                                                  eachMessageRoom
+                                                )
+                                              }
+                                              onMouseEnter={() => {
+                                                console.log(
+                                                  "Message room id =>",
+                                                  eachMessageRoom._id
+                                                );
+                                                setIsHovered(
+                                                  eachMessageRoom._id
+                                                );
+                                                // setshowMessageDeletePopover(true);
+                                              }}
+                                              onMouseLeave={() => {
+                                                setIsHovered(false);
+                                                setshowMessageDeletePopover(
+                                                  false
+                                                );
+                                              }}
+                                              className={`p-2 ms-auto message-icon`}
+                                            >
+                                              <OverlayTrigger
+                                                trigger="click"
+                                                placement="left"
+                                                overlay={popoverLeft}
+                                              >
+                                                <div
+                                                  onClick={() => {
+                                                    setshowMessageDeletePopover(
+                                                      !showMessageDeletePopover
+                                                    );
+                                                  }}
+                                                  className={
+                                                    isHovered ===
+                                                      eachMessageRoom._id &&
+                                                    themeName !== "dark-theme"
+                                                      ? `message-delete-three-dots-parent message-delete-three-dots-parent-hovered`
+                                                      : `message-delete-three-dots-parent-dark-theme message-delete-three-dots-parent-hovered-dark-theme`
+                                                  }
                                                   style={{
                                                     cursor: "pointer",
-                                                    position: "relative",
-                                                    left: "10px",
-                                                    top: "5px",
+                                                    borderRadius: "50%",
                                                   }}
-                                                  color={
-                                                    isHovered ===
-                                                    eachMessageRoom._id
-                                                      ? "#259ef0"
-                                                      : "rgb(83, 100, 113)"
-                                                  }
-                                                  fill="currentColor"
-                                                  width={`${1.25}em`}
-                                                  height={`${1.25}em`}
-                                                  viewBox="0 0 24 24"
-                                                  aria-hidden="true"
-                                                  className={`${
-                                                    showThreeDots ===
-                                                    eachMessageRoom._id
-                                                      ? ""
-                                                      : "hide"
-                                                  } message-delete-three-dots bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi`}
                                                 >
-                                                  <g>
-                                                    <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                                  </g>
-                                                </svg>
-                                              </div>
-                                            </OverlayTrigger>
-                                          </div>
-                                        </Stack>
+                                                  <svg
+                                                    style={{
+                                                      cursor: "pointer",
+                                                      position: "relative",
+                                                      left: "10px",
+                                                      top: "5px",
+                                                    }}
+                                                    color={
+                                                      isHovered ===
+                                                      eachMessageRoom._id
+                                                        ? "#259ef0"
+                                                        : "rgb(83, 100, 113)"
+                                                    }
+                                                    fill="currentColor"
+                                                    width={`${1.25}em`}
+                                                    height={`${1.25}em`}
+                                                    viewBox="0 0 24 24"
+                                                    aria-hidden="true"
+                                                    className={`${
+                                                      showThreeDots ===
+                                                      eachMessageRoom._id
+                                                        ? ""
+                                                        : "hide"
+                                                    } message-delete-three-dots bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi`}
+                                                  >
+                                                    <g>
+                                                      <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                                                    </g>
+                                                  </svg>
+                                                </div>
+                                              </OverlayTrigger>
+                                            </div>
+                                          </Stack>
 
-                                        {/* message text is here ? start to check  */}
+                                          {/* message text is here ? start to check  */}
 
-                                        {/* message text is here ? finish to check  */}
-                                      </>
-                                    )}
+                                          {/* message text is here ? finish to check  */}
+                                        </>
+                                      )}
+                                  </div>
                                 </div>
-                              </Link>
-                            ) : null}
-                          </>
-                        )}
-                      </div>
-                    </>
-                  ))}
-                </div>
-              ) : (
-                <>
-                  {messagesLoadingbar && !filteredRooms?.length ? (
-                    <div style={{ textAlign: "center", padding: "64px" }}>
+                              ) : null}
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    ))}
+                  </div>
+                ) : (
+                  <>
+                    <div style={{ textAlign: "left", padding: "16px" }}>
                       <div
                         style={{
-                          fontSize: "15px",
+                          lineHeight: "36px",
+                          fontSize: "31px",
+                          fontWeight: "800",
+                          margin: "10px",
                         }}
                       >
-                        <LoadingSpinner
-                          strokeColor={"rgb(29, 155, 240)"}
-                        ></LoadingSpinner>
+                        Welcome to your inbox!
                       </div>
+                      <div
+                        style={{
+                          color: "rgb(83, 100, 113)",
+                          lineHeight: "20px",
+                          fontSize: "15px",
+                          fontWeight: "400",
+                          margin: "10px",
+                        }}
+                      >
+                        Drop a line, share posts and more with private
+                        conversations between you and others on Connectify.
+                      </div>
+                      <button
+                        className="write-a-message-message-page-btn"
+                        style={{
+                          color: "white",
+                          backgroundColor: "rgb(29,155,240)",
+                          margin: "10px",
+                          borderStyle: "none",
+                          borderRadius: "9999px",
+                          minWidth: "52px",
+                          outlineStyle: "none",
+                          cursor: "pointer",
+                          minHeight: "52px",
+                          paddingLeft: "32px",
+                          paddingRight: "32px",
+                          fontWeight: "700",
+                          fontSize: "15px",
+                        }}
+                        onClick={handleShow}
+                      >
+                        Write a message
+                      </button>
                     </div>
-                  ) : (
-                    <>
-                      {/* <CreateChat writeMessageButton={true}></CreateChat> */}
-
-                      <>
-                        {/* another create chat modal start to check  */}
-                        <div style={{ textAlign: "left", padding: "16px" }}>
-                          <div
-                            style={{
-                              lineHeight: "36px",
-                              fontSize: "31px",
-                              fontWeight: "800",
-                              margin: "10px",
-                            }}
-                          >
-                            Welcome to your inbox!asdasdasdsadsadadad
-                          </div>
-                          <div
-                            style={{
-                              color: "rgb(83, 100, 113)",
-                              lineHeight: "20px",
-                              fontSize: "15px",
-                              fontWeight: "400",
-                              margin: "10px",
-                            }}
-                          >
-                            Drop a line, share posts and more with private
-                            conversations between you and others on Connectify.
-                          </div>
-                          <button
-                            className="write-a-message-message-page-btn"
-                            style={{
-                              color: "white",
-                              backgroundColor: "rgb(29,155,240)",
-                              margin: "10px",
-                              borderStyle: "none",
-                              borderRadius: "9999px",
-                              minWidth: "52px",
-                              outlineStyle: "none",
-                              cursor: "pointer",
-                              minHeight: "52px",
-                              paddingLeft: "32px",
-                              paddingRight: "32px",
-                              fontWeight: "700",
-                              fontSize: "15px",
-                            }}
-                            onClick={handleShow}
-                          >
-                            Write a message
-                          </button>
-                        </div>
-
-                        <Modal show={show} onHide={handleClose}>
-                          <Modal.Header
-                            closeButton={false} // closeButton'u devre dışı bırak
-                            style={{
-                              border: "none",
-                            }}
-                          >
-                            <div
-                              className="close-button"
-                              style={{ borderRadius: "50%", cursor: "pointer" }}
-                            >
-                              <div>
-                                <svg
-                                  style={{
-                                    border: "none",
-                                    fontSize: "15px",
-                                    margin: "5px",
-                                  }}
-                                  onClick={handleClose}
-                                  width={20}
-                                  height={20}
-                                  color="rgb(15,20,25)"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                                >
-                                  <g>
-                                    <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
-                                  </g>
-                                </svg>{" "}
-                              </div>
-                            </div>
-                            <span
-                              style={{
-                                position: "relative",
-                                marginLeft: "25px",
-                              }}
-                            >
-                              New message
-                            </span>
-                          </Modal.Header>
-                          <div className="joinChatContainer">
-                            <div>
-                              <input
-                                type="text"
-                                placeholder="Search people"
-                                value={searchString}
-                                onChange={handleSearchTermChange}
-                                style={{
-                                  fontSize: "14px",
-                                  width: "100%",
-                                  outline: "none",
-                                  border: "none",
-                                  borderRadius: "0px",
-                                  borderBottom: "1px solid rgba(0,0,0,0.1)",
-                                }}
-                              />
-                            </div>
-                            {filteredUsers.map((user) => (
-                              <>
-                                <div className="selected-user-for-dm">
-                                  <Link
-                                    onClick={() => selectedUser(user)}
-                                    style={{
-                                      cursor: "pointer",
-                                      textDecoration: "none",
-                                    }}
-                                    // to={`/messages/${messageRoomId}`}
-                                  >
-                                    <Stack
-                                      style={{
-                                        margin: "5px",
-                                        padding: "5px",
-                                      }}
-                                      direction="horizontal"
-                                    >
-                                      <div className="p-0">
-                                        {" "}
-                                        {user.imageUrl.slice(0, 3) !== "../" ? (
-                                          <img
-                                            style={{
-                                              borderRadius: "50%",
-                                            }}
-                                            width={40}
-                                            height={40}
-                                            src={user.imageUrl}
-                                            alt=""
-                                          />
-                                        ) : (
-                                          <div>
-                                            <svg
-                                              style={{
-                                                borderRadius: "50%",
-                                              }}
-                                              xmlns="http://www.w3.org/2000/svg"
-                                              width="40"
-                                              height="40"
-                                              fill="rgb(83, 100, 113)"
-                                              className="bi bi-person-circle"
-                                              viewBox="0 0 16 16"
-                                            >
-                                              <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                              <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                            </svg>
-                                          </div>
-                                        )}
-                                      </div>
-                                      <div
-                                        style={{
-                                          marginLeft: "10px",
-                                        }}
-                                        className="p-0"
-                                      >
-                                        {" "}
-                                        <div
-                                          style={{
-                                            color: "rgb(15, 20, 25)",
-                                            fontSize: "15px",
-                                            lineHeight: "20px",
-                                            fontWeight: "700",
-                                          }}
-                                        >
-                                          {user.fullname}
-                                        </div>
-                                        <div
-                                          style={{
-                                            marginRight:
-                                              user.imageUrl.slice(0, 3) !==
-                                              "../"
-                                                ? ""
-                                                : "32px",
-                                            color: "rgb(83, 100, 113)",
-                                            lineHeight: "20px",
-                                            fontSize: "15px",
-                                            fontWeight: "400",
-                                          }}
-                                        >
-                                          @{user.username}
-                                        </div>
-                                      </div>
-                                    </Stack>
-                                  </Link>
-                                </div>
-                              </>
-                            ))}
-                          </div>
-                          <Modal.Body>
-                            {/* start to check  search create message search bar*/}
-
-                            {/* finish to check  */}
-                          </Modal.Body>
-                        </Modal>
-
-                        {/* another create chat model finish to check  */}
-                      </>
-                    </>
-                  )}
-                </>
-              )}
-            </>
+                  </>
+                )}
+              </>
+            ) : messagesLoadingbar ? (
+              <div style={{ textAlign: "center", padding: "64px" }}>
+                <div
+                  style={{
+                    fontSize: "15px",
+                  }}
+                >
+                  <LoadingSpinner
+                    strokeColor={"rgb(29, 155, 240)"}
+                  ></LoadingSpinner>
+                </div>
+              </div>
+            ) : !messageRooms.length ? (
+              <div style={{ textAlign: "left", padding: "16px" }}>
+                <div
+                  style={{
+                    lineHeight: "36px",
+                    fontSize: "31px",
+                    fontWeight: "800",
+                    margin: "10px",
+                  }}
+                >
+                  Welcome to your inbox!
+                </div>
+                <div
+                  style={{
+                    color: "rgb(83, 100, 113)",
+                    lineHeight: "20px",
+                    fontSize: "15px",
+                    fontWeight: "400",
+                    margin: "10px",
+                  }}
+                >
+                  Drop a line, share posts and more with private conversations
+                  between you and others on Connectify.
+                </div>
+                <button
+                  className="write-a-message-message-page-btn"
+                  style={{
+                    color: "white",
+                    backgroundColor: "rgb(29,155,240)",
+                    margin: "10px",
+                    borderStyle: "none",
+                    borderRadius: "9999px",
+                    minWidth: "52px",
+                    outlineStyle: "none",
+                    cursor: "pointer",
+                    minHeight: "52px",
+                    paddingLeft: "32px",
+                    paddingRight: "32px",
+                    fontWeight: "700",
+                    fontSize: "15px",
+                  }}
+                  onClick={handleShow}
+                >
+                  Write a message
+                </button>
+              </div>
+            ) : null}
           </Col>
           {/* finish to check main column  */}
 

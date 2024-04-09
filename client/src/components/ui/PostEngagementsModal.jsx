@@ -3,6 +3,7 @@ import { Modal, Stack, Button, Row } from "react-bootstrap";
 import { UserContext } from "../../context/UserContext";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { ThemeContext } from "../../context/ThemeContext";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -188,6 +189,14 @@ function PostEngagements({
   console.log("All follower ids =>", allFollowerIds());
   console.log("All following ids => ", allFollowingIds());
   console.log("Detailed post id =>", detailedPost._id);
+
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
+
   return (
     <>
       {/* view post engagements section start to check */}
@@ -244,7 +253,11 @@ function PostEngagements({
       {/* view post engagements section finish to check */}
       <div
         style={{
-          borderBottom: postDetailPage ? "1px solid rgba(0,0,0,0.1)" : null,
+          borderBottom:
+            (themeName !== "dark-theme" && postDetailPage) || !postDetailPage
+              ? "1px solid rgba(0, 0, 0, 0.1)"
+              : // : "0.1px solid rgb(70, 70, 70)",
+                "1px solid rgb(70, 70, 70)",
         }}
       ></div>
       <Modal
