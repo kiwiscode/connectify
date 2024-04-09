@@ -74,6 +74,23 @@ body {
   background-color: rgb(29, 155, 240) !important;
 }
 
+.login-button:hover,
+.unfollow-btn:hover {
+  outline-style: none;
+  border-style: none;
+  border-radius: var(--border-radius);
+  background-color: #272c30 !important;
+  transition-duration: 0.2s !important;
+}
+
+.login-button-dark-theme:hover {
+  outline-style: none;
+  border-style: none;
+  border-radius: var(--border-radius);
+  background-color: #198cd8 !important;
+  transition-duration: 0.2s !important;
+}
+
 .right-side-column-nav-bar-dark-theme div {
   color: white;
 }
@@ -82,6 +99,11 @@ body {
 .send-button:hover,
 .message-delete-three-dots-parent-hovered:hover {
   background-color: #e4f0f9 !important;
+  transition-duration: 0.2s !important;
+}
+
+.message-delete-three-dots-parent-hovered-dark-theme:hover {
+  background-color: #162837 !important;
   transition-duration: 0.2s !important;
 }
 
@@ -95,6 +117,7 @@ body {
 }
 
 .each-post-dark-theme:hover {
+  cursor: pointer !important;
   background-color: #181818 !important;
 }
 
@@ -116,6 +139,26 @@ body {
 .chat-create-icon-dark-theme:hover {
   background-color: rgba(25, 26, 26, 255) !important;
   transition-duration: 0.2s !important;
+}
+
+.each-message-parent-div:hover {
+  background-color: #f7f9f9 !important ;
+}
+
+.each-message-parent-div-dark-theme:hover {
+  background-color: #181818 !important ;
+}
+
+.spesific-profile-svg-three-dots:hover,
+.spesific-profile-svg-dm:hover {
+  background-color: rgba(234, 234, 234, 255);
+  cursor: pointer;
+}
+
+.spesific-profile-svg-three-dots-dark-theme:hover,
+.spesific-profile-svg-dm-dark-theme:hover {
+  background-color: #181818;
+  cursor: pointer;
 }
 
 /* html {
@@ -1008,6 +1051,14 @@ span > a:hover {
   bottom: 8px;
 }
 
+.message-delete-three-dots-parent-dark-theme {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  margin: auto;
+  bottom: 8px;
+}
+
 .each-post,
 .border-extra {
   cursor: pointer !important;
@@ -1796,21 +1847,6 @@ span > a:hover {
   background-color: #0f141a;
 }
 
-.spesific-profile-svg-three-dots:hover,
-.spesific-profile-svg-dm:hover {
-  background-color: rgba(234, 234, 234, 255);
-  cursor: pointer;
-}
-
-.login-button:hover,
-.unfollow-btn:hover {
-  outline-style: none;
-  border-style: none;
-  border-radius: var(--border-radius);
-  background-color: #272c30 !important;
-  transition-duration: 0.2s !important;
-}
-
 .deactivate-tab-next-btn:hover {
   background-color: #272c30 !important;
   transition-duration: 0.2s !important;
@@ -1848,7 +1884,9 @@ span > a:hover {
 .message-popoover:hover {
   background-color: #f7f7f7;
 }
-
+.message-popoover-dark-theme:hover {
+  background-color: #181818;
+}
 .delete-conversation-content {
   padding: 32px;
 }

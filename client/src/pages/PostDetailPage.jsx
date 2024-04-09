@@ -14,11 +14,18 @@ const API_URL = "http://localhost:3000";
 // when working on deployment version
 // ?
 import io from "socket.io-client";
-import PostModal from "../components/Main-Left-Side-Navbar/PostModal";
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
+import { ThemeContext } from "../context/ThemeContext";
 function PostDetailPage() {
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
+
   const socket = io.connect(`${API_URL}`);
   const { postOwner, postId } = useParams();
   const [detailedPost, setdetailedPost] = useState([]);
@@ -552,8 +559,18 @@ function PostDetailPage() {
             xxl={5} // 1400px ve sonrası aralığı
             className={`main-column `}
             style={{
-              border: "1px solid rgba(0, 0, 0, 0.1)",
-              borderTop: "none",
+              borderLeft:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
+
+              borderRight:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
+              borderTop: "none ",
               borderBottom: "none",
               padding: "0px",
               position: "relative",
@@ -562,7 +579,7 @@ function PostDetailPage() {
             <Stack direction="horizontal" gap={3}>
               <div
                 onClick={handleGoBack}
-                className="p-2 arrow"
+                className={`p-2 arrow arrow-${themeName}`}
                 style={{
                   position: "relative",
                   left: "10px",
@@ -573,6 +590,8 @@ function PostDetailPage() {
                 }}
               >
                 <svg
+                  color={themeName === "dark-theme" ? "white" : ""}
+                  fill="currentColor"
                   style={{
                     position: "absolute",
                     bottom: "5px",
@@ -659,7 +678,12 @@ function PostDetailPage() {
                                   <div
                                     className="responsive-comment-line"
                                     style={{
-                                      border: "1px solid rgba(0, 0, 0, 0.2)",
+                                      border:
+                                        themeName !== "dark-theme"
+                                          ? "1px solid rgba(0, 0, 0, 0.2)"
+                                          : // : "0.1px solid rgb(70, 70, 70)",
+                                            "1px solid rgb(70, 70, 70)",
+
                                       margin: "5px 0px 5px 0px",
                                       width: "2px",
                                       height: `${
@@ -759,7 +783,10 @@ function PostDetailPage() {
                               <span
                                 className="hover-fullname"
                                 style={{
-                                  color: "black",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "white"
+                                      : "black",
                                   fontWeight: "700",
                                   fontSize: "15px",
                                   lineHeight: "20px",
@@ -919,7 +946,14 @@ function PostDetailPage() {
                               lineHeight: "20px",
                             }}
                           >
-                            <span>{commentedForThisPost.content}</span>
+                            <span
+                              style={{
+                                color:
+                                  themeName === "dark-theme" ? "white" : "",
+                              }}
+                            >
+                              {commentedForThisPost.content}
+                            </span>
                             {commentedForThisPost.image ? (
                               <>
                                 {commentedForThisPost.image.url.slice(0, 3) !==
@@ -1385,7 +1419,7 @@ function PostDetailPage() {
                       <span
                         className="post-detail-underline-text-2"
                         style={{
-                          color: "black",
+                          color: themeName === "dark-theme" ? "white" : "black",
                           lineHeight: "20px",
                           fontWeight: "700",
                           fontSize: "15px",
@@ -1499,6 +1533,7 @@ function PostDetailPage() {
                   <span
                     style={{
                       marginLeft: "10px",
+                      color: themeName === "dark-theme" ? "white" : "black",
                     }}
                   >
                     {detailedPost.content}
@@ -1564,7 +1599,11 @@ function PostDetailPage() {
               </Link>
               <div
                 style={{
-                  borderBottom: "1px solid rgba(0,0,0,0.1)",
+                  borderBottom:
+                    themeName !== "dark-theme"
+                      ? "1px solid rgba(0, 0, 0, 0.1)"
+                      : // : "0.1px solid rgb(70, 70, 70)",
+                        "1px solid rgb(70, 70, 70)",
                 }}
               ></div>
             </Stack>
