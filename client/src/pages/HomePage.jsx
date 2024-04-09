@@ -14,7 +14,8 @@ function HomePage() {
       <Container
         style={{
           overflowX: "hidden",
-          height: "100vh",
+          // overflowY: "hidden",
+          height: "100%",
         }}
         fluid
       >

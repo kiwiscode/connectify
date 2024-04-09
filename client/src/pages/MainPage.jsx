@@ -38,8 +38,15 @@ import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
 import useWindowDimensions from "../hooks/getWindowDimensions";
 import { TextField } from "@mui/material";
+import { ThemeContext } from "../context/ThemeContext";
 
 function MainPage() {
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
   const socket = io.connect(`${API_URL}`);
   const [isSubModalOpened, setIsSubModalOpened] = useState(false);
   const [tabIndexValue, settabIndexValue] = useState(null);
@@ -519,7 +526,6 @@ function MainPage() {
         return err;
       });
   };
-  console.log("All posts in main page =>", posts);
   const setLoadingTrue = () => {
     setIsLoading(true);
     setContent("");
@@ -775,7 +781,12 @@ function MainPage() {
     return {
       // textDecoration: activeTab === tab ? "underline" : "none",
       // background: hoveredTab === tab ? "purple" : "none",
-      color: activeTab === tab ? "rgb(29, 155, 240" : "rgb(83,100,113)",
+      color:
+        activeTab === tab && themeName !== "dark-theme"
+          ? "rgb(29, 155, 240"
+          : activeTab === tab && themeName === "dark-theme"
+          ? "white"
+          : "rgb(83,100,113)",
       fontWeight: activeTab === tab ? "700" : "400",
       lineHeight: "20px",
       fontSize: "15px",
@@ -858,43 +869,6 @@ function MainPage() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
-  // start to check right side search bar progress
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredSearchResult, setFilteredSearchResult] = useState([]);
-
-  const handleSetSearchTerm = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const setSearchTermEmpty = () => {
-    setSearchTerm("");
-  };
-
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/allUsersFromDataBase`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        const term = searchTerm.split(" ").join("").toLowerCase();
-
-        const filteredUsers = response.data.allUsers.filter((eachUser) => {
-          return (
-            eachUser.username.includes(term) || eachUser.fullname.includes(term)
-          );
-        });
-
-        setFilteredSearchResult(filteredUsers);
-      })
-      .catch((error) => {
-        console.log("Error =>", error);
-      });
-  }, [searchTerm]);
-
-  // finish to check right side search bar progress
 
   const [completedProfileImage, setcompletedProfileImage] = useState(false);
 
@@ -1922,12 +1896,13 @@ function MainPage() {
       <Container
         style={{
           overflowX: "hidden",
+          overflowY: "hidden",
         }}
         fluid
       >
         <Row
           style={{
-            height: "100vh",
+            // height: "100%",
             borderTop: "none",
             borderBottom: "none",
           }}
@@ -1957,11 +1932,22 @@ function MainPage() {
             xxl={5} // 1400px ve sonrası aralığı
             className={`main-column `}
             style={{
-              border: "1px solid rgba(0, 0, 0, 0.1)",
-              borderTop: "none",
+              borderLeft:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
+
+              borderRight:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
+              borderTop: "none ",
               borderBottom: "none",
               padding: "0px",
               position: "relative",
+              height: !showForYou ? "100vh" : "",
             }}
           >
             <div
@@ -1988,14 +1974,27 @@ function MainPage() {
               </span>
             </div>
 
-            <div
-              className="responsive-top-border"
-              style={{
-                borderTop: "1px solid rgba(0, 0, 0, 0.1)",
-              }}
-            ></div>
+            {themeName === "dark-theme" ? (
+              <div
+                style={{
+                  // borderTop: "0.1px solid rgb(70, 70, 70)",
+                  borderTop: "1px solid rgb(70, 70, 70)",
+                }}
+              ></div>
+            ) : (
+              <div
+                className="responsive-top-border"
+                style={{
+                  borderTop: "1px solid rgba(0, 0, 0, 0.1)",
+                }}
+              ></div>
+            )}
 
             <Stack
+              style={{
+                // padding: "12px",
+                backgroundColor: themeName === "dark-theme" ? "black" : "",
+              }}
               direction="horizontal"
               gap={1}
               className="responsive-stack-home-page"
@@ -2059,12 +2058,16 @@ function MainPage() {
                   style={{
                     resize: "none",
                     padding: "8px",
-                    color: "rgba(15,20,25,1.00)",
+                    color:
+                      themeName === "dark-theme"
+                        ? "white"
+                        : "rgba(15,20,25,1.00)",
                     lineHeight: "24px",
                     fontWeight: "400",
                     fontSize: `${content ? "15px" : "20px"}`,
                     width: "100%",
                     height: "100px",
+                    background: themeName === "dark-theme" ? "black" : "",
                   }}
                 />
               </div>
@@ -2116,12 +2119,23 @@ function MainPage() {
                 />
               </div>
             )}
-            <div
-              // className="responsive-stack-home-page-row"
-              style={{
-                borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
-              }}
-            ></div>
+            {themeName !== "dark-theme" ? (
+              <div
+                // className="responsive-stack-home-page-row"
+                style={{
+                  borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
+                }}
+              ></div>
+            ) : (
+              <div
+                // className="responsive-stack-home-page-row"
+                style={{
+                  // borderBottom: "0.1px solid rgb(70, 70, 70)",
+                  borderBottom: "1px solid rgb(70, 70, 70)",
+                }}
+              ></div>
+            )}
+
             <Stack
               direction="horizontal"
               gap={0}
@@ -2139,7 +2153,7 @@ function MainPage() {
                     cursor: "pointer",
                     borderRadius: "50%",
                   }}
-                  className="svg-border-parent"
+                  className={`svg-border-parent svg-border-parent-${themeName}`}
                 >
                   <svg
                     style={{
@@ -2177,7 +2191,7 @@ function MainPage() {
                   overlay={popoverBottom}
                 >
                   <div
-                    className="svg-border-parent show-emoji"
+                    className={`svg-border-parent show-emoji svg-border-parent-${themeName}`}
                     style={{
                       cursor: "pointer",
                       borderRadius: "50%",
@@ -2230,12 +2244,21 @@ function MainPage() {
                 )}
               </div>
             </Stack>
-            <div
-              className="responsive-stack-home-page-row"
-              style={{
-                borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
-              }}
-            ></div>
+            {themeName === "dark-theme" ? (
+              <div
+                style={{
+                  // borderBottom: "0.1px solid rgb(70, 70, 70)",
+                  borderBottom: "1px solid rgb(70, 70, 70)",
+                }}
+              ></div>
+            ) : (
+              <div
+                className="responsive-stack-home-page-row"
+                style={{
+                  borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
+                }}
+              ></div>
+            )}
             {/* mainpage yani home rotasına tüm twitlerin gösterileceği column burası !  */}
             <span>
               {isLoading ? (
@@ -2260,7 +2283,11 @@ function MainPage() {
                                   console.log("Post box parent class =>", post);
                                   setclickedPostBox(post);
                                 }}
-                                className="each-post"
+                                className={
+                                  themeName === "dark-theme"
+                                    ? `each-post-${themeName}`
+                                    : "each-post"
+                                }
                                 key={post._id}
                               >
                                 <div
@@ -2390,7 +2417,7 @@ function MainPage() {
                                     style={{
                                       cursor: "pointer",
                                     }}
-                                    to={`/${post.userId.username}/status/${
+                                    to={`/${post.userId?.username}/status/${
                                       !post.isReposted
                                         ? post._id
                                         : post.repostedFromThisOriginalPost[0]
@@ -2467,6 +2494,10 @@ function MainPage() {
                                             <span
                                               className="hover-fullname"
                                               style={{
+                                                color:
+                                                  themeName === "dark-theme"
+                                                    ? "white"
+                                                    : "",
                                                 fontWeight: "700",
                                                 fontSize: "15px",
                                                 lineHeight: "20px",
@@ -2688,6 +2719,10 @@ function MainPage() {
                                           overflowWrap: "break-word",
                                           maxWidth: "100%",
                                           cursor: "pointer",
+                                          color:
+                                            themeName === "dark-theme"
+                                              ? "white"
+                                              : "",
                                         }}
                                         className="p-2"
                                       >
@@ -2939,6 +2974,7 @@ function MainPage() {
                                   </Stack>
                                   {/* new version favorite repost comment finish to check */}
                                 </div>
+
                                 <div
                                   onClick={() => {
                                     console.log(
@@ -2949,7 +2985,11 @@ function MainPage() {
                                   }}
                                   className="border-extra"
                                   style={{
-                                    borderBottom: "1px solid rgba(0,0,0,0.1)",
+                                    borderBottom:
+                                      themeName !== "dark-theme"
+                                        ? "1px solid rgba(0, 0, 0, 0.1)"
+                                        : // : "0.1px solid rgb(70, 70, 70)",
+                                          "1px solid rgb(70, 70, 70)",
                                   }}
                                 ></div>
                               </div>
@@ -3040,7 +3080,11 @@ function MainPage() {
                                 console.log("Post box parent class =>", post);
                                 setclickedPostBox(post);
                               }}
-                              className="each-post"
+                              className={
+                                themeName === "dark-theme"
+                                  ? `each-post-${themeName}`
+                                  : "each-post"
+                              }
                               key={post._id}
                             >
                               <div
@@ -3238,7 +3282,10 @@ function MainPage() {
                                           to={`/profile/${post.userId._id}`}
                                           style={{
                                             textDecoration: "none",
-                                            color: "black",
+                                            color:
+                                              themeName === "dark-theme"
+                                                ? "white"
+                                                : "",
                                           }}
                                         >
                                           <span
@@ -3457,6 +3504,10 @@ function MainPage() {
                                         overflowWrap: "break-word",
                                         maxWidth: "100%",
                                         cursor: "pointer",
+                                        color:
+                                          themeName === "dark-theme"
+                                            ? "white"
+                                            : "",
                                       }}
                                       className="p-2"
                                     >
@@ -3704,7 +3755,11 @@ function MainPage() {
                                 }}
                                 className="border-extra"
                                 style={{
-                                  borderBottom: "1px solid rgba(0,0,0,0.1)",
+                                  borderBottom:
+                                    themeName !== "dark-theme"
+                                      ? "1px solid rgba(0, 0, 0, 0.1)"
+                                      : // : "0.1px solid rgb(70, 70, 70)",
+                                        "1px solid rgb(70, 70, 70)",
                                 }}
                               ></div>
                             </div>
@@ -3785,10 +3840,6 @@ function MainPage() {
           {/* finish to check  main column */}
           {/* 3.column burası olucak */}
           <RightSideColumn
-            handleSetSearchTerm={handleSetSearchTerm}
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTermEmpty}
-            filteredSearchResult={filteredSearchResult}
             onModalToggle={handleModalToggle}
             tabIndexValue={handleReceiveTabIndexValue}
             isSubscriptionCompleted={subscriptionCompletedStatus}

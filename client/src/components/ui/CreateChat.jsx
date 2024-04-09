@@ -31,6 +31,8 @@ function CreateChat({ writeMessageButton }) {
 
     socket.on("getmessageRoomId", handleGetMessageRoomId);
 
+    console.log("Message room id =>", messageRoomId);
+
     // Server tarafından emit edilen "activeUsers" olayını dinle
     socket.on("activeUsers", (users) => {
       const spliceActiveUser = users.filter((eachUser) => {
@@ -59,19 +61,20 @@ function CreateChat({ writeMessageButton }) {
   }, []);
 
   const selectedUser = (user) => {
+    console.log("Profile info =>", user);
     const room = [userInfo.username, user.username].sort().join("_");
 
     setRoom(room);
-    // Emit an event to join the room with the selected user
+    // // Emit an event to join the room with the selected user
     socket.emit("join_user_room", { activeUser: userInfo, selectedUser: user });
   };
 
   // problem buradan kaynaklanıyor olabilir start to check
   // messageRoomId state'i değiştiğinde yönlendirme yap
   useEffect(() => {
+    console.log("Message room id =>", messageRoomId);
     if (messageRoomId) {
-      navigate(`/messages/${messageRoomId}`);
-      window.location.reload();
+      window.location.href = `http://localhost:5173/messages/${messageRoomId}`;
     }
   }, [messageRoomId]);
   // problem buradan kaynaklanıyor olabilir finish to check
@@ -179,6 +182,7 @@ function CreateChat({ writeMessageButton }) {
           position: "relative",
           width: "40px",
           height: "40px",
+          right: "10px",
         }}
       >
         <svg

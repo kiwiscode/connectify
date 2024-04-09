@@ -269,7 +269,6 @@ function PostDetailPage() {
 
   const closeImage = () => {
     navigate(-1);
-    // window.location.reload();
   };
 
   const handleDeleteLikePostDetailPageCFTUP = (postId) => {
