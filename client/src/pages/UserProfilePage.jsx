@@ -27,8 +27,19 @@ import io from "socket.io-client";
 
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
+import { ThemeContext } from "../context/ThemeContext";
 
 function UserProfile() {
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
+
+  console.log("Theme name =>", themeName);
+  console.log("Theme  =>", theme);
+
   const socket = io.connect(`${API_URL}`);
 
   const navigate = useNavigate();
@@ -208,6 +219,8 @@ function UserProfile() {
   // socket io 5 client finish to check
 
   const handleGetFavorites = () => {
+    setFavoriteWindow("");
+    setPostWindow("hide");
     axios
       .get(`${API_URL}/favorite`, {
         headers: {
@@ -215,9 +228,6 @@ function UserProfile() {
         },
       })
       .then((response) => {
-        setFavoriteWindow("");
-        setPostWindow("hide");
-
         setFavorites(response.data.favorites);
       })
       .catch((err) => {
@@ -241,6 +251,8 @@ function UserProfile() {
   };
   const [profile, setProfile] = useState([]);
   const handleShowPostsProfilePage = () => {
+    setFavoriteWindow("hide");
+    setPostWindow("");
     axios
       .get(`${API_URL}/profile`, {
         headers: {
@@ -249,8 +261,6 @@ function UserProfile() {
       })
       .then((response) => {
         console.log("Profile info =>", response);
-        setFavoriteWindow("hide");
-        setPostWindow("");
 
         setProfile(response.data.user);
         setUserprofiledata(response.data.posts);
@@ -466,9 +476,13 @@ function UserProfile() {
       });
   };
 
+  const [profileImageChangingLoadingBar, setprofileImageChangingLoadingBar] =
+    useState(false);
+
   const handleImage = (e) => {
     const file = e.target.files[0];
     setFileToBase(file);
+    setprofileImageChangingLoadingBar(true);
   };
 
   const setFileToBase = (file) => {
@@ -476,6 +490,7 @@ function UserProfile() {
     reader.readAsDataURL(file);
 
     reader.onloadend = () => {
+      setprofileImageChangingLoadingBar(true);
       setprofileImage(reader.result);
     };
   };
@@ -501,8 +516,8 @@ function UserProfile() {
         localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
         setcompletedProfileImage(true);
 
-        navigate("/profile");
-        window.location.reload();
+        setprofileImageChangingLoadingBar(false);
+        window.location.href = "http://localhost:5173/profile";
       })
       .catch((error) => {
         console.log(error);
@@ -591,12 +606,14 @@ function UserProfile() {
       <Container
         style={{
           overflowX: "hidden",
+
+          overflowY: "hidden",
         }}
         fluid
       >
         <Row
           style={{
-            height: "100vh",
+            height: "100%",
             borderTop: "none",
             borderBottom: "none",
           }}
@@ -626,8 +643,18 @@ function UserProfile() {
             xxl={5} // 1400px ve sonrası aralığı
             className={`main-column `}
             style={{
-              border: "1px solid rgba(0, 0, 0, 0.1)",
-              borderTop: "none",
+              borderLeft:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
+
+              borderRight:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
+              borderTop: "none ",
               borderBottom: "none",
               padding: "0px",
               position: "relative",
@@ -639,7 +666,8 @@ function UserProfile() {
                   {/* start to check  */}
                   <div
                     onClick={handleGoBack}
-                    className="p-2 arrow"
+                    // className="p-2 arrow"
+                    className={`p-2 arrow arrow-${themeName}`}
                     style={{
                       position: "relative",
                       bottom: "15px",
@@ -650,6 +678,8 @@ function UserProfile() {
                     }}
                   >
                     <svg
+                      color={themeName === "dark-theme" ? "white" : ""}
+                      fill="currentColor"
                       style={{
                         position: "absolute",
                         bottom: "5px",
@@ -693,31 +723,68 @@ function UserProfile() {
                   style={{ marginTop: "45px" }}
                 >
                   <div className="p-2">
-                    {userInfo.imageUrl.slice(0, 3) !== "../" ? (
+                    {userInfo.imageUrl?.slice(0, 3) !== "../" ? (
                       <>
-                        <div>
-                          <img
-                            style={{
-                              cursor: "pointer",
-                              borderRadius: "50%",
-                            }}
-                            src={userInfo.imageUrl}
-                            alt=""
-                            onClick={() =>
-                              document
-                                .getElementById("formuploadModal-profile-image")
-                                .click()
-                            }
-                          />
-                          <input
-                            onChange={handleImage}
-                            type="file"
-                            id="formuploadModal-profile-image"
-                            name="modalImage"
-                            className="form-control"
-                            style={{ display: "none" }}
-                          />
-                        </div>
+                        {profileImageChangingLoadingBar ? (
+                          <>
+                            <div
+                              style={{
+                                position: "relative",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  position: "absolute",
+                                  bottom: "0px",
+                                  width: "100%",
+                                  height: "100%",
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <LoadingSpinner
+                                  strokeColor={"rgb(29, 155, 240)"}
+                                ></LoadingSpinner>
+                              </div>
+                              <img
+                                style={{
+                                  visibility: "hidden",
+                                }}
+                                src={userInfo.imageUrl}
+                                alt=""
+                              />
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div>
+                              <img
+                                style={{
+                                  cursor: "pointer",
+                                  borderRadius: "50%",
+                                }}
+                                src={userInfo.imageUrl}
+                                alt=""
+                                onClick={() =>
+                                  document
+                                    .getElementById(
+                                      "formuploadModal-profile-image"
+                                    )
+                                    .click()
+                                }
+                              />
+                              <input
+                                onChange={handleImage}
+                                type="file"
+                                id="formuploadModal-profile-image"
+                                name="modalImage"
+                                className="form-control"
+                                style={{ display: "none" }}
+                              />
+                            </div>
+                          </>
+                        )}
                       </>
                     ) : (
                       <div>
@@ -777,22 +844,33 @@ function UserProfile() {
                     </svg>{" "}
                     Joined {getCreatedDateForProfile(userInfo.createdAt)}
                   </div>
-                  <div>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "3%",
+                    }}
+                  >
                     {/* following and followers details start to check  */}
                     <Link
                       to={`/profile/${userInfo._id}/following`}
-                      style={{ textDecoration: "none", color: "black" }}
+                      style={{
+                        textDecoration: "none",
+                        color: themeName === "dark-theme" ? "white" : "black",
+                      }}
                       className="following-followers-link"
                     >
-                      <span
-                        style={{
-                          fontWeight: "700",
-                          fontSize: "15px",
-                          lineHeight: "20px",
-                        }}
-                      >
+                      <span>
                         {activeUserFollowing.length && (
-                          <span>{activeUserFollowing.length}</span>
+                          <span
+                            style={{
+                              cursor: "pointer",
+                              fontSize: "14px",
+                              lineHeight: "16px",
+                              fontWeight: "700",
+                            }}
+                          >
+                            {activeUserFollowing.length}
+                          </span>
                         )}
                       </span>{" "}
                       <span
@@ -810,17 +888,23 @@ function UserProfile() {
                     <Link
                       to={`/profile/${userInfo._id}/followers`}
                       className="following-followers-link"
-                      style={{ textDecoration: "none", color: "black" }}
+                      style={{
+                        textDecoration: "none",
+                        color: themeName === "dark-theme" ? "white" : "black",
+                      }}
                     >
-                      <span
-                        style={{
-                          fontWeight: "700",
-                          fontSize: "15px",
-                          lineHeight: "20px",
-                        }}
-                      >
+                      <span>
                         {activeUserFollowers.length && (
-                          <span>{activeUserFollowers.length}</span>
+                          <span
+                            style={{
+                              cursor: "pointer",
+                              fontSize: "14px",
+                              lineHeight: "16px",
+                              fontWeight: "700",
+                            }}
+                          >
+                            {activeUserFollowers.length}
+                          </span>
                         )}
                       </span>{" "}
                       <span
@@ -842,60 +926,118 @@ function UserProfile() {
             </Container>
             <div
               style={{
-                borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
+                borderBottom:
+                  themeName !== "dark-theme"
+                    ? "1px solid rgba(0, 0, 0, 0.1)"
+                    : // : "0.1px solid rgb(70, 70, 70)",
+                      "1px solid rgb(70, 70, 70)",
               }}
             ></div>
 
-            <ButtonGroup
+            <div
               aria-label="Basic example"
               style={{
                 display: "flex",
+                justifyContent: "space-around",
+                // backgroundColor: "yellow",
+                width: "100%",
               }}
             >
-              <Button
-                onClick={() => handleShowPostsProfilePage()}
-                variant="secondary"
+              <div
                 style={{
-                  backgroundColor: "white",
-                  color: "black",
-                  border: "none",
-                  borderRight: "1px solid rgba(0,0,0,0.1)",
+                  width: "50%",
+                  textAlign: "center",
+                  // backgroundColor: "black",
+                  borderRight:
+                    themeName !== "dark-theme"
+                      ? "1px solid rgba(0, 0, 0, 0.1)"
+                      : // : "0.1px solid rgb(70, 70, 70)",
+                        "1px solid rgb(70, 70, 70)",
                 }}
               >
-                {favoriteWindow === "" ? (
-                  <span>Posts</span>
-                ) : (
-                  <span style={{ color: "rgb(29, 155, 240)" }}>Posts</span>
-                )}
-              </Button>
-              <Button
-                onClick={() => handleGetFavorites()}
-                variant="secondary"
+                <Button
+                  onClick={() => handleShowPostsProfilePage()}
+                  variant="secondary"
+                  style={{
+                    backgroundColor:
+                      themeName === "dark-theme" ? "black" : "white",
+                    border: "none",
+                    // borderRight: "1px solid rgba(0,0,0,0.1)",
+                  }}
+                >
+                  {favoriteWindow === "" ? (
+                    <span
+                      style={{
+                        fontWeight: "400",
+                        color: "rgb(83,100,113)",
+                      }}
+                    >
+                      Posts
+                    </span>
+                  ) : (
+                    <span
+                      style={{
+                        fontWeight: "700",
+                        color:
+                          themeName === "dark-theme"
+                            ? "white"
+                            : "rgb(29, 155, 240)",
+                      }}
+                    >
+                      Posts
+                    </span>
+                  )}
+                </Button>
+              </div>
+              <div
                 style={{
-                  backgroundColor: "white",
-                  color: "black",
-                  border: "none",
-                  borderLeft: "1px solid rgba(0,0,0,0.1)",
+                  width: "50%",
+                  textAlign: "center",
                 }}
               >
-                {favoriteWindow === "" ? (
-                  <span
-                    style={{
-                      color: "rgb(29, 155, 240)",
-                    }}
-                  >
-                    Likes
-                  </span>
-                ) : (
-                  <span>Likes </span>
-                )}
-              </Button>
-            </ButtonGroup>
+                <Button
+                  onClick={() => handleGetFavorites()}
+                  variant="secondary"
+                  style={{
+                    backgroundColor:
+                      themeName === "dark-theme" ? "black" : "white",
+                    border: "none",
+                  }}
+                >
+                  {postsWindow === "" ? (
+                    <span
+                      style={{
+                        fontWeight: "400",
+                        color: "rgb(83,100,113)",
+                      }}
+                    >
+                      Likes
+                    </span>
+                  ) : (
+                    <span
+                      style={{
+                        fontWeight: "700",
+                        color:
+                          themeName === "dark-theme"
+                            ? "white"
+                            : "rgb(29, 155, 240)",
+                      }}
+                    >
+                      Likes
+                    </span>
+                  )}
+                </Button>
+              </div>
+            </div>
 
             {postsWindow || favoriteWindow ? (
               <div
                 style={{
-                  borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
+                  borderBottom:
+                    themeName !== "dark-theme"
+                      ? "1px solid rgba(0, 0, 0, 0.1)"
+                      : // : "0.1px solid rgb(70, 70, 70)",
+                        "1px solid rgb(70, 70, 70)",
                 }}
               ></div>
             ) : null}
@@ -920,7 +1062,11 @@ function UserProfile() {
                         console.log("Post box parent class =>", post);
                         setclickedPostBox(post);
                       }}
-                      className="each-post"
+                      className={
+                        themeName === "dark-theme"
+                          ? `each-post-${themeName}`
+                          : "each-post"
+                      }
                       key={post._id}
                     >
                       {post.deactivatedOwner ? null : (
@@ -1057,6 +1203,10 @@ function UserProfile() {
                                           fontWeight: "700",
                                           fontSize: "15px",
                                           lineHeight: "20px",
+                                          color:
+                                            themeName === "dark-theme"
+                                              ? "white"
+                                              : "",
                                         }}
                                       >
                                         {post.authorFullName}
@@ -1259,6 +1409,8 @@ function UserProfile() {
                                     overflowWrap: "break-word",
                                     maxWidth: "100%",
                                     cursor: "pointer",
+                                    color:
+                                      themeName === "dark-theme" ? "white" : "",
                                   }}
                                   className="p-2"
                                 >
@@ -1480,7 +1632,11 @@ function UserProfile() {
                             }}
                             className="border-extra"
                             style={{
-                              borderBottom: "1px solid rgba(0,0,0,0.1)",
+                              borderBottom:
+                                themeName !== "dark-theme"
+                                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                                  : // : "0.1px solid rgb(70, 70, 70)",
+                                    "1px solid rgb(70, 70, 70)",
                             }}
                           ></div>
                         </>
@@ -1561,7 +1717,11 @@ function UserProfile() {
                         console.log("Post box parent class =>", favorite);
                         setclickedPostBox(favorite);
                       }}
-                      className="each-post"
+                      className={
+                        themeName === "dark-theme"
+                          ? `each-post-${themeName}`
+                          : "each-post"
+                      }
                       key={favorite._id}
                     >
                       {favorite.deactivatedOwner ? null : (
@@ -1658,6 +1818,10 @@ function UserProfile() {
                                             fontWeight: "700",
                                             fontSize: "15px",
                                             lineHeight: "20px",
+                                            color:
+                                              themeName === "dark-theme"
+                                                ? "white"
+                                                : "",
                                           }}
                                         >
                                           {favorite.authorFullName}
@@ -1819,6 +1983,8 @@ function UserProfile() {
                               >
                                 <div
                                   style={{
+                                    color:
+                                      themeName === "dark-theme" ? "white" : "",
                                     fontSize: "15px",
                                     fontWeight: "400",
                                     lineHeight: "20px",
@@ -2071,7 +2237,11 @@ function UserProfile() {
                             }}
                             className="border-extra"
                             style={{
-                              borderBottom: "1px solid rgba(0,0,0,0.1)",
+                              borderBottom:
+                                themeName !== "dark-theme"
+                                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                                  : // : "0.1px solid rgb(70, 70, 70)",
+                                    "1px solid rgb(70, 70, 70)",
                             }}
                           ></div>
                         </>

@@ -16,6 +16,7 @@ import {
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { UserContext } from "../../context/UserContext";
+import { ThemeContext } from "../../context/ThemeContext";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -28,6 +29,15 @@ function LeftSideNavBar({
   visible,
   parentCallBack,
 }) {
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
+
+  console.log("Left side navigation bar theme =>", themeName);
+
   const [isHomeRouteActive, setIsHomeRouteActive] = useState(false);
   const [isNotificationsRouteActive, setIsNotificationsRouteActive] =
     useState(false);
@@ -37,10 +47,6 @@ function LeftSideNavBar({
 
   const navigate = useNavigate();
 
-  const redirectToMessages = () => {
-    navigate("/messages");
-    window.location.reload();
-  };
   useEffect(() => {
     const getClickLocation = (e) => {
       const classList = e.target.classList;
@@ -275,6 +281,30 @@ function LeftSideNavBar({
     };
   }, []);
 
+  const locateHomePage = () => {
+    if (window.location.href !== "http://localhost:5173/home") {
+      window.location.href = "http://localhost:5173/home";
+    }
+  };
+
+  const locateNotificationsPage = () => {
+    if (window.location.href !== "http://localhost:5173/notifications") {
+      window.location.href = "http://localhost:5173/notifications";
+    }
+  };
+
+  const locateMessagesPage = () => {
+    if (window.location.href !== "http://localhost:5173/messages") {
+      window.location.href = "http://localhost:5173/messages";
+    }
+  };
+
+  const locateProfilePage = () => {
+    if (window.location.href !== "http://localhost:5173/profile") {
+      window.location.href = "http://localhost:5173/profile";
+    }
+  };
+
   return (
     <>
       <Col
@@ -301,6 +331,8 @@ function LeftSideNavBar({
             <div className="p-2 connectify-basic-icon">
               {" "}
               <svg
+                color={themeName === "dark-theme" ? "white" : ""}
+                fill="currentColor"
                 style={{
                   position: "relative",
                   left: "15px",
@@ -308,7 +340,6 @@ function LeftSideNavBar({
                 xmlns="http://www.w3.org/2000/svg"
                 width="30"
                 height="30"
-                fill="currentColor"
                 viewBox="0 0 20 20"
               >
                 <path d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
@@ -317,29 +348,28 @@ function LeftSideNavBar({
             </div>
           </NavLink>
           {/* Second */}
-          <NavLink className="home-nav-link" to={"/home"}>
+          <NavLink
+            onClick={locateHomePage}
+            className={`home-nav-link home-nav-link-${themeName}`}
+          >
             <span
               style={{
                 cursor: "pointer",
-                // backgroundColor: "indianred",
               }}
               className="p-2 home-nav-link-parent-div"
             >
               {" "}
               <div
-                className="home-parent-of-span-svg"
+                className={`home-parent-of-span-svg home-parent-of-span-svg-${themeName}`}
                 style={{
                   display: "inline-block",
                   padding: "12px",
-                  // backgroundColor: "rebeccapurple",
                 }}
               >
                 <svg
-                  style={
-                    {
-                      // backgroundColor: "green",
-                    }
-                  }
+                  color={themeName === "dark-theme" ? "white" : ""}
+                  fill="currentColor"
+                  style={{}}
                   width={26}
                   height={26}
                   viewBox="0 0 24 24"
@@ -347,7 +377,7 @@ function LeftSideNavBar({
                   className="home-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
                 >
                   <g className="home-svg-group">
-                    {isHomeRouteActive ? (
+                    {window.location.href === "http://localhost:5173/home" ? (
                       <path d="M21.591 7.146L12.52 1.157c-.316-.21-.724-.21-1.04 0l-9.071 5.99c-.26.173-.409.456-.409.757v13.183c0 .502.418.913.929.913H9.14c.51 0 .929-.41.929-.913v-7.075h3.909v7.075c0 .502.417.913.928.913h6.165c.511 0 .929-.41.929-.913V7.904c0-.301-.158-.584-.408-.758z"></path>
                     ) : (
                       <path d="M21.591 7.146L12.52 1.157c-.316-.21-.724-.21-1.04 0l-9.071 5.99c-.26.173-.409.456-.409.757v13.183c0 .502.418.913.929.913h6.638c.511 0 .929-.41.929-.913v-7.075h3.008v7.075c0 .502.418.913.929.913h6.639c.51 0 .928-.41.928-.913V7.904c0-.301-.158-.584-.408-.758zM20 20l-4.5.01.011-7.097c0-.502-.418-.913-.928-.913H9.44c-.511 0-.929.41-.929.913L8.5 20H4V8.773l8.011-5.342L20 8.764z"></path>
@@ -355,15 +385,17 @@ function LeftSideNavBar({
                   </g>
                 </svg>
                 <span
-                  className="nav-home-text"
+                  className={`nav-home-text nav-home-text-${themeName}`}
                   style={{
                     marginLeft: "15px",
-                    fontWeight: isHomeRouteActive ? "700" : "400",
+                    fontWeight:
+                      window.location.href === "http://localhost:5173/home"
+                        ? "700"
+                        : "400",
                     fontSize: "20px",
                     lineHeight: "24px",
                     position: "relative",
                     top: "3px",
-                    // backgroundColor: "green",
                   }}
                 >
                   Home
@@ -373,8 +405,8 @@ function LeftSideNavBar({
           </NavLink>
           {/* Third */}
           <NavLink
-            className="notifications-nav-link"
-            // to={"/notifications"}
+            className={`notifications-nav-link notifications-nav-link-${themeName}`}
+            onClick={locateNotificationsPage}
           >
             <span
               style={{
@@ -383,13 +415,15 @@ function LeftSideNavBar({
               className="p-2 notifications-nav-link-parent-div"
             >
               <div
-                className="notifications-parent-of-span-svg"
+                className={`notifications-parent-of-span-svg notifications-parent-of-span-svg-${themeName}`}
                 style={{
                   display: "inline-block",
                   padding: "12px",
                 }}
               >
                 <svg
+                  color={themeName === "dark-theme" ? "white" : ""}
+                  fill="currentColor"
                   width={26}
                   height={26}
                   viewBox="0 0 24 24"
@@ -397,7 +431,8 @@ function LeftSideNavBar({
                   className="notifications-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
                 >
                   <g className="notifications-svg-group">
-                    {isNotificationsRouteActive ? (
+                    {window.location.href ===
+                    "http://localhost:5173/notifications" ? (
                       <path d="M11.996 2c-4.062 0-7.49 3.021-7.999 7.051L2.866 18H7.1c.463 2.282 2.481 4 4.9 4s4.437-1.718 4.9-4h4.236l-1.143-8.958C19.48 5.017 16.054 2 11.996 2zM9.171 18h5.658c-.412 1.165-1.523 2-2.829 2s-2.417-.835-2.829-2z"></path>
                     ) : (
                       <path d="M19.993 9.042C19.48 5.017 16.054 2 11.996 2s-7.49 3.021-7.999 7.051L2.866 18H7.1c.463 2.282 2.481 4 4.9 4s4.437-1.718 4.9-4h4.236l-1.143-8.958zM12 20c-1.306 0-2.417-.835-2.829-2h5.658c-.412 1.165-1.523 2-2.829 2zm-6.866-4l.847-6.698C6.364 6.272 8.941 4 11.996 4s5.627 2.268 6.013 5.295L18.864 16H5.134z"></path>
@@ -409,7 +444,11 @@ function LeftSideNavBar({
                   className="nav-notifications-text"
                   style={{
                     marginLeft: "15px",
-                    fontWeight: isNotificationsRouteActive ? "700" : "400",
+                    fontWeight:
+                      window.location.href ===
+                      "http://localhost:5173/notifications"
+                        ? "700"
+                        : "400",
                     fontSize: "20px",
                     lineHeight: "24px",
                     position: "relative",
@@ -423,9 +462,8 @@ function LeftSideNavBar({
           </NavLink>
           {/* Fourth  */}
           <NavLink
-            className="messages-nav-link"
-            onClick={redirectToMessages}
-            to={"/messages"}
+            className={`messages-nav-link messages-nav-link-${themeName}`}
+            onClick={locateMessagesPage}
           >
             <span
               style={{
@@ -434,13 +472,15 @@ function LeftSideNavBar({
               className="p-2 messages-nav-link-parent-div"
             >
               <div
-                className="messages-parent-of-span-svg"
+                className={`messages-parent-of-span-svg messages-parent-of-span-svg-${themeName}`}
                 style={{
                   display: "inline-block",
                   padding: "12px",
                 }}
               >
                 <svg
+                  color={themeName === "dark-theme" ? "white" : ""}
+                  fill="currentColor"
                   width={26}
                   height={26}
                   viewBox="0 0 24 24"
@@ -448,7 +488,8 @@ function LeftSideNavBar({
                   className="messages-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
                 >
                   <g className="messages-svg-group">
-                    {isMessagesRouteActive ? (
+                    {window.location.href ===
+                    "http://localhost:5173/messages" ? (
                       <path d="M1.998 4.499c0-.828.671-1.499 1.5-1.499h17c.828 0 1.5.671 1.5 1.499v2.858l-10 4.545-10-4.547V4.499zm0 5.053V19.5c0 .828.671 1.5 1.5 1.5h17c.828 0 1.5-.672 1.5-1.5V9.554l-10 4.545-10-4.547z"></path>
                     ) : (
                       <path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v2.764l8 3.638 8-3.636V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 5.463l-8 3.636-8-3.638V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-8.037z"></path>
@@ -460,7 +501,10 @@ function LeftSideNavBar({
                   className="nav-messages-text"
                   style={{
                     marginLeft: "15px",
-                    fontWeight: isMessagesRouteActive ? "700" : "400",
+                    fontWeight:
+                      window.location.href === "http://localhost:5173/messages"
+                        ? "700"
+                        : "400",
                     fontSize: "20px",
                     lineHeight: "24px",
                     position: "relative",
@@ -473,7 +517,10 @@ function LeftSideNavBar({
             </span>
           </NavLink>
           {/* Fifth  */}
-          <NavLink className="profile-nav-link" to={"/profile"}>
+          <NavLink
+            className={`profile-nav-link profile-nav-link-${themeName}`}
+            onClick={locateProfilePage}
+          >
             <span
               style={{
                 cursor: "pointer",
@@ -481,13 +528,15 @@ function LeftSideNavBar({
               className="p-2 profile-nav-link-parent-div"
             >
               <div
-                className="profile-parent-of-span-svg"
+                className={`profile-parent-of-span-svg home-parent-of-span-svg-${themeName}`}
                 style={{
                   display: "inline-block",
                   padding: "12px",
                 }}
               >
                 <svg
+                  color={themeName === "dark-theme" ? "white" : ""}
+                  fill="currentColor"
                   width={26}
                   height={26}
                   viewBox="0 0 24 24"
@@ -495,7 +544,8 @@ function LeftSideNavBar({
                   className="profile-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
                 >
                   <g className="profile-svg-group">
-                    {isProfileRouteActive ? (
+                    {window.location.href ===
+                    "http://localhost:5173/profile" ? (
                       <path d="M17.863 13.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H3.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46C7.627 11.85 9.648 11 12 11s4.373.85 5.863 2.44zM12 2C9.791 2 8 3.79 8 6s1.791 4 4 4 4-1.79 4-4-1.791-4-4-4z"></path>
                     ) : (
                       <path d="M5.651 19h12.698c-.337-1.8-1.023-3.21-1.945-4.19C15.318 13.65 13.838 13 12 13s-3.317.65-4.404 1.81c-.922.98-1.608 2.39-1.945 4.19zm.486-5.56C7.627 11.85 9.648 11 12 11s4.373.85 5.863 2.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H3.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46zM12 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM8 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4z"></path>
@@ -507,7 +557,10 @@ function LeftSideNavBar({
                   className="nav-profile-text"
                   style={{
                     marginLeft: "15px",
-                    fontWeight: isProfileRouteActive ? "700" : "400",
+                    fontWeight:
+                      window.location.href === "http://localhost:5173/profile"
+                        ? "700"
+                        : "400",
                     fontSize: "20px",
                     lineHeight: "24px",
                     position: "relative",
@@ -550,7 +603,8 @@ function LeftSideNavBar({
             <Button
               variant="primary"
               onClick={handleShow}
-              className="compose-tweet compose-tweet-2"
+              // className="compose-tweet compose-tweet-2"
+              className={`compose-tweet compose-tweet-2 `}
               size="sm"
               style={{
                 maxWidth: "233px",

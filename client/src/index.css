@@ -31,6 +31,91 @@ body {
   margin: 0;
   padding: 0;
   font-family: "cloneFont" sans-serif;
+  transition: background 0.2s linear;
+}
+.cyber-punk-theme,
+.light-theme,
+.dark-theme {
+  transition: background 0.2s linear;
+}
+
+.home-nav-link-dark-theme span,
+.notifications-nav-link-dark-theme span,
+.messages-nav-link-dark-theme span,
+.profile-nav-link-dark-theme span {
+  color: white;
+}
+
+.home-parent-of-span-svg-dark-theme:hover,
+.stack-logout-navigation-parent-dark-theme:hover,
+.notifications-parent-of-span-svg-dark-theme:hover,
+.messages-parent-of-span-svg-dark-theme:hover,
+.profile-parent-of-span-svg-dark-theme:hover {
+  background-color: #181818 !important;
+  transition-duration: 0.2s !important;
+}
+
+/* popover hover effetct start to check  */
+
+.settings-and-privacy:hover,
+.logout-popover:hover {
+  background-color: #f7f9f9 !important;
+  transition-duration: 0.2s !important;
+}
+/* popover hover effetct finish to check  */
+
+.settings-and-privacy-dark-theme:hover,
+.logout-popover-dark-theme:hover {
+  background-color: #181818 !important;
+  transition-duration: 0.2s !important;
+}
+
+.login-button-dark-theme {
+  background-color: rgb(29, 155, 240) !important;
+}
+
+.right-side-column-nav-bar-dark-theme div {
+  color: white;
+}
+
+.svg-border-parent:hover,
+.send-button:hover,
+.message-delete-three-dots-parent-hovered:hover {
+  background-color: #e4f0f9 !important;
+  transition-duration: 0.2s !important;
+}
+
+.svg-border-parent-dark-theme:hover {
+  background-color: #010c1a !important;
+  transition-duration: 0.2s !important;
+}
+
+.each-post:hover {
+  background-color: #f8f8f8 !important;
+}
+
+.each-post-dark-theme:hover {
+  background-color: #181818 !important;
+}
+
+.previous-button:hover,
+.close-button:hover,
+.arrow:hover,
+.message-info:hover,
+.settings-icon:hover,
+.chat-create-icon:hover {
+  background-color: #e7e7e8 !important;
+  transition-duration: 0.2s !important;
+}
+
+.previous-button-dark-theme:hover,
+.close-button-dark-theme:hover,
+.arrow-dark-theme:hover,
+.message-info-dark-theme:hover,
+.settings-icon-dark-theme:hover,
+.chat-create-icon-dark-theme:hover {
+  background-color: rgba(25, 26, 26, 255) !important;
+  transition-duration: 0.2s !important;
 }
 
 /* html {
@@ -859,15 +944,6 @@ span > a:hover {
   background-color: rgba(247, 249, 249, 255);
   transition-duration: 0.2s;
 }
-.previous-button:hover,
-.close-button:hover,
-.arrow:hover,
-.message-info:hover,
-.settings-icon:hover,
-.chat-create-icon:hover {
-  background-color: #e7e7e8 !important;
-  transition-duration: 0.2s !important;
-}
 
 .hover-fullname:hover {
   text-decoration: underline !important;
@@ -932,20 +1008,9 @@ span > a:hover {
   bottom: 8px;
 }
 
-.svg-border-parent:hover,
-.send-button:hover,
-.message-delete-three-dots-parent-hovered:hover {
-  background-color: #e4f0f9;
-  transition-duration: 0.2s !important;
-}
-
 .each-post,
 .border-extra {
   cursor: pointer !important;
-}
-
-.each-post:hover {
-  background-color: #f8f8f8;
 }
 
 .replying-to-text:hover {
@@ -1552,6 +1617,7 @@ span > a:hover {
 .following-followers-link:hover {
   text-decoration: underline !important;
   text-decoration-color: black;
+  text-decoration-thickness: 1px !important;
 }
 
 .selected {
@@ -1576,15 +1642,6 @@ span > a:hover {
 /* side bar colum responsiveness start to check  */
 
 /* side bar colum responsiveness finish to check  */
-
-/* popover hover effetct start to check  */
-
-.settings-and-privacy:hover,
-.logout-popover:hover {
-  background-color: #f7f9f9 !important;
-  transition-duration: 0.2s !important;
-}
-/* popover hover effetct finish to check  */
 
 .account-info-div:hover,
 .change-password-div:hover,
@@ -1737,6 +1794,12 @@ span > a:hover {
 .unfollow-btn {
   border: none;
   background-color: #0f141a;
+}
+
+.spesific-profile-svg-three-dots:hover,
+.spesific-profile-svg-dm:hover {
+  background-color: rgba(234, 234, 234, 255);
+  cursor: pointer;
 }
 
 .login-button:hover,

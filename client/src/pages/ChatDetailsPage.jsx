@@ -292,9 +292,9 @@ function ChatDetailsPage() {
   );
 
   const redirectToMessages = () => {
-    navigate("/messages");
-    console.log("Clicked !");
-    window.location.reload();
+    setTimeout(() => {
+      window.location.href = "http://localhost:5173/messages";
+    }, 1000);
   };
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);

@@ -15,47 +15,102 @@ import FollowingDetailPage from "./pages/FollowingDetail";
 import FollowerDetailPage from "./pages/FollowersDetailPage";
 import ImagePostDetailPage from "./pages/ImagePostDetailPage";
 import DeactivatedPage from "./pages/DeactivatedPage";
+import NotificationsPage from "./pages/NotificationsPage";
+import { ThemeContext } from "./context/ThemeContext";
+import { useContext } from "react";
+
 function App() {
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
+
+  console.log("Theme name =>", themeName);
+  console.log("Theme  =>", theme);
+
   return (
     <UserProvider>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/home" element={<MainPage />}></Route>
+      <div
+        className={
+          themeName === "cyberpunk-theme"
+            ? "cyber-punk-theme"
+            : themeName === "dark-theme"
+            ? "dark-theme"
+            : themeName === "light-theme"
+            ? "light-theme"
+            : null
+        }
+        style={{
+          backgroundColor: theme.backgroundColor,
+          color: theme.color,
+        }}
+      >
+        <button
+          style={{
+            zIndex: 9999,
+          }}
+          type="button"
+          onClick={lightModeActive}
+        >
+          Light
+        </button>{" "}
+        <button
+          style={{
+            zIndex: 9999,
+          }}
+          type="button"
+          onClick={darkModeActive}
+        >
+          Dark
+        </button>{" "}
+        <button
+          style={{
+            zIndex: 9999,
+          }}
+          type="button"
+          onClick={cyberpunkModeActive}
+        >
+          CyberPunk
+        </button>{" "}
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/home" element={<MainPage />}></Route>
+          <Route path="/notifications" element={<NotificationsPage />}></Route>
+          <Route path="/messages" element={<MessagesPage />}></Route>
+          <Route path="/profile" element={<UserProfile />}></Route>
+          <Route path="/profile/:id" element={<SpesificUserProfile />}></Route>
+          <Route
+            path="/:postOwner/status/:postId"
+            element={<PostDetailPage />}
+          ></Route>
+          <Route
+            path="/messages/:chatRoomId"
+            element={<ChatDetailsPage />}
+          ></Route>
+          {/* new page start to check  INFO => CONTROL STYLING*/}
+          <Route
+            path="/:postOwner/status/:postId/photo/1"
+            element={<ImagePostDetailPage />}
+          ></Route>
+          {/* new page finish to check INFO => CONTROL STYLING */}
+          <Route
+            path="/profile/:userId/following"
+            element={<FollowingDetailPage />}
+          ></Route>
 
-        <Route path="/profile" element={<UserProfile />}></Route>
-        <Route path="/profile/:id" element={<SpesificUserProfile />}></Route>
-        <Route path="/messages" element={<MessagesPage />}></Route>
-        <Route
-          path="/messages/:chatRoomId"
-          element={<ChatDetailsPage />}
-        ></Route>
-        <Route
-          path="/:postOwner/status/:postId"
-          element={<PostDetailPage />}
-        ></Route>
+          <Route
+            path="/profile/:userId/followers"
+            element={<FollowerDetailPage />}
+          ></Route>
 
-        {/* new page start to check  */}
-        <Route
-          path="/:postOwner/status/:postId/photo/1"
-          element={<ImagePostDetailPage />}
-        ></Route>
-        {/* new page finish to check  */}
-
-        <Route
-          path="/profile/:userId/following"
-          element={<FollowingDetailPage />}
-        ></Route>
-
-        <Route
-          path="/profile/:userId/followers"
-          element={<FollowerDetailPage />}
-        ></Route>
-
-        <Route
-          path="/settings/deactivated"
-          element={<DeactivatedPage />}
-        ></Route>
-      </Routes>
+          <Route
+            path="/settings/deactivated"
+            element={<DeactivatedPage />}
+          ></Route>
+        </Routes>
+      </div>
     </UserProvider>
   );
 }

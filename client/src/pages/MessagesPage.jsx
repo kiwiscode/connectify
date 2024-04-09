@@ -17,9 +17,9 @@ import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNaviga
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import CustomNotification from "../components/Notifications/CustomNotification";
 import { List, message } from "antd";
-import PostModal from "../components/Main-Left-Side-Navbar/PostModal";
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
+import LoadingSpinner from "../components/ui/LoadingSpinner";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -591,8 +591,7 @@ function MessagesPage() {
   console.log(checkIfAllFilteredRoomsChatEmpty(filteredRooms) !== 0);
 
   const redirectToChatDetailPage = (roomId) => {
-    navigate(`/messages/${roomId}`);
-    window.location.reload();
+    window.location.href = `http://localhost:5173/messages/${roomId}`;
   };
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -609,6 +608,14 @@ function MessagesPage() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  const [messagesLoadingbar, setmessagesLoadingbar] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setmessagesLoadingbar(false);
+    }, 1500);
+  }, [messagesLoadingbar, filteredRooms]);
 
   return (
     <>
@@ -1039,211 +1046,228 @@ function MessagesPage() {
                 </div>
               ) : (
                 <>
-                  {/* <CreateChat writeMessageButton={true}></CreateChat> */}
-
-                  <>
-                    {/* another create chat modal start to check  */}
-                    <div style={{ textAlign: "left", padding: "16px" }}>
+                  {messagesLoadingbar && !filteredRooms?.length ? (
+                    <div style={{ textAlign: "center", padding: "64px" }}>
                       <div
                         style={{
-                          lineHeight: "36px",
-                          fontSize: "31px",
-                          fontWeight: "800",
-                          margin: "10px",
-                        }}
-                      >
-                        Welcome to your inbox!
-                      </div>
-                      <div
-                        style={{
-                          color: "rgb(83, 100, 113)",
-                          lineHeight: "20px",
-                          fontSize: "15px",
-                          fontWeight: "400",
-                          margin: "10px",
-                        }}
-                      >
-                        Drop a line, share posts and more with private
-                        conversations between you and others on Connectify.
-                      </div>
-                      <button
-                        className="write-a-message-message-page-btn"
-                        style={{
-                          color: "white",
-                          backgroundColor: "rgb(29,155,240)",
-                          margin: "10px",
-                          borderStyle: "none",
-                          borderRadius: "9999px",
-                          minWidth: "52px",
-                          outlineStyle: "none",
-                          cursor: "pointer",
-                          minHeight: "52px",
-                          paddingLeft: "32px",
-                          paddingRight: "32px",
-                          fontWeight: "700",
                           fontSize: "15px",
                         }}
-                        onClick={handleShow}
                       >
-                        Write a message
-                      </button>
+                        <LoadingSpinner
+                          strokeColor={"rgb(29, 155, 240)"}
+                        ></LoadingSpinner>
+                      </div>
                     </div>
+                  ) : (
+                    <>
+                      {/* <CreateChat writeMessageButton={true}></CreateChat> */}
 
-                    <Modal show={show} onHide={handleClose}>
-                      <Modal.Header
-                        closeButton={false} // closeButton'u devre dışı bırak
-                        style={{
-                          border: "none",
-                        }}
-                      >
-                        <div
-                          className="close-button"
-                          style={{ borderRadius: "50%", cursor: "pointer" }}
-                        >
-                          <div>
-                            <svg
-                              style={{
-                                border: "none",
-                                fontSize: "15px",
-                                margin: "5px",
-                              }}
-                              onClick={handleClose}
-                              width={20}
-                              height={20}
-                              color="rgb(15,20,25)"
-                              fill="currentColor"
-                              viewBox="0 0 24 24"
-                              aria-hidden="true"
-                              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                            >
-                              <g>
-                                <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
-                              </g>
-                            </svg>{" "}
-                          </div>
-                        </div>
-                        <span
-                          style={{
-                            position: "relative",
-                            marginLeft: "25px",
-                          }}
-                        >
-                          New message
-                        </span>
-                      </Modal.Header>
-                      <div className="joinChatContainer">
-                        <div>
-                          <input
-                            type="text"
-                            placeholder="Search people"
-                            value={searchString}
-                            onChange={handleSearchTermChange}
+                      <>
+                        {/* another create chat modal start to check  */}
+                        <div style={{ textAlign: "left", padding: "16px" }}>
+                          <div
                             style={{
-                              fontSize: "14px",
-                              width: "100%",
-                              outline: "none",
-                              border: "none",
-                              borderRadius: "0px",
-                              borderBottom: "1px solid rgba(0,0,0,0.1)",
+                              lineHeight: "36px",
+                              fontSize: "31px",
+                              fontWeight: "800",
+                              margin: "10px",
                             }}
-                          />
+                          >
+                            Welcome to your inbox!asdasdasdsadsadadad
+                          </div>
+                          <div
+                            style={{
+                              color: "rgb(83, 100, 113)",
+                              lineHeight: "20px",
+                              fontSize: "15px",
+                              fontWeight: "400",
+                              margin: "10px",
+                            }}
+                          >
+                            Drop a line, share posts and more with private
+                            conversations between you and others on Connectify.
+                          </div>
+                          <button
+                            className="write-a-message-message-page-btn"
+                            style={{
+                              color: "white",
+                              backgroundColor: "rgb(29,155,240)",
+                              margin: "10px",
+                              borderStyle: "none",
+                              borderRadius: "9999px",
+                              minWidth: "52px",
+                              outlineStyle: "none",
+                              cursor: "pointer",
+                              minHeight: "52px",
+                              paddingLeft: "32px",
+                              paddingRight: "32px",
+                              fontWeight: "700",
+                              fontSize: "15px",
+                            }}
+                            onClick={handleShow}
+                          >
+                            Write a message
+                          </button>
                         </div>
-                        {filteredUsers.map((user) => (
-                          <>
-                            <div className="selected-user-for-dm">
-                              <Link
-                                onClick={() => selectedUser(user)}
-                                style={{
-                                  cursor: "pointer",
-                                  textDecoration: "none",
-                                }}
-                                // to={`/messages/${messageRoomId}`}
-                              >
-                                <Stack
+
+                        <Modal show={show} onHide={handleClose}>
+                          <Modal.Header
+                            closeButton={false} // closeButton'u devre dışı bırak
+                            style={{
+                              border: "none",
+                            }}
+                          >
+                            <div
+                              className="close-button"
+                              style={{ borderRadius: "50%", cursor: "pointer" }}
+                            >
+                              <div>
+                                <svg
                                   style={{
+                                    border: "none",
+                                    fontSize: "15px",
                                     margin: "5px",
-                                    padding: "5px",
                                   }}
-                                  direction="horizontal"
+                                  onClick={handleClose}
+                                  width={20}
+                                  height={20}
+                                  color="rgb(15,20,25)"
+                                  fill="currentColor"
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
                                 >
-                                  <div className="p-0">
-                                    {" "}
-                                    {user.imageUrl.slice(0, 3) !== "../" ? (
-                                      <img
-                                        style={{
-                                          borderRadius: "50%",
-                                        }}
-                                        width={40}
-                                        height={40}
-                                        src={user.imageUrl}
-                                        alt=""
-                                      />
-                                    ) : (
-                                      <div>
-                                        <svg
-                                          style={{
-                                            borderRadius: "50%",
-                                          }}
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          width="40"
-                                          height="40"
-                                          fill="rgb(83, 100, 113)"
-                                          className="bi bi-person-circle"
-                                          viewBox="0 0 16 16"
-                                        >
-                                          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                          <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                        </svg>
-                                      </div>
-                                    )}
-                                  </div>
-                                  <div
-                                    style={{
-                                      marginLeft: "10px",
-                                    }}
-                                    className="p-0"
-                                  >
-                                    {" "}
-                                    <div
-                                      style={{
-                                        color: "rgb(15, 20, 25)",
-                                        fontSize: "15px",
-                                        lineHeight: "20px",
-                                        fontWeight: "700",
-                                      }}
-                                    >
-                                      {user.fullname}
-                                    </div>
-                                    <div
-                                      style={{
-                                        marginRight:
-                                          user.imageUrl.slice(0, 3) !== "../"
-                                            ? ""
-                                            : "32px",
-                                        color: "rgb(83, 100, 113)",
-                                        lineHeight: "20px",
-                                        fontSize: "15px",
-                                        fontWeight: "400",
-                                      }}
-                                    >
-                                      @{user.username}
-                                    </div>
-                                  </div>
-                                </Stack>
-                              </Link>
+                                  <g>
+                                    <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                                  </g>
+                                </svg>{" "}
+                              </div>
                             </div>
-                          </>
-                        ))}
-                      </div>
-                      <Modal.Body>
-                        {/* start to check  search create message search bar*/}
+                            <span
+                              style={{
+                                position: "relative",
+                                marginLeft: "25px",
+                              }}
+                            >
+                              New message
+                            </span>
+                          </Modal.Header>
+                          <div className="joinChatContainer">
+                            <div>
+                              <input
+                                type="text"
+                                placeholder="Search people"
+                                value={searchString}
+                                onChange={handleSearchTermChange}
+                                style={{
+                                  fontSize: "14px",
+                                  width: "100%",
+                                  outline: "none",
+                                  border: "none",
+                                  borderRadius: "0px",
+                                  borderBottom: "1px solid rgba(0,0,0,0.1)",
+                                }}
+                              />
+                            </div>
+                            {filteredUsers.map((user) => (
+                              <>
+                                <div className="selected-user-for-dm">
+                                  <Link
+                                    onClick={() => selectedUser(user)}
+                                    style={{
+                                      cursor: "pointer",
+                                      textDecoration: "none",
+                                    }}
+                                    // to={`/messages/${messageRoomId}`}
+                                  >
+                                    <Stack
+                                      style={{
+                                        margin: "5px",
+                                        padding: "5px",
+                                      }}
+                                      direction="horizontal"
+                                    >
+                                      <div className="p-0">
+                                        {" "}
+                                        {user.imageUrl.slice(0, 3) !== "../" ? (
+                                          <img
+                                            style={{
+                                              borderRadius: "50%",
+                                            }}
+                                            width={40}
+                                            height={40}
+                                            src={user.imageUrl}
+                                            alt=""
+                                          />
+                                        ) : (
+                                          <div>
+                                            <svg
+                                              style={{
+                                                borderRadius: "50%",
+                                              }}
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              width="40"
+                                              height="40"
+                                              fill="rgb(83, 100, 113)"
+                                              className="bi bi-person-circle"
+                                              viewBox="0 0 16 16"
+                                            >
+                                              <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                              <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                            </svg>
+                                          </div>
+                                        )}
+                                      </div>
+                                      <div
+                                        style={{
+                                          marginLeft: "10px",
+                                        }}
+                                        className="p-0"
+                                      >
+                                        {" "}
+                                        <div
+                                          style={{
+                                            color: "rgb(15, 20, 25)",
+                                            fontSize: "15px",
+                                            lineHeight: "20px",
+                                            fontWeight: "700",
+                                          }}
+                                        >
+                                          {user.fullname}
+                                        </div>
+                                        <div
+                                          style={{
+                                            marginRight:
+                                              user.imageUrl.slice(0, 3) !==
+                                              "../"
+                                                ? ""
+                                                : "32px",
+                                            color: "rgb(83, 100, 113)",
+                                            lineHeight: "20px",
+                                            fontSize: "15px",
+                                            fontWeight: "400",
+                                          }}
+                                        >
+                                          @{user.username}
+                                        </div>
+                                      </div>
+                                    </Stack>
+                                  </Link>
+                                </div>
+                              </>
+                            ))}
+                          </div>
+                          <Modal.Body>
+                            {/* start to check  search create message search bar*/}
 
-                        {/* finish to check  */}
-                      </Modal.Body>
-                    </Modal>
+                            {/* finish to check  */}
+                          </Modal.Body>
+                        </Modal>
 
-                    {/* another create chat model finish to check  */}
-                  </>
+                        {/* another create chat model finish to check  */}
+                      </>
+                    </>
+                  )}
                 </>
               )}
             </>

@@ -212,6 +212,7 @@ const handleLoginSuccess = (req, res, next) => {
         token: token,
       });
     } else {
+      console.log("Here is working !");
       res.status(403).json({ error: true, message: "Not Authorized" });
     }
   } else {

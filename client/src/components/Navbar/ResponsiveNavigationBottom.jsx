@@ -60,10 +60,10 @@ function ResponsiveNavigationBarBottom({
     });
   };
 
-  const navigate = useNavigate();
   const redirectToMessages = () => {
-    navigate("/messages");
-    window.location.reload();
+    setTimeout(() => {
+      window.location.href = "http://localhost:5173/messages";
+    }, 1000);
   };
 
   const handleScroll = () => {

@@ -6,6 +6,7 @@ import {
   Modal,
   Popover,
   OverlayTrigger,
+  Row,
 } from "react-bootstrap";
 import axios from "axios";
 import { UserContext } from "../../context/UserContext";
@@ -34,6 +35,7 @@ import en from "react-phone-number-input/locale/en.json";
 import "react-phone-number-input/style.css";
 
 import { QRCodeSVG } from "qrcode.react";
+import { ThemeContext } from "../../context/ThemeContext";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -41,14 +43,16 @@ const API_URL = "http://localhost:3000";
 // ?
 
 function RightSideColumn({
-  handleSetSearchTerm,
-  searchTerm,
-  setSearchTerm,
-  filteredSearchResult,
   onModalToggle,
   tabIndexValue,
   isSubscriptionCompleted,
 }) {
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
   const { getToken, userInfo } = useContext(UserContext);
   const [onFocus, setOnFocus] = useState(false);
   const [user, setUser] = useState([]);
@@ -59,6 +63,41 @@ function RightSideColumn({
   const onFocusActive = () => {
     setOnFocus(true);
   };
+
+  // start to check search implementation for main component right side column
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredSearchResult, setFilteredSearchResult] = useState([]);
+
+  const setSearchTermEmpty = () => {
+    setSearchTerm("");
+  };
+  const handleSetSearchTerm = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/allUsersFromDataBase`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        const term = searchTerm.split(" ").join("").toLowerCase();
+
+        const filteredUsers = response.data.allUsers.filter((eachUser) => {
+          return (
+            eachUser.username.includes(term) || eachUser.fullname.includes(term)
+          );
+        });
+
+        setFilteredSearchResult(filteredUsers);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  }, [searchTerm]);
+  // finish to check search implementation for main component right side column
 
   const { updateUser } = useContext(UserContext);
 
@@ -489,16 +528,16 @@ function RightSideColumn({
     }
   };
 
-  console.log("Organization premium role =>", organizationSubPremiumRole);
-  console.log("Organization premium type =>", organizationSubPremiumType);
-  console.log(
-    "Organization premium plan type =>",
-    organizationSubPlanTypeBasic || organizationSubPlanTypeFullAccess
-  );
-  console.log(
-    "Organization premium plan price =>",
-    organizationSubPlanPriceBasic || organizationSubPlanPriceFullAccess
-  );
+  // console.log("Organization premium role =>", organizationSubPremiumRole);
+  // console.log("Organization premium type =>", organizationSubPremiumType);
+  // console.log(
+  //   "Organization premium plan type =>",
+  //   organizationSubPlanTypeBasic || organizationSubPlanTypeFullAccess
+  // );
+  // console.log(
+  //   "Organization premium plan price =>",
+  //   organizationSubPlanPriceBasic || organizationSubPlanPriceFullAccess
+  // );
 
   const handleChooseActionForSubscriptionModal = (individual, organization) => {
     if (individual) {
@@ -1232,7 +1271,7 @@ function RightSideColumn({
                             : "none",
                       }}
                     >
-                      Subscribe
+                      Subscribess
                     </span>
                     <div
                       style={{
@@ -15066,7 +15105,14 @@ function RightSideColumn({
               style={{
                 width: "350px",
                 height: "44px",
-                backgroundColor: onFocus ? "white" : "#eff3f4",
+
+                // backgroundColor: onFocus ? "white" : "#eff3f4",
+                backgroundColor:
+                  themeName === "dark-theme"
+                    ? "#16181c"
+                    : onFocus && themeName !== "dark-theme"
+                    ? "white"
+                    : "#eff3f4",
                 border: onFocus ? "1px solid #1e9bf0" : "none",
                 outlineStyle: "none",
                 borderRadius: "9999px",
@@ -15076,6 +15122,7 @@ function RightSideColumn({
                 fontWeight: "400",
                 lineHeight: "20px",
                 wordWrap: "break-word",
+                color: themeName === "dark-theme" ? "white" : "black",
               }}
               type="text"
               className="right-side-bar-input"
@@ -15096,7 +15143,7 @@ function RightSideColumn({
                 }}
                 className="div-parent-search-input-delete-search-term css-175oi2r r-6koalj r-1777fci"
                 onClick={() => {
-                  setSearchTerm();
+                  setSearchTermEmpty();
                 }}
               >
                 <div
@@ -15124,7 +15171,7 @@ function RightSideColumn({
                         position: "relative",
                         bottom: "2px",
                       }}
-                      color="white"
+                      color={themeName === "dark-theme" ? "black" : "white"}
                       fill="currentColor"
                       width={9}
                       height={9}
@@ -15149,15 +15196,21 @@ function RightSideColumn({
                 overflowX: "hidden",
                 maxHeight: "400px",
                 minHeight: "100px",
-                backgroundColor: "white",
+                backgroundColor: themeName === "dark-theme" ? "black" : "white",
                 zIndex: 9999,
                 width: "350px",
                 borderRadius: "8px",
                 border: "none",
                 position: "absolute",
                 padding: "12px",
+                filter:
+                  themeName === "dark-theme"
+                    ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                    : "",
+
                 boxShadow:
                   "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+
                 display: onFocus ? "flex" : "none",
                 flexDirection: "column",
 
@@ -15180,20 +15233,45 @@ function RightSideColumn({
               ) : (
                 <>
                   <List
-                    className="right-side-bar-column-search-bar-list"
+                    style={{}}
+                    // className="right-side-bar-column-search-bar-list"
+                    className={`right-side-bar-column-search-bar-list right-side-bar-column-search-bar-list-${themeName}`}
                     size="small"
-                    header={<div>{`Search for "${searchTerm}"`}</div>}
                     bordered
+                    header={
+                      <div
+                        style={{
+                          color: themeName === "dark-theme" ? "white" : "black",
+                        }}
+                      >{`Search for "${searchTerm}"`}</div>
+                    }
                   >
+                    {themeName === "dark-theme" ? (
+                      <div
+                        style={{
+                          borderBottom: "0.1px solid rgb(70, 70, 70)",
+                        }}
+                      ></div>
+                    ) : null}
+
                     {filteredSearchResult.map((eachUser, index) => (
                       <List.Item
                         onMouseEnter={() => {
                           setIsHoveredListItem(index);
                         }}
+                        onMouseLeave={() => {
+                          setIsHoveredListItem("");
+                        }}
                         key={index}
                         style={{
                           backgroundColor:
-                            isHoveredListItem === index ? "#f7f9f9" : "",
+                            isHoveredListItem === index &&
+                            themeName !== "dark-theme"
+                              ? "#f7f9f9"
+                              : isHoveredListItem === index &&
+                                themeName === "dark-theme"
+                              ? "#181818"
+                              : "",
                           border: "none",
                           cursor: "pointer",
                         }}
@@ -15265,6 +15343,10 @@ function RightSideColumn({
                                     textOverflow: "ellipsis",
                                     whiteSpace: "nowrap",
                                     width: "200px",
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "white"
+                                        : "black",
                                   }}
                                 >
                                   {eachUser._doc?.fullname}
@@ -15314,6 +15396,7 @@ function RightSideColumn({
           </div>
           {/* input finish to check  */}
           <div
+            className={`right-side-column-nav-bar right-side-column-nav-bar-${themeName}`}
             style={{
               position: "relative",
               bottom: "40px",
@@ -15324,7 +15407,8 @@ function RightSideColumn({
                 border: "none",
                 borderWidth: "1px",
                 borderRadius: "16px",
-                backgroundColor: "#eff3f4",
+                backgroundColor:
+                  themeName === "dark-theme" ? "#16181c" : "#eff3f4",
                 maxWidth: "350px",
               }}
               className="p-4"
@@ -15358,7 +15442,8 @@ function RightSideColumn({
                     marginTop: "10px",
                     maxWidth: "107px",
                   }}
-                  className="login-button"
+                  // className="login-button"
+                  className={`login-button login-button-${themeName}`}
                   variant="dark"
                 >
                   Subscribe
@@ -15373,7 +15458,8 @@ function RightSideColumn({
                 border: "none",
                 borderWidth: "1px",
                 borderRadius: "16px",
-                backgroundColor: "#eff3f4",
+                backgroundColor:
+                  themeName === "dark-theme" ? "#16181c" : "#eff3f4",
                 maxWidth: "350px",
                 marginTop: "10px",
                 display: "flex",
