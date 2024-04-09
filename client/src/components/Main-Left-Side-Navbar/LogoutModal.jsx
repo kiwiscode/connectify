@@ -19,12 +19,19 @@ import "../../index.css";
 import { message, Steps } from "antd";
 import { Divider, List } from "antd";
 import LoadingSpinner from "../ui/LoadingSpinner";
+import { ThemeContext } from "../../context/ThemeContext";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
 function LogoutModal({ isLogoutActionActive }) {
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
   const [messageApi, contextHolder] = message.useMessage();
   const successMessage = () => {
     messageApi.success({
@@ -389,7 +396,6 @@ function LogoutModal({ isLogoutActionActive }) {
   };
 
   const handleLogoutFromGoogleAccount = () => {
-    console.log("This function should run !!");
     axios
       .get(`${API_URL}/auth/google-logout`)
       .then(() => {
@@ -421,12 +427,18 @@ function LogoutModal({ isLogoutActionActive }) {
   const popoverTop = (
     <Popover
       style={{
+        filter:
+          themeName === "dark-theme"
+            ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+            : "",
+
         boxShadow:
           "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
         width: "19.5%",
         padding: "8px 0px",
         borderWidth: "1px",
         borderRadius: "12px",
+        backgroundColor: themeName === "dark-theme" ? "black" : "",
       }}
       id="popover-positioned-top"
       title="Popover top"
@@ -441,7 +453,7 @@ function LogoutModal({ isLogoutActionActive }) {
         {/* settings icon start to check  */}
         <div
           onClick={handleShow}
-          className="settings-and-privacy"
+          className={`settings-and-privacy settings-and-privacy-${themeName}`}
           style={{
             paddingBottom: "12px",
             paddingTop: "12px",
@@ -455,6 +467,8 @@ function LogoutModal({ isLogoutActionActive }) {
           }}
         >
           <svg
+            color={themeName === "dark-theme" ? "white" : ""}
+            fill="currentColor"
             style={{
               position: "relative",
               left: "10px",
@@ -473,6 +487,7 @@ function LogoutModal({ isLogoutActionActive }) {
             style={{
               position: "relative",
               left: "10px",
+              color: themeName === "dark-theme" ? "white" : "",
             }}
             className="logout-p"
           >
@@ -494,13 +509,14 @@ function LogoutModal({ isLogoutActionActive }) {
             width: "100%",
             height: "100%",
           }}
-          className="logout-p logout-popover"
+          className={`logout-p logout-popover logout-popover-${themeName}`}
           onClick={() => handleOpenLogoutModal()}
         >
           <span
             style={{
               position: "relative",
               left: "10px",
+              color: themeName === "dark-theme" ? "white" : "",
             }}
           >
             Log out @{localeInfo?.username}
@@ -849,7 +865,7 @@ function LogoutModal({ isLogoutActionActive }) {
         {/* start to check  */}
 
         <Stack
-          className="stack-logout-navigation-parent"
+          className={`stack-logout-navigation-parent stack-logout-navigation-parent-${themeName}`}
           style={{
             width: "80%",
             borderRadius: "9999px",
@@ -898,7 +914,8 @@ function LogoutModal({ isLogoutActionActive }) {
               <div
                 className="localeInfo-username"
                 style={{
-                  color: "rgb(15,20,25)",
+                  color: themeName === "dark-theme" ? "white" : "black",
+
                   lineHeight: "20px",
                   fontWeight: "700",
                   fontSize: "15px",
@@ -929,6 +946,8 @@ function LogoutModal({ isLogoutActionActive }) {
           </div>
           <div className="p-2 ms-auto responsive-logout">
             <svg
+              color={themeName === "dark-theme" ? "white" : ""}
+              fill="currentColor"
               width={`${1.25}em`}
               height={`${1.25}em`}
               viewBox="0 0 24 24"

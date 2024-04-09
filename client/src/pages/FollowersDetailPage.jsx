@@ -216,10 +216,6 @@ function FollowerDetailPage() {
 
   const [activeTab, setActiveTab] = useState("");
 
-  const redirectToMessages = () => {
-    navigate("/messages");
-    window.location.reload();
-  };
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const handleResize = () => {

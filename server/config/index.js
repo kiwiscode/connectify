@@ -534,6 +534,8 @@ module.exports = (app) => {
                   findedRoom
                 );
 
+                console.log("Varolan oda bulundu oda adı =>", findedRoom.room);
+
                 socket.emit("getmessageRoomId", findedRoom._id.toString());
               } else {
                 console.error("Error fetching messages for the existing room.");

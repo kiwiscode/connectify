@@ -211,10 +211,7 @@ function FollowingDetailPage() {
     });
   };
   // socket io 5 client finish to check
-  const redirectToMessages = () => {
-    navigate("/messages");
-    window.location.reload();
-  };
+
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const handleResize = () => {

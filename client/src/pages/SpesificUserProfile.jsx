@@ -234,35 +234,29 @@ function SpesificUserProfile() {
   const buttonStyles = {
     cursor: "pointer",
     minWidth: "25%",
+    // border: isHovered
+    //   ? "1px solid rgba(253,201,206,255)"
+    //   : "1px solid rgb(185, 202, 211)",
 
-    // width: "25%",
-    textAlign: "center",
-    border: isHovered
-      ? "1px solid rgba(253,201,206,255)"
-      : "1px solid rgb(185, 202, 211)",
-    paddingLeft: "16px",
-    paddingRight: "16px",
     borderRadius: "9999px",
     lineHeight: "20px",
     fontSize: "15px",
     fontWeight: "700",
-    padding: "5px",
-    marginRight: "15px",
-    backgroundColor: isHovered
-      ? "rgba(255,234,235,255)"
-      : profileInfo.followers
-      ? getFollowerIds(profileInfo.followers).includes(userInfo._id)
-        ? "white"
-        : "black"
-      : null,
+    // backgroundColor: isHovered
+    //   ? "rgba(255,234,235,255)"
+    //   : profileInfo.followers
+    //   ? getFollowerIds(profileInfo.followers).includes(userInfo._id)
+    //     ? "white"
+    //     : "black"
+    //   : null,
     // backgroundColor: "rgba(39,44,48,255)",
-    color: isHovered
-      ? "rgba(244,34,45,255)"
-      : profileInfo.followers
-      ? getFollowerIds(profileInfo.followers).includes(userInfo._id)
-        ? "black"
-        : "white"
-      : null,
+    // color: isHovered
+    //   ? "rgba(244,34,45,255)"
+    //   : profileInfo.followers
+    //   ? getFollowerIds(profileInfo.followers).includes(userInfo._id)
+    //     ? "black"
+    //     : "white"
+    //   : null,
   };
 
   // socket io 4 client start to check
@@ -716,6 +710,29 @@ function SpesificUserProfile() {
     };
   }, []);
 
+  const [room, setRoom] = useState("");
+  const [messageRoomId, setmessageRoomId] = useState("");
+
+  const selectedUser = (user) => {
+    const room = [userInfo.username, user.username].sort().join("_");
+    console.log("message room =>", room);
+    setRoom(room);
+    // Emit an event to join the room with the selected user
+    socket.emit("join_user_room", { activeUser: userInfo, selectedUser: user });
+    const handleGetMessageRoomId = (roomId) => {
+      setmessageRoomId(roomId);
+    };
+    console.log("Message room id =>", messageRoomId);
+    socket.on("getmessageRoomId", handleGetMessageRoomId);
+  };
+
+  useEffect(() => {
+    console.log("This line is working !!!");
+    if (messageRoomId) {
+      window.location.href = `http://localhost:5173/messages/${messageRoomId}`;
+    }
+  }, [messageRoomId]);
+
   return (
     <>
       {contextHolder}
@@ -920,34 +937,30 @@ function SpesificUserProfile() {
                   {profileInfo._id !== userInfo._id ? (
                     <div
                       style={{
-                        position: "relative",
-                        right: "21px",
-                        width: "100%",
+                        // backgroundColor: "yellow",
                         display: "flex",
                         justifyContent: "center",
+                        width: "100%",
+                        gap: "2%",
                       }}
                       className="p-2 ms-auto"
                     >
                       <div
-                        className="three-dots-spesific-profile"
                         style={{
-                          cursor: "pointer",
-                          border: "1px solid black",
-                          borderColor: "rgb(185, 202, 211)",
+                          width: "40px",
+                          height: "40px",
                           borderRadius: "50%",
-                          marginRight: "15px",
-                          padding: "5px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          border: "1px solid rgb(185, 202, 211)",
                         }}
+                        className="spesific-profile-svg-three-dots"
                       >
                         <svg
                           width={20}
                           height={20}
-                          style={{
-                            position: "relative",
-                            display: "inline-block",
-                            bottom: "2px",
-                            padding: "1px",
-                          }}
+                          style={{}}
                           viewBox="0 0 24 24"
                           aria-hidden="true"
                           className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
@@ -957,26 +970,22 @@ function SpesificUserProfile() {
                           </g>
                         </svg>
                       </div>
-                      {/* start to check  */}
+                      {/* start to check redirect to the messages  */}
                       <div
-                        className="message-box-spesific-profile"
+                        onClick={() => selectedUser(profileInfo)}
                         style={{
-                          cursor: "pointer",
-
-                          border: "1px solid black",
-                          borderColor: "rgb(185, 202, 211)",
+                          width: "40px",
+                          height: "40px",
                           borderRadius: "50%",
-                          marginRight: "15px",
-                          padding: "5px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          border: "1px solid rgb(185, 202, 211)",
                         }}
+                        className="spesific-profile-svg-dm"
                       >
                         <svg
-                          style={{
-                            position: "relative",
-                            display: "inline-block",
-                            bottom: "1px",
-                            padding: "1px",
-                          }}
+                          style={{}}
                           width={20}
                           height={20}
                           viewBox="0 0 24 24"
@@ -990,12 +999,10 @@ function SpesificUserProfile() {
                           </g>
                         </svg>
                       </div>
-                      {/* finish to check  */}
-                      <div
+                      {/* finish to check redirect to the messages  */}
+                      <Button
+                        // buttonStyles
                         onClick={handleFollow}
-                        className="follow-following-section-spesific-profile"
-                        style={buttonStyles}
-                        // onClick={handleClick}
                         onMouseEnter={
                           profileInfo.followers
                             ? !getFollowerIds(profileInfo.followers).includes(
@@ -1006,6 +1013,32 @@ function SpesificUserProfile() {
                             : null
                         }
                         onMouseLeave={handleMouseLeave}
+                        style={{
+                          display: "inline",
+                          maxWidth: "107px",
+                          border: isHovered
+                            ? "1px solid rgba(253,201,206,255)"
+                            : "1px solid rgb(185, 202, 211)",
+                          backgroundColor: isHovered
+                            ? "rgba(255,234,235,255)"
+                            : profileInfo.followers
+                            ? getFollowerIds(profileInfo.followers).includes(
+                                userInfo._id
+                              )
+                              ? "white"
+                              : "black"
+                            : null,
+                          color: isHovered
+                            ? "rgba(244,34,45,255)"
+                            : profileInfo.followers
+                            ? getFollowerIds(profileInfo.followers).includes(
+                                userInfo._id
+                              )
+                              ? "black"
+                              : "white"
+                            : null,
+                        }}
+                        variant="dark"
                       >
                         {profileInfo.followers
                           ? getFollowerIds(profileInfo.followers).includes(
@@ -1016,7 +1049,7 @@ function SpesificUserProfile() {
                               : "Following"
                             : "Follow"
                           : null}
-                      </div>
+                      </Button>
                     </div>
                   ) : null}
                 </Stack>
