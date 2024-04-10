@@ -1902,9 +1902,10 @@ function MainPage() {
       >
         <Row
           style={{
-            // height: "100%",
             borderTop: "none",
             borderBottom: "none",
+            overflowX: "hidden",
+            overflowY: "hidden",
           }}
         >
           <LeftSideNavBar
@@ -1947,7 +1948,6 @@ function MainPage() {
               borderBottom: "none",
               padding: "0px",
               position: "relative",
-              height: !showForYou ? "100vh" : "",
             }}
           >
             <div

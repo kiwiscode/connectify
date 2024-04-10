@@ -73,7 +73,7 @@ function App() {
           onClick={cyberpunkModeActive}
         >
           CyberPunk
-        </button>{" "}
+        </button>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/home" element={<MainPage />}></Route>

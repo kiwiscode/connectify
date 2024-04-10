@@ -6,7 +6,6 @@ import {
   Modal,
   Popover,
   OverlayTrigger,
-  Row,
 } from "react-bootstrap";
 import axios from "axios";
 import { UserContext } from "../../context/UserContext";
@@ -15059,6 +15058,8 @@ function RightSideColumn({
         style={{
           position: "relative",
           left: "1.5%",
+          height: "100vh",
+          top: "0px",
         }}
       >
         <Stack

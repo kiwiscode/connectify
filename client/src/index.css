@@ -107,9 +107,34 @@ body {
   transition-duration: 0.2s !important;
 }
 
-.svg-border-parent-dark-theme:hover {
-  background-color: #010c1a !important;
+.svg-border-parent-dark-theme:hover,
+.send-button-dark-theme:hover {
+  background-color: #1e3140 !important;
   transition-duration: 0.2s !important;
+}
+
+.send-button {
+  color: rgba(29, 155, 240);
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  background-color: rgba(239, 243, 244, 1);
+  cursor: pointer;
+  outline: none;
+  font-size: 15px;
+  line-height: 20px;
+}
+
+.send-button-dark-theme {
+  color: rgba(29, 155, 240);
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  background-color: #202327;
+  cursor: pointer;
+  outline: none;
+  font-size: 15px;
+  line-height: 20px;
 }
 
 .each-post:hover {
@@ -159,6 +184,227 @@ body {
 .spesific-profile-svg-dm-dark-theme:hover {
   background-color: #181818;
   cursor: pointer;
+}
+
+/* className="transition-gray-hover" */
+
+.transition-gray-hover {
+  transition: background-color 0.2s ease;
+}
+.transition-gray-hover:hover {
+  background-color: rgba(247, 247, 247, 255);
+}
+
+.view-post-engagements-section:hover {
+  background-color: rgba(247, 247, 247, 255);
+}
+.transition-gray-hover-dark-theme {
+  transition: background-color 0.2s ease;
+}
+.transition-gray-hover-dark-theme:hover {
+  background-color: #181818;
+}
+
+.view-post-engagements-section-dark-theme:hover {
+  background-color: #181818;
+}
+
+.accordion-button {
+  border: none !important;
+  background-color: white !important;
+}
+
+.accordion-button:focus {
+  border: none !important;
+  box-shadow: none;
+}
+
+.accordion-button:not(.collapsed) {
+  border: none !important;
+  color: #212529;
+}
+
+.accordion-2-dark-theme > .accordion-button {
+  background-color: black !important;
+}
+
+.message-detail-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  height: 400px;
+  width: 100%;
+  background-color: #fff;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+}
+
+.message-detail-container-dark-theme {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  height: 400px;
+  width: 100%;
+  background-color: black;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+}
+
+/* chat details page user information start to check  */
+
+.message-detail-user-card {
+  text-align: center;
+  margin-top: 15px;
+  height: 330px;
+  padding: 20px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Hover effect */
+.message-detail-user-card:hover {
+  background-color: #f5f8fa; /* Twitter hover rengi */
+  transition-duration: 0.2s;
+}
+
+.message-detail-user-card-dark-theme {
+  text-align: center;
+  margin-top: 15px;
+  height: 330px;
+  padding: 20px 16px;
+  border-bottom: 1px solid rgb(70, 70, 70);
+}
+
+/* Hover effect */
+.message-detail-user-card-dark-theme:hover {
+  background-color: #181818 !important; /* Twitter hover rengi */
+  transition-duration: 0.2s;
+}
+
+.message-input {
+  flex: 1;
+  padding: 8px;
+  margin-right: 8px;
+  border-style: none;
+  background-color: rgba(239, 243, 244, 1);
+  outline: none;
+  font-size: 15px;
+  width: 100%;
+}
+
+.message-input-dark-theme {
+  flex: 1;
+  padding: 8px;
+  margin-right: 8px;
+  border-style: none;
+  background-color: #202327 !important;
+  outline: none;
+  font-size: 15px;
+  width: 100%;
+}
+
+.chat-footer-detail {
+  height: 50px;
+  margin: 5px;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background-color: rgba(239, 243, 244, 1);
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+
+.chat-footer-detail-dark-theme {
+  height: 50px;
+  margin: 5px;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background-color: #202327 !important;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+
+.disabled-button {
+  cursor: default !important;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background-color: rgba(239, 243, 244, 1);
+}
+
+.disabled-button-dark-theme {
+  cursor: default !important;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background-color: #202327 !important;
+}
+
+/* chat details page user information finish to check  */
+
+.spesific-room-message-other {
+  background-color: rgba(239, 243, 244, 1);
+  color: black;
+  border-color: rgb(207, 217, 222);
+  border-radius: 24px;
+  border-bottom-left-radius: 4px;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.spesific-room-message-other-dark-theme {
+  background-color: #202327 !important;
+  color: white !important;
+  border-color: rgb(207, 217, 222);
+  border-radius: 24px;
+  border-bottom-left-radius: 4px;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.deactivated-info-left-side div {
+  color: black;
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 400;
+  margin-top: 10px;
+}
+
+.deactivated-info-left-side-dark-theme div {
+  color: white;
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 400;
+}
+.deactivated-info-left-side div span {
+  color: rgb(113, 118, 123);
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 400;
+}
+
+.deactivated-footer-login:hover {
+  background-color: #3ea6f1 !important  ;
+}
+
+.deactivated-footer-signup:hover {
+  background-color: #d7dbdc !important  ;
+}
+
+.ant-divider-dark-theme::before {
+  background-color: rgb(70, 70, 70);
+}
+
+.ant-divider-dark-theme::after {
+  background-color: rgb(70, 70, 70);
 }
 
 /* html {
@@ -915,57 +1161,10 @@ span > a:hover {
 }
 
 /* footer chat details page style start to check  */
-.chat-footer-detail {
-  height: 50px;
-  margin: 5px;
-  display: flex;
-  align-items: center;
-  padding: 8px;
-  background-color: rgba(239, 243, 244, 1);
-  border-bottom-left-radius: 16px;
-  border-bottom-right-radius: 16px;
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
-}
 
-.message-input {
-  flex: 1;
-  padding: 8px;
-  margin-right: 8px;
-  border-style: none;
-  background-color: rgba(239, 243, 244, 1);
-  outline: none;
-  font-size: 15px;
-  width: 100%;
-}
-
-.send-button {
-  color: rgba(29, 155, 240);
-  border: none;
-  border-radius: 20px;
-  padding: 8px 16px;
-  background-color: rgba(239, 243, 244, 1);
-  cursor: pointer;
-  outline: none;
-  font-size: 15px;
-  line-height: 20px;
-}
 /* footer chat details page style finish to check  */
 
 /* chat details page user information start to check  */
-
-.message-detail-container {
-  max-width: 600px;
-  margin: auto;
-  padding: 20px;
-  height: 400px;
-  width: 100%;
-  background-color: #fff;
-  border-bottom-left-radius: 2px;
-  border-bottom-right-radius: 2px;
-  border-top-left-radius: 2px;
-  border-top-right-radius: 2px;
-}
 
 .message-detail-user-card {
   text-align: center;
@@ -1007,13 +1206,6 @@ span > a:hover {
 
 .disabled {
   opacity: 0.5;
-}
-
-.disabled-button {
-  width: 40px;
-  height: 40px;
-  border: none;
-  background-color: rgba(239, 243, 244, 1);
 }
 
 .disabled-send-button-svg {
@@ -1621,33 +1813,6 @@ span > a:hover {
   .responsive-comment-line-parent-div-second {
     width: 26% !important;
   }
-}
-/* className="transition-gray-hover" */
-
-.transition-gray-hover {
-  transition: background-color 0.2s ease;
-}
-.transition-gray-hover:hover {
-  background-color: rgba(247, 247, 247, 255);
-}
-
-.view-post-engagements-section:hover {
-  background-color: rgba(247, 247, 247, 255);
-}
-
-.accordion-button {
-  border: none !important;
-  background-color: white !important;
-}
-
-.accordion-button:focus {
-  border: none !important;
-  box-shadow: none;
-}
-
-.accordion-button:not(.collapsed) {
-  border: none !important;
-  color: #212529;
 }
 
 .learn-more-post-detail:hover {

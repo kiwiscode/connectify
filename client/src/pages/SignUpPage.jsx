@@ -19,6 +19,7 @@ import { UserContext } from "../context/UserContext";
 import { message } from "antd";
 import { useNavigate } from "react-router-dom";
 import useWindowDimensions from "../hooks/getWindowDimensions";
+import { ThemeContext } from "../context/ThemeContext";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -621,6 +622,13 @@ function SignUpPage() {
 
   console.log("Height =>", height);
   console.log("Width =>", width);
+
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
 
   return (
     <>
@@ -3410,6 +3418,7 @@ function SignUpPage() {
                 fontSize: width < 501 ? "40px" : "64px",
                 lineHeight: width < 501 ? "52px" : "84px ",
                 fontWeight: "700",
+                color: themeName === "dark-theme" ? "white" : "",
               }}
               className="header-first header"
             >
@@ -3428,6 +3437,7 @@ function SignUpPage() {
                 fontSize: width < 501 ? "23px" : "31px",
                 lineHeight: width < 501 ? "28px" : "36px",
                 fontWeight: "700",
+                color: themeName === "dark-theme" ? "white" : "",
               }}
               className="header-second header "
             >
@@ -3449,6 +3459,11 @@ function SignUpPage() {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
+                  border:
+                    themeName !== "dark-theme"
+                      ? "1px solid rgba(0, 0, 0, 0.1)"
+                      : // : "0.1px solid rgb(70, 70, 70)",
+                        "1px solid rgb(70, 70, 70)",
                 }}
                 variant="light"
                 className="google-variant-sign-in"
@@ -3459,7 +3474,7 @@ function SignUpPage() {
                     fontWeight: "400",
                     lineHeight: "16px",
                     marginLeft: "10px",
-                    color: "black",
+                    color: themeName === "dark-theme" ? "white" : "black",
                   }}
                 >
                   Sign up with Google
@@ -3495,12 +3510,14 @@ function SignUpPage() {
               </Button>
 
               <Divider
+                className={`ant-divider-theme ant-divider-${themeName}`}
                 style={{
                   margin: "5px 0px",
                   padding: "0px",
                   maxHeight: "20px",
                   width: "300px",
                   minWidth: "300px",
+                  color: themeName === "dark-theme" ? "white" : "",
                 }}
                 plain
               >
