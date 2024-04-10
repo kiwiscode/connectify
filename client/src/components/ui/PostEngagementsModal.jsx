@@ -203,7 +203,8 @@ function PostEngagements({
 
       <Stack
         onClick={handleShow}
-        className="view-post-engagements-section transition-gray-hover"
+        // className="view-post-engagements-section transition-gray-hover"
+        className={`view-post-engagements-section transition-gray-hover transition-gray-hover-${themeName}`}
         direction="horizontal"
         style={{
           cursor: "pointer",

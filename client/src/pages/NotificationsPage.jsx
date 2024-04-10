@@ -5,6 +5,7 @@ import useWindowDimensions from "../hooks/getWindowDimensions";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserContext";
 import axios from "axios";
+import { ThemeContext } from "../context/ThemeContext";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -28,19 +29,26 @@ function NotificationsPage() {
 
   const [subscriptionCompletedStatus, setsubscriptionCompletedStatus] =
     useState(null);
-
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
   return (
     <Container
       style={{
         overflowX: "hidden",
+        overflowY: "hidden",
       }}
       fluid
     >
       <Row
         style={{
-          height: "100vh",
           borderTop: "none",
           borderBottom: "none",
+          overflowX: "hidden",
+          overflowY: "hidden",
         }}
       >
         <LeftSideNavBar
@@ -58,8 +66,18 @@ function NotificationsPage() {
           xxl={5} // 1400px ve sonrası aralığı
           className={`main-column `}
           style={{
-            border: "1px solid rgba(0, 0, 0, 0.1)",
-            borderTop: "none",
+            borderLeft:
+              themeName !== "dark-theme"
+                ? "1px solid rgba(0, 0, 0, 0.1)"
+                : // : "0.1px solid rgb(70, 70, 70)",
+                  "1px solid rgb(70, 70, 70)",
+
+            borderRight:
+              themeName !== "dark-theme"
+                ? "1px solid rgba(0, 0, 0, 0.1)"
+                : // : "0.1px solid rgb(70, 70, 70)",
+                  "1px solid rgb(70, 70, 70)",
+            borderTop: "none ",
             borderBottom: "none",
             padding: "0px",
             position: "relative",

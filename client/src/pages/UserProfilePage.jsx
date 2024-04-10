@@ -598,16 +598,16 @@ function UserProfile() {
       <Container
         style={{
           overflowX: "hidden",
-
           overflowY: "hidden",
         }}
         fluid
       >
         <Row
           style={{
-            height: "100%",
             borderTop: "none",
             borderBottom: "none",
+            overflowX: "hidden",
+            overflowY: "hidden",
           }}
         >
           <LeftSideNavBar
