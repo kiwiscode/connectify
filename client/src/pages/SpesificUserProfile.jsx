@@ -759,9 +759,10 @@ function SpesificUserProfile() {
       >
         <Row
           style={{
-            height: "100%",
             borderTop: "none",
             borderBottom: "none",
+            overflowX: "hidden",
+            overflowY: "hidden",
           }}
         >
           <LeftSideNavBar

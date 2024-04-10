@@ -33,6 +33,7 @@ import {
   OutlinedInput,
   TextField,
 } from "@mui/material";
+import { ThemeContext } from "../../context/ThemeContext";
 
 // socket io cleaning up socket.id after logout from online users client start to check
 // import io from "socket.io-client";
@@ -383,6 +384,12 @@ function SigninModal({ deactivatedScreen }) {
     setNewPasswordForgotPasswordProcess(e.target.value);
     setfirstInputActive(true);
   };
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
 
   const handleConfirmPasswordChange = (e) => {
     setNewPasswordForgotPasswordProcessConfirm(e.target.value);
@@ -557,6 +564,7 @@ function SigninModal({ deactivatedScreen }) {
               fontWeight: "700",
               padding: "5px",
               backgroundColor: "rgba(29,155,240,1.00)",
+              // backgroundColor: "yellow",
               color: "white",
             }}
             onClick={handleShowLoginModal}
@@ -583,6 +591,15 @@ function SigninModal({ deactivatedScreen }) {
               variant="light"
               onClick={handleShowLoginModal}
               className="sign-in"
+              style={{
+                backgroundColor: themeName === "dark-theme" ? "black" : "",
+                color: "rgb(29, 155, 240)",
+                border:
+                  themeName !== "dark-theme"
+                    ? "1px solid rgba(0, 0, 0, 0.1)"
+                    : // : "0.1px solid rgb(70, 70, 70)",
+                      "1px solid rgb(70, 70, 70)",
+              }}
             >
               Sign in
             </Button>

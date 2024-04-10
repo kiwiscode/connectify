@@ -19,6 +19,7 @@ import { message } from "antd";
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
 import axios from "axios";
+import { ThemeContext } from "../context/ThemeContext";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -311,6 +312,13 @@ function ChatDetailsPage() {
     };
   }, []);
 
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
+
   return (
     <>
       {contextHolder}
@@ -318,14 +326,16 @@ function ChatDetailsPage() {
       <Container
         style={{
           overflowX: "hidden",
+          overflowY: "hidden",
         }}
         fluid
       >
         <Row
           style={{
-            height: "100vh",
             borderTop: "none",
             borderBottom: "none",
+            overflowX: "hidden",
+            overflowY: "hidden",
           }}
         >
           <LeftSideNavBar parentCallBack={handleCallback} />
@@ -347,31 +357,51 @@ function ChatDetailsPage() {
             xxl={5} // 1400px ve sonrası aralığı
             className={`main-column `}
             style={{
-              border: "1px solid rgba(0, 0, 0, 0.1)",
-              borderTop: "none",
+              borderLeft:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
+
+              borderRight:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
+              borderTop: "none ",
               borderBottom: "none",
               padding: "0px",
               position: "relative",
             }}
           >
-            <div className="message-detail-container">
+            <div
+              // className="message-detail-container"
+              className={`message-detail-container message-detail-container-${themeName}`}
+            >
               {selectedUser.length ? (
                 <>
                   <Stack direction="horizontal" gap={3}>
                     <Link
                       onClick={redirectToMessages}
                       to={"/messages"}
-                      className="p-2 arrow"
+                      // className="p-2 arrow"
+                      className={
+                        themeName === "dark-theme"
+                          ? `p-2 arrow-${themeName}`
+                          : `p-2 arrow`
+                      }
                       style={{
                         position: "relative",
                         width: "30px",
                         height: " 30px",
-                        // border: "1px solid purple",
+
                         borderRadius: "50%",
                         cursor: "pointer",
                       }}
                     >
                       <svg
+                        color={themeName === "dark-theme" ? "white" : "black"}
+                        fill="currentColor"
                         style={{
                           position: "absolute",
                           bottom: "5px",
@@ -397,13 +427,19 @@ function ChatDetailsPage() {
                           lineHeight: "20px",
                           fontWeight: "700",
                           fontSize: "17px",
+                          color: themeName === "dark-theme" ? "white" : "black",
                         }}
                       >
                         {selectedUser[0].fullname}
                       </span>
                     </div>
                     <div
-                      className="p-2 message-info ms-auto"
+                      // className="p-2 message-info ms-auto"
+                      className={
+                        themeName === "dark-theme"
+                          ? `p-2 message-info-${themeName} ms-auto`
+                          : `p-2 message-info ms-auto`
+                      }
                       style={{
                         position: "relative",
                         left: "10px",
@@ -416,6 +452,8 @@ function ChatDetailsPage() {
                       {" "}
                       <span>
                         <svg
+                          color={themeName === "dark-theme" ? "white" : "black"}
+                          fill="currentColor"
                           style={{
                             position: "absolute",
                             border: "none",
@@ -441,7 +479,14 @@ function ChatDetailsPage() {
                     style={{ textDecoration: "none", color: "black" }}
                     to={`/profile/${selectedUser[0]._id}`}
                   >
-                    <div className="message-detail-user-card">
+                    <div
+                      // className="message-detail-user-card"
+                      className={
+                        themeName === "dark-theme"
+                          ? `message-detail-user-card-${themeName}`
+                          : "message-detail-user-card"
+                      }
+                    >
                       {selectedUser[0].imageUrl.slice(0, 3) !== "../" ? (
                         <>
                           <img
@@ -479,6 +524,7 @@ function ChatDetailsPage() {
                           lineHeight: "20px",
                           fontWeight: "700",
                           fontSize: "15px",
+                          color: themeName === "dark-theme" ? "white" : "black",
                         }}
                       >
                         {selectedUser[0].fullname}
@@ -488,6 +534,7 @@ function ChatDetailsPage() {
                           lineHeight: "20px",
                           fontWeight: "400",
                           fontSize: "15px",
+
                           color: "rgb(83, 100, 113)",
                         }}
                       >
@@ -511,7 +558,10 @@ function ChatDetailsPage() {
                             <>
                               <span
                                 style={{
-                                  color: "rgba(0,0,0,0.6)",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "rgb(83, 100, 113)"
+                                      : "rgba(0,0,0,0.6)",
                                   lineHeight: "16px",
                                   fontWeight: "400",
                                   fontSize: "14px",
@@ -522,7 +572,10 @@ function ChatDetailsPage() {
                               </span>
                               <span
                                 style={{
-                                  color: "rgba(0,0,0,0.6)",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "rgb(83, 100, 113)"
+                                      : "rgba(0,0,0,0.6)",
                                   lineHeight: "16px",
                                   fontWeight: "400",
                                   fontSize: "14px",
@@ -579,8 +632,8 @@ function ChatDetailsPage() {
                       <div
                         className={
                           userInfo.username === eachMessage.sender
-                            ? "spesific-room-message-you"
-                            : "spesific-room-message-other"
+                            ? `spesific-room-message-you`
+                            : `spesific-room-message-other spesific-room-message-other-${themeName}`
                         }
                       >
                         <div className="spesific-room-message-container">
@@ -627,7 +680,11 @@ function ChatDetailsPage() {
 
             <div
               style={{
-                borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
+                borderBottom:
+                  themeName !== "dark-theme"
+                    ? "1px solid rgba(0, 0, 0, 0.1)"
+                    : // : "0.1px solid rgb(70, 70, 70)",
+                      "1px solid rgb(70, 70, 70)",
               }}
             ></div>
             <div
@@ -636,24 +693,9 @@ function ChatDetailsPage() {
                 top: "1%",
                 transform: "translateY(-20%)",
               }}
-              className="chat-footer-detail"
+              // className="chat-footer-detail"
+              className={`chat-footer-detail chat-footer-detail-${themeName} `}
             >
-              {/* <div
-                className={`${showEmojisBar} date-picker-container`}
-                style={{
-                  position: "fixed",
-                  zIndex: 9999,
-                  marginBottom: "550px",
-                  marginLeft: "-150px",
-                }}
-              >
-                <Picker
-                  onEmojiClick={onEmojiClick}
-                  emojiStyle="twitter"
-                  width={"320px"}
-                  height={"400px"}
-                />
-              </div> */}
               <div className="p-2 chat-detail-emoji">
                 {/* emoji mart start to check */}
 
@@ -663,7 +705,7 @@ function ChatDetailsPage() {
                   overlay={popoverTop}
                 >
                   <div
-                    className="svg-border-parent chat-detail-emoji-svg-border-parent"
+                    className={`svg-border-parent chat-detail-emoji-svg-border-parent svg-border-parent-${themeName}`}
                     style={{
                       cursor: "pointer",
                       borderRadius: "50%",
@@ -691,7 +733,11 @@ function ChatDetailsPage() {
                 {/* emoji mart finish to check */}
               </div>
               <input
-                className="message-input"
+                // className="message-input"
+                style={{
+                  color: themeName === "dark-theme" ? "white" : "black",
+                }}
+                className={`message-input message-input-${themeName}`}
                 type="text"
                 value={currentMessage}
                 placeholder="Start a new message"
@@ -705,7 +751,11 @@ function ChatDetailsPage() {
               />
 
               <button
-                className={`${disabled ? "disabled-button" : "send-button"}`}
+                className={`${
+                  disabled
+                    ? `disabled-button disabled-button-${themeName}`
+                    : `send-button send-button-${themeName}`
+                }`}
                 onClick={sendMessage}
               >
                 <div>

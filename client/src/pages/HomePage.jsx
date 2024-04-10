@@ -2,6 +2,7 @@ import SignUpPage from "../pages/SignUpPage";
 import IndexFooter from "../components/IndexFooter/IndexFooter";
 import { Container, Col, Row } from "react-bootstrap";
 import useWindowDimensions from "../hooks/getWindowDimensions";
+
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -9,6 +10,7 @@ const API_URL = "http://localhost:3000";
 // ?
 function HomePage() {
   const { height, width } = useWindowDimensions();
+
   return (
     <>
       <Container

@@ -867,9 +867,9 @@ function LogoutModal({ isLogoutActionActive }) {
         <Stack
           className={`stack-logout-navigation-parent stack-logout-navigation-parent-${themeName}`}
           style={{
-            width: "80%",
             borderRadius: "9999px",
             cursor: "pointer",
+            // backgroundColor: "yellow",
           }}
           direction="horizontal"
         >

@@ -11,9 +11,10 @@ import {
 
 import { Link } from "react-router-dom";
 import { SigninModal } from "../components/ui/Modal";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import axios from "axios";
 import { Layout, Flex } from "antd";
+import { ThemeContext } from "../context/ThemeContext";
 const { Footer } = Layout;
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -79,6 +80,13 @@ function DeactivatedPage() {
   const handleShow = () => {
     setShow(true);
   };
+
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
 
   return (
     <>
@@ -240,7 +248,11 @@ function DeactivatedPage() {
         >
           <Col
             style={{
-              borderRight: "1px solid rgba(0,0,0,0.1)",
+              borderRight:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
             }}
             className="left-column-settings-deactivated d-none d-xs-none sm-none d-md-block d-lg-block d-xxl-block"
             xs={2} // 0px - 576px aralığı
@@ -255,6 +267,8 @@ function DeactivatedPage() {
                   <div className="home">
                     <div>
                       <svg
+                        color={themeName === "dark-theme" ? "white" : "black"}
+                        fill="currentColor"
                         width={26}
                         height={26}
                         viewBox="0 0 24 24"
@@ -271,6 +285,7 @@ function DeactivatedPage() {
                           fontSize: "20px",
                           fontWeight: "700",
                           lineHeight: "24px",
+                          color: themeName === "dark-theme" ? "white" : "black",
                         }}
                       >
                         Settings
@@ -292,7 +307,12 @@ function DeactivatedPage() {
             lg={3} // 1200px - 1400px aralığı
             xxl={3} // 1400px ve sonrası aralığı
             style={{
-              borderRight: "1px solid rgba(0,0,0,0.1)",
+              padding: "0px",
+              borderRight:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
             }}
           >
             <div
@@ -300,7 +320,7 @@ function DeactivatedPage() {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
-                padding: "8px",
+                padding: "16px",
               }}
             >
               <div
@@ -322,6 +342,177 @@ function DeactivatedPage() {
                 }}
               >
                 Privacy
+              </div>
+              <div
+                className={`deactivated-info-left-side deactivated-info-left-side-${themeName}`}
+                style={{}}
+              >
+                <div
+                  style={{
+                    // width: "90%",
+
+                    display: "flex",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "100%",
+                    }}
+                  >
+                    <div>Personalization and data</div>
+                    <span style={{}}>Allow some</span>
+                  </div>
+                  <div
+                    className="ms-auto"
+                    style={{
+                      height: "auto",
+                      margin: "auto 0",
+                    }}
+                  >
+                    <svg
+                      style={{}}
+                      color="rgb(113, 118, 123)"
+                      fill="currentColor"
+                      width={`${1.25}em`}
+                      height={`${1.25}em`}
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      className="ms-auto r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1bwzh9t r-1q142lx r-f727ji"
+                    >
+                      <g>
+                        <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
+                      </g>
+                    </svg>
+                  </div>
+                </div>
+
+                <div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div>Your C data</div>
+                    <svg
+                      color="rgb(113, 118, 123)"
+                      fill="currentColor"
+                      width={`${1.25}em`}
+                      height={`${1.25}em`}
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1bwzh9t r-1q142lx r-f727ji"
+                    >
+                      <g>
+                        <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
+                      </g>
+                    </svg>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    // width: "90%",
+
+                    display: "flex",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "100%",
+                    }}
+                  >
+                    <div>Cookie preferences</div>
+                    <span style={{}}>Manage your cookie experience on C.</span>
+                  </div>
+                  <div
+                    className="ms-auto"
+                    style={{
+                      height: "auto",
+                      margin: "auto 0",
+                    }}
+                  >
+                    <svg
+                      style={{}}
+                      color="rgb(113, 118, 123)"
+                      fill="currentColor"
+                      width={`${1.25}em`}
+                      height={`${1.25}em`}
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      className="ms-auto r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1bwzh9t r-1q142lx r-f727ji"
+                    >
+                      <g>
+                        <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
+                      </g>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  fontSize: "15px",
+                  lineHeight: "20px",
+                  fontWeight: "400",
+                }}
+                className="mt-5"
+              >
+                These settings apply to this browser or device while you’re
+                logged out. They don’t have any effect when you’re logged in.
+              </div>
+            </div>
+            <div
+              style={{
+                borderBottom:
+                  themeName !== "dark-theme"
+                    ? "1px solid rgba(0, 0, 0, 0.1)"
+                    : // : "0.1px solid rgb(70, 70, 70)",
+                      "1px solid rgb(70, 70, 70)",
+              }}
+            ></div>
+
+            <div
+              style={{
+                padding: "16px",
+                fontSize: "20px",
+                fontWeight: "800",
+                lineHeight: "24px",
+                color: themeName === "dark-theme" ? "white" : "black",
+              }}
+            >
+              General
+            </div>
+            <div>
+              <div
+                style={{
+                  padding: "16px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: "15px",
+                    fontWeight: "400",
+                    lineHeight: "20px",
+                    color: themeName === "dark-theme" ? "white" : "black",
+                  }}
+                >
+                  Additional resources
+                </div>
+                <svg
+                  color="rgb(113, 118, 123)"
+                  fill="currentColor"
+                  width={`${1.25}em`}
+                  height={`${1.25}em`}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1bwzh9t r-1q142lx r-f727ji"
+                >
+                  <g>
+                    <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
+                  </g>
+                </svg>
               </div>
             </div>
           </Col>
@@ -443,12 +634,12 @@ function DeactivatedPage() {
                 People on Connectify are the first to know.
               </div>
             </div>
-            <div className="p-2 ms-auto deactivated-footer-login">
+            <div className="p-2 ms-auto">
               <SigninModal deactivatedScreen={true} />
             </div>
-            <div className="p-0 deactivated-footer-signup">
+            <div className="p-0">
               <Button
-                className="deactivated-footer-signup "
+                className="deactivated-footer-signup"
                 style={{
                   cursor: "pointer",
                   maxWidth: "87px",

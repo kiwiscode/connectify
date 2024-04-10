@@ -17,6 +17,7 @@ const API_URL = "http://localhost:3000";
 import io from "socket.io-client";
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
+import { ThemeContext } from "../context/ThemeContext";
 
 function FollowingDetailPage() {
   const socket = io.connect(`${API_URL}`);
@@ -159,7 +160,12 @@ function FollowingDetailPage() {
 
   const getTabStyle = (tab) => {
     return {
-      color: activeTab === tab ? "rgb(29, 155, 240" : "rgb(83,100,113)",
+      color:
+        activeTab === tab && themeName !== "dark-theme"
+          ? "rgb(29, 155, 240"
+          : activeTab === tab && themeName === "dark-theme"
+          ? "white"
+          : "rgb(83,100,113)",
       fontWeight: activeTab === tab ? "700" : "400",
       lineHeight: "20px",
       fontSize: "15px",
@@ -226,6 +232,13 @@ function FollowingDetailPage() {
     };
   }, []);
 
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
+
   return (
     <>
       {contextHolder}
@@ -237,14 +250,16 @@ function FollowingDetailPage() {
       <Container
         style={{
           overflowX: "hidden",
+          overflowY: "hidden",
         }}
         fluid
       >
         <Row
           style={{
-            height: "100vh",
             borderTop: "none",
             borderBottom: "none",
+            overflowX: "hidden",
+            overflowY: "hidden",
           }}
         >
           <LeftSideNavBar parentCallBack={handleCallback} />
@@ -265,18 +280,34 @@ function FollowingDetailPage() {
             xxl={5} // 1400px ve sonrası aralığı
             className={`main-column `}
             style={{
-              border: "1px solid rgba(0, 0, 0, 0.1)",
-              borderTop: "none",
+              borderLeft:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
+
+              borderRight:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
+              borderTop: "none ",
               borderBottom: "none",
               padding: "0px",
               position: "relative",
             }}
           >
-            <Stack direction="horizontal" gap={0}>
+            <Stack
+              style={{
+                padding: "0px 12px",
+              }}
+              direction="horizontal"
+              gap={0}
+            >
               {/* start to check  */}
               <div
                 onClick={handleGoBack}
-                className="p-2 arrow"
+                className={`p-2 arrow arrow-${themeName}`}
                 style={{
                   position: "relative",
                   bottom: "15px",
@@ -287,6 +318,8 @@ function FollowingDetailPage() {
                 }}
               >
                 <svg
+                  color={themeName === "dark-theme" ? "white" : ""}
+                  fill="currentColor"
                   style={{
                     position: "absolute",
                     bottom: "5px",
@@ -345,12 +378,16 @@ function FollowingDetailPage() {
 
             <div
               style={{
-                borderBottom: "1px solid rgba(0,0,0,0.1)",
+                borderBottom:
+                  themeName !== "dark-theme"
+                    ? "1px solid rgba(0, 0, 0, 0.1)"
+                    : // : "0.1px solid rgb(70, 70, 70)",
+                      "1px solid rgb(70, 70, 70)",
               }}
             ></div>
             <div
               style={{
-                padding: "0px 4px",
+                padding: "0px 12px",
               }}
             >
               {following && following.length ? (
@@ -422,32 +459,37 @@ function FollowingDetailPage() {
 
                   const buttonStyles = {
                     cursor: "pointer",
-                    minWidth: "25%",
                     textAlign: "center",
-                    paddingLeft: "16px",
-                    paddingRight: "16px",
-                    borderRadius: "9999px",
-                    lineHeight: "20px",
-                    fontSize: "15px",
-                    fontWeight: "700",
-                    padding: "5px",
-                    transitionDuration: "0.2s",
                     border:
-                      isHovered === buttonId && isFollowing
+                      isHovered === buttonId &&
+                      isFollowing &&
+                      themeName !== "dark-theme"
                         ? "1px solid rgba(253,201,206,255)"
-                        : isFollowing
+                        : isHovered === buttonId &&
+                          isFollowing &&
+                          themeName === "dark-theme"
+                        ? "1px solid #e71f2c"
+                        : isFollowing && themeName !== "dark-theme"
                         ? "1px solid rgba(0, 0, 0, 0.1)"
-                        : "1px solid rgb(185, 202, 211)",
+                        : "1px solid rgb(70, 70, 70)",
+                    borderRadius: "9999px",
+                    transitionDuration: "0.2s",
                     backgroundColor:
-                      isHovered === buttonId && isFollowing
+                      isHovered === buttonId &&
+                      isFollowing &&
+                      themeName !== "dark-theme"
                         ? "rgba(255,234,235,255)"
-                        : isFollowing
+                        : isHovered === buttonId &&
+                          isFollowing &&
+                          themeName === "dark-theme"
+                        ? "#230608"
+                        : isFollowing && themeName !== "dark-theme"
                         ? "white"
                         : "black",
                     color:
                       isHovered === buttonId && isFollowing
                         ? "rgba(244,34,45,255)"
-                        : isFollowing
+                        : isFollowing && themeName !== "dark-theme"
                         ? "black"
                         : "white",
                   };
@@ -504,6 +546,7 @@ function FollowingDetailPage() {
                                   fontSize: "15px",
                                   fontWeight: "700",
                                   lineHeight: "20px",
+                                  padding: "2px 0px",
                                 }}
                                 className="fullname"
                               >
@@ -512,7 +555,10 @@ function FollowingDetailPage() {
                                   className="hover-fullname"
                                   style={{
                                     textDecoration: "none",
-                                    color: "black",
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "white"
+                                        : "black",
                                   }}
                                 >
                                   <div
@@ -574,7 +620,10 @@ function FollowingDetailPage() {
                                       fontSize: "11px",
                                       wordWrap: "break-word",
                                       whiteSpace: "nowrap",
-                                      backgroundColor: "rgba(239,243,244,1.00)",
+                                      backgroundColor:
+                                        themeName === "dark-theme"
+                                          ? "#24282b"
+                                          : "rgba(239,243,244,1.00)",
                                       borderRadius: "3px",
                                       padding: "4px",
                                       overflowX: "hidden",
@@ -627,13 +676,20 @@ function FollowingDetailPage() {
                               }
                             >
                               {user._id !== userInfo._id ? (
-                                <>
+                                <div
+                                  style={{
+                                    padding: "8px 16px",
+                                    lineHeight: "20px",
+                                    fontSize: "15px",
+                                    fontWeight: "700",
+                                  }}
+                                >
                                   {isFollowing
                                     ? isHovered === buttonId
                                       ? "Unfollow"
                                       : "Following"
                                     : "Follow"}
-                                </>
+                                </div>
                               ) : null}
                             </div>
                             {/* Following Button finish to check */}

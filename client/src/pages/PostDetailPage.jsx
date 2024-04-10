@@ -533,14 +533,16 @@ function PostDetailPage() {
       <Container
         style={{
           overflowX: "hidden",
+          overflowY: "hidden",
         }}
         fluid
       >
         <Row
           style={{
-            height: "100vh",
             borderTop: "none",
             borderBottom: "none",
+            overflowX: "hidden",
+            overflowY: "hidden",
           }}
         >
           <LeftSideNavBar parentCallBack={handleCallback} />
@@ -631,9 +633,15 @@ function PostDetailPage() {
                   style={{
                     cursor: "pointer",
                   }}
-                  className="mt-3  transition-gray-hover"
+                  // className="mt-3  transition-gray-hover"
+                  className={`mt-3  transition-gray-hover transition-gray-hover-${themeName}`}
                 >
-                  <Row>
+                  <Row
+                    style={{
+                      // backgroundColor: "yellow",
+                      padding: "6px 0px 0px 0px",
+                    }}
+                  >
                     <Col
                       xs={2}
                       sm={2}
@@ -1342,7 +1350,11 @@ function PostDetailPage() {
             {/* deactivated post owner detected finish to check  */}
 
             <Container>
-              <Row>
+              <Row
+                style={{
+                  padding: "6px 0px 0px 0px",
+                }}
+              >
                 <Col
                   xs={2}
                   sm={2}
@@ -1897,7 +1909,11 @@ function PostDetailPage() {
             {/* new version favorite repost comment finish to check */}
             <div
               style={{
-                borderBottom: "1px solid rgba(0,0,0,0.1)",
+                borderBottom:
+                  themeName !== "dark-theme"
+                    ? "1px solid rgba(0, 0, 0, 0.1)"
+                    : // : "0.1px solid rgb(70, 70, 70)",
+                      "1px solid rgb(70, 70, 70)",
               }}
             ></div>
             {/* accordion implementation for comments when it is more than 0 start to check  */}
@@ -1906,10 +1922,18 @@ function PostDetailPage() {
             detailedPost.comments.length &&
             !detailedPost.comments[0].userId.isDeactivated ? (
               <Accordion defaultActiveKey="0">
-                <Accordion.Item style={{ border: "none" }} eventKey="1">
+                <Accordion.Item
+                  style={{
+                    border: "none",
+                    backgroundColor: themeName === "dark-theme" ? "black" : "",
+                  }}
+                  eventKey="1"
+                >
                   <Accordion.Header
-                    style={{ border: "none" }}
-                    className="accordion-2"
+                    style={{
+                      border: "none",
+                    }}
+                    className={`accordion-2 accordion-2-${themeName}`}
                   >
                     <div
                       style={{
@@ -1921,7 +1945,6 @@ function PostDetailPage() {
                         fontWeight: "400",
                         lineHeight: "24px",
                         cursor: "pointer",
-                        backgroundColor: "transparent",
                       }}
                     >
                       Show this threads
@@ -1939,7 +1962,10 @@ function PostDetailPage() {
                                     <div
                                       style={{
                                         borderBottom:
-                                          "1px solid rgba(0,0,0,0.1)",
+                                          themeName !== "dark-theme"
+                                            ? "1px solid rgba(0, 0, 0, 0.1)"
+                                            : // : "0.1px solid rgb(70, 70, 70)",
+                                              "1px solid rgb(70, 70, 70)",
                                       }}
                                       className="all-posts"
                                     >
@@ -2019,6 +2045,11 @@ function PostDetailPage() {
                                                         fontWeight: "700",
                                                         fontSize: "15px",
                                                         lineHeight: "20px",
+                                                        color:
+                                                          themeName ===
+                                                          "dark-theme"
+                                                            ? "white"
+                                                            : "black",
                                                       }}
                                                     >
                                                       {
@@ -2189,6 +2220,10 @@ function PostDetailPage() {
                                                   lineHeight: "20px",
                                                   overflowWrap: "break-word",
                                                   maxWidth: "100%",
+                                                  color:
+                                                    themeName === "dark-theme"
+                                                      ? "white"
+                                                      : "black",
                                                 }}
                                                 className="p-2"
                                               >
