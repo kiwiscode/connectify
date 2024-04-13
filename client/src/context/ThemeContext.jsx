@@ -44,7 +44,6 @@ export const ThemeProvider = ({ children }) => {
 
   useEffect(() => {
     const storedTheme = localStorage.getItem("themeName");
-    console.log("Running !", storedTheme);
     if (storedTheme) {
       setThemeName(storedTheme);
     }

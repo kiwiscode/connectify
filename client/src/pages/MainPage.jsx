@@ -47,6 +47,7 @@ function MainPage() {
     darkModeActive,
     cyberpunkModeActive,
   ] = useContext(ThemeContext);
+
   const socket = io.connect(`${API_URL}`);
   const [isSubModalOpened, setIsSubModalOpened] = useState(false);
   const [tabIndexValue, settabIndexValue] = useState(null);
@@ -73,139 +74,135 @@ function MainPage() {
     setshowSubscriptionCompletedModal(false);
   };
 
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/individual-subscribe-checkout-success`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        console.log("Response for subscription =>", response);
-        if (response.status === 200) {
-          setsubscriptionCompletedStatus(200);
-        }
-      })
-      .catch((error) => {
-        setsubscriptionCompletedStatus(500);
-        console.log("Error for subscription =>", error);
-      });
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get(`${API_URL}/individual-subscribe-checkout-success`, {
+  //       headers: {
+  //         Authorization: `Bearer ${getToken()}`,
+  //       },
+  //     })
+  //     .then((response) => {
+  //       console.log("Response for subscription =>", response);
+  //       if (response.status === 200) {
+  //         setsubscriptionCompletedStatus(200);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       setsubscriptionCompletedStatus(500);
+  //       console.log("Error for subscription =>", error);
+  //     });
+  // }, []);
 
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/organization-basic-subscribe-checkout-success`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        console.log("Response for subscription =>", response);
-        if (response.status === 200) {
-          setsubscriptionCompletedStatus(200);
-        }
-      })
-      .catch((error) => {
-        setsubscriptionCompletedStatus(500);
-        console.log("Error for subscription =>", error);
-      });
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get(`${API_URL}/organization-basic-subscribe-checkout-success`, {
+  //       headers: {
+  //         Authorization: `Bearer ${getToken()}`,
+  //       },
+  //     })
+  //     .then((response) => {
+  //       console.log("Response for subscription =>", response);
+  //       if (response.status === 200) {
+  //         setsubscriptionCompletedStatus(200);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       setsubscriptionCompletedStatus(500);
+  //       console.log("Error for subscription =>", error);
+  //     });
+  // }, []);
 
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/organization-full-access-subscribe-checkout-success`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        console.log("Response for subscription =>", response);
-        if (response.status === 200) {
-          setsubscriptionCompletedStatus(200);
-        }
-      })
-      .catch((error) => {
-        setsubscriptionCompletedStatus(500);
-        console.log("Error for subscription =>", error);
-      });
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get(`${API_URL}/organization-full-access-subscribe-checkout-success`, {
+  //       headers: {
+  //         Authorization: `Bearer ${getToken()}`,
+  //       },
+  //     })
+  //     .then((response) => {
+  //       console.log("Response for subscription =>", response);
+  //       if (response.status === 200) {
+  //         setsubscriptionCompletedStatus(200);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       setsubscriptionCompletedStatus(500);
+  //       console.log("Error for subscription =>", error);
+  //     });
+  // }, []);
 
-  useEffect(() => {
-    console.log(
-      "Subscription completed status =>",
-      subscriptionCompletedStatus
-    );
-    axios
-      .post(
-        `${API_URL}/change-subscription-success-modal-status`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then((response) => {
-        console.log("Response show modal =>", response);
-        if (response.status === 200) {
-          setshowSubscriptionCompletedModal(true);
-        }
-      })
-      .catch((error) => {
-        console.log("Error do not show modal =>", error);
-      });
-  }, [subscriptionCompletedStatus]);
+  // useEffect(() => {
+  //   axios
+  //     .post(
+  //       `${API_URL}/change-subscription-success-modal-status`,
+  //       {},
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${getToken()}`,
+  //         },
+  //       }
+  //     )
+  //     .then((response) => {
+  //       console.log("Response show modal =>", response);
+  //       if (response.status === 200) {
+  //         setshowSubscriptionCompletedModal(true);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.log("Error do not show modal =>", error);
+  //     });
+  // }, [subscriptionCompletedStatus]);
 
   // use effect to grab current mouse click location start to check
   const [clickedPostBox, setclickedPostBox] = useState(null);
-  useEffect(() => {
-    const getClickLocation = (e) => {
-      const clickedElementParentClass = e.target.parentNode.className;
-      const clickedElementClass = e.target.classList;
-      if (
-        (clickedElementClass.contains("hover-reposted-text") &&
-          clickedElementParentClass !== "post-circle-profile-svg-on-point" &&
-          clickedElementParentClass !== "post-circle-profile-image-on-point" &&
-          clickedElementParentClass !== "post-circle-postowner-fullname" &&
-          clickedElementParentClass !== "post-circle-postowner-username" &&
-          clickedElementParentClass !== "post-circle-date-post-detail" &&
-          clickedElementParentClass !== "svg-three-dots-post-detail" &&
-          clickedElementParentClass === "p-1 next-to-comment") ||
-        clickedElementParentClass === "p-1 next-to-repost" ||
-        clickedElementParentClass === "p-1 next-to-like" ||
-        clickedElementParentClass === "parent-footer-stack" ||
-        clickedElementParentClass ===
-          "posts-details outside-of-inner-circle-actions" ||
-        clickedElementParentClass ===
-          "outside-of-inner-circle-action-comment-text vstack gap-1" ||
-        clickedElementParentClass === "p-2 parent-comment-text" ||
-        clickedElementParentClass ===
-          "outside-of-inner-circle-post-info-user-info-svg-three-dots hstack gap-1" ||
-        clickedElementParentClass === "mt-0 parent-footer-stack hstack" ||
-        clickedElementClass.contains("repost-svg-post-box") ||
-        clickedElementParentClass === "post-head" ||
-        clickedElementClass.contains("each-post") ||
-        clickedElementClass.contains("border-extra") ||
-        clickedElementParentClass === "each-post"
-      ) {
-        if (clickedPostBox) {
-          navigate(
-            `/${clickedPostBox.userId.username}/status/${
-              !clickedPostBox.isReposted
-                ? clickedPostBox._id
-                : clickedPostBox.repostedFromThisOriginalPost[0]._id
-            }`
-          );
-        }
-      }
-    };
+  // useEffect(() => {
+  //   const getClickLocation = (e) => {
+  //     const clickedElementParentClass = e.target.parentNode.className;
+  //     const clickedElementClass = e.target.classList;
+  //     if (
+  //       (clickedElementClass.contains("hover-reposted-text") &&
+  //         clickedElementParentClass !== "post-circle-profile-svg-on-point" &&
+  //         clickedElementParentClass !== "post-circle-profile-image-on-point" &&
+  //         clickedElementParentClass !== "post-circle-postowner-fullname" &&
+  //         clickedElementParentClass !== "post-circle-postowner-username" &&
+  //         clickedElementParentClass !== "post-circle-date-post-detail" &&
+  //         clickedElementParentClass !== "svg-three-dots-post-detail" &&
+  //         clickedElementParentClass === "p-1 next-to-comment") ||
+  //       clickedElementParentClass === "p-1 next-to-repost" ||
+  //       clickedElementParentClass === "p-1 next-to-like" ||
+  //       clickedElementParentClass === "parent-footer-stack" ||
+  //       clickedElementParentClass ===
+  //         "posts-details outside-of-inner-circle-actions" ||
+  //       clickedElementParentClass ===
+  //         "outside-of-inner-circle-action-comment-text vstack gap-1" ||
+  //       clickedElementParentClass === "p-2 parent-comment-text" ||
+  //       clickedElementParentClass ===
+  //         "outside-of-inner-circle-post-info-user-info-svg-three-dots hstack gap-1" ||
+  //       clickedElementParentClass === "mt-0 parent-footer-stack hstack" ||
+  //       clickedElementClass.contains("repost-svg-post-box") ||
+  //       clickedElementParentClass === "post-head" ||
+  //       clickedElementClass.contains("each-post") ||
+  //       clickedElementClass.contains("border-extra") ||
+  //       clickedElementParentClass === "each-post"
+  //     ) {
+  //       if (clickedPostBox) {
+  //         navigate(
+  //           `/${clickedPostBox.userId.username}/status/${
+  //             !clickedPostBox.isReposted
+  //               ? clickedPostBox._id
+  //               : clickedPostBox.repostedFromThisOriginalPost[0]._id
+  //           }`
+  //         );
+  //       }
+  //     }
+  //   };
 
-    document.body.addEventListener("click", getClickLocation);
+  //   document.body.addEventListener("click", getClickLocation);
 
-    return () => {
-      document.body.removeEventListener("click", getClickLocation);
-    };
-  }, [clickedPostBox]);
+  //   return () => {
+  //     document.body.removeEventListener("click", getClickLocation);
+  //   };
+  // }, [clickedPostBox]);
 
   // use effect to grab current mouse click location finish to check
 
@@ -231,16 +228,52 @@ function MainPage() {
   const [notificationText, setnotificationText] = useState([]);
   // socket io 1 client finish to check
 
-  // socket io 4 client start to check
-  useEffect(() => {
-    setshouldHide(true);
-    handleShowPostsHomePage();
-    socket.on("socket_id_for_user", (socketId) => {
-      localStorage.setItem("socketId", socketId);
-    });
+  const [postsLoadingSpinner, setPostsLoadingSpinner] = useState(null);
 
-    socket.emit("setUsername", userInfo.username);
-  }, []);
+  const handleShowPostsHomePage = async () => {
+    console.log("handleShowPostsHomePage function is working !");
+    // const homePagePostsForYouSection = JSON.parse(
+    //   localStorage.getItem("homePagePostsForYouSection")
+    // );
+    // setPosts(homePagePostsForYouSection);
+
+    try {
+      const response = await axios.get(`${API_URL}/home`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      });
+      console.log("Response working!");
+
+      // localStorage.setItem(
+      //   "homePagePostsForYouSection",
+      //   JSON.stringify(response.data)
+      // );
+
+      getOnlyFollowingPosts();
+      setPosts(response.data);
+    } catch (error) {
+      console.log("Catch error working!");
+
+      console.error("Error:", error);
+    }
+  };
+  const [shouldHide, setshouldHide] = useState(true);
+
+  // socket io 4 client start to check
+
+  // socket io 4 client start to check
+  // useEffect(() => {
+  //   console.log("Here is working !");
+  //   setshouldHide(true);
+  //   handleShowPostsHomePage();
+
+  //   socket.on("socket_id_for_user", (socketId) => {
+  //     localStorage.setItem("socketId", socketId);
+  //   });
+
+  //   socket.emit("setUsername", userInfo.username);
+  // }, []);
   // socket io 4 client finish to check
 
   const getUser = async () => {
@@ -277,24 +310,25 @@ function MainPage() {
         );
       }
     } catch (err) {
-      console.log("Error =>", err);
+      return err;
+      // console.log("Error =>", err);
     }
   };
 
-  useEffect(() => {
-    if (
-      userInfo?.signedUpWithVariantOne?.isSignedUpWithVariantOne &&
-      (!userInfo?.signedUpWithVariantOne
-        ?.isProfileImageCustomizationModalShown ||
-        !userInfo?.signedUpWithVariantOne?.isUsernameCustomizationModalShown)
-    ) {
-      console.log("We are here right now !");
-      setTabIndex(0);
-      setshowPickProfilePictureModal(true);
-      setshowModalForProfilePictureOrUsernameOrBoth(true);
-    }
-    getUser();
-  }, []);
+  // useEffect(() => {
+  //   if (
+  //     userInfo?.signedUpWithVariantOne?.isSignedUpWithVariantOne &&
+  //     (!userInfo?.signedUpWithVariantOne
+  //       ?.isProfileImageCustomizationModalShown ||
+  //       !userInfo?.signedUpWithVariantOne?.isUsernameCustomizationModalShown)
+  //   ) {
+  //     console.log("We are here right now !");
+  //     setTabIndex(0);
+  //     setshowPickProfilePictureModal(true);
+  //     setshowModalForProfilePictureOrUsernameOrBoth(true);
+  //   }
+  //   getUser();
+  // }, []);
 
   const [activeUser, setActiveUser] = useState([]);
   const refreshActiveUser = () => {
@@ -313,36 +347,8 @@ function MainPage() {
       });
   };
 
-  useEffect(() => {
-    refreshActiveUser();
-  }, []);
-
   // useEffect(() => {
-  //   if (
-  //     userInfo?.signedUpWithVariantOne?.isSignedUpWithVariantOne &&
-  //     (!userInfo?.signedUpWithVariantOne
-  //       ?.isProfileImageCustomizationModalShown ||
-  //       !userInfo?.signedUpWithVariantOne?.isUsernameCustomizationModalShown)
-  //   ) {
-  //     console.log("We are here right now !");
-  //     setTabIndex(0);
-  //     setshowPickProfilePictureModal(true);
-  //     setshowModalForProfilePictureOrUsernameOrBoth(true);
-  //   } else if (
-  //     userInfo?.signedUpWithGoogle?.isSignedUpWithGoogle &&
-  //     !userInfo?.signedUpWithGoogle?.isUsernameCustomizationModalShown
-  //   ) {
-  //     setTabIndex(1);
-  //     setshowWhatShouldWeCallYouModal(true);
-  //     setshowModalForProfilePictureOrUsernameOrBoth(true);
-  //     console.log(
-  //       "User created account by using google show What should we call you modal for editing username !!"
-  //     );
-  //   } else {
-  //     console.log(
-  //       "User is already signed up with google or variant one and did or did not change profile picture or username !"
-  //     );
-  //   }
+  //   refreshActiveUser();
   // }, []);
 
   // create account variant 1 flow finish to check
@@ -356,7 +362,6 @@ function MainPage() {
   const [showSecondModal, setShowSecondModal] = useState(false);
   const maxCharacters = 140;
   const [isLoading, setIsLoading] = useState(false);
-  const [shouldHide, setshouldHide] = useState(true);
   const { height, width } = useWindowDimensions();
 
   const [image, setImage] = useState("");
@@ -427,46 +432,46 @@ function MainPage() {
       });
   };
 
-  useEffect(() => {
-    socket.on("getNotification", (data) => {
-      console.log("Data =>", data);
-      if (data.senderName !== userInfo.username) {
-        setnotificationTest((prev) => [...prev, data]);
-      } else {
-        console.log("You cannot send a notification to yourself.");
-      }
-    });
+  // useEffect(() => {
+  //   socket.on("getNotification", (data) => {
+  //     console.log("Data =>", data);
+  //     if (data.senderName !== userInfo.username) {
+  //       setnotificationTest((prev) => [...prev, data]);
+  //     } else {
+  //       console.log("You cannot send a notification to yourself.");
+  //     }
+  //   });
 
-    socket.on("getText", (data) => {
-      console.log("Data get text =>", data);
-      if (data.senderName !== userInfo.username) {
-        setnotificationText(data);
+  //   socket.on("getText", (data) => {
+  //     console.log("Data get text =>", data);
+  //     if (data.senderName !== userInfo.username) {
+  //       setnotificationText(data);
 
-        toast(
-          <CustomNotification
-            senderName={data.senderName}
-            type={data.type}
-            contactHasBeenMade={data.contactHasBeenMade}
-            senderInfo={data.senderInfo}
-            text={data.text ? data.text : null}
-          />,
-          {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            transition: Bounce,
-            theme: "light",
-          }
-        );
-      } else {
-        console.log("You cannot send a notification to yourself.");
-      }
-    });
-  }, [socket]);
+  //       toast(
+  //         <CustomNotification
+  //           senderName={data.senderName}
+  //           type={data.type}
+  //           contactHasBeenMade={data.contactHasBeenMade}
+  //           senderInfo={data.senderInfo}
+  //           text={data.text ? data.text : null}
+  //         />,
+  //         {
+  //           position: "top-right",
+  //           autoClose: 5000,
+  //           hideProgressBar: false,
+  //           closeOnClick: true,
+  //           pauseOnHover: true,
+  //           draggable: true,
+  //           progress: undefined,
+  //           transition: Bounce,
+  //           theme: "light",
+  //         }
+  //       );
+  //     } else {
+  //       console.log("You cannot send a notification to yourself.");
+  //     }
+  //   });
+  // }, [socket]);
 
   // socket io 5 client start to check
   const handleNotification = (post, userInfo, type) => {
@@ -511,21 +516,6 @@ function MainPage() {
     return `${months[getMonth]} ${createdAt.getDate()}`;
   };
 
-  const handleShowPostsHomePage = () => {
-    axios
-      .get(`${API_URL}/home`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        getOnlyFollowingPosts();
-        setPosts(response.data);
-      })
-      .catch((err) => {
-        return err;
-      });
-  };
   const setLoadingTrue = () => {
     setIsLoading(true);
     setContent("");
@@ -569,6 +559,8 @@ function MainPage() {
   const handlePostLikesFromHomePage = (postId, findedPost) => {
     setpostId(postId);
 
+    console.log("Post id =>", postId);
+
     axios
       .post(
         `${API_URL}/favorite`,
@@ -580,6 +572,7 @@ function MainPage() {
         }
       )
       .then(() => {
+        console.log("We are here !!!");
         setTimeout(() => {
           handleNotification(findedPost, userInfo, "liked");
           setLoadingTrue();
@@ -808,27 +801,27 @@ function MainPage() {
     setContent((prevText) => prevText + emoji);
   };
 
-  useEffect(() => {
-    const closeEmojiContainer = (e) => {
-      if (
-        e.target.classList.contains("post-modal-emoji-picker") ||
-        e.srcElement.parentElement.className ===
-          "svg-border-parent show-emoji" ||
-        e.srcElement.parentNode.className === "p-2" ||
-        e.target.classList.value === ""
-      ) {
-        setshowEmojisBar(false);
-      } else {
-        setshowEmojisBar(true);
-      }
-    };
+  // useEffect(() => {
+  //   const closeEmojiContainer = (e) => {
+  //     if (
+  //       e.target.classList.contains("post-modal-emoji-picker") ||
+  //       e.srcElement.parentElement.className ===
+  //         "svg-border-parent show-emoji" ||
+  //       e.srcElement.parentNode.className === "p-2" ||
+  //       e.target.classList.value === ""
+  //     ) {
+  //       setshowEmojisBar(false);
+  //     } else {
+  //       setshowEmojisBar(true);
+  //     }
+  //   };
 
-    document.body.addEventListener("click", closeEmojiContainer);
+  //   document.body.addEventListener("click", closeEmojiContainer);
 
-    return () => {
-      document.body.removeEventListener("click", closeEmojiContainer);
-    };
-  }, []);
+  //   return () => {
+  //     document.body.removeEventListener("click", closeEmojiContainer);
+  //   };
+  // }, []);
 
   const popoverBottom = (
     <Popover
@@ -862,13 +855,13 @@ function MainPage() {
     setWindowWidth(window.innerWidth);
   };
 
-  useEffect(() => {
-    window.addEventListener("resize", handleResize);
+  // useEffect(() => {
+  //   window.addEventListener("resize", handleResize);
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener("resize", handleResize);
+  //   };
+  // }, []);
 
   const [completedProfileImage, setcompletedProfileImage] = useState(false);
 
@@ -917,9 +910,9 @@ function MainPage() {
     };
   };
 
-  useEffect(() => {
-    changeProfileImage();
-  }, [profileImage, completedProfileImage]);
+  // useEffect(() => {
+  //   changeProfileImage();
+  // }, [profileImage, completedProfileImage]);
 
   const [username, setUsername] = useState("");
   const [usernameValidated, setusernameValidated] = useState(false);
@@ -960,7 +953,6 @@ function MainPage() {
         }
       })
       .catch((error) => {
-        console.log("Error =>", error);
         if (error.response.data.errorMessage && username.length) {
           console.log("Something went wrong during the process !");
           setnextButtonDisabled(true);
@@ -977,9 +969,9 @@ function MainPage() {
       });
   };
 
-  useEffect(() => {
-    checkUsernameDuplicate();
-  }, [username]);
+  // useEffect(() => {
+  //   checkUsernameDuplicate();
+  // }, [username]);
 
   const changeUsername = () => {
     axios
@@ -1040,6 +1032,256 @@ function MainPage() {
         console.log("Error =>", error);
       });
   };
+
+  // useEffects start to check
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/individual-subscribe-checkout-success`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        console.log("Response for subscription =>", response);
+        if (response.status === 200) {
+          setsubscriptionCompletedStatus(200);
+        }
+      })
+      .catch((error) => {
+        setsubscriptionCompletedStatus(500);
+        // console.log("Error for subscription =>", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/organization-basic-subscribe-checkout-success`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        console.log("Response for subscription =>", response);
+        if (response.status === 200) {
+          setsubscriptionCompletedStatus(200);
+        }
+      })
+      .catch((error) => {
+        setsubscriptionCompletedStatus(500);
+        // console.log("Error for subscription =>", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/organization-full-access-subscribe-checkout-success`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        console.log("Response for subscription =>", response);
+        if (response.status === 200) {
+          setsubscriptionCompletedStatus(200);
+        }
+      })
+      .catch((error) => {
+        setsubscriptionCompletedStatus(500);
+        // console.log("Error for subscription =>", error);
+      });
+  }, []);
+  useEffect(() => {
+    axios
+      .post(
+        `${API_URL}/change-subscription-success-modal-status`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log("Response show modal =>", response);
+        if (response.status === 200) {
+          setshowSubscriptionCompletedModal(true);
+        }
+      })
+      .catch((error) => {
+        return error;
+        // console.log("Error do not show modal =>", error);
+      });
+  }, [subscriptionCompletedStatus]);
+
+  useEffect(() => {
+    const getClickLocation = (e) => {
+      const clickedElementParentClass = e.target.parentNode.className;
+      const clickedElementClass = e.target.classList;
+      if (
+        (clickedElementClass.contains("hover-reposted-text") &&
+          clickedElementParentClass !== "post-circle-profile-svg-on-point" &&
+          clickedElementParentClass !== "post-circle-profile-image-on-point" &&
+          clickedElementParentClass !== "post-circle-postowner-fullname" &&
+          clickedElementParentClass !== "post-circle-postowner-username" &&
+          clickedElementParentClass !== "post-circle-date-post-detail" &&
+          clickedElementParentClass !== "svg-three-dots-post-detail" &&
+          clickedElementParentClass === "p-1 next-to-comment") ||
+        clickedElementParentClass === "p-1 next-to-repost" ||
+        clickedElementParentClass === "p-1 next-to-like" ||
+        clickedElementParentClass === "parent-footer-stack" ||
+        clickedElementParentClass ===
+          "posts-details outside-of-inner-circle-actions" ||
+        clickedElementParentClass ===
+          "outside-of-inner-circle-action-comment-text vstack gap-1" ||
+        clickedElementParentClass === "p-2 parent-comment-text" ||
+        clickedElementParentClass ===
+          "outside-of-inner-circle-post-info-user-info-svg-three-dots hstack gap-1" ||
+        clickedElementParentClass === "mt-0 parent-footer-stack hstack" ||
+        clickedElementClass.contains("repost-svg-post-box") ||
+        clickedElementParentClass === "post-head" ||
+        clickedElementClass.contains("each-post") ||
+        clickedElementClass.contains("border-extra") ||
+        clickedElementParentClass === "each-post"
+      ) {
+        if (clickedPostBox) {
+          navigate(
+            `/${clickedPostBox.userId.username}/status/${
+              !clickedPostBox.isReposted
+                ? clickedPostBox._id
+                : clickedPostBox.repostedFromThisOriginalPost[0]._id
+            }`
+          );
+        }
+      }
+    };
+
+    document.body.addEventListener("click", getClickLocation);
+
+    return () => {
+      document.body.removeEventListener("click", getClickLocation);
+    };
+  }, [clickedPostBox]);
+
+  useEffect(() => {
+    if (
+      userInfo?.signedUpWithVariantOne?.isSignedUpWithVariantOne &&
+      (!userInfo?.signedUpWithVariantOne
+        ?.isProfileImageCustomizationModalShown ||
+        !userInfo?.signedUpWithVariantOne?.isUsernameCustomizationModalShown)
+    ) {
+      console.log("We are here right now !");
+      setTabIndex(0);
+      setshowPickProfilePictureModal(true);
+      setshowModalForProfilePictureOrUsernameOrBoth(true);
+    }
+    getUser();
+  }, []);
+  useEffect(() => {
+    refreshActiveUser();
+  }, []);
+
+  useEffect(() => {
+    socket.on("getNotification", (data) => {
+      console.log("Data =>", data);
+      if (data.senderName !== userInfo.username) {
+        setnotificationTest((prev) => [...prev, data]);
+      } else {
+        console.log("You cannot send a notification to yourself.");
+      }
+    });
+
+    socket.on("getText", (data) => {
+      console.log("Data get text =>", data);
+      if (data.senderName !== userInfo.username) {
+        setnotificationText(data);
+
+        toast(
+          <CustomNotification
+            senderName={data.senderName}
+            type={data.type}
+            contactHasBeenMade={data.contactHasBeenMade}
+            senderInfo={data.senderInfo}
+            text={data.text ? data.text : null}
+          />,
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: Bounce,
+            theme: "light",
+          }
+        );
+      } else {
+        console.log("You cannot send a notification to yourself.");
+      }
+    });
+  }, [socket]);
+
+  useEffect(() => {
+    const closeEmojiContainer = (e) => {
+      if (
+        e.target.classList.contains("post-modal-emoji-picker") ||
+        e.srcElement.parentElement.className ===
+          "svg-border-parent show-emoji" ||
+        e.srcElement.parentNode.className === "p-2" ||
+        e.target.classList.value === ""
+      ) {
+        setshowEmojisBar(false);
+      } else {
+        setshowEmojisBar(true);
+      }
+    };
+
+    document.body.addEventListener("click", closeEmojiContainer);
+
+    return () => {
+      document.body.removeEventListener("click", closeEmojiContainer);
+    };
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    changeProfileImage();
+  }, [profileImage, completedProfileImage]);
+
+  useEffect(() => {
+    checkUsernameDuplicate();
+  }, [username]);
+
+  useEffect(() => {
+    console.log("Here is working !");
+    setshouldHide(true);
+
+    socket.on("socket_id_for_user", (socketId) => {
+      localStorage.setItem("socketId", socketId);
+    });
+
+    socket.emit("setUsername", userInfo.username);
+  }, []);
+
+  useEffect(() => {
+    console.log("Use effect is running !");
+    setPostsLoadingSpinner(true);
+
+    setTimeout(() => {
+      // setPostsLoadingSpinner(false);
+
+      handleShowPostsHomePage();
+    }, 500);
+  }, []);
+
+  // useEffects finish to check
 
   return (
     <>
@@ -1914,11 +2156,7 @@ function MainPage() {
             setLoadingFalse={() => setLoadingFalse()}
             parentCallBack={handleCallback}
           />
-          {/* xs={12} // 0px - 576px aralığı
-            sm={12} // 576px - 768px aralığı
-            md={11} // 768px - 992px aralığı
-            lg={5} // 992px - 1400px aralığı
-            xxl={5} // 1400px ve sonrası aralığı */}
+
           <Col
             xs={12} // 0px - 576px aralığı
             sm={12} // 576px - 768px aralığı
@@ -2067,7 +2305,8 @@ function MainPage() {
                     fontSize: `${content ? "15px" : "20px"}`,
                     width: "100%",
                     height: "100px",
-                    background: themeName === "dark-theme" ? "black" : "",
+                    backgroundColor:
+                      themeName === "dark-theme" ? "black" : "transparent",
                   }}
                 />
               </div>
@@ -3030,8 +3269,15 @@ function MainPage() {
                         </Accordion>
                       )}
                     </>
-                  ) : (
+                  ) : postsLoadingSpinner && !posts.length ? (
+                    <LoadingSpinner
+                      strokeColor={"rgb(29, 155, 240)"}
+                    ></LoadingSpinner>
+                  ) : null}
+
+                  {!posts && !posts.length && !postsLoadingSpinner ? (
                     <>
+                      {" "}
                       {/* when no post yet from for you section in general start to check  */}
                       <div
                         style={{
@@ -3064,7 +3310,7 @@ function MainPage() {
                       </div>
                       {/* when no post yet from for you section in general finish to check  */}
                     </>
-                  )}
+                  ) : null}
                 </>
               ) : (
                 <>
@@ -3282,18 +3528,23 @@ function MainPage() {
                                           to={`/profile/${post.userId._id}`}
                                           style={{
                                             textDecoration: "none",
-                                            color:
-                                              themeName === "dark-theme"
-                                                ? "white"
-                                                : "",
+                                            color: "black",
                                           }}
                                         >
                                           <span
                                             className="hover-fullname"
                                             style={{
+                                              color:
+                                                themeName === "dark-theme"
+                                                  ? "white"
+                                                  : "",
                                               fontWeight: "700",
                                               fontSize: "15px",
                                               lineHeight: "20px",
+                                              overflow: "hidden",
+                                              textOverflow: "ellipsis",
+                                              whiteSpace: "nowrap",
+                                              width: "120px",
                                             }}
                                           >
                                             {post.authorFullName}
