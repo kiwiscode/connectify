@@ -1,4 +1,3 @@
-import { UserProvider } from "./context/UserContext";
 import HomePage from "./pages/HomePage";
 import MainPage from "./pages/MainPage";
 import UserProfile from "./pages/UserProfilePage";
@@ -18,6 +17,10 @@ import DeactivatedPage from "./pages/DeactivatedPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import { ThemeContext } from "./context/ThemeContext";
 import { useContext } from "react";
+import { UrlContext } from "./context/UrlContext";
+import { UserProvider } from "./context/UserContext";
+import RightSideColumn from "./components/Main-Right-Side-Column/RightSideColumn";
+import LeftSideNavBar from "./components/Main-Left-Side-Navbar/LeftSideNavbar";
 
 function App() {
   const [
@@ -29,6 +32,11 @@ function App() {
 
   console.log("Theme name =>", themeName);
   console.log("Theme  =>", theme);
+
+  const { url, urlHistory } = useContext(UrlContext);
+
+  console.log("Current Url =>", url);
+  console.log("Url history array =>", urlHistory);
 
   return (
     <UserProvider>
@@ -73,7 +81,7 @@ function App() {
           onClick={cyberpunkModeActive}
         >
           CyberPunk
-        </button>
+        </button>{" "}
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/home" element={<MainPage />}></Route>

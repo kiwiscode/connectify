@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 
 import LogoutModal from "./LogoutModal";
 import axios from "axios";
@@ -35,8 +35,6 @@ function LeftSideNavBar({
     darkModeActive,
     cyberpunkModeActive,
   ] = useContext(ThemeContext);
-
-  console.log("Left side navigation bar theme =>", themeName);
 
   const [isHomeRouteActive, setIsHomeRouteActive] = useState(false);
   const [isNotificationsRouteActive, setIsNotificationsRouteActive] =
@@ -359,7 +357,8 @@ function LeftSideNavBar({
               </div>
             </NavLink>
             {/* Second */}
-            <NavLink
+            <Link
+              // to={"/home"}
               onClick={locateHomePage}
               className={`home-nav-link home-nav-link-${themeName}`}
             >
@@ -413,11 +412,12 @@ function LeftSideNavBar({
                   </span>
                 </div>
               </span>
-            </NavLink>
+            </Link>
             {/* Third */}
             <NavLink
-              className={`notifications-nav-link notifications-nav-link-${themeName}`}
+              // to={"/notifications"}
               onClick={locateNotificationsPage}
+              className={`notifications-nav-link notifications-nav-link-${themeName}`}
             >
               <span
                 style={{
@@ -473,8 +473,9 @@ function LeftSideNavBar({
             </NavLink>
             {/* Fourth  */}
             <NavLink
-              className={`messages-nav-link messages-nav-link-${themeName}`}
+              // to={"/messages"}
               onClick={locateMessagesPage}
+              className={`messages-nav-link messages-nav-link-${themeName}`}
             >
               <span
                 style={{
@@ -530,8 +531,9 @@ function LeftSideNavBar({
             </NavLink>
             {/* Fifth  */}
             <NavLink
-              className={`profile-nav-link profile-nav-link-${themeName}`}
+              // to={"/profile"}
               onClick={locateProfilePage}
+              className={`profile-nav-link profile-nav-link-${themeName}`}
             >
               <span
                 style={{
