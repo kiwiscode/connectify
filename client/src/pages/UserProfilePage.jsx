@@ -29,9 +29,6 @@ function UserProfile() {
     cyberpunkModeActive,
   ] = useContext(ThemeContext);
 
-  console.log("Theme name =>", themeName);
-  console.log("Theme  =>", theme);
-
   const socket = io.connect(`${API_URL}`);
 
   const navigate = useNavigate();
@@ -252,8 +249,6 @@ function UserProfile() {
         },
       })
       .then((response) => {
-        console.log("Profile info =>", response);
-
         setProfile(response.data.user);
         setUserprofiledata(response.data.posts);
       })
@@ -515,8 +510,6 @@ function UserProfile() {
         console.log(error);
       });
   };
-
-  console.log("Profile =>", profile);
 
   const setLoadingTrue = () => {
     setIsLoading(true);

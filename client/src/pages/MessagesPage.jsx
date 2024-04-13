@@ -74,7 +74,6 @@ function MessagesPage() {
     });
   }, []);
   useEffect(() => {
-    console.log("First use effect !");
     const closePopover = (e) => {
       if (
         e.target.classList.contains("message-delete-three-dots") ||
@@ -94,7 +93,6 @@ function MessagesPage() {
   }, []);
 
   useEffect(() => {
-    console.log("Second use effect !");
     socket.emit("get_specific_user", userInfo);
   }, []);
 
@@ -441,8 +439,6 @@ function MessagesPage() {
 
   // socket io 4 client start to check
   useEffect(() => {
-    console.log("Third use effect !");
-
     socket.on("socket_id_for_user", (socketId) => {
       console.log("socket id received from backend =>", socketId);
 
@@ -454,8 +450,6 @@ function MessagesPage() {
   // socket io 4 client finish to check
 
   useEffect(() => {
-    console.log("Fourth use effect !");
-
     socket.on("getNotification", (data) => {
       console.log("Data =>", data);
       if (data.senderName !== userInfo.username) {
@@ -520,8 +514,6 @@ function MessagesPage() {
   };
 
   useEffect(() => {
-    console.log("Fifth use effect !");
-
     // Server tarafından emit edilen "activeUsers" olayını dinle
     socket.on("activeUsers", (users) => {
       const spliceActiveUser = users.filter((eachUser) => {
@@ -577,8 +569,6 @@ function MessagesPage() {
   };
   // finish to check filtering rooms
 
-  console.log("Message rooms =>", messageRooms);
-
   const checkIfAllFilteredRoomsChatEmpty = (array) => {
     const allChatLengths = array.map((eachMessageRoom) => {
       return eachMessageRoom.chat.length;
@@ -591,7 +581,6 @@ function MessagesPage() {
 
     return sum;
   };
-  console.log(checkIfAllFilteredRoomsChatEmpty(filteredRooms));
 
   const handleShowPostsMessagePage = () => {
     axios
@@ -637,9 +626,6 @@ function MessagesPage() {
     return result[0];
   };
 
-  console.log("Filtered rooms length =>", filteredRooms.length);
-  console.log(checkIfAllFilteredRoomsChatEmpty(filteredRooms) !== 0);
-
   const redirectToChatDetailPage = (roomId) => {
     window.location.href = `http://localhost:5173/messages/${roomId}`;
   };
@@ -650,8 +636,6 @@ function MessagesPage() {
   };
 
   useEffect(() => {
-    console.log("Sixth use effect !");
-
     window.addEventListener("resize", handleResize);
 
     return () => {
@@ -917,6 +901,7 @@ function MessagesPage() {
               </Link>
               <div
                 style={{
+                  lineHeight: "24px",
                   fontWeight: "700",
                   fontSize: "20px",
                 }}

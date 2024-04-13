@@ -2,6 +2,7 @@ import { useState, useEffect, createContext } from "react";
 import PropTypes from "prop-types";
 
 import io from "socket.io-client";
+import axios from "axios";
 
 // when working on local version
 const API_URL = "http://localhost:3000";

@@ -37,7 +37,7 @@ const handleGetFavorites = (req, res) => {
 const handleAddFavorite = (req, res) => {
   const { postId } = req.body;
   const { userId } = req.user;
-  console.log("This line is working 1!");
+  console.log("This line is working 1!", userId);
   User.findById(userId)
     .populate("favorites")
     .then((user) => {
@@ -47,6 +47,33 @@ const handleAddFavorite = (req, res) => {
       console.log("This line is working 2!");
 
       Post.findById(postId).then((post) => {
+        // notification ekleme start to check
+        // user kendisine notification gönderemez !
+        if (post.userId.toString() !== userId) {
+          User.findById(post.userId.toString())
+            .then((notifiedUser) => {
+              console.log("Notified user =>", notifiedUser);
+              const newNotification = {
+                post: post._id,
+                notificationReceiver: post.userId,
+                notificationSender: userId,
+                isFavorite: {
+                  value: true,
+                  profileImageUrl: user.imageUrl,
+                  senderId: userId,
+                  userFullName: user.fullname,
+                  favoritedPostContent: post.content,
+                },
+              };
+
+              notifiedUser.notifications.unshift(newNotification);
+              notifiedUser.save();
+            })
+            .catch(() => {});
+        } else {
+        }
+        // notification ekleme finish to check
+
         // eğer favorilere eklenen post comment ise onu comment collectionunda bul ve ayrıca likeslarına userı ekle start to check
 
         if (post.isComment) {
@@ -83,57 +110,6 @@ const handleAddFavorite = (req, res) => {
             content: post,
           });
 
-          // NOTE start to check send notification after adding favorite
-
-          User.findById(post.userId.toString())
-            .then((notificationReceiver) => {
-              const checkingNotifications =
-                notificationReceiver.notifications.filter(
-                  (eachNotification) => {
-                    return (
-                      eachNotification.post.toString() ===
-                        post._id.toString() && eachNotification.isFavorite.value
-                    );
-                  }
-                );
-
-              const newNotification = {
-                post: post._id,
-                notificationReceiver: post.userId,
-                isFavorite: {
-                  value: true,
-                  profileImageUrl: user.imageUrl,
-                  userFullName: user.fullname,
-                  favoritedPostContent: post.content,
-                  senderId: userId,
-                },
-              };
-              console.log(checkingNotifications.length);
-              console.log(notificationReceiver._id, userId);
-              if (
-                !checkingNotifications.length &&
-                notificationReceiver._id.toString() !== userId
-              ) {
-                notificationReceiver.notifications.unshift(newNotification);
-                notificationReceiver.save();
-                console.log(
-                  "NOTIFICATION RECEIVER INFORMED ABOUT HIS POST GOT FAVORITE 1"
-                );
-              } else {
-                console.log(
-                  "This notification cannot send to this user because he is the owner!"
-                );
-                return;
-              }
-            })
-            .catch(() => {
-              res.status(404).json({
-                errorMessage: "Notification receiver user not found!",
-              });
-            });
-
-          // NOTE finish to check send notification after adding favorite
-
           return user.save().then(() => {
             res.status(200).json("Favorite added to your favorites");
           });
@@ -164,57 +140,6 @@ const handleAddFavorite = (req, res) => {
                 content: post,
               });
               // user.save();
-
-              // NOTE start to check send notification after adding favorite
-
-              User.findById(post.userId.toString())
-                .then((notificationReceiver) => {
-                  const checkingNotifications =
-                    notificationReceiver.notifications.filter(
-                      (eachNotification) => {
-                        return (
-                          eachNotification.post.toString() ===
-                            post._id.toString() &&
-                          eachNotification.isFavorite.value
-                        );
-                      }
-                    );
-
-                  if (
-                    !checkingNotifications.length &&
-                    notificationReceiver._id.toString() !== user._id.toString()
-                  ) {
-                    const newNotification = {
-                      post: post._id,
-                      notificationReceiver: post.userId,
-                      isFavorite: {
-                        value: true,
-                        profileImageUrl: user.imageUrl,
-                        userFullName: user.fullname,
-                        favoritedPostContent: post.content,
-                        senderId: userId,
-                      },
-                    };
-
-                    notificationReceiver.notifications.unshift(newNotification);
-                    notificationReceiver.save();
-
-                    console.log(
-                      "NOTIFICATION RECEIVER INFORMED ABOUT HIS POST GOT FAVORITE 2"
-                    );
-                  } else {
-                    console.log(
-                      "Here is working you cannot send notification to this user because he is the owner !"
-                    );
-                  }
-                })
-                .catch(() => {
-                  res.status(404).json({
-                    errorMessage: "Notification receiver user not found!",
-                  });
-                });
-
-              // NOTE finish to check send notification after adding favorite
 
               return user.save().then(() => {
                 res.status(200).json("Favorite added to your favorites");
@@ -247,56 +172,6 @@ const handleAddFavorite = (req, res) => {
                 content: post,
               });
 
-              // NOTE start to check send notification after adding favorite
-
-              User.findById(post.userId.toString())
-                .then((notificationReceiver) => {
-                  const checkingNotifications =
-                    notificationReceiver.notifications.filter(
-                      (eachNotification) => {
-                        return (
-                          eachNotification.post.toString() ===
-                            post._id.toString() &&
-                          eachNotification.isFavorite.value
-                        );
-                      }
-                    );
-
-                  if (
-                    !checkingNotifications.length &&
-                    notificationReceiver._id.toString() !== user._id.toString()
-                  ) {
-                    const newNotification = {
-                      post: post._id,
-                      notificationReceiver: post.userId,
-                      isFavorite: {
-                        value: true,
-                        profileImageUrl: user.imageUrl,
-                        userFullName: user.fullname,
-                        favoritedPostContent: post.content,
-                        senderId: userId,
-                      },
-                    };
-
-                    notificationReceiver.notifications.unshift(newNotification);
-                    notificationReceiver.save();
-
-                    console.log(
-                      "NOTIFICATION RECEIVER INFORMED ABOUT HIS POST GOT FAVORITE 3"
-                    );
-                  } else {
-                    console.log(
-                      "Here is working you cannot send notification to this user because he is the owner !-2"
-                    );
-                  }
-                })
-                .catch(() => {
-                  res.status(404).json({
-                    errorMessage: "Notification receiver user not found!",
-                  });
-                });
-
-              // NOTE finish to check send notification after adding favorite
               return user.save().then(() => {
                 res.status(200).json("Favorite added to your favorites");
               });
@@ -324,6 +199,139 @@ const handleDeleteFavorite = (req, res) => {
       }
 
       Post.findById(postId).then((post) => {
+        // notified olması mümkün olan kullanıcıdan notificationı silme veya bırakma işlemi start to check
+        const isReposted = post.isReposted;
+        const doesRepostedLength = post.reposted.length;
+        console.log("Is reposted post =>", isReposted);
+        console.log("Does reposted length =>", doesRepostedLength);
+        User.findById(post.userId.toString())
+          .then((notifiedUser) => {
+            if (isReposted) {
+              Post.findById(post.repostedFromThisOriginalPost[0].toString())
+                .then((originalPost) => {
+                  console.log(
+                    "Origial post id =>",
+                    originalPost._id.toString()
+                  );
+                  console.log("Reference post id =>", postId);
+                  const notification = notifiedUser.notifications.find(
+                    (notification) => {
+                      return (
+                        (notification.post.toString() === postId ||
+                          notification.post.toString() ===
+                            originalPost._id.toString()) &&
+                        notification.notificationSender.toString() === userId
+                      );
+                    }
+                  );
+                  const notificationIndex =
+                    notifiedUser.notifications.indexOf(notification);
+                  console.log("Notification founded =>", notification);
+                  console.log(
+                    "Notification founded index =>",
+                    notificationIndex
+                  );
+                  notifiedUser.notifications.splice(notificationIndex, 1);
+                  notifiedUser.save();
+                })
+                .catch(() => {});
+            } else if (
+              (doesRepostedLength || !doesRepostedLength) &&
+              !isReposted
+            ) {
+              // belki doesRepostedLength olabilir check et start to check
+              let originalPostId;
+              Post.find({ repostedFromThisOriginalPost: postId })
+                .then((referencePost) => {
+                  console.log("Reference post =>", referencePost[0]);
+                  originalPostId = referencePost[0]._id.toString();
+
+                  console.log(
+                    "Original post id inside then =>",
+                    originalPostId
+                  );
+
+                  console.log("We are here right now !");
+                  const notification = notifiedUser.notifications.find(
+                    (notification) => {
+                      return (
+                        (notification.post.toString() === postId ||
+                          notification.post.toString() === originalPostId) &&
+                        notification.notificationSender.toString() === userId
+                      );
+                    }
+                  );
+
+                  const notificationIndex =
+                    notifiedUser.notifications.indexOf(notification);
+                  console.log(
+                    notifiedUser.notifications[
+                      notificationIndex
+                    ].post.toString(),
+                    "+",
+                    postId
+                  );
+                  console.log(
+                    notifiedUser.notifications[
+                      notificationIndex
+                    ].notificationSender.toString(),
+                    "+",
+                    userId
+                  );
+                  console.log("Notification founded =>", notification);
+                  console.log(
+                    "Notification founded index =>",
+                    notificationIndex
+                  );
+                  notifiedUser.notifications.splice(notificationIndex, 1);
+                  notifiedUser.save();
+                })
+                .catch(() => {
+                  console.log(
+                    "Original post id inside catch =>",
+                    originalPostId
+                  );
+                  const notification = notifiedUser.notifications.find(
+                    (notification) => {
+                      return (
+                        notification.post.toString() === postId &&
+                        notification.notificationSender.toString() === userId
+                      );
+                    }
+                  );
+
+                  const notificationIndex =
+                    notifiedUser.notifications.indexOf(notification);
+                  console.log(
+                    notifiedUser.notifications[
+                      notificationIndex
+                    ].post.toString(),
+                    "+",
+                    postId
+                  );
+                  console.log(
+                    notifiedUser.notifications[
+                      notificationIndex
+                    ].notificationSender.toString(),
+                    "+",
+                    userId
+                  );
+                  console.log("Notification founded =>", notification);
+                  console.log(
+                    "Notification founded index =>",
+                    notificationIndex
+                  );
+                  notifiedUser.notifications.splice(notificationIndex, 1);
+                  notifiedUser.save();
+                });
+
+              // belki doesRepostedLength olabilir check et finish to check
+            } else {
+            }
+          })
+          .catch(() => {});
+        // notified olması mümkün olan kullanıcıdan notificationı silme veya bırakma işlemi finish to check
+
         if (post.isComment) {
           console.log("This post is comment =>", post);
           Comment.find({ postId: post._id })
@@ -370,12 +378,21 @@ const handleDeleteFavorite = (req, res) => {
             repostedPost[0].likes = filterPostLikes;
             repostedPost[0].save();
 
-            // NOTE start to check delete if favorite notification readed
+            // NOTE start to check delete favorite notification
 
             User.findById(post.userId.toString())
               .then((notifiedUser) => {
-                // let's find the index of this post and delete the notification
+                const notifiedUserNotificationIds =
+                  notifiedUser.notifications.map((eachNotification) => {
+                    return eachNotification.post.toString();
+                  });
 
+                console.log(
+                  "Notificationların içerisindeki tüm mevcut post idleri => ",
+                  notifiedUserNotificationIds
+                );
+                // bildirimi alan kişi = notifiedUser !!!
+                // let's find the index of this post and delete the notification
                 const findedPost = notifiedUser.notifications.find(
                   (eachNotification) => {
                     return (
@@ -384,12 +401,11 @@ const handleDeleteFavorite = (req, res) => {
                     );
                   }
                 );
-                console.log("Finded notification =>", findedPost);
+
                 const findIndex =
                   notifiedUser.notifications.indexOf(findedPost);
 
-                console.log("Index of notification =>", findIndex);
-                if (!findIndex) {
+                if (!findIndex && findIndex !== 0) {
                   const filteredFavoritesUserArray = user.favorites.filter(
                     (eachFavorite) => {
                       return (
@@ -423,7 +439,7 @@ const handleDeleteFavorite = (req, res) => {
                         post._id.toString() !== postId
                     );
                     notifiedUser.favorites = filteredFavoritesUserArray;
-                    notifiedUser.notifications.splice(findIndex, 1);
+                    // notifiedUser.notifications.splice(findIndex, 1);
                     notifiedUser.save();
                     console.log("THIS LINE IS WORKING 1");
                   } else if (
@@ -431,7 +447,7 @@ const handleDeleteFavorite = (req, res) => {
                   ) {
                     console.log("Line 338 working");
 
-                    notifiedUser.notifications.splice(findIndex, 1);
+                    // notifiedUser.notifications.splice(findIndex, 1);
                     notifiedUser.save();
                     console.log("POST ID =>", postId);
                     console.log(
@@ -519,7 +535,8 @@ const handleDeleteFavorite = (req, res) => {
                 });
               });
 
-            // NOTE finish to check delete if favorite notification readed
+            // NOTE finish to check delete favorite notification
+
             // NOTE start to check delete favorite collection
 
             Favorite.findOne({
@@ -567,17 +584,19 @@ const handleDeleteFavorite = (req, res) => {
               originalPost[0].likes = filterPostLikes;
               originalPost[0].save();
 
-              // NOTE start to check delete if favorite notification readed
+              // NOTE start to check delete if favorite notification
 
               User.findById(post.userId.toString())
                 .then((notifiedUser) => {
-                  // let's find the index of this post and delete the notification
-                  console.log(
-                    "Notified user id =>",
-                    notifiedUser._id.toString()
-                  );
+                  const notifiedUserNotificationIds =
+                    notifiedUser.notifications.map((eachNotification) => {
+                      return eachNotification.post.toString();
+                    });
 
-                  console.log("Active user id =>", user._id.toString());
+                  console.log(
+                    "Notificationların içerisindeki tüm mevcut post idleri => ",
+                    notifiedUserNotificationIds
+                  );
 
                   const findedPost = notifiedUser.notifications.find(
                     (eachNotification) => {
@@ -614,7 +633,7 @@ const handleDeleteFavorite = (req, res) => {
                           post._id.toString() !== postId
                       );
                       notifiedUser.favorites = filteredFavoritesUserArray;
-                      notifiedUser.notifications.splice(findIndex, 1);
+                      // notifiedUser.notifications.splice(findIndex, 1);
                       notifiedUser.save();
                     } else if (
                       notifiedUser._id.toString() !== user._id.toString()
@@ -638,7 +657,7 @@ const handleDeleteFavorite = (req, res) => {
                         user.favorites = filteredFavoritesUserArray;
                         user.save();
 
-                        notifiedUser.notifications.splice(findIndex, 1);
+                        // notifiedUser.notifications.splice(findIndex, 1);
                         notifiedUser.save();
 
                         console.log(
@@ -678,7 +697,7 @@ const handleDeleteFavorite = (req, res) => {
                   });
                 });
 
-              // NOTE finish to check delete if favorite notification readed
+              // NOTE finish to check delete if favorite notification
               // NOTE start to check delete favorite collection
 
               Favorite.findOne({
@@ -722,8 +741,7 @@ const handleDeleteFavorite = (req, res) => {
 
           post.likes = filterPost;
           post.save();
-          console.log(filterPost);
-          // NOTE start to check delete if favorite notification readed
+          // NOTE start to check delete if favorite notification
 
           User.findById(post.userId.toString())
             .then((notifiedUser) => {
@@ -753,13 +771,13 @@ const handleDeleteFavorite = (req, res) => {
                       (postId) => postId._id.toString() !== post._id.toString()
                     );
                   notifiedUser.favorites = filteredFavoritesUserArray;
-                  notifiedUser.notifications.splice(findIndex, 1);
+                  // notifiedUser.notifications.splice(findIndex, 1);
                   notifiedUser.save();
                 } else if (
                   notifiedUser._id.toString() !== user._id.toString()
                 ) {
                   console.log("We are here 4");
-                  notifiedUser.notifications.splice(findIndex, 1);
+                  // notifiedUser.notifications.splice(findIndex, 1);
                   notifiedUser.save();
                   const filteredFavoritesUserArray = user.favorites.filter(
                     (postId) => postId._id.toString() !== post._id.toString()
@@ -793,7 +811,7 @@ const handleDeleteFavorite = (req, res) => {
               });
             });
 
-          // NOTE finish to check delete if favorite notification readed
+          // NOTE finish to check delete if favorite notification
           // NOTE start to check delete favorite collection
 
           Favorite.findOne({ userId: userId, postId: postId })
