@@ -120,6 +120,96 @@ const handleDeletePost = (req, res) => {
       // STARTING WITH POST DELETING PROCESS
       Post.findById(postId)
         .then((post) => {
+          // notified olması mümkün olan kullanıcıdan notificationı silme veya bırakma işlemi start to check
+          const isComment = post.isComment;
+          const isReposted = post.isReposted;
+          const doesRepostedLength = post.reposted.length;
+          if (isComment) {
+            const commentedForThisPost =
+              post.commentedForThisPost._id.toString();
+            User.findById(post.commentedForThisUsersPost.toString())
+              .then((notifiedUser) => {
+                if (isReposted) {
+                  Post.findById(post.repostedFromThisOriginalPost[0].toString())
+                    .then((originalPost) => {
+                      console.log("Şimdi de buradayız !!!", originalPost);
+                      const notification = notifiedUser.notifications.find(
+                        (notification) => {
+                          return (
+                            (notification.post.toString() ===
+                              commentedForThisPost ||
+                              notification.post.toString() ===
+                                originalPost.commentedForThisPost._id.toString()) &&
+                            notification.notificationSender.toString() ===
+                              userId &&
+                            notification.isComment.value
+                          );
+                        }
+                      );
+
+                      const notificationIndex =
+                        notifiedUser.notifications.indexOf(notification);
+
+                      console.log("Notification =>", notification);
+                      console.log("Notification index =>", notificationIndex);
+                      notifiedUser.notifications.splice(notificationIndex, 1);
+                      notifiedUser.save();
+                    })
+                    .catch(() => {});
+                } else if (
+                  (doesRepostedLength || !doesRepostedLength) &&
+                  !isReposted
+                ) {
+                  // belki doesRepostedLength olabilir check et start to check
+                  Post.find({ repostedFromThisOriginalPost: postId })
+                    .then((referencePost) => {
+                      const notification = notifiedUser.notifications.find(
+                        (notification) => {
+                          return (
+                            (notification.post.toString() ===
+                              commentedForThisPost ||
+                              notification.post.toString() ===
+                                referencePost[0].commentedForThisPost._id.toString()) &&
+                            notification.notificationSender.toString() ===
+                              userId &&
+                            notification.isComment.value
+                          );
+                        }
+                      );
+
+                      const notificationIndex =
+                        notifiedUser.notifications.indexOf(notification);
+
+                      notifiedUser.notifications.splice(notificationIndex, 1);
+                      notifiedUser.save();
+                    })
+                    .catch(() => {
+                      const notification = notifiedUser.notifications.find(
+                        (notification) => {
+                          return (
+                            notification.post.toString() ===
+                              commentedForThisPost &&
+                            notification.notificationSender.toString() ===
+                              userId &&
+                            notification.isComment.value
+                          );
+                        }
+                      );
+
+                      const notificationIndex =
+                        notifiedUser.notifications.indexOf(notification);
+
+                      notifiedUser.notifications.splice(notificationIndex, 1);
+                      notifiedUser.save();
+                    });
+                  // belki doesRepostedLength olabilir check et finish to check
+                } else {
+                }
+              })
+              .catch(() => {});
+          }
+          // notified olması mümkün olan kullanıcıdan notificationı silme veya bırakma işlemi finish to check
+
           if (post.isReposted) {
             // this postId should filtered from all the users favorites array ! So then we can delete the post itself after delete from every user's favorites array
             // check if the active(current user who is deleting the post) exclude him/her from promise.all user.save combination

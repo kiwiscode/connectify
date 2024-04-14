@@ -327,7 +327,7 @@ function LeftSideNavBar({
         <div
           style={{
             height: "100%",
-            position: "fixed",
+            // position: "fixed",
             // finish after test mode theme mode start to check
             // top: "0px",
             // finish after test mode theme mode finish to check

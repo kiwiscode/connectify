@@ -232,10 +232,6 @@ function MainPage() {
 
   const handleShowPostsHomePage = async () => {
     console.log("handleShowPostsHomePage function is working !");
-    // const homePagePostsForYouSection = JSON.parse(
-    //   localStorage.getItem("homePagePostsForYouSection")
-    // );
-    // setPosts(homePagePostsForYouSection);
 
     try {
       const response = await axios.get(`${API_URL}/home`, {
@@ -244,11 +240,6 @@ function MainPage() {
         },
       });
       console.log("Response working!");
-
-      // localStorage.setItem(
-      //   "homePagePostsForYouSection",
-      //   JSON.stringify(response.data)
-      // );
 
       getOnlyFollowingPosts();
       setPosts(response.data);
@@ -1275,10 +1266,9 @@ function MainPage() {
     setPostsLoadingSpinner(true);
 
     setTimeout(() => {
-      // setPostsLoadingSpinner(false);
-
+      setPostsLoadingSpinner(false);
       handleShowPostsHomePage();
-    }, 500);
+    }, 1200);
   }, []);
 
   // useEffects finish to check
