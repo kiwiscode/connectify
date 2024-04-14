@@ -131,6 +131,21 @@ function RightSideColumn({
     getUser();
   }, []);
 
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/get-most-followed-3-user`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        setFirst3User(response.data.first3User);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  }, []);
+
   const onFocusInActive = () => {
     setOnFocus(false);
   };
@@ -176,6 +191,7 @@ function RightSideColumn({
         },
       })
       .then((response) => {
+        console.log("User refresh active => ", response);
         setUser(response.data.user);
       })
       .catch((error) => {
@@ -194,6 +210,14 @@ function RightSideColumn({
       });
     }
   };
+
+  const allFollowingsFromActiveUser = () => {
+    return user?.following?.map((eachFollowedUser) => {
+      return eachFollowedUser._id;
+    });
+  };
+
+  console.log("User following =>", allFollowingsFromActiveUser());
 
   const [showUnfollowModal, setshowUnfollowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState("");
@@ -15482,6 +15506,14 @@ function RightSideColumn({
               </div>
               {first3User
                 ? first3User.map((eachUser, index) => {
+                    const buttonId = `followButton_${index}`;
+                    const isFollowing = allFollowingsFromActiveUser()?.includes(
+                      eachUser._id
+                    );
+                    console.log("Is following =>", isFollowing);
+                    if (isFollowing) {
+                      console.log("Following this user =>", eachUser);
+                    }
                     return (
                       <div
                         style={{
@@ -15623,9 +15655,9 @@ function RightSideColumn({
                             </div>
                             <div
                               onMouseEnter={() => {
-                                setIsHovered(index);
+                                setIsHovered(buttonId);
                               }}
-                              onMouseLeave={() => setIsHovered("")}
+                              onMouseLeave={() => setIsHovered(null)}
                               className="ms-auto"
                             >
                               <Button
@@ -15635,58 +15667,93 @@ function RightSideColumn({
                                     : handleFollow(eachUser)
                                 }
                                 style={{
-                                  maxWidth: "99px",
-                                  maxHeight: "32px",
                                   fontSize: "15px",
                                   lineHeight: "20px",
                                   fontWeight: "700",
+                                  display: "inline",
+                                  maxWidth: "107px",
                                   transitionDuration: "0.2s",
+                                  // border:
+                                  //   isHovered === index &&
+                                  //   getFollowingIds(user)?.includes(
+                                  //     eachUser._id
+                                  //   )
+                                  //     ? "1px solid rgba(253,201,206,255)"
+                                  //     : getFollowingIds(user)?.includes(
+                                  //         eachUser._id
+                                  //       )
+                                  //     ? "1px solid rgba(0, 0, 0, 0.1)"
+                                  //     : "1px solid rgb(185, 202, 211)",
+                                  // backgroundColor:
+                                  //   isHovered === index &&
+                                  //   getFollowingIds(user)?.includes(
+                                  //     eachUser._id
+                                  //   )
+                                  //     ? "rgba(255,234,235,255)"
+                                  //     : getFollowingIds(user)?.includes(
+                                  //         eachUser._id
+                                  //       )
+                                  //     ? "transparent"
+                                  //     : "black",
+                                  // color:
+                                  //   isHovered === index &&
+                                  //   getFollowingIds(user).includes(eachUser._id)
+                                  //     ? "rgba(244,34,45,255)"
+                                  //     : getFollowingIds(user)?.includes(
+                                  //         eachUser._id
+                                  //       )
+                                  //     ? "black"
+                                  //     : "white",
                                   border:
-                                    isHovered === index &&
-                                    getFollowingIds(user)?.includes(
-                                      eachUser._id
-                                    )
+                                    isHovered === buttonId &&
+                                    isFollowing &&
+                                    themeName !== "dark-theme"
                                       ? "1px solid rgba(253,201,206,255)"
-                                      : getFollowingIds(user)?.includes(
-                                          eachUser._id
-                                        )
+                                      : isHovered === buttonId &&
+                                        isFollowing &&
+                                        themeName === "dark-theme"
+                                      ? "1px solid #e71f2c"
+                                      : isFollowing &&
+                                        themeName !== "dark-theme"
                                       ? "1px solid rgba(0, 0, 0, 0.1)"
-                                      : "1px solid rgb(185, 202, 211)",
-                                  backgroundColor:
-                                    isHovered === index &&
-                                    getFollowingIds(user)?.includes(
-                                      eachUser._id
-                                    )
-                                      ? "rgba(255,234,235,255)"
-                                      : getFollowingIds(user)?.includes(
-                                          eachUser._id
-                                        )
-                                      ? "transparent"
-                                      : "black",
+                                      : "1px solid rgb(70, 70, 70)",
+                                  borderRadius: "9999px",
 
+                                  backgroundColor:
+                                    !isFollowing && themeName === "dark-theme"
+                                      ? "white"
+                                      : isHovered === buttonId &&
+                                        isFollowing &&
+                                        themeName !== "dark-theme"
+                                      ? "rgba(255,234,235,255)"
+                                      : isHovered === buttonId &&
+                                        isFollowing &&
+                                        themeName === "dark-theme"
+                                      ? "#230608"
+                                      : isFollowing &&
+                                        themeName === "dark-theme"
+                                      ? "black"
+                                      : isFollowing &&
+                                        themeName !== "dark-theme"
+                                      ? "white"
+                                      : "black",
                                   color:
-                                    isHovered === index &&
-                                    getFollowingIds(user).includes(eachUser._id)
+                                    !isFollowing && themeName === "dark-theme"
+                                      ? "black"
+                                      : isHovered === buttonId && isFollowing
                                       ? "rgba(244,34,45,255)"
-                                      : getFollowingIds(user)?.includes(
-                                          eachUser._id
-                                        )
+                                      : isFollowing &&
+                                        themeName !== "dark-theme"
                                       ? "black"
                                       : "white",
                                 }}
                                 className="right-side-bar-button"
                                 variant="dark"
                               >
-                                {isHovered === index
-                                  ? getFollowingIds(user)?.includes(
-                                      eachUser._id
-                                    )
+                                {isFollowing
+                                  ? isHovered === buttonId
                                     ? "Unfollow"
-                                    : "Follow"
-                                  : getFollowingIds(user)?.includes(
-                                      eachUser._id
-                                    )
-                                  ? "Following"
+                                    : "Following"
                                   : "Follow"}
                               </Button>
                             </div>

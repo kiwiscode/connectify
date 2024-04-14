@@ -163,7 +163,8 @@ function SigninModal({ deactivatedScreen }) {
           setTimeout(() => {
             navigate("/home");
             setTabLoading(false);
-          }, 500);
+            window.location.href = "http://localhost:5173/home";
+          }, 600);
         }
       })
       .catch((error) => {
@@ -2675,6 +2676,7 @@ function SigninModal({ deactivatedScreen }) {
                             or
                           </Divider>
                           <TextField
+                            autoFocus
                             className="mt-1"
                             id="outlined-basic"
                             label="Email, or username"

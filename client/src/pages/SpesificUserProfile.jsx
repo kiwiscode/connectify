@@ -238,34 +238,6 @@ function SpesificUserProfile() {
     setIsHovered(false);
   };
 
-  const buttonStyles = {
-    cursor: "pointer",
-    minWidth: "25%",
-    // border: isHovered
-    //   ? "1px solid rgba(253,201,206,255)"
-    //   : "1px solid rgb(185, 202, 211)",
-
-    borderRadius: "9999px",
-    lineHeight: "20px",
-    fontSize: "15px",
-    fontWeight: "700",
-    // backgroundColor: isHovered
-    //   ? "rgba(255,234,235,255)"
-    //   : profileInfo.followers
-    //   ? getFollowerIds(profileInfo.followers).includes(userInfo._id)
-    //     ? "white"
-    //     : "black"
-    //   : null,
-    // backgroundColor: "rgba(39,44,48,255)",
-    // color: isHovered
-    //   ? "rgba(244,34,45,255)"
-    //   : profileInfo.followers
-    //   ? getFollowerIds(profileInfo.followers).includes(userInfo._id)
-    //     ? "black"
-    //     : "white"
-    //   : null,
-  };
-
   // socket io 4 client start to check
   useEffect(() => {
     socket.on("socket_id_for_user", (socketId) => {
@@ -740,6 +712,17 @@ function SpesificUserProfile() {
     }
   }, [messageRoomId]);
 
+  const checkSpesificUserFollowers = () => {
+    return profileInfo?.followers?.map((eachFollowerUser) => {
+      return eachFollowerUser._id;
+    });
+  };
+
+  const isFollowing = checkSpesificUserFollowers()?.includes(userInfo._id);
+
+  console.log("profile info =>", checkSpesificUserFollowers());
+  console.log("is following =>", isFollowing);
+
   return (
     <>
       {contextHolder}
@@ -1045,30 +1028,69 @@ function SpesificUserProfile() {
                         }
                         onMouseLeave={handleMouseLeave}
                         style={{
+                          fontSize: "15px",
+                          lineHeight: "20px",
+                          fontWeight: "700",
                           display: "inline",
                           maxWidth: "107px",
+                          // border:
+                          //   isHovered && themeName !== "dark-theme"
+                          //     ? "1px solid rgba(253,201,206,255)"
+                          //     : "1px solid rgb(185, 202, 211)",
+                          // backgroundColor: isHovered
+                          //   ? "rgba(255,234,235,255)"
+                          //   : profileInfo.followers
+                          //   ? getFollowerIds(profileInfo.followers).includes(
+                          //       userInfo._id
+                          //     )
+                          //     ? "white"
+                          //     : "black"
+                          //   : null,
+                          // color: isHovered
+                          //   ? "rgba(244,34,45,255)"
+                          //   : profileInfo.followers
+                          //   ? getFollowerIds(profileInfo.followers).includes(
+                          //       userInfo._id
+                          //     )
+                          //     ? "black"
+                          //     : "white"
+                          //   : null,
                           border:
-                            isHovered && themeName !== "dark-theme"
+                            isHovered &&
+                            isFollowing &&
+                            themeName !== "dark-theme"
                               ? "1px solid rgba(253,201,206,255)"
-                              : "1px solid rgb(185, 202, 211)",
-                          backgroundColor: isHovered
-                            ? "rgba(255,234,235,255)"
-                            : profileInfo.followers
-                            ? getFollowerIds(profileInfo.followers).includes(
-                                userInfo._id
-                              )
+                              : isHovered &&
+                                isFollowing &&
+                                themeName === "dark-theme"
+                              ? "1px solid #e71f2c"
+                              : isFollowing && themeName !== "dark-theme"
+                              ? "1px solid rgba(0, 0, 0, 0.1)"
+                              : "1px solid rgb(70, 70, 70)",
+                          backgroundColor:
+                            !isFollowing && themeName === "dark-theme"
                               ? "white"
-                              : "black"
-                            : null,
-                          color: isHovered
-                            ? "rgba(244,34,45,255)"
-                            : profileInfo.followers
-                            ? getFollowerIds(profileInfo.followers).includes(
-                                userInfo._id
-                              )
+                              : isHovered &&
+                                isFollowing &&
+                                themeName !== "dark-theme"
+                              ? "rgba(255,234,235,255)"
+                              : isHovered &&
+                                isFollowing &&
+                                themeName === "dark-theme"
+                              ? "#230608"
+                              : isFollowing && themeName === "dark-theme"
                               ? "black"
-                              : "white"
-                            : null,
+                              : isFollowing && themeName !== "dark-theme"
+                              ? "white"
+                              : "black",
+                          color:
+                            !isFollowing && themeName === "dark-theme"
+                              ? "black"
+                              : isHovered && isFollowing
+                              ? "rgba(244,34,45,255)"
+                              : isFollowing && themeName !== "dark-theme"
+                              ? "black"
+                              : "white",
                         }}
                         variant="dark"
                       >

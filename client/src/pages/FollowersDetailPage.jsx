@@ -461,7 +461,6 @@ function FollowerDetailPage() {
                   const buttonStyles = {
                     cursor: "pointer",
                     textAlign: "center",
-
                     border:
                       isHovered === buttonId &&
                       isFollowing &&
