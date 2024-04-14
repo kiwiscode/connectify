@@ -220,29 +220,24 @@ const handleDeleteReposts = (req, res) => {
       // notified olması mümkün olan kullanıcıdan notificationı silme veya bırakma işlemi start to check
       const isReposted = post.isReposted;
       const doesRepostedLength = post.reposted.length;
-      console.log("Is reposted post =>", isReposted);
-      console.log("Does reposted length =>", doesRepostedLength);
       User.findById(post.userId.toString())
         .then((notifiedUser) => {
           if (isReposted) {
             Post.findById(post.repostedFromThisOriginalPost[0].toString())
               .then((originalPost) => {
-                console.log("Origial post id =>", originalPost._id.toString());
-                console.log("Reference post id =>", postId);
                 const notification = notifiedUser.notifications.find(
                   (notification) => {
                     return (
                       (notification.post.toString() === postId ||
                         notification.post.toString() ===
                           originalPost._id.toString()) &&
-                      notification.notificationSender.toString() === userId
+                      notification.notificationSender.toString() === userId &&
+                      notification.isRepost.value
                     );
                   }
                 );
                 const notificationIndex =
                   notifiedUser.notifications.indexOf(notification);
-                console.log("Notification founded =>", notification);
-                console.log("Notification founded index =>", notificationIndex);
                 notifiedUser.notifications.splice(notificationIndex, 1);
                 notifiedUser.save();
               })
@@ -255,42 +250,22 @@ const handleDeleteReposts = (req, res) => {
             let originalPostId;
             Post.find({ repostedFromThisOriginalPost: postId })
               .then((referencePost) => {
-                console.log("Reference post =>", referencePost[0]);
                 originalPostId = referencePost[0]._id.toString();
 
-                console.log("Original post id inside then =>", originalPostId);
-                console.log(
-                  "Original post id outside then & catch =>",
-                  originalPostId
-                );
-
-                console.log("We are here right now !");
                 const notification = notifiedUser.notifications.find(
                   (notification) => {
                     return (
                       (notification.post.toString() === postId ||
                         notification.post.toString() === originalPostId) &&
-                      notification.notificationSender.toString() === userId
+                      notification.notificationSender.toString() === userId &&
+                      notification.isRepost.value
                     );
                   }
                 );
 
                 const notificationIndex =
                   notifiedUser.notifications.indexOf(notification);
-                console.log(
-                  notifiedUser.notifications[notificationIndex].post.toString(),
-                  "+",
-                  postId
-                );
-                console.log(
-                  notifiedUser.notifications[
-                    notificationIndex
-                  ].notificationSender.toString(),
-                  "+",
-                  userId
-                );
-                console.log("Notification founded =>", notification);
-                console.log("Notification founded index =>", notificationIndex);
+
                 notifiedUser.notifications.splice(notificationIndex, 1);
                 notifiedUser.save();
               })

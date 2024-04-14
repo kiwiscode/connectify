@@ -12,6 +12,34 @@ const addComment = (req, res) => {
     .then((user) => {
       Post.findById(postId)
         .then((post) => {
+          // notification ekleme start to check
+          // user kendisine notification gönderemez !
+          if (post.userId.toString() !== userId) {
+            User.findById(post.userId.toString())
+              .then((notifiedUser) => {
+                console.log("Notified user =>", notifiedUser);
+                const newNotification = {
+                  post: post._id,
+                  notificationReceiver: post.userId,
+                  notificationSender: userId,
+                  isComment: {
+                    value: true,
+                    profileImageUrl: user.imageUrl,
+                    senderId: userId,
+                    userFullName: user.fullname,
+                    userUserName: user.username,
+                    comment: commentPost,
+                  },
+                };
+
+                notifiedUser.notifications.unshift(newNotification);
+                notifiedUser.save();
+              })
+              .catch(() => {});
+          } else {
+          }
+          // notification ekleme finish to check
+
           if (post) {
             // eğer kendi postuna comment yapıyorsan ve hiç repost yoksa start to check
             if (
