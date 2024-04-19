@@ -606,7 +606,7 @@ function ChatDetailsPage() {
 
             {/* start to check render messages with spesific user  */}
             <div
-              className="scrollbar-add"
+              className={`scrollbar-add scrollbar-add-${themeName}`}
               style={{
                 overflowY: "auto",
                 maxHeight: "500px",

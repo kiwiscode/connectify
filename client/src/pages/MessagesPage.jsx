@@ -219,7 +219,9 @@ function MessagesPage() {
             ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
             : "",
         boxShadow:
-          "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+          themeName === "dark-theme"
+            ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+            : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
         backgroundColor: themeName === "dark-theme" ? "black" : "",
       }}
       id="popover-positioned-left"

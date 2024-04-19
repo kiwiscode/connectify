@@ -121,6 +121,12 @@ const handleDeletePost = (req, res) => {
       Post.findById(postId)
         .then((post) => {
           // notified olması mümkün olan kullanıcıdan notificationı silme veya bırakma işlemi start to check
+          console.log(
+            "Post =>",
+            post._id.toString(),
+            "Is post reposted post =>",
+            post.isReposted
+          );
           const isComment = post.isComment;
           const isReposted = post.isReposted;
           const doesRepostedLength = post.reposted.length;
@@ -337,20 +343,22 @@ const handleDeletePost = (req, res) => {
                                 if (
                                   commentedForThisPost.reposted.length === 0
                                 ) {
-                                  commentedForThisPost.comments.filter(
-                                    (eachComment) => {
-                                      return (
-                                        eachComment._id.toString() !==
-                                        deletedComment._id.toString()
-                                      );
-                                    }
-                                  );
+                                  const filteredCommentsArray =
+                                    commentedForThisPost.comments.filter(
+                                      (eachComment) => {
+                                        return (
+                                          eachComment._id.toString() !==
+                                          deletedComment._id.toString()
+                                        );
+                                      }
+                                    );
                                   console.log(
                                     "Deleted comment id =>",
                                     deletedComment._id.toString()
                                   );
                                   commentedForThisPost.comments =
                                     filteredCommentsArray;
+
                                   commentedForThisPost.save();
                                 } else {
                                   if (commentedForThisPost.isReposted) {
@@ -852,7 +860,7 @@ const handleDeletePost = (req, res) => {
                         deletedComment.commentedForThisPost._id.toString()
                       )
                         .then((commentedForThisPost) => {
-                          if (commentedForThisPost.reposted.length === 0) {
+                          if (commentedForThisPost?.reposted.length === 0) {
                             const filteredCommentsArray =
                               commentedForThisPost.comments.filter(
                                 (eachComment) => {

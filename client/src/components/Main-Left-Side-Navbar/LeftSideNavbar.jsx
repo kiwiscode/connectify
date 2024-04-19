@@ -17,6 +17,9 @@ import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { UserContext } from "../../context/UserContext";
 import { ThemeContext } from "../../context/ThemeContext";
+import { Badge } from "@mui/material";
+import useWindowDimensions from "../../hooks/getWindowDimensions";
+
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -279,6 +282,29 @@ function LeftSideNavBar({
     };
   }, []);
 
+  const changeNotificationReadedStatus = async () => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/notifications/mark-as-read`,
+        {
+          userId: userInfo._id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      console.log("Response from db =>", response);
+    } catch (error) {
+      console.error(
+        "An error occurred while changing active user notification readed status:",
+        error
+      );
+    }
+  };
+
   const locateHomePage = () => {
     if (window.location.href !== "http://localhost:5173/home") {
       window.location.href = "http://localhost:5173/home";
@@ -287,6 +313,7 @@ function LeftSideNavBar({
 
   const locateNotificationsPage = () => {
     if (window.location.href !== "http://localhost:5173/notifications") {
+      changeNotificationReadedStatus();
       window.location.href = "http://localhost:5173/notifications";
     }
   };
@@ -303,15 +330,47 @@ function LeftSideNavBar({
     }
   };
 
+  const [unReadNotifications, setUnReadNotifications] = useState([]);
+  const getActiveUserInfo = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/notifications/unread-notifications`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      const unreadNotifications = await response.data.unReadNotifications;
+
+      setUnReadNotifications(unreadNotifications);
+      console.log("Response =>", response);
+    } catch (error) {
+      console.error(
+        "An error occurred while fetching active user info:",
+        error
+      );
+    }
+  };
+
+  console.log("Notifications =>", unReadNotifications);
+
+  useEffect(() => {
+    getActiveUserInfo();
+  }, []);
+
+  const { height, width } = useWindowDimensions();
+
   return (
     <>
       <Col
         style={{
           padding: "16px",
           width:
-            windowWidth < 768 && windowWidth >= 600
+            width < 768 && width >= 600
               ? "10%"
-              : windowWidth < 600 && windowWidth >= 500
+              : width < 600 && width >= 500
               ? "11%"
               : "",
           position: "relative",
@@ -321,7 +380,7 @@ function LeftSideNavBar({
         xs={1} // 0px - 576px aralığı
         sm={1} // 576px - 768px aralığı
         md={1} // 768px - 992px aralığı
-        lg={windowWidth <= 1201 && windowWidth >= 992 ? 1 : 3} // 992px - 1400px aralığı
+        lg={width <= 1201 && width >= 992 ? 1 : 3} // 992px - 1400px aralığı
         xxl={3} // 1400px ve sonrası aralığı */}
       >
         <div
@@ -380,8 +439,8 @@ function LeftSideNavBar({
                     color={themeName === "dark-theme" ? "white" : ""}
                     fill="currentColor"
                     style={{}}
-                    width={26}
-                    height={26}
+                    width={`${1.75}rem`}
+                    height={`${1.75}rem`}
                     viewBox="0 0 24 24"
                     aria-hidden="true"
                     className="home-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
@@ -414,7 +473,11 @@ function LeftSideNavBar({
               </span>
             </Link>
             {/* Third */}
+
             <NavLink
+              style={{
+                position: "relative",
+              }}
               // to={"/notifications"}
               onClick={locateNotificationsPage}
               className={`notifications-nav-link notifications-nav-link-${themeName}`}
@@ -430,13 +493,46 @@ function LeftSideNavBar({
                   style={{
                     display: "inline-block",
                     padding: "12px",
+                    position: "relative",
                   }}
                 >
+                  {unReadNotifications?.length === 0 ? null : (
+                    <div
+                      style={{
+                        cursor: "pointer",
+                        position: "absolute",
+                        backgroundColor: "rgb(29, 155, 240)",
+                        boxSizing: "content-box",
+                        top: "4px",
+                        left: "24px",
+                        minWidth: "18px",
+                        minHeight: "18px",
+                        borderRadius: "50%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        border: "1px solid white",
+                      }}
+                    >
+                      {" "}
+                      <span
+                        style={{
+                          fontWeight: "400",
+                          fontSize: "11px",
+                          lineHeight: "12px",
+                          color: "white",
+                        }}
+                      >
+                        {unReadNotifications?.length}
+                      </span>
+                    </div>
+                  )}
                   <svg
+                    style={{}}
                     color={themeName === "dark-theme" ? "white" : ""}
                     fill="currentColor"
-                    width={26}
-                    height={26}
+                    width={`${1.75}rem`}
+                    height={`${1.75}rem`}
                     viewBox="0 0 24 24"
                     aria-hidden="true"
                     className="notifications-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
@@ -493,8 +589,8 @@ function LeftSideNavBar({
                   <svg
                     color={themeName === "dark-theme" ? "white" : ""}
                     fill="currentColor"
-                    width={26}
-                    height={26}
+                    width={`${1.75}rem`}
+                    height={`${1.75}rem`}
                     viewBox="0 0 24 24"
                     aria-hidden="true"
                     className="messages-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
@@ -551,8 +647,8 @@ function LeftSideNavBar({
                   <svg
                     color={themeName === "dark-theme" ? "white" : ""}
                     fill="currentColor"
-                    width={26}
-                    height={26}
+                    width={`${1.75}rem`}
+                    height={`${1.75}rem`}
                     viewBox="0 0 24 24"
                     aria-hidden="true"
                     className="profile-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
@@ -648,15 +744,34 @@ function LeftSideNavBar({
                 </svg>
               </Button>
 
-              <Modal show={show} onHide={handleClose}>
+              <Modal
+                backdropClassName={
+                  themeName === "dark-theme" ? `back-drop-${themeName}` : ""
+                }
+                dialogClassName={width <= 700 ? "modal-fullscreen" : ""}
+                className={
+                  width <= 700 && themeName !== "dark-theme"
+                    ? ""
+                    : width <= 700 && themeName === "dark-theme"
+                    ? `width-smaller-700-post-modal-left-side-navigation-bar width-smaller-700-post-modal-left-side-navigation-bar-${themeName}`
+                    : `post-modal-from-left-side-navigation-bar post-modal-from-left-side-navigation-bar-${themeName}`
+                }
+                show={show}
+                onHide={handleClose}
+              >
                 <Modal.Header
+                  className="signin-modal-header-child-non-reactivate"
                   style={{
                     border: "none",
                   }}
                 >
                   <div
                     onClick={handleClose}
-                    className="close-button"
+                    className={
+                      themeName === "dark-theme"
+                        ? `close-button-${themeName}`
+                        : `close-button`
+                    }
                     style={{ borderRadius: "50%", cursor: "pointer" }}
                   >
                     <div>
@@ -669,7 +784,9 @@ function LeftSideNavBar({
                         onClick={handleClose}
                         width={20}
                         height={20}
-                        color="rgb(15,20,25)"
+                        color={
+                          themeName === "dark-theme" ? "white" : "rgb(15,20,25)"
+                        }
                         fill="currentColor"
                         viewBox="0 0 24 24"
                         aria-hidden="true"
@@ -732,12 +849,19 @@ function LeftSideNavBar({
                         style={{
                           resize: "none",
                           padding: "8px",
-                          color: "rgba(15,20,25,1.00)",
+                          color:
+                            themeName === "dark-theme"
+                              ? "white"
+                              : "rgba(15,20,25,1.00)",
                           lineHeight: "24px",
                           fontWeight: "400",
                           fontSize: `${content ? "15px" : "20px"}`,
                           width: "100%",
                           height: "100px",
+                          backgroundColor:
+                            themeName === "dark-theme"
+                              ? "black"
+                              : "transparent",
                         }}
                       />
                     </div>
@@ -799,7 +923,16 @@ function LeftSideNavBar({
                   </div>
                 </Modal.Body>
 
-                <Modal.Footer className="post-modal-footer ml-1">
+                <Modal.Footer
+                  style={{
+                    borderTop:
+                      themeName !== "dark-theme"
+                        ? "1px solid rgba(0, 0, 0, 0.1)"
+                        : // : "0.1px solid rgb(70, 70, 70)",
+                          "1px solid rgb(70, 70, 70)",
+                  }}
+                  className="post-modal-footer ml-1"
+                >
                   <Stack direction="horizontal" gap={0}>
                     {/* INFO */}
                     <div
@@ -814,7 +947,7 @@ function LeftSideNavBar({
                           cursor: "pointer",
                           borderRadius: "50%",
                         }}
-                        className="svg-border-parent svg-border-parent-image-choose"
+                        className={`svg-border-parent svg-border-parent-${themeName}`}
                       >
                         <svg
                           style={{
@@ -853,7 +986,7 @@ function LeftSideNavBar({
                         overlay={popoverBottom}
                       >
                         <div
-                          className="svg-border-parent"
+                          className={`svg-border-parent chat-detail-emoji-svg-border-parent svg-border-parent-${themeName}`}
                           style={{
                             cursor: "pointer",
                             borderRadius: "50%",
@@ -895,6 +1028,9 @@ function LeftSideNavBar({
                         </Button>
                       ) : (
                         <Button
+                          style={{
+                            border: "none",
+                          }}
                           variant="primary"
                           onClick={() => handlePost()}
                           className={`emptyContent post-btn compose-tweet-textArea`}

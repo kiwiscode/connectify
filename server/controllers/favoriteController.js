@@ -198,84 +198,93 @@ const handleDeleteFavorite = (req, res) => {
       }
 
       Post.findById(postId).then((post) => {
-        // notified olması mümkün olan kullanıcıdan notificationı silme veya bırakma işlemi start to check
-        const isReposted = post.isReposted;
-        const doesRepostedLength = post.reposted.length;
+        console.log("Post to delete favorite =>", post);
+        // eğer user kendi postundan favorite silmiyorsa start to check
+        if (userId !== post.userId.toString()) {
+          // notified olması mümkün olan kullanıcıdan notificationı silme veya bırakma işlemi start to check
+          const isReposted = post.isReposted;
+          const doesRepostedLength = post.reposted.length;
 
-        User.findById(post.userId.toString())
-          .then((notifiedUser) => {
-            if (isReposted) {
-              Post.findById(post.repostedFromThisOriginalPost[0].toString())
-                .then((originalPost) => {
-                  const notification = notifiedUser.notifications.find(
-                    (notification) => {
-                      return (
-                        (notification.post.toString() === postId ||
-                          notification.post.toString() ===
-                            originalPost._id.toString()) &&
-                        notification.notificationSender.toString() === userId &&
-                        notification.isFavorite.value
-                      );
-                    }
-                  );
-                  const notificationIndex =
-                    notifiedUser.notifications.indexOf(notification);
+          User.findById(post.userId.toString())
+            .then((notifiedUser) => {
+              if (isReposted) {
+                Post.findById(post.repostedFromThisOriginalPost[0].toString())
+                  .then((originalPost) => {
+                    const notification = notifiedUser.notifications.find(
+                      (notification) => {
+                        return (
+                          (notification.post.toString() === postId ||
+                            notification.post.toString() ===
+                              originalPost._id.toString()) &&
+                          notification.notificationSender.toString() ===
+                            userId &&
+                          notification.isFavorite.value
+                        );
+                      }
+                    );
+                    const notificationIndex =
+                      notifiedUser.notifications.indexOf(notification);
 
-                  notifiedUser.notifications.splice(notificationIndex, 1);
-                  notifiedUser.save();
-                })
-                .catch(() => {});
-            } else if (
-              (doesRepostedLength || !doesRepostedLength) &&
-              !isReposted
-            ) {
-              // belki doesRepostedLength olabilir check et start to check
-              let originalPostId;
-              Post.find({ repostedFromThisOriginalPost: postId })
-                .then((referencePost) => {
-                  originalPostId = referencePost[0]._id.toString();
+                    notifiedUser.notifications.splice(notificationIndex, 1);
+                    notifiedUser.save();
+                  })
+                  .catch(() => {});
+              } else if (
+                (doesRepostedLength || !doesRepostedLength) &&
+                !isReposted
+              ) {
+                // belki doesRepostedLength olabilir check et start to check
+                let originalPostId;
+                Post.find({ repostedFromThisOriginalPost: postId })
+                  .then((referencePost) => {
+                    originalPostId = referencePost[0]._id.toString();
 
-                  const notification = notifiedUser.notifications.find(
-                    (notification) => {
-                      return (
-                        (notification.post.toString() === postId ||
-                          notification.post.toString() === originalPostId) &&
-                        notification.notificationSender.toString() === userId &&
-                        notification.isFavorite.value
-                      );
-                    }
-                  );
+                    const notification = notifiedUser.notifications.find(
+                      (notification) => {
+                        return (
+                          (notification.post.toString() === postId ||
+                            notification.post.toString() === originalPostId) &&
+                          notification.notificationSender.toString() ===
+                            userId &&
+                          notification.isFavorite.value
+                        );
+                      }
+                    );
 
-                  const notificationIndex =
-                    notifiedUser.notifications.indexOf(notification);
+                    const notificationIndex =
+                      notifiedUser.notifications.indexOf(notification);
 
-                  notifiedUser.notifications.splice(notificationIndex, 1);
-                  notifiedUser.save();
-                })
-                .catch(() => {
-                  const notification = notifiedUser.notifications.find(
-                    (notification) => {
-                      return (
-                        notification.post.toString() === postId &&
-                        notification.notificationSender.toString() === userId &&
-                        notification.isFavorite.value
-                      );
-                    }
-                  );
+                    notifiedUser.notifications.splice(notificationIndex, 1);
+                    notifiedUser.save();
+                  })
+                  .catch(() => {
+                    const notification = notifiedUser.notifications.find(
+                      (notification) => {
+                        return (
+                          notification.post.toString() === postId &&
+                          notification.notificationSender.toString() ===
+                            userId &&
+                          notification.isFavorite.value
+                        );
+                      }
+                    );
 
-                  const notificationIndex =
-                    notifiedUser.notifications.indexOf(notification);
+                    const notificationIndex =
+                      notifiedUser.notifications.indexOf(notification);
 
-                  notifiedUser.notifications.splice(notificationIndex, 1);
-                  notifiedUser.save();
-                });
+                    notifiedUser.notifications.splice(notificationIndex, 1);
+                    notifiedUser.save();
+                  });
 
-              // belki doesRepostedLength olabilir check et finish to check
-            } else {
-            }
-          })
-          .catch(() => {});
-        // notified olması mümkün olan kullanıcıdan notificationı silme veya bırakma işlemi finish to check
+                // belki doesRepostedLength olabilir check et finish to check
+              } else {
+              }
+            })
+            .catch(() => {});
+          // notified olması mümkün olan kullanıcıdan notificationı silme veya bırakma işlemi finish to check
+        }
+
+        // eğer user kendi postundan favorite silmiyorsa finish to check
 
         if (post.isComment) {
           console.log("This post is comment =>", post);
