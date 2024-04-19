@@ -5,6 +5,8 @@ const cloudinary = require("../utils/cloudinary");
 
 let globalImageId;
 let globalImageUrl;
+
+let createdCommentPostId;
 const addComment = (req, res) => {
   const { userId, postId, commentPost, modalImage } = req.body;
 
@@ -14,30 +16,35 @@ const addComment = (req, res) => {
         .then((post) => {
           // notification ekleme start to check
           // user kendisine notification gönderemez !
-          if (post.userId.toString() !== userId) {
-            User.findById(post.userId.toString())
-              .then((notifiedUser) => {
-                console.log("Notified user =>", notifiedUser);
-                const newNotification = {
-                  post: post._id,
-                  notificationReceiver: post.userId,
-                  notificationSender: userId,
-                  isComment: {
-                    value: true,
-                    profileImageUrl: user.imageUrl,
-                    senderId: userId,
-                    userFullName: user.fullname,
-                    userUserName: user.username,
-                    comment: commentPost,
-                  },
-                };
+          setTimeout(() => {
+            console.log("Burayı çalıştırıyoruz şimdi !!!");
+            console.log("Created comment post id =>", createdCommentPostId);
+            if (post.userId.toString() !== userId) {
+              User.findById(post.userId.toString())
+                .then((notifiedUser) => {
+                  console.log("Notified user =>", notifiedUser);
+                  const newNotification = {
+                    post: post._id,
+                    notificationReceiver: post.userId,
+                    notificationSender: userId,
+                    isComment: {
+                      value: true,
+                      profileImageUrl: user.imageUrl,
+                      senderId: userId,
+                      userFullName: user.fullname,
+                      userUserName: user.username,
+                      comment: commentPost,
+                      commentPostId: createdCommentPostId,
+                    },
+                  };
 
-                notifiedUser.notifications.unshift(newNotification);
-                notifiedUser.save();
-              })
-              .catch(() => {});
-          } else {
-          }
+                  notifiedUser.notifications.unshift(newNotification);
+                  notifiedUser.save();
+                })
+                .catch(() => {});
+            } else {
+            }
+          }, 1000);
           // notification ekleme finish to check
 
           if (post) {
@@ -85,6 +92,7 @@ const addComment = (req, res) => {
                     });
                   })
                   .then((newCreatedPost) => {
+                    createdCommentPostId = newCreatedPost._id.toString();
                     Comment.create({
                       userId: userId,
                       authorFullName: user.fullname,
@@ -142,6 +150,8 @@ const addComment = (req, res) => {
                   commentedForThisUsersPost: post.userId._id.toString(),
                 })
                   .then((newCreatedPost) => {
+                    createdCommentPostId = newCreatedPost._id.toString();
+
                     console.log("This line is working 2 !");
 
                     Comment.create({
@@ -229,6 +239,8 @@ const addComment = (req, res) => {
                     });
                   })
                   .then((newCreatedPost) => {
+                    createdCommentPostId = newCreatedPost._id.toString();
+
                     Comment.create({
                       userId: userId,
                       authorFullName: user.fullname,
@@ -330,6 +342,8 @@ const addComment = (req, res) => {
                   commentedForThisUsersPost: post.userId._id.toString(),
                 })
                   .then((newCreatedPost) => {
+                    createdCommentPostId = newCreatedPost._id.toString();
+
                     console.log("This line is working 2 !");
 
                     Comment.create({
@@ -463,6 +477,8 @@ const addComment = (req, res) => {
                     });
                   })
                   .then((newCreatedPost) => {
+                    createdCommentPostId = newCreatedPost._id.toString();
+
                     Comment.create({
                       userId: userId,
                       authorFullName: user.fullname,
@@ -550,6 +566,8 @@ const addComment = (req, res) => {
                   commentedForThisUsersPost: post.userId._id.toString(),
                 })
                   .then((newCreatedPost) => {
+                    createdCommentPostId = newCreatedPost._id.toString();
+
                     console.log("This line is working 2 !");
 
                     Comment.create({
@@ -637,6 +655,8 @@ const addComment = (req, res) => {
                     });
                   })
                   .then((newCreatedPost) => {
+                    createdCommentPostId = newCreatedPost._id.toString();
+
                     Comment.create({
                       userId: userId,
                       authorFullName: user.fullname,
@@ -738,6 +758,8 @@ const addComment = (req, res) => {
                   commentedForThisUsersPost: post.userId._id.toString(),
                 })
                   .then((newCreatedPost) => {
+                    createdCommentPostId = newCreatedPost._id.toString();
+
                     console.log("This line is working 2 !");
 
                     Comment.create({
@@ -884,6 +906,9 @@ const addComment = (req, res) => {
                                     post.userId._id.toString(),
                                 })
                                   .then((newCreatedPost) => {
+                                    createdCommentPostId =
+                                      newCreatedPost._id.toString();
+
                                     return Comment.create({
                                       userId: userId,
                                       authorFullName: user.fullname,
@@ -965,6 +990,9 @@ const addComment = (req, res) => {
                                 post.userId._id.toString(),
                             })
                               .then((newCreatedPost) => {
+                                createdCommentPostId =
+                                  newCreatedPost._id.toString();
+
                                 return Comment.create({
                                   userId: userId,
                                   authorFullName: user.fullname,
@@ -1060,6 +1088,9 @@ const addComment = (req, res) => {
                                   post.userId._id.toString(),
                               })
                                 .then((newCreatedPost) => {
+                                  createdCommentPostId =
+                                    newCreatedPost._id.toString();
+
                                   return Comment.create({
                                     userId: userId,
                                     authorFullName: user.fullname,
@@ -1115,6 +1146,9 @@ const addComment = (req, res) => {
                           commentedForThisUsersPost: post.userId._id.toString(),
                         })
                           .then((newCreatedPost) => {
+                            createdCommentPostId =
+                              newCreatedPost._id.toString();
+
                             return Comment.create({
                               userId: userId,
                               authorFullName: user.fullname,

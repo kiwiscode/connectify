@@ -277,10 +277,6 @@ async function handleChangePassword(req, res) {
 
     const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
     console.log("is password match =>", isPasswordMatch);
-    if (!isPasswordMatch) {
-      return res.status(401).json({ message: "Incorrect old password." });
-    }
-
     const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
     if (!regex.test(newPassword) || newPassword.length < 6) {
       res.status(402).json({
@@ -288,6 +284,10 @@ async function handleChangePassword(req, res) {
           "Password needs to have at least 6 chars and must contain at least one number, one lowercase and one uppercase letter.",
       });
       return;
+    }
+    if (!isPasswordMatch) {
+      console.log("We are here !");
+      return res.status(401).json({ message: "Incorrect old password." });
     }
 
     const hashedNewPassword = await bcrypt.hash(newPassword, 10);
@@ -313,6 +313,8 @@ async function handleDeactivatePasswordConfirmation(req, res) {
     );
     console.log("is password match =>", isPasswordMatch);
     if (!isPasswordMatch) {
+      console.log("We are here 2 !");
+
       return res.status(401).json({ message: "Incorrect password." });
     }
 

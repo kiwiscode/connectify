@@ -21,6 +21,7 @@ import { UrlContext } from "./context/UrlContext";
 import { UserProvider } from "./context/UserContext";
 import RightSideColumn from "./components/Main-Right-Side-Column/RightSideColumn";
 import LeftSideNavBar from "./components/Main-Left-Side-Navbar/LeftSideNavbar";
+import Posts from "./components/Posts/Posts";
 
 function App() {
   const [
@@ -117,6 +118,7 @@ function App() {
             path="/settings/deactivated"
             element={<DeactivatedPage />}
           ></Route>
+          <Route path="/posts-component-test" element={<Posts />}></Route>
         </Routes>
       </div>
     </UserProvider>

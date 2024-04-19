@@ -8,6 +8,7 @@ import {
   Stack,
   Popover,
   OverlayTrigger,
+  FormLabel,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
@@ -20,6 +21,20 @@ import { message, Steps } from "antd";
 import { Divider, List } from "antd";
 import LoadingSpinner from "../ui/LoadingSpinner";
 import { ThemeContext } from "../../context/ThemeContext";
+import { width } from "@mui/system";
+import useWindowDimensions from "../../hooks/getWindowDimensions";
+import {
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+  Radio,
+  RadioGroup,
+  TextField,
+  Tooltip,
+} from "@mui/material";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -122,9 +137,20 @@ function LogoutModal({ isLogoutActionActive }) {
     }
   }, [deactivatePassword]);
 
+  const { height, width } = useWindowDimensions();
+
+  const [initialOptionClicked, setInitialOptionClicked] = useState(false);
   const steps = [
     {
-      title: "First",
+      title: (
+        <div
+          style={{
+            color: themeName === "dark-theme" ? "white" : "",
+          }}
+        >
+          First
+        </div>
+      ),
       content: (
         <List
           style={{
@@ -136,9 +162,15 @@ function LogoutModal({ isLogoutActionActive }) {
         >
           <List.Item
             style={{
+              borderBottom:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
               fontSize: "20px",
               fontWeight: "800",
               lineHeight: "24px",
+              color: themeName === "dark-theme" ? "white" : "black",
             }}
           >
             This will deactivate your account
@@ -149,6 +181,11 @@ function LogoutModal({ isLogoutActionActive }) {
               lineHeight: "16px",
               fontWeight: "400",
               color: "rgb(83, 100, 113)",
+              borderBottom:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
             }}
           >
             You’re about to start the process of deactivating your Connectify
@@ -158,9 +195,15 @@ function LogoutModal({ isLogoutActionActive }) {
           </List.Item>
           <List.Item
             style={{
+              borderBottom:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
               fontSize: "20px",
               fontWeight: "800",
               lineHeight: "24px",
+              color: themeName === "dark-theme" ? "white" : "black",
             }}
           >
             What else you should know
@@ -171,6 +214,11 @@ function LogoutModal({ isLogoutActionActive }) {
               lineHeight: "16px",
               fontWeight: "400",
               color: "rgb(83, 100, 113)",
+              borderBottom:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
             }}
           >
             Some account information may still be available in search engines,
@@ -192,7 +240,15 @@ function LogoutModal({ isLogoutActionActive }) {
       ),
     },
     {
-      title: "Second",
+      title: (
+        <div
+          style={{
+            color: themeName === "dark-theme" ? "white" : "",
+          }}
+        >
+          Second
+        </div>
+      ),
       content: (
         <div className="responsive-input-group input-group">
           {errorInputStyle3 ? (
@@ -212,20 +268,21 @@ function LogoutModal({ isLogoutActionActive }) {
               </div>
             </>
           ) : null}
-
           <div
             className="mt-2"
             style={{
+              padding: "12px",
               fontSize: "20px",
               fontWeight: "800",
               lineHeight: "24px",
+              color: themeName === "dark-theme" ? "white" : "black",
             }}
           >
             Confirm your password
           </div>
           <div
-            className="mt-2"
             style={{
+              padding: "12px",
               fontSize: "13px",
               lineHeight: "16px",
               fontWeight: "400",
@@ -235,26 +292,53 @@ function LogoutModal({ isLogoutActionActive }) {
             Complete your deactivation request by entering the password
             associated with your account.
           </div>
-          <InputGroup className="mt-3">
-            <Form.Control
-              style={{
-                borderColor: errorInputStyle ? "rgba(244,39,49,255)" : "",
-              }}
-              aria-label="Default"
-              aria-describedby="inputGroup-sizing-default"
-              placeholder="Password"
-              type="password"
-              value={deactivatePassword}
-              onChange={(e) => {
-                setdeactivatePassword(e.target.value);
-              }}
-            />
-          </InputGroup>
+          <TextField
+            className="mt-2"
+            autoFocus={true}
+            value={deactivatePassword}
+            onChange={(e) => {
+              setdeactivatePassword(e.target.value);
+            }}
+            type="password"
+            id="outlined-basic"
+            variant={"outlined"}
+            label={`Password`}
+            style={{
+              width: "90%",
+              height: "58px",
+              position: "relative",
+              left: "15px",
+            }}
+            InputProps={{
+              style: {
+                color: themeName === "dark-theme" ? "white" : "black",
+              },
+            }}
+            sx={{
+              "& .Mui-focused input + fieldset": {
+                border: "2px solid #1d9bf0 !important",
+              },
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#cfd9de !important",
+              },
+              "& .MuiInputLabel-shrink": {
+                color: "#1f9cf0 !important",
+              },
+            }}
+          />{" "}
         </div>
       ),
     },
     {
-      title: "Last",
+      title: (
+        <div
+          style={{
+            color: themeName === "dark-theme" ? "white" : "",
+          }}
+        >
+          Last
+        </div>
+      ),
       content: (
         <List
           style={{
@@ -269,6 +353,12 @@ function LogoutModal({ isLogoutActionActive }) {
               fontSize: "20px",
               fontWeight: "800",
               lineHeight: "24px",
+              color: themeName === "dark-theme" ? "white" : "black",
+              borderBottom:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
             }}
           >
             You Are Deactivating Your Account
@@ -279,6 +369,11 @@ function LogoutModal({ isLogoutActionActive }) {
               lineHeight: "16px",
               fontWeight: "400",
               color: "rgb(83, 100, 113)",
+              borderBottom:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
             }}
           >
             {
@@ -290,6 +385,12 @@ function LogoutModal({ isLogoutActionActive }) {
               fontSize: "20px",
               fontWeight: "800",
               lineHeight: "24px",
+              color: themeName === "dark-theme" ? "white" : "black",
+              borderBottom:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
             }}
           >
             When you deactivate your account:
@@ -300,6 +401,11 @@ function LogoutModal({ isLogoutActionActive }) {
               lineHeight: "16px",
               fontWeight: "400",
               color: "rgb(83, 100, 113)",
+              borderBottom:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
             }}
           >
             All your content on Connectify will be removed.
@@ -311,6 +417,11 @@ function LogoutModal({ isLogoutActionActive }) {
               lineHeight: "16px",
               fontWeight: "400",
               color: "rgb(83, 100, 113)",
+              borderBottom:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
             }}
           >
             {"Your friends and followers won't be able to contact you."}
@@ -433,7 +544,9 @@ function LogoutModal({ isLogoutActionActive }) {
             : "",
 
         boxShadow:
-          "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+          themeName === "dark-theme"
+            ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+            : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
         width: "19.5%",
         padding: "8px 0px",
         borderWidth: "1px",
@@ -569,25 +682,27 @@ function LogoutModal({ isLogoutActionActive }) {
   const [tabIndexThird, setTabIndexThird] = useState(2);
 
   const showInitialTab = () => {
+    setInitialOptionClicked(false);
+    setSelectedSection(null);
     setTabIndex(0);
     setShowDetailAccountInfo(false);
     setshowListItem(true);
   };
 
   const showSecondTab = () => {
+    setInitialOptionClicked(false);
+    setSelectedSection(null);
     setTabIndexSecond((prevState) => (prevState === 0 ? 0 : 1));
     setShowDetailChangePasswordInfo(false);
     setshowListItem(true);
   };
 
   const showThirdTab = () => {
+    setInitialOptionClicked(false);
+    setSelectedSection(null);
     setTabIndexThird((prevState) => (prevState === 0 ? 0 : 2));
     setShowDetailDeactivateAccountInfo(false);
     setshowListItem(true);
-  };
-
-  const handleClose = () => {
-    setShow(false);
   };
 
   const handleChangePassword = () => {
@@ -639,7 +754,7 @@ function LogoutModal({ isLogoutActionActive }) {
         .catch((error) => {
           if (error.response.status === 402) {
             seterrorInput4(
-              "Your password needs to be at least 8 characters. Please enter a longer one.      "
+              "Your password needs to be at least 8 characters. Please enter a longer one."
             );
             seterrorInputStyle4(true);
 
@@ -648,6 +763,9 @@ function LogoutModal({ isLogoutActionActive }) {
 
             seterrorInputStyle2(false);
             seterrorInput2("");
+
+            seterrorInputStyle3(false);
+            seterrorInput3("");
           }
           if (error.response.status === 401) {
             seterrorInput3("The password you entered was incorrect.");
@@ -664,6 +782,9 @@ function LogoutModal({ isLogoutActionActive }) {
           }
         });
     } else if (!regex.test(newPassword) || newPassword.length < 6) {
+      seterrorInput4(
+        "Your password needs to be at least 8 characters. Please enter a longer one."
+      );
       seterrorInputStyle4(true);
       seterrorInput3("");
       seterrorInputStyle3(false);
@@ -744,8 +865,160 @@ function LogoutModal({ isLogoutActionActive }) {
     getUser();
   }, []);
 
+  const [isHoveredIndex, setIsHoveredIndex] = useState(null);
+
+  const [startForgotPasswordProcessModal, setStartForgotPasswordProcessModal] =
+    useState(false);
+
+  const startForgotPasswordProcess = () => {
+    setStartForgotPasswordProcessModal(true);
+  };
+
+  const handleClose = () => {
+    setTimeout(() => {
+      setTabIndex(0);
+    }, 300);
+    setShow(false);
+  };
+
+  const handleCloseForgotPasswordProcessModal = () => {
+    setTimeout(() => {
+      setTabIndex(0);
+    }, 300);
+    setStartForgotPasswordProcessModal(false);
+  };
+
+  const getMaskedEmail = (str) => {
+    const atIndex = str.indexOf("@");
+    const userName = str.slice(0, atIndex);
+    const domainIndex = str.indexOf(".");
+    const domain = str.slice(atIndex + 1, domainIndex);
+
+    const maskedUsername = userName.slice(0, 2) + "*".repeat(10);
+    const maskedDomain = domain.charAt(0) + "*".repeat(4);
+    const maskedDot = "*".repeat(3);
+
+    return maskedUsername + "@" + maskedDomain + maskedDot;
+  };
+  const [
+    receivedVerificationCodeForPasswordChange,
+    setReceivedVerificationCodeForPasswordChange,
+  ] = useState(null);
+  const [
+    isWaitingForConfirmationCodeSendingProcess,
+    setIsWaitingForConfirmationCodeSendingProcess,
+  ] = useState(false);
+
+  const [showEnterVerificationCodeScreen, setShowEnterVerificationCodeScreen] =
+    useState(false);
+  const handleSendForgotPasswordCodeToEmail = () => {
+    axios
+      .post(
+        `${API_URL}/send-forgot-password-code-to-email
+  `,
+        { forgotPasswordInProcessUser: userInfo }
+      )
+      .then((response) => {
+        setReceivedVerificationCodeForPasswordChange(
+          response.data.result.verificationCode.toString()
+        );
+        setIsWaitingForConfirmationCodeSendingProcess(true);
+
+        setTimeout(() => {
+          setTabIndex(null);
+          setShowEnterVerificationCodeScreen(true);
+          setIsWaitingForConfirmationCodeSendingProcess(false);
+        }, 500);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  };
+  const [verificationCodeInput, setVerificationCodeInput] = useState("");
+
+  const catchErrorMessage = (message) => {
+    messageApi.success({
+      type: "success",
+      content: message,
+      duration: 4,
+      className: "custom-message-style",
+    });
+  };
+
+  const [
+    verificationCodeSuccessChangePasswordScreen,
+    setverificationCodeSuccessChangePasswordScreen,
+  ] = useState(false);
+
+  const handleTabChangeAfterSuccessVerificationCode = () => {
+    setVerificationCodeInput("");
+    setShowEnterVerificationCodeScreen(false);
+    setverificationCodeSuccessChangePasswordScreen(true);
+  };
+
+  const [newPasswordResetPassword, setnewPasswordResetPassword] = useState("");
+  const [newPasswordResetPasswordRepeat, setnewPasswordResetPasswordRepeat] =
+    useState("");
+
+  const [isValidPassword, setIsValidPassword] = useState(null);
+
+  const [errorResetPassword, setErrorResetPassword] = useState("");
+  const [errorResetPassword2, setErrorResetPassword2] = useState("");
+
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+  const [
+    whyDidYouChangeyourpasswordScreen,
+    setwhyDidYouChangeyourpasswordScreen,
+  ] = useState(null);
+
+  useEffect(() => {
+    setIsValidPassword(passwordRegex.test(newPasswordResetPassword));
+  }, [newPasswordResetPassword]);
+
+  const handleChangePasswordSubmit = () => {
+    axios
+      .post(
+        `${API_URL}/change-password-forgot-password-process`,
+        {
+          newPassword: newPasswordResetPassword,
+          user: userInfo,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then(() => {})
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  };
+
+  const resetPassword = () => {
+    if (!isValidPassword) {
+      setErrorResetPassword(
+        "Your password needs to be at least 8 characters. Please enter a longer one."
+      );
+    } else if (newPasswordResetPassword !== newPasswordResetPasswordRepeat) {
+      setErrorResetPassword2("Passwords do not match.");
+    } else {
+      setErrorResetPassword("");
+      setErrorResetPassword2("");
+      handleChangePasswordSubmit();
+      setwhyDidYouChangeyourpasswordScreen(true);
+    }
+  };
+
+  console.log("Is valid password =>", isValidPassword);
+
+  const [showAfterChangePasswordScreen, setshowAfterChangePasswordScreen] =
+    useState(null);
+
   return (
     <>
+      {contextHolder}
       {showLogoutSpinner ? (
         <>
           <Modal
@@ -758,6 +1031,7 @@ function LogoutModal({ isLogoutActionActive }) {
             show={showLogoutModal}
           >
             {/* start to check  */}
+            <Modal.Header></Modal.Header>
 
             <Modal.Body
               style={{
@@ -788,7 +1062,9 @@ function LogoutModal({ isLogoutActionActive }) {
       )}
 
       <Modal
-        className="logout-modal-variant-parent"
+        // className="logout-modal-variant-parent"
+
+        className={`logout-modal-variant-parent logout-modal-variant-parent-${themeName}`}
         style={{
           backgroundColor: showLogoutModal ? "#999999" : "",
         }}
@@ -800,58 +1076,74 @@ function LogoutModal({ isLogoutActionActive }) {
 
         <Modal.Body style={{}} className="logout-modal-variant">
           <div
-            className="mt-5"
             style={{
-              lineHeight: "24px",
-              fontWeight: "700",
-              fontSize: "20px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              alignContent: "center",
+              width: "92%",
             }}
           >
-            Log out of Connectify?
-          </div>
-          <div
-            style={{
-              width: "81.5%",
-              lineHeight: "20px",
-              fontWeight: "400",
-              fontSize: "15px",
-              color: "#536471",
-            }}
-            className="mt-2"
-          >
-            You can always log back in at any time. If you just want to switch
-            accounts, you can do that by adding an existing account.
-          </div>
+            <div
+              className="mt-5"
+              style={{
+                width: "100%",
 
-          <Button
-            className="login-button mt-4 next-btn"
-            variant="dark"
-            style={{
-              width: "90%",
-              height: "42px",
-              color: "white",
-              backgroundColor: "#0f141a",
-            }}
-            onClick={() =>
-              userInfo.signedUpWithGoogle.isSignedUpWithGoogle
-                ? handleLogoutFromGoogleAccount()
-                : handleLogout()
-            }
-          >
-            Log out
-          </Button>
-          <Button
-            onClick={() => setShowLogoutModal(false)}
-            className="mt-3 forgot-password-btn"
-            variant="light"
-            style={{
-              width: "90%",
-              height: "42px",
-              color: "black",
-            }}
-          >
-            Cancel
-          </Button>
+                lineHeight: "24px",
+                fontWeight: "700",
+                fontSize: "20px",
+                color: themeName === "dark-theme" ? "white" : "black",
+              }}
+            >
+              Log out of C?
+            </div>
+            <div
+              style={{
+                lineHeight: "20px",
+                fontWeight: "400",
+                fontSize: "15px",
+                color: "#536471",
+              }}
+              className="mt-2"
+            >
+              You can always log back in at any time. If you just want to switch
+              accounts, you can do that by adding an existing account.
+            </div>
+
+            <Button
+              // className="login-button mt-4 next-btn"
+              className={`login-button mt-4 next-btn ${themeName}-white-btn`}
+              variant="dark"
+              style={{
+                width: "256px",
+                height: "44px",
+                color: themeName === "dark-theme" ? "black" : "white",
+                backgroundColor:
+                  themeName === "dark-theme" ? "white" : "#0f141a",
+              }}
+              onClick={() =>
+                userInfo.signedUpWithGoogle.isSignedUpWithGoogle
+                  ? handleLogoutFromGoogleAccount()
+                  : handleLogout()
+              }
+            >
+              Log out
+            </Button>
+            <Button
+              onClick={() => setShowLogoutModal(false)}
+              className={`mt-3 forgot-password-btn ${themeName}-black-btn`}
+              variant="light"
+              style={{
+                width: "256px",
+                height: "44px",
+                color: themeName === "dark-theme" ? "white" : "black",
+                backgroundColor: themeName === "dark-theme" ? "black" : "white",
+              }}
+            >
+              Cancel
+            </Button>
+          </div>
         </Modal.Body>
       </Modal>
 
@@ -966,19 +1258,28 @@ function LogoutModal({ isLogoutActionActive }) {
 
       {/* settings and privacy modal start to check  */}
       <Modal
+        backdropClassName={
+          themeName === "dark-theme" ? `back-drop-${themeName}` : ""
+        }
         show={show}
         onHide={handleClose}
         centered="true"
-        contentClassName="settings-and-privacy-second"
+        dialogClassName={width <= 700 ? "modal-fullscreen" : ""}
+        contentClassName={
+          width <= 700
+            ? `settings-and-privacy-second-smaller-than-700-width settings-and-privacy-second-smaller-than-700-width-${themeName}`
+            : `settings-and-privacy-second settings-and-privacy-second-${themeName}`
+        }
       >
         <Modal.Header
+          className="signin-modal-header-child-non-reactivate"
           style={{
             border: "none",
           }}
         >
           {current > 0 ? (
             <div
-              className="previous-button"
+              className={`previous-button previous-button-${themeName}`}
               style={{ borderRadius: "50%", cursor: "pointer" }}
             >
               <div>
@@ -988,6 +1289,8 @@ function LogoutModal({ isLogoutActionActive }) {
                     fontSize: "15px",
                     margin: "5px",
                   }}
+                  color={themeName === "dark-theme" ? "white" : ""}
+                  fill="currentColor"
                   onClick={() => prev()}
                   height={20}
                   width={20}
@@ -1003,11 +1306,13 @@ function LogoutModal({ isLogoutActionActive }) {
             </div>
           ) : showDetailAccountInfo ? (
             <div
-              className="previous-button"
+              className={`previous-button previous-button-${themeName}`}
               style={{ borderRadius: "50%", cursor: "pointer" }}
             >
               <div>
                 <svg
+                  color={themeName === "dark-theme" ? "white" : ""}
+                  fill="currentColor"
                   style={{
                     border: "none",
                     fontSize: "15px",
@@ -1028,11 +1333,13 @@ function LogoutModal({ isLogoutActionActive }) {
             </div>
           ) : showDetailChangePasswordInfo ? (
             <div
-              className="previous-button"
+              className={`previous-button previous-button-${themeName}`}
               style={{ borderRadius: "50%", cursor: "pointer" }}
             >
               <div>
                 <svg
+                  color={themeName === "dark-theme" ? "white" : ""}
+                  fill="currentColor"
                   style={{
                     border: "none",
                     fontSize: "15px",
@@ -1053,11 +1360,13 @@ function LogoutModal({ isLogoutActionActive }) {
             </div>
           ) : showDetailDeactivateAccountInfo ? (
             <div
-              className="previous-button"
+              className={`previous-button previous-button-${themeName}`}
               style={{ borderRadius: "50%", cursor: "pointer" }}
             >
               <div>
                 <svg
+                  color={themeName === "dark-theme" ? "white" : ""}
+                  fill="currentColor"
                   style={{
                     border: "none",
                     fontSize: "15px",
@@ -1080,11 +1389,15 @@ function LogoutModal({ isLogoutActionActive }) {
             <>
               <div
                 onClick={handleClose}
-                className="close-button"
+                className={`close-button close-button-${themeName}`}
                 style={{ borderRadius: "50%", cursor: "pointer" }}
               >
                 <div>
                   <svg
+                    color={
+                      themeName === "dark-theme" ? "white" : "rgb(15,20,25)"
+                    }
+                    fill="currentColor"
                     style={{
                       border: "none",
                       fontSize: "15px",
@@ -1093,8 +1406,6 @@ function LogoutModal({ isLogoutActionActive }) {
                     onClick={handleClose}
                     width={20}
                     height={20}
-                    color="rgb(15,20,25)"
-                    fill="currentColor"
                     viewBox="0 0 24 24"
                     aria-hidden="true"
                     className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
@@ -1108,13 +1419,29 @@ function LogoutModal({ isLogoutActionActive }) {
             </>
           )}
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body
+          style={{
+            padding: "0px",
+          }}
+        >
           {/* main navigation bar start to check  */}
           <Divider
+            className={`divider-your-account-settings-and-privacy-${themeName}`}
             orientation="left"
-            style={{ fontWeight: "700", fontSize: "20px", lineHeight: "24px" }}
+            style={{
+              fontWeight: "700",
+              fontSize: "20px",
+              lineHeight: "24px",
+              color: themeName === "dark-theme" ? "white" : "black",
+            }}
           >
-            <div>{selectedSection ? selectedSection : "Your Account"}</div>
+            <div>
+              {selectedSection !== "Account information" &&
+              selectedSection !== "Change your password" &&
+              selectedSection !== "Deactivate your account"
+                ? "Your Account"
+                : selectedSection}
+            </div>
           </Divider>
           <div
             style={{
@@ -1122,6 +1449,7 @@ function LogoutModal({ isLogoutActionActive }) {
               lineHeight: "16px",
               fontWeight: "400",
               color: "rgb(83, 100, 113)",
+              margin: "0px 12px",
             }}
           >
             {selectedSection
@@ -1150,7 +1478,28 @@ function LogoutModal({ isLogoutActionActive }) {
               itemLayout="horizontal"
             >
               {data.map((item, index) => (
-                <List.Item key={index}>
+                <List.Item
+                  onClick={() => setInitialOptionClicked(true)}
+                  onMouseEnter={() => {
+                    if (!initialOptionClicked) {
+                      setIsHoveredIndex(index);
+                    }
+                  }}
+                  onMouseLeave={() => setIsHoveredIndex(null)}
+                  className="mt-3"
+                  style={{
+                    backgroundColor:
+                      isHoveredIndex === index && themeName !== "dark-theme"
+                        ? "#f7f9f9"
+                        : isHoveredIndex === index && themeName === "dark-theme"
+                        ? "#16181c"
+                        : "",
+                    padding: "12px",
+                    width: "100%",
+                    margin: "0px",
+                  }}
+                  key={index}
+                >
                   {item && index === 0 ? (
                     <>
                       <div
@@ -1160,7 +1509,7 @@ function LogoutModal({ isLogoutActionActive }) {
                           padding: "12px",
                           cursor: "pointer",
                         }}
-                        className={`${showListItem} account-info-div`}
+                        className={`${showListItem}`}
                       >
                         <Stack direction="horizontal" gap={3}>
                           <div className="p-2">
@@ -1186,6 +1535,10 @@ function LogoutModal({ isLogoutActionActive }) {
                                   lineHeight: "20px",
                                   fontSize: "15px",
                                   fontWeight: "400",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "white"
+                                      : "black",
                                 }}
                               >
                                 Account information
@@ -1233,7 +1586,7 @@ function LogoutModal({ isLogoutActionActive }) {
                               padding: "12px",
                               cursor: "pointer",
                             }}
-                            className={`${showListItem} change-password-div`}
+                            className={`${showListItem} `}
                           >
                             <Stack direction="horizontal" gap={3}>
                               <div className="p-2">
@@ -1259,6 +1612,10 @@ function LogoutModal({ isLogoutActionActive }) {
                                       lineHeight: "20px",
                                       fontSize: "15px",
                                       fontWeight: "400",
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "white"
+                                          : "black",
                                     }}
                                   >
                                     Change your password
@@ -1305,7 +1662,7 @@ function LogoutModal({ isLogoutActionActive }) {
                                   padding: "12px",
                                   cursor: "pointer",
                                 }}
-                                className={`${showListItem} deactivate-account-div`}
+                                className={`${showListItem} `}
                               >
                                 <Stack direction="horizontal" gap={3}>
                                   <div className="p-2">
@@ -1328,6 +1685,10 @@ function LogoutModal({ isLogoutActionActive }) {
                                     <div>
                                       <div
                                         style={{
+                                          color:
+                                            themeName === "dark-theme"
+                                              ? "white"
+                                              : "black",
                                           lineHeight: "20px",
                                           fontSize: "15px",
                                           fontWeight: "400",
@@ -1400,7 +1761,11 @@ function LogoutModal({ isLogoutActionActive }) {
                     padding: "12px",
                     // cursor: "pointer",
                     listStyle: "none",
-                    borderBottom: "1px solid rgba(0,0,0,0.1)",
+                    borderBottom:
+                      themeName !== "dark-theme"
+                        ? "1px solid rgba(0, 0, 0, 0.1)"
+                        : // : "0.1px solid rgb(70, 70, 70)",
+                          "1px solid rgb(70, 70, 70)",
                   }}
                   className={showDetailAccountInfo ? "info-account" : "hide"}
                 >
@@ -1413,6 +1778,8 @@ function LogoutModal({ isLogoutActionActive }) {
                             lineHeight: "20px",
                             fontSize: "15px",
                             fontWeight: "400",
+                            color:
+                              themeName === "dark-theme" ? "white" : "black",
                           }}
                         >
                           Username
@@ -1457,7 +1824,11 @@ function LogoutModal({ isLogoutActionActive }) {
                     padding: "12px",
                     // cursor: "pointer",
                     listStyle: "none",
-                    borderBottom: "1px solid rgba(0,0,0,0.1)",
+                    borderBottom:
+                      themeName !== "dark-theme"
+                        ? "1px solid rgba(0, 0, 0, 0.1)"
+                        : // : "0.1px solid rgb(70, 70, 70)",
+                          "1px solid rgb(70, 70, 70)",
                   }}
                   className={showDetailAccountInfo ? "info-account" : "hide"}
                 >
@@ -1470,6 +1841,8 @@ function LogoutModal({ isLogoutActionActive }) {
                             lineHeight: "20px",
                             fontSize: "15px",
                             fontWeight: "400",
+                            color:
+                              themeName === "dark-theme" ? "white" : "black",
                           }}
                         >
                           Email
@@ -1514,7 +1887,11 @@ function LogoutModal({ isLogoutActionActive }) {
                     padding: "12px",
                     // cursor: "pointer",
                     listStyle: "none",
-                    borderBottom: "1px solid rgba(0,0,0,0.1)",
+                    borderBottom:
+                      themeName !== "dark-theme"
+                        ? "1px solid rgba(0, 0, 0, 0.1)"
+                        : // : "0.1px solid rgb(70, 70, 70)",
+                          "1px solid rgb(70, 70, 70)",
                   }}
                   className={showDetailAccountInfo ? "info-account" : "hide"}
                 >
@@ -1527,6 +1904,8 @@ function LogoutModal({ isLogoutActionActive }) {
                             lineHeight: "20px",
                             fontSize: "15px",
                             fontWeight: "400",
+                            color:
+                              themeName === "dark-theme" ? "white" : "black",
                           }}
                         >
                           Verified
@@ -1608,6 +1987,8 @@ function LogoutModal({ isLogoutActionActive }) {
                             lineHeight: "20px",
                             fontSize: "15px",
                             fontWeight: "400",
+                            color:
+                              themeName === "dark-theme" ? "white" : "black",
                           }}
                         >
                           Account creation
@@ -1654,121 +2035,386 @@ function LogoutModal({ isLogoutActionActive }) {
           {tabIndexSecond === 1 ? (
             <>
               <div className={showDetailChangePasswordInfo ? "" : "hide"}>
-                <div className="responsive-input-group input-group">
-                  <InputGroup className="mb-2">
-                    <Form.Control
-                      aria-label="Default"
-                      aria-describedby="inputGroup-sizing-default"
-                      placeholder="Current password"
-                      type="password"
-                      value={oldPassword}
+                <div
+                  style={{
+                    width: "100%",
+                    textAlign: "center",
+                  }}
+                >
+                  <FormControl
+                    className="mt-4"
+                    sx={{
+                      width: "90%",
+                    }}
+                    variant="outlined"
+                  >
+                    <InputLabel
+                      sx={{
+                        color: errorInputStyle3
+                          ? "rgb(244, 33, 46)"
+                          : "#606368",
+                        "&.MuiInputLabel-shrink": {
+                          color: errorInputStyle3
+                            ? "rgb(244, 33, 46)!important"
+                            : "#1f9cf0 !important",
+                        },
+                      }}
+                      htmlFor="outlined-adornment-password"
+                    >
+                      Current password
+                    </InputLabel>
+                    <OutlinedInput
+                      inputProps={{
+                        sx: {
+                          color: themeName === "dark-theme" ? "white" : "black",
+                        },
+                      }}
+                      sx={{
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: errorInputStyle3
+                            ? "rgb(244, 33, 46)!important"
+                            : "#cfd9de !important",
+                          border:
+                            themeName === "dark-theme" && !errorInputStyle3
+                              ? "1px solid rgb(70, 70, 70) !important"
+                              : themeName === "dark-theme" && errorInputStyle3
+                              ? "1px solid rgb(244, 33, 46) !important"
+                              : "",
+                        },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          border: errorInputStyle3
+                            ? "2px solid rgb(244, 33, 46)!important"
+                            : "2px solid #1d9bf0 !important",
+                        },
+                      }}
+                      // onBlur={() => setfirstInputActive(false)}
                       onChange={(e) => setOldPassword(e.target.value)}
+                      value={oldPassword}
+                      id="outlined-adornment-password"
+                      type={"password"}
+                      label="Current password"
                     />
-                  </InputGroup>
+                  </FormControl>
                   {errorInputStyle3 ? (
                     <>
                       <div
-                        className="mt-0"
+                        className="mt-1"
                         style={{
-                          display: "flex",
-                          justifyContent: "center",
+                          display: "inline-block",
                           color: "rgba(244,39,49,255)",
+                          textAlign: "left",
                           fontSize: "13px",
                           lineHeight: "16px",
                           fontWeight: "400",
+                          width: "92%",
+                          position: "relative",
+                          left: "5px",
                         }}
                       >
-                        {errorInput3}
+                        <span
+                          style={{
+                            position: "relative",
+                            left: "10px",
+                          }}
+                        >
+                          {errorInput3}
+                        </span>
                       </div>
                     </>
                   ) : null}
-                  <InputGroup className="mt-2">
-                    <Form.Control
-                      aria-label="Default"
-                      aria-describedby="inputGroup-sizing-default"
-                      placeholder="New password"
-                      type="password"
-                      value={newPassword}
+                  <>
+                    <div
+                      className="mt-1 forgot-password-logout-settings-and-privacy-modal"
+                      style={{
+                        cursor: "pointer",
+                        display: !errorInputStyle3 ? "inline-block" : "none",
+                        color: "rgb(29, 155, 240)",
+                        textAlign: "left",
+                        fontSize: "13px",
+                        lineHeight: "16px",
+                        fontWeight: "400",
+                        width: "92%",
+                        position: "relative",
+                        left: "5px",
+                      }}
+                    >
+                      <span
+                        onClick={() => startForgotPasswordProcess()}
+                        style={{
+                          position: "relative",
+                          left: "10px",
+                        }}
+                      >
+                        Forgot password?
+                      </span>
+                    </div>
+                  </>
+                  <>
+                    <div
+                      style={{
+                        borderBottom:
+                          themeName !== "dark-theme"
+                            ? "1px solid rgba(0, 0, 0, 0.1)"
+                            : // : "0.1px solid rgb(70, 70, 70)",
+                              "1px solid rgb(70, 70, 70)",
+
+                        display: "inline-block",
+                        width: "100%",
+                      }}
+                    ></div>
+                  </>
+                  <FormControl
+                    className="mt-3"
+                    sx={{
+                      width: "90%",
+                    }}
+                    variant="outlined"
+                  >
+                    <InputLabel
+                      sx={{
+                        color:
+                          errorInputStyle4 || errorInputStyle2
+                            ? "rgb(244, 33, 46)"
+                            : "#606368",
+                        "&.MuiInputLabel-shrink": {
+                          color:
+                            errorInputStyle4 || errorInputStyle2
+                              ? "rgb(244, 33, 46)!important"
+                              : "#1f9cf0 !important",
+                        },
+                      }}
+                      htmlFor="outlined-adornment-password"
+                    >
+                      New password
+                    </InputLabel>
+                    <OutlinedInput
+                      inputProps={{
+                        sx: {
+                          color: themeName === "dark-theme" ? "white" : "black",
+                        },
+                      }}
+                      sx={{
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor:
+                            errorInputStyle4 || errorInputStyle2
+                              ? "rgb(244, 33, 46)!important"
+                              : "#cfd9de !important",
+                          border:
+                            themeName === "dark-theme" &&
+                            !errorInputStyle4 &&
+                            !errorInputStyle2
+                              ? "1px solid rgb(70, 70, 70) !important"
+                              : themeName === "dark-theme" &&
+                                errorInputStyle4 &&
+                                errorInputStyle2
+                              ? "1px solid rgb(244, 33, 46) !important"
+                              : "",
+                        },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          border:
+                            errorInputStyle4 || errorInputStyle2
+                              ? "2px solid rgb(244, 33, 46)!important"
+                              : "2px solid #1d9bf0 !important",
+                        },
+                      }}
+                      // onBlur={() => setfirstInputActive(false)}
                       onChange={(e) => setNewPassword(e.target.value)}
+                      value={newPassword}
+                      id="outlined-adornment-password"
+                      type={"password"}
+                      label="New password"
                     />
-                  </InputGroup>
+                  </FormControl>
                   {errorInputStyle4 ? (
                     <>
                       <div
-                        className="mt-2"
+                        className="mt-1"
                         style={{
-                          display: "flex",
-                          justifyContent: "center",
+                          display: "inline-block",
                           color: "rgba(244,39,49,255)",
+                          textAlign: "left",
                           fontSize: "13px",
                           lineHeight: "16px",
                           fontWeight: "400",
+                          width: "92%",
+                          position: "relative",
+                          left: "5px",
                         }}
                       >
-                        {errorInput4}
+                        <span
+                          style={{
+                            position: "relative",
+                            left: "10px",
+                          }}
+                        >
+                          {errorInput4}
+                        </span>
                       </div>
                     </>
                   ) : null}
                   {errorInputStyle2 ? (
                     <>
                       <div
-                        className="mt-2"
+                        className="mt-1"
                         style={{
-                          display: "flex",
-                          justifyContent: "center",
+                          display: "inline-block",
                           color: "rgba(244,39,49,255)",
+                          textAlign: "left",
                           fontSize: "13px",
                           lineHeight: "16px",
                           fontWeight: "400",
+                          width: "92%",
+                          position: "relative",
+                          left: "5px",
                         }}
                       >
-                        {errorInput2}
+                        <span
+                          style={{
+                            position: "relative",
+                            left: "10px",
+                          }}
+                        >
+                          {errorInput2}
+                        </span>
                       </div>
                     </>
                   ) : null}
-                  <InputGroup className="mt-3">
-                    <Form.Control
-                      style={{
-                        borderColor: errorInputStyle
-                          ? "rgba(244,39,49,255)"
-                          : "",
+                  <FormControl
+                    className="mt-4"
+                    sx={{
+                      width: "90%",
+                    }}
+                    variant="outlined"
+                  >
+                    <InputLabel
+                      sx={{
+                        color: errorInputStyle ? "rgb(244, 33, 46)" : "#606368",
+                        "&.MuiInputLabel-shrink": {
+                          color: errorInputStyle
+                            ? "rgb(244, 33, 46)!important"
+                            : "#1f9cf0 !important",
+                        },
                       }}
-                      aria-label="Default"
-                      aria-describedby="inputGroup-sizing-default"
-                      placeholder="Confirm password"
-                      type="password"
+                      htmlFor="outlined-adornment-password"
+                    >
+                      Confirm password
+                    </InputLabel>
+                    <OutlinedInput
+                      inputProps={{
+                        sx: {
+                          color: themeName === "dark-theme" ? "white" : "black",
+                        },
+                      }}
+                      sx={{
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: errorInputStyle
+                            ? "rgb(244, 33, 46)!important"
+                            : "#cfd9de !important",
+                          border:
+                            themeName === "dark-theme" && !errorInputStyle
+                              ? "1px solid rgb(70, 70, 70) !important"
+                              : themeName === "dark-theme" && errorInputStyle
+                              ? "1px solid rgb(244, 33, 46) !important"
+                              : "",
+                        },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          border: errorInputStyle
+                            ? "2px solid rgb(244, 33, 46)!important"
+                            : "2px solid #1d9bf0 !important",
+                        },
+                      }}
+                      // onBlur={() => setfirstInputActive(false)}
                       value={confirmNewPassword}
                       onChange={(e) => setConfirmNewPassword(e.target.value)}
+                      id="outlined-adornment-password"
+                      type={"password"}
+                      label="                      Confirm password                      "
                     />
-                  </InputGroup>
+                  </FormControl>
                   {errorInputStyle ? (
                     <>
                       <div
-                        className="mt-2"
+                        className="mt-1"
                         style={{
-                          display: "flex",
-                          justifyContent: "center",
+                          display: "inline-block",
                           color: "rgba(244,39,49,255)",
+                          textAlign: "left",
                           fontSize: "13px",
                           lineHeight: "16px",
                           fontWeight: "400",
+                          width: "92%",
+                          position: "relative",
+                          left: "5px",
                         }}
                       >
-                        {errorInput}
+                        <span
+                          style={{
+                            position: "relative",
+                            left: "10px",
+                          }}
+                        >
+                          {errorInput}
+                        </span>
                       </div>
                     </>
-                  ) : null}
+                  ) : null}{" "}
+                  <>
+                    <div
+                      style={{
+                        borderBottom:
+                          themeName !== "dark-theme"
+                            ? "1px solid rgba(0, 0, 0, 0.1)"
+                            : // : "0.1px solid rgb(70, 70, 70)",
+                              "1px solid rgb(70, 70, 70)",
 
-                  <div>
+                        display: "inline-block",
+                        width: "100%",
+                      }}
+                    ></div>
+                  </>
+                  <div
+                    className="mt-1"
+                    style={{
+                      textAlign: "right",
+                      borderTop:
+                        themeName !== "dark-theme"
+                          ? "1px solid rgba(0, 0, 0, 0.1)"
+                          : // : "0.1px solid rgb(70, 70, 70)",
+                            "1px solid rgb(70, 70, 70)",
+
+                      width: "100%",
+                    }}
+                  >
                     <Button
                       style={{
+                        height: "45px",
+                        marginTop: "15px",
+                        position: "relative",
+                        right: "20px",
+                        border: "none",
+                        maxWidth: "69.17px",
+                        maxHeight: "36px",
+                        minHeight: "36px",
+                        fontSize: "15px",
+                        cursor:
+                          oldPassword && newPassword && confirmNewPassword
+                            ? "pointer"
+                            : "default",
                         opacity:
                           oldPassword && newPassword && confirmNewPassword
                             ? ""
                             : "0.5",
                       }}
-                      onClick={() => handleChangePassword()}
-                      className="change-password-btn"
+                      onClick={
+                        oldPassword && newPassword && confirmNewPassword
+                          ? () => handleChangePassword()
+                          : null
+                      }
+                      className={
+                        oldPassword && newPassword && confirmNewPassword
+                          ? "change-password-btn"
+                          : "disabled-change-password-btn"
+                      }
                     >
                       Save
                     </Button>
@@ -1790,10 +2436,11 @@ function LogoutModal({ isLogoutActionActive }) {
             >
               <Steps
                 style={{
+                  padding: "12px",
                   display: "flex",
                   flexDirection: "row",
                 }}
-                className="steps"
+                className={`steps-parent-tag-${themeName}`}
                 current={current}
                 items={items}
               />
@@ -1803,13 +2450,17 @@ function LogoutModal({ isLogoutActionActive }) {
                 {current < steps.length - 1 && current !== 1 && (
                   <Button
                     style={{
-                      backgroundColor: "#0f141a",
+                      backgroundColor:
+                        themeName === "dark-theme" ? "#16181c" : "#0f141a",
+
                       color: "white",
                       fontSize: "15px",
                       fontWeight: "500",
                       lineHeight: "20px",
                       float: "right",
                       border: " none",
+                      position: "relative",
+                      right: "15px",
                     }}
                     className="deactivate-next-btn deactivate-tab-next-btn"
                     variant="info"
@@ -1822,14 +2473,18 @@ function LogoutModal({ isLogoutActionActive }) {
                 {current < steps.length - 1 && current === 1 && (
                   <Button
                     style={{
+                      backgroundColor:
+                        themeName === "dark-theme" ? "#16181c" : "#0f141a",
                       marginTop: "100px",
-                      backgroundColor: "#0f141a",
+
                       color: "white",
                       fontSize: "15px",
                       fontWeight: "500",
                       lineHeight: "20px",
                       float: "right",
                       border: " none",
+                      position: "relative",
+                      right: "15px",
                     }}
                     className="deactivate-next-btn deactivate-tab-next-btn"
                     variant="info"
@@ -1852,6 +2507,8 @@ function LogoutModal({ isLogoutActionActive }) {
                       lineHeight: "20px",
                       float: "right",
                       border: " none",
+                      position: "relative",
+                      right: "15px",
                     }}
                     variant="danger"
                     onClick={() => {
@@ -1869,6 +2526,1074 @@ function LogoutModal({ isLogoutActionActive }) {
       </Modal>
 
       {/* settings and privacy modal finish to check  */}
+
+      {/* forgot password option from change password screen start to check  */}
+      <Modal
+        backdropClassName={
+          themeName === "dark-theme" ? `back-drop-${themeName}` : ""
+        }
+        show={startForgotPasswordProcessModal}
+        onHide={handleCloseForgotPasswordProcessModal}
+        centered="true"
+        dialogClassName={width <= 700 ? "modal-fullscreen" : ""}
+        contentClassName={
+          width <= 700
+            ? `forgot-password-process-modal-from-change-password-section forgot-password-process-modal-from-change-password-section-${themeName}`
+            : `forgot-password-process forgot-password-process-${themeName}`
+        }
+      >
+        {/* <Modal.Header
+          className="signin-modal-header-child-non-reactivate"
+          style={{
+            border: "none",
+          }}
+        >
+          {current > 0 ? (
+            <div
+              className={`previous-button previous-button-${themeName}`}
+              style={{ borderRadius: "50%", cursor: "pointer" }}
+            >
+              <div>
+                <svg
+                  style={{
+                    border: "none",
+                    fontSize: "15px",
+                    margin: "5px",
+                  }}
+                  color={themeName === "dark-theme" ? "white" : ""}
+                  fill="currentColor"
+                  onClick={() => prev()}
+                  height={20}
+                  width={20}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                >
+                  <g>
+                    <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                  </g>
+                </svg>
+              </div>
+            </div>
+          ) : showDetailAccountInfo ? (
+            <div
+              className={`previous-button previous-button-${themeName}`}
+              style={{ borderRadius: "50%", cursor: "pointer" }}
+            >
+              <div>
+                <svg
+                  color={themeName === "dark-theme" ? "white" : ""}
+                  fill="currentColor"
+                  style={{
+                    border: "none",
+                    fontSize: "15px",
+                    margin: "5px",
+                  }}
+                  onClick={showInitialTab}
+                  height={20}
+                  width={20}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                >
+                  <g>
+                    <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                  </g>
+                </svg>
+              </div>
+            </div>
+          ) : showDetailChangePasswordInfo ? (
+            <div
+              className={`previous-button previous-button-${themeName}`}
+              style={{ borderRadius: "50%", cursor: "pointer" }}
+            >
+              <div>
+                <svg
+                  color={themeName === "dark-theme" ? "white" : ""}
+                  fill="currentColor"
+                  style={{
+                    border: "none",
+                    fontSize: "15px",
+                    margin: "5px",
+                  }}
+                  onClick={showSecondTab}
+                  height={20}
+                  width={20}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                >
+                  <g>
+                    <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                  </g>
+                </svg>
+              </div>
+            </div>
+          ) : showDetailDeactivateAccountInfo ? (
+            <div
+              className={`previous-button previous-button
+-${themeName}`}
+              style={{ borderRadius: "50%", cursor: "pointer" }}
+            >
+              <div>
+                <svg
+                  color={themeName === "dark-theme" ? "white" : ""}
+                  fill="currentColor"
+                  style={{
+                    border: "none",
+                    fontSize: "15px",
+                    margin: "5px",
+                  }}
+                  onClick={showThirdTab}
+                  height={20}
+                  width={20}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                >
+                  <g>
+                    <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                  </g>
+                </svg>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div
+                onClick={handleClose}
+                className={`close-button close-button-${themeName}`}
+                style={{ borderRadius: "50%", cursor: "pointer" }}
+              >
+                <div>
+                  <svg
+                    color={
+                      themeName === "dark-theme" ? "white" : "rgb(15,20,25)"
+                    }
+                    fill="currentColor"
+                    style={{
+                      border: "none",
+                      fontSize: "15px",
+                      margin: "5px",
+                    }}
+                    onClick={handleClose}
+                    width={20}
+                    height={20}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                  >
+                    <g>
+                      <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                    </g>
+                  </svg>{" "}
+                </div>
+              </div>
+            </>
+          )}
+        </Modal.Header> */}
+        <Modal.Body
+          style={{
+            padding: "0px",
+          }}
+        >
+          {/* account information list start to check  */}
+          {tabIndex === 0 ? (
+            <>
+              <div
+                className="mt-5"
+                style={{
+                  width: "100%",
+                  fontSize: "28px",
+                  fontWeight: "700",
+                  color: themeName === "dark-theme" ? "white" : "black",
+                  fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                }}
+              >
+                <span
+                  style={{
+                    position: "relative",
+                    left: "15px",
+                    fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                  }}
+                >
+                  How do you want to reset your password?
+                </span>
+              </div>
+              <div
+                className="mt-4"
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "left",
+
+                  width: "100%",
+                  padding: "16px",
+                }}
+              >
+                <img
+                  style={{
+                    borderRadius: "50%",
+                  }}
+                  width={48}
+                  height={48}
+                  src={`${userInfo.imageUrl}`}
+                  alt=""
+                />
+                <div
+                  style={{
+                    marginLeft: "10px",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    alignContent: "center",
+                    position: "relative",
+                  }}
+                >
+                  <div
+                    style={{
+                      color: themeName === "dark-theme" ? "white" : "black",
+                      fontWeight: "700",
+                      fontSize: "15px",
+                      lineHeight: "20px",
+                      fontFamily:
+                        "Helvetica Neue, Helvetica, Arial, sans-serif",
+                    }}
+                  >
+                    {userInfo.fullname}
+                  </div>
+                  <div
+                    style={{
+                      textDecoration: "none",
+                      color: "rgb(83, 100, 113)",
+                      lineHeight: "20px",
+                      fontSize: "15px",
+                      fontWeight: "400",
+                      fontFamily:
+                        "Helvetica Neue, Helvetica, Arial, sans-serif",
+                    }}
+                  >
+                    @{userInfo.username}
+                  </div>
+                </div>
+              </div>
+              <div
+                style={{
+                  color: themeName === "dark-theme" ? "white" : "black",
+                  fontWeight: "400",
+                  fontSize: "15px",
+                  lineHeight: "20px",
+                  width: "100%",
+                  position: "relative",
+                  left: "15px",
+                  fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                }}
+              >
+                You can use the information associated with your account.
+              </div>
+              <div
+                className="mt-3"
+                style={{
+                  width: "100%",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    position: "relative",
+                    left: "5px",
+                    alignItems: "center",
+                  }}
+                >
+                  <Radio checked={true} name="radio-buttons" />
+                  <div
+                    style={{
+                      fontFamily:
+                        "Helvetica Neue, Helvetica, Arial, sans-serif",
+                      color: themeName === "dark-theme" ? "white" : "black",
+                    }}
+                  >
+                    Send an email to
+                  </div>
+                  <div
+                    style={{
+                      visibility: "hidden",
+                    }}
+                  >
+                    a
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "15px",
+                      lineHeight: "20px",
+                      fontWeight: "700",
+                      fontFamily:
+                        "Helvetica Neue, Helvetica, Arial, sans-serif",
+                      color: themeName === "dark-theme" ? "white" : "black",
+                    }}
+                  >
+                    {getMaskedEmail(userInfo.email)}
+                  </div>
+                </div>
+              </div>
+              <div
+                className="mt-2"
+                style={{
+                  width: "100%",
+                }}
+              >
+                <Button
+                  style={{
+                    height: "45px",
+                    border: "none",
+                    maxWidth: "69.17px",
+                    maxHeight: "36px",
+                    minHeight: "36px",
+                    fontSize: "15px",
+                    position: "relative",
+                    left: "15px",
+                    fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                  }}
+                  className={"change-password-btn"}
+                  onClick={() => {
+                    handleSendForgotPasswordCodeToEmail();
+                  }}
+                >
+                  Next
+                </Button>
+              </div>
+              <div
+                className="mt-4"
+                style={{
+                  cursor: "pointer",
+                  color: "#55acee",
+                  width: "100%",
+                  fontSize: "13px",
+                  fontWeight: "400",
+                  fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                }}
+              >
+                <span
+                  style={{
+                    position: "relative",
+                    left: "15px",
+                  }}
+                >
+                  <Tooltip title="This feature is not yet active. ">
+                    Don’t have access to these?
+                  </Tooltip>
+                </span>
+              </div>
+            </>
+          ) : null}
+          {/* account information list finish to check  */}
+
+          {/* change password inputs start to check  */}
+          {showEnterVerificationCodeScreen ? (
+            <>
+              {" "}
+              <div
+                className="mt-5"
+                style={{
+                  width: "100%",
+                  fontSize: "28px",
+                  fontWeight: "700",
+                  color: themeName === "dark-theme" ? "white" : "black",
+                  fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                }}
+              >
+                <span
+                  style={{
+                    position: "relative",
+                    left: "15px",
+                    fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                  }}
+                >
+                  Check your email
+                </span>
+              </div>
+              <div
+                className="mt-4"
+                style={{
+                  color: themeName === "dark-theme" ? "white" : "black",
+                  fontWeight: "400",
+                  fontSize: "15px",
+                  lineHeight: "20px",
+                  width: "100%",
+                  position: "relative",
+                  left: "15px",
+                  fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                }}
+              >
+                {
+                  "You'll receive a code to verify here so you can reset your account password."
+                }
+              </div>
+              <div
+                className="mt-4"
+                style={{
+                  width: "100%",
+                }}
+              >
+                <TextField
+                  autoFocus={true}
+                  value={verificationCodeInput}
+                  onChange={(e) => {
+                    setVerificationCodeInput(e.target.value);
+                  }}
+                  type="text"
+                  id="outlined-basic"
+                  variant={"outlined"}
+                  label={`Enter your code`}
+                  style={{
+                    width: "90%",
+                    height: "58px",
+                    position: "relative",
+                    left: "15px",
+                  }}
+                  InputProps={{
+                    style: {
+                      color: themeName === "dark-theme" ? "white" : "black",
+                    },
+                  }}
+                  sx={{
+                    "& .Mui-focused input + fieldset": {
+                      border: "2px solid #1d9bf0 !important",
+                    },
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#cfd9de !important",
+                    },
+                    "& .MuiInputLabel-shrink": {
+                      color: "#1f9cf0 !important",
+                    },
+                  }}
+                />{" "}
+              </div>
+              <div
+                className="mt-4"
+                style={{
+                  width: "100%",
+                }}
+              >
+                <Button
+                  style={{
+                    height: "45px",
+                    border: "none",
+                    maxWidth: "69.17px",
+                    maxHeight: "36px",
+                    minHeight: "36px",
+                    fontSize: "15px",
+                    position: "relative",
+                    left: "15px",
+                    fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                  }}
+                  onClick={() => {
+                    verificationCodeInput ===
+                    receivedVerificationCodeForPasswordChange
+                      ? handleTabChangeAfterSuccessVerificationCode()
+                      : catchErrorMessage("Invalid verification code.");
+                  }}
+                  className={"change-password-btn"}
+                >
+                  Verify
+                </Button>
+              </div>
+              <div
+                className="mt-3"
+                style={{
+                  color: themeName === "dark-theme" ? "white" : "black",
+                  fontWeight: "400",
+                  fontSize: "15px",
+                  lineHeight: "20px",
+                  width: "90%",
+
+                  fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                }}
+              >
+                <span
+                  style={{
+                    position: "relative",
+                    right: "15px",
+                  }}
+                >
+                  {
+                    "If you don't see the email, check other places it might be, like your junk, spam, social, or other folders."
+                  }
+                </span>
+              </div>
+              <div
+                onClick={() => {
+                  handleSendForgotPasswordCodeToEmail();
+                }}
+                className="mt-5"
+                style={{
+                  cursor: "pointer",
+                  color: "#55acee",
+                  fontWeight: "400",
+                  fontSize: "15px",
+                  lineHeight: "20px",
+                  width: "90%",
+
+                  fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                }}
+              >
+                <span
+                  style={{
+                    position: "relative",
+                    right: "15px",
+                  }}
+                >
+                  {"Didn’t receive your code?"}
+                </span>
+              </div>
+            </>
+          ) : null}
+          {/* change password inputs finish to check  */}
+
+          {verificationCodeSuccessChangePasswordScreen &&
+          !whyDidYouChangeyourpasswordScreen ? (
+            <>
+              {" "}
+              <div className={showDetailChangePasswordInfo ? "" : "hide"}>
+                <div
+                  className="mt-5"
+                  style={{
+                    width: "100%",
+                    fontSize: "28px",
+                    fontWeight: "700",
+                    color: themeName === "dark-theme" ? "white" : "black",
+                    fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily:
+                        "Helvetica Neue, Helvetica, Arial, sans-serif",
+                    }}
+                  >
+                    Reset your password
+                  </span>
+                </div>{" "}
+                <div
+                  className="mt-4"
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "left",
+                    width: "100%",
+                  }}
+                >
+                  <img
+                    style={{
+                      borderRadius: "50%",
+                    }}
+                    width={48}
+                    height={48}
+                    src={`${userInfo.imageUrl}`}
+                    alt=""
+                  />
+                  <div
+                    style={{
+                      marginLeft: "10px",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      alignContent: "center",
+                      position: "relative",
+                    }}
+                  >
+                    <div
+                      style={{
+                        color: themeName === "dark-theme" ? "white" : "black",
+                        fontWeight: "700",
+                        fontSize: "15px",
+                        lineHeight: "20px",
+                        fontFamily:
+                          "Helvetica Neue, Helvetica, Arial, sans-serif",
+                      }}
+                    >
+                      {userInfo.fullname}
+                    </div>
+                    <div
+                      style={{
+                        textDecoration: "none",
+                        color: "rgb(83, 100, 113)",
+                        lineHeight: "20px",
+                        fontSize: "15px",
+                        fontWeight: "400",
+                        fontFamily:
+                          "Helvetica Neue, Helvetica, Arial, sans-serif",
+                      }}
+                    >
+                      @{userInfo.username}
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-2">
+                  <span
+                    style={{
+                      color: themeName === "dark-theme" ? "white" : "black",
+                      fontWeight: "400",
+                      fontSize: "15px",
+                      lineHeight: "20px",
+                      fontFamily:
+                        "Helvetica Neue, Helvetica, Arial, sans-serif",
+                    }}
+                  >
+                    Strong passwords include numbers, letters, and punctuation
+                    marks.
+                  </span>{" "}
+                  <span
+                    style={{
+                      cursor: "pointer",
+                      color: "#55acee",
+                      width: "100%",
+                      fontSize: "13px",
+                      fontWeight: "400",
+                      fontFamily:
+                        "Helvetica Neue, Helvetica, Arial, sans-serif",
+                    }}
+                  >
+                    Learn more
+                  </span>
+                </div>
+                <div>
+                  <FormControl
+                    className="mt-3"
+                    sx={{
+                      width: "100%",
+                    }}
+                    variant="outlined"
+                  >
+                    <InputLabel
+                      sx={{
+                        color: errorResetPassword
+                          ? "rgb(244, 33, 46)"
+                          : "#606368",
+                        "&.MuiInputLabel-shrink": {
+                          color: errorResetPassword
+                            ? "rgb(244, 33, 46)!important"
+                            : "#1f9cf0 !important",
+                        },
+                      }}
+                      htmlFor="outlined-adornment-password"
+                    >
+                      Enter your new password
+                    </InputLabel>
+                    <OutlinedInput
+                      inputProps={{
+                        sx: {
+                          color: themeName === "dark-theme" ? "white" : "black",
+                        },
+                      }}
+                      sx={{
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: errorResetPassword
+                            ? "rgb(244, 33, 46)!important"
+                            : "#cfd9de !important",
+                          border:
+                            themeName === "dark-theme" && !errorResetPassword
+                              ? "1px solid rgb(70, 70, 70) !important"
+                              : themeName === "dark-theme" && errorResetPassword
+                              ? "1px solid rgb(244, 33, 46) !important"
+                              : "",
+                        },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          border: errorResetPassword
+                            ? "2px solid rgb(244, 33, 46)!important"
+                            : "2px solid #1d9bf0 !important",
+                        },
+                      }}
+                      // onBlur={() => setfirstInputActive(false)}
+                      onChange={(e) =>
+                        setnewPasswordResetPassword(e.target.value)
+                      }
+                      value={newPasswordResetPassword}
+                      id="outlined-adornment-password"
+                      type={"password"}
+                      label="Enter your new password
+                      "
+                    />
+                  </FormControl>
+                </div>
+                {errorResetPassword ? (
+                  <>
+                    <span
+                      className="mt-1"
+                      style={{
+                        display: "flex",
+                        color: "rgba(244,39,49,255)",
+                        textAlign: "left",
+                        fontSize: "13px",
+                        lineHeight: "16px",
+                        fontWeight: "400",
+                        width: "92%",
+                        position: "relative",
+                        left: "5px",
+                      }}
+                    >
+                      <span
+                        style={{
+                          position: "relative",
+                          left: "10px",
+                        }}
+                      >
+                        {errorResetPassword}
+                      </span>
+                    </span>
+                  </>
+                ) : null}
+                <FormControl
+                  className="mt-4"
+                  sx={{
+                    width: "100%",
+                  }}
+                  variant="outlined"
+                >
+                  <InputLabel
+                    sx={{
+                      color: errorResetPassword2
+                        ? "rgb(244, 33, 46)"
+                        : "#606368",
+                      "&.MuiInputLabel-shrink": {
+                        color: errorResetPassword2
+                          ? "rgb(244, 33, 46)!important"
+                          : "#1f9cf0 !important",
+                      },
+                    }}
+                    htmlFor="outlined-adornment-password"
+                  >
+                    Enter your password one more time
+                  </InputLabel>
+                  <OutlinedInput
+                    inputProps={{
+                      sx: {
+                        color: themeName === "dark-theme" ? "white" : "black",
+                      },
+                    }}
+                    sx={{
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: errorResetPassword2
+                          ? "rgb(244, 33, 46)!important"
+                          : "#cfd9de !important",
+                        border:
+                          themeName === "dark-theme" && !errorResetPassword2
+                            ? "1px solid rgb(70, 70, 70) !important"
+                            : themeName === "dark-theme" && errorResetPassword2
+                            ? "1px solid rgb(244, 33, 46) !important"
+                            : "",
+                      },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        border: errorResetPassword2
+                          ? "2px solid rgb(244, 33, 46)!important"
+                          : "2px solid #1d9bf0 !important",
+                      },
+                    }}
+                    // onBlur={() => setfirstInputActive(false)}
+                    onChange={(e) =>
+                      setnewPasswordResetPasswordRepeat(e.target.value)
+                    }
+                    value={newPasswordResetPasswordRepeat}
+                    id="outlined-adornment-password"
+                    type={"password"}
+                    label="Enter your password one more time
+                      "
+                  />
+                </FormControl>
+                {errorResetPassword2 ? (
+                  <>
+                    <div
+                      className="mt-1"
+                      style={{
+                        display: "inline-block",
+                        color: "rgba(244,39,49,255)",
+                        textAlign: "left",
+                        fontSize: "13px",
+                        lineHeight: "16px",
+                        fontWeight: "400",
+                        width: "92%",
+                        position: "relative",
+                        left: "5px",
+                      }}
+                    >
+                      <span
+                        style={{
+                          position: "relative",
+                          left: "10px",
+                        }}
+                      >
+                        {errorResetPassword2}
+                      </span>
+                    </div>
+                  </>
+                ) : null}{" "}
+                <FormControlLabel
+                  sx={{
+                    color: themeName === "dark-theme" ? "white" : "black",
+                    "& .MuiSvgIcon-root": {
+                      color: themeName === "dark-theme" ? "white" : "",
+                    },
+                  }}
+                  control={<Checkbox />}
+                  label="Remember me"
+                />
+                <div>
+                  <span
+                    style={{
+                      color: themeName === "dark-theme" ? "white" : "black",
+                      fontWeight: "400",
+                      fontSize: "15px",
+                      lineHeight: "20px",
+                      fontFamily:
+                        "Helvetica Neue, Helvetica, Arial, sans-serif",
+                    }}
+                  >
+                    Resetting your password will log you out of all your active
+                    Connectify sessions.
+                  </span>{" "}
+                </div>
+                <div
+                  className="mt-1"
+                  style={{
+                    textAlign: "left",
+                  }}
+                >
+                  <Button
+                    onClick={resetPassword}
+                    style={{
+                      height: "45px",
+                      marginTop: "15px",
+                      border: "none",
+                      minWidth: "142px",
+                      maxWidth: "145px",
+                      maxHeight: "36px",
+                      minHeight: "36px",
+                      fontSize: "15px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Reset password
+                  </Button>
+                </div>
+              </div>
+            </>
+          ) : whyDidYouChangeyourpasswordScreen &&
+            !showAfterChangePasswordScreen ? (
+            <>
+              <div
+                className="mt-5"
+                style={{
+                  width: "100%",
+                  fontSize: "28px",
+                  fontWeight: "700",
+                  color: themeName === "dark-theme" ? "white" : "black",
+                  fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                }}
+              >
+                <span
+                  style={{
+                    position: "relative",
+                    left: "15px",
+                    fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                  }}
+                >
+                  Why did you change your password?
+                </span>
+              </div>
+              <div
+                className="mt-4"
+                style={{
+                  width: "100%",
+                }}
+              >
+                <FormControl
+                  style={{
+                    position: "relative",
+                    left: "15px",
+                  }}
+                >
+                  <RadioGroup
+                    sx={{
+                      color: themeName === "dark-theme" ? "white" : "black",
+                      "& .MuiSvgIcon-root": {
+                        color: themeName === "dark-theme" ? "white" : "",
+                      },
+                    }}
+                    aria-labelledby="demo-controlled-radio-buttons-group"
+                    name="controlled-radio-buttons-group"
+                  >
+                    <FormControlLabel
+                      value="Forgot password"
+                      control={<Radio />}
+                      label="Forgot password"
+                    />
+                    <FormControlLabel
+                      value="Account may have been accessed by someone else"
+                      control={<Radio />}
+                      label="Account may have been accessed by someone else"
+                    />{" "}
+                    <FormControlLabel
+                      value="Another reason"
+                      control={<Radio />}
+                      label="Another reason"
+                    />
+                    <div
+                      className="mt-3"
+                      style={{
+                        width: "100%",
+                      }}
+                    >
+                      <Button
+                        style={{
+                          height: "45px",
+                          border: "none",
+                          maxWidth: "69.17px",
+                          maxHeight: "36px",
+                          minHeight: "36px",
+                          fontSize: "15px",
+                          fontFamily:
+                            "Helvetica Neue, Helvetica, Arial, sans-serif",
+                        }}
+                        className={"change-password-btn"}
+                        onClick={() => {
+                          setshowAfterChangePasswordScreen(true);
+                        }}
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  </RadioGroup>
+                </FormControl>
+              </div>
+              <div></div>
+              <div></div>{" "}
+            </>
+          ) : showAfterChangePasswordScreen ? (
+            <>
+              <div
+                className="mt-5"
+                style={{
+                  width: "100%",
+                  fontSize: "28px",
+                  fontWeight: "700",
+                  color: themeName === "dark-theme" ? "white" : "black",
+                  fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                }}
+              >
+                <span
+                  style={{
+                    position: "relative",
+                    left: "15px",
+                    fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                  }}
+                >
+                  {"You’re all set. You've successfully changed your password."}{" "}
+                </span>
+              </div>
+              <div
+                className="mt-5"
+                style={{
+                  cursor: "pointer",
+                  color: "#55acee",
+                  width: "100%",
+                  fontWeight: "400",
+                  fontSize: "15px",
+                  lineHeight: "20px",
+                  fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                }}
+              >
+                <span
+                  style={{
+                    position: "relative",
+                    left: "15px",
+                  }}
+                >
+                  Review your applications
+                </span>
+              </div>
+              <div
+                className="mt-1"
+                style={{
+                  color: themeName === "dark-theme" ? "white" : "black",
+                  fontWeight: "400",
+                  fontSize: "15px",
+                  lineHeight: "20px",
+                  width: "100%",
+                  position: "relative",
+                  left: "15px",
+                  fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                }}
+              >
+                {
+                  "Take a moment to review the applications that have access to your account. Revoke those you don't recognize or no longer use."
+                }
+              </div>
+              <div
+                className="mt-1"
+                style={{
+                  cursor: "pointer",
+                  color: "#55acee",
+                  width: "100%",
+                  fontWeight: "400",
+                  fontSize: "15px",
+                  lineHeight: "20px",
+                  fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                }}
+              >
+                <span
+                  style={{
+                    position: "relative",
+                    left: "15px",
+                  }}
+                >
+                  Add a phone number to your account
+                </span>
+              </div>
+              <div
+                className="mt-1"
+                style={{
+                  color: themeName === "dark-theme" ? "white" : "black",
+                  fontWeight: "400",
+                  fontSize: "15px",
+                  lineHeight: "20px",
+                  width: "100%",
+                  position: "relative",
+                  left: "15px",
+                  fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                }}
+              >
+                {
+                  "This makes it easy to get back into your account if you're ever locked out."
+                }
+              </div>
+              <div
+                onClick={handleCloseForgotPasswordProcessModal}
+                className="mt-5"
+                style={{
+                  cursor: "pointer",
+                  color: "#55acee",
+                  width: "100%",
+                  fontWeight: "400",
+                  fontSize: "15px",
+                  lineHeight: "20px",
+                  fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                }}
+              >
+                <span
+                  style={{
+                    position: "relative",
+                    left: "15px",
+                  }}
+                >
+                  Continue to Connectify
+                </span>
+              </div>
+            </>
+          ) : null}
+        </Modal.Body>
+      </Modal>
+      {/* forgot password option from change password screen finish to check  */}
     </>
   );
 }

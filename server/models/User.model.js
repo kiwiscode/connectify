@@ -27,6 +27,7 @@ const notificationSchema = new Schema(
       userFullName: { type: String, default: "" },
       userUserName: { type: String, default: "" },
       comment: { type: String, default: "" },
+      commentPostId: { type: Schema.Types.ObjectId, ref: "Post" },
     },
     isReaded: {
       type: Boolean,
