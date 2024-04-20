@@ -510,6 +510,7 @@ function MainPage() {
   const setLoadingTrue = () => {
     setIsLoading(true);
     setContent("");
+    setImage("");
   };
 
   const setLoadingFalse = () => {
@@ -614,6 +615,8 @@ function MainPage() {
   };
 
   const handlePost = () => {
+    setImage("");
+    setLoadingTrue();
     if (content || chosenEmoji || image) {
       axios
         .post(
@@ -629,8 +632,6 @@ function MainPage() {
           }
         )
         .then((response) => {
-          setImage("");
-          setLoadingTrue();
           setTimeout(() => {
             axios
               .get(`${API_URL}/home`, {
@@ -1268,7 +1269,7 @@ function MainPage() {
     setTimeout(() => {
       setPostsLoadingSpinner(false);
       handleShowPostsHomePage();
-    }, 1200);
+    }, 600);
   }, []);
 
   // useEffects finish to check
@@ -1284,6 +1285,8 @@ function MainPage() {
               <Modal
                 style={{
                   height: "100%",
+                  margin: "0px",
+                  padding: "0px",
                 }}
                 dialogClassName={"modal-fullscreen"}
                 show={showSubscriptionCompletedModal}
@@ -1297,7 +1300,7 @@ function MainPage() {
                     justifyContent: "center",
                     alignItems: "center",
                   }}
-                  className="scrollbar-add signin-modal-body-child-non-reactivate create-account-first-tab"
+                  className={`scrollbar-add signin-modal-body-child-non-reactivate create-account-first-tab scrollbar-add-${themeName}`}
                 >
                   <h1
                     style={{
@@ -1473,9 +1476,11 @@ function MainPage() {
           <Modal
             style={{
               height: "100%",
+              margin: "0px",
+              padding: "0px",
               overflowY: "scroll",
             }}
-            dialogClassName={"scrollbar-add modal-fullscreen"}
+            dialogClassName={`scrollbar-add modal-fullscreen scrollbar-add-${themeName}`}
             show={showModalForProfilePictureOrUsernameOrBoth}
             centered={true}
           >
@@ -1500,7 +1505,7 @@ function MainPage() {
                     style={{
                       overflowY: "auto",
                     }}
-                    className="scrollbar-add signin-modal-body-child-non-reactivate create-account-first-tab"
+                    className={`scrollbar-add signin-modal-body-child-non-reactivate create-account-first-tab scrollbar-add-${themeName}`}
                   >
                     <div
                       className="mt-5"
@@ -2286,15 +2291,16 @@ function MainPage() {
                   style={{
                     resize: "none",
                     padding: "8px",
-                    color:
-                      themeName === "dark-theme"
-                        ? "white"
-                        : "rgba(15,20,25,1.00)",
+
                     lineHeight: "24px",
                     fontWeight: "400",
                     fontSize: `${content ? "15px" : "20px"}`,
                     width: "100%",
                     height: "100px",
+                    color:
+                      themeName === "dark-theme"
+                        ? "white"
+                        : "rgba(15,20,25,1.00)",
                     backgroundColor:
                       themeName === "dark-theme" ? "black" : "transparent",
                   }}
@@ -2498,6 +2504,7 @@ function MainPage() {
                 ""
               )}
             </span>
+
             <div className="all-posts">
               {showForYou ? (
                 <>
@@ -2530,7 +2537,13 @@ function MainPage() {
                                   className="posts-details outside-of-inner-circle-actions"
                                 >
                                   {" "}
-                                  <div className="post-head">
+                                  <div
+                                    style={{
+                                      position: "relative",
+                                      top: "5px",
+                                    }}
+                                    className="post-head"
+                                  >
                                     {/* start to check */}
                                     {post.reposted.length > 0 &&
                                     post.isReposted &&
@@ -2538,8 +2551,6 @@ function MainPage() {
                                       <div
                                         className="you-reposted-head"
                                         style={{
-                                          position: "relative",
-                                          left: "6px",
                                           cursor: "pointer",
                                         }}
                                       >
@@ -2547,6 +2558,9 @@ function MainPage() {
                                           style={{
                                             color: "rgb(83, 100, 113)",
                                             marginLeft: "20px",
+                                            position: "relative",
+                                            top: "5px",
+                                            left: "20px",
                                           }}
                                           width={`16px`}
                                           height={`16px`}
@@ -2574,6 +2588,9 @@ function MainPage() {
                                             marginLeft: "10px",
                                             cursor: "pointer",
                                             textDecoration: "none",
+                                            position: "relative",
+                                            top: "5px",
+                                            left: "15px",
                                           }}
                                           onClick={() =>
                                             setclickedPostBox(post)
@@ -2642,16 +2659,13 @@ function MainPage() {
                                       </div>
                                     ) : null}
                                   </div>
+                                  {/* post box new styling test start to check  */}
+                                  {/* post boxun tamamı start to check  */}
+                                  {/* owner img,fullname,username,created date,three dots start to check */}
                                   <Stack
                                     style={{
                                       cursor: "pointer",
                                     }}
-                                    to={`/${post.userId?.username}/status/${
-                                      !post.isReposted
-                                        ? post._id
-                                        : post.repostedFromThisOriginalPost[0]
-                                            ._id
-                                    }`}
                                     onClick={() => setclickedPostBox(post)}
                                     className="outside-of-inner-circle-post-info-user-info-svg-three-dots"
                                     direction="horizontal"
@@ -2867,6 +2881,7 @@ function MainPage() {
                                     </div>
                                     {/* three dots svg finish to check */}
                                   </Stack>
+                                  {/* owner img,fullname,username,created date,three dots finish to check */}
                                   {/* post content start to check  */}
                                   <Stack
                                     to={`/${post.userId.username}/status/${
@@ -3202,6 +3217,8 @@ function MainPage() {
                                     </div>
                                   </Stack>
                                   {/* new version favorite repost comment finish to check */}
+                                  {/* post boxun tamamı finish to check  */}
+                                  {/* post box new styling test finish to check  */}
                                 </div>
 
                                 <div
@@ -3263,9 +3280,7 @@ function MainPage() {
                     <LoadingSpinner
                       strokeColor={"rgb(29, 155, 240)"}
                     ></LoadingSpinner>
-                  ) : null}
-
-                  {!posts && !posts.length && !postsLoadingSpinner ? (
+                  ) : (
                     <>
                       {" "}
                       {/* when no post yet from for you section in general start to check  */}
@@ -3300,7 +3315,7 @@ function MainPage() {
                       </div>
                       {/* when no post yet from for you section in general finish to check  */}
                     </>
-                  ) : null}
+                  )}
                 </>
               ) : (
                 <>

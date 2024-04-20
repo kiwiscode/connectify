@@ -28,6 +28,13 @@ const API_URL = "http://localhost:3000";
 // ?
 
 function SignUpPage() {
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
+
   const [fullname, setFullname] = useState("");
   const [fullnameFilled, setfullnameFilled] = useState(false);
   const [email, setEmail] = useState("");
@@ -224,7 +231,7 @@ function SignUpPage() {
   // later finish to check
   const popoverContent = (
     <Popover
-      className="scrollbar-add"
+      className={`scrollbar-add scrollbar-add-${themeName}`}
       style={{
         padding: "8px",
         height: "250px",
@@ -261,7 +268,7 @@ function SignUpPage() {
   const [hoveredIndexDay, setIshoveredIndexDay] = useState(null);
   const popoverDayContent = (
     <Popover
-      className="scrollbar-add"
+      className={`scrollbar-add scrollbar-add-${themeName}`}
       style={{
         padding: "8px",
         height: "250px",
@@ -296,7 +303,7 @@ function SignUpPage() {
   const [hoveredIndexYear, setIshoveredIndexYear] = useState(null);
   const popoverYearContent = (
     <Popover
-      className="scrollbar-add"
+      className={`scrollbar-add scrollbar-add-${themeName}`}
       style={{
         padding: "8px",
         height: "250px",
@@ -623,13 +630,6 @@ function SignUpPage() {
   console.log("Height =>", height);
   console.log("Width =>", width);
 
-  const [
-    { theme, themeName },
-    lightModeActive,
-    darkModeActive,
-    cyberpunkModeActive,
-  ] = useContext(ThemeContext);
-
   return (
     <>
       {contextHolder}
@@ -638,6 +638,8 @@ function SignUpPage() {
           <Modal
             style={{
               height: "100%",
+              margin: "0px",
+              padding: "0px",
             }}
             dialogClassName={"modal-fullscreen"}
             show={showCreateAccountModal}
@@ -801,7 +803,7 @@ function SignUpPage() {
                       overflowY: "auto",
                       position: "relative",
                     }}
-                    className="scrollbar-add signin-modal-body-child-non-reactivate create-account-first-tab"
+                    className={`scrollbar-add signin-modal-body-child-non-reactivate create-account-first-tab scrollbar-add-${themeName}`}
                   >
                     <div
                       className="mb-4"
@@ -1315,7 +1317,7 @@ function SignUpPage() {
                   </Modal.Body>
                 ) : (
                   <Modal.Body
-                    className="scrollbar-add signin-modal-body-child-non-reactivate"
+                    className={`scrollbar-add signin-modal-body-child-non-reactivate scrollbar-add-${themeName}`}
                     style={{
                       overflowY: "auto",
                       position: "relative",
@@ -1334,7 +1336,7 @@ function SignUpPage() {
                       Customize your experience
                     </div>
                     <div
-                      className="scrollbar-add"
+                      className={`scrollbar-add scrollbar-add-${themeName}`}
                       style={{
                         overflowY: "auto",
                         position: "relative",
@@ -2181,7 +2183,7 @@ function SignUpPage() {
                   </Modal.Body>
                 ) : (
                   <Modal.Body
-                    className="scrollbar-add signin-modal-body-child-non-reactivate create-account-first-tab"
+                    className={`scrollbar-add signin-modal-body-child-non-reactivate create-account-first-tab scrollbar-add-${themeName}`}
                     style={{
                       overflowY: "auto",
                       position: "relative",
@@ -2697,7 +2699,7 @@ function SignUpPage() {
 
                       position: "relative",
                     }}
-                    className="scrollbar-add signin-modal-body-child-non-reactivate"
+                    className={`scrollbar-add signin-modal-body-child-non-reactivate scrollbar-add-${themeName}`}
                   >
                     <div
                       className="mb-4"
@@ -2711,7 +2713,7 @@ function SignUpPage() {
                       Customize your experience
                     </div>
                     <div
-                      className="scrollbar-add"
+                      className={`scrollbar-add scrollbar-add-${themeName}`}
                       style={{
                         overflowY: "auto",
                         position: "relative",

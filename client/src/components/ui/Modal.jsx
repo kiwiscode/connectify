@@ -397,6 +397,8 @@ function SigninModal({ deactivatedScreen }) {
     setsecondInputActive(true);
   };
 
+  const [validPassword, setValidPassword] = useState(null);
+
   useEffect(() => {
     console.log("First input active mode =>", firstInputActive);
     console.log("Second input active mode =>", secondInputActive);
@@ -404,32 +406,48 @@ function SigninModal({ deactivatedScreen }) {
       seterrorMessageForFirstInput(
         "Password needs to have at least 8 chars and must contain at least one number, one lowercase and one uppercase letter."
       );
-    } else {
-      seterrorMessageForFirstInput("");
     }
+    //  else {
+    //   seterrorMessageForFirstInput("");
+    // }
     if (!regex.test(confirmPassword) && confirmPassword.length) {
       seterrorMessageForSecondInput(
         "Password needs to have at least 8 chars and must contain at least one number, one lowercase and one uppercase letter."
       );
-    } else {
-      seterrorMessageForSecondInput("");
     }
+    //  else {
+    //   seterrorMessageForSecondInput("");
+    // }
 
     if (firstInputActive) {
       if (newPassword !== confirmPassword) {
         seterrorMessageForSecondInput("Passwords do not match.");
-      } else {
-        seterrorMessageForSecondInput("");
-        seterrorMessageForFirstInput("");
       }
+      // else {
+      //   seterrorMessageForSecondInput("");
+      //   seterrorMessageForFirstInput("");
+      // }
     }
     if (secondInputActive) {
       if (confirmPassword !== newPassword) {
         seterrorMessageForFirstInput("Passwords do not match.");
-      } else {
-        seterrorMessageForSecondInput("");
-        seterrorMessageForFirstInput("");
       }
+      // else {
+      //   seterrorMessageForSecondInput("");
+      //   seterrorMessageForFirstInput("");
+      // }
+    }
+    if (
+      confirmPassword !== newPassword ||
+      newPassword !== confirmPassword ||
+      (!regex.test(confirmPassword) && confirmPassword.length) ||
+      (!regex.test(newPassword) && newPassword.length)
+    ) {
+      setValidPassword(false);
+    } else {
+      seterrorMessageForFirstInput("");
+      seterrorMessageForSecondInput("");
+      setValidPassword(true);
     }
   }, [newPassword, confirmPassword]);
   console.log("New password outside of on change function =>", newPassword);
@@ -448,32 +466,33 @@ function SigninModal({ deactivatedScreen }) {
   const handleChangePassword = () => {
     console.log("Tab loading after change password click =>", tabLoading);
     console.log("Tab index after click =>", tabIndex);
-
-    axios
-      .post(
-        `${API_URL}/change-password-forgot-password-process`,
-        {
-          newPassword,
-          user: forgotPasswordInProcessUser,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
+    if (validPassword) {
+      axios
+        .post(
+          `${API_URL}/change-password-forgot-password-process`,
+          {
+            newPassword,
+            user: forgotPasswordInProcessUser,
           },
-        }
-      )
-      .then((response) => {
-        if (response.status === 201) {
-          setTabLoading(true);
-          setTimeout(() => {
-            setTabLoading(false);
-            setTabIndex(tabIndex + 1);
-          }, 700);
-        }
-      })
-      .catch((error) => {
-        console.log("Error =>", error);
-      });
+          {
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
+          }
+        )
+        .then((response) => {
+          if (response.status === 201) {
+            setTabLoading(true);
+            setTimeout(() => {
+              setTabLoading(false);
+              setTabIndex(tabIndex + 1);
+            }, 700);
+          }
+        })
+        .catch((error) => {
+          console.log("Error =>", error);
+        });
+    }
   };
 
   const [forgotMyPasswordChecked, setForgotMyPasswordChecked] = useState(false);
@@ -614,8 +633,15 @@ function SigninModal({ deactivatedScreen }) {
               <Modal
                 style={{
                   height: "100%",
+                  margin: "0px",
+                  padding: "0px",
                 }}
                 dialogClassName={"modal-fullscreen"}
+                contentClassName={
+                  themeName === "dark-theme"
+                    ? "dark-theme-reactivate-account-modal"
+                    : "reactivate-account-modal"
+                }
                 centered={true}
                 show={openDeactivateLoginModal}
                 onHide={handleCloseReactivatedLoginScreen}
@@ -628,7 +654,7 @@ function SigninModal({ deactivatedScreen }) {
                 >
                   <div
                     onClick={handleCloseReactivatedLoginScreen}
-                    className="close-button"
+                    className={`close-button close-button-${themeName}`}
                     style={{
                       borderRadius: "50%",
                       cursor: "pointer",
@@ -644,7 +670,9 @@ function SigninModal({ deactivatedScreen }) {
                         onClick={handleCloseReactivatedLoginScreen}
                         width={20}
                         height={20}
-                        color="rgb(15,20,25)"
+                        color={
+                          themeName === "dark-theme" ? "white" : `rgb(15,20,25)`
+                        }
                         fill="currentColor"
                         viewBox="0 0 24 24"
                         aria-hidden="true"
@@ -660,18 +688,25 @@ function SigninModal({ deactivatedScreen }) {
 
                 <>
                   {" "}
-                  <Modal.Body className="signin-modal-body-child-non-reactivate mt-5">
+                  <Modal.Body
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
                     <div
                       style={{
-                        width: "81.5%",
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "400px",
                       }}
                     >
                       <div
                         style={{
                           fontSize: "26px",
-                          fontWeight: "700",
                           lineHeight: "32px",
-                          letterSpacing: "0.5px",
+                          fontWeight: "800",
+                          color: themeName === "dark-theme" ? "white" : "black",
                         }}
                       >
                         Reactivate your account?
@@ -684,25 +719,31 @@ function SigninModal({ deactivatedScreen }) {
                           fontWeight: "400",
                           lineHeight: "20px",
                         }}
-                      >{`You deactivated your account on ${userdeactivateddate}.On ${userdeletiondate} it will no longer be possible for you to restore your Connectify account if it was accidentally or wrongfully deactivated. By clicking "Yes, reactivate", you will halt the deactivation process and reactivate your account.`}</div>
+                      >{`You deactivated your account on ${userdeactivateddate}.On ${userdeletiondate}, it will no longer be possible for you to restore your Connectify account if it was accidentally or wrongfully deactivated. By clicking "Yes, reactivate", you will halt the deactivation process and reactivate your account.`}</div>
                     </div>
-
                     <Button
                       style={{
-                        width: "81.5%",
                         minHeight: "52px",
+                        width: "400px",
+                        color: themeName === "dark-theme" ? "black" : "white",
+                        backgroundColor:
+                          themeName === "dark-theme" ? "white" : "#0f141a",
                       }}
-                      className="login-button mt-4"
+                      className={`login-button mt-5 next-btn ${themeName}-white-btn`}
+                      // variant="dark"
                       onClick={handleDeactivatedUserReturnLogin}
                     >
                       Yes, reactivate
                     </Button>
                     <Button
-                      className="cancel-btn-reactivate-tab mt-3"
+                      className={`mt-3 forgot-password-btn ${themeName}-black-btn`}
                       style={{
-                        width: "81.5%",
-                        height: "52px",
-                        color: "black",
+                        minHeight: "52px",
+
+                        width: "400px",
+                        color: themeName === "dark-theme" ? "white" : "black",
+                        backgroundColor:
+                          themeName === "dark-theme" ? "black" : "white",
                       }}
                       variant="light"
                       onClick={handleCloseReactivatedLoginScreen}
@@ -716,8 +757,19 @@ function SigninModal({ deactivatedScreen }) {
           ) : (
             <>
               <Modal
-                dialogClassName="signin-modal-dialog"
-                contentClassName="modal-content"
+                style={{
+                  margin: 0,
+                  padding: 0,
+                }}
+                backdropClassName={
+                  themeName === "dark-theme" ? `back-drop-${themeName}` : ""
+                }
+                centered
+                contentClassName={
+                  themeName === "dark-theme"
+                    ? "dark-theme-reactivate-account-modal"
+                    : "reactivate-account-modal"
+                }
                 className="signin-modal"
                 show={openDeactivateLoginModal}
                 onHide={handleCloseReactivatedLoginScreen}
@@ -729,7 +781,7 @@ function SigninModal({ deactivatedScreen }) {
                 >
                   <div
                     onClick={handleCloseReactivatedLoginScreen}
-                    className="close-button"
+                    className={`close-button close-button-${themeName}`}
                     style={{
                       borderRadius: "50%",
                       cursor: "pointer",
@@ -745,7 +797,9 @@ function SigninModal({ deactivatedScreen }) {
                         onClick={handleCloseReactivatedLoginScreen}
                         width={20}
                         height={20}
-                        color="rgb(15,20,25)"
+                        color={
+                          themeName === "dark-theme" ? "white" : `rgb(15,20,25)`
+                        }
                         fill="currentColor"
                         viewBox="0 0 24 24"
                         aria-hidden="true"
@@ -761,18 +815,25 @@ function SigninModal({ deactivatedScreen }) {
 
                 <>
                   {" "}
-                  <Modal.Body>
+                  <Modal.Body
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
                     <div
                       style={{
                         display: "flex",
                         flexDirection: "column",
-                        // width: "420px",
+                        width: "400px",
                       }}
-                      className="sign-in-header mt-4 mb-4"
                     >
                       <div
                         style={{
-                          textAlign: "left",
+                          fontSize: "26px",
+                          lineHeight: "32px",
+                          fontWeight: "800",
+                          color: themeName === "dark-theme" ? "white" : "black",
                         }}
                       >
                         Reactivate your account?
@@ -784,43 +845,41 @@ function SigninModal({ deactivatedScreen }) {
                           fontSize: "15px",
                           fontWeight: "400",
                           lineHeight: "20px",
-                          textAlign: "left",
                         }}
                       >{`You deactivated your account on ${userdeactivateddate}.On ${userdeletiondate}, it will no longer be possible for you to restore your Connectify account if it was accidentally or wrongfully deactivated. By clicking "Yes, reactivate", you will halt the deactivation process and reactivate your account.`}</div>
                     </div>
+
+                    <Button
+                      style={{
+                        minHeight: "52px",
+                        width: "400px",
+                        color: themeName === "dark-theme" ? "black" : "white",
+                        backgroundColor:
+                          themeName === "dark-theme" ? "white" : "#0f141a",
+                      }}
+                      className={`login-button mt-5 next-btn ${themeName}-white-btn`}
+                      // variant="dark"
+                      onClick={handleDeactivatedUserReturnLogin}
+                    >
+                      Yes, reactivate
+                    </Button>
+                    <Button
+                      className={`mt-3 forgot-password-btn ${themeName}-black-btn`}
+                      style={{
+                        minHeight: "52px",
+
+                        width: "400px",
+                        color: themeName === "dark-theme" ? "white" : "black",
+                        backgroundColor:
+                          themeName === "dark-theme" ? "black" : "white",
+                      }}
+                      variant="light"
+                      onClick={handleCloseReactivatedLoginScreen}
+                    >
+                      Cancel
+                    </Button>
                   </Modal.Body>
                 </>
-
-                <Modal.Footer
-                  style={{
-                    border: "none",
-                  }}
-                >
-                  <Button
-                    style={{
-                      // width: "400px",
-                      minHeight: "52px",
-                    }}
-                    className="login-button"
-                    // variant="dark"
-                    onClick={handleDeactivatedUserReturnLogin}
-                  >
-                    Yes, reactivate
-                  </Button>
-                  <Button
-                    className="cancel-btn-reactivate-tab"
-                    style={{
-                      // width: "400px",
-                      minHeight: "52px",
-                      color: "black",
-                    }}
-                    // className="login-button"
-                    variant="light"
-                    onClick={handleCloseReactivatedLoginScreen}
-                  >
-                    Cancel
-                  </Button>
-                </Modal.Footer>
               </Modal>
             </>
           )}
@@ -834,7 +893,12 @@ function SigninModal({ deactivatedScreen }) {
                   <Modal
                     style={{
                       height: "100%",
+                      margin: "0px",
+                      padding: "0px",
                     }}
+                    contentClassName={
+                      themeName === "dark-theme" ? "dark-theme-sub-modal" : ""
+                    }
                     dialogClassName={"modal-fullscreen"}
                     centered={true}
                     show={showLoginModal}
@@ -848,7 +912,7 @@ function SigninModal({ deactivatedScreen }) {
                     >
                       <div
                         onClick={handleCloseLoginModal}
-                        className="close-button"
+                        className={`close-button close-button-${themeName}`}
                         style={{
                           borderRadius: "50%",
                           cursor: "pointer",
@@ -865,7 +929,11 @@ function SigninModal({ deactivatedScreen }) {
                             onClick={handleCloseLoginModal}
                             width={20}
                             height={20}
-                            color="rgb(15,20,25)"
+                            color={
+                              themeName === "dark-theme"
+                                ? "white"
+                                : "rgb(15,20,25)"
+                            }
                             fill="currentColor"
                             viewBox="0 0 24 24"
                             aria-hidden="true"
@@ -903,23 +971,29 @@ function SigninModal({ deactivatedScreen }) {
                               }
                             }
                           >
-                            <span
-                              style={{
-                                fontSize: "26px",
-                                fontWeight: "700",
-                                lineHeight: "32px",
-                                letterSpacing: "0.5px",
-                              }}
-                              className="sign-in-header mt-4 mb-4"
-                            >
-                              Sign in to Connectify
-                            </span>
-
                             <div>
+                              <div
+                                style={{
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "white"
+                                      : "black",
+                                  fontSize: "31px",
+                                  fontWeight: "700",
+                                  lineHeight: "36px",
+                                  letterSpacing: "0.5px",
+                                }}
+                                className="sign-in-header mt-4 mb-4"
+                              >
+                                Sign in to C
+                              </div>
                               <Button
                                 onClick={googleAuth}
                                 style={{
-                                  backgroundColor: "transparent",
+                                  backgroundColor:
+                                    themeName === "dark-theme"
+                                      ? "white"
+                                      : "transparent",
                                   borderWidth: "1px",
                                   minWidth: "300px",
                                   minHeight: "40px",
@@ -974,6 +1048,7 @@ function SigninModal({ deactivatedScreen }) {
                               </Button>
                             </div>
                             <Divider
+                              className={`theme-divider-${themeName}`}
                               style={{
                                 width: "300px",
                                 minWidth: "300px",
@@ -981,7 +1056,16 @@ function SigninModal({ deactivatedScreen }) {
                               }}
                               plain
                             >
-                              or
+                              <span
+                                style={{
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "white"
+                                      : "black",
+                                }}
+                              >
+                                or
+                              </span>
                             </Divider>
                             <TextField
                               autoFocus
@@ -1001,13 +1085,35 @@ function SigninModal({ deactivatedScreen }) {
                                 width: "300px",
                                 height: "58px",
                               }}
+                              InputProps={{
+                                style: {
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "white"
+                                      : "black",
+                                },
+                              }}
+                              InputLabelProps={{
+                                style: {
+                                  color:
+                                    themeName === "dark-theme" ? "#71767B" : "",
+                                },
+                              }}
                               sx={{
+                                "& .MuiOutlinedInput-notchedOutline": {
+                                  borderColor:
+                                    themeName === "dark-theme"
+                                      ? "rgb(70, 70, 70)"
+                                      : "#cfd9de !important",
+                                  border:
+                                    themeName === "dark-theme"
+                                      ? "1px solid rgb(70, 70, 70) !important"
+                                      : "",
+                                },
                                 "& .Mui-focused input + fieldset": {
                                   border: "2px solid #1d9bf0 !important",
                                 },
-                                "& .MuiOutlinedInput-notchedOutline": {
-                                  borderColor: "#cfd9de !important",
-                                },
+
                                 "& .MuiInputLabel-shrink": {
                                   color: "#1f9cf0 !important",
                                 },
@@ -1024,7 +1130,7 @@ function SigninModal({ deactivatedScreen }) {
                                 fontWeight: "700",
                                 lineHeight: "20px",
                               }}
-                              className="login-button mt-4 next-btn"
+                              className={`login-button mt-4 next-btn ${themeName}-white-btn`}
                               variant="dark"
                               onClick={handleLoginVariantOneStartProcess}
                             >
@@ -1034,12 +1140,15 @@ function SigninModal({ deactivatedScreen }) {
                               style={{
                                 width: "300px",
                                 height: "36px",
-                                color: "black",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "black",
                                 fontSize: "15px",
                                 fontWeight: "700",
                                 lineHeight: "20px",
                               }}
-                              className="mt-4 forgot-password-btn"
+                              className={`mt-4 forgot-password-btn ${themeName}-black-btn`}
                               variant="light"
                               onClick={() => {
                                 setTabLoading(true);
@@ -1104,7 +1213,7 @@ function SigninModal({ deactivatedScreen }) {
                         ) : (
                           <>
                             <Modal.Body
-                              className="scrollbar-add signin-modal-body-child-non-reactivate"
+                              className={`scrollbar-add signin-modal-body-child-non-reactivate scrollbar-add-${themeName}`}
                               style={{
                                 overflowY: "auto",
                                 position: "relative",
@@ -1119,6 +1228,10 @@ function SigninModal({ deactivatedScreen }) {
                                   fontWeight: "700",
                                   fontSize: "26px",
                                   letterSpacing: "0.5px",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "white"
+                                      : "black",
                                 }}
                               >
                                 Find your Connectify account
@@ -1151,12 +1264,34 @@ function SigninModal({ deactivatedScreen }) {
                                   width: "81.5%",
                                   height: "58px",
                                 }}
+                                InputLabelProps={{
+                                  style: {
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "#71767B"
+                                        : "",
+                                  },
+                                }}
+                                InputProps={{
+                                  style: {
+                                    color:
+                                      themeName === "dark-theme" ? "white" : "",
+                                  },
+                                }}
                                 sx={{
+                                  color: "yellow",
                                   "& .Mui-focused input + fieldset": {
                                     border: "2px solid #1d9bf0 !important",
                                   },
                                   "& .MuiOutlinedInput-notchedOutline": {
-                                    borderColor: "#cfd9de !important",
+                                    borderColor:
+                                      themeName === "dark-theme"
+                                        ? "rgb(70, 70, 70)"
+                                        : "#cfd9de !important",
+                                    border:
+                                      themeName === "dark-theme"
+                                        ? "1px solid rgb(70, 70, 70) !important"
+                                        : "",
                                   },
                                   "& .MuiInputLabel-shrink": {
                                     color: "#1f9cf0 !important",
@@ -1175,7 +1310,7 @@ function SigninModal({ deactivatedScreen }) {
                                     : "0.5",
                                 }}
                                 onClick={() => handleFindConnectifyAccount()}
-                                className="login-button mt-5"
+                                className={`login-button mt-5 ${themeName}-white-btn`}
                                 variant="dark"
                               >
                                 Next
@@ -1203,7 +1338,7 @@ function SigninModal({ deactivatedScreen }) {
                           <>
                             {/* start to check confirm username */}
                             <Modal.Body
-                              className="scrollbar-add signin-modal-body-child-non-reactivate"
+                              className={`scrollbar-add signin-modal-body-child-non-reactivate scrollbar-add-${themeName}`}
                               style={{
                                 overflowY: "auto",
                                 position: "relative",
@@ -1310,6 +1445,10 @@ function SigninModal({ deactivatedScreen }) {
                                 fontWeight: "700",
                                 fontSize: "26px",
                                 letterSpacing: "0.5px",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "black",
                               }}
                             >
                               Where should we send a confirmation code?
@@ -1350,6 +1489,10 @@ function SigninModal({ deactivatedScreen }) {
                               style={{
                                 display: "flex",
                                 width: "81.5%",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "black",
                               }}
                             >
                               <div
@@ -1417,6 +1560,10 @@ function SigninModal({ deactivatedScreen }) {
                                 fontSize: "15px",
                                 fontWeight: "400",
                                 width: "81.5%",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "black",
                               }}
                             >
                               Contact{" "}
@@ -1435,25 +1582,25 @@ function SigninModal({ deactivatedScreen }) {
                               style={{
                                 position: "absolute",
                                 bottom: "70px",
-                                width: "81.5%",
+                                width: "90%",
                                 height: "52px",
                               }}
                               onClick={() =>
                                 handleSendForgotPasswordCodeToEmail()
                               }
-                              className="login-button mt-5 mb-3"
+                              className={`login-button mt-5 mb-3 ${themeName}-white-btn`}
                               variant="dark"
                             >
                               Next
                             </Button>
 
                             <Button
-                              className="cancel-btn-reactivate-tab"
+                              className={`cancel-btn-reactivate-tab ${themeName}-black-btn`}
                               style={{
                                 position: "absolute",
                                 bottom: "20px",
                                 height: "52px",
-                                width: "81.5%",
+                                width: "90%",
                                 color: "black",
                               }}
                               // className="login-button"
@@ -1489,7 +1636,7 @@ function SigninModal({ deactivatedScreen }) {
                               overflowY: "auto",
                               position: "relative",
                             }}
-                            className="scrollbar-add signin-modal-body-child-non-reactivate"
+                            className={`scrollbar-add signin-modal-body-child-non-reactivate scrollbar-add-${themeName}`}
                           >
                             <div
                               style={{
@@ -1500,6 +1647,10 @@ function SigninModal({ deactivatedScreen }) {
                                 fontWeight: "700",
                                 fontSize: "26px",
                                 letterSpacing: "0.5px",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "black",
                               }}
                             >
                               We sent you a code
@@ -1533,12 +1684,31 @@ function SigninModal({ deactivatedScreen }) {
                                 width: "81.5%",
                                 height: "58px",
                               }}
+                              InputProps={{
+                                style: {
+                                  color:
+                                    themeName === "dark-theme" ? "white" : "",
+                                },
+                              }}
+                              InputLabelProps={{
+                                style: {
+                                  color:
+                                    themeName === "dark-theme" ? "#71767B" : "",
+                                },
+                              }}
                               sx={{
                                 "& .Mui-focused input + fieldset": {
                                   border: "2px solid #1d9bf0 !important",
                                 },
                                 "& .MuiOutlinedInput-notchedOutline": {
-                                  borderColor: "#cfd9de !important",
+                                  borderColor:
+                                    themeName === "dark-theme"
+                                      ? "rgb(70, 70, 70)"
+                                      : "#cfd9de !important",
+                                  border:
+                                    themeName === "dark-theme"
+                                      ? "1px solid rgb(70, 70, 70) !important"
+                                      : "",
                                 },
                                 "& .MuiInputLabel-shrink": {
                                   color: "#1f9cf0 !important",
@@ -1550,7 +1720,7 @@ function SigninModal({ deactivatedScreen }) {
                                 style={{
                                   position: "absolute",
                                   bottom: "20px",
-                                  width: "81.5%",
+                                  width: "90%",
                                   minHeight: "52px",
                                   color: "white",
                                 }}
@@ -1562,7 +1732,7 @@ function SigninModal({ deactivatedScreen }) {
                                         "Invalid verification code."
                                       );
                                 }}
-                                className="login-button"
+                                className={`login-button ${themeName}-white-btn`}
                                 variant="dark"
                               >
                                 Next
@@ -1570,11 +1740,11 @@ function SigninModal({ deactivatedScreen }) {
                             ) : (
                               <>
                                 <Button
-                                  className={"cancel-btn-reactivate-tab"}
+                                  className={`cancel-btn-reactivate-tab ${themeName}-black-btn`}
                                   style={{
                                     position: "absolute",
                                     bottom: "20px",
-                                    width: "81.5%",
+                                    width: "90%",
                                     minHeight: "52px",
                                     color: "black",
                                   }}
@@ -1617,6 +1787,10 @@ function SigninModal({ deactivatedScreen }) {
                                   fontWeight: "700",
                                   fontSize: "26px",
                                   letterSpacing: "0.5px",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "white"
+                                      : "black",
                                 }}
                               >
                                 Choose a new password
@@ -1666,6 +1840,10 @@ function SigninModal({ deactivatedScreen }) {
                               >
                                 <InputLabel
                                   sx={{
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "#71767B"
+                                        : "",
                                     "&.MuiInputLabel-shrink": {
                                       color: errorMessageForFirstInput
                                         ? "rgb(244, 33, 46)!important"
@@ -1677,6 +1855,14 @@ function SigninModal({ deactivatedScreen }) {
                                   Enter a new password
                                 </InputLabel>
                                 <OutlinedInput
+                                  inputProps={{
+                                    style: {
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "white"
+                                          : "",
+                                    },
+                                  }}
                                   sx={{
                                     "& .MuiOutlinedInput-notchedOutline": {
                                       borderColor: errorMessageForFirstInput
@@ -1704,7 +1890,11 @@ function SigninModal({ deactivatedScreen }) {
                                           style={{
                                             cursor: "pointer",
                                           }}
-                                          color="rgb(15, 20, 25)"
+                                          color={
+                                            themeName === "dark-theme"
+                                              ? "white"
+                                              : `rgb(15, 20, 25)`
+                                          }
                                           fill="currentColor"
                                           width={22}
                                           height={22}
@@ -1718,6 +1908,12 @@ function SigninModal({ deactivatedScreen }) {
                                         </svg>
                                       ) : (
                                         <svg
+                                          color={
+                                            themeName === "dark-theme"
+                                              ? "white"
+                                              : `rgb(15, 20, 25)`
+                                          }
+                                          fill="currentColor"
                                           onClick={handleClickShowPassword}
                                           onMouseDown={handleMouseDownPassword}
                                           style={{
@@ -1725,8 +1921,6 @@ function SigninModal({ deactivatedScreen }) {
                                           }}
                                           width={22}
                                           height={22}
-                                          color="rgb(15, 20, 25)"
-                                          fill="currentColor"
                                           viewBox="0 0 24 24"
                                           aria-hidden="true"
                                           className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18yzcnr r-yc9v9c"
@@ -1763,6 +1957,10 @@ function SigninModal({ deactivatedScreen }) {
                               >
                                 <InputLabel
                                   sx={{
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "#71767B"
+                                        : "",
                                     "&.MuiInputLabel-shrink": {
                                       color: errorMessageForSecondInput
                                         ? "rgb(244, 33, 46)!important"
@@ -1774,6 +1972,14 @@ function SigninModal({ deactivatedScreen }) {
                                   Confirm your password
                                 </InputLabel>
                                 <OutlinedInput
+                                  inputProps={{
+                                    style: {
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "white"
+                                          : "",
+                                    },
+                                  }}
                                   sx={{
                                     "& .MuiOutlinedInput-notchedOutline": {
                                       borderColor: errorMessageForSecondInput
@@ -1809,7 +2015,11 @@ function SigninModal({ deactivatedScreen }) {
                                           style={{
                                             cursor: "pointer",
                                           }}
-                                          color="rgb(15, 20, 25)"
+                                          color={
+                                            themeName === "dark-theme"
+                                              ? "white"
+                                              : `rgb(15, 20, 25)`
+                                          }
                                           fill="currentColor"
                                           width={22}
                                           height={22}
@@ -1834,7 +2044,11 @@ function SigninModal({ deactivatedScreen }) {
                                           }}
                                           width={22}
                                           height={22}
-                                          color="rgb(15, 20, 25)"
+                                          color={
+                                            themeName === "dark-theme"
+                                              ? "white"
+                                              : `rgb(15, 20, 25)`
+                                          }
                                           fill="currentColor"
                                           viewBox="0 0 24 24"
                                           aria-hidden="true"
@@ -1867,19 +2081,20 @@ function SigninModal({ deactivatedScreen }) {
                               ) : null}
                               <Button
                                 style={{
-                                  width: "81.5%",
+                                  width: "90%",
                                   height: "52px",
                                   position: "absolute",
                                   bottom: "20px",
-                                  opacity:
-                                    confirmPassword.length && newPassword.length
-                                      ? "1"
-                                      : "0.5",
+                                  opacity: validPassword ? "1" : "0.5",
                                 }}
-                                onClick={() => {
-                                  handleChangePassword();
-                                }}
-                                className="login-button mt-5"
+                                onClick={
+                                  validPassword
+                                    ? () => {
+                                        handleChangePassword();
+                                      }
+                                    : () => window.alert("Check errors!")
+                                }
+                                className={`login-button mt-5 ${themeName}-white-btn`}
                                 variant="dark"
                               >
                                 Change password
@@ -1933,7 +2148,7 @@ function SigninModal({ deactivatedScreen }) {
                               people need to change their passwords.
                             </div>
                             <div
-                              className="mt-5 scrollbar-add "
+                              className={`mt-5 scrollbar-add scrollbar-add-${themeName}`}
                               style={{
                                 overflowY: "auto",
                                 position: "relative",
@@ -2014,7 +2229,7 @@ function SigninModal({ deactivatedScreen }) {
                               </div>
                             </div>
                             <div
-                              className="mt-3 scrollbar-add "
+                              className={`mt-3 scrollbar-add scrollbar-add-${themeName}`}
                               style={{
                                 overflowY: "auto",
                                 position: "relative",
@@ -2095,7 +2310,7 @@ function SigninModal({ deactivatedScreen }) {
                               </div>
                             </div>
                             <div
-                              className="mt-3 scrollbar-add "
+                              className={`mt-3 scrollbar-add scrollbar-add-${themeName}`}
                               style={{
                                 overflowY: "auto",
                                 position: "relative",
@@ -2303,7 +2518,7 @@ function SigninModal({ deactivatedScreen }) {
                           ) : (
                             <>
                               <Modal.Body
-                                className="scrollbar-add signin-modal-body-child-non-reactivate"
+                                className={`scrollbar-add signin-modal-body-child-non-reactivate scrollbar-add-${themeName}`}
                                 style={{
                                   overflowY: "auto",
                                   position: "relative",
@@ -2311,6 +2526,10 @@ function SigninModal({ deactivatedScreen }) {
                               >
                                 <div
                                   style={{
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "white"
+                                        : "black",
                                     display: "flex",
                                     textAlign: "left",
                                     width: "81.5%",
@@ -2327,33 +2546,97 @@ function SigninModal({ deactivatedScreen }) {
                                   className="mt-5"
                                   style={{
                                     width: "81.5%",
-                                    height: "58px",
                                   }}
                                 >
                                   <TextField
                                     style={{
                                       width: "100%",
+                                      height: "60px",
                                     }}
                                     disabled
                                     id="filled-disabled"
-                                    label="Username"
-                                    defaultValue={
-                                      loginInput.usernameOrEmail.match(
-                                        emailRegex
-                                      )
-                                        ? `${loginInput.usernameOrEmail}`
-                                        : `@${loginInput.usernameOrEmail}`
+                                    label={
+                                      <div
+                                        style={{
+                                          flexDirection: "column",
+                                          justifyContent: "center",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <div
+                                          style={{
+                                            fontSize: "13px",
+                                            position: "relative",
+                                            bottom: "5px",
+                                            color:
+                                              themeName === "dark-theme"
+                                                ? "#3C3F41"
+                                                : "",
+                                          }}
+                                        >
+                                          {loginInput.usernameOrEmail.match(
+                                            emailRegex
+                                          )
+                                            ? `Email`
+                                            : `Username`}
+                                        </div>
+                                        <div
+                                          style={{
+                                            position: "relative",
+                                            bottom: "5px",
+                                            color:
+                                              themeName === "dark-theme"
+                                                ? "#3C3F41"
+                                                : "#999A9B",
+                                          }}
+                                        >
+                                          {loginInput.usernameOrEmail.match(
+                                            emailRegex
+                                          )
+                                            ? `${loginInput.usernameOrEmail}`
+                                            : `@${loginInput.usernameOrEmail}`}
+                                        </div>
+                                      </div>
                                     }
                                     variant="filled"
                                     InputProps={{
                                       disableUnderline: true,
                                     }}
+                                    InputLabelProps={{
+                                      style: {
+                                        color:
+                                          themeName === "dark-theme"
+                                            ? "#71767B"
+                                            : "",
+                                      },
+                                    }}
                                     sx={{
                                       "& .MuiFilledInput-root": {
-                                        background: "#f7f9fa !important",
+                                        background:
+                                          themeName === "dark-theme"
+                                            ? "#0D0E11 !important"
+                                            : "#f7f9fa !important",
+                                        height: "60px",
                                       },
                                     }}
                                   />
+                                  <span
+                                    style={{
+                                      position: "absolute",
+                                      left: "13.4px",
+                                      bottom: "11.9px",
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "#71767B"
+                                          : "#999A9B",
+                                    }}
+                                  >
+                                    {loginInput.usernameOrEmail.match(
+                                      emailRegex
+                                    )
+                                      ? `${loginInput.usernameOrEmail}`
+                                      : `@${loginInput.usernameOrEmail}`}
+                                  </span>
                                 </div>
                                 <FormControl
                                   className="mt-4"
@@ -2365,6 +2648,10 @@ function SigninModal({ deactivatedScreen }) {
                                 >
                                   <InputLabel
                                     sx={{
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "white"
+                                          : "",
                                       "&.MuiInputLabel-shrink": {
                                         color: "#1f9cf0 !important",
                                       },
@@ -2376,8 +2663,19 @@ function SigninModal({ deactivatedScreen }) {
                                   <OutlinedInput
                                     autoFocus
                                     sx={{
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "white"
+                                          : "black",
                                       "& .MuiOutlinedInput-notchedOutline": {
-                                        borderColor: "#cfd9de !important",
+                                        borderColor:
+                                          themeName === "dark-theme"
+                                            ? "rgb(70, 70, 70)"
+                                            : "#cfd9de !important",
+                                        border:
+                                          themeName === "dark-theme"
+                                            ? "1px solid rgb(70, 70, 70) !important"
+                                            : "",
                                       },
                                       "&.Mui-focused .MuiOutlinedInput-notchedOutline":
                                         {
@@ -2405,7 +2703,11 @@ function SigninModal({ deactivatedScreen }) {
                                             style={{
                                               cursor: "pointer",
                                             }}
-                                            color="rgb(15, 20, 25)"
+                                            color={
+                                              themeName === "dark-theme"
+                                                ? "white"
+                                                : `rgb(15, 20, 25)`
+                                            }
                                             fill="currentColor"
                                             width={22}
                                             height={22}
@@ -2428,7 +2730,11 @@ function SigninModal({ deactivatedScreen }) {
                                             }}
                                             width={22}
                                             height={22}
-                                            color="rgb(15, 20, 25)"
+                                            color={
+                                              themeName === "dark-theme"
+                                                ? "white"
+                                                : `rgb(15, 20, 25)`
+                                            }
                                             fill="currentColor"
                                             viewBox="0 0 24 24"
                                             aria-hidden="true"
@@ -2467,21 +2773,21 @@ function SigninModal({ deactivatedScreen }) {
                                     lineHeight: "16px",
                                   }}
                                 >
-                                  Forgot password
+                                  Forgot password?
                                 </div>
 
                                 <Button
                                   style={{
                                     position: "absolute",
                                     bottom: "60px",
-                                    width: "81.5%",
+                                    width: "90%",
                                     height: "52px",
                                     opacity: loginInput.password.length
                                       ? "1"
                                       : "0.5",
                                   }}
                                   onClick={() => handleLoginVariantOneStep2()}
-                                  className="login-button mt-5"
+                                  className={`login-button mt-5 ${themeName}-white-btn`}
                                   variant="dark"
                                 >
                                   Log in
@@ -2490,7 +2796,7 @@ function SigninModal({ deactivatedScreen }) {
                                   style={{
                                     position: "absolute",
                                     bottom: "15px",
-                                    width: "81.5%",
+                                    width: "90%",
                                     fontSize: "15px",
                                     fontWeight: "400",
                                     lineHeight: "20px",
@@ -2525,6 +2831,18 @@ function SigninModal({ deactivatedScreen }) {
                 </>
               ) : (
                 <Modal
+                  style={{
+                    padding: 0,
+                    margin: 0,
+                  }}
+                  backdropClassName={
+                    themeName === "dark-theme" ? `back-drop-${themeName}` : ""
+                  }
+                  contentClassName={
+                    themeName === "dark-theme"
+                      ? "dark-theme-modal"
+                      : "light-theme-modal"
+                  }
                   show={showLoginModal}
                   onHide={handleCloseLoginModal}
                   size="lg"
@@ -2539,7 +2857,7 @@ function SigninModal({ deactivatedScreen }) {
                   >
                     <div
                       onClick={handleCloseLoginModal}
-                      className="close-button"
+                      className={`close-button close-button-${themeName}`}
                       style={{
                         borderRadius: "50%",
                         cursor: "pointer",
@@ -2557,7 +2875,11 @@ function SigninModal({ deactivatedScreen }) {
                           onClick={handleCloseLoginModal}
                           width={20}
                           height={20}
-                          color="rgb(15,20,25)"
+                          color={
+                            themeName === "dark-theme"
+                              ? "white"
+                              : `rgb(15,20,25)`
+                          }
                           fill="currentColor"
                           viewBox="0 0 24 24"
                           aria-hidden="true"
@@ -2595,23 +2917,29 @@ function SigninModal({ deactivatedScreen }) {
                             }
                           }
                         >
-                          <span
-                            style={{
-                              fontSize: "31px",
-                              fontWeight: "700",
-                              lineHeight: "36px",
-                              letterSpacing: "0.5px",
-                            }}
-                            className="sign-in-header mt-4 mb-4"
-                          >
-                            Sign in to Connectify
-                          </span>
-
                           <div>
+                            <div
+                              style={{
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "black",
+                                fontSize: "31px",
+                                fontWeight: "700",
+                                lineHeight: "36px",
+                                letterSpacing: "0.5px",
+                              }}
+                              className="sign-in-header mt-4 mb-4"
+                            >
+                              Sign in to C
+                            </div>
                             <Button
                               onClick={googleAuth}
                               style={{
-                                backgroundColor: "transparent",
+                                backgroundColor:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "transparent",
                                 borderWidth: "1px",
                                 minWidth: "300px",
                                 minHeight: "40px",
@@ -2666,6 +2994,7 @@ function SigninModal({ deactivatedScreen }) {
                             </Button>
                           </div>
                           <Divider
+                            className={`theme-divider-${themeName}`}
                             style={{
                               width: "300px",
                               minWidth: "300px",
@@ -2673,7 +3002,16 @@ function SigninModal({ deactivatedScreen }) {
                             }}
                             plain
                           >
-                            or
+                            <span
+                              style={{
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "black",
+                              }}
+                            >
+                              or
+                            </span>
                           </Divider>
                           <TextField
                             autoFocus
@@ -2693,12 +3031,33 @@ function SigninModal({ deactivatedScreen }) {
                               width: "300px",
                               height: "58px",
                             }}
+                            InputProps={{
+                              style: {
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "black",
+                              },
+                            }}
+                            InputLabelProps={{
+                              style: {
+                                color:
+                                  themeName === "dark-theme" ? "#71767B" : "",
+                              },
+                            }}
                             sx={{
+                              "& .MuiOutlinedInput-notchedOutline": {
+                                borderColor:
+                                  themeName === "dark-theme"
+                                    ? "rgb(70, 70, 70)"
+                                    : "#cfd9de !important",
+                                border:
+                                  themeName === "dark-theme"
+                                    ? "1px solid rgb(70, 70, 70) !important"
+                                    : "",
+                              },
                               "& .Mui-focused input + fieldset": {
                                 border: "2px solid #1d9bf0 !important",
-                              },
-                              "& .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#cfd9de !important",
                               },
                               "& .MuiInputLabel-shrink": {
                                 color: "#1f9cf0 !important",
@@ -2712,12 +3071,11 @@ function SigninModal({ deactivatedScreen }) {
                             style={{
                               width: "300px",
                               minHeight: "36px",
-                              color: "white",
                               fontSize: "15px",
                               fontWeight: "700",
                               lineHeight: "20px",
                             }}
-                            className="login-button mt-4 next-btn"
+                            className={`login-button mt-4 next-btn ${themeName}-white-btn`}
                             variant="dark"
                             // onClick={() => {
                             //   setTabLoading(true);
@@ -2737,12 +3095,13 @@ function SigninModal({ deactivatedScreen }) {
                             style={{
                               width: "300px",
                               height: "36px",
-                              color: "black",
+                              color:
+                                themeName === "dark-theme" ? "white" : "black",
                               fontSize: "15px",
                               fontWeight: "700",
                               lineHeight: "20px",
                             }}
-                            className="mt-4 forgot-password-btn"
+                            className={`mt-4 forgot-password-btn ${themeName}-black-btn`}
                             variant="light"
                             onClick={() => {
                               setTabLoading(true);
@@ -2787,6 +3146,8 @@ function SigninModal({ deactivatedScreen }) {
                       {tabLoading ? (
                         <Modal.Body
                           style={{
+                            padding: 0,
+                            margin: 0,
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "center",
@@ -2800,7 +3161,7 @@ function SigninModal({ deactivatedScreen }) {
                       ) : (
                         <>
                           <Modal.Body
-                            className="scrollbar-add signin-modal-body-child-non-reactivate"
+                            className={`scrollbar-add signin-modal-body-child-non-reactivate scrollbar-add-${themeName}`}
                             style={{
                               overflowY: "auto",
                               position: "relative",
@@ -2812,6 +3173,10 @@ function SigninModal({ deactivatedScreen }) {
                                 lineHeight: "36px",
                                 fontWeight: "700",
                                 fontSize: "31px",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "black",
                               }}
                             >
                               Find your Connectify account
@@ -2844,12 +3209,31 @@ function SigninModal({ deactivatedScreen }) {
                                 width: "81.5%",
                                 height: "58px",
                               }}
+                              InputLabelProps={{
+                                style: {
+                                  color:
+                                    themeName === "dark-theme" ? "#71767B" : "",
+                                },
+                              }}
+                              InputProps={{
+                                style: {
+                                  color:
+                                    themeName === "dark-theme" ? "white" : "",
+                                },
+                              }}
                               sx={{
                                 "& .Mui-focused input + fieldset": {
                                   border: "2px solid #1d9bf0 !important",
                                 },
                                 "& .MuiOutlinedInput-notchedOutline": {
-                                  borderColor: "#cfd9de !important",
+                                  borderColor:
+                                    themeName === "dark-theme"
+                                      ? "rgb(70, 70, 70)"
+                                      : "#cfd9de !important",
+                                  border:
+                                    themeName === "dark-theme"
+                                      ? "1px solid rgb(70, 70, 70) !important"
+                                      : "",
                                 },
                                 "& .MuiInputLabel-shrink": {
                                   color: "#1f9cf0 !important",
@@ -2868,7 +3252,7 @@ function SigninModal({ deactivatedScreen }) {
                                   : "0.5",
                               }}
                               onClick={() => handleFindConnectifyAccount()}
-                              className="login-button mt-5"
+                              className={`login-button mt-5 ${themeName}-white-btn`}
                               variant="dark"
                             >
                               Next
@@ -2897,7 +3281,7 @@ function SigninModal({ deactivatedScreen }) {
                         <>
                           {/* start to check confirm username */}
                           <Modal.Body
-                            className="scrollbar-add signin-modal-body-child-non-reactivate"
+                            className={`scrollbar-add signin-modal-body-child-non-reactivate scrollbar-add-${themeName}`}
                             style={{
                               overflowY: "auto",
                               position: "relative",
@@ -2999,6 +3383,8 @@ function SigninModal({ deactivatedScreen }) {
                               lineHeight: "36px",
                               fontWeight: "700",
                               fontSize: "31px",
+                              color:
+                                themeName === "dark-theme" ? "white" : "black",
                             }}
                           >
                             Where should we send a confirmation code?
@@ -3038,6 +3424,8 @@ function SigninModal({ deactivatedScreen }) {
                             style={{
                               display: "flex",
                               width: "81.5%",
+                              color:
+                                themeName === "dark-theme" ? "white" : "black",
                             }}
                           >
                             <div
@@ -3105,6 +3493,8 @@ function SigninModal({ deactivatedScreen }) {
                               fontSize: "15px",
                               fontWeight: "400",
                               width: "81.5%",
+                              color:
+                                themeName === "dark-theme" ? "white" : "black",
                             }}
                           >
                             Contact{" "}
@@ -3123,25 +3513,25 @@ function SigninModal({ deactivatedScreen }) {
                             style={{
                               position: "absolute",
                               bottom: "70px",
-                              width: "81.5%",
+                              width: "90%",
                               height: "52px",
                             }}
                             onClick={() =>
                               handleSendForgotPasswordCodeToEmail()
                             }
-                            className="login-button mt-5 mb-3"
+                            className={`login-button mt-5 mb-3 ${themeName}-white-btn`}
                             variant="dark"
                           >
                             Next
                           </Button>
 
                           <Button
-                            className="cancel-btn-reactivate-tab"
+                            className={`cancel-btn-reactivate-tab ${themeName}-black-btn`}
                             style={{
                               position: "absolute",
                               bottom: "20px",
                               height: "52px",
-                              width: "81.5%",
+                              width: "90%",
                               color: "black",
                             }}
                             // className="login-button"
@@ -3178,7 +3568,7 @@ function SigninModal({ deactivatedScreen }) {
                             overflowY: "auto",
                             position: "relative",
                           }}
-                          className="scrollbar-add signin-modal-body-child-non-reactivate"
+                          className={`scrollbar-add signin-modal-body-child-non-reactivate scrollbar-add-${themeName}`}
                         >
                           <div
                             style={{
@@ -3186,6 +3576,8 @@ function SigninModal({ deactivatedScreen }) {
                               lineHeight: "36px",
                               fontWeight: "700",
                               fontSize: "31px",
+                              color:
+                                themeName === "dark-theme" ? "white" : "black",
                             }}
                           >
                             We sent you a code
@@ -3219,12 +3611,31 @@ function SigninModal({ deactivatedScreen }) {
                               width: "81.5%",
                               height: "58px",
                             }}
+                            InputProps={{
+                              style: {
+                                color:
+                                  themeName === "dark-theme" ? "white" : "",
+                              },
+                            }}
+                            InputLabelProps={{
+                              style: {
+                                color:
+                                  themeName === "dark-theme" ? "#71767B" : "",
+                              },
+                            }}
                             sx={{
                               "& .Mui-focused input + fieldset": {
                                 border: "2px solid #1d9bf0 !important",
                               },
                               "& .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#cfd9de !important",
+                                borderColor:
+                                  themeName === "dark-theme"
+                                    ? "rgb(70, 70, 70)"
+                                    : "#cfd9de !important",
+                                border:
+                                  themeName === "dark-theme"
+                                    ? "1px solid rgb(70, 70, 70) !important"
+                                    : "",
                               },
                               "& .MuiInputLabel-shrink": {
                                 color: "#1f9cf0 !important",
@@ -3236,7 +3647,7 @@ function SigninModal({ deactivatedScreen }) {
                               style={{
                                 position: "absolute",
                                 bottom: "20px",
-                                width: "81.5%",
+                                width: "90%",
                                 minHeight: "52px",
                                 color: "white",
                               }}
@@ -3248,7 +3659,7 @@ function SigninModal({ deactivatedScreen }) {
                                       "Invalid verification code."
                                     );
                               }}
-                              className="login-button"
+                              className={`login-button ${themeName}-white-btn`}
                               variant="dark"
                             >
                               Next
@@ -3256,11 +3667,11 @@ function SigninModal({ deactivatedScreen }) {
                           ) : (
                             <>
                               <Button
-                                className={"cancel-btn-reactivate-tab"}
+                                className={`cancel-btn-reactivate-tab ${themeName}-black-btn`}
                                 style={{
                                   position: "absolute",
                                   bottom: "20px",
-                                  width: "81.5%",
+                                  width: "90%",
                                   minHeight: "52px",
                                   color: "black",
                                 }}
@@ -3300,6 +3711,10 @@ function SigninModal({ deactivatedScreen }) {
                                 lineHeight: "36px",
                                 fontWeight: "700",
                                 fontSize: "31px",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "black",
                               }}
                             >
                               Choose a new password
@@ -3349,6 +3764,9 @@ function SigninModal({ deactivatedScreen }) {
                             >
                               <InputLabel
                                 sx={{
+                                  color:
+                                    themeName === "dark-theme" ? "#71767B" : "",
+
                                   "&.MuiInputLabel-shrink": {
                                     color: errorMessageForFirstInput
                                       ? "rgb(244, 33, 46)!important"
@@ -3360,6 +3778,12 @@ function SigninModal({ deactivatedScreen }) {
                                 Enter a new password
                               </InputLabel>
                               <OutlinedInput
+                                inputProps={{
+                                  style: {
+                                    color:
+                                      themeName === "dark-theme" ? "white" : "",
+                                  },
+                                }}
                                 sx={{
                                   "& .MuiOutlinedInput-notchedOutline": {
                                     borderColor: errorMessageForFirstInput
@@ -3382,13 +3806,17 @@ function SigninModal({ deactivatedScreen }) {
                                   <InputAdornment position="end">
                                     {showPassword ? (
                                       <svg
+                                        color={
+                                          themeName === "dark-theme"
+                                            ? "white"
+                                            : `rgb(15, 20, 25)`
+                                        }
+                                        fill="currentColor"
                                         onClick={handleClickShowPassword}
                                         onMouseDown={handleMouseDownPassword}
                                         style={{
                                           cursor: "pointer",
                                         }}
-                                        color="rgb(15, 20, 25)"
-                                        fill="currentColor"
                                         width={22}
                                         height={22}
                                         viewBox="0 0 24 24"
@@ -3401,6 +3829,12 @@ function SigninModal({ deactivatedScreen }) {
                                       </svg>
                                     ) : (
                                       <svg
+                                        color={
+                                          themeName === "dark-theme"
+                                            ? "white"
+                                            : `rgb(15, 20, 25)`
+                                        }
+                                        fill="currentColor"
                                         onClick={handleClickShowPassword}
                                         onMouseDown={handleMouseDownPassword}
                                         style={{
@@ -3408,8 +3842,6 @@ function SigninModal({ deactivatedScreen }) {
                                         }}
                                         width={22}
                                         height={22}
-                                        color="rgb(15, 20, 25)"
-                                        fill="currentColor"
                                         viewBox="0 0 24 24"
                                         aria-hidden="true"
                                         className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18yzcnr r-yc9v9c"
@@ -3446,6 +3878,8 @@ function SigninModal({ deactivatedScreen }) {
                             >
                               <InputLabel
                                 sx={{
+                                  color:
+                                    themeName === "dark-theme" ? "#71767B" : "",
                                   "&.MuiInputLabel-shrink": {
                                     color: errorMessageForSecondInput
                                       ? "rgb(244, 33, 46)!important"
@@ -3457,6 +3891,12 @@ function SigninModal({ deactivatedScreen }) {
                                 Confirm your password
                               </InputLabel>
                               <OutlinedInput
+                                inputProps={{
+                                  style: {
+                                    color:
+                                      themeName === "dark-theme" ? "white" : "",
+                                  },
+                                }}
                                 sx={{
                                   "& .MuiOutlinedInput-notchedOutline": {
                                     borderColor: errorMessageForSecondInput
@@ -3479,6 +3919,12 @@ function SigninModal({ deactivatedScreen }) {
                                   <InputAdornment position="end">
                                     {showConfirmPassword ? (
                                       <svg
+                                        color={
+                                          themeName === "dark-theme"
+                                            ? "white"
+                                            : `rgb(15, 20, 25)`
+                                        }
+                                        fill="currentColor"
                                         onClick={
                                           handleClickShowPasswordForConfirmPassword
                                         }
@@ -3488,8 +3934,6 @@ function SigninModal({ deactivatedScreen }) {
                                         style={{
                                           cursor: "pointer",
                                         }}
-                                        color="rgb(15, 20, 25)"
-                                        fill="currentColor"
                                         width={22}
                                         height={22}
                                         viewBox="0 0 24 24"
@@ -3513,7 +3957,11 @@ function SigninModal({ deactivatedScreen }) {
                                         }}
                                         width={22}
                                         height={22}
-                                        color="rgb(15, 20, 25)"
+                                        color={
+                                          themeName === "dark-theme"
+                                            ? "white"
+                                            : `rgb(15, 20, 25)`
+                                        }
                                         fill="currentColor"
                                         viewBox="0 0 24 24"
                                         aria-hidden="true"
@@ -3546,7 +3994,7 @@ function SigninModal({ deactivatedScreen }) {
                             ) : null}
                             <Button
                               style={{
-                                width: "81.5%",
+                                width: "90%",
                                 height: "52px",
                                 position: "absolute",
                                 bottom: "20px",
@@ -3555,10 +4003,14 @@ function SigninModal({ deactivatedScreen }) {
                                     ? "1"
                                     : "0.5",
                               }}
-                              onClick={() => {
-                                handleChangePassword();
-                              }}
-                              className="login-button mt-5"
+                              onClick={
+                                validPassword
+                                  ? () => {
+                                      handleChangePassword();
+                                    }
+                                  : () => window.alert("Check errors!")
+                              }
+                              className={`login-button mt-5 ${themeName}-white-btn`}
                               variant="dark"
                             >
                               Change password
@@ -3609,7 +4061,7 @@ function SigninModal({ deactivatedScreen }) {
                             people need to change their passwords.
                           </div>
                           <div
-                            className="mt-5 scrollbar-add "
+                            className={`mt-5 scrollbar-add scrollbar-add-${themeName}`}
                             style={{
                               overflowY: "auto",
                               position: "relative",
@@ -3690,7 +4142,7 @@ function SigninModal({ deactivatedScreen }) {
                             </div>
                           </div>
                           <div
-                            className="mt-3 scrollbar-add "
+                            className={`mt-3 scrollbar-add scrollbar-add-${themeName}`}
                             style={{
                               overflowY: "auto",
                               position: "relative",
@@ -3771,7 +4223,7 @@ function SigninModal({ deactivatedScreen }) {
                             </div>
                           </div>
                           <div
-                            className="scrollbar-add mt-3"
+                            className={`mt-3 scrollbar-add scrollbar-add-${themeName}`}
                             style={{
                               overflowY: "auto",
                               position: "relative",
@@ -3978,7 +4430,7 @@ function SigninModal({ deactivatedScreen }) {
                         ) : (
                           <>
                             <Modal.Body
-                              className="scrollbar-add signin-modal-body-child-non-reactivate"
+                              className={`scrollbar-add signin-modal-body-child-non-reactivate scrollbar-add-${themeName}`}
                               style={{
                                 overflowY: "auto",
                                 position: "relative",
@@ -3986,6 +4438,10 @@ function SigninModal({ deactivatedScreen }) {
                             >
                               <div
                                 style={{
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "white"
+                                      : "black",
                                   display: "flex",
                                   textAlign: "left",
                                   width: "81.5%",
@@ -4010,22 +4466,71 @@ function SigninModal({ deactivatedScreen }) {
                                   }}
                                   disabled
                                   id="filled-disabled"
-                                  label="Username"
-                                  defaultValue={
-                                    loginInput.usernameOrEmail.match(emailRegex)
-                                      ? `${loginInput.usernameOrEmail}`
-                                      : `@${loginInput.usernameOrEmail}`
+                                  label={
+                                    <div
+                                      style={{
+                                        flexDirection: "column",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                      }}
+                                    >
+                                      <div
+                                        style={{
+                                          fontSize: "13px",
+                                          position: "relative",
+                                          bottom: "5px",
+                                          color:
+                                            themeName === "dark-theme"
+                                              ? "#3C3F41"
+                                              : "",
+                                        }}
+                                      >
+                                        {loginInput.usernameOrEmail.match(
+                                          emailRegex
+                                        )
+                                          ? `Email`
+                                          : `Username`}
+                                      </div>
+                                      <div
+                                        style={{
+                                          position: "relative",
+                                          bottom: "5px",
+                                          color:
+                                            themeName === "dark-theme"
+                                              ? "#3C3F41"
+                                              : "",
+                                        }}
+                                      >
+                                        {loginInput.usernameOrEmail.match(
+                                          emailRegex
+                                        )
+                                          ? `${loginInput.usernameOrEmail}`
+                                          : `@${loginInput.usernameOrEmail}`}
+                                      </div>
+                                    </div>
                                   }
                                   variant="filled"
                                   InputProps={{
                                     disableUnderline: true,
                                   }}
-                                  sx={{
-                                    "& .MuiFilledInput-root": {
-                                      background: "#f7f9fa !important",
+                                  InputLabelProps={{
+                                    style: {
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "#71767B"
+                                          : "",
                                     },
                                   }}
-                                />
+                                  sx={{
+                                    "& .MuiFilledInput-root": {
+                                      background:
+                                        themeName === "dark-theme"
+                                          ? "#0D0E11 !important"
+                                          : "#f7f9fa !important",
+                                      height: "60px",
+                                    },
+                                  }}
+                                />{" "}
                               </div>
                               <FormControl
                                 className="mt-4"
@@ -4037,6 +4542,9 @@ function SigninModal({ deactivatedScreen }) {
                               >
                                 <InputLabel
                                   sx={{
+                                    color:
+                                      themeName === "dark-theme" ? "white" : "",
+
                                     "&.MuiInputLabel-shrink": {
                                       color: "#1f9cf0 !important",
                                     },
@@ -4048,8 +4556,19 @@ function SigninModal({ deactivatedScreen }) {
                                 <OutlinedInput
                                   autoFocus
                                   sx={{
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "white"
+                                        : "black",
                                     "& .MuiOutlinedInput-notchedOutline": {
-                                      borderColor: "#cfd9de !important",
+                                      borderColor:
+                                        themeName === "dark-theme"
+                                          ? "rgb(70, 70, 70)"
+                                          : "#cfd9de !important",
+                                      border:
+                                        themeName === "dark-theme"
+                                          ? "1px solid rgb(70, 70, 70) !important"
+                                          : "",
                                     },
                                     "&.Mui-focused .MuiOutlinedInput-notchedOutline":
                                       {
@@ -4074,7 +4593,11 @@ function SigninModal({ deactivatedScreen }) {
                                           style={{
                                             cursor: "pointer",
                                           }}
-                                          color="rgb(15, 20, 25)"
+                                          color={
+                                            themeName === "dark-theme"
+                                              ? "white"
+                                              : `rgb(15, 20, 25)`
+                                          }
                                           fill="currentColor"
                                           width={22}
                                           height={22}
@@ -4095,7 +4618,11 @@ function SigninModal({ deactivatedScreen }) {
                                           }}
                                           width={22}
                                           height={22}
-                                          color="rgb(15, 20, 25)"
+                                          color={
+                                            themeName === "dark-theme"
+                                              ? "white"
+                                              : `rgb(15, 20, 25)`
+                                          }
                                           fill="currentColor"
                                           viewBox="0 0 24 24"
                                           aria-hidden="true"
@@ -4134,21 +4661,21 @@ function SigninModal({ deactivatedScreen }) {
                                   lineHeight: "16px",
                                 }}
                               >
-                                Forgot password
+                                Forgot password?
                               </div>
 
                               <Button
                                 style={{
                                   position: "absolute",
                                   bottom: "70px",
-                                  width: "81.5%",
+                                  width: "90%",
                                   height: "52px",
                                   opacity: loginInput.password.length
                                     ? "1"
                                     : "0.5",
                                 }}
                                 onClick={() => handleLoginVariantOneStep2()}
-                                className="login-button mt-5"
+                                className={`login-button mt-5 ${themeName}-white-btn`}
                                 variant="dark"
                               >
                                 Log in
@@ -4157,7 +4684,7 @@ function SigninModal({ deactivatedScreen }) {
                                 style={{
                                   position: "absolute",
                                   bottom: "30px",
-                                  width: "81.5%",
+                                  width: "90%",
                                   fontSize: "15px",
                                   fontWeight: "400",
                                   lineHeight: "20px",

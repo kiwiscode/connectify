@@ -406,6 +406,21 @@ body {
   background-color: rgb(70, 70, 70);
 }
 
+.notification-is-comment-box:hover,
+.notification-is-favorite-box:hover,
+.notification-is-repost-box:hover {
+  transition-duration: 0.2s;
+  background-color: #f7f7f7;
+  cursor: pointer;
+}
+.notification-is-comment-box-dark-theme:hover,
+.notification-is-favorite-box-dark-theme:hover,
+.notification-is-repost-box-dark-theme:hover {
+  transition-duration: 0.2s;
+  background-color: #080808;
+  cursor: pointer;
+}
+
 /* html {
   font-family: TwitterChirp, -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, Helvetica, Arial, sans-serif;
@@ -507,6 +522,11 @@ body {
   transition-duration: 0.2s;
 }
 
+.next-btn-dark-theme:hover {
+  background-color: #d7dbdc !important;
+  transition-duration: 0.2s;
+}
+
 .didn-t-receive-email-text:hover {
   text-decoration: underline;
   text-decoration-color: rgb(29, 155, 240);
@@ -570,11 +590,6 @@ body {
   text-decoration-color: rgb(29, 155, 240);
 }
 
-.input-group {
-  width: 300px;
-  height: 40px;
-}
-
 .form-control {
   outline-style: none;
   border-style: solid;
@@ -636,15 +651,6 @@ span > a:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.sign-in-header {
-  font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, Helvetica, Arial, sans-serif;
-  line-height: 36px;
-  font-size: 31px;
-  font-weight: 700;
-  padding: 16px;
 }
 
 /* user-profile page  */
@@ -1611,16 +1617,6 @@ span > a:hover {
     width: 100%;
   }
 
-  .responsive-input-group {
-    position: relative;
-    left: 15%;
-  }
-
-  .responsive-input-group-text {
-    position: relative !important;
-    left: 0;
-  }
-
   .footer-container {
     margin-left: 25px;
     text-align: left;
@@ -1850,29 +1846,41 @@ span > a:hover {
 }
 
 .extra-css-engage-modal,
-.settings-and-privacy-second {
-  height: 600px;
+.settings-and-privacy-second,
+.forgot-password-process {
+  height: 600px !important;
+}
+
+.forgot-password-process {
+  min-width: 600px;
 }
 
 /* side bar colum responsiveness start to check  */
 
 /* side bar colum responsiveness finish to check  */
 
-.account-info-div:hover,
-.change-password-div:hover,
-.deactivate-account-div:hover {
-  background-color: #f7f9f9;
-}
-
 /* .info-account:hover {
   background-color: #f7f9f9;
 } */
 
-.change-password-btn {
+/* .change-password-btn {
   height: 45px;
   margin-top: 15px;
-}
+} */
+
 .change-password-btn:hover {
+  background-color: rgb(16, 128, 202);
+  outline-style: none;
+  border-style: solid;
+  border-color: rgb(207, 217, 222);
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-top-width: 1px;
+  border-radius: var(--border-radius);
+  transition-duration: 0.2s !important;
+}
+.disabled-change-password-btn:hover {
   background-color: rgb(16, 128, 202);
   outline-style: none;
   border-style: solid;
@@ -1981,11 +1989,6 @@ span > a:hover {
 }
 
 /* ant message success responsive ! finish to check */
-
-.signin-modal-dialog {
-  max-width: 600px;
-  max-height: 575px;
-}
 
 @media (max-width: 618px) {
   .deactivated-footer-text {
@@ -2544,6 +2547,16 @@ span > a:hover {
   transition-duration: 0.2s;
 }
 
+.hover-customize-your-experience-tab-get-more-out-of-variant-dark-theme:hover {
+  background-color: #154772 !important;
+  transition-duration: 0.2s !important;
+}
+
+.hover-customize-your-experience-tab-get-more-out-of-variant-2-dark-theme:hover {
+  background-color: rgba(25, 26, 26, 255) !important;
+  transition-duration: 0.2s !important;
+}
+
 .connectify-support-forgot-password-screen span:hover {
   cursor: pointer;
   text-decoration: underline !important;
@@ -2659,12 +2672,6 @@ span > a:hover {
   text-decoration-color: rgb(29, 155, 240);
 }
 
-.individual-subscription-box:hover,
-.organization-subscription-box:hover {
-  background-color: #f7f9f9 !important  ;
-  transform: scale(1);
-}
-
 .basic-plan-parent-div div div span {
   margin-left: 10px;
 }
@@ -2686,6 +2693,11 @@ span > a:hover {
 .subscribe-btn-basic-plan:hover,
 .subscribe-btn-full-access-plan:hover {
   background-color: #262b30 !important;
+  transition-duration: 0.2s;
+}
+.subscribe-btn-basic-plan-dark-theme:hover,
+.subscribe-btn-full-access-plan-dark-theme:hover {
+  background-color: #d7dbdc !important;
   transition-duration: 0.2s;
 }
 
@@ -2797,6 +2809,21 @@ span > a:hover {
   border-top-right-radius: 100vw;
   border-bottom-right-radius: 100vw;
   margin-block: 0.5em;
+  padding: 0;
+  margin: 0;
+}
+
+.scrollbar-add::-webkit-scrollbar {
+  width: 1em;
+}
+
+.scrollbar-add::-webkit-scrollbar-track {
+  background: #f7f9f9;
+  border-top-right-radius: 100vw;
+  border-bottom-right-radius: 100vw;
+  margin-block: 0.5em;
+  padding: 0;
+  margin: 0;
 }
 
 .scrollbar-add::-webkit-scrollbar-thumb {
@@ -2805,14 +2832,45 @@ span > a:hover {
   width: 5px;
   border: 0.25em solid #f7f9f9;
 }
+
+/* scrollbar- dark theme styling start to check  */
+.scrollbar-add-dark-theme::-webkit-scrollbar {
+  width: 1em;
+}
+
+.scrollbar-add-dark-theme::-webkit-scrollbar-track {
+  background: #3e4144;
+  border-top-right-radius: 100vw;
+  border-bottom-right-radius: 100vw;
+  margin-block: 0.5em;
+  padding: 0;
+  margin: 0;
+}
+
+.scrollbar-add-dark-theme::-webkit-scrollbar-thumb {
+  background: #3e4144;
+  border-radius: 100vw;
+  width: 5px;
+  border: 0.25em solid #16181c;
+}
+
+.scrollbar-add-dark-theme::-webkit-scrollbar {
+  width: 1em;
+}
+
+.scrollbar-add-dark-theme::-webkit-scrollbar-track {
+  background: #16181c;
+  border-top-right-radius: 100vw;
+  border-bottom-right-radius: 100vw;
+  margin-block: 0.5em;
+  padding: 0;
+  margin: 0;
+}
+/* scrollbar- dark theme styling finish to check  */
+
 /* scrollbar styling general finish to check  */
 .modal-content {
   border-radius: 16px;
-}
-
-.widthsmallerthan700-sub-modal {
-  background-color: white;
-  width: 100vh !important;
 }
 
 /* phone verified start to check  */
@@ -2902,7 +2960,180 @@ select {
   background-position-y: 15px;
 }
 
-.learn-more-add-phone-number:hover {
+.learn-more-add-phone-number:hover,
+.forgot-password-logout-settings-and-privacy-modal:hover {
   text-decoration: underline;
   text-decoration-color: rgb(29, 155, 240);
 }
+
+/* start to check modals dark theme and etc. styling  */
+.post-modal-from-left-side-navigation-bar .modal-content {
+  width: 600px;
+  height: 300px;
+}
+
+.back-drop-dark-theme {
+  background-color: #232e36;
+}
+
+.post-modal-from-left-side-navigation-bar-dark-theme {
+}
+
+.post-modal-from-left-side-navigation-bar-dark-theme .modal-content {
+  width: 600px;
+  height: 300px;
+  background-color: black !important;
+}
+
+.width-smaller-700-post-modal-left-side-navigation-bar-dark-theme
+  .modal-content,
+.settings-and-privacy-second-smaller-than-700-width-dark-theme,
+.forgot-password-process-modal-from-change-password-section-dark-theme {
+  background-color: black !important;
+}
+
+.logout-modal-variant-parent .modal-content {
+  min-width: 320px;
+  min-height: 356px;
+}
+
+.logout-modal-variant-parent-dark-theme .modal-content {
+  min-width: 320px;
+  min-height: 356px;
+  background-color: black;
+}
+
+.dark-theme-black-btn {
+  color: white !important;
+  outline-style: none;
+  border-style: none;
+  background-color: black;
+  border: 1px solid rgb(70, 70, 70) !important;
+}
+
+.dark-theme-white-btn {
+  color: black !important;
+  background-color: white;
+}
+
+.dark-theme-black-btn:hover {
+  color: white;
+  background-color: #191a1a !important;
+  transition-duration: 0.2s !important;
+}
+
+.dark-theme-white-btn:hover {
+  background-color: #d7dbdc !important;
+  color: black;
+}
+
+.settings-and-privacy-second-dark-theme,
+.forgot-password-process-dark-theme {
+  background-color: black !important;
+}
+
+.divider-your-account-settings-and-privacy-dark-theme::after,
+.divider-your-account-settings-and-privacy-dark-theme::before {
+  background-color: rgb(70, 70, 70);
+}
+
+.theme-divider-dark-theme::after,
+.theme-divider-dark-theme::before {
+  background-color: rgb(70, 70, 70);
+}
+
+.ant-steps-item-title::after {
+  background-color: rgb(70, 70, 70) !important;
+}
+
+.steps-parent-tag-dark-theme div div div div::after {
+  background-color: rgb(70, 70, 70);
+}
+
+.steps-parent-tag-dark-theme div div .ant-steps-item-icon {
+  background-color: white !important;
+}
+
+.steps-parent-tag-dark-theme div div .ant-steps-item-icon span {
+  color: black !important;
+}
+.steps-parent-tag-dark-theme .ant-steps-item-active div .ant-steps-item-icon {
+  background-color: #16181c !important;
+  border: none !important;
+}
+.steps-parent-tag-dark-theme
+  .ant-steps-item-active
+  div
+  .ant-steps-item-icon
+  span {
+  color: white !important;
+}
+
+.signin-modal-header-child-non-reactivate-dark-theme {
+  background-color: black;
+}
+
+.subscription-modal-dark-theme {
+  background-color: black;
+}
+
+.individual-subscription-box:hover,
+.organization-subscription-box:hover {
+  background-color: #f7f9f9 !important;
+}
+.individual-subscription-box-width-small-than-700:hover,
+.organization-subscription-box-width-small-than-700:hover {
+  background-color: #f7f9f9 !important;
+}
+.individual-subscription-box-dark-theme:hover,
+.organization-subscription-box-dark-theme:hover,
+.individual-subscription-box-width-small-than-700-dark-theme:hover,
+.organization-subscription-box-width-small-than-700-dark-theme:hover {
+  background-color: #17181c !important;
+}
+
+.dark-theme-sub-modal {
+  background-color: black;
+}
+
+.new-message-modal {
+  min-height: 650px;
+  min-width: 600px;
+  background-color: white !important;
+}
+
+.dark-theme-new-message-modal {
+  min-height: 650px;
+  min-width: 600px;
+  background-color: black !important;
+}
+
+.selected-user-for-dm-dark-theme:hover {
+  background-color: #16181c;
+  transition-duration: 0.2s;
+}
+
+.dark-theme-reactivate-account-modal {
+  min-height: 650px;
+  min-width: 600px;
+  background-color: black !important;
+}
+.reactivate-account-modal {
+  min-height: 650px;
+  min-width: 600px;
+}
+
+/* general classname for backgroundcolor modal according to the theme start to check */
+.dark-theme-modal {
+  min-height: 650px;
+  min-width: 600px;
+  background-color: black !important;
+}
+
+.light-theme-modal {
+  min-height: 650px;
+  min-width: 600px;
+}
+/* general classname for backgroundcolor modal according to the theme finish to check */
+
+/* finish to check modals dark theme and etc. styling  */

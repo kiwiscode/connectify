@@ -128,6 +128,10 @@ const handleSendForgotPasswordProcessCodeToEmail = (req, res) => {
   const { forgotPasswordInProcessUser } = req.body;
 
   console.log(
+    "Forgot password in process user =>",
+    forgotPasswordInProcessUser
+  );
+  console.log(
     "Processed user username =>",
     forgotPasswordInProcessUser.username
   );

@@ -5,6 +5,7 @@ import { UserContext } from "../../context/UserContext";
 import { Link, useNavigate } from "react-router-dom";
 import { Stack } from "react-bootstrap";
 import { ThemeContext } from "../../context/ThemeContext";
+import useWindowDimensions from "../../hooks/getWindowDimensions";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -107,6 +108,8 @@ function CreateChat({ writeMessageButton }) {
       setFilteredUsers([]);
     }
   };
+
+  const { height, width } = useWindowDimensions();
   return (
     <>
       {/* {writeMessageButton ? (
@@ -215,7 +218,25 @@ function CreateChat({ writeMessageButton }) {
         </svg>
       </div>
 
-      <Modal show={show} onHide={handleClose}>
+      <Modal
+        style={{
+          margin: "0px",
+          padding: "0px",
+        }}
+        backdropClassName={
+          themeName === "dark-theme" ? `back-drop-${themeName}` : ""
+        }
+        dialogClassName={width <= 700 ? `modal-fullscreen ` : ``}
+        contentClassName={
+          themeName === "dark-theme"
+            ? "dark-theme-new-message-modal"
+            : "new-message-modal"
+        }
+        className={`widthsmallerthan700-new-message-modal widthsmallerthan700-new-message-modal-${themeName}`}
+        centered
+        show={show}
+        onHide={handleClose}
+      >
         <Modal.Header
           closeButton={false} // closeButton'u devre dışı bırak
           style={{
@@ -223,8 +244,14 @@ function CreateChat({ writeMessageButton }) {
           }}
         >
           <div
-            className="close-button"
-            style={{ borderRadius: "50%", cursor: "pointer" }}
+            className={`close-button close-button-${themeName}`}
+            style={{
+              borderRadius: "50%",
+              cursor: "pointer",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
           >
             <div>
               <svg
@@ -236,7 +263,7 @@ function CreateChat({ writeMessageButton }) {
                 onClick={handleClose}
                 width={20}
                 height={20}
-                color="rgb(15,20,25)"
+                color={themeName === "dark-theme" ? "white" : "rgb(15,20,25)"}
                 fill="currentColor"
                 viewBox="0 0 24 24"
                 aria-hidden="true"
@@ -248,35 +275,78 @@ function CreateChat({ writeMessageButton }) {
               </svg>{" "}
             </div>
           </div>
-          <span
+          <div
             style={{
-              position: "relative",
-              marginLeft: "25px",
+              color: themeName === "dark-theme" ? "white" : "black",
+              fontWeight: "700",
+              fontSize: "20px",
+              lineHeight: "24px",
+              position: "absolute",
+              left: "80px",
             }}
           >
             New message
-          </span>
+          </div>
         </Modal.Header>
         <div className="joinChatContainer">
-          <div>
+          <div
+            style={{
+              position: "relative",
+            }}
+          >
             <input
               type="text"
               placeholder="Search people"
               value={searchString}
               onChange={handleSearchTermChange}
               style={{
+                paddingLeft: "62px",
                 fontSize: "14px",
                 width: "100%",
                 outline: "none",
                 border: "none",
                 borderRadius: "0px",
-                borderBottom: "1px solid rgba(0,0,0,0.1)",
+                borderBottom:
+                  themeName !== "dark-theme"
+                    ? "1px solid rgba(0, 0, 0, 0.1)"
+                    : // : "0.1px solid rgb(70, 70, 70)",
+                      "1px solid rgb(70, 70, 70)",
+
+                color:
+                  themeName === "dark-theme" ? "white" : "rgba(15,20,25,1.00)",
+                backgroundColor:
+                  themeName === "dark-theme" ? "black" : "transparent",
               }}
             />
+            <div
+              style={{
+                position: "absolute",
+                bottom: "15px",
+                left: "22px",
+              }}
+            >
+              <div>
+                <svg
+                  color={themeName === "dark-theme" ? "#565A5E" : "#536471"}
+                  fill="currentColor"
+                  width={`${1.25}em`}
+                  height={`${1.25}em`}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1bwzh9t r-4wgw6l r-f727ji"
+                >
+                  <g>
+                    <path d="M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781c-1.447 1.142-3.276 1.824-5.262 1.824-4.694 0-8.5-3.806-8.5-8.5z"></path>
+                  </g>
+                </svg>
+              </div>
+            </div>
           </div>
           {filteredUsers.map((user) => (
             <>
-              <div className="selected-user-for-dm">
+              <div
+                className={`selected-user-for-dm selected-user-for-dm-${themeName}`}
+              >
                 <Link
                   onClick={() => selectedUser(user)}
                   style={{
@@ -332,7 +402,10 @@ function CreateChat({ writeMessageButton }) {
                       {" "}
                       <div
                         style={{
-                          color: "rgb(15, 20, 25)",
+                          color:
+                            themeName === "dark-theme"
+                              ? "white"
+                              : "rgb(15, 20, 25)",
                           fontSize: "15px",
                           lineHeight: "20px",
                           fontWeight: "700",

@@ -6,6 +6,7 @@ import { Button, Modal, Stack, Popover, OverlayTrigger } from "react-bootstrap";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { UserContext } from "../../context/UserContext";
+import { ThemeContext } from "../../context/ThemeContext";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -28,6 +29,13 @@ function PostModal({
   const [showEmojisBar, setshowEmojisBar] = useState("hide");
   const [showSecondModal, setShowSecondModal] = useState(false);
   const maxCharacters = 140;
+
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
 
   const [modalImage, setModalImage] = useState("");
   //handle and convert it in base 64
