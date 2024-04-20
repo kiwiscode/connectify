@@ -1270,6 +1270,10 @@ function LogoutModal({ isLogoutActionActive }) {
             ? `settings-and-privacy-second-smaller-than-700-width settings-and-privacy-second-smaller-than-700-width-${themeName}`
             : `settings-and-privacy-second settings-and-privacy-second-${themeName}`
         }
+        style={{
+          margin: "0px",
+          padding: "0px",
+        }}
       >
         <Modal.Header
           className="signin-modal-header-child-non-reactivate"
@@ -2529,6 +2533,10 @@ function LogoutModal({ isLogoutActionActive }) {
 
       {/* forgot password option from change password screen start to check  */}
       <Modal
+        style={{
+          margin: "0px",
+          padding: "0px",
+        }}
         backdropClassName={
           themeName === "dark-theme" ? `back-drop-${themeName}` : ""
         }

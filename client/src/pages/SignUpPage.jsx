@@ -638,6 +638,8 @@ function SignUpPage() {
           <Modal
             style={{
               height: "100%",
+              margin: "0px",
+              padding: "0px",
             }}
             dialogClassName={"modal-fullscreen"}
             show={showCreateAccountModal}

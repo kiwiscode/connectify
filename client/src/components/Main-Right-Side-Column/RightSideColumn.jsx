@@ -1240,11 +1240,15 @@ function RightSideColumn({
         <>
           {showSubscriptionModal ? (
             <Modal
-              backdropClassName={`sub-modal-smaller-than-700-${themeName}`}
+              backdropClassName={
+                themeName === "dark-theme" ? `back-drop-${themeName}` : ""
+              }
               style={{
                 height: "100%",
                 overflowX: "hidden",
                 overflowY: "hidden",
+                margin: "0px",
+                padding: "0px",
               }}
               dialogClassName={"modal-fullscreen"}
               show={showSubscriptionModal}
@@ -7035,7 +7039,6 @@ function RightSideColumn({
                             className="mt-3"
                             style={{
                               width: "100%",
-                              position: "relative",
                             }}
                           >
                             <TextField
@@ -7045,8 +7048,33 @@ function RightSideColumn({
                               }}
                               disabled
                               id="filled-disabled"
-                              label="Organization @handle"
-                              // defaultValue={`@${userInfo.username}`}
+                              label={
+                                <div
+                                  style={{
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      fontSize: "13px",
+                                      position: "relative",
+                                      bottom: "5px",
+                                    }}
+                                  >
+                                    Organization @handle
+                                  </div>
+                                  <div
+                                    style={{
+                                      position: "relative",
+                                      bottom: "5px",
+                                    }}
+                                  >
+                                    {`@${userInfo.username}`}
+                                  </div>
+                                </div>
+                              } // defaultValue={`@${userInfo.username}`}
                               variant="filled"
                               InputLabelProps={{
                                 style: {
@@ -7065,22 +7093,10 @@ function RightSideColumn({
                                     themeName === "dark-theme"
                                       ? "#0D0E11 !important"
                                       : "#f7f9fa !important",
+                                  height: "60px",
                                 },
                               }}
                             />
-                            <span
-                              style={{
-                                position: "absolute",
-                                left: "13.4px",
-                                bottom: "11.9px",
-                                color:
-                                  themeName === "dark-theme"
-                                    ? "#3C3F41"
-                                    : "#999A9B",
-                              }}
-                            >
-                              {`@${userInfo.username}`}
-                            </span>
                           </div>
                           <TextField
                             className="mt-3"
@@ -14188,7 +14204,6 @@ function RightSideColumn({
                             className="mt-3"
                             style={{
                               width: "81.5%",
-                              position: "relative",
                             }}
                           >
                             <TextField
@@ -14198,8 +14213,33 @@ function RightSideColumn({
                               }}
                               disabled
                               id="filled-disabled"
-                              label="Organization @handle"
-                              // defaultValue={`@${userInfo.username}`}
+                              label={
+                                <div
+                                  style={{
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      fontSize: "13px",
+                                      position: "relative",
+                                      bottom: "5px",
+                                    }}
+                                  >
+                                    Organization @handle
+                                  </div>
+                                  <div
+                                    style={{
+                                      position: "relative",
+                                      bottom: "5px",
+                                    }}
+                                  >
+                                    {`@${userInfo.username}`}
+                                  </div>
+                                </div>
+                              }
                               variant="filled"
                               InputLabelProps={{
                                 style: {
@@ -14218,22 +14258,10 @@ function RightSideColumn({
                                     themeName === "dark-theme"
                                       ? "#0D0E11 !important"
                                       : "#f7f9fa !important",
+                                  height: "60px",
                                 },
                               }}
                             />
-                            <span
-                              style={{
-                                position: "absolute",
-                                left: "13.4px",
-                                bottom: "11.9px",
-                                color:
-                                  themeName === "dark-theme"
-                                    ? "#3C3F41"
-                                    : "#999A9B",
-                              }}
-                            >
-                              {`@${userInfo.username}`}
-                            </span>
                           </div>
                           <TextField
                             className="mt-3"
