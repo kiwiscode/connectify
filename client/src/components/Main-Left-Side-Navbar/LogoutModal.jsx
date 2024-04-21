@@ -898,7 +898,7 @@ function LogoutModal({ isLogoutActionActive }) {
     const maskedDomain = domain.charAt(0) + "*".repeat(4);
     const maskedDot = "*".repeat(3);
 
-    return maskedUsername + "@" + maskedDomain + maskedDot;
+    return maskedUsername + "@" + maskedDomain + "." + maskedDot;
   };
   const [
     receivedVerificationCodeForPasswordChange,

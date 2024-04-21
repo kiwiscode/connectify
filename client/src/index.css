@@ -610,6 +610,15 @@ body {
   transition-duration: 0.2s !important;
 }
 
+.sign-in-dark-theme {
+  background-color: black;
+}
+
+.sign-in-dark-theme:hover {
+  background-color: #061019;
+  transition-duration: 0.2s !important;
+}
+
 .google-variant-sign-in:hover {
   background-color: #f8fafe !important;
   transition-duration: 0.2s;
@@ -2547,6 +2556,15 @@ span > a:hover {
   transition-duration: 0.2s;
 }
 
+.hover-forgot-password-send-email-stack-svg-verified-email-dark-theme:hover {
+  background-color: #061019;
+  transition-duration: 0.2s;
+}
+.hover-forgot-password-send-email-stack-svg-verified-email-variant-2-dark-theme:hover {
+  background-color: #0c0c0c;
+  transition-duration: 0.2s;
+}
+
 .hover-customize-your-experience-tab-get-more-out-of-variant-dark-theme:hover {
   background-color: #154772 !important;
   transition-duration: 0.2s !important;
@@ -3134,6 +3152,19 @@ select {
   min-height: 650px;
   min-width: 600px;
 }
+
+.forgot-password-modal-opened {
+  background-color: #999999 !important;
+}
+
+.forgot-password-modal-opened-dark-theme {
+  background-color: #232e36 !important;
+}
+
+.dark-theme-spinner-modal {
+  background-color: black !important;
+}
+
 /* general classname for backgroundcolor modal according to the theme finish to check */
 
 /* finish to check modals dark theme and etc. styling  */
