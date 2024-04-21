@@ -610,6 +610,15 @@ body {
   transition-duration: 0.2s !important;
 }
 
+.sign-in-dark-theme {
+  background-color: black;
+}
+
+.sign-in-dark-theme:hover {
+  background-color: #061019;
+  transition-duration: 0.2s !important;
+}
+
 .google-variant-sign-in:hover {
   background-color: #f8fafe !important;
   transition-duration: 0.2s;
@@ -651,15 +660,6 @@ span > a:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.sign-in-header {
-  font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, Helvetica, Arial, sans-serif;
-  line-height: 36px;
-  font-size: 31px;
-  font-weight: 700;
-  padding: 16px;
 }
 
 /* user-profile page  */
@@ -1999,11 +1999,6 @@ span > a:hover {
 
 /* ant message success responsive ! finish to check */
 
-.signin-modal-dialog {
-  max-width: 600px;
-  max-height: 575px;
-}
-
 @media (max-width: 618px) {
   .deactivated-footer-text {
     display: none !important;
@@ -2561,6 +2556,15 @@ span > a:hover {
   transition-duration: 0.2s;
 }
 
+.hover-forgot-password-send-email-stack-svg-verified-email-dark-theme:hover {
+  background-color: #061019;
+  transition-duration: 0.2s;
+}
+.hover-forgot-password-send-email-stack-svg-verified-email-variant-2-dark-theme:hover {
+  background-color: #0c0c0c;
+  transition-duration: 0.2s;
+}
+
 .hover-customize-your-experience-tab-get-more-out-of-variant-dark-theme:hover {
   background-color: #154772 !important;
   transition-duration: 0.2s !important;
@@ -2887,11 +2891,6 @@ span > a:hover {
   border-radius: 16px;
 }
 
-.widthsmallerthan700-sub-modal {
-  background-color: white;
-  width: 100vh !important;
-}
-
 /* phone verified start to check  */
 /* .signin-modal-parent-non-reactivate div {
   max-width: 600px !important;
@@ -3022,12 +3021,28 @@ select {
   background-color: black;
 }
 
+.dark-theme-black-btn {
+  color: white !important;
+  outline-style: none;
+  border-style: none;
+  background-color: black;
+  border: 1px solid rgb(70, 70, 70) !important;
+}
+
+.dark-theme-white-btn {
+  color: black !important;
+  background-color: white;
+}
+
 .dark-theme-black-btn:hover {
+  color: white;
   background-color: #191a1a !important;
+  transition-duration: 0.2s !important;
 }
 
 .dark-theme-white-btn:hover {
   background-color: #d7dbdc !important;
+  color: black;
 }
 
 .settings-and-privacy-second-dark-theme,
@@ -3037,6 +3052,11 @@ select {
 
 .divider-your-account-settings-and-privacy-dark-theme::after,
 .divider-your-account-settings-and-privacy-dark-theme::before {
+  background-color: rgb(70, 70, 70);
+}
+
+.theme-divider-dark-theme::after,
+.theme-divider-dark-theme::before {
   background-color: rgb(70, 70, 70);
 }
 
@@ -3075,18 +3095,6 @@ select {
   background-color: black;
 }
 
-/* start to check BUG problematic classname */
-/* 
-.widthsmallerthan700-sub-modal-dark-theme div {
-  background-color: black;
-}
-*/
-
-.widthsmallerthan700-sub-modal-dark-theme {
-  background-color: black !important;
-}
-/* finish to check BUG problematic classname */
-
 .individual-subscription-box:hover,
 .organization-subscription-box:hover {
   background-color: #f7f9f9 !important;
@@ -3105,5 +3113,58 @@ select {
 .dark-theme-sub-modal {
   background-color: black;
 }
+
+.new-message-modal {
+  min-height: 650px;
+  min-width: 600px;
+  background-color: white !important;
+}
+
+.dark-theme-new-message-modal {
+  min-height: 650px;
+  min-width: 600px;
+  background-color: black !important;
+}
+
+.selected-user-for-dm-dark-theme:hover {
+  background-color: #16181c;
+  transition-duration: 0.2s;
+}
+
+.dark-theme-reactivate-account-modal {
+  min-height: 650px;
+  min-width: 600px;
+  background-color: black !important;
+}
+.reactivate-account-modal {
+  min-height: 650px;
+  min-width: 600px;
+}
+
+/* general classname for backgroundcolor modal according to the theme start to check */
+.dark-theme-modal {
+  min-height: 650px;
+  min-width: 600px;
+  background-color: black !important;
+}
+
+.light-theme-modal {
+  min-height: 650px;
+  min-width: 600px;
+}
+
+.forgot-password-modal-opened {
+  background-color: #999999 !important;
+}
+
+.forgot-password-modal-opened-dark-theme {
+  background-color: #232e36 !important;
+}
+
+.dark-theme-spinner-modal {
+  background-color: black !important;
+}
+
+/* general classname for backgroundcolor modal according to the theme finish to check */
 
 /* finish to check modals dark theme and etc. styling  */

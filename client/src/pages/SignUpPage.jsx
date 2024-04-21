@@ -638,6 +638,8 @@ function SignUpPage() {
           <Modal
             style={{
               height: "100%",
+              margin: "0px",
+              padding: "0px",
             }}
             dialogClassName={"modal-fullscreen"}
             show={showCreateAccountModal}
@@ -1618,7 +1620,10 @@ function SignUpPage() {
                       className="mt-4"
                       style={{
                         width: "81.5%",
-                        color: "rgb(83, 100, 113)",
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A                                  "
+                            : "rgb(83, 100, 113)",
                         fontSize: "15px",
                         lineHeight: "20px",
                         fontWeight: "400",
@@ -1967,7 +1972,10 @@ function SignUpPage() {
                         width: "81.5%",
                         position: "absolute",
                         bottom: "100px",
-                        color: "rgb(83, 100, 113)",
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A                                  "
+                            : "rgb(83, 100, 113)",
                         fontSize: "13px",
                         fontWeight: "400",
                         lineHeight: "16px",
@@ -2994,7 +3002,10 @@ function SignUpPage() {
                       className="mt-2"
                       style={{
                         width: "81.5%",
-                        color: "rgb(83, 100, 113)",
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A                                  "
+                            : "rgb(83, 100, 113)",
                         fontSize: "15px",
                         lineHeight: "20px",
                         fontWeight: "400",
@@ -3333,7 +3344,10 @@ function SignUpPage() {
                         width: "81.5%",
                         position: "absolute",
                         bottom: "100px",
-                        color: "rgb(83, 100, 113)",
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A                                  "
+                            : "rgb(83, 100, 113)",
                         fontSize: "13px",
                         fontWeight: "400",
                         lineHeight: "16px",
@@ -3539,6 +3553,10 @@ function SignUpPage() {
                   fontSize: "11px",
                   fontWeight: "400",
                   margin: "10px 0px",
+                  color:
+                    themeName === "dark-theme"
+                      ? "#71767A                                  "
+                      : "rgb(83, 100, 113)",
                 }}
                 className="by-signing"
               >

@@ -748,6 +748,10 @@ function LeftSideNavBar({
                 backdropClassName={
                   themeName === "dark-theme" ? `back-drop-${themeName}` : ""
                 }
+                style={{
+                  margin: "0px",
+                  padding: "0px",
+                }}
                 dialogClassName={width <= 700 ? "modal-fullscreen" : ""}
                 className={
                   width <= 700 && themeName !== "dark-theme"

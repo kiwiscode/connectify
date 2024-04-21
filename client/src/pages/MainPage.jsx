@@ -1285,6 +1285,8 @@ function MainPage() {
               <Modal
                 style={{
                   height: "100%",
+                  margin: "0px",
+                  padding: "0px",
                 }}
                 dialogClassName={"modal-fullscreen"}
                 show={showSubscriptionCompletedModal}
@@ -1474,6 +1476,8 @@ function MainPage() {
           <Modal
             style={{
               height: "100%",
+              margin: "0px",
+              padding: "0px",
               overflowY: "scroll",
             }}
             dialogClassName={`scrollbar-add modal-fullscreen scrollbar-add-${themeName}`}
@@ -2287,15 +2291,16 @@ function MainPage() {
                   style={{
                     resize: "none",
                     padding: "8px",
-                    color:
-                      themeName === "dark-theme"
-                        ? "white"
-                        : "rgba(15,20,25,1.00)",
+
                     lineHeight: "24px",
                     fontWeight: "400",
                     fontSize: `${content ? "15px" : "20px"}`,
                     width: "100%",
                     height: "100px",
+                    color:
+                      themeName === "dark-theme"
+                        ? "white"
+                        : "rgba(15,20,25,1.00)",
                     backgroundColor:
                       themeName === "dark-theme" ? "black" : "transparent",
                   }}
