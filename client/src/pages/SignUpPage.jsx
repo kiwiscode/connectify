@@ -12,6 +12,7 @@ import {
   OutlinedInput,
   FormControl,
   TextField,
+  Tooltip,
 } from "@mui/material";
 
 import LoadingSpinner from "../components/ui/LoadingSpinner";
@@ -487,9 +488,7 @@ function SignUpPage() {
       const parentNodeClassName = e.srcElement?.parentNode.className;
       const svgGroupClassName = e.srcElement?.parentNode.className.baseVal;
 
-      if (classList.contains("didn-t-receive-email-text")) {
-        setShowOptionsReceivedEmail(!showOptionsReceivedEmail);
-      } else {
+      if (!classList.contains("didn-t-receive-email-text")) {
         setShowOptionsReceivedEmail(false);
       }
 
@@ -641,6 +640,11 @@ function SignUpPage() {
               margin: "0px",
               padding: "0px",
             }}
+            contentClassName={
+              themeName === "dark-theme"
+                ? `create-account-modal-${themeName}`
+                : ""
+            }
             dialogClassName={"modal-fullscreen"}
             show={showCreateAccountModal}
             onHide={handleCloseCreateAccountModal}
@@ -660,7 +664,7 @@ function SignUpPage() {
                       <div onClick={() => setTabIndex(tabIndex - 1)}>
                         {" "}
                         <div
-                          className="p-2 arrow"
+                          className={`p2 arrow arrow-${themeName}`}
                           style={{
                             position: "relative",
                             width: "34px",
@@ -677,6 +681,12 @@ function SignUpPage() {
                               left: "7px",
                               fontSize: "15px",
                             }}
+                            color={
+                              themeName === "dark-theme"
+                                ? "white"
+                                : `rgb(15,20,25)`
+                            }
+                            fill="currentColor"
                             width={20}
                             height={20}
                             viewBox="0 0 24 24"
@@ -692,7 +702,7 @@ function SignUpPage() {
                     ) : (
                       <div
                         onClick={handleCloseCreateAccountModal}
-                        className="close-button"
+                        className={`close-button close-button-${themeName}`}
                         style={{
                           borderRadius: "50%",
                           cursor: "pointer",
@@ -709,7 +719,11 @@ function SignUpPage() {
                             onClick={handleCloseCreateAccountModal}
                             width={20}
                             height={20}
-                            color="rgb(15,20,25)"
+                            color={
+                              themeName === "dark-theme"
+                                ? "white"
+                                : `rgb(15,20,25)`
+                            }
                             fill="currentColor"
                             viewBox="0 0 24 24"
                             aria-hidden="true"
@@ -734,8 +748,15 @@ function SignUpPage() {
                   display: showOptionsReceivedEmail ? "flex" : "none",
                   flexDirection: "column",
                   borderRadius: "16px",
+                  filter:
+                    themeName === "dark-theme"
+                      ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                      : "",
+
                   boxShadow:
-                    "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                    themeName === "dark-theme"
+                      ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                      : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
                   zIndex: "999",
                   transform: `scale(${showOptionsReceivedEmail ? "1" : "0.8"})`,
                   animation: "fadeIn 0.5s ease",
@@ -748,6 +769,7 @@ function SignUpPage() {
                     fontSize: "15px",
                     fontWeight: "400",
                     padding: "12px",
+                    color: themeName === "dark-theme" ? "white" : "",
                   }}
                 >
                   {"Didn't receive email?"}
@@ -756,30 +778,34 @@ function SignUpPage() {
                   onClick={() => {
                     sendEmailVerificationCode(email);
                   }}
-                  className="resend-email"
+                  className={`resend-email resend-email-${themeName}`}
                   style={{
                     cursor: "pointer",
                     lineHeight: "20px",
                     fontSize: "15px",
                     fontWeight: "700",
                     padding: "12px",
+                    color: themeName === "dark-theme" ? "white" : "",
                   }}
                 >
                   {"Resend email"}
                 </div>
-                <div
-                  className="use-phone-instead"
-                  style={{
-                    // cursor: "pointer",
-                    lineHeight: "20px",
-                    fontSize: "15px",
-                    fontWeight: "700",
-                    padding: "12px",
-                    opacity: "0.5",
-                  }}
-                >
-                  {"Use phone instead"}
-                </div>
+                <Tooltip title="This feature is not yet active. ">
+                  <div
+                    className={`use-phone-instead use-phone-instead-${themeName}`}
+                    style={{
+                      // cursor: "pointer",
+                      lineHeight: "20px",
+                      fontSize: "15px",
+                      fontWeight: "700",
+                      padding: "12px",
+                      opacity: "0.5",
+                      color: themeName === "dark-theme" ? "white" : "",
+                    }}
+                  >
+                    {"Use phone instead"}{" "}
+                  </div>
+                </Tooltip>
               </div>
             </Modal.Header>
             {tabIndex === 0 ? (
@@ -815,6 +841,7 @@ function SignUpPage() {
                         fontWeight: "700",
                         fontSize: "26px",
                         letterSpacing: "0.5px",
+                        color: themeName === "dark-theme" ? "white" : "black",
                       }}
                     >
                       Create your account
@@ -872,6 +899,16 @@ function SignUpPage() {
                         width: "81.5%",
                         height: "58px",
                       }}
+                      InputLabelProps={{
+                        style: {
+                          color: themeName === "dark-theme" ? "#71767B" : "",
+                        },
+                      }}
+                      InputProps={{
+                        style: {
+                          color: themeName === "dark-theme" ? "white" : "",
+                        },
+                      }}
                       sx={{
                         "& .Mui-focused input + fieldset": {
                           border:
@@ -887,6 +924,8 @@ function SignUpPage() {
                             fullname.length === 0 &&
                             !firstAppearence
                               ? "rgb(244, 33, 46)!important"
+                              : themeName === "dark-theme"
+                              ? "rgb(70, 70, 70) !important"
                               : "#cfd9de !important",
                         },
                         "& .MuiInputLabel-shrink": {
@@ -929,6 +968,16 @@ function SignUpPage() {
                         width: "81.5%",
                         height: "58px",
                       }}
+                      InputLabelProps={{
+                        style: {
+                          color: themeName === "dark-theme" ? "#71767B" : "",
+                        },
+                      }}
+                      InputProps={{
+                        style: {
+                          color: themeName === "dark-theme" ? "white" : "",
+                        },
+                      }}
                       sx={{
                         "& .Mui-focused input + fieldset": {
                           border:
@@ -942,6 +991,8 @@ function SignUpPage() {
                             emailTypeError === 304 ||
                             (emailTypeError === 200 && email.length)
                               ? "rgb(244, 33, 46)!important"
+                              : themeName === "dark-theme"
+                              ? "rgb(70, 70, 70) !important"
                               : "#cfd9de !important",
                         },
                         "& .MuiInputLabel-shrink": {
@@ -1023,6 +1074,7 @@ function SignUpPage() {
                           fontSize: "15px",
                           lineHeight: "20px",
                           fontWeight: "700",
+                          color: themeName === "dark-theme" ? "white" : "",
                         }}
                       >
                         Date of birth
@@ -1030,7 +1082,10 @@ function SignUpPage() {
                       <div
                         className="mt-2"
                         style={{
-                          color: "rgb(83, 100, 113)",
+                          color:
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)",
                           fontSize: "14px",
                           lineHeight: "16px",
                           fontWeight: "400",
@@ -1073,6 +1128,8 @@ function SignUpPage() {
                               borderWidth: styleOfBoxMonth ? "2px" : "1px",
                               borderColor: styleOfBoxMonth
                                 ? "#1d9bf0                          "
+                                : themeName === "dark-theme"
+                                ? "rgb(70,70,70)"
                                 : "#cfd9de",
                             }}
                           >
@@ -1082,13 +1139,24 @@ function SignUpPage() {
                                 float: "left",
                               }}
                             >
-                              <div className="main-outline-text">Month</div>
+                              <div
+                                className="main-outline-text"
+                                style={{
+                                  color:
+                                    themeName === "dark-theme" ? "#71767B" : "",
+                                }}
+                              >
+                                Month
+                              </div>
                               <div
                                 className="mt-2 selected-month-string-parent-div"
                                 style={{
                                   fontSize: "17px",
                                   lineHeight: "20px",
-                                  color: "black",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "white"
+                                      : "black",
                                 }}
                               >
                                 {selectedMonth}
@@ -1131,7 +1199,6 @@ function SignUpPage() {
                             onClick={handleDayClick}
                             style={{
                               borderRadius: "4px",
-
                               cursor: "pointer",
                               color: "#536471",
                               flex: "113.75px",
@@ -1141,7 +1208,9 @@ function SignUpPage() {
                               borderWidth: styleOfBoxDay ? "2px" : "1px",
                               borderColor: styleOfBoxDay
                                 ? "#1d9bf0                          "
-                                : "#cfd9de",
+                                : themeName === "dark-theme"
+                                ? "rgb(70,70,70)"
+                                : "rgb(207, 217, 222)",
                             }}
                           >
                             <div
@@ -1150,7 +1219,13 @@ function SignUpPage() {
                                 float: "left",
                               }}
                             >
-                              <div className="main-outline-text-day-picker">
+                              <div
+                                className="main-outline-text-day-picker"
+                                style={{
+                                  color:
+                                    themeName === "dark-theme" ? "#71767A" : "",
+                                }}
+                              >
                                 Day
                               </div>
                               <div
@@ -1158,7 +1233,10 @@ function SignUpPage() {
                                 style={{
                                   fontSize: "17px",
                                   lineHeight: "20px",
-                                  color: "black",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "white"
+                                      : "black",
                                 }}
                               >
                                 {selectedDay}
@@ -1208,6 +1286,8 @@ function SignUpPage() {
                               borderWidth: styleOfBoxYear ? "2px" : "1px",
                               borderColor: styleOfBoxYear
                                 ? "#1d9bf0                          "
+                                : themeName === "dark-theme"
+                                ? "rgb(70,70,70)"
                                 : "#cfd9de",
                             }}
                           >
@@ -1217,7 +1297,13 @@ function SignUpPage() {
                                 float: "left",
                               }}
                             >
-                              <div className="main-outline-text-year-picker">
+                              <div
+                                className="main-outline-text-year-picker"
+                                style={{
+                                  color:
+                                    themeName === "dark-theme" ? "#71767A" : "",
+                                }}
+                              >
                                 Year
                               </div>
                               <div
@@ -1225,7 +1311,10 @@ function SignUpPage() {
                                 style={{
                                   fontSize: "17px",
                                   lineHeight: "20px",
-                                  color: "black",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "white"
+                                      : "black",
                                 }}
                               >
                                 {displayedYear}
@@ -1265,7 +1354,8 @@ function SignUpPage() {
                         bottom: "20px",
                         width: "81.5%",
                         height: "52px",
-                        backgroundColor: "#0f141a",
+                        backgroundColor:
+                          themeName === "dark-theme" ? "white" : "#0f141a",
                         opacity:
                           checkFields.nameInput &&
                           checkFields.emailInput &&
@@ -1292,7 +1382,7 @@ function SignUpPage() {
                             }
                           : null
                       }
-                      className="next-btn"
+                      className={`next-btn ${themeName}-white-btn`}
                     >
                       Next
                     </Button>
@@ -1331,12 +1421,12 @@ function SignUpPage() {
                         fontWeight: "700",
                         fontSize: "26px",
                         letterSpacing: "0.5px",
+                        color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
                       Customize your experience
                     </div>
                     <div
-                      className={`scrollbar-add scrollbar-add-${themeName}`}
                       style={{
                         overflowY: "auto",
                         position: "relative",
@@ -1349,9 +1439,10 @@ function SignUpPage() {
                           fontWeight: "700",
                           fontSize: "20px",
                           lineHeight: "24px",
+                          color: themeName === "dark-theme" ? "white" : "",
                         }}
                       >
-                        Get more out of Connectify
+                        Get more out of C
                       </div>
                       <div
                         className="mt-2"
@@ -1370,6 +1461,7 @@ function SignUpPage() {
                           <div
                             style={{
                               width: "81.5%",
+                              color: themeName === "dark-theme" ? "white" : "",
                             }}
                           >
                             {" "}
@@ -1387,8 +1479,8 @@ function SignUpPage() {
                             }}
                             className={
                               firstClicked
-                                ? "hover-customize-your-experience-tab-get-more-out-of-variant"
-                                : "hover-customize-your-experience-tab-get-more-out-of-variant-2"
+                                ? `hover-customize-your-experience-tab-get-more-out-of-variant cs-experience-getMoreOutOf-${themeName}`
+                                : `hover-customize-your-experience-tab-get-more-out-of-variant-2 cs-experience-variant-2-getMoreOutOf-${themeName}`
                             }
                           >
                             <div
@@ -1397,7 +1489,9 @@ function SignUpPage() {
                                   ? "#1d9bf0"
                                   : "transparent",
                                 border: firstClicked
-                                  ? "none"
+                                  ? ""
+                                  : themeName === "dark-theme"
+                                  ? "2px solid rgb(70,70,70)"
                                   : "2px solid #536471",
 
                                 borderWidth: "2px ",
@@ -1438,6 +1532,7 @@ function SignUpPage() {
                           fontWeight: "700",
                           fontSize: "20px",
                           lineHeight: "24px",
+                          color: themeName === "dark-theme" ? "white" : "",
                         }}
                       >
                         Connect with people you know
@@ -1459,6 +1554,7 @@ function SignUpPage() {
                           <div
                             style={{
                               width: "81.5%",
+                              color: themeName === "dark-theme" ? "white" : "",
                             }}
                           >
                             {" "}
@@ -1476,8 +1572,8 @@ function SignUpPage() {
                             }}
                             className={
                               secondClicked
-                                ? "hover-customize-your-experience-tab-connect-with-people-you-know"
-                                : "hover-customize-your-experience-tab-connect-with-people-you-know-variant-2"
+                                ? `hover-customize-your-experience-tab-connect-with-people-you-know cs-experience-connectWithPeopleYouKnow-${themeName}`
+                                : `hover-customize-your-experience-tab-connect-with-people-you-know-variant-2 cs-experience-variant-2-connectWithPeopleYouKnow-${themeName}`
                             }
                           >
                             <div
@@ -1486,7 +1582,9 @@ function SignUpPage() {
                                   ? "#1d9bf0"
                                   : "transparent",
                                 border: secondClicked
-                                  ? "none"
+                                  ? ""
+                                  : themeName === "dark-theme"
+                                  ? "2px solid rgb(70,70,70)"
                                   : "2px solid #536471",
 
                                 borderWidth: "2px ",
@@ -1527,6 +1625,7 @@ function SignUpPage() {
                           fontWeight: "700",
                           fontSize: "20px",
                           lineHeight: "24px",
+                          color: themeName === "dark-theme" ? "white" : "",
                         }}
                       >
                         Personalized ads
@@ -1548,6 +1647,7 @@ function SignUpPage() {
                           <div
                             style={{
                               width: "81.5%",
+                              color: themeName === "dark-theme" ? "white" : "",
                             }}
                           >
                             {" "}
@@ -1569,8 +1669,8 @@ function SignUpPage() {
                             }}
                             className={
                               thirdClicked
-                                ? "hover-customize-your-experience-tab-personalized-ads"
-                                : "hover-customize-your-experience-tab-personalized-ads-variant-2"
+                                ? `hover-customize-your-experience-tab-personalized-ads cs-experience-personalizedAds-${themeName}`
+                                : `hover-customize-your-experience-tab-personalized-ads-variant-2 cs-experience-variant-2-personalizedAds-${themeName} `
                             }
                           >
                             <div
@@ -1579,7 +1679,9 @@ function SignUpPage() {
                                   ? "#1d9bf0"
                                   : "transparent",
                                 border: thirdClicked
-                                  ? "none"
+                                  ? ""
+                                  : themeName === "dark-theme"
+                                  ? "2px solid rgb(70,70,70)"
                                   : "2px solid #536471",
 
                                 borderWidth: "2px ",
@@ -1652,7 +1754,8 @@ function SignUpPage() {
                         bottom: "20px",
                         width: "81.5%",
                         height: "52px",
-                        backgroundColor: "#0f141a",
+                        backgroundColor:
+                          themeName === "dark-theme" ? "white" : "#0f141a",
                         opacity:
                           checkFields.nameInput &&
                           checkFields.emailInput &&
@@ -1672,7 +1775,7 @@ function SignUpPage() {
                             }
                           : null
                       }
-                      className="next-btn"
+                      className={`next-btn ${themeName}-white-btn`}
                     >
                       Next
                     </Button>
@@ -1717,6 +1820,7 @@ function SignUpPage() {
                         fontWeight: "700",
                         fontSize: "26px",
                         zIndex: "100",
+                        color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
                       <div
@@ -1729,7 +1833,10 @@ function SignUpPage() {
                       <div
                         className="mt-2"
                         style={{
-                          color: "rgb(83, 100, 113)",
+                          color:
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)",
                           fontSize: "15px",
                           lineHeight: "20px",
                           fontWeight: "400",
@@ -1758,12 +1865,25 @@ function SignUpPage() {
                         width: "81.5%",
                         height: "58px",
                       }}
+                      InputLabelProps={{
+                        style: {
+                          color: themeName === "dark-theme" ? "#71767B" : "",
+                        },
+                      }}
+                      InputProps={{
+                        style: {
+                          color: themeName === "dark-theme" ? "white" : "",
+                        },
+                      }}
                       sx={{
                         "& .Mui-focused input + fieldset": {
                           border: "2px solid #1d9bf0 !important",
                         },
                         "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#cfd9de !important",
+                          borderColor:
+                            themeName === "dark-theme"
+                              ? "rgb(70,70,70) !important"
+                              : "#cfd9de !important",
                         },
                         "& .MuiInputLabel-shrink": {
                           color: "#1f9cf0 !important",
@@ -1771,6 +1891,9 @@ function SignUpPage() {
                       }}
                     />
                     <div
+                      onClick={() =>
+                        setShowOptionsReceivedEmail(!showOptionsReceivedEmail)
+                      }
                       style={{
                         width: "81.5%",
                       }}
@@ -1798,7 +1921,8 @@ function SignUpPage() {
                         bottom: "20px",
                         width: "81.5%",
                         height: "52px",
-                        backgroundColor: "#0f141a",
+                        backgroundColor:
+                          themeName === "dark-theme" ? "white" : "#0f141a",
                         opacity: confirmEmailVerificationCode.length
                           ? "1"
                           : "0.5",
@@ -1816,7 +1940,7 @@ function SignUpPage() {
                             }
                           : () => errorMessageAndCleanTextInput()
                       }
-                      className="next-btn"
+                      className={`next-btn ${themeName}-white-btn`}
                     >
                       Next
                     </Button>
@@ -1856,6 +1980,7 @@ function SignUpPage() {
                       <div
                         style={{
                           letterSpacing: "0.5px",
+                          color: themeName === "dark-theme" ? "white" : "",
                         }}
                       >
                         {"You'll need a password"}
@@ -1863,7 +1988,10 @@ function SignUpPage() {
                       <div
                         className="mt-2.5"
                         style={{
-                          color: "rgb(83, 100, 113)",
+                          color:
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)",
                           fontSize: "15px",
                           lineHeight: "20px",
                           fontWeight: "400",
@@ -1893,10 +2021,14 @@ function SignUpPage() {
                         autoFocus
                         onChange={(e) => setPassword(e.target.value)}
                         sx={{
+                          color: themeName === "dark-theme" ? "white" : "",
+
                           "& .MuiOutlinedInput-notchedOutline": {
                             borderColor:
                               password.length && !passwordIsValid
                                 ? "rgb(244, 33, 46)!important"
+                                : themeName === "dark-theme"
+                                ? "rgb(70,70,70) !important"
                                 : "#cfd9de !important",
                           },
                           "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
@@ -1917,7 +2049,11 @@ function SignUpPage() {
                                 style={{
                                   cursor: "pointer",
                                 }}
-                                color="rgb(15, 20, 25)"
+                                color={
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "rgb(15, 20, 25)"
+                                }
                                 fill="currentColor"
                                 width={22}
                                 height={22}
@@ -1938,7 +2074,11 @@ function SignUpPage() {
                                 }}
                                 width={22}
                                 height={22}
-                                color="rgb(15, 20, 25)"
+                                color={
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "rgb(15, 20, 25)"
+                                }
                                 fill="currentColor"
                                 viewBox="0 0 24 24"
                                 aria-hidden="true"
@@ -2007,7 +2147,8 @@ function SignUpPage() {
                         bottom: "20px",
                         width: "81.5%",
                         height: "52px",
-                        backgroundColor: "#0f141a",
+                        backgroundColor:
+                          themeName === "dark-theme" ? "white" : "#0f141a",
                         opacity:
                           password.length >= 8 && passwordIsValid ? "1" : "0.5",
                       }}
@@ -2016,7 +2157,7 @@ function SignUpPage() {
                           ? handleSignUp
                           : null
                       }
-                      className="next-btn"
+                      className={`next-btn ${themeName}-white-btn`}
                     >
                       Next
                     </Button>
@@ -2031,6 +2172,19 @@ function SignUpPage() {
       ) : (
         <>
           <Modal
+            style={{
+              padding: "0px",
+              margin: "0px",
+            }}
+            backdropClassName={
+              themeName === "dark-theme" ? `back-drop-${themeName}` : ""
+            }
+            dialogClassName="test"
+            contentClassName={
+              themeName === "dark-theme"
+                ? `create-account-modal-${themeName}`
+                : ""
+            }
             className={"signin-modal-parent-non-reactivate"}
             show={showCreateAccountModal}
             onHide={handleCloseCreateAccountModal}
@@ -2050,7 +2204,7 @@ function SignUpPage() {
                       <div onClick={() => setTabIndex(tabIndex - 1)}>
                         {" "}
                         <div
-                          className="p-2 arrow"
+                          className={`p2 arrow arrow-${themeName}`}
                           style={{
                             position: "relative",
                             width: "34px",
@@ -2067,6 +2221,12 @@ function SignUpPage() {
                               left: "7px",
                               fontSize: "15px",
                             }}
+                            color={
+                              themeName === "dark-theme"
+                                ? "white"
+                                : `rgb(15,20,25)`
+                            }
+                            fill="currentColor"
                             width={20}
                             height={20}
                             viewBox="0 0 24 24"
@@ -2082,7 +2242,7 @@ function SignUpPage() {
                     ) : (
                       <div
                         onClick={handleCloseCreateAccountModal}
-                        className="close-button"
+                        className={`close-button close-button-${themeName}`}
                         style={{
                           borderRadius: "50%",
                           cursor: "pointer",
@@ -2099,7 +2259,11 @@ function SignUpPage() {
                             onClick={handleCloseCreateAccountModal}
                             width={20}
                             height={20}
-                            color="rgb(15,20,25)"
+                            color={
+                              themeName === "dark-theme"
+                                ? "white"
+                                : `rgb(15,20,25)`
+                            }
                             fill="currentColor"
                             viewBox="0 0 24 24"
                             aria-hidden="true"
@@ -2124,8 +2288,15 @@ function SignUpPage() {
                   display: showOptionsReceivedEmail ? "flex" : "none",
                   flexDirection: "column",
                   borderRadius: "16px",
+                  filter:
+                    themeName === "dark-theme"
+                      ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                      : "",
+
                   boxShadow:
-                    "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                    themeName === "dark-theme"
+                      ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                      : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
                   zIndex: "999",
                   transform: `scale(${showOptionsReceivedEmail ? "1" : "0.8"})`,
                   animation: "fadeIn 0.5s ease",
@@ -2133,11 +2304,14 @@ function SignUpPage() {
               >
                 <div
                   style={{
+                    border: "none",
+                    outlineStyle: "none",
                     cursor: "pointer",
                     lineHeight: "20px",
                     fontSize: "15px",
                     fontWeight: "400",
                     padding: "12px",
+                    color: themeName === "dark-theme" ? "white" : "",
                   }}
                 >
                   {"Didn't receive email?"}
@@ -2146,30 +2320,38 @@ function SignUpPage() {
                   onClick={() => {
                     sendEmailVerificationCode(email);
                   }}
-                  className="resend-email"
+                  className={`resend-email resend-email-${themeName}`}
                   style={{
+                    border: "none",
+                    outlineStyle: "none",
                     cursor: "pointer",
                     lineHeight: "20px",
                     fontSize: "15px",
                     fontWeight: "700",
                     padding: "12px",
+                    color: themeName === "dark-theme" ? "white" : "",
                   }}
                 >
                   {"Resend email"}
                 </div>
-                <div
-                  className="use-phone-instead"
-                  style={{
-                    // cursor: "pointer",
-                    lineHeight: "20px",
-                    fontSize: "15px",
-                    fontWeight: "700",
-                    padding: "12px",
-                    opacity: "0.5",
-                  }}
-                >
-                  {"Use phone instead"}
-                </div>
+                <Tooltip title="This feature is not yet active. ">
+                  <div
+                    className={`use-phone-instead use-phone-instead-${themeName}`}
+                    style={{
+                      // cursor: "pointer",
+                      lineHeight: "20px",
+                      fontSize: "15px",
+                      fontWeight: "700",
+                      padding: "12px",
+                      opacity: "0.5",
+                      borderBottomRightRadius: "16px",
+                      borderBottomLeftRadius: "16px",
+                      color: themeName === "dark-theme" ? "white" : "",
+                    }}
+                  >
+                    {"Use phone instead"}{" "}
+                  </div>
+                </Tooltip>
               </div>
             </Modal.Header>
             {tabIndex === 0 ? (
@@ -2203,6 +2385,7 @@ function SignUpPage() {
                         lineHeight: "36px",
                         fontWeight: "700",
                         fontSize: "31px",
+                        color: themeName === "dark-theme" ? "white" : "black",
                       }}
                     >
                       Create your account
@@ -2258,6 +2441,16 @@ function SignUpPage() {
                         width: "81.5%",
                         height: "58px",
                       }}
+                      InputLabelProps={{
+                        style: {
+                          color: themeName === "dark-theme" ? "#71767B" : "",
+                        },
+                      }}
+                      InputProps={{
+                        style: {
+                          color: themeName === "dark-theme" ? "white" : "",
+                        },
+                      }}
                       sx={{
                         "& .Mui-focused input + fieldset": {
                           border:
@@ -2273,6 +2466,8 @@ function SignUpPage() {
                             fullname.length === 0 &&
                             !firstAppearence
                               ? "rgb(244, 33, 46)!important"
+                              : themeName === "dark-theme"
+                              ? "rgb(70, 70, 70) !important"
                               : "#cfd9de !important",
                         },
                         "& .MuiInputLabel-shrink": {
@@ -2314,6 +2509,16 @@ function SignUpPage() {
                         width: "81.5%",
                         height: "58px",
                       }}
+                      InputLabelProps={{
+                        style: {
+                          color: themeName === "dark-theme" ? "#71767B" : "",
+                        },
+                      }}
+                      InputProps={{
+                        style: {
+                          color: themeName === "dark-theme" ? "white" : "",
+                        },
+                      }}
                       sx={{
                         "& .Mui-focused input + fieldset": {
                           border:
@@ -2327,6 +2532,8 @@ function SignUpPage() {
                             emailTypeError === 304 ||
                             (emailTypeError === 200 && email.length)
                               ? "rgb(244, 33, 46)!important"
+                              : themeName === "dark-theme"
+                              ? "rgb(70, 70, 70) !important"
                               : "#cfd9de !important",
                         },
                         "& .MuiInputLabel-shrink": {
@@ -2408,6 +2615,7 @@ function SignUpPage() {
                           fontSize: "15px",
                           lineHeight: "20px",
                           fontWeight: "700",
+                          color: themeName === "dark-theme" ? "white" : "",
                         }}
                       >
                         Date of birth
@@ -2415,7 +2623,10 @@ function SignUpPage() {
                       <div
                         className="mt-2"
                         style={{
-                          color: "rgb(83, 100, 113)",
+                          color:
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)",
                           fontSize: "14px",
                           lineHeight: "16px",
                           fontWeight: "400",
@@ -2458,6 +2669,8 @@ function SignUpPage() {
                               borderWidth: styleOfBoxMonth ? "2px" : "1px",
                               borderColor: styleOfBoxMonth
                                 ? "#1d9bf0                          "
+                                : themeName === "dark-theme"
+                                ? "rgb(70, 70, 70)"
                                 : "rgb(207, 217, 222)",
                             }}
                           >
@@ -2467,13 +2680,24 @@ function SignUpPage() {
                                 float: "left",
                               }}
                             >
-                              <div className="main-outline-text">Month</div>
+                              <div
+                                className="main-outline-text"
+                                style={{
+                                  color:
+                                    themeName === "dark-theme" ? "#71767B" : "",
+                                }}
+                              >
+                                Month
+                              </div>
                               <div
                                 className="mt-2 selected-month-string-parent-div"
                                 style={{
                                   fontSize: "17px",
                                   lineHeight: "20px",
-                                  color: "black",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "white"
+                                      : "black",
                                 }}
                               >
                                 {selectedMonth}
@@ -2525,6 +2749,8 @@ function SignUpPage() {
                               borderWidth: styleOfBoxDay ? "2px" : "1px",
                               borderColor: styleOfBoxDay
                                 ? "#1d9bf0                          "
+                                : themeName === "dark-theme"
+                                ? "rgb(70,70,70)"
                                 : "rgb(207, 217, 222)",
                             }}
                           >
@@ -2534,7 +2760,13 @@ function SignUpPage() {
                                 float: "left",
                               }}
                             >
-                              <div className="main-outline-text-day-picker">
+                              <div
+                                className="main-outline-text-day-picker"
+                                style={{
+                                  color:
+                                    themeName === "dark-theme" ? "#71767A" : "",
+                                }}
+                              >
                                 Day
                               </div>
                               <div
@@ -2542,7 +2774,10 @@ function SignUpPage() {
                                 style={{
                                   fontSize: "17px",
                                   lineHeight: "20px",
-                                  color: "black",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "white"
+                                      : "black",
                                 }}
                               >
                                 {selectedDay}
@@ -2592,6 +2827,8 @@ function SignUpPage() {
                               borderWidth: styleOfBoxYear ? "2px" : "1px",
                               borderColor: styleOfBoxYear
                                 ? "#1d9bf0                          "
+                                : themeName === "dark-theme"
+                                ? "rgb(70,70,70)"
                                 : "rgb(207, 217, 222)",
                             }}
                           >
@@ -2601,7 +2838,13 @@ function SignUpPage() {
                                 float: "left",
                               }}
                             >
-                              <div className="main-outline-text-year-picker">
+                              <div
+                                className="main-outline-text-year-picker"
+                                style={{
+                                  color:
+                                    themeName === "dark-theme" ? "#71767A" : "",
+                                }}
+                              >
                                 Year
                               </div>
                               <div
@@ -2609,7 +2852,10 @@ function SignUpPage() {
                                 style={{
                                   fontSize: "17px",
                                   lineHeight: "20px",
-                                  color: "black",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "white"
+                                      : "black",
                                 }}
                               >
                                 {displayedYear}
@@ -2648,7 +2894,8 @@ function SignUpPage() {
                         bottom: "20px",
                         width: "81.5%",
                         height: "52px",
-                        backgroundColor: "#0f141a",
+                        backgroundColor:
+                          themeName === "dark-theme" ? "white" : "#0f141a",
                         opacity:
                           checkFields.nameInput &&
                           checkFields.emailInput &&
@@ -2675,7 +2922,7 @@ function SignUpPage() {
                             }
                           : null
                       }
-                      className="next-btn"
+                      className={`next-btn ${themeName}-white-btn`}
                     >
                       Next
                     </Button>{" "}
@@ -2701,342 +2948,371 @@ function SignUpPage() {
                 ) : (
                   <Modal.Body
                     style={{
-                      overflowY: "auto",
-
+                      padding: "0px",
+                      margin: "0px",
                       position: "relative",
                     }}
-                    className={`scrollbar-add signin-modal-body-child-non-reactivate scrollbar-add-${themeName}`}
+                    className={`signin-modal-body-child-non-reactivate`}
                   >
                     <div
-                      className="mb-4"
+                      className={`scrollbar-add scrollbar-add-${themeName} `}
                       style={{
-                        width: "81.5%",
-                        lineHeight: "36px",
-                        fontWeight: "700",
-                        fontSize: "31px",
-                      }}
-                    >
-                      Customize your experience
-                    </div>
-                    <div
-                      className={`scrollbar-add scrollbar-add-${themeName}`}
-                      style={{
-                        overflowY: "auto",
-                        position: "relative",
-                        width: "81.5%",
+                        overflowY: "scroll",
+                        height: "80%",
+                        paddingLeft: "62px",
+                        paddingTop: "36px",
                       }}
                     >
                       <div
-                        className="mt-3"
                         style={{
-                          fontWeight: "700",
-                          fontSize: "20px",
-                          lineHeight: "24px",
-                        }}
-                      >
-                        Get more out of Connectify
-                      </div>
-                      <div
-                        className="mt-2"
-                        style={{
-                          lineHeight: "20px",
-                          fontSize: "15px",
-                          fontWeight: "400",
+                          width: "100%",
                         }}
                       >
                         <div
+                          className="mb-4"
                           style={{
-                            display: "flex",
-                            justifyContent: "space-between",
+                            width: "81.5%",
+                            lineHeight: "36px",
+                            fontWeight: "700",
+                            fontSize: "31px",
+                            color: themeName === "dark-theme" ? "white" : "",
+                          }}
+                        >
+                          Customize your experience
+                        </div>
+                        <div
+                          className="mt-3"
+                          style={{
+                            fontWeight: "700",
+                            fontSize: "20px",
+                            lineHeight: "24px",
+                            color: themeName === "dark-theme" ? "white" : "",
+                          }}
+                        >
+                          Get more out of C
+                        </div>
+                        <div
+                          className="mt-2"
+                          style={{
+                            lineHeight: "20px",
+                            fontSize: "15px",
+                            fontWeight: "400",
                           }}
                         >
                           <div
                             style={{
-                              width: "81.5%",
+                              display: "flex",
+                              justifyContent: "space-between",
                             }}
-                          >
-                            {" "}
-                            Receive email about your Connectify activity and
-                            recommendations.
-                          </div>
-                          <div
-                            onClick={() => setfirstClicked(!firstClicked)}
-                            style={{
-                              width: "36px",
-                              height: "36px",
-                              borderRadius: "50%",
-                              cursor: "pointer",
-                              position: "relative",
-                            }}
-                            className={
-                              firstClicked
-                                ? "hover-customize-your-experience-tab-get-more-out-of-variant"
-                                : "hover-customize-your-experience-tab-get-more-out-of-variant-2"
-                            }
                           >
                             <div
                               style={{
-                                backgroundColor: firstClicked
-                                  ? "#1d9bf0"
-                                  : "transparent",
-                                border: firstClicked
-                                  ? "none"
-                                  : "2px solid #536471",
-
-                                borderWidth: "2px ",
-                                width: "20px",
-                                height: "20px",
-                                position: "relative",
-                                left: "8px",
-                                top: "8px",
-                                borderRadius: "3px",
+                                width: "81.5%",
+                                color:
+                                  themeName === "dark-theme" ? "white" : "",
                               }}
                             >
-                              <svg
+                              {" "}
+                              Receive email about your Connectify activity and
+                              recommendations.
+                            </div>
+                            <div
+                              onClick={() => setfirstClicked(!firstClicked)}
+                              style={{
+                                marginRight: "36px",
+                                width: "36px",
+                                height: "36px",
+                                borderRadius: "50%",
+                                cursor: "pointer",
+                                position: "relative",
+                              }}
+                              className={
+                                firstClicked
+                                  ? `hover-customize-your-experience-tab-get-more-out-of-variant cs-experience-getMoreOutOf-${themeName}`
+                                  : `hover-customize-your-experience-tab-get-more-out-of-variant-2 cs-experience-variant-2-getMoreOutOf-${themeName}`
+                              }
+                            >
+                              <div
                                 style={{
+                                  backgroundColor: firstClicked
+                                    ? "#1d9bf0"
+                                    : "transparent",
+                                  border: firstClicked
+                                    ? ""
+                                    : themeName === "dark-theme"
+                                    ? "2px solid rgb(70,70,70)"
+                                    : "2px solid #536471",
+
+                                  borderWidth: "2px ",
+                                  width: "20px",
+                                  height: "20px",
                                   position: "relative",
-                                  left: "2px",
-                                  bottom: "2px",
-                                  display: firstClicked ? "initial" : "none",
+                                  left: "8px",
+                                  top: "8px",
+                                  borderRadius: "3px",
                                 }}
-                                width={16}
-                                height={16}
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
-                                color="white"
-                                fill="currentColor"
                               >
-                                <g>
-                                  <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                </g>
-                              </svg>
+                                <svg
+                                  style={{
+                                    position: "relative",
+                                    left: "2px",
+                                    bottom: "2px",
+                                    display: firstClicked ? "initial" : "none",
+                                  }}
+                                  width={16}
+                                  height={16}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
+                                  color="white"
+                                  fill="currentColor"
+                                >
+                                  <g>
+                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                  </g>
+                                </svg>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <div
-                        className="mt-3"
-                        style={{
-                          fontWeight: "700",
-                          fontSize: "20px",
-                          lineHeight: "24px",
-                        }}
-                      >
-                        Connect with people you know
-                      </div>
-                      <div
-                        className="mt-2"
-                        style={{
-                          lineHeight: "20px",
-                          fontSize: "15px",
-                          fontWeight: "400",
-                        }}
-                      >
                         <div
+                          className="mt-3"
                           style={{
-                            display: "flex",
-                            justifyContent: "space-between",
+                            fontWeight: "700",
+                            fontSize: "20px",
+                            lineHeight: "24px",
+                            color: themeName === "dark-theme" ? "white" : "",
+                          }}
+                        >
+                          Connect with people you know
+                        </div>
+                        <div
+                          className="mt-2"
+                          style={{
+                            lineHeight: "20px",
+                            fontSize: "15px",
+                            fontWeight: "400",
                           }}
                         >
                           <div
                             style={{
-                              width: "81.5%",
+                              display: "flex",
+                              justifyContent: "space-between",
                             }}
-                          >
-                            {" "}
-                            Let others find your account by your email address.
-                          </div>
-                          <div
-                            onClick={() => setsecondClicked(!secondClicked)}
-                            style={{
-                              width: "36px",
-                              height: "36px",
-                              borderRadius: "50%",
-                              cursor: "pointer",
-                              position: "relative",
-                            }}
-                            className={
-                              secondClicked
-                                ? "hover-customize-your-experience-tab-connect-with-people-you-know"
-                                : "hover-customize-your-experience-tab-connect-with-people-you-know-variant-2"
-                            }
                           >
                             <div
                               style={{
-                                backgroundColor: secondClicked
-                                  ? "#1d9bf0"
-                                  : "transparent",
-                                border: secondClicked
-                                  ? "none"
-                                  : "2px solid #536471",
-
-                                borderWidth: "2px ",
-                                width: "20px",
-                                height: "20px",
-                                position: "relative",
-                                left: "8px",
-                                top: "8px",
-                                borderRadius: "3px",
+                                width: "81.5%",
+                                color:
+                                  themeName === "dark-theme" ? "white" : "",
                               }}
                             >
-                              <svg
+                              {" "}
+                              Let others find your account by your email
+                              address.
+                            </div>
+                            <div
+                              onClick={() => setsecondClicked(!secondClicked)}
+                              style={{
+                                marginRight: "36px",
+                                width: "36px",
+                                height: "36px",
+                                borderRadius: "50%",
+                                cursor: "pointer",
+                                position: "relative",
+                              }}
+                              className={
+                                secondClicked
+                                  ? `hover-customize-your-experience-tab-connect-with-people-you-know cs-experience-connectWithPeopleYouKnow-${themeName}`
+                                  : `hover-customize-your-experience-tab-connect-with-people-you-know-variant-2 cs-experience-variant-2-connectWithPeopleYouKnow-${themeName}`
+                              }
+                            >
+                              <div
                                 style={{
+                                  backgroundColor: secondClicked
+                                    ? "#1d9bf0"
+                                    : "transparent",
+                                  border: secondClicked
+                                    ? ""
+                                    : themeName === "dark-theme"
+                                    ? "2px solid rgb(70,70,70)"
+                                    : "2px solid #536471",
+
+                                  borderWidth: "2px ",
+                                  width: "20px",
+                                  height: "20px",
                                   position: "relative",
-                                  left: "2px",
-                                  bottom: "2px",
-                                  display: secondClicked ? "initial" : "none",
+                                  left: "8px",
+                                  top: "8px",
+                                  borderRadius: "3px",
                                 }}
-                                width={16}
-                                height={16}
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
-                                color="white"
-                                fill="currentColor"
                               >
-                                <g>
-                                  <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                </g>
-                              </svg>
+                                <svg
+                                  style={{
+                                    position: "relative",
+                                    left: "2px",
+                                    bottom: "2px",
+                                    display: secondClicked ? "initial" : "none",
+                                  }}
+                                  width={16}
+                                  height={16}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
+                                  color="white"
+                                  fill="currentColor"
+                                >
+                                  <g>
+                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                  </g>
+                                </svg>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <div
-                        className="mt-3"
-                        style={{
-                          fontWeight: "700",
-                          fontSize: "20px",
-                          lineHeight: "24px",
-                        }}
-                      >
-                        Personalized ads
-                      </div>
-                      <div
-                        className="mt-2"
-                        style={{
-                          lineHeight: "20px",
-                          fontSize: "15px",
-                          fontWeight: "400",
-                        }}
-                      >
                         <div
+                          className="mt-3"
                           style={{
-                            display: "flex",
-                            justifyContent: "space-between",
+                            fontWeight: "700",
+                            fontSize: "20px",
+                            lineHeight: "24px",
+                            color: themeName === "dark-theme" ? "white" : "",
+                          }}
+                        >
+                          Personalized ads
+                        </div>
+                        <div
+                          className="mt-2"
+                          style={{
+                            lineHeight: "20px",
+                            fontSize: "15px",
+                            fontWeight: "400",
                           }}
                         >
                           <div
                             style={{
-                              width: "81.5%",
+                              display: "flex",
+                              justifyContent: "space-between",
                             }}
-                          >
-                            {" "}
-                            You will always see ads on Connectify based on your
-                            Connectify activity. When this setting is enabled,
-                            Connectify may further personalize ads from
-                            Connectify advertisers, on and off Connectify, by
-                            combining your Connectify activity with other online
-                            activity and information from our partners.
-                          </div>
-                          <div
-                            onClick={() => setthirdClicked(!thirdClicked)}
-                            style={{
-                              width: "36px",
-                              height: "36px",
-                              borderRadius: "50%",
-                              cursor: "pointer",
-                              position: "relative",
-                            }}
-                            className={
-                              thirdClicked
-                                ? "hover-customize-your-experience-tab-personalized-ads"
-                                : "hover-customize-your-experience-tab-personalized-ads-variant-2"
-                            }
                           >
                             <div
                               style={{
-                                backgroundColor: thirdClicked
-                                  ? "#1d9bf0"
-                                  : "transparent",
-                                border: thirdClicked
-                                  ? "none"
-                                  : "2px solid #536471",
-
-                                borderWidth: "2px ",
-                                width: "20px",
-                                height: "20px",
-                                position: "relative",
-                                left: "8px",
-                                top: "8px",
-                                borderRadius: "3px",
+                                width: "81.5%",
+                                color:
+                                  themeName === "dark-theme" ? "white" : "",
                               }}
                             >
-                              <svg
+                              {" "}
+                              You will always see ads on Connectify based on
+                              your Connectify activity. When this setting is
+                              enabled, Connectify may further personalize ads
+                              from Connectify advertisers, on and off
+                              Connectify, by combining your Connectify activity
+                              with other online activity and information from
+                              our partners.
+                            </div>
+                            <div
+                              onClick={() => setthirdClicked(!thirdClicked)}
+                              style={{
+                                marginRight: "36px",
+                                width: "36px",
+                                height: "36px",
+                                borderRadius: "50%",
+                                cursor: "pointer",
+                                position: "relative",
+                              }}
+                              className={
+                                thirdClicked
+                                  ? `hover-customize-your-experience-tab-personalized-ads cs-experience-personalizedAds-${themeName}`
+                                  : `hover-customize-your-experience-tab-personalized-ads-variant-2 cs-experience-variant-2-personalizedAds-${themeName} `
+                              }
+                            >
+                              <div
                                 style={{
+                                  backgroundColor: thirdClicked
+                                    ? "#1d9bf0"
+                                    : "transparent",
+                                  border: thirdClicked
+                                    ? ""
+                                    : themeName === "dark-theme"
+                                    ? "2px solid rgb(70,70,70)"
+                                    : "2px solid #536471",
+
+                                  borderWidth: "2px ",
+                                  width: "20px",
+                                  height: "20px",
                                   position: "relative",
-                                  left: "2px",
-                                  bottom: "2px",
-                                  display: thirdClicked ? "initial" : "none",
+                                  left: "8px",
+                                  top: "8px",
+                                  borderRadius: "3px",
                                 }}
-                                width={16}
-                                height={16}
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
-                                color="white"
-                                fill="currentColor"
                               >
-                                <g>
-                                  <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                </g>
-                              </svg>
+                                <svg
+                                  style={{
+                                    position: "relative",
+                                    left: "2px",
+                                    bottom: "2px",
+                                    display: thirdClicked ? "initial" : "none",
+                                  }}
+                                  width={16}
+                                  height={16}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
+                                  color="white"
+                                  fill="currentColor"
+                                >
+                                  <g>
+                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                  </g>
+                                </svg>
+                              </div>
                             </div>
                           </div>
                         </div>
+                        <div
+                          className="mt-5"
+                          style={{
+                            paddingBottom: "36px",
+                            width: "81.5%",
+                            color:
+                              themeName === "dark-theme"
+                                ? "#71767A                                  "
+                                : "rgb(83, 100, 113)",
+                            fontSize: "15px",
+                            lineHeight: "20px",
+                            fontWeight: "400",
+                          }}
+                        >
+                          <span>By signing up, you agree to our </span>
+                          <span className="customize-experience-tab">
+                            Terms
+                          </span>
+                          ,{" "}
+                          <span className="customize-experience-tab">
+                            Privacy Policy
+                          </span>
+                          , and{" "}
+                          <span className="customize-experience-tab">
+                            Cookie Use
+                          </span>
+                          . Connectify may use your contact information,
+                          including your email address and phone number for
+                          purposes outlined in our Privacy Policy.{" "}
+                          <span className="customize-experience-tab">
+                            Learn more
+                          </span>
+                        </div>
                       </div>
                     </div>
-
-                    <div
-                      className="mt-2"
-                      style={{
-                        width: "81.5%",
-                        color:
-                          themeName === "dark-theme"
-                            ? "#71767A                                  "
-                            : "rgb(83, 100, 113)",
-                        fontSize: "15px",
-                        lineHeight: "20px",
-                        fontWeight: "400",
-                      }}
-                    >
-                      <span>By signing up, you agree to our </span>
-                      <span className="customize-experience-tab">
-                        Terms
-                      </span>,{" "}
-                      <span className="customize-experience-tab">
-                        Privacy Policy
-                      </span>
-                      , and{" "}
-                      <span className="customize-experience-tab">
-                        Cookie Use
-                      </span>
-                      . Connectify may use your contact information, including
-                      your email address and phone number for purposes outlined
-                      in our Privacy Policy.{" "}
-                      <span className="customize-experience-tab">
-                        Learn more
-                      </span>
-                    </div>
-
                     <Button
                       style={{
                         position: height < 700 ? "" : "absolute",
                         bottom: "20px",
                         width: "81.5%",
                         height: "52px",
-                        backgroundColor: "#0f141a",
+                        backgroundColor:
+                          themeName === "dark-theme" ? "white" : "#0f141a",
                         opacity:
                           checkFields.nameInput &&
                           checkFields.emailInput &&
@@ -3056,7 +3332,7 @@ function SignUpPage() {
                             }
                           : null
                       }
-                      className="next-btn"
+                      className={`next-btn ${themeName}-white-btn`}
                     >
                       Next
                     </Button>
@@ -3101,12 +3377,16 @@ function SignUpPage() {
                         fontWeight: "700",
                         fontSize: "31px",
                         zIndex: "100",
+                        color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
                       <div>We sent you a code</div>
                       <div
                         style={{
-                          color: "rgb(83, 100, 113)",
+                          color:
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)",
                           fontSize: "15px",
                           lineHeight: "20px",
                           fontWeight: "400",
@@ -3136,12 +3416,25 @@ function SignUpPage() {
                         width: "81.5%",
                         height: "58px",
                       }}
+                      InputLabelProps={{
+                        style: {
+                          color: themeName === "dark-theme" ? "#71767B" : "",
+                        },
+                      }}
+                      InputProps={{
+                        style: {
+                          color: themeName === "dark-theme" ? "white" : "",
+                        },
+                      }}
                       sx={{
                         "& .Mui-focused input + fieldset": {
                           border: "2px solid #1d9bf0 !important",
                         },
                         "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#cfd9de !important",
+                          borderColor:
+                            themeName === "dark-theme"
+                              ? "rgb(70,70,70) !important"
+                              : "#cfd9de !important",
                         },
                         "& .MuiInputLabel-shrink": {
                           color: "#1f9cf0 !important",
@@ -3149,6 +3442,9 @@ function SignUpPage() {
                       }}
                     />
                     <div
+                      onClick={() =>
+                        setShowOptionsReceivedEmail(!showOptionsReceivedEmail)
+                      }
                       style={{
                         width: "81.5%",
                       }}
@@ -3176,7 +3472,8 @@ function SignUpPage() {
                         bottom: "20px",
                         width: "81.5%",
                         height: "52px",
-                        backgroundColor: "#0f141a",
+                        backgroundColor:
+                          themeName === "dark-theme" ? "white" : "#0f141a",
                         opacity: confirmEmailVerificationCode.length
                           ? "1"
                           : "0.5",
@@ -3194,7 +3491,7 @@ function SignUpPage() {
                             }
                           : () => errorMessageAndCleanTextInput()
                       }
-                      className="next-btn"
+                      className={`next-btn ${themeName}-white-btn`}
                     >
                       Next
                     </Button>
@@ -3229,12 +3526,16 @@ function SignUpPage() {
                         fontWeight: "700",
                         fontSize: "31px",
                         zIndex: "100",
+                        color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
                       <div>{"You'll need a password"}</div>
                       <div
                         style={{
-                          color: "rgb(83, 100, 113)",
+                          color:
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)",
                           fontSize: "15px",
                           lineHeight: "20px",
                           fontWeight: "400",
@@ -3265,10 +3566,13 @@ function SignUpPage() {
                         autoFocus
                         onChange={(e) => setPassword(e.target.value)}
                         sx={{
+                          color: themeName === "dark-theme" ? "white" : "",
                           "& .MuiOutlinedInput-notchedOutline": {
                             borderColor:
                               password.length && !passwordIsValid
                                 ? "rgb(244, 33, 46)!important"
+                                : themeName === "dark-theme"
+                                ? "rgb(70,70,70) !important"
                                 : "#cfd9de !important",
                           },
                           "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
@@ -3289,7 +3593,11 @@ function SignUpPage() {
                                 style={{
                                   cursor: "pointer",
                                 }}
-                                color="rgb(15, 20, 25)"
+                                color={
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "rgb(15, 20, 25)"
+                                }
                                 fill="currentColor"
                                 width={22}
                                 height={22}
@@ -3310,7 +3618,11 @@ function SignUpPage() {
                                 }}
                                 width={22}
                                 height={22}
-                                color="rgb(15, 20, 25)"
+                                color={
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "rgb(15, 20, 25)"
+                                }
                                 fill="currentColor"
                                 viewBox="0 0 24 24"
                                 aria-hidden="true"
@@ -3378,7 +3690,8 @@ function SignUpPage() {
                         bottom: "20px",
                         width: "81.5%",
                         height: "52px",
-                        backgroundColor: "#0f141a",
+                        backgroundColor:
+                          themeName === "dark-theme" ? "white" : "#0f141a",
                         opacity:
                           password.length >= 8 && passwordIsValid ? "1" : "0.5",
                       }}
@@ -3387,7 +3700,7 @@ function SignUpPage() {
                           ? handleSignUp
                           : null
                       }
-                      className="next-btn"
+                      className={`next-btn ${themeName}-white-btn`}
                     >
                       Next
                     </Button>
@@ -3555,7 +3868,7 @@ function SignUpPage() {
                   margin: "10px 0px",
                   color:
                     themeName === "dark-theme"
-                      ? "#71767A                                  "
+                      ? "#71767A"
                       : "rgb(83, 100, 113)",
                 }}
                 className="by-signing"

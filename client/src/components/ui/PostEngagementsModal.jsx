@@ -4,6 +4,8 @@ import { UserContext } from "../../context/UserContext";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { ThemeContext } from "../../context/ThemeContext";
+import UnfollowModal from "../unfollow-modal/UnfollowModal";
+import useWindowDimensions from "../../hooks/getWindowDimensions";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -65,7 +67,14 @@ function PostEngagements({
     return {
       // textDecoration: activeTab === tab ? "underline" : "none",
       // background: hoveredTab === tab ? "purple" : "none",
-      color: activeTab === tab ? "rgb(29, 155, 240" : "rgb(83,100,113)",
+      color:
+        activeTab === tab && themeName !== "dark-theme"
+          ? "rgb(29, 155, 240"
+          : activeTab === tab && themeName === "dark-theme"
+          ? "white"
+          : themeName === "dark-theme"
+          ? "#71767A"
+          : "rgb(83,100,113)",
       fontWeight: activeTab === tab ? "700" : "400",
       lineHeight: "20px",
       fontSize: "15px",
@@ -197,10 +206,11 @@ function PostEngagements({
     cyberpunkModeActive,
   ] = useContext(ThemeContext);
 
+  const { height, width } = useWindowDimensions();
+
   return (
     <>
       {/* view post engagements section start to check */}
-
       <Stack
         onClick={handleShow}
         // className="view-post-engagements-section transition-gray-hover"
@@ -265,7 +275,11 @@ function PostEngagements({
         show={show}
         onHide={handleClose}
         centered="true"
-        contentClassName="extra-css-engage-modal"
+        contentClassName={`extra-css-engage-modal extra-css-engage-modal-${themeName}`}
+        backdropClassName={
+          themeName === "dark-theme" ? `back-drop-${themeName}` : ""
+        }
+        dialogClassName={width <= 700 ? "modal-fullscreen" : ""}
       >
         <Modal.Header
           style={{
@@ -274,7 +288,7 @@ function PostEngagements({
         >
           <div
             onClick={handleClose}
-            className="close-button"
+            className={`close-button close-button-${themeName}`}
             style={{ borderRadius: "50%", cursor: "pointer" }}
           >
             <div>
@@ -287,7 +301,7 @@ function PostEngagements({
                 onClick={handleClose}
                 width={20}
                 height={20}
-                color="rgb(15,20,25)"
+                color={themeName === "dark-theme" ? "white" : "rgb(15,20,25)"}
                 fill="currentColor"
                 viewBox="0 0 24 24"
                 aria-hidden="true"
@@ -303,7 +317,11 @@ function PostEngagements({
         {/* <Modal.Body> */}
         <div
           style={{
-            borderBottom: "1px solid rgba(0,0,0,0.1)",
+            borderBottom:
+              themeName !== "dark-theme"
+                ? "1px solid rgba(0, 0, 0, 0.1)"
+                : // : "0.1px solid rgb(70, 70, 70)",
+                  "1px solid rgb(70, 70, 70)",
             display: "flex",
             padding: "16px 0px 16px 0px",
           }}
@@ -346,34 +364,44 @@ function PostEngagements({
                       setIsHovered(false);
                     };
                     const buttonStyles = {
-                      cursor: "pointer",
-                      minWidth: "25%",
-                      textAlign: "center",
-                      paddingLeft: "16px",
-                      paddingRight: "16px",
-                      borderRadius: "9999px",
-                      lineHeight: "20px",
-                      fontSize: "15px",
-                      fontWeight: "700",
-                      padding: "5px",
-                      marginRight: "15px",
                       transitionDuration: "0.2s",
+                      fontSize: "15px",
+                      lineHeight: "20px",
+                      fontWeight: "700",
+                      display: "inline",
+                      maxWidth: "107px",
                       border:
-                        isHovered === buttonId && isFollowing
+                        isHovered && isFollowing && themeName !== "dark-theme"
                           ? "1px solid rgba(253,201,206,255)"
-                          : isFollowing
+                          : isHovered &&
+                            isFollowing &&
+                            themeName === "dark-theme"
+                          ? "1px solid #e71f2c"
+                          : isFollowing && themeName !== "dark-theme"
                           ? "1px solid rgba(0, 0, 0, 0.1)"
-                          : "1px solid rgb(185, 202, 211)",
+                          : "1px solid rgb(70, 70, 70)",
                       backgroundColor:
-                        isHovered === buttonId && isFollowing
+                        !isFollowing && themeName === "dark-theme"
+                          ? "white"
+                          : isHovered &&
+                            isFollowing &&
+                            themeName !== "dark-theme"
                           ? "rgba(255,234,235,255)"
-                          : isFollowing
+                          : isHovered &&
+                            isFollowing &&
+                            themeName === "dark-theme"
+                          ? "#230608"
+                          : isFollowing && themeName === "dark-theme"
+                          ? "black"
+                          : isFollowing && themeName !== "dark-theme"
                           ? "white"
                           : "black",
                       color:
-                        isHovered === buttonId && isFollowing
+                        !isFollowing && themeName === "dark-theme"
+                          ? "black"
+                          : isHovered && isFollowing
                           ? "rgba(244,34,45,255)"
-                          : isFollowing
+                          : isFollowing && themeName !== "dark-theme"
                           ? "black"
                           : "white",
                     };
@@ -489,7 +517,10 @@ function PostEngagements({
                                 <span
                                   className="hover-fullname"
                                   style={{
-                                    color: "rgb(15, 20, 25)",
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "white"
+                                        : "rgb(15, 20, 25)",
 
                                     fontSize: "15px",
                                     fontWeight: "700",
@@ -572,8 +603,8 @@ function PostEngagements({
                             </div>
 
                             {/* Following Button start to check */}
-                            <div
-                              className="follow-following-section-spesific-profile ms-auto"
+                            <Button
+                              className="ms-auto"
                               style={
                                 buttonStyles &&
                                 eachReposter._id !== userInfo._id
@@ -587,6 +618,7 @@ function PostEngagements({
                                   ? openUnfollowModal(eachReposter)
                                   : handleFollow(eachReposter)
                               }
+                              variant="dark"
                             >
                               {eachReposter._id !== userInfo._id ? (
                                 <>
@@ -597,7 +629,7 @@ function PostEngagements({
                                     : "Follow"}
                                 </>
                               ) : null}
-                            </div>
+                            </Button>
                             {/* Following Button finish to check */}
                           </Stack>
                         </div>
@@ -663,34 +695,45 @@ function PostEngagements({
                       setIsHovered(false);
                     };
                     const buttonStyles = {
-                      cursor: "pointer",
-                      minWidth: "25%",
-                      textAlign: "center",
-                      paddingLeft: "16px",
-                      paddingRight: "16px",
-                      borderRadius: "9999px",
-                      lineHeight: "20px",
-                      fontSize: "15px",
-                      fontWeight: "700",
-                      padding: "5px",
-                      marginRight: "15px",
                       transitionDuration: "0.2s",
+                      fontSize: "15px",
+                      lineHeight: "20px",
+                      fontWeight: "700",
+                      display: "inline",
+                      maxWidth: "107px",
+
                       border:
-                        isHovered === buttonId && isFollowing
+                        isHovered && isFollowing && themeName !== "dark-theme"
                           ? "1px solid rgba(253,201,206,255)"
-                          : isFollowing
+                          : isHovered &&
+                            isFollowing &&
+                            themeName === "dark-theme"
+                          ? "1px solid #e71f2c"
+                          : isFollowing && themeName !== "dark-theme"
                           ? "1px solid rgba(0, 0, 0, 0.1)"
-                          : "1px solid rgb(185, 202, 211)",
+                          : "1px solid rgb(70, 70, 70)",
                       backgroundColor:
-                        isHovered === buttonId && isFollowing
+                        !isFollowing && themeName === "dark-theme"
+                          ? "white"
+                          : isHovered &&
+                            isFollowing &&
+                            themeName !== "dark-theme"
                           ? "rgba(255,234,235,255)"
-                          : isFollowing
+                          : isHovered &&
+                            isFollowing &&
+                            themeName === "dark-theme"
+                          ? "#230608"
+                          : isFollowing && themeName === "dark-theme"
+                          ? "black"
+                          : isFollowing && themeName !== "dark-theme"
                           ? "white"
                           : "black",
                       color:
-                        isHovered === buttonId && isFollowing
+                        !isFollowing && themeName === "dark-theme"
+                          ? "black"
+                          : isHovered && isFollowing
                           ? "rgba(244,34,45,255)"
-                          : isFollowing
+                          : isFollowing && themeName !== "dark-theme"
                           ? "black"
                           : "white",
                     };
@@ -805,7 +848,10 @@ function PostEngagements({
                                 <span
                                   className="hover-fullname"
                                   style={{
-                                    color: "rgb(15, 20, 25)",
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "white"
+                                        : "rgb(15, 20, 25)",
 
                                     fontSize: "15px",
                                     fontWeight: "700",
@@ -888,8 +934,8 @@ function PostEngagements({
                             </div>
                             {/* <div className="p-0 ms-auto">asd</div> */}
                             {/* Following Button start to check */}
-                            <div
-                              className="follow-following-section-spesific-profile ms-auto"
+                            <Button
+                              className=" ms-auto"
                               style={
                                 buttonStyles && eachLiker._id !== userInfo._id
                                   ? buttonStyles
@@ -902,6 +948,7 @@ function PostEngagements({
                                   ? openUnfollowModal(eachLiker)
                                   : handleFollow(eachLiker)
                               }
+                              variant="dark"
                             >
                               {eachLiker._id !== userInfo._id ? (
                                 <>
@@ -912,7 +959,7 @@ function PostEngagements({
                                     : "Follow"}
                                 </>
                               ) : null}
-                            </div>
+                            </Button>
                             {/* Following Button finish to check */}
                           </Stack>
                         </div>
@@ -961,62 +1008,14 @@ function PostEngagements({
           )}
         </div>
       </Modal>
-
       {/* unfollow modal start to check  */}
-      <Modal show={showUnfollowModal} onHide={handleCloseUnfollowModal}>
-        <Modal.Body
-          style={{
-            textAlign: "center",
-          }}
-        >
-          <div>
-            <span
-              style={{
-                fontWeight: "700",
-                fontSize: "20px",
-                lineHeight: "24px",
-                textAlign: "left",
-              }}
-            >
-              Unfollow @{selectedUser.username}
-            </span>
-            <div
-              style={{
-                color: "rgb(83, 100, 113)",
-                fontWeight: "400",
-                fontSize: "15px",
-                lineHeight: "20px",
-                textAlign: "left",
-              }}
-            >
-              Their posts will no longer show up in your Following timeline. You
-              can still view their profile, unless their posts are protected.
-            </div>
-          </div>
-        </Modal.Body>
-        <Modal.Footer
-          style={{
-            border: "none",
-          }}
-        >
-          <Button
-            variant="dark"
-            onClick={() => handleUnfollow(selectedUser)}
-            // onClick={handleUnfollow}
-          >
-            Unfollow
-          </Button>
 
-          <Button
-            className="hover-unfollow-cancel"
-            style={{ color: "black" }}
-            variant="light"
-            onClick={handleCloseUnfollowModal}
-          >
-            Cancel
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <UnfollowModal
+        selectedUser={selectedUser}
+        handleUnfollow={handleUnfollow}
+        showUnfollowModal={showUnfollowModal}
+        handleClose={handleCloseUnfollowModal}
+      />
       {/* unfollow modal finish to check  */}
     </>
   );

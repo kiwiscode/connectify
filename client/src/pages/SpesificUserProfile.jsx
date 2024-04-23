@@ -2,16 +2,7 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
-import {
-  Container,
-  Row,
-  Col,
-  Stack,
-  Button,
-  ButtonGroup,
-  Modal,
-  Accordion,
-} from "react-bootstrap";
+import { Container, Row, Col, Stack, Button, Accordion } from "react-bootstrap";
 import { CommentModal } from "../components/ui/Modal";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import { Bounce, ToastContainer, toast } from "react-toastify";
@@ -29,6 +20,7 @@ import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import { ThemeContext } from "../context/ThemeContext";
+import UnfollowModal from "../components/unfollow-modal/UnfollowModal";
 
 function SpesificUserProfile() {
   const [
@@ -787,60 +779,12 @@ function SpesificUserProfile() {
             }}
           >
             {/* unfollow modal start to check  */}
-            <Modal show={showUnfollowModal} onHide={handleClose}>
-              <Modal.Body
-                style={{
-                  textAlign: "center",
-                }}
-              >
-                <div>
-                  <span
-                    style={{
-                      fontWeight: "700",
-                      fontSize: "20px",
-                      lineHeight: "24px",
-                      textAlign: "left",
-                    }}
-                  >
-                    Unfollow @{profileInfo.username}?
-                  </span>
-                  <div
-                    style={{
-                      color: "rgb(83, 100, 113)",
-                      fontWeight: "400",
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      textAlign: "left",
-                    }}
-                  >
-                    Their posts will no longer show up in your Following
-                    timeline. You can still view their profile, unless their
-                    posts are protected.
-                  </div>
-                </div>
-              </Modal.Body>
-              <Modal.Footer
-                style={{
-                  border: "none",
-                }}
-              >
-                <Button
-                  className="unfollow-btn"
-                  variant="dark"
-                  onClick={handleUnfollow}
-                >
-                  Unfollow
-                </Button>
-                <Button
-                  className="hover-unfollow-cancel"
-                  style={{ color: "black" }}
-                  variant="light"
-                  onClick={handleClose}
-                >
-                  Cancel
-                </Button>
-              </Modal.Footer>
-            </Modal>
+            <UnfollowModal
+              selectedUser={profileInfo}
+              handleUnfollow={handleUnfollow}
+              showUnfollowModal={showUnfollowModal}
+              handleClose={handleClose}
+            />
             {/* unfollow modal finish to check  */}
 
             <Container>
@@ -1028,33 +972,13 @@ function SpesificUserProfile() {
                         }
                         onMouseLeave={handleMouseLeave}
                         style={{
+                          transitionDuration: "0.2s",
                           fontSize: "15px",
                           lineHeight: "20px",
                           fontWeight: "700",
                           display: "inline",
                           maxWidth: "107px",
-                          // border:
-                          //   isHovered && themeName !== "dark-theme"
-                          //     ? "1px solid rgba(253,201,206,255)"
-                          //     : "1px solid rgb(185, 202, 211)",
-                          // backgroundColor: isHovered
-                          //   ? "rgba(255,234,235,255)"
-                          //   : profileInfo.followers
-                          //   ? getFollowerIds(profileInfo.followers).includes(
-                          //       userInfo._id
-                          //     )
-                          //     ? "white"
-                          //     : "black"
-                          //   : null,
-                          // color: isHovered
-                          //   ? "rgba(244,34,45,255)"
-                          //   : profileInfo.followers
-                          //   ? getFollowerIds(profileInfo.followers).includes(
-                          //       userInfo._id
-                          //     )
-                          //     ? "black"
-                          //     : "white"
-                          //   : null,
+
                           border:
                             isHovered &&
                             isFollowing &&
