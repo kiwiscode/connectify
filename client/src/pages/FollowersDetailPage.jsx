@@ -16,6 +16,7 @@ const API_URL = "http://localhost:3000";
 import io from "socket.io-client";
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import { ThemeContext } from "../context/ThemeContext";
+import UnfollowModal from "../components/unfollow-modal/UnfollowModal";
 
 function FollowerDetailPage() {
   const socket = io.connect(`${API_URL}`);
@@ -705,62 +706,12 @@ function FollowerDetailPage() {
                             </div>
                             {/* Following or unfollow Button finish to check */}
                             {/* unfollow modal start to check  */}
-                            <Modal
-                              show={showUnfollowModal}
-                              onHide={handleClose}
-                            >
-                              <Modal.Body
-                                style={{
-                                  textAlign: "center",
-                                }}
-                              >
-                                <div>
-                                  <span
-                                    style={{
-                                      fontWeight: "700",
-                                      fontSize: "20px",
-                                      lineHeight: "24px",
-                                      textAlign: "left",
-                                    }}
-                                  >
-                                    Unfollow @{selectedUser.username}?
-                                  </span>
-                                  <div
-                                    style={{
-                                      color: "rgb(83, 100, 113)",
-                                      fontWeight: "400",
-                                      fontSize: "15px",
-                                      lineHeight: "20px",
-                                      textAlign: "left",
-                                    }}
-                                  >
-                                    Their posts will no longer show up in your
-                                    Following timeline. You can still view their
-                                    profile, unless their posts are protected.
-                                  </div>
-                                </div>
-                              </Modal.Body>
-                              <Modal.Footer
-                                style={{
-                                  border: "none",
-                                }}
-                              >
-                                <Button
-                                  variant="dark"
-                                  onClick={() => handleUnfollow(selectedUser)}
-                                >
-                                  Unfollow
-                                </Button>
-                                <Button
-                                  className="hover-unfollow-cancel"
-                                  style={{ color: "black" }}
-                                  variant="light"
-                                  onClick={handleClose}
-                                >
-                                  Cancel
-                                </Button>
-                              </Modal.Footer>
-                            </Modal>
+                            <UnfollowModal
+                              selectedUser={selectedUser}
+                              handleUnfollow={handleUnfollow}
+                              showUnfollowModal={showUnfollowModal}
+                              handleClose={handleClose}
+                            />
                             {/* unfollow modal finish to check  */}
                           </Stack>
                         </>
