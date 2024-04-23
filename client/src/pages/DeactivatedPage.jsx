@@ -9,7 +9,7 @@ import {
   Form,
 } from "react-bootstrap";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { SigninModal } from "../components/ui/Modal";
 import { useContext, useState } from "react";
 import axios from "axios";
@@ -87,6 +87,12 @@ function DeactivatedPage() {
     darkModeActive,
     cyberpunkModeActive,
   ] = useContext(ThemeContext);
+
+  const navigate = useNavigate();
+
+  const redirectHomePageToSignUp = () => {
+    navigate("/");
+  };
 
   return (
     <>
@@ -261,40 +267,59 @@ function DeactivatedPage() {
             lg={3} // 1200px - 1400px aralığı
             xxl={3} // 1400px ve sonrası aralığı
           >
-            <nav className="nav-bar-home">
-              <div className="inner-div-fonts inner-div">
-                <Link to="/home">
-                  <div className="home">
-                    <div>
-                      <svg
-                        color={themeName === "dark-theme" ? "white" : "black"}
-                        fill="currentColor"
-                        width={26}
-                        height={26}
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                        className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
-                      >
-                        <g>
-                          <path d="M22.25 13.46v-2.92l-2.36-1.57c-.17-.12-.26-.33-.21-.53l.58-2.54-2.17-2.17-2.53.59c-.21.04-.42-.04-.53-.21l-1.57-2.36h-2.92L8.96 4.11c-.11.17-.32.25-.52.21L5.9 3.73 3.73 5.9l.58 2.54c.05.2-.03.41-.21.53l-2.35 1.57v2.92l2.35 1.57c.18.12.26.33.21.53l-.58 2.54 2.17 2.17 2.54-.59c.2-.04.41.04.52.21l1.58 2.36h2.92l1.57-2.36c.11-.17.32-.25.53-.21l2.53.59 2.17-2.17-.58-2.54c-.05-.2.04-.41.21-.53l2.36-1.57zM12 15c-1.66 0-3-1.34-3-3s1.34-3 3-3c1.65 0 3 1.34 3 3s-1.35 3-3 3z"></path>
-                        </g>
-                      </svg>
+            <div
+              style={{
+                width: "100%",
+                textAlign: "center",
+                position: "relative",
+                top: "10%",
+              }}
+            >
+              <div
+                className={`deactivation-page-settings deactivation-page-settings-${themeName}`}
+                style={{
+                  cursor: "pointer",
+                  borderRadius: "9999px",
+                  padding: "12px",
+                  display: "inline-flex",
+                }}
+              >
+                <div
+                  style={{
+                    width: "166px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: "7.5%",
+                  }}
+                >
+                  <svg
+                    color={themeName === "dark-theme" ? "white" : "black"}
+                    fill="currentColor"
+                    width={26}
+                    height={26}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
+                  >
+                    <g>
+                      <path d="M22.25 13.46v-2.92l-2.36-1.57c-.17-.12-.26-.33-.21-.53l.58-2.54-2.17-2.17-2.53.59c-.21.04-.42-.04-.53-.21l-1.57-2.36h-2.92L8.96 4.11c-.11.17-.32.25-.52.21L5.9 3.73 3.73 5.9l.58 2.54c.05.2-.03.41-.21.53l-2.35 1.57v2.92l2.35 1.57c.18.12.26.33.21.53l-.58 2.54 2.17 2.17 2.54-.59c.2-.04.41.04.52.21l1.58 2.36h2.92l1.57-2.36c.11-.17.32-.25.53-.21l2.53.59 2.17-2.17-.58-2.54c-.05-.2.04-.41.21-.53l2.36-1.57zM12 15c-1.66 0-3-1.34-3-3s1.34-3 3-3c1.65 0 3 1.34 3 3s-1.35 3-3 3z"></path>
+                    </g>
+                  </svg>
 
-                      <span
-                        style={{
-                          fontSize: "20px",
-                          fontWeight: "700",
-                          lineHeight: "24px",
-                          color: themeName === "dark-theme" ? "white" : "black",
-                        }}
-                      >
-                        Settings
-                      </span>
-                    </div>
-                  </div>
-                </Link>
+                  <span
+                    style={{
+                      fontSize: "20px",
+                      fontWeight: "700",
+                      lineHeight: "24px",
+                      color: themeName === "dark-theme" ? "white" : "black",
+                    }}
+                  >
+                    Settings
+                  </span>
+                </div>
               </div>
-            </nav>
+            </div>
           </Col>
 
           {/* start to check  main column */}
@@ -637,7 +662,7 @@ function DeactivatedPage() {
             <div className="p-2 ms-auto">
               <SigninModal deactivatedScreen={true} />
             </div>
-            <div className="p-0">
+            <div onClick={redirectHomePageToSignUp} className="p-0">
               <Button
                 className="deactivated-footer-signup"
                 style={{

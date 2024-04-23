@@ -319,7 +319,10 @@ function LogoutModal({ isLogoutActionActive }) {
                 border: "2px solid #1d9bf0 !important",
               },
               "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#cfd9de !important",
+                borderColor:
+                  themeName === "dark-theme"
+                    ? "rgb(70,70,70) !important"
+                    : "#cfd9de !important",
               },
               "& .MuiInputLabel-shrink": {
                 color: "#1f9cf0 !important",
@@ -486,6 +489,8 @@ function LogoutModal({ isLogoutActionActive }) {
 
   const [showLogoutSpinner, setshowLogoutSpinner] = useState(false);
   const handleLogout = () => {
+    setshowLogoutSpinner(true);
+
     axios
       .post(`${API_URL}/auth/logout`, null, {
         headers: {
@@ -493,11 +498,9 @@ function LogoutModal({ isLogoutActionActive }) {
         },
       })
       .then(() => {
-        setshowLogoutSpinner(true);
         setTimeout(() => {
           logout();
           navigate("/");
-          setshowLogoutSpinner(false);
           setshowLogoutSpinner(false);
         }, 1000);
       })
@@ -842,7 +845,7 @@ function LogoutModal({ isLogoutActionActive }) {
     return () => {
       document.body.removeEventListener("click", getClickLocation);
     };
-  }, []);
+  }, [showlogoutPopup]);
 
   const { updateUser } = useContext(UserContext);
   const [user, setUser] = useState([]);
@@ -870,15 +873,16 @@ function LogoutModal({ isLogoutActionActive }) {
   const [startForgotPasswordProcessModal, setStartForgotPasswordProcessModal] =
     useState(false);
 
-  const startForgotPasswordProcess = () => {
-    setStartForgotPasswordProcessModal(true);
-  };
-
   const handleClose = () => {
     setTimeout(() => {
       setTabIndex(0);
     }, 300);
     setShow(false);
+  };
+
+  const startForgotPasswordProcess = () => {
+    handleClose();
+    setStartForgotPasswordProcessModal(true);
   };
 
   const handleCloseForgotPasswordProcessModal = () => {
@@ -1024,17 +1028,22 @@ function LogoutModal({ isLogoutActionActive }) {
           <Modal
             className="logout-modal-variant-parent-visible-mode-spinner"
             style={{
-              backgroundColor: showLogoutSpinner ? "white" : "",
+              backgroundColor:
+                showLogoutSpinner && themeName !== "dark-theme"
+                  ? "white"
+                  : showLogoutSpinner && themeName === "dark-theme"
+                  ? "black"
+                  : "",
             }}
             size="sm"
             centered={true}
             show={showLogoutModal}
           >
             {/* start to check  */}
-            <Modal.Header></Modal.Header>
 
             <Modal.Body
               style={{
+                backgroundColor: themeName === "dark-theme" ? "black" : "white",
                 border: "2px solid black !important",
               }}
               className="logout-modal-variant"
@@ -1043,9 +1052,9 @@ function LogoutModal({ isLogoutActionActive }) {
                 strokeColor={"rgb(29, 155, 240)"}
               ></LoadingSpinner>
               <div
-                className="mt-4"
+                className="mt-3"
                 style={{
-                  color: "#536471",
+                  color: themeName === "dark-theme" ? "#71767A" : "#536471",
                   letterSpacing: "-1.1px",
                   fontSize: "16px",
                   fontWeight: "600",
@@ -1062,11 +1071,14 @@ function LogoutModal({ isLogoutActionActive }) {
       )}
 
       <Modal
-        // className="logout-modal-variant-parent"
-
         className={`logout-modal-variant-parent logout-modal-variant-parent-${themeName}`}
         style={{
-          backgroundColor: showLogoutModal ? "#999999" : "",
+          backgroundColor:
+            showLogoutModal && themeName !== "dark-theme"
+              ? "#999999"
+              : showLogoutModal && themeName === "dark-theme"
+              ? "#242D35"
+              : "",
         }}
         size="sm"
         centered={true}
@@ -1074,14 +1086,17 @@ function LogoutModal({ isLogoutActionActive }) {
       >
         {/* start to check  */}
 
-        <Modal.Body style={{}} className="logout-modal-variant">
+        <Modal.Body
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          className="logout-modal-variant"
+        >
           <div
             style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              alignContent: "center",
               width: "92%",
             }}
           >
@@ -1103,7 +1118,7 @@ function LogoutModal({ isLogoutActionActive }) {
                 lineHeight: "20px",
                 fontWeight: "400",
                 fontSize: "15px",
-                color: "#536471",
+                color: themeName === "dark-theme" ? " #71767A" : "#536471",
               }}
               className="mt-2"
             >

@@ -233,6 +233,7 @@ function SigninModal({ deactivatedScreen }) {
         setIsLoading(true);
         setTimeout(() => {
           navigate("/home");
+          window.location.href = "http://localhost:5173/home";
         }, 500);
       })
       .catch((error) => {
@@ -756,23 +757,24 @@ function SigninModal({ deactivatedScreen }) {
             <>
               <Modal
                 style={{
-                  margin: 0,
-                  padding: 0,
+                  margin: "0px",
+                  padding: "0px",
                 }}
                 backdropClassName={
                   themeName === "dark-theme" ? `back-drop-${themeName}` : ""
                 }
-                centered
+                centered={true}
                 contentClassName={
                   themeName === "dark-theme"
                     ? "dark-theme-reactivate-account-modal"
                     : "reactivate-account-modal"
                 }
-                className="signin-modal"
+                className="signin-modal-parent-non-reactivate"
                 show={openDeactivateLoginModal}
                 onHide={handleCloseReactivatedLoginScreen}
               >
                 <Modal.Header
+                  className="signin-modal-header-child-non-reactivate"
                   style={{
                     border: "none",
                   }}
@@ -839,10 +841,14 @@ function SigninModal({ deactivatedScreen }) {
                       <div
                         style={{
                           marginTop: "5px",
-                          color: "rgb(83, 100, 113)",
+                          color:
+                            themeName === "dark-theme"
+                              ? "#71767A                                  "
+                              : "rgb(83, 100, 113)",
                           fontSize: "15px",
                           fontWeight: "400",
                           lineHeight: "20px",
+                          textAlign: "left",
                         }}
                       >{`You deactivated your account on ${userdeactivateddate}.On ${userdeletiondate}, it will no longer be possible for you to restore your Connectify account if it was accidentally or wrongfully deactivated. By clicking "Yes, reactivate", you will halt the deactivation process and reactivate your account.`}</div>
                     </div>
@@ -2956,7 +2962,9 @@ function SigninModal({ deactivatedScreen }) {
                   className={
                     tabIndex > 0 && tabIndex !== 8 && themeName === "dark-theme"
                       ? "forgot-password-modal-opened-dark-theme signin-modal-parent-non-reactivate"
-                      : tabIndex > 0 && themeName !== "dark-theme"
+                      : tabIndex > 0 &&
+                        tabIndex !== 8 &&
+                        themeName === "light-theme"
                       ? `forgot-password-modal-opened signin-modal-parent-non-reactivate`
                       : "signin-modal-parent-non-reactivate"
                   }
@@ -4942,17 +4950,25 @@ function SigninModal({ deactivatedScreen }) {
             </>
           ) : (
             <Modal
-              show={isLoading}
-              onHide={handleCloseLoginModal}
-              size="lg"
-              centered={true}
+              style={{
+                margin: "0px",
+                padding: "0px",
+              }}
               backdropClassName={
                 themeName === "dark-theme" ? `back-drop-${themeName}` : ""
               }
-              className={`signin-modal-parent-non-reactivate`}
-              contentClassName={
-                themeName === "dark-theme" ? "dark-theme-spinner-modal" : ""
+              centered={true}
+              show={isLoading}
+              onHide={handleCloseLoginModal}
+              className={
+                width > 700 ? `signin-modal-parent-non-reactivate` : ""
               }
+              contentClassName={
+                themeName === "dark-theme"
+                  ? "dark-theme-spinner-modal"
+                  : "light-theme-spinner-modal"
+              }
+              dialogClassName={width <= 700 ? "modal-fullscreen" : ""}
             >
               <Modal.Body
                 style={{

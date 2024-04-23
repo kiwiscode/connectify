@@ -715,6 +715,16 @@ span > a:hover {
   background-color: #e7e7e8;
   transition-duration: 0.2s !important;
 }
+
+.deactivation-page-settings:hover {
+  background-color: #e7e7e8;
+  transition-duration: 0.2s !important;
+}
+.deactivation-page-settings-dark-theme:hover {
+  background-color: #181818;
+  transition-duration: 0.2s !important;
+}
+
 /* navigation bar hover effect finish to check */
 
 .compose-tweet {
@@ -1830,10 +1840,6 @@ span > a:hover {
   transition-duration: 0.2s !important;
 }
 
-.hover-unfollow-cancel:hover {
-  background-color: #e7e7e8;
-}
-
 .following-followers-link:hover {
   text-decoration: underline !important;
   text-decoration-color: black;
@@ -1854,10 +1860,18 @@ span > a:hover {
   pointer-events: none; /* Elementin pointer olaylarına müdahalesini kapatmak için */
 }
 
-.extra-css-engage-modal,
 .settings-and-privacy-second,
 .forgot-password-process {
   height: 600px !important;
+}
+
+.extra-css-engage-modal {
+  height: 600px;
+}
+
+.extra-css-engage-modal-dark-theme {
+  height: 600px;
+  background-color: black;
 }
 
 .forgot-password-process {
@@ -2442,29 +2456,6 @@ span > a:hover {
   text-decoration-color: rgb(83, 100, 113);
 }
 
-.right-side-bar-unfollow-modal {
-  display: flex !important;
-  justify-content: center !important;
-  align-content: center !important;
-  align-items: center !important;
-}
-
-.right-side-bar-unfollow-modal div div {
-  max-width: 320px !important;
-}
-
-.right-side-bar-unfollow-modal-body {
-  padding: 32px !important;
-}
-
-.right-side-bar-unfollow-modal-body div {
-  text-align: left !important;
-}
-
-.right-side-bar-unfollow-modal-footer {
-  padding: 0px 16px 16px 16px !important;
-}
-
 .right-side-input-close-text-search-input:hover {
   transition-duration: 0.2s;
   background-color: rgba(25, 140, 216, 255) !important;
@@ -2556,6 +2547,20 @@ span > a:hover {
   transition-duration: 0.2s;
 }
 
+.cs-experience-getMoreOutOf-dark-theme:hover,
+.cs-experience-connectWithPeopleYouKnow-dark-theme:hover,
+.cs-experience-personalizedAds-dark-theme:hover {
+  background-color: #061019;
+  transition-duration: 0.2s;
+}
+
+.cs-experience-variant-2-getMoreOutOf-dark-theme:hover,
+.cs-experience-variant-2-connectWithPeopleYouKnow-dark-theme:hover,
+.cs-experience-variant-2-personalizedAds-dark-theme:hover {
+  background-color: #0c0c0c;
+  transition-duration: 0.2s;
+}
+
 .hover-forgot-password-send-email-stack-svg-verified-email-dark-theme:hover {
   background-color: #061019;
   transition-duration: 0.2s;
@@ -2599,6 +2604,13 @@ span > a:hover {
 .resend-email:hover,
 .use-phone-instead:hover {
   background-color: #f7f9f9 !important;
+  transition-duration: 0.2s !important;
+}
+
+.resend-email-dark-theme:hover,
+.use-phone-instead-dark-theme:hover {
+  outline-style: none;
+  background-color: #16181c !important;
   transition-duration: 0.2s !important;
 }
 
@@ -2884,6 +2896,7 @@ span > a:hover {
   padding: 0;
   margin: 0;
 }
+
 /* scrollbar- dark theme styling finish to check  */
 
 /* scrollbar styling general finish to check  */
@@ -3011,13 +3024,13 @@ select {
 }
 
 .logout-modal-variant-parent .modal-content {
-  min-width: 320px;
-  min-height: 356px;
+  min-width: 322px;
+  min-height: 358px;
 }
 
 .logout-modal-variant-parent-dark-theme .modal-content {
-  min-width: 320px;
-  min-height: 356px;
+  min-width: 322px;
+  min-height: 358px;
   background-color: black;
 }
 
@@ -3131,14 +3144,15 @@ select {
   transition-duration: 0.2s;
 }
 
-.dark-theme-reactivate-account-modal {
-  min-height: 650px;
-  min-width: 600px;
-  background-color: black !important;
-}
 .reactivate-account-modal {
   min-height: 650px;
   min-width: 600px;
+}
+
+.dark-theme-reactivate-account-modal {
+  min-height: 650px;
+  min-width: 600px;
+  background-color: black;
 }
 
 /* general classname for backgroundcolor modal according to the theme start to check */
@@ -3162,8 +3176,48 @@ select {
 }
 
 .dark-theme-spinner-modal {
+  min-height: 650px;
+  min-width: 600px;
   background-color: black !important;
 }
+
+.light-theme-spinner-modal {
+  min-height: 650px;
+  min-width: 600px;
+}
+
+.create-account-modal-dark-theme {
+  background-color: black;
+}
+
+/* start to check unfollow modal styling for themes */
+
+.unfollow-modal-dark-theme {
+  width: 320px !important;
+  height: 300px !important;
+  background-color: black !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 32px;
+}
+
+.unfollow-modal {
+  width: 320px !important;
+  height: 300px !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 32px;
+}
+.unfollow-modal div,
+.unfollow-modal-dark-theme div {
+  min-width: 250px;
+}
+
+/* finish to check unfollow modal styling for themes */
 
 /* general classname for backgroundcolor modal according to the theme finish to check */
 

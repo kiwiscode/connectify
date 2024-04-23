@@ -1480,6 +1480,11 @@ function MainPage() {
               padding: "0px",
               overflowY: "scroll",
             }}
+            contentClassName={
+              themeName === "dark-theme"
+                ? `create-account-modal-${themeName}`
+                : ""
+            }
             dialogClassName={`scrollbar-add modal-fullscreen scrollbar-add-${themeName}`}
             show={showModalForProfilePictureOrUsernameOrBoth}
             centered={true}
@@ -1515,6 +1520,7 @@ function MainPage() {
                         fontWeight: "700",
                         fontSize: "26px",
                         letterSpacing: "0.5px",
+                        color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
                       Pick a profile picture
@@ -1525,7 +1531,8 @@ function MainPage() {
                         lineHeight: "20px",
                         fontWeight: "400",
                         fontSize: "15px",
-                        color: "#536471",
+                        color:
+                          themeName === "dark-theme" ? "#71767A" : "#536471",
                       }}
                       className="mt-2"
                     >
@@ -1605,7 +1612,12 @@ function MainPage() {
                               xmlns="http://www.w3.org/2000/svg"
                               width="133"
                               height="133"
-                              fill="rgb(83, 100, 113)"
+                              color={
+                                themeName === "dark-theme"
+                                  ? "#71767A"
+                                  : "rgb(83, 100, 113)"
+                              }
+                              fill="currentColor"
                               className="bi bi-person-circle"
                               viewBox="0 0 16 16"
                               style={{ cursor: "pointer", borderRadius: "50%" }}
@@ -1639,19 +1651,29 @@ function MainPage() {
                         width: "81.5%",
                         height: "52px",
                         backgroundColor:
-                          userInfo?.imageUrl?.slice(0, 3) !== "../"
+                          userInfo?.imageUrl?.slice(0, 3) !== "../" &&
+                          themeName !== "dark-theme"
                             ? "#0f141a"
+                            : themeName === "dark-theme" &&
+                              userInfo?.imageUrl?.slice(0, 3) !== "../"
+                            ? "white"
                             : "transparent",
                         color:
-                          userInfo?.imageUrl?.slice(0, 3) !== "../"
+                          userInfo?.imageUrl?.slice(0, 3) !== "../" &&
+                          themeName !== "dark-theme"
                             ? "white"
+                            : themeName === "dark-theme"
+                            ? "black"
                             : "black",
-                        border: "1px solid rgba(0,0,0,0.1)",
+                        border:
+                          themeName === "dark-theme"
+                            ? "1px solid rgb(70,70,70)"
+                            : "1px solid rgba(0,0,0,0.1)",
                       }}
                       className={
                         userInfo?.imageUrl?.slice(0, 3) !== "../"
-                          ? `next-btn`
-                          : "next-btn-skip-for-now"
+                          ? `next-btn ${themeName}-white-btn`
+                          : `next-btn-skip-for-now ${themeName}-black-btn`
                       }
                       onClick={() => {
                         setTabLoading(true);
@@ -1699,6 +1721,8 @@ function MainPage() {
                         fontWeight: "700",
                         fontSize: "26px",
                         letterSpacing: "0.5px",
+
+                        color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
                       What should we call you?
@@ -1709,13 +1733,24 @@ function MainPage() {
                         lineHeight: "20px",
                         fontWeight: "400",
                         fontSize: "15px",
-                        color: "#536471",
+                        color:
+                          themeName === "dark-theme" ? "#71767A" : "#536471",
                       }}
                       className="mt-2"
                     >
                       Your @username is unique. You can always change it later.
                     </div>
                     <TextField
+                      InputProps={{
+                        style: {
+                          color: themeName === "dark-theme" ? "white" : "",
+                        },
+                      }}
+                      InputLabelProps={{
+                        style: {
+                          color: themeName === "dark-theme" ? "#71767B" : "",
+                        },
+                      }}
                       sx={{
                         "& .Mui-focused input + fieldset": {
                           border: usernameDuplicateError
@@ -1725,6 +1760,8 @@ function MainPage() {
                         "& .MuiOutlinedInput-notchedOutline": {
                           borderColor: usernameDuplicateError
                             ? "rgb(244, 33, 46)!important"
+                            : themeName === "dark-theme"
+                            ? "rgb(70,70,70) !important"
                             : "#cfd9de !important",
                         },
                         "& .MuiInputLabel-shrink": {
@@ -1766,11 +1803,23 @@ function MainPage() {
                         bottom: "150px",
                         width: "81.5%",
                         height: "52px",
-                        backgroundColor: skipButtonActive
-                          ? "transparent "
-                          : "#0f141a",
-                        color: skipButtonActive ? "black" : "white",
-                        border: "1px solid rgba(0,0,0,0.1)",
+                        backgroundColor:
+                          skipButtonActive && themeName !== "dark-theme"
+                            ? "transparent "
+                            : skipButtonActive && themeName === "dark-theme"
+                            ? "black"
+                            : (nextButtonActive || nextButtonDisabled) &&
+                              themeName === "dark-theme"
+                            ? "white"
+                            : "#0f141a",
+                        color:
+                          skipButtonActive && themeName !== "dark-theme"
+                            ? "black"
+                            : "white",
+                        border:
+                          themeName === "dark-theme"
+                            ? "1px solid rgb(70,70,70)"
+                            : "1px solid rgba(0,0,0,0.1)",
                         opacity:
                           skipButtonActive ||
                           (nextButtonActive && usernameValidated)
@@ -1779,10 +1828,10 @@ function MainPage() {
                       }}
                       className={
                         nextButtonActive
-                          ? `next-btn`
+                          ? `next-btn ${themeName}-white-btn`
                           : nextButtonDisabled
-                          ? "next-btn"
-                          : "next-btn-skip-for-now"
+                          ? `next-btn ${themeName}-white-btn`
+                          : `next-btn-skip-for-now ${themeName}-black-btn`
                       }
                       onClick={
                         usernameValidated
@@ -1806,6 +1855,14 @@ function MainPage() {
       ) : (
         <>
           <Modal
+            backdropClassName={
+              themeName === "dark-theme" ? `back-drop-${themeName}` : ""
+            }
+            contentClassName={
+              themeName === "dark-theme"
+                ? `create-account-modal-${themeName}`
+                : ""
+            }
             className={"signin-modal-parent-non-reactivate"}
             show={showModalForProfilePictureOrUsernameOrBoth}
             centered={true}
@@ -1835,6 +1892,7 @@ function MainPage() {
                         lineHeight: "36px",
                         fontWeight: "700",
                         fontSize: "31px",
+                        color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
                       Pick a profile picture
@@ -1845,7 +1903,8 @@ function MainPage() {
                         lineHeight: "20px",
                         fontWeight: "400",
                         fontSize: "15px",
-                        color: "#536471",
+                        color:
+                          themeName === "dark-theme" ? "#71767A" : "#536471",
                       }}
                       className="mt-2"
                     >
@@ -1927,7 +1986,12 @@ function MainPage() {
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="133"
                                 height="133"
-                                fill="rgb(83, 100, 113)"
+                                color={
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "rgb(83, 100, 113)"
+                                }
+                                fill="currentColor"
                                 className="bi bi-person-circle"
                                 viewBox="0 0 16 16"
                                 style={{
@@ -1966,19 +2030,29 @@ function MainPage() {
                         width: "81.5%",
                         height: "52px",
                         backgroundColor:
-                          userInfo?.imageUrl?.slice(0, 3) !== "../"
+                          userInfo?.imageUrl?.slice(0, 3) !== "../" &&
+                          themeName !== "dark-theme"
                             ? "#0f141a"
+                            : themeName === "dark-theme" &&
+                              userInfo?.imageUrl?.slice(0, 3) !== "../"
+                            ? "white"
                             : "transparent",
                         color:
-                          userInfo?.imageUrl?.slice(0, 3) !== "../"
+                          userInfo?.imageUrl?.slice(0, 3) !== "../" &&
+                          themeName !== "dark-theme"
                             ? "white"
+                            : themeName === "dark-theme"
+                            ? "black"
                             : "black",
-                        border: "1px solid rgba(0,0,0,0.1)",
+                        border:
+                          themeName === "dark-theme"
+                            ? "1px solid rgb(70,70,70)"
+                            : "1px solid rgba(0,0,0,0.1)",
                       }}
                       className={
                         userInfo?.imageUrl?.slice(0, 3) !== "../"
-                          ? `next-btn`
-                          : "next-btn-skip-for-now"
+                          ? `next-btn ${themeName}-white-btn`
+                          : `next-btn-skip-for-now ${themeName}-black-btn`
                       }
                       onClick={() => {
                         setTabLoading(true);
@@ -2021,6 +2095,7 @@ function MainPage() {
                         lineHeight: "36px",
                         fontWeight: "700",
                         fontSize: "31px",
+                        color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
                       What should we call you?
@@ -2031,7 +2106,8 @@ function MainPage() {
                         lineHeight: "20px",
                         fontWeight: "400",
                         fontSize: "15px",
-                        color: "#536471",
+                        color:
+                          themeName === "dark-theme" ? "#71767A" : "#536471",
                       }}
                       className="mt-2"
                     >
@@ -2039,6 +2115,16 @@ function MainPage() {
                     </div>
                     <TextField
                       className="mt-5"
+                      InputProps={{
+                        style: {
+                          color: themeName === "dark-theme" ? "white" : "",
+                        },
+                      }}
+                      InputLabelProps={{
+                        style: {
+                          color: themeName === "dark-theme" ? "#71767B" : "",
+                        },
+                      }}
                       sx={{
                         "& .Mui-focused input + fieldset": {
                           border: usernameDuplicateError
@@ -2048,6 +2134,8 @@ function MainPage() {
                         "& .MuiOutlinedInput-notchedOutline": {
                           borderColor: usernameDuplicateError
                             ? "rgb(244, 33, 46)!important"
+                            : themeName === "dark-theme"
+                            ? "rgb(70,70,70) !important"
                             : "#cfd9de !important",
                         },
                         "& .MuiInputLabel-shrink": {
@@ -2086,11 +2174,23 @@ function MainPage() {
                         bottom: "20px",
                         width: "81.5%",
                         height: "52px",
-                        backgroundColor: skipButtonActive
-                          ? "transparent "
-                          : "#0f141a",
-                        color: skipButtonActive ? "black" : "white",
-                        border: "1px solid rgba(0,0,0,0.1)",
+                        backgroundColor:
+                          skipButtonActive && themeName !== "dark-theme"
+                            ? "transparent "
+                            : skipButtonActive && themeName === "dark-theme"
+                            ? "black"
+                            : (nextButtonActive || nextButtonDisabled) &&
+                              themeName === "dark-theme"
+                            ? "white"
+                            : "#0f141a",
+                        color:
+                          skipButtonActive && themeName !== "dark-theme"
+                            ? "black"
+                            : "white",
+                        border:
+                          themeName === "dark-theme"
+                            ? "1px solid rgb(70,70,70)"
+                            : "1px solid rgba(0,0,0,0.1)",
                         opacity:
                           skipButtonActive ||
                           (nextButtonActive && usernameValidated)
@@ -2099,10 +2199,10 @@ function MainPage() {
                       }}
                       className={
                         nextButtonActive
-                          ? `next-btn`
+                          ? `next-btn ${themeName}-white-btn`
                           : nextButtonDisabled
-                          ? "next-btn"
-                          : "next-btn-skip-for-now"
+                          ? `next-btn ${themeName}-white-btn`
+                          : `next-btn-skip-for-now ${themeName}-black-btn`
                       }
                       onClick={
                         usernameValidated

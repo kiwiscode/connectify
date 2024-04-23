@@ -35,6 +35,7 @@ import "react-phone-number-input/style.css";
 
 import { QRCodeSVG } from "qrcode.react";
 import { ThemeContext } from "../../context/ThemeContext";
+import UnfollowModal from "../unfollow-modal/UnfollowModal";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -15748,79 +15749,13 @@ function RightSideColumn({
         </>
       )}
 
-      <Modal
-        className="right-side-bar-unfollow-modal"
-        show={showUnfollowModal}
-        onHide={handleClose}
-      >
-        <Modal.Body
-          className="right-side-bar-unfollow-modal-body"
-          style={{
-            textAlign: "center",
-          }}
-        >
-          <div className="right-side-bar-unfollow-modal-div">
-            <div
-              style={{
-                fontWeight: "700",
-                fontSize: "20px",
-                lineHeight: "24px",
-                textAlign: "left",
-              }}
-            >
-              Unfollow
-            </div>
-            <div
-              style={{
-                fontWeight: "700",
-                fontSize: "20px",
-                lineHeight: "24px",
-                textAlign: "left",
-              }}
-            >
-              @{selectedUser.username}?
-            </div>
-            <div
-              style={{
-                color: "rgb(83, 100, 113)",
-                fontWeight: "400",
-                fontSize: "15px",
-                lineHeight: "20px",
-                textAlign: "left",
-                marginTop: "10px",
-              }}
-            >
-              Their posts will no longer show up in your Following timeline. You
-              can still view their profile, unless their posts are protected.
-            </div>
-          </div>
-        </Modal.Body>
-        <Modal.Footer
-          className="right-side-bar-unfollow-modal-footer"
-          style={{
-            border: "none",
-          }}
-        >
-          <Button
-            style={{
-              maxWidth: "256px",
-              minHeight: "44px ",
-            }}
-            variant="dark"
-            onClick={() => handleUnfollow(selectedUser)}
-          >
-            Unfollow
-          </Button>
-          <Button
-            className="hover-unfollow-cancel"
-            style={{ color: "black", maxWidth: "256px", minHeight: "44px" }}
-            variant="light"
-            onClick={handleClose}
-          >
-            Cancel
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <UnfollowModal
+        selectedUser={selectedUser}
+        handleUnfollow={handleUnfollow}
+        showUnfollowModal={showUnfollowModal}
+        handleClose={handleClose}
+      />
+
       <Col
         className="side-bar-column d-none d-lg-block d-xxl-block"
         xs={12} // 0px - 576px aralığı
