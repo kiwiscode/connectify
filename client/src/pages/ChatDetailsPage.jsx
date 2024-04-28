@@ -27,10 +27,10 @@ const API_URL = "http://localhost:3000";
 // when working on deployment version
 // ?
 
+const socket = io.connect(`${API_URL}`);
 function ChatDetailsPage() {
   const { chatRoomId } = useParams();
   const { userInfo } = useContext(UserContext);
-  const socket = io.connect(`${API_URL}`);
 
   const [spesificRoom, setspesificRoom] = useState([]);
   const [selectedUser, setselectedUser] = useState([]);
