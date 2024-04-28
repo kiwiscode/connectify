@@ -238,10 +238,17 @@ function SignUpPage() {
         height: "250px",
         width: "175px",
         overflowY: "scroll",
-        backgroundColor: "#e4e2e9",
+        backgroundColor: themeName === "dark-theme" ? "black" : "#e4e2e9",
         border: "none",
+        filter:
+          themeName === "dark-theme"
+            ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+            : "",
+
         boxShadow:
-          "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+          themeName === "dark-theme"
+            ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+            : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
       }}
       id="monthPopover"
     >
@@ -254,6 +261,7 @@ function SignUpPage() {
           key={index}
           onClick={() => handleMonthSelect(month)}
           style={{
+            color: themeName === "dark-theme" ? "white" : "black",
             padding: "8px",
             cursor: "pointer",
             backgroundColor: hoveredIndexMonth === index ? "#5aa0ff" : "",
@@ -276,9 +284,16 @@ function SignUpPage() {
         width: "175px",
         border: "none",
         overflowY: "scroll",
-        backgroundColor: "#e4e2e9",
+        backgroundColor: themeName === "dark-theme" ? "black" : "#e4e2e9",
+        filter:
+          themeName === "dark-theme"
+            ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+            : "",
+
         boxShadow:
-          "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+          themeName === "dark-theme"
+            ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+            : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
       }}
       id="dayPopover"
     >
@@ -290,6 +305,7 @@ function SignUpPage() {
           key={index}
           onClick={() => handleDaySelect(day)}
           style={{
+            color: themeName === "dark-theme" ? "white" : "black",
             padding: "8px",
             cursor: "pointer",
             backgroundColor: hoveredIndexDay === index ? "#5aa0ff" : "",
@@ -311,9 +327,16 @@ function SignUpPage() {
         width: "175px",
         border: "none",
         overflowY: "scroll",
-        backgroundColor: "#e4e2e9",
+        backgroundColor: themeName === "dark-theme" ? "black" : "#e4e2e9",
+        filter:
+          themeName === "dark-theme"
+            ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+            : "",
+
         boxShadow:
-          "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+          themeName === "dark-theme"
+            ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+            : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
       }}
       id="yearPopover"
     >
@@ -325,6 +348,7 @@ function SignUpPage() {
           key={index}
           onClick={() => handleYearSelect(year)}
           style={{
+            color: themeName === "dark-theme" ? "white" : "black",
             padding: "8px",
             cursor: "pointer",
             backgroundColor: hoveredIndexYear === index ? "#5aa0ff" : "",
@@ -856,7 +880,10 @@ function SignUpPage() {
                       >
                         <div
                           style={{
-                            color: "rgb(83, 100, 113)",
+                            color:
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)",
                             fontSize: "13px",
                             fontWeight: "400",
                             lineHeight: "16px",
@@ -874,7 +901,10 @@ function SignUpPage() {
                       >
                         <div
                           style={{
-                            color: "rgb(83, 100, 113)",
+                            color:
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)",
                             fontSize: "13px",
                             fontWeight: "400",
                             lineHeight: "16px",
@@ -2399,7 +2429,10 @@ function SignUpPage() {
                       >
                         <div
                           style={{
-                            color: "rgb(83, 100, 113)",
+                            color:
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)",
                             fontSize: "13px",
                             fontWeight: "400",
                             lineHeight: "16px",
@@ -2417,7 +2450,10 @@ function SignUpPage() {
                       >
                         <div
                           style={{
-                            color: "rgb(83, 100, 113)",
+                            color:
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)",
                             fontSize: "13px",
                             fontWeight: "400",
                             lineHeight: "16px",
@@ -3305,37 +3341,55 @@ function SignUpPage() {
                         </div>
                       </div>
                     </div>
-                    <Button
+                    <div
+                      className="mt-1"
                       style={{
-                        position: height < 700 ? "" : "absolute",
-                        bottom: "20px",
-                        width: "81.5%",
-                        height: "52px",
-                        backgroundColor:
-                          themeName === "dark-theme" ? "white" : "#0f141a",
-                        opacity:
-                          checkFields.nameInput &&
-                          checkFields.emailInput &&
-                          checkFields.dateofbirthInput
-                            ? "1"
-                            : "0.5",
+                        // backgroundColor: "yellow",
+                        width: "100%",
+                        height: "100px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        filter:
+                          themeName === "dark-theme"
+                            ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                            : "",
+                        boxShadow:
+                          themeName === "dark-theme"
+                            ? "inset 0px 7px 3px -3px rgba(50, 50, 50, 0.75)"
+                            : "",
                       }}
-                      onClick={
-                        informationsAreCorrect
-                          ? () => {
-                              setTabLoading(true);
-                              sendEmailVerificationCode(email);
-                              setTimeout(() => {
-                                setTabLoading(false);
-                                setTabIndex(tabIndex + 1);
-                              }, 500);
-                            }
-                          : null
-                      }
-                      className={`next-btn ${themeName}-white-btn`}
                     >
-                      Next
-                    </Button>
+                      <Button
+                        style={{
+                          width: "81.5%",
+                          height: "52px",
+                          backgroundColor:
+                            themeName === "dark-theme" ? "white" : "#0f141a",
+                          opacity:
+                            checkFields.nameInput &&
+                            checkFields.emailInput &&
+                            checkFields.dateofbirthInput
+                              ? "1"
+                              : "0.5",
+                        }}
+                        onClick={
+                          informationsAreCorrect
+                            ? () => {
+                                setTabLoading(true);
+                                sendEmailVerificationCode(email);
+                                setTimeout(() => {
+                                  setTabLoading(false);
+                                  setTabIndex(tabIndex + 1);
+                                }, 500);
+                              }
+                            : null
+                        }
+                        className={`next-btn ${themeName}-white-btn`}
+                      >
+                        Next
+                      </Button>
+                    </div>
                   </Modal.Body>
                 )}
               </>

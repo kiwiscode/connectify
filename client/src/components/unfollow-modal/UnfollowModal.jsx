@@ -26,7 +26,7 @@ function UnfollowModal({
           ? `unfollow-modal-${themeName}`
           : "unfollow-modal"
       }
-      className=""
+      className="unfollow-modal-general-class"
       show={showUnfollowModal}
       onHide={handleClose}
       style={{

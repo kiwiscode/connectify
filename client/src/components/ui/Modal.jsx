@@ -45,9 +45,14 @@ const API_URL = "http://localhost:3000";
 // when working on deployment version
 // ?
 
-// const socket = io.connect(API_URL);
-
 function SigninModal({ deactivatedScreen }) {
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
+
   const googleAuth = () => {
     window.open(`${API_URL}/auth/google/callback`, "_self");
   };
@@ -386,12 +391,6 @@ function SigninModal({ deactivatedScreen }) {
     setNewPasswordForgotPasswordProcess(e.target.value);
     setfirstInputActive(true);
   };
-  const [
-    { theme, themeName },
-    lightModeActive,
-    darkModeActive,
-    cyberpunkModeActive,
-  ] = useContext(ThemeContext);
 
   const handleConfirmPasswordChange = (e) => {
     setNewPasswordForgotPasswordProcessConfirm(e.target.value);
@@ -5192,6 +5191,26 @@ function CommentModal({
       />
     </Popover>
   );
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
+
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   return (
     <>
@@ -5203,11 +5222,17 @@ function CommentModal({
           viewBox="0 0 24 24"
           aria-hidden="true"
           className="bi bi-chat r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-          fill={isImagePostDetail ? "white" : "rgb(83, 100, 113)"}
+          fill={themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)"}
         >
           <g>
             <path
-              stroke={isImagePostDetail ? "white" : "rgb(83, 100, 113)"}
+              stroke={
+                isImagePostDetail
+                  ? "white"
+                  : themeName === "dark-theme"
+                  ? "#71767A"
+                  : "rgb(83, 100, 113)"
+              }
               strokeWidth="0.1"
               d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"
             ></path>
@@ -5215,7 +5240,13 @@ function CommentModal({
         </svg>
         <span
           className="post-description"
-          style={{ color: isImagePostDetail ? "white" : "rgb(83, 100, 113)" }}
+          style={{
+            color: isImagePostDetail
+              ? "white"
+              : themeName === "dark-theme"
+              ? "#71767A"
+              : "rgb(83, 100, 113)",
+          }}
         >
           {post.comments && post.comments.length ? (
             <span>{post.comments.length}</span>
@@ -5223,7 +5254,27 @@ function CommentModal({
         </span>
       </div>
 
-      <Modal show={show} onHide={handleClose}>
+      <Modal
+        style={{
+          padding: "0px",
+          margin: "0px",
+        }}
+        show={show}
+        onHide={handleClose}
+        backdropClassName={
+          themeName === "dark-theme" ? `back-drop-${themeName}` : ""
+        }
+        contentClassName={
+          windowWidth <= 700 && themeName === "dark-theme"
+            ? `comment-modal-${themeName}`
+            : themeName === "dark-theme"
+            ? `comment-modal comment-modal-${themeName}`
+            : windowWidth <= 700
+            ? ""
+            : "comment-modal"
+        }
+        dialogClassName={windowWidth <= 700 ? "modal-fullscreen" : ""}
+      >
         <Modal.Header
           style={{
             border: "none",
@@ -5231,7 +5282,7 @@ function CommentModal({
         >
           <div
             onClick={handleClose}
-            className="close-button"
+            className={`close-button close-button-${themeName}`}
             style={{ borderRadius: "50%", cursor: "pointer" }}
           >
             <div>
@@ -5243,7 +5294,7 @@ function CommentModal({
                 }}
                 width={20}
                 height={20}
-                color="rgb(15,20,25)"
+                color={themeName === "dark-theme" ? "white" : `rgb(15,20,25)`}
                 fill="currentColor"
                 viewBox="0 0 24 24"
                 aria-hidden="true"
@@ -5312,7 +5363,11 @@ function CommentModal({
                         <div
                           className="responsive-comment-line "
                           style={{
-                            border: "1px solid rgba(0, 0, 0, 0.2)",
+                            border:
+                              themeName !== "dark-theme"
+                                ? "1px solid rgba(0, 0, 0, 0.2)"
+                                : // : "0.1px solid rgb(70, 70, 70)",
+                                  "1px solid rgb(70, 70, 70)",
                             margin: "5px 0px 5px 0px",
                             width: "2px",
 
@@ -5356,7 +5411,11 @@ function CommentModal({
                         <div
                           className="responsive-comment-line "
                           style={{
-                            border: "1px solid rgba(0, 0, 0, 0.2)",
+                            border:
+                              themeName !== "dark-theme"
+                                ? "1px solid rgba(0, 0, 0, 0.2)"
+                                : // : "0.1px solid rgb(70, 70, 70)",
+                                  "1px solid rgb(70, 70, 70)",
                             margin: "5px 0px 5px 0px",
                             width: "2px",
 
@@ -5393,6 +5452,7 @@ function CommentModal({
                           fontWeight: "700",
                           fontSize: "15px",
                           lineHeight: "20px",
+                          color: themeName === "dark-theme" ? "white" : "",
                         }}
                       >
                         {post.authorFullName}
@@ -5421,7 +5481,10 @@ function CommentModal({
 
                       <span
                         style={{
-                          color: "rgb(83, 100, 113)",
+                          color:
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)",
                           lineHeight: "20px",
                           fontSize: "15px",
                           fontWeight: "400",
@@ -5432,7 +5495,10 @@ function CommentModal({
 
                       <span
                         style={{
-                          color: "rgb(83, 100, 113)",
+                          color:
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)",
                           lineHeight: "20px",
                           fontSize: "15px",
                           fontWeight: "400",
@@ -5464,6 +5530,7 @@ function CommentModal({
                       fontSize: "15px",
                       fontWeight: "400",
                       lineHeight: "20px",
+                      color: themeName === "dark-theme" ? "white" : "black",
                     }}
                   >
                     <span>{post.content}</span>
@@ -5487,7 +5554,10 @@ function CommentModal({
                           >
                             <span
                               style={{
-                                color: "rgb(83, 100, 113)",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "rgb(83, 100, 113)",
                                 fontSize: "15px",
                                 fontWeight: "400",
                                 lineHeight: "20px",
@@ -5541,7 +5611,10 @@ function CommentModal({
                             >
                               <span
                                 style={{
-                                  color: "rgb(83, 100, 113)",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "#71767A"
+                                      : "rgb(83, 100, 113)",
                                   fontSize: "15px",
                                   fontWeight: "400",
                                   lineHeight: "20px",
@@ -5639,6 +5712,7 @@ function CommentModal({
               </Col>
               <Col xs={10} sm={10} md={10} lg={10} xxl={10} style={{}}>
                 <textarea
+                  autoFocus
                   onChange={handleChange}
                   rows="4"
                   cols="50"
@@ -5654,11 +5728,15 @@ function CommentModal({
                   }
                   style={{
                     resize: "none",
-                    color: "rgba(15,20,25,1.00)",
+                    color:
+                      themeName == "dark-theme"
+                        ? "white"
+                        : "rgba(15,20,25,1.00)",
                     lineHeight: "24px",
                     fontWeight: "400",
                     fontSize: `${content ? "15px" : "20px"}`,
-
+                    backgroundColor:
+                      themeName === "dark-theme" ? "black" : "transparent",
                     width: "100%",
                     height: "100px",
                   }}
@@ -5742,7 +5820,7 @@ function CommentModal({
                   cursor: "pointer",
                   borderRadius: "50%",
                 }}
-                className="svg-border-parent svg-border-parent-image-choose"
+                className={`svg-border-parent svg-border-parent-${themeName}`}
               >
                 <svg
                   style={{
@@ -5781,7 +5859,7 @@ function CommentModal({
                 overlay={popoverBottom}
               >
                 <div
-                  className="svg-border-parent"
+                  className={`svg-border-parent svg-border-parent-${themeName}`}
                   style={{
                     cursor: "pointer",
                     borderRadius: "50%",

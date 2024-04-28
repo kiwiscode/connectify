@@ -1,17 +1,6 @@
 import { useState, useEffect, createContext } from "react";
 import PropTypes from "prop-types";
 
-import io from "socket.io-client";
-import axios from "axios";
-
-// when working on local version
-const API_URL = "http://localhost:3000";
-
-// when working on deployment version
-// ?
-
-const socket = io.connect(`${API_URL}`);
-
 const UserContext = createContext();
 
 const UserProvider = ({ children }) => {
@@ -49,8 +38,6 @@ const UserProvider = ({ children }) => {
   };
 
   const logout = () => {
-    socket.disconnect();
-
     setUserInfo({
       username: "",
       email: "",
@@ -87,7 +74,6 @@ const UserProvider = ({ children }) => {
         logout,
         setToken,
         getToken,
-        socket,
       }}
     >
       {children}

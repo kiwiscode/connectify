@@ -198,8 +198,6 @@ const handleDeleteFavorite = (req, res) => {
       }
 
       Post.findById(postId).then((post) => {
-        console.log("Post to delete favorite =>", post);
-        // eğer user kendi postundan favorite silmiyorsa start to check
         if (userId !== post.userId.toString()) {
           // notified olması mümkün olan kullanıcıdan notificationı silme veya bırakma işlemi start to check
           const isReposted = post.isReposted;

@@ -151,36 +151,6 @@ module.exports = (app) => {
                   messages: [newChat],
                 })
                   .then((newCreatedChatBetween2User) => {
-                    // BUG users room index not receiving correctly start to check
-
-                    // console.log(
-                    //   "Not exist user => first user => active user =>",
-                    //   chatDetailActiveUser.messages
-                    // );
-                    // // İki kullanıcının da messages array'ini alalım
-
-                    // const user1Messages = chatDetailActiveUser.messages || [];
-                    // const user2Messages = chatDetailSelectedUser.messages || [];
-                    // console.log(
-                    //   "Check user 1 messages  =>",
-                    //   user1Messages,
-                    //   "Check user 2 messages  =>",
-                    //   user2Messages
-                    // );
-                    // // İlk kullanıcının messages array'indeki room'u bulalım
-                    // const user1RoomIndex = user1Messages.findIndex(
-                    //   (message) => message.room === data.room
-                    // );
-
-                    // console.log("Check room indexes =>", user1RoomIndex);
-
-                    // // İkinci kullanıcının messages array'indeki room'u bulalım
-                    // const user2RoomIndex = user2Messages.findIndex(
-                    //   (message) => message.room === data.room
-                    // );
-                    // console.log("Check room indexes 2=>", user2RoomIndex);
-                    // BUG users room index not receiving correctly finish to check
-
                     console.log("Active user id =>", chatDetailActiveUser._id);
                     console.log(
                       "Selected user id =>",
@@ -586,6 +556,7 @@ module.exports = (app) => {
         text,
         senderInfo,
       }) => {
+        console.log("Burası çalışıyor !!!");
         const receiver = onlineUsers.find((eachUser) => {
           return eachUser.username === receiverName;
         });

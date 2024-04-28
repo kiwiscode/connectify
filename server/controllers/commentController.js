@@ -10,6 +10,15 @@ let createdCommentPostId;
 const addComment = (req, res) => {
   const { userId, postId, commentPost, modalImage } = req.body;
 
+  console.log(
+    "user id =>",
+    userId,
+    "post id =>",
+    postId,
+    "comment post =>",
+    commentPost,
+    modalImage ? "modal image" : "no modal image"
+  );
   User.findById(userId)
     .then((user) => {
       Post.findById(postId)
@@ -19,8 +28,8 @@ const addComment = (req, res) => {
           setTimeout(() => {
             console.log("Burayı çalıştırıyoruz şimdi !!!");
             console.log("Created comment post id =>", createdCommentPostId);
-            if (post.userId.toString() !== userId) {
-              User.findById(post.userId.toString())
+            if (post?.userId?.toString() !== userId) {
+              User.findById(post?.userId?.toString())
                 .then((notifiedUser) => {
                   console.log("Notified user =>", notifiedUser);
                   const newNotification = {

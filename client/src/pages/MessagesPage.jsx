@@ -21,6 +21,7 @@ import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import { ThemeContext } from "../context/ThemeContext";
+import io from "socket.io-client";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -28,10 +29,9 @@ const API_URL = "http://localhost:3000";
 // when working on deployment version
 // ?
 
-// const socket = io.connect(API_URL);
-
 function MessagesPage() {
-  const { userInfo, getToken, socket } = useContext(UserContext);
+  const { userInfo, getToken } = useContext(UserContext);
+  const socket = io.connect(`${API_URL}`);
 
   const [isHovered, setIsHovered] = useState(false);
   const [messageRooms, setmessageRooms] = useState([]);
@@ -138,76 +138,90 @@ function MessagesPage() {
 
   const deleteModalOutput = [
     <Modal
-      contentClassName="delete-conversation-content"
-      dialogClassName="delete-conversation-dialog"
+      backdropClassName={
+        themeName === "dark-theme" ? `back-drop-${themeName}` : ""
+      }
       centered={true}
       key={0}
       show={showDeleteConversationModal}
       onHide={handleClose}
+      className="leave-conversation"
+      contentClassName={
+        themeName === "dark-theme"
+          ? "leave-conversation-modal-dark-theme"
+          : "leave-conversation-modal"
+      }
     >
-      <Modal.Body
-        style={{
-          border: "none",
-        }}
-      >
+      <Modal.Body>
         <div
           style={{
-            textAlign: "left",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+            paddingBottom: "16px",
+            paddingTop: "16px",
+            maxWidth: "256px",
           }}
         >
           <div
             style={{
+              color: themeName === "dark-theme" ? "white" : "",
               fontWeight: "700",
               fontSize: "20px",
               lineHeight: "24px",
             }}
           >
-            Leave conversation?{" "}
+            Leave conversation ?
           </div>
           <div
             style={{
-              lineHeight: "20px",
-              fontSize: "15px",
+              color:
+                themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
               fontWeight: "400",
-              color: "rgb(83, 100, 113)",
-              marginTop: "15px",
+              fontSize: "15px",
+              lineHeight: "20px",
             }}
+            className="mt-2"
           >
-            This conversation will be deleted from your inbox. Other people in
-            the conversation will still be able to see it.{" "}
+            This can’t be undone and it will be removed from your profile, the
+            timeline of any accounts that follow you, and from search results.{" "}
           </div>
         </div>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            padding: "12px",
+          }}
+        >
+          <Button
+            onClick={() => deleteConversation()}
+            className={`red-btn ${themeName}-red-btn`}
+            style={{
+              maxWidth: "256px",
+              minHeight: "44px",
+              color: "white",
+              backgroundColor: "rgb(244, 33, 46)",
+              border: "none",
+            }}
+          >
+            Leave
+          </Button>
+          <Button
+            variant="light"
+            onClick={handleCloseDeleteConversationModal}
+            style={{
+              color: themeName === "dark-theme" ? "white" : "black",
+              maxWidth: "256px",
+              minHeight: "44px",
+            }}
+            className={`mt-2 forgot-password-btn ${themeName}-black-btn`}
+          >
+            Cancel
+          </Button>
+        </div>
       </Modal.Body>
-      <Modal.Footer
-        style={{
-          border: "none",
-        }}
-      >
-        <Button
-          className="leave-btn-delete-conversation-tab"
-          style={{
-            minHeight: "44px",
-            color: "white",
-            backgroundColor: "rgb(244, 33, 46)",
-            border: "none",
-          }}
-          onClick={() => deleteConversation()}
-        >
-          Leave
-        </Button>
-        <Button
-          className="cancel-btn-delete-conversation-tab"
-          style={{
-            minHeight: "44px",
-            color: "black",
-          }}
-          // className="login-button"
-          variant="light"
-          onClick={handleCloseDeleteConversationModal}
-        >
-          Cancel
-        </Button>
-      </Modal.Footer>
     </Modal>,
   ];
 
@@ -483,7 +497,6 @@ function MessagesPage() {
               draggable: true,
               progress: undefined,
               transition: Bounce,
-              theme: "light",
             }
           );
         }
@@ -821,7 +834,7 @@ function MessagesPage() {
       {/* finish to check delete conversation modal  */}
 
       {contextHolder}
-      <ToastContainer />
+      <ToastContainer theme={themeName === "dark-theme" ? "dark" : "light"} />
 
       <ResponsiveNavigationBarBottom />
       <Container
@@ -887,6 +900,7 @@ function MessagesPage() {
               }}
               direction="horizontal"
               gap={3}
+              className="mt-2"
             >
               <Link className="responsive-home-arrow" to={"/home"}>
                 <svg
@@ -1082,13 +1096,13 @@ function MessagesPage() {
                                           ? "white"
                                           : !eachMessageRoom.readed &&
                                             themeName !== "dark-theme"
-                                          ? ""
+                                          ? "#f7f9f9"
                                           : eachMessageRoom.readed &&
                                             themeName === "dark-theme"
                                           ? "black"
                                           : !eachMessageRoom.readed &&
                                             themeName === "dark-theme"
-                                          ? "black"
+                                          ? "#181818"
                                           : "",
                                     }}
                                   >
@@ -1184,7 +1198,7 @@ function MessagesPage() {
                                                 style={{
                                                   color:
                                                     themeName === "dark-theme"
-                                                      ? "#6c7175"
+                                                      ? "#71767A"
                                                       : "rgb(83, 100, 113)",
                                                   fontSize: "15px",
                                                   lineHeight: "20px",
@@ -1210,7 +1224,7 @@ function MessagesPage() {
                                                 style={{
                                                   color:
                                                     themeName === "dark-theme"
-                                                      ? "#6c7175"
+                                                      ? "#71767A"
                                                       : "rgb(83, 100, 113)",
                                                   fontSize: "15px",
                                                   lineHeight: "20px",
@@ -1232,7 +1246,7 @@ function MessagesPage() {
                                                   style={{
                                                     color:
                                                       themeName === "dark-theme"
-                                                        ? "#6c7175"
+                                                        ? "#71767A"
                                                         : "rgb(83, 100, 113)",
                                                   }}
                                                 >
@@ -1246,6 +1260,7 @@ function MessagesPage() {
                                               </div>
                                             </div>
                                             {/* <div className="p-0 ms-auto">asd</div> */}
+
                                             <div
                                               style={{
                                                 marginTop: "5px",
@@ -1296,6 +1311,18 @@ function MessagesPage() {
                                                     borderRadius: "50%",
                                                   }}
                                                 >
+                                                  <div
+                                                    style={{
+                                                      position: "absolute",
+                                                      right: "50px",
+                                                      top: "14px",
+                                                      backgroundColor:
+                                                        "#1d9bf0",
+                                                      borderRadius: "50%",
+                                                      width: "10px",
+                                                      height: "10px",
+                                                    }}
+                                                  ></div>
                                                   <svg
                                                     style={{
                                                       cursor: "pointer",
@@ -1307,6 +1334,9 @@ function MessagesPage() {
                                                       isHovered ===
                                                       eachMessageRoom._id
                                                         ? "#259ef0"
+                                                        : themeName ===
+                                                          "dark-theme"
+                                                        ? "#71767A"
                                                         : "rgb(83, 100, 113)"
                                                     }
                                                     fill="currentColor"
@@ -1359,7 +1389,10 @@ function MessagesPage() {
                       </div>
                       <div
                         style={{
-                          color: "rgb(83, 100, 113)",
+                          color:
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)",
                           lineHeight: "20px",
                           fontSize: "15px",
                           fontWeight: "400",
@@ -1420,7 +1453,11 @@ function MessagesPage() {
                 </div>
                 <div
                   style={{
-                    color: "rgb(83, 100, 113)",
+                    color:
+                      themeName === "dark-theme"
+                        ? "#71767A"
+                        : "rgb(83, 100, 113)",
+
                     lineHeight: "20px",
                     fontSize: "15px",
                     fontWeight: "400",

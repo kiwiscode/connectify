@@ -84,6 +84,8 @@ const handlePost = (req, res) => {
 const handleShowPosts = (req, res) => {
   const { userId } = req.user;
 
+  console.log("Now we are in home page !!!");
+
   Post.find()
     // IMPORTANT
     // start to check
@@ -120,99 +122,98 @@ const handleDeletePost = (req, res) => {
       // STARTING WITH POST DELETING PROCESS
       Post.findById(postId)
         .then((post) => {
-          // notified olması mümkün olan kullanıcıdan notificationı silme veya bırakma işlemi start to check
-          console.log(
-            "Post =>",
-            post._id.toString(),
-            "Is post reposted post =>",
-            post.isReposted
-          );
-          const isComment = post.isComment;
-          const isReposted = post.isReposted;
-          const doesRepostedLength = post.reposted.length;
-          if (isComment) {
-            const commentedForThisPost =
-              post.commentedForThisPost._id.toString();
-            User.findById(post.commentedForThisUsersPost.toString())
-              .then((notifiedUser) => {
-                if (isReposted) {
-                  Post.findById(post.repostedFromThisOriginalPost[0].toString())
-                    .then((originalPost) => {
-                      console.log("Şimdi de buradayız !!!", originalPost);
-                      const notification = notifiedUser.notifications.find(
-                        (notification) => {
-                          return (
-                            (notification.post.toString() ===
-                              commentedForThisPost ||
+          if (userId !== post.userId.toString()) {
+            // notified olması mümkün olan kullanıcıdan notificationı silme veya bırakma işlemi start to check
+            const isComment = post.isComment;
+            const isReposted = post.isReposted;
+            const doesRepostedLength = post.reposted.length;
+
+            if (isComment) {
+              const commentedForThisPost =
+                post.commentedForThisPost._id.toString();
+              User.findById(post.commentedForThisUsersPost.toString())
+                .then((notifiedUser) => {
+                  if (isReposted) {
+                    Post.findById(
+                      post.repostedFromThisOriginalPost[0].toString()
+                    )
+                      .then((originalPost) => {
+                        console.log("Şimdi de buradayız !!!", originalPost);
+                        const notification = notifiedUser.notifications.find(
+                          (notification) => {
+                            return (
+                              (notification.post.toString() ===
+                                commentedForThisPost ||
+                                notification.post.toString() ===
+                                  originalPost.commentedForThisPost._id.toString()) &&
+                              notification.notificationSender.toString() ===
+                                userId &&
+                              notification.isComment.value
+                            );
+                          }
+                        );
+
+                        const notificationIndex =
+                          notifiedUser.notifications.indexOf(notification);
+
+                        console.log("Notification =>", notification);
+                        console.log("Notification index =>", notificationIndex);
+                        notifiedUser.notifications.splice(notificationIndex, 1);
+                        notifiedUser.save();
+                      })
+                      .catch(() => {});
+                  } else if (
+                    (doesRepostedLength || !doesRepostedLength) &&
+                    !isReposted
+                  ) {
+                    // belki doesRepostedLength olabilir check et start to check
+                    Post.find({ repostedFromThisOriginalPost: postId })
+                      .then((referencePost) => {
+                        const notification = notifiedUser.notifications.find(
+                          (notification) => {
+                            return (
+                              (notification.post.toString() ===
+                                commentedForThisPost ||
+                                notification.post.toString() ===
+                                  referencePost[0].commentedForThisPost._id.toString()) &&
+                              notification.notificationSender.toString() ===
+                                userId &&
+                              notification.isComment.value
+                            );
+                          }
+                        );
+
+                        const notificationIndex =
+                          notifiedUser.notifications.indexOf(notification);
+
+                        notifiedUser.notifications.splice(notificationIndex, 1);
+                        notifiedUser.save();
+                      })
+                      .catch(() => {
+                        const notification = notifiedUser.notifications.find(
+                          (notification) => {
+                            return (
                               notification.post.toString() ===
-                                originalPost.commentedForThisPost._id.toString()) &&
-                            notification.notificationSender.toString() ===
-                              userId &&
-                            notification.isComment.value
-                          );
-                        }
-                      );
+                                commentedForThisPost &&
+                              notification.notificationSender.toString() ===
+                                userId &&
+                              notification.isComment.value
+                            );
+                          }
+                        );
 
-                      const notificationIndex =
-                        notifiedUser.notifications.indexOf(notification);
+                        const notificationIndex =
+                          notifiedUser.notifications.indexOf(notification);
 
-                      console.log("Notification =>", notification);
-                      console.log("Notification index =>", notificationIndex);
-                      notifiedUser.notifications.splice(notificationIndex, 1);
-                      notifiedUser.save();
-                    })
-                    .catch(() => {});
-                } else if (
-                  (doesRepostedLength || !doesRepostedLength) &&
-                  !isReposted
-                ) {
-                  // belki doesRepostedLength olabilir check et start to check
-                  Post.find({ repostedFromThisOriginalPost: postId })
-                    .then((referencePost) => {
-                      const notification = notifiedUser.notifications.find(
-                        (notification) => {
-                          return (
-                            (notification.post.toString() ===
-                              commentedForThisPost ||
-                              notification.post.toString() ===
-                                referencePost[0].commentedForThisPost._id.toString()) &&
-                            notification.notificationSender.toString() ===
-                              userId &&
-                            notification.isComment.value
-                          );
-                        }
-                      );
-
-                      const notificationIndex =
-                        notifiedUser.notifications.indexOf(notification);
-
-                      notifiedUser.notifications.splice(notificationIndex, 1);
-                      notifiedUser.save();
-                    })
-                    .catch(() => {
-                      const notification = notifiedUser.notifications.find(
-                        (notification) => {
-                          return (
-                            notification.post.toString() ===
-                              commentedForThisPost &&
-                            notification.notificationSender.toString() ===
-                              userId &&
-                            notification.isComment.value
-                          );
-                        }
-                      );
-
-                      const notificationIndex =
-                        notifiedUser.notifications.indexOf(notification);
-
-                      notifiedUser.notifications.splice(notificationIndex, 1);
-                      notifiedUser.save();
-                    });
-                  // belki doesRepostedLength olabilir check et finish to check
-                } else {
-                }
-              })
-              .catch(() => {});
+                        notifiedUser.notifications.splice(notificationIndex, 1);
+                        notifiedUser.save();
+                      });
+                    // belki doesRepostedLength olabilir check et finish to check
+                  } else {
+                  }
+                })
+                .catch(() => {});
+            }
           }
           // notified olması mümkün olan kullanıcıdan notificationı silme veya bırakma işlemi finish to check
 
@@ -341,10 +342,10 @@ const handleDeletePost = (req, res) => {
                             )
                               .then((commentedForThisPost) => {
                                 if (
-                                  commentedForThisPost.reposted.length === 0
+                                  commentedForThisPost?.reposted.length === 0
                                 ) {
                                   const filteredCommentsArray =
-                                    commentedForThisPost.comments.filter(
+                                    commentedForThisPost?.comments.filter(
                                       (eachComment) => {
                                         return (
                                           eachComment._id.toString() !==
@@ -356,10 +357,12 @@ const handleDeletePost = (req, res) => {
                                     "Deleted comment id =>",
                                     deletedComment._id.toString()
                                   );
-                                  commentedForThisPost.comments =
-                                    filteredCommentsArray;
+                                  if (commentedForThisPost) {
+                                    commentedForThisPost.comments =
+                                      filteredCommentsArray;
 
-                                  commentedForThisPost.save();
+                                    commentedForThisPost.save();
+                                  }
                                 } else {
                                   if (commentedForThisPost.isReposted) {
                                     console.log(
@@ -879,7 +882,7 @@ const handleDeletePost = (req, res) => {
                               "Commented for this post =>",
                               commentedForThisPost
                             );
-                            if (commentedForThisPost.isReposted) {
+                            if (commentedForThisPost?.isReposted) {
                               // look for original post to filter comments array also start to check
                               Post.find({
                                 _id: commentedForThisPost.repostedFromThisOriginalPost[0].toString(),
@@ -920,11 +923,11 @@ const handleDeletePost = (req, res) => {
                               // look for reference post to filter comments array also start to check
                               Post.find({
                                 repostedFromThisOriginalPost:
-                                  commentedForThisPost._id.toString(),
+                                  commentedForThisPost?._id.toString(),
                               })
                                 .then((referencePost) => {
                                   const filteredCommentsArray =
-                                    referencePost[0].comments.filter(
+                                    referencePost[0]?.comments.filter(
                                       (eachComment) => {
                                         return (
                                           eachComment._id.toString() !==
@@ -932,16 +935,18 @@ const handleDeletePost = (req, res) => {
                                         );
                                       }
                                     );
-                                  referencePost[0].comments =
-                                    filteredCommentsArray;
-                                  referencePost[0].save();
+                                  if (referencePost[0]) {
+                                    referencePost[0].comments =
+                                      filteredCommentsArray;
+                                    referencePost[0].save();
+                                  }
                                 })
                                 .catch((error) => {
                                   console.log("Error =>", error);
                                 });
                               // look for reference post to filter comments array also finish to check
                               const filteredCommentsArray =
-                                commentedForThisPost.comments.filter(
+                                commentedForThisPost?.comments.filter(
                                   (eachComment) => {
                                     return (
                                       eachComment._id.toString() !==
@@ -950,9 +955,11 @@ const handleDeletePost = (req, res) => {
                                   }
                                 );
 
-                              commentedForThisPost.comments =
-                                filteredCommentsArray;
-                              commentedForThisPost.save();
+                              if (commentedForThisPost) {
+                                commentedForThisPost.comments =
+                                  filteredCommentsArray;
+                                commentedForThisPost.save();
+                              }
                             }
                           }
                         })

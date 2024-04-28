@@ -805,7 +805,6 @@ function RightSideColumn({
 
   const handleCheckoutStripeApiOrganizationBasic = () => {
     setCheckoutProcessLoadingBar(true);
-    window.alert("HELLO WORLD");
     axios
       .post(
         `${API_URL}/organization-basic-subscribe-create-checkout-session`,
@@ -830,7 +829,6 @@ function RightSideColumn({
         }, 1000);
       })
       .catch((err) => {
-        window.alert("Error !!!", err ? err : null);
         setCheckoutProcessLoadingBar(false);
       });
   };
@@ -936,12 +934,14 @@ function RightSideColumn({
   const [yourFullName, setYourFullName] = useState(null);
   const [organizationEmailAdress, setOrganizationEmailAdress] = useState("");
   const [organizationWebSite, setOrganizationWebSite] = useState(null);
-  const [allTextFieldsFilled, setallTextFieldsFilled] = useState("unknown");
 
   const emailRegex =
     /^[a-zA-Z0-9._%+-]+@(gmail|outlook|hotmail|yahoo|proton|zoho|mail|aol|yandex)\.(com|org|net|gov|edu|mil|co|info|de|co.uk|ca|me|tr|com.tr)$/;
 
-  const [invalidEmailError, setInvalidEmailError] = useState("");
+  // const websiteRegex =
+  //   /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)(com|net|org|io|gov|edu|mil|co|info|biz|tv|me|ca|us|uk|de|in|es|it|fr|nl|jp|au|nz)(\/\S*)?$/;
+
+  const [invalidEmailError, setInvalidEmailError] = useState(null);
 
   const handleCheckoutStripeApiOrganizationFullAccess = () => {
     setCheckoutProcessLoadingBar(true);
@@ -978,7 +978,6 @@ function RightSideColumn({
       .catch((err) => window.alert("Error !!!", err ? err : null));
   };
 
-  const [submitClicked, setsubmitClicked] = useState(false);
   const handleSubmitOrganizationInformationForFullAccessSubscription = (
     organizationName,
     yourFullName,
@@ -986,24 +985,69 @@ function RightSideColumn({
     organizationWebSite,
     organizationType
   ) => {
-    setsubmitClicked(true);
-    if (
-      (!organizationName ||
-        !yourFullName ||
-        !organizationEmailAdress ||
-        !organizationWebSite ||
-        !organizationType) &&
-      !organizationEmailAdress.match(emailRegex)
-    ) {
+    console.log(
+      organizationName,
+      yourFullName,
+      organizationEmailAdress,
+      organizationWebSite,
+      organizationType,
+      emailRegex.test(organizationEmailAdress)
+    );
+
+    if (!organizationName) {
+      setOrganizationNameFilled(true);
+    }
+
+    if (!yourFullName) {
+      setOrganizationYourFullNameFilled(true);
+    }
+
+    if (!organizationEmailAdress) {
       setInvalidEmailError("Invalid Email");
-      setallTextFieldsFilled("no");
+      setOrganizationEmailAdressFilled(true);
+    }
+
+    if (!organizationWebSite) {
+      setOrganizationWebSiteFilled(true);
+    }
+
+    if (!displayedOrganizationType) {
+      setOrganizationDisplayedOrganizationTypeFilled(true);
+    }
+
+    if (!emailRegex.test(organizationEmailAdress) && organizationEmailAdress) {
+      setInvalidEmailError("Invalid Email");
     } else {
-      setallTextFieldsFilled("unknown");
+      setInvalidEmailError(null);
+    }
+
+    if (
+      organizationName &&
+      yourFullName &&
+      emailRegex.test(organizationEmailAdress) &&
+      organizationWebSite &&
+      organizationType
+    ) {
+      setInvalidEmailError(null);
       handleCheckoutStripeApiOrganizationFullAccess();
     }
   };
 
+  const [organizationNameFilled, setOrganizationNameFilled] = useState(false);
+  const [organizationYourFullNameFilled, setOrganizationYourFullNameFilled] =
+    useState(false);
+  const [organizationEmailAdressFilled, setOrganizationEmailAdressFilled] =
+    useState(false);
+  const [organizationWebSiteFilled, setOrganizationWebSiteFilled] =
+    useState(false);
+  const [
+    organizationDisplayedOrganizationTypeFilled,
+    setOrganizationDisplayedOrganizationTypeFilled,
+  ] = useState(false);
+
+  // unneccessary !
   const [verifyPasswordErrorMessage, setverifyPasswordErrorMessage] =
+    // unneccessary !
     useState(null);
   const [verifyPasswordInput, setverifyPasswordInput] = useState(null);
 
@@ -1234,6 +1278,8 @@ function RightSideColumn({
   const [boxHoveredIndividual, setBoxHoveredIndividual] = useState(false);
   const [boxHoveredOrganization, setBoxHoveredOrganization] = useState(false);
 
+  console.log("Email correct =>", emailRegex.test("aykt-kav@gmailcom"));
+
   return (
     <>
       {contextHolder}
@@ -1250,6 +1296,7 @@ function RightSideColumn({
                 overflowY: "hidden",
                 margin: "0px",
                 padding: "0px",
+                backgroundColor: themeName === "dark-theme" ? "black" : "white",
               }}
               dialogClassName={"modal-fullscreen"}
               show={showSubscriptionModal}
@@ -1323,6 +1370,7 @@ function RightSideColumn({
                     </div>{" "}
                     <span
                       style={{
+                        color: themeName === "dark-theme" ? "white" : "",
                         fontWeight: "700",
                         fontSize: "20px",
                         lineHeight: "24px",
@@ -1336,7 +1384,7 @@ function RightSideColumn({
                             : "none",
                       }}
                     >
-                      Subscribess
+                      Subscribe
                     </span>
                     <div
                       style={{
@@ -1847,11 +1895,14 @@ function RightSideColumn({
                           </Stack>{" "}
                           {/* enhanced experience start to check  */}
                           <div
-                            className="mt-3 premium-plus-parent-div"
+                            className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                             style={{
                               padding: "32px",
                               borderRadius: "16px",
-                              backgroundColor: "#eff3f4",
+                              backgroundColor:
+                                themeName === "dark-theme"
+                                  ? "#16181C"
+                                  : "#eff3f4",
                             }}
                           >
                             <div className="premium-plus-header">
@@ -2139,11 +2190,14 @@ function RightSideColumn({
                           {/* enhanced experience finish to check  */}
                           {/* creator hub start to check  */}
                           <div
-                            className="mt-3 premium-plus-parent-div"
+                            className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                             style={{
                               padding: "32px",
                               borderRadius: "16px",
-                              backgroundColor: "#eff3f4",
+                              backgroundColor:
+                                themeName === "dark-theme"
+                                  ? "#16181C"
+                                  : "#eff3f4",
                             }}
                           >
                             <div className="premium-plus-header">
@@ -2160,7 +2214,9 @@ function RightSideColumn({
                                   <span
                                     style={{
                                       color:
-                                        "rgb(83, 100, 113)                                  ",
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgb(83, 100, 113)                                  ",
                                     }}
                                   >
                                     Write Articles
@@ -2168,7 +2224,11 @@ function RightSideColumn({
                                   <svg
                                     width={20}
                                     height={20}
-                                    color="rgba(83,100,113,1.00)"
+                                    color={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgba(83,100,113,1.00)"
+                                    }
                                     fill="currentColor"
                                     viewBox="0 0 24 24"
                                     aria-hidden="true"
@@ -2184,7 +2244,11 @@ function RightSideColumn({
                                   <svg
                                     width={`${1.25}em`}
                                     height={`${1.25}em`}
-                                    color="rgba(83,100,113,1.00)"
+                                    color={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgba(83,100,113,1.00)"
+                                    }
                                     fill="currentColor"
                                     viewBox="0 0 24 24"
                                     aria-hidden="true"
@@ -2208,7 +2272,9 @@ function RightSideColumn({
                                   <span
                                     style={{
                                       color:
-                                        "rgb(83, 100, 113)                                  ",
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgb(83, 100, 113)                                  ",
                                     }}
                                   >
                                     Get paid to post
@@ -2216,7 +2282,11 @@ function RightSideColumn({
                                   <svg
                                     width={20}
                                     height={20}
-                                    color="rgba(83,100,113,1.00)"
+                                    color={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgba(83,100,113,1.00)"
+                                    }
                                     fill="currentColor"
                                     viewBox="0 0 24 24"
                                     aria-hidden="true"
@@ -2232,7 +2302,11 @@ function RightSideColumn({
                                   <svg
                                     width={`${1.25}em`}
                                     height={`${1.25}em`}
-                                    color="rgba(83,100,113,1.00)"
+                                    color={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgba(83,100,113,1.00)"
+                                    }
                                     fill="currentColor"
                                     viewBox="0 0 24 24"
                                     aria-hidden="true"
@@ -2256,7 +2330,9 @@ function RightSideColumn({
                                   <span
                                     style={{
                                       color:
-                                        "rgb(83, 100, 113)                                  ",
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgb(83, 100, 113)                                  ",
                                     }}
                                   >
                                     Creator Subscriptions
@@ -2264,7 +2340,11 @@ function RightSideColumn({
                                   <svg
                                     width={20}
                                     height={20}
-                                    color="rgba(83,100,113,1.00)"
+                                    color={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgba(83,100,113,1.00)"
+                                    }
                                     fill="currentColor"
                                     viewBox="0 0 24 24"
                                     aria-hidden="true"
@@ -2280,7 +2360,11 @@ function RightSideColumn({
                                   <svg
                                     width={`${1.25}em`}
                                     height={`${1.25}em`}
-                                    color="rgba(83,100,113,1.00)"
+                                    color={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgba(83,100,113,1.00)"
+                                    }
                                     fill="currentColor"
                                     viewBox="0 0 24 24"
                                     aria-hidden="true"
@@ -2304,7 +2388,9 @@ function RightSideColumn({
                                   <span
                                     style={{
                                       color:
-                                        "rgb(83, 100, 113)                                  ",
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgb(83, 100, 113)                                  ",
                                     }}
                                   >
                                     X Pro
@@ -2312,7 +2398,11 @@ function RightSideColumn({
                                   <svg
                                     width={20}
                                     height={20}
-                                    color="rgba(83,100,113,1.00)"
+                                    color={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgba(83,100,113,1.00)"
+                                    }
                                     fill="currentColor"
                                     viewBox="0 0 24 24"
                                     aria-hidden="true"
@@ -2328,7 +2418,11 @@ function RightSideColumn({
                                   <svg
                                     width={`${1.25}em`}
                                     height={`${1.25}em`}
-                                    color="rgba(83,100,113,1.00)"
+                                    color={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgba(83,100,113,1.00)"
+                                    }
                                     fill="currentColor"
                                     viewBox="0 0 24 24"
                                     aria-hidden="true"
@@ -2352,7 +2446,9 @@ function RightSideColumn({
                                   <span
                                     style={{
                                       color:
-                                        "rgb(83, 100, 113)                                  ",
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgb(83, 100, 113)                                  ",
                                     }}
                                   >
                                     Media Studio
@@ -2360,7 +2456,11 @@ function RightSideColumn({
                                   <svg
                                     width={20}
                                     height={20}
-                                    color="rgba(83,100,113,1.00)"
+                                    color={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgba(83,100,113,1.00)"
+                                    }
                                     fill="currentColor"
                                     viewBox="0 0 24 24"
                                     aria-hidden="true"
@@ -2376,7 +2476,11 @@ function RightSideColumn({
                                   <svg
                                     width={`${1.25}em`}
                                     height={`${1.25}em`}
-                                    color="rgba(83,100,113,1.00)"
+                                    color={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgba(83,100,113,1.00)"
+                                    }
                                     fill="currentColor"
                                     viewBox="0 0 24 24"
                                     aria-hidden="true"
@@ -2400,7 +2504,9 @@ function RightSideColumn({
                                   <span
                                     style={{
                                       color:
-                                        "rgb(83, 100, 113)                                  ",
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgb(83, 100, 113)                                  ",
                                     }}
                                   >
                                     Analytics
@@ -2408,7 +2514,11 @@ function RightSideColumn({
                                   <svg
                                     width={20}
                                     height={20}
-                                    color="rgba(83,100,113,1.00)"
+                                    color={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgba(83,100,113,1.00)"
+                                    }
                                     fill="currentColor"
                                     viewBox="0 0 24 24"
                                     aria-hidden="true"
@@ -2424,7 +2534,11 @@ function RightSideColumn({
                                   <svg
                                     width={`${1.25}em`}
                                     height={`${1.25}em`}
-                                    color="rgba(83,100,113,1.00)"
+                                    color={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgba(83,100,113,1.00)"
+                                    }
                                     fill="currentColor"
                                     viewBox="0 0 24 24"
                                     aria-hidden="true"
@@ -2441,11 +2555,14 @@ function RightSideColumn({
                           {/* creator hub finish to check  */}
                           {/* Verification and security start to check */}
                           <div
-                            className="mt-3 premium-plus-parent-div"
+                            className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                             style={{
                               padding: "32px",
                               borderRadius: "16px",
-                              backgroundColor: "#eff3f4",
+                              backgroundColor:
+                                themeName === "dark-theme"
+                                  ? "#16181C"
+                                  : "#eff3f4",
                             }}
                           >
                             <div className="premium-plus-header">
@@ -2462,7 +2579,9 @@ function RightSideColumn({
                                   <span
                                     style={{
                                       color:
-                                        "rgb(83, 100, 113)                                  ",
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgba(83,100,113,1.00)",
                                     }}
                                   >
                                     {" "}
@@ -2471,7 +2590,11 @@ function RightSideColumn({
                                   <svg
                                     width={20}
                                     height={20}
-                                    color="rgba(83,100,113,1.00)"
+                                    color={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgba(83,100,113,1.00)"
+                                    }
                                     fill="currentColor"
                                     viewBox="0 0 24 24"
                                     aria-hidden="true"
@@ -2487,7 +2610,11 @@ function RightSideColumn({
                                   <svg
                                     width={`${1.25}em`}
                                     height={`${1.25}em`}
-                                    color="rgba(83,100,113,1.00)"
+                                    color={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgba(83,100,113,1.00)"
+                                    }
                                     fill="currentColor"
                                     viewBox="0 0 24 24"
                                     aria-hidden="true"
@@ -2552,7 +2679,9 @@ function RightSideColumn({
                                   <span
                                     style={{
                                       color:
-                                        "rgb(83, 100, 113)                                  ",
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgba(83,100,113,1.00)",
                                     }}
                                   >
                                     Optional ID verification
@@ -2560,7 +2689,11 @@ function RightSideColumn({
                                   <svg
                                     width={20}
                                     height={20}
-                                    color="rgba(83,100,113,1.00)"
+                                    color={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgba(83,100,113,1.00)"
+                                    }
                                     fill="currentColor"
                                     viewBox="0 0 24 24"
                                     aria-hidden="true"
@@ -2576,7 +2709,11 @@ function RightSideColumn({
                                   <svg
                                     width={`${1.25}em`}
                                     height={`${1.25}em`}
-                                    color="rgba(83,100,113,1.00)"
+                                    color={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgba(83,100,113,1.00)"
+                                    }
                                     fill="currentColor"
                                     viewBox="0 0 24 24"
                                     aria-hidden="true"
@@ -2593,11 +2730,14 @@ function RightSideColumn({
                           {/* verification and security finish to check */}
                           {/* Customization start to check  */}
                           <div
-                            className="mt-3 premium-plus-parent-div"
+                            className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                             style={{
                               padding: "32px",
                               borderRadius: "16px",
-                              backgroundColor: "#eff3f4",
+                              backgroundColor:
+                                themeName === "dark-theme"
+                                  ? "#16181C"
+                                  : "#eff3f4",
                             }}
                           >
                             <div className="premium-plus-header">
@@ -2929,11 +3069,14 @@ function RightSideColumn({
                           </Stack>{" "}
                           {/* enhanced experience start to check  */}
                           <div
-                            className="mt-3 premium-plus-parent-div"
+                            className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                             style={{
                               padding: "32px",
                               borderRadius: "16px",
-                              backgroundColor: "#eff3f4",
+                              backgroundColor:
+                                themeName === "dark-theme"
+                                  ? "#16181C"
+                                  : "#eff3f4",
                             }}
                           >
                             <div className="premium-plus-header">
@@ -3221,11 +3364,14 @@ function RightSideColumn({
                           {/* enhanced experience finish to check  */}
                           {/* creator hub start to check  */}
                           <div
-                            className="mt-3 premium-plus-parent-div"
+                            className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                             style={{
                               padding: "32px",
                               borderRadius: "16px",
-                              backgroundColor: "#eff3f4",
+                              backgroundColor:
+                                themeName === "dark-theme"
+                                  ? "#16181C"
+                                  : "#eff3f4",
                             }}
                           >
                             <div className="premium-plus-header">
@@ -3242,7 +3388,9 @@ function RightSideColumn({
                                   <span
                                     style={{
                                       color:
-                                        "rgb(83, 100, 113)                                  ",
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgba(83,100,113,1.00)",
                                     }}
                                   >
                                     Write Articles
@@ -3251,7 +3399,11 @@ function RightSideColumn({
                                   <svg
                                     width={20}
                                     height={20}
-                                    color="rgba(83,100,113,1.00)"
+                                    color={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgba(83,100,113,1.00)"
+                                    }
                                     fill="currentColor"
                                     viewBox="0 0 24 24"
                                     aria-hidden="true"
@@ -3267,7 +3419,11 @@ function RightSideColumn({
                                   <svg
                                     width={`${1.25}em`}
                                     height={`${1.25}em`}
-                                    color="rgba(83,100,113,1.00)"
+                                    color={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgba(83,100,113,1.00)"
+                                    }
                                     fill="currentColor"
                                     viewBox="0 0 24 24"
                                     aria-hidden="true"
@@ -3489,11 +3645,14 @@ function RightSideColumn({
                           {/* creator hub finish to check  */}
                           {/* Verification and security start to check */}
                           <div
-                            className="mt-3 premium-plus-parent-div"
+                            className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                             style={{
                               padding: "32px",
                               borderRadius: "16px",
-                              backgroundColor: "#eff3f4",
+                              backgroundColor:
+                                themeName === "dark-theme"
+                                  ? "#16181C"
+                                  : "#eff3f4",
                             }}
                           >
                             <div className="premium-plus-header">
@@ -3626,11 +3785,14 @@ function RightSideColumn({
                           {/* verification and security finish to check */}
                           {/* Customization start to check  */}
                           <div
-                            className="mt-3 premium-plus-parent-div"
+                            className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                             style={{
                               padding: "32px",
                               borderRadius: "16px",
-                              backgroundColor: "#eff3f4",
+                              backgroundColor:
+                                themeName === "dark-theme"
+                                  ? "#16181C"
+                                  : "#eff3f4",
                             }}
                           >
                             <div className="premium-plus-header">
@@ -3955,11 +4117,14 @@ function RightSideColumn({
                           </Stack>{" "}
                           {/* enhanced experience start to check  */}
                           <div
-                            className="mt-3 premium-plus-parent-div"
+                            className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                             style={{
                               padding: "32px",
                               borderRadius: "16px",
-                              backgroundColor: "#eff3f4",
+                              backgroundColor:
+                                themeName === "dark-theme"
+                                  ? "#16181C"
+                                  : "#eff3f4",
                             }}
                           >
                             <div className="premium-plus-header">
@@ -4247,11 +4412,14 @@ function RightSideColumn({
                           {/* enhanced experience finish to check  */}
                           {/* creator hub start to check  */}
                           <div
-                            className="mt-3 premium-plus-parent-div"
+                            className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                             style={{
                               padding: "32px",
                               borderRadius: "16px",
-                              backgroundColor: "#eff3f4",
+                              backgroundColor:
+                                themeName === "dark-theme"
+                                  ? "#16181C"
+                                  : "#eff3f4",
                             }}
                           >
                             <div className="premium-plus-header">
@@ -4507,11 +4675,14 @@ function RightSideColumn({
                           {/* creator hub finish to check  */}
                           {/* Verification and security start to check */}
                           <div
-                            className="mt-3 premium-plus-parent-div"
+                            className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                             style={{
                               padding: "32px",
                               borderRadius: "16px",
-                              backgroundColor: "#eff3f4",
+                              backgroundColor:
+                                themeName === "dark-theme"
+                                  ? "#16181C"
+                                  : "#eff3f4",
                             }}
                           >
                             <div className="premium-plus-header">
@@ -4644,11 +4815,14 @@ function RightSideColumn({
                           {/* verification and security finish to check */}
                           {/* Customization start to check  */}
                           <div
-                            className="mt-3 premium-plus-parent-div"
+                            className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                             style={{
                               padding: "32px",
                               borderRadius: "16px",
-                              backgroundColor: "#eff3f4",
+                              backgroundColor:
+                                themeName === "dark-theme"
+                                  ? "#16181C"
+                                  : "#eff3f4",
                             }}
                           >
                             <div className="premium-plus-header">
@@ -4880,6 +5054,7 @@ function RightSideColumn({
                         }}
                         className="modal-sub-modal-payment-screen-parent"
                         dialogClassName="modal-body-sub-modal-payment-screen"
+                        contentClassName={`${themeName}-sub-basic-modal`}
                       >
                         <Modal.Body
                           style={{
@@ -4895,6 +5070,7 @@ function RightSideColumn({
                               fontWeight: "700",
                               lineHeight: "28px",
                               margin: "0 auto",
+                              color: themeName === "dark-theme" ? "white" : "",
                             }}
                           >
                             Premium+
@@ -4907,18 +5083,26 @@ function RightSideColumn({
                                 false
                               );
                             }}
-                            className="individual-subscription-box mt-4"
+                            className={`individual-subscription-box individual-subscription-box-${themeName} mt-4`}
                             style={{
                               width: "95%",
 
-                              backgroundColor: "white",
                               minHeight: "96px",
                               padding: "12px",
                               cursor: "pointer",
                               borderWidth: "1px",
                               borderRadius: "16px",
+                              backgroundColor:
+                                themeName === "dark-theme" ? "black" : "",
+                              filter:
+                                themeName === "dark-theme"
+                                  ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                                  : "",
+
                               boxShadow:
-                                "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                                themeName === "dark-theme"
+                                  ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                                  : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
                               border: individualSubOptionPremiumPlusAnnualTab
                                 ? "2px solid #339bf0"
                                 : "2px solid transparent",
@@ -4927,7 +5111,10 @@ function RightSideColumn({
                           >
                             <span
                               style={{
-                                color: "#697884",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "#697884",
                                 fontSize: "14px",
                                 fontWeight: "400",
                                 lineHeight: "16px",
@@ -4937,15 +5124,21 @@ function RightSideColumn({
                               <span
                                 style={{
                                   fontSize: "11px",
-                                  backgroundColor: "#dcf8eb",
                                   borderRadius: "9999px",
-                                  color: "black",
                                   position: "relative",
                                   bottom: "1px",
                                   fontWeight: "700",
                                   lineHeight: "12px",
                                   padding: "4px",
                                   height: "20px",
+                                  backgroundColor:
+                                    themeName === "dark-theme"
+                                      ? "#05241A"
+                                      : "#dcf8eb",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "#C2F1DC"
+                                      : "rgb(0, 67, 41)",
                                 }}
                               >
                                 <span>Save 12%</span>
@@ -4954,7 +5147,10 @@ function RightSideColumn({
 
                             <span
                               style={{
-                                color: "rgb(15, 20, 25)",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "rgb(15, 20, 25)",
                                 fontSize: "17px",
                                 fontWeight: "700",
                                 lineHeight: "20px",
@@ -4965,7 +5161,10 @@ function RightSideColumn({
                             </span>
                             <div
                               style={{
-                                color: "rgb(83, 100, 113)",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "#697884",
                                 fontSize: "13px",
                                 fontWeight: "400",
                                 lineHeight: "16px",
@@ -4975,21 +5174,29 @@ function RightSideColumn({
                             </div>
                           </div>
                           <div
-                            className="organization-subscription-box mt-3"
+                            className={`individual-subscription-box individual-subscription-box-${themeName} mt-3`}
                             onClick={() => {
                               setindividualSubOptionPremiumPlusMonthlyTab(true);
                               setindividualSubOptionPremiumPlusAnnualTab(false);
                             }}
                             style={{
                               width: "95%",
-                              backgroundColor: "white",
                               minHeight: "96px",
                               padding: "12px",
                               cursor: "pointer",
                               borderWidth: "1px",
                               borderRadius: "16px",
+                              backgroundColor:
+                                themeName === "dark-theme" ? "black" : "",
+                              filter:
+                                themeName === "dark-theme"
+                                  ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                                  : "",
+
                               boxShadow:
-                                "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                                themeName === "dark-theme"
+                                  ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                                  : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
                               border: individualSubOptionPremiumPlusMonthlyTab
                                 ? "2px solid #339bf0"
                                 : "2px solid transparent",
@@ -4998,7 +5205,10 @@ function RightSideColumn({
                           >
                             <span
                               style={{
-                                color: "#697884",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "#697884",
                                 fontSize: "14px",
                                 fontWeight: "400",
                                 lineHeight: "16px",
@@ -5009,7 +5219,10 @@ function RightSideColumn({
 
                             <div
                               style={{
-                                color: "rgb(15, 20, 25)",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "rgb(15, 20, 25)",
                                 fontSize: "17px",
                                 fontWeight: "700",
                                 lineHeight: "20px",
@@ -5018,7 +5231,10 @@ function RightSideColumn({
                               €19.04 / month
                               <div
                                 style={{
-                                  color: "rgb(83, 100, 113)",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "#71767A"
+                                      : "#697884",
                                   fontSize: "13px",
                                   fontWeight: "400",
                                   lineHeight: "16px",
@@ -5057,7 +5273,7 @@ function RightSideColumn({
                           ) : null}
                           <Button
                             onClick={() => handlePhoneVerifiedCheck()}
-                            className={`login-button next-btn ${
+                            className={`login-button next-btn ${themeName}-white-btn ${
                               phoneVerifiedErrorMessage ? "mt-2" : "mt-4"
                             }`}
                             variant="dark"
@@ -5065,7 +5281,10 @@ function RightSideColumn({
                               width: "95%",
                               height: "36px",
                               color: "white",
-                              backgroundColor: "#0f141a",
+                              backgroundColor:
+                                themeName === "dark-theme"
+                                  ? "white"
+                                  : "#0f141a",
                               opacity: subErrorPhoneVerifiedTabLoading
                                 ? "0.5"
                                 : "1",
@@ -5094,7 +5313,14 @@ function RightSideColumn({
                               fontSize: "13px",
                               lineHeight: "16px",
                               fontWeight: "400",
-                              border: "1px solid black",
+                              border:
+                                themeName === "dark-theme"
+                                  ? "1px solid rgb(70, 70, 70)"
+                                  : "1px solid black",
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#71767A"
+                                  : "#697884",
                               borderRadius: "8px",
                               padding: "6px",
                             }}
@@ -5133,6 +5359,7 @@ function RightSideColumn({
                         }}
                         className="modal-sub-modal-payment-screen-parent"
                         dialogClassName="modal-body-sub-modal-payment-screen"
+                        contentClassName={`${themeName}-sub-basic-modal`}
                       >
                         <Modal.Body
                           style={{
@@ -5148,6 +5375,7 @@ function RightSideColumn({
                               fontWeight: "700",
                               lineHeight: "28px",
                               margin: "0 auto",
+                              color: themeName === "dark-theme" ? "white" : "",
                             }}
                           >
                             Premium
@@ -5160,18 +5388,26 @@ function RightSideColumn({
                                 false
                               );
                             }}
-                            className="individual-subscription-box mt-4"
+                            className={`individual-subscription-box individual-subscription-box-${themeName} mt-4`}
                             style={{
                               width: "95%",
 
-                              backgroundColor: "white",
                               minHeight: "96px",
                               padding: "12px",
                               cursor: "pointer",
                               borderWidth: "1px",
                               borderRadius: "16px",
+                              backgroundColor:
+                                themeName === "dark-theme" ? "black" : "",
+                              filter:
+                                themeName === "dark-theme"
+                                  ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                                  : "",
+
                               boxShadow:
-                                "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                                themeName === "dark-theme"
+                                  ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                                  : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
                               border: individualSubOptionPremiumPlusAnnualTab
                                 ? "2px solid #339bf0"
                                 : "2px solid transparent",
@@ -5180,7 +5416,10 @@ function RightSideColumn({
                           >
                             <span
                               style={{
-                                color: "#697884",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "#697884",
                                 fontSize: "14px",
                                 fontWeight: "400",
                                 lineHeight: "16px",
@@ -5190,15 +5429,23 @@ function RightSideColumn({
                               <span
                                 style={{
                                   fontSize: "11px",
-                                  backgroundColor: "#dcf8eb",
+
                                   borderRadius: "9999px",
-                                  color: "black",
+
                                   position: "relative",
                                   bottom: "1px",
                                   fontWeight: "700",
                                   lineHeight: "12px",
                                   padding: "4px",
                                   height: "20px",
+                                  backgroundColor:
+                                    themeName === "dark-theme"
+                                      ? "#05241A"
+                                      : "#dcf8eb",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "#C2F1DC"
+                                      : "rgb(0, 67, 41)",
                                 }}
                               >
                                 <span>Save 12%</span>
@@ -5207,7 +5454,10 @@ function RightSideColumn({
 
                             <span
                               style={{
-                                color: "rgb(15, 20, 25)",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "rgb(15, 20, 25)",
                                 fontSize: "17px",
                                 fontWeight: "700",
                                 lineHeight: "20px",
@@ -5218,7 +5468,10 @@ function RightSideColumn({
                             </span>
                             <div
                               style={{
-                                color: "rgb(83, 100, 113)",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "#697884",
                                 fontSize: "13px",
                                 fontWeight: "400",
                                 lineHeight: "16px",
@@ -5228,21 +5481,29 @@ function RightSideColumn({
                             </div>
                           </div>
                           <div
-                            className="organization-subscription-box mt-3"
+                            className={`individual-subscription-box individual-subscription-box-${themeName} mt-3`}
                             onClick={() => {
                               setindividualSubOptionPremiumPlusMonthlyTab(true);
                               setindividualSubOptionPremiumPlusAnnualTab(false);
                             }}
                             style={{
                               width: "95%",
-                              backgroundColor: "white",
                               minHeight: "96px",
                               padding: "12px",
                               cursor: "pointer",
                               borderWidth: "1px",
                               borderRadius: "16px",
+                              backgroundColor:
+                                themeName === "dark-theme" ? "black" : "",
+                              filter:
+                                themeName === "dark-theme"
+                                  ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                                  : "",
+
                               boxShadow:
-                                "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                                themeName === "dark-theme"
+                                  ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                                  : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
                               border: individualSubOptionPremiumPlusMonthlyTab
                                 ? "2px solid #339bf0"
                                 : "2px solid transparent",
@@ -5251,7 +5512,10 @@ function RightSideColumn({
                           >
                             <span
                               style={{
-                                color: "#697884",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "#697884",
                                 fontSize: "14px",
                                 fontWeight: "400",
                                 lineHeight: "16px",
@@ -5262,7 +5526,10 @@ function RightSideColumn({
 
                             <div
                               style={{
-                                color: "rgb(15, 20, 25)",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "rgb(15, 20, 25)",
                                 fontSize: "17px",
                                 fontWeight: "700",
                                 lineHeight: "20px",
@@ -5271,7 +5538,10 @@ function RightSideColumn({
                               €9.52 / month
                               <div
                                 style={{
-                                  color: "rgb(83, 100, 113)",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "#71767A"
+                                      : "#697884",
                                   fontSize: "13px",
                                   fontWeight: "400",
                                   lineHeight: "16px",
@@ -5310,7 +5580,7 @@ function RightSideColumn({
                           ) : null}
                           <Button
                             onClick={() => handlePhoneVerifiedCheck()}
-                            className={`login-button next-btn ${
+                            className={`login-button next-btn ${themeName}-white-btn ${
                               phoneVerifiedErrorMessage ? "mt-2" : "mt-4"
                             }`}
                             variant="dark"
@@ -5318,7 +5588,10 @@ function RightSideColumn({
                               width: "95%",
                               height: "36px",
                               color: "white",
-                              backgroundColor: "#0f141a",
+                              backgroundColor:
+                                themeName === "dark-theme"
+                                  ? "white"
+                                  : "#0f141a",
                               opacity: subErrorPhoneVerifiedTabLoading
                                 ? "0.5"
                                 : "1",
@@ -5347,7 +5620,14 @@ function RightSideColumn({
                               fontSize: "13px",
                               lineHeight: "16px",
                               fontWeight: "400",
-                              border: "1px solid black",
+                              border:
+                                themeName === "dark-theme"
+                                  ? "1px solid rgb(70, 70, 70)"
+                                  : "1px solid black",
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#71767A"
+                                  : "#697884",
                               borderRadius: "8px",
                               padding: "6px",
                             }}
@@ -5386,6 +5666,7 @@ function RightSideColumn({
                         }}
                         className="modal-sub-modal-payment-screen-parent"
                         dialogClassName="modal-body-sub-modal-payment-screen"
+                        contentClassName={`${themeName}-sub-basic-modal`}
                       >
                         <Modal.Body
                           style={{
@@ -5401,6 +5682,7 @@ function RightSideColumn({
                               fontWeight: "700",
                               lineHeight: "28px",
                               margin: "0 auto",
+                              color: themeName === "dark-theme" ? "white" : "",
                             }}
                           >
                             Basic
@@ -5413,18 +5695,26 @@ function RightSideColumn({
                                 false
                               );
                             }}
-                            className="individual-subscription-box mt-4"
+                            className={`individual-subscription-box individual-subscription-box-${themeName} mt-4`}
                             style={{
                               width: "95%",
 
-                              backgroundColor: "white",
-                              minHeight: "96px",
                               padding: "12px",
                               cursor: "pointer",
                               borderWidth: "1px",
                               borderRadius: "16px",
+                              minHeight: "96px",
+                              backgroundColor:
+                                themeName === "dark-theme" ? "black" : "",
+                              filter:
+                                themeName === "dark-theme"
+                                  ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                                  : "",
+
                               boxShadow:
-                                "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                                themeName === "dark-theme"
+                                  ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                                  : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
                               border: individualSubOptionPremiumPlusAnnualTab
                                 ? "2px solid #339bf0"
                                 : "2px solid transparent",
@@ -5433,7 +5723,10 @@ function RightSideColumn({
                           >
                             <span
                               style={{
-                                color: "#697884",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "#697884",
                                 fontSize: "14px",
                                 fontWeight: "400",
                                 lineHeight: "16px",
@@ -5443,15 +5736,21 @@ function RightSideColumn({
                               <span
                                 style={{
                                   fontSize: "11px",
-                                  backgroundColor: "#dcf8eb",
                                   borderRadius: "9999px",
-                                  color: "black",
                                   position: "relative",
                                   bottom: "1px",
                                   fontWeight: "700",
                                   lineHeight: "12px",
                                   padding: "4px",
                                   height: "20px",
+                                  backgroundColor:
+                                    themeName === "dark-theme"
+                                      ? "#05241A"
+                                      : "#dcf8eb",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "#C2F1DC"
+                                      : "rgb(0, 67, 41)",
                                 }}
                               >
                                 <span>Save 11%</span>
@@ -5460,7 +5759,10 @@ function RightSideColumn({
 
                             <span
                               style={{
-                                color: "rgb(15, 20, 25)",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "rgb(15, 20, 25)",
                                 fontSize: "17px",
                                 fontWeight: "700",
                                 lineHeight: "20px",
@@ -5471,7 +5773,10 @@ function RightSideColumn({
                             </span>
                             <div
                               style={{
-                                color: "rgb(83, 100, 113)",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "#697884",
                                 fontSize: "13px",
                                 fontWeight: "400",
                                 lineHeight: "16px",
@@ -5481,21 +5786,29 @@ function RightSideColumn({
                             </div>
                           </div>
                           <div
-                            className="organization-subscription-box mt-3"
+                            className={`individual-subscription-box individual-subscription-box-${themeName} mt-3`}
                             onClick={() => {
                               setindividualSubOptionPremiumPlusMonthlyTab(true);
                               setindividualSubOptionPremiumPlusAnnualTab(false);
                             }}
                             style={{
                               width: "95%",
-                              backgroundColor: "white",
                               minHeight: "96px",
                               padding: "12px",
                               cursor: "pointer",
                               borderWidth: "1px",
                               borderRadius: "16px",
+                              backgroundColor:
+                                themeName === "dark-theme" ? "black" : "",
+                              filter:
+                                themeName === "dark-theme"
+                                  ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                                  : "",
+
                               boxShadow:
-                                "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                                themeName === "dark-theme"
+                                  ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                                  : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
                               border: individualSubOptionPremiumPlusMonthlyTab
                                 ? "2px solid #339bf0"
                                 : "2px solid transparent",
@@ -5504,7 +5817,10 @@ function RightSideColumn({
                           >
                             <span
                               style={{
-                                color: "#697884",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "#697884",
                                 fontSize: "14px",
                                 fontWeight: "400",
                                 lineHeight: "16px",
@@ -5515,7 +5831,10 @@ function RightSideColumn({
 
                             <div
                               style={{
-                                color: "rgb(15, 20, 25)",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "rgb(15, 20, 25)",
                                 fontSize: "17px",
                                 fontWeight: "700",
                                 lineHeight: "20px",
@@ -5524,7 +5843,10 @@ function RightSideColumn({
                               €3.57 / month
                               <div
                                 style={{
-                                  color: "rgb(83, 100, 113)",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "#71767A"
+                                      : "#697884",
                                   fontSize: "13px",
                                   fontWeight: "400",
                                   lineHeight: "16px",
@@ -5564,7 +5886,7 @@ function RightSideColumn({
 
                           <Button
                             onClick={() => handlePhoneVerifiedCheck()}
-                            className={`login-button next-btn ${
+                            className={`login-button next-btn ${themeName}-white-btn ${
                               phoneVerifiedErrorMessage ? "mt-2" : "mt-4"
                             }`}
                             variant="dark"
@@ -5572,7 +5894,10 @@ function RightSideColumn({
                               width: "95%",
                               height: "36px",
                               color: "white",
-                              backgroundColor: "#0f141a",
+                              backgroundColor:
+                                themeName === "dark-theme"
+                                  ? "white"
+                                  : "#0f141a",
                               opacity: subErrorPhoneVerifiedTabLoading
                                 ? "0.5"
                                 : "1",
@@ -5601,7 +5926,14 @@ function RightSideColumn({
                               fontSize: "13px",
                               lineHeight: "16px",
                               fontWeight: "400",
-                              border: "1px solid black",
+                              border:
+                                themeName === "dark-theme"
+                                  ? "1px solid rgb(70, 70, 70)"
+                                  : "1px solid black",
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#71767A"
+                                  : "#697884",
                               borderRadius: "8px",
                               padding: "6px",
                             }}
@@ -5633,36 +5965,57 @@ function RightSideColumn({
                   {individualSubOptionTab === 2 ? (
                     <Modal.Footer
                       style={{
-                        height: "69px",
-                        backgroundColor: "#fdfdfe",
+                        maxHeight: "69px",
+                        border: "none",
+                        backgroundColor:
+                          themeName === "dark-theme" ? "black" : "#fdfdfe",
                         position: "relative",
                         right: "15px",
+                        filter:
+                          themeName === "dark-theme"
+                            ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                            : "",
+
+                        boxShadow:
+                          themeName === "dark-theme"
+                            ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                            : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
                       }}
                     >
                       <div
                         style={{
                           width: "90%",
-                          height: "69px",
-                          padding: "22px 0px",
+                          minHeight: "69px",
+                          padding: "35px 0px",
                           position: "relative",
-                          borderRight: "1px solid rgba(0,0,0,0.1)",
-                          borderLeft: "1px solid rgba(0,0,0,0.1)",
+                          borderRight:
+                            themeName !== "dark-theme"
+                              ? "1px solid rgba(0, 0, 0, 0.1)"
+                              : // : "0.1px solid rgb(70, 70, 70)",
+                                "1px solid rgb(70, 70, 70)",
+                          borderLeft:
+                            themeName !== "dark-theme"
+                              ? "1px solid rgba(0, 0, 0, 0.1)"
+                              : // : "0.1px solid rgb(70, 70, 70)",
+                                "1px solid rgb(70, 70, 70)",
                           top: "17px",
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
-                          backgroundColor: "#ffffff",
+                          backgroundColor:
+                            themeName === "dark-theme" ? "black" : "#ffffff",
                           boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                         }}
                       >
                         <Button
                           onClick={showPremiumPlusPaymentScreen}
-                          className="login-button next-btn"
+                          className={`${themeName}-white-btn login-button next-btn `}
                           variant="dark"
                           style={{
                             width: "75%",
                             color: "white",
-                            backgroundColor: "#0f141a",
+                            backgroundColor:
+                              themeName === "dark-theme" ? "white" : "#0f141a",
                           }}
                         >
                           Starting at €19.04
@@ -5672,36 +6025,57 @@ function RightSideColumn({
                   ) : individualSubOptionTab === 1 ? (
                     <Modal.Footer
                       style={{
-                        height: "69px",
-                        backgroundColor: "#fdfdfe",
+                        maxHeight: "69px",
+                        border: "none",
+                        backgroundColor:
+                          themeName === "dark-theme" ? "black" : "#fdfdfe",
                         position: "relative",
                         right: "15px",
+                        filter:
+                          themeName === "dark-theme"
+                            ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                            : "",
+
+                        boxShadow:
+                          themeName === "dark-theme"
+                            ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                            : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
                       }}
                     >
                       <div
                         style={{
                           width: "90%",
-                          height: "69px",
-                          padding: "22px 0px",
+                          minHeight: "69px",
+                          padding: "35px 0px",
                           position: "relative",
-                          borderRight: "1px solid rgba(0,0,0,0.1)",
-                          borderLeft: "1px solid rgba(0,0,0,0.1)",
+                          borderRight:
+                            themeName !== "dark-theme"
+                              ? "1px solid rgba(0, 0, 0, 0.1)"
+                              : // : "0.1px solid rgb(70, 70, 70)",
+                                "1px solid rgb(70, 70, 70)",
+                          borderLeft:
+                            themeName !== "dark-theme"
+                              ? "1px solid rgba(0, 0, 0, 0.1)"
+                              : // : "0.1px solid rgb(70, 70, 70)",
+                                "1px solid rgb(70, 70, 70)",
                           top: "17px",
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
-                          backgroundColor: "#ffffff",
+                          backgroundColor:
+                            themeName === "dark-theme" ? "black" : "#ffffff",
                           boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                         }}
                       >
                         <Button
                           onClick={showPremiumPaymentScreen}
-                          className="login-button next-btn"
+                          className={`${themeName}-white-btn login-button next-btn `}
                           variant="dark"
                           style={{
                             width: "75%",
                             color: "white",
-                            backgroundColor: "#0f141a",
+                            backgroundColor:
+                              themeName === "dark-theme" ? "white" : "#0f141a",
                           }}
                         >
                           Starting at €9.60
@@ -5711,36 +6085,57 @@ function RightSideColumn({
                   ) : individualSubOptionTab === 0 ? (
                     <Modal.Footer
                       style={{
-                        height: "69px",
-                        backgroundColor: "#fdfdfe",
+                        maxHeight: "69px",
+                        border: "none",
+                        backgroundColor:
+                          themeName === "dark-theme" ? "black" : "#fdfdfe",
                         position: "relative",
                         right: "15px",
+                        filter:
+                          themeName === "dark-theme"
+                            ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                            : "",
+
+                        boxShadow:
+                          themeName === "dark-theme"
+                            ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                            : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
                       }}
                     >
                       <div
                         style={{
                           width: "90%",
-                          height: "69px",
-                          padding: "22px 0px",
+                          minHeight: "69px",
+                          padding: "35px 0px",
                           position: "relative",
-                          borderRight: "1px solid rgba(0,0,0,0.1)",
-                          borderLeft: "1px solid rgba(0,0,0,0.1)",
+                          borderRight:
+                            themeName !== "dark-theme"
+                              ? "1px solid rgba(0, 0, 0, 0.1)"
+                              : // : "0.1px solid rgb(70, 70, 70)",
+                                "1px solid rgb(70, 70, 70)",
+                          borderLeft:
+                            themeName !== "dark-theme"
+                              ? "1px solid rgba(0, 0, 0, 0.1)"
+                              : // : "0.1px solid rgb(70, 70, 70)",
+                                "1px solid rgb(70, 70, 70)",
                           top: "17px",
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
-                          backgroundColor: "#ffffff",
+                          backgroundColor:
+                            themeName === "dark-theme" ? "black" : "#ffffff",
                           boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                         }}
                       >
                         <Button
                           onClick={showBasicPaymentScreen}
-                          className="login-button next-btn"
+                          className={`${themeName}-white-btn login-button next-btn `}
                           variant="dark"
                           style={{
                             width: "75%",
                             color: "white",
-                            backgroundColor: "#0f141a",
+                            backgroundColor:
+                              themeName === "dark-theme" ? "white" : "#0f141a",
                           }}
                         >
                           Starting at €3.57
@@ -6991,11 +7386,7 @@ function RightSideColumn({
                               width: "100%",
                               height: "58px",
                             }}
-                            error={
-                              allTextFieldsFilled === "no" && !organizationName
-                                ? "true"
-                                : ""
-                            }
+                            error={organizationNameFilled && !organizationName}
                             InputLabelProps={{
                               style: {
                                 color:
@@ -7013,15 +7404,13 @@ function RightSideColumn({
                             sx={{
                               "& .Mui-focused input + fieldset": {
                                 border:
-                                  allTextFieldsFilled === "no" &&
-                                  !organizationName
+                                  organizationNameFilled && !organizationName
                                     ? "2px solid rgb(244, 33, 46)!important"
                                     : "2px solid #1d9bf0 !important",
                               },
                               "& .MuiOutlinedInput-notchedOutline": {
                                 borderColor:
-                                  allTextFieldsFilled === "no" &&
-                                  !organizationName
+                                  organizationNameFilled && !organizationName
                                     ? "rgb(244, 33, 46)!important"
                                     : themeName !== "dark-theme"
                                     ? "#cfd9de !important"
@@ -7029,8 +7418,7 @@ function RightSideColumn({
                               },
                               "& .MuiInputLabel-shrink": {
                                 color:
-                                  allTextFieldsFilled === "no" &&
-                                  !organizationName
+                                  organizationNameFilled && !organizationName
                                     ? "rgb(244, 33, 46)!important"
                                     : "#1f9cf0 !important",
                               },
@@ -7112,7 +7500,7 @@ function RightSideColumn({
                             value={yourFullName}
                             onChange={(e) => setYourFullName(e.target.value)}
                             error={
-                              allTextFieldsFilled === "no" && !yourFullName
+                              organizationYourFullNameFilled && !yourFullName
                             }
                             InputLabelProps={{
                               style: {
@@ -7131,13 +7519,15 @@ function RightSideColumn({
                             sx={{
                               "& .Mui-focused input + fieldset": {
                                 border:
-                                  allTextFieldsFilled === "no" && !yourFullName
+                                  organizationYourFullNameFilled &&
+                                  !yourFullName
                                     ? "2px solid rgb(244, 33, 46)!important"
                                     : "2px solid #1d9bf0 !important",
                               },
                               "& .MuiOutlinedInput-notchedOutline": {
                                 borderColor:
-                                  allTextFieldsFilled === "no" && !yourFullName
+                                  organizationYourFullNameFilled &&
+                                  !yourFullName
                                     ? "rgb(244, 33, 46)!important"
                                     : themeName !== "dark-theme"
                                     ? "#cfd9de !important"
@@ -7145,7 +7535,8 @@ function RightSideColumn({
                               },
                               "& .MuiInputLabel-shrink": {
                                 color:
-                                  allTextFieldsFilled === "no" && !yourFullName
+                                  organizationYourFullNameFilled &&
+                                  !yourFullName
                                     ? "rgb(244, 33, 46)!important"
                                     : "#1f9cf0 !important",
                               },
@@ -7166,8 +7557,9 @@ function RightSideColumn({
                               setOrganizationEmailAdress(e.target.value)
                             }
                             error={
-                              allTextFieldsFilled === "no" &&
-                              !organizationEmailAdress
+                              (organizationEmailAdressFilled &&
+                                !organizationEmailAdress) ||
+                              invalidEmailError
                             }
                             InputLabelProps={{
                               style: {
@@ -7186,15 +7578,17 @@ function RightSideColumn({
                             sx={{
                               "& .Mui-focused input + fieldset": {
                                 border:
-                                  allTextFieldsFilled === "no" &&
-                                  !organizationEmailAdress
+                                  (organizationEmailAdressFilled &&
+                                    !organizationEmailAdress) ||
+                                  invalidEmailError
                                     ? "2px solid rgb(244, 33, 46)!important"
                                     : "2px solid #1d9bf0 !important",
                               },
                               "& .MuiOutlinedInput-notchedOutline": {
                                 borderColor:
-                                  allTextFieldsFilled === "no" &&
-                                  !organizationEmailAdress
+                                  (organizationEmailAdressFilled &&
+                                    !organizationEmailAdress) ||
+                                  invalidEmailError
                                     ? "rgb(244, 33, 46) !important"
                                     : themeName !== "dark-theme"
                                     ? "#cfd9de !important"
@@ -7202,14 +7596,15 @@ function RightSideColumn({
                               },
                               "& .MuiInputLabel-shrink": {
                                 color:
-                                  allTextFieldsFilled === "no" &&
-                                  !organizationEmailAdress
+                                  (organizationEmailAdressFilled &&
+                                    !organizationEmailAdress) ||
+                                  invalidEmailError
                                     ? "rgb(244, 33, 46)!important"
                                     : "#1f9cf0 !important",
                               },
                             }}
                           />
-                          {invalidEmailError && !organizationEmailAdress ? (
+                          {invalidEmailError && organizationEmailAdress ? (
                             <div
                               style={{
                                 color: "rgb(244, 33, 46)",
@@ -7240,8 +7635,7 @@ function RightSideColumn({
                               setOrganizationWebSite(e.target.value)
                             }
                             error={
-                              allTextFieldsFilled === "no" &&
-                              !organizationWebSite
+                              organizationWebSiteFilled && !organizationWebSite
                             }
                             InputLabelProps={{
                               style: {
@@ -7260,14 +7654,14 @@ function RightSideColumn({
                             sx={{
                               "& .Mui-focused input + fieldset": {
                                 border:
-                                  allTextFieldsFilled === "no" &&
+                                  organizationWebSiteFilled &&
                                   !organizationWebSite
                                     ? "2px solid rgb(244, 33, 46)!important"
                                     : "2px solid #1d9bf0 !important",
                               },
                               "& .MuiOutlinedInput-notchedOutline": {
                                 borderColor:
-                                  allTextFieldsFilled === "no" &&
+                                  organizationWebSiteFilled &&
                                   !organizationWebSite
                                     ? "rgb(244, 33, 46)!important"
                                     : themeName !== "dark-theme"
@@ -7276,7 +7670,7 @@ function RightSideColumn({
                               },
                               "& .MuiInputLabel-shrink": {
                                 color:
-                                  allTextFieldsFilled === "no" &&
+                                  organizationWebSiteFilled &&
                                   !organizationWebSite
                                     ? "rgb(244, 33, 46)!important"
                                     : "#1f9cf0 !important",
@@ -7308,7 +7702,7 @@ function RightSideColumn({
                                   ? "2px"
                                   : "1px",
                                 borderColor:
-                                  allTextFieldsFilled === "no" &&
+                                  organizationDisplayedOrganizationTypeFilled &&
                                   !displayedOrganizationType
                                     ? "rgb(244, 33, 46)"
                                     : showOrganizationTypeContent
@@ -7341,7 +7735,7 @@ function RightSideColumn({
                                   <span
                                     style={{
                                       color:
-                                        allTextFieldsFilled === "no" &&
+                                        organizationDisplayedOrganizationTypeFilled &&
                                         !displayedOrganizationType
                                           ? "rgb(244, 33, 46)"
                                           : "",
@@ -7489,14 +7883,17 @@ function RightSideColumn({
                             </div>
                           </div>
                           <Button
-                            onClick={() =>
-                              handleSubmitOrganizationInformationForFullAccessSubscription(
-                                organizationName,
-                                yourFullName,
-                                organizationEmailAdress,
-                                organizationWebSite,
-                                displayedOrganizationType
-                              )
+                            onClick={
+                              clicked && !checkoutProcessLoadingBar
+                                ? () =>
+                                    handleSubmitOrganizationInformationForFullAccessSubscription(
+                                      organizationName,
+                                      yourFullName,
+                                      organizationEmailAdress,
+                                      organizationWebSite,
+                                      displayedOrganizationType
+                                    )
+                                : ""
                             }
                             className={`mt-4 subscribe-btn-full-access-plan subscribe-btn-full-access-plan-${themeName}`}
                             variant="dark"
@@ -7588,6 +7985,7 @@ function RightSideColumn({
                             fontSize: "26px",
                             lineHeight: "32px",
                             fontWeight: "800",
+                            color: themeName === "dark-theme" ? "white" : "",
                           }}
                         >
                           Verify your phone number
@@ -7598,7 +7996,10 @@ function RightSideColumn({
                             fontSize: "15px",
                             fontWeight: "400",
                             lineHeight: "20px",
-                            color: "rgb(83, 100, 113)",
+                            color:
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)",
                           }}
                         >
                           Verify your phone number to subscribe for Premium. It
@@ -7608,13 +8009,14 @@ function RightSideColumn({
                           onClick={() => {
                             handleVerifyYourPasswordModalAfterVerifyYourPhoneNumberClick();
                           }}
-                          className="login-button next-btn mt-4"
+                          className={`login-button next-btn mt-4 mb-5 ${themeName}-white-btn`}
                           variant="dark"
                           style={{
                             width: "100%",
                             height: "52px",
                             color: "white",
-                            backgroundColor: "#0f141a",
+                            backgroundColor:
+                              themeName === "dark-theme" ? "white" : "#0f141a",
                           }}
                         >
                           Verify your phone number
@@ -7662,20 +8064,24 @@ function RightSideColumn({
                               lineHeight: "32px",
                               fontWeight: "700",
                               fontSize: "26px",
+                              color: themeName === "dark-theme" ? "white" : "",
                             }}
                           >
                             Verify your password
                           </div>
                           <div
                             style={{
-                              color: "rgb(83, 100, 113)",
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#71767A"
+                                  : "rgb(83, 100, 113)",
                               lineHeight: "20px",
                               fontWeight: "400",
                               fontSize: "15px",
                             }}
                             className="mt-2"
                           >
-                            Re-enter your Connectify password to continue.
+                            Re-enter your C password to continue.
                           </div>
                           {/* start to check verify your password  */}
                           <FormControl
@@ -7687,6 +8093,8 @@ function RightSideColumn({
                           >
                             <InputLabel
                               sx={{
+                                color:
+                                  themeName === "dark-theme" ? "#71767B" : "",
                                 "&.MuiInputLabel-shrink": {
                                   color: verifyPasswordErrorMessage
                                     ? "rgb(244, 33, 46)!important"
@@ -7700,10 +8108,19 @@ function RightSideColumn({
                             <OutlinedInput
                               autoFocus
                               sx={{
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "black",
                                 "& .MuiOutlinedInput-notchedOutline": {
-                                  borderColor: verifyPasswordErrorMessage
-                                    ? "rgb(244, 33, 46)!important"
-                                    : "#cfd9de !important",
+                                  borderColor:
+                                    themeName === "dark-theme"
+                                      ? "rgb(70, 70, 70) !important"
+                                      : "#cfd9de !important",
+                                  border:
+                                    themeName === "dark-theme"
+                                      ? "1px solid rgb(70, 70, 70) !important"
+                                      : "",
                                 },
                                 "&.Mui-focused .MuiOutlinedInput-notchedOutline":
                                   {
@@ -7725,7 +8142,11 @@ function RightSideColumn({
                                       style={{
                                         cursor: "pointer",
                                       }}
-                                      color="rgb(15, 20, 25)"
+                                      color={
+                                        themeName === "dark-theme"
+                                          ? "white"
+                                          : "rgb(15, 20, 25)"
+                                      }
                                       fill="currentColor"
                                       width={22}
                                       height={22}
@@ -7746,7 +8167,11 @@ function RightSideColumn({
                                       }}
                                       width={22}
                                       height={22}
-                                      color="rgb(15, 20, 25)"
+                                      color={
+                                        themeName === "dark-theme"
+                                          ? "white"
+                                          : "rgb(15, 20, 25)"
+                                      }
                                       fill="currentColor"
                                       viewBox="0 0 24 24"
                                       aria-hidden="true"
@@ -7777,7 +8202,7 @@ function RightSideColumn({
                               position: "absolute",
                               bottom: "20px",
                             }}
-                            className="login-button next-btn"
+                            className={`login-button next-btn ${themeName}-white-btn`}
                             variant="dark"
                             onClick={() => {
                               handleCheckIsPasswordInputCorrect();
@@ -7797,7 +8222,7 @@ function RightSideColumn({
                               position: "absolute",
                               bottom: "20px",
                             }}
-                            className="forgot-password-btn"
+                            className={`forgot-password-button ${themeName}-black-btn`}
                             variant="light"
                             onClick={() => {
                               setsubErrorPhoneVerifiedTabLoading(true);
@@ -7851,13 +8276,18 @@ function RightSideColumn({
                               fontWeight: "700",
                               fontSize: "26px",
                               letterSpacing: "0.5px",
+                              color:
+                                themeName === "dark-theme" ? "white" : "black",
                             }}
                           >
                             Add a phone number
                           </div>
                           <div
                             style={{
-                              color: "rgb(83, 100, 113)",
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#71767A"
+                                  : "rgb(83, 100, 113)",
                               lineHeight: "20px",
                               fontWeight: "400",
                               fontSize: "15px",
@@ -7884,6 +8314,8 @@ function RightSideColumn({
                                 : "1px",
                               borderColor: showpopoverCountriesAndTheirPhoneCode
                                 ? "#1d9bf0"
+                                : themeName === "dark-theme"
+                                ? "rgb(70,70,70)"
                                 : "#cfd9de",
                             }}
                           >
@@ -7907,14 +8339,26 @@ function RightSideColumn({
                                     : "rgba(83,100,113,1.00)",
                                 }}
                               >
-                                <span>Country code</span>
+                                <span
+                                  style={{
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "",
+                                  }}
+                                >
+                                  Country code
+                                </span>
                                 <div
                                   onClick={handleShowOptions}
                                   className="mt-2 selected-year-string-parent-div"
                                   style={{
                                     fontSize: "17px",
                                     lineHeight: "20px",
-                                    color: "black",
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "white"
+                                        : "black",
                                   }}
                                 >
                                   {country ? (
@@ -7943,9 +8387,10 @@ function RightSideColumn({
                                   color={
                                     showpopoverCountriesAndTheirPhoneCode
                                       ? "#1d9bf0"
+                                      : themeName === "dark-theme"
+                                      ? "rgb(70,70,70)"
                                       : "rgba(83,100,113,1.00)"
                                   }
-                                  fill="currentColor"
                                   viewBox="0 0 24 24"
                                   aria-hidden="true"
                                   className="svg-year-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-1plcrui r-lrvibr r-14j79pv r-1pgswnq r-50lct3 r-fdch1b r-633pao r-u8s1d r-1v2oles"
@@ -8015,6 +8460,18 @@ function RightSideColumn({
                               position: "relative",
                               bottom: "45px",
                             }}
+                            InputProps={{
+                              style: {
+                                color:
+                                  themeName === "dark-theme" ? "white" : "",
+                              },
+                            }}
+                            InputLabelProps={{
+                              style: {
+                                color:
+                                  themeName === "dark-theme" ? "#71767B" : "",
+                              },
+                            }}
                             sx={{
                               "& .Mui-focused input + fieldset": {
                                 border: !validPhoneNumber
@@ -8024,6 +8481,8 @@ function RightSideColumn({
                               "& .MuiOutlinedInput-notchedOutline": {
                                 borderColor: !validPhoneNumber
                                   ? "rgb(244, 33, 46)!important"
+                                  : themeName === "dark-theme"
+                                  ? "rgb(70,70,70) !important"
                                   : "#cfd9de !important",
                               },
                               "& .MuiInputLabel-shrink": {
@@ -8062,7 +8521,10 @@ function RightSideColumn({
                             <div
                               className="mt-2"
                               style={{
-                                color: "rgb(83, 100, 113)",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "rgb(83, 100, 113)",
                                 fontSize: "15px",
                                 lineHeight: "20px",
                                 fontWeight: "400",
@@ -8099,8 +8561,8 @@ function RightSideColumn({
                                 }}
                                 className={
                                   clicked
-                                    ? "hover-customize-your-experience-tab-get-more-out-of-variant"
-                                    : "hover-customize-your-experience-tab-get-more-out-of-variant-2"
+                                    ? `hover-customize-your-experience-tab-get-more-out-of-variant ${themeName}-variant-1-hover-add-phoneNumber`
+                                    : `hover-customize-your-experience-tab-get-more-out-of-variant-2 ${themeName}-variant-2-hover-add-phoneNumber`
                                 }
                               >
                                 <div
@@ -8110,6 +8572,8 @@ function RightSideColumn({
                                       : "transparent",
                                     border: clicked
                                       ? "none"
+                                      : themeName === "dark-theme"
+                                      ? "2px solid rgb(70,70,70)"
                                       : "2px solid #536471",
 
                                     borderWidth: "2px ",
@@ -8160,7 +8624,7 @@ function RightSideColumn({
                               position: "absolute",
                               bottom: "20px",
                             }}
-                            className="login-button next-btn"
+                            className={`login-button next-btn ${themeName}-white-btn`}
                             variant="dark"
                             onClick={() => {
                               handleSubscriptionInfoNonPhoneVerifiedUser();
@@ -8173,14 +8637,15 @@ function RightSideColumn({
                             style={{
                               width: "90%",
                               height: "52px",
-                              color: "black",
+                              color:
+                                themeName === "dark-theme" ? "white" : "black",
                               fontSize: "17px",
                               fontWeight: "700",
                               lineHeight: "20px",
                               position: "absolute",
                               bottom: "20px",
                             }}
-                            className="forgot-password-btn"
+                            className={`forgot-password ${themeName}-black-btn`}
                             variant="light"
                             onClick={() => {
                               setsubErrorPhoneVerifiedTabLoading(true);
@@ -8236,6 +8701,7 @@ function RightSideColumn({
                             fontWeight: "700",
                             fontSize: "26px",
                             letterSpacing: "0.5px",
+                            color: themeName === "dark-theme" ? "white" : "",
                           }}
                         >
                           Verify your phone number
@@ -8243,7 +8709,10 @@ function RightSideColumn({
                         <div
                           className="mt-3"
                           style={{
-                            color: "rgb(83, 100, 113)",
+                            color:
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)",
                             lineHeight: "20px",
                             fontSize: "15px",
                             fontWeight: "400",
@@ -8276,7 +8745,10 @@ function RightSideColumn({
                           >
                             <div
                               style={{
-                                color: "rgb(15, 20, 25)",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "rgb(83, 100, 113)",
                                 fontSize: "15px",
                                 lineHeight: "20px",
                                 fontWeight: "400",
@@ -8286,7 +8758,10 @@ function RightSideColumn({
                             </div>
                             <div
                               style={{
-                                color: "rgb(15, 20, 25)",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "rgb(83, 100, 113)",
                                 fontSize: "15px",
                                 lineHeight: "20px",
                                 fontWeight: "400",
@@ -8312,7 +8787,7 @@ function RightSideColumn({
                               position: "absolute",
                               bottom: "20px",
                             }}
-                            className="login-button next-btn"
+                            className={`login-button next-btn ${themeName}-white-btn`}
                             variant="dark"
                             onClick={() => {
                               handleVerifyPhoneForSubscription();
@@ -8345,6 +8820,7 @@ function RightSideColumn({
                         fontWeight: "700",
                         fontSize: "26px",
                         letterSpacing: "0.5px",
+                        color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
                       Verifying code...
@@ -8352,7 +8828,10 @@ function RightSideColumn({
                     <div
                       className="mt-3"
                       style={{
-                        color: "rgb(83, 100, 113)",
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)",
                         lineHeight: "20px",
                         fontSize: "15px",
                         fontWeight: "400",
@@ -8383,6 +8862,7 @@ function RightSideColumn({
                         lineHeight: "36px",
                         fontSize: "31px",
                         fontWeight: "800",
+                        color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
                       Subscription Error!
@@ -8430,7 +8910,7 @@ function RightSideColumn({
                         width: "65%",
                         height: "52px",
                       }}
-                      className="login-button mt-5"
+                      className={`login-button mt-5 ${themeName}-white-btn`}
                       variant="dark"
                     >
                       Continue to Connectify
@@ -8449,9 +8929,14 @@ function RightSideColumn({
                 themeName === "dark-theme" ? `back-drop-${themeName}` : ""
               }
               style={{
-                backgroundColor: showVerifyPhoneNumberPasswordModal
-                  ? "#999999"
-                  : "",
+                backgroundColor:
+                  showVerifyPhoneNumberPasswordModal &&
+                  themeName !== "dark-theme"
+                    ? "#999999"
+                    : themeName === "dark-theme" &&
+                      showVerifyPhoneNumberPasswordModal
+                    ? "#232E36"
+                    : "",
               }}
               contentClassName={
                 themeName === "dark-theme" ? "dark-theme-sub-modal" : ""
@@ -8987,11 +9472,14 @@ function RightSideColumn({
                             </Stack>{" "}
                             {/* enhanced experience start to check  */}
                             <div
-                              className="mt-3 premium-plus-parent-div"
+                              className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                               style={{
                                 padding: "32px",
                                 borderRadius: "16px",
-                                backgroundColor: "#eff3f4",
+                                backgroundColor:
+                                  themeName === "dark-theme"
+                                    ? "#16181C"
+                                    : "#eff3f4",
                               }}
                             >
                               <div className="premium-plus-header">
@@ -9279,11 +9767,14 @@ function RightSideColumn({
                             {/* enhanced experience finish to check  */}
                             {/* creator hub start to check  */}
                             <div
-                              className="mt-3 premium-plus-parent-div"
+                              className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                               style={{
                                 padding: "32px",
                                 borderRadius: "16px",
-                                backgroundColor: "#eff3f4",
+                                backgroundColor:
+                                  themeName === "dark-theme"
+                                    ? "#16181C"
+                                    : "#eff3f4",
                               }}
                             >
                               <div className="premium-plus-header">
@@ -9300,7 +9791,9 @@ function RightSideColumn({
                                     <span
                                       style={{
                                         color:
-                                          "rgb(83, 100, 113)                                  ",
+                                          themeName === "dark-theme"
+                                            ? "#71767A"
+                                            : "rgb(83, 100, 113)                                  ",
                                       }}
                                     >
                                       Write Articles
@@ -9308,7 +9801,11 @@ function RightSideColumn({
                                     <svg
                                       width={20}
                                       height={20}
-                                      color="rgba(83,100,113,1.00)"
+                                      color={
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgba(83,100,113,1.00)"
+                                      }
                                       fill="currentColor"
                                       viewBox="0 0 24 24"
                                       aria-hidden="true"
@@ -9324,7 +9821,11 @@ function RightSideColumn({
                                     <svg
                                       width={`${1.25}em`}
                                       height={`${1.25}em`}
-                                      color="rgba(83,100,113,1.00)"
+                                      color={
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgba(83,100,113,1.00)"
+                                      }
                                       fill="currentColor"
                                       viewBox="0 0 24 24"
                                       aria-hidden="true"
@@ -9348,7 +9849,9 @@ function RightSideColumn({
                                     <span
                                       style={{
                                         color:
-                                          "rgb(83, 100, 113)                                  ",
+                                          themeName === "dark-theme"
+                                            ? "#71767A"
+                                            : "rgb(83, 100, 113)                                  ",
                                       }}
                                     >
                                       Get paid to post
@@ -9356,7 +9859,11 @@ function RightSideColumn({
                                     <svg
                                       width={20}
                                       height={20}
-                                      color="rgba(83,100,113,1.00)"
+                                      color={
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgba(83,100,113,1.00)"
+                                      }
                                       fill="currentColor"
                                       viewBox="0 0 24 24"
                                       aria-hidden="true"
@@ -9372,7 +9879,11 @@ function RightSideColumn({
                                     <svg
                                       width={`${1.25}em`}
                                       height={`${1.25}em`}
-                                      color="rgba(83,100,113,1.00)"
+                                      color={
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgba(83,100,113,1.00)"
+                                      }
                                       fill="currentColor"
                                       viewBox="0 0 24 24"
                                       aria-hidden="true"
@@ -9396,7 +9907,9 @@ function RightSideColumn({
                                     <span
                                       style={{
                                         color:
-                                          "rgb(83, 100, 113)                                  ",
+                                          themeName === "dark-theme"
+                                            ? "#71767A"
+                                            : "rgb(83, 100, 113)                                  ",
                                       }}
                                     >
                                       Creator Subscriptions
@@ -9404,7 +9917,11 @@ function RightSideColumn({
                                     <svg
                                       width={20}
                                       height={20}
-                                      color="rgba(83,100,113,1.00)"
+                                      color={
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgba(83,100,113,1.00)"
+                                      }
                                       fill="currentColor"
                                       viewBox="0 0 24 24"
                                       aria-hidden="true"
@@ -9418,10 +9935,14 @@ function RightSideColumn({
                                   <div>
                                     {" "}
                                     <svg
+                                      color={
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgba(83,100,113,1.00)"
+                                      }
+                                      fill="currentColor"
                                       width={`${1.25}em`}
                                       height={`${1.25}em`}
-                                      color="rgba(83,100,113,1.00)"
-                                      fill="currentColor"
                                       viewBox="0 0 24 24"
                                       aria-hidden="true"
                                       className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
@@ -9444,7 +9965,9 @@ function RightSideColumn({
                                     <span
                                       style={{
                                         color:
-                                          "rgb(83, 100, 113)                                  ",
+                                          themeName === "dark-theme"
+                                            ? "#71767A"
+                                            : "rgb(83, 100, 113)                                  ",
                                       }}
                                     >
                                       X Pro
@@ -9452,7 +9975,11 @@ function RightSideColumn({
                                     <svg
                                       width={20}
                                       height={20}
-                                      color="rgba(83,100,113,1.00)"
+                                      color={
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgba(83,100,113,1.00)"
+                                      }
                                       fill="currentColor"
                                       viewBox="0 0 24 24"
                                       aria-hidden="true"
@@ -9468,7 +9995,11 @@ function RightSideColumn({
                                     <svg
                                       width={`${1.25}em`}
                                       height={`${1.25}em`}
-                                      color="rgba(83,100,113,1.00)"
+                                      color={
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgba(83,100,113,1.00)"
+                                      }
                                       fill="currentColor"
                                       viewBox="0 0 24 24"
                                       aria-hidden="true"
@@ -9492,7 +10023,9 @@ function RightSideColumn({
                                     <span
                                       style={{
                                         color:
-                                          "rgb(83, 100, 113)                                  ",
+                                          themeName === "dark-theme"
+                                            ? "#71767A"
+                                            : "rgb(83, 100, 113)                                  ",
                                       }}
                                     >
                                       Media Studio
@@ -9500,7 +10033,11 @@ function RightSideColumn({
                                     <svg
                                       width={20}
                                       height={20}
-                                      color="rgba(83,100,113,1.00)"
+                                      color={
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgba(83,100,113,1.00)"
+                                      }
                                       fill="currentColor"
                                       viewBox="0 0 24 24"
                                       aria-hidden="true"
@@ -9516,7 +10053,11 @@ function RightSideColumn({
                                     <svg
                                       width={`${1.25}em`}
                                       height={`${1.25}em`}
-                                      color="rgba(83,100,113,1.00)"
+                                      color={
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgba(83,100,113,1.00)"
+                                      }
                                       fill="currentColor"
                                       viewBox="0 0 24 24"
                                       aria-hidden="true"
@@ -9540,7 +10081,9 @@ function RightSideColumn({
                                     <span
                                       style={{
                                         color:
-                                          "rgb(83, 100, 113)                                  ",
+                                          themeName === "dark-theme"
+                                            ? "#71767A"
+                                            : "rgb(83, 100, 113)                                  ",
                                       }}
                                     >
                                       Analytics
@@ -9548,7 +10091,11 @@ function RightSideColumn({
                                     <svg
                                       width={20}
                                       height={20}
-                                      color="rgba(83,100,113,1.00)"
+                                      color={
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgba(83,100,113,1.00)"
+                                      }
                                       fill="currentColor"
                                       viewBox="0 0 24 24"
                                       aria-hidden="true"
@@ -9564,7 +10111,11 @@ function RightSideColumn({
                                     <svg
                                       width={`${1.25}em`}
                                       height={`${1.25}em`}
-                                      color="rgba(83,100,113,1.00)"
+                                      color={
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgba(83,100,113,1.00)"
+                                      }
                                       fill="currentColor"
                                       viewBox="0 0 24 24"
                                       aria-hidden="true"
@@ -9581,11 +10132,14 @@ function RightSideColumn({
                             {/* creator hub finish to check  */}
                             {/* Verification and security start to check */}
                             <div
-                              className="mt-3 premium-plus-parent-div"
+                              className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                               style={{
                                 padding: "32px",
                                 borderRadius: "16px",
-                                backgroundColor: "#eff3f4",
+                                backgroundColor:
+                                  themeName === "dark-theme"
+                                    ? "#16181C"
+                                    : "#eff3f4",
                               }}
                             >
                               <div className="premium-plus-header">
@@ -9602,7 +10156,9 @@ function RightSideColumn({
                                     <span
                                       style={{
                                         color:
-                                          "rgb(83, 100, 113)                                  ",
+                                          themeName === "dark-theme"
+                                            ? "#71767A"
+                                            : "rgba(83,100,113,1.00)",
                                       }}
                                     >
                                       {" "}
@@ -9611,7 +10167,11 @@ function RightSideColumn({
                                     <svg
                                       width={20}
                                       height={20}
-                                      color="rgba(83,100,113,1.00)"
+                                      color={
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgba(83,100,113,1.00)"
+                                      }
                                       fill="currentColor"
                                       viewBox="0 0 24 24"
                                       aria-hidden="true"
@@ -9627,7 +10187,11 @@ function RightSideColumn({
                                     <svg
                                       width={`${1.25}em`}
                                       height={`${1.25}em`}
-                                      color="rgba(83,100,113,1.00)"
+                                      color={
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgba(83,100,113,1.00)"
+                                      }
                                       fill="currentColor"
                                       viewBox="0 0 24 24"
                                       aria-hidden="true"
@@ -9692,7 +10256,9 @@ function RightSideColumn({
                                     <span
                                       style={{
                                         color:
-                                          "rgb(83, 100, 113)                                  ",
+                                          themeName === "dark-theme"
+                                            ? "#71767A"
+                                            : "rgba(83,100,113,1.00)",
                                       }}
                                     >
                                       Optional ID verification
@@ -9700,7 +10266,11 @@ function RightSideColumn({
                                     <svg
                                       width={20}
                                       height={20}
-                                      color="rgba(83,100,113,1.00)"
+                                      color={
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgba(83,100,113,1.00)"
+                                      }
                                       fill="currentColor"
                                       viewBox="0 0 24 24"
                                       aria-hidden="true"
@@ -9716,7 +10286,11 @@ function RightSideColumn({
                                     <svg
                                       width={`${1.25}em`}
                                       height={`${1.25}em`}
-                                      color="rgba(83,100,113,1.00)"
+                                      color={
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgba(83,100,113,1.00)"
+                                      }
                                       fill="currentColor"
                                       viewBox="0 0 24 24"
                                       aria-hidden="true"
@@ -9733,11 +10307,14 @@ function RightSideColumn({
                             {/* verification and security finish to check */}
                             {/* Customization start to check  */}
                             <div
-                              className="mt-3 premium-plus-parent-div"
+                              className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                               style={{
                                 padding: "32px",
                                 borderRadius: "16px",
-                                backgroundColor: "#eff3f4",
+                                backgroundColor:
+                                  themeName === "dark-theme"
+                                    ? "#16181C"
+                                    : "#eff3f4",
                               }}
                             >
                               <div className="premium-plus-header">
@@ -10069,11 +10646,14 @@ function RightSideColumn({
                             </Stack>{" "}
                             {/* enhanced experience start to check  */}
                             <div
-                              className="mt-3 premium-plus-parent-div"
+                              className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                               style={{
                                 padding: "32px",
                                 borderRadius: "16px",
-                                backgroundColor: "#eff3f4",
+                                backgroundColor:
+                                  themeName === "dark-theme"
+                                    ? "#16181C"
+                                    : "#eff3f4",
                               }}
                             >
                               <div className="premium-plus-header">
@@ -10361,11 +10941,14 @@ function RightSideColumn({
                             {/* enhanced experience finish to check  */}
                             {/* creator hub start to check  */}
                             <div
-                              className="mt-3 premium-plus-parent-div"
+                              className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                               style={{
                                 padding: "32px",
                                 borderRadius: "16px",
-                                backgroundColor: "#eff3f4",
+                                backgroundColor:
+                                  themeName === "dark-theme"
+                                    ? "#16181C"
+                                    : "#eff3f4",
                               }}
                             >
                               <div className="premium-plus-header">
@@ -10382,7 +10965,9 @@ function RightSideColumn({
                                     <span
                                       style={{
                                         color:
-                                          "rgb(83, 100, 113)                                  ",
+                                          themeName === "dark-theme"
+                                            ? "#71767A"
+                                            : "rgba(83,100,113,1.00)",
                                       }}
                                     >
                                       Write Articles
@@ -10391,7 +10976,11 @@ function RightSideColumn({
                                     <svg
                                       width={20}
                                       height={20}
-                                      color="rgba(83,100,113,1.00)"
+                                      color={
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgba(83,100,113,1.00)"
+                                      }
                                       fill="currentColor"
                                       viewBox="0 0 24 24"
                                       aria-hidden="true"
@@ -10407,7 +10996,11 @@ function RightSideColumn({
                                     <svg
                                       width={`${1.25}em`}
                                       height={`${1.25}em`}
-                                      color="rgba(83,100,113,1.00)"
+                                      color={
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgba(83,100,113,1.00)"
+                                      }
                                       fill="currentColor"
                                       viewBox="0 0 24 24"
                                       aria-hidden="true"
@@ -10629,11 +11222,14 @@ function RightSideColumn({
                             {/* creator hub finish to check  */}
                             {/* Verification and security start to check */}
                             <div
-                              className="mt-3 premium-plus-parent-div"
+                              className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                               style={{
                                 padding: "32px",
                                 borderRadius: "16px",
-                                backgroundColor: "#eff3f4",
+                                backgroundColor:
+                                  themeName === "dark-theme"
+                                    ? "#16181C"
+                                    : "#eff3f4",
                               }}
                             >
                               <div className="premium-plus-header">
@@ -10766,11 +11362,14 @@ function RightSideColumn({
                             {/* verification and security finish to check */}
                             {/* Customization start to check  */}
                             <div
-                              className="mt-3 premium-plus-parent-div"
+                              className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                               style={{
                                 padding: "32px",
                                 borderRadius: "16px",
-                                backgroundColor: "#eff3f4",
+                                backgroundColor:
+                                  themeName === "dark-theme"
+                                    ? "#16181C"
+                                    : "#eff3f4",
                               }}
                             >
                               <div className="premium-plus-header">
@@ -11095,11 +11694,14 @@ function RightSideColumn({
                             </Stack>{" "}
                             {/* enhanced experience start to check  */}
                             <div
-                              className="mt-3 premium-plus-parent-div"
+                              className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                               style={{
                                 padding: "32px",
                                 borderRadius: "16px",
-                                backgroundColor: "#eff3f4",
+                                backgroundColor:
+                                  themeName === "dark-theme"
+                                    ? "#16181C"
+                                    : "#eff3f4",
                               }}
                             >
                               <div className="premium-plus-header">
@@ -11387,11 +11989,14 @@ function RightSideColumn({
                             {/* enhanced experience finish to check  */}
                             {/* creator hub start to check  */}
                             <div
-                              className="mt-3 premium-plus-parent-div"
+                              className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                               style={{
                                 padding: "32px",
                                 borderRadius: "16px",
-                                backgroundColor: "#eff3f4",
+                                backgroundColor:
+                                  themeName === "dark-theme"
+                                    ? "#16181C"
+                                    : "#eff3f4",
                               }}
                             >
                               <div className="premium-plus-header">
@@ -11647,11 +12252,14 @@ function RightSideColumn({
                             {/* creator hub finish to check  */}
                             {/* Verification and security start to check */}
                             <div
-                              className="mt-3 premium-plus-parent-div"
+                              className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                               style={{
                                 padding: "32px",
                                 borderRadius: "16px",
-                                backgroundColor: "#eff3f4",
+                                backgroundColor:
+                                  themeName === "dark-theme"
+                                    ? "#16181C"
+                                    : "#eff3f4",
                               }}
                             >
                               <div className="premium-plus-header">
@@ -11784,11 +12392,14 @@ function RightSideColumn({
                             {/* verification and security finish to check */}
                             {/* Customization start to check  */}
                             <div
-                              className="mt-3 premium-plus-parent-div"
+                              className={`mt-3 premium-plus-parent-div premium-plus-parent-div-${themeName}`}
                               style={{
                                 padding: "32px",
                                 borderRadius: "16px",
-                                backgroundColor: "#eff3f4",
+                                backgroundColor:
+                                  themeName === "dark-theme"
+                                    ? "#16181C"
+                                    : "#eff3f4",
                               }}
                             >
                               <div className="premium-plus-header">
@@ -12024,7 +12635,8 @@ function RightSideColumn({
 
                         borderBottomLeftRadius: "16px",
                         borderBottomRightRadius: "16px",
-                        backgroundColor: "#fdfdfe",
+                        backgroundColor:
+                          themeName === "dark-theme" ? "black" : "#fdfdfe",
 
                         display: "flex",
                         flexDirection: "column",
@@ -12047,26 +12659,38 @@ function RightSideColumn({
                             setindividualSubOptionPremiumPlusAnnualTab(true);
                             setindividualSubOptionPremiumPlusMonthlyTab(false);
                           }}
-                          className="individual-subscription-box"
+                          className={`individual-subscription-box individual-subscription-box-${themeName}`}
                           style={{
                             flex: 1,
-                            backgroundColor: "white",
+
                             maxHeight: "96px",
                             padding: "12px",
                             cursor: "pointer",
                             borderWidth: "1px",
                             borderRadius: "16px",
+                            backgroundColor:
+                              themeName === "dark-theme" ? "black" : "white",
+                            filter:
+                              themeName === "dark-theme"
+                                ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                                : "",
                             boxShadow:
-                              "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                              themeName === "dark-theme"
+                                ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                                : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
                             border: individualSubOptionPremiumPlusAnnualTab
                               ? "2px solid #339bf0"
                               : "2px solid transparent",
+
                             transition: "transform 0.3s ease",
                           }}
                         >
                           <span
                             style={{
-                              color: "#697884",
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#71767A"
+                                  : "#697884",
                               fontSize: "14px",
                               fontWeight: "400",
                               lineHeight: "16px",
@@ -12076,15 +12700,21 @@ function RightSideColumn({
                             <span
                               style={{
                                 fontSize: "11px",
-                                backgroundColor: "#dcf8eb",
                                 borderRadius: "9999px",
-                                color: "black",
                                 position: "relative",
                                 bottom: "1px",
                                 fontWeight: "700",
                                 lineHeight: "12px",
                                 padding: "4px",
                                 height: "20px",
+                                backgroundColor:
+                                  themeName === "dark-theme"
+                                    ? "#05241A"
+                                    : "#dcf8eb",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#C2F1DC"
+                                    : "rgb(0, 67, 41)",
                               }}
                             >
                               <span>Save 12%</span>
@@ -12093,7 +12723,10 @@ function RightSideColumn({
 
                           <span
                             style={{
-                              color: "rgb(15, 20, 25)",
+                              color:
+                                themeName === "dark-theme"
+                                  ? "white"
+                                  : "rgb(15, 20, 25)",
                               fontSize: "17px",
                               fontWeight: "700",
                               lineHeight: "20px",
@@ -12104,7 +12737,10 @@ function RightSideColumn({
                           </span>
                           <div
                             style={{
-                              color: "rgb(83, 100, 113)",
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#71767A"
+                                  : "#697884",
                               fontSize: "13px",
                               fontWeight: "400",
                               lineHeight: "16px",
@@ -12114,21 +12750,29 @@ function RightSideColumn({
                           </div>
                         </div>
                         <div
-                          className="organization-subscription-box"
+                          className={`individual-subscription-box individual-subscription-box-${themeName}`}
                           onClick={() => {
                             setindividualSubOptionPremiumPlusMonthlyTab(true);
                             setindividualSubOptionPremiumPlusAnnualTab(false);
                           }}
                           style={{
                             flex: 1,
-                            backgroundColor: "white",
                             maxHeight: "96px",
                             padding: "12px",
                             cursor: "pointer",
                             borderWidth: "1px",
                             borderRadius: "16px",
+                            backgroundColor:
+                              themeName === "dark-theme" ? "black" : "white",
+                            filter:
+                              themeName === "dark-theme"
+                                ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                                : "",
+
                             boxShadow:
-                              "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                              themeName === "dark-theme"
+                                ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                                : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
                             border: individualSubOptionPremiumPlusMonthlyTab
                               ? "2px solid #339bf0"
                               : "2px solid transparent",
@@ -12137,7 +12781,10 @@ function RightSideColumn({
                         >
                           <span
                             style={{
-                              color: "#697884",
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#71767A"
+                                  : "#697884",
                               fontSize: "14px",
                               fontWeight: "400",
                               lineHeight: "16px",
@@ -12148,7 +12795,10 @@ function RightSideColumn({
 
                           <div
                             style={{
-                              color: "rgb(15, 20, 25)",
+                              color:
+                                themeName === "dark-theme"
+                                  ? "white"
+                                  : "rgb(15, 20, 25)",
                               fontSize: "17px",
                               fontWeight: "700",
                               lineHeight: "20px",
@@ -12157,7 +12807,10 @@ function RightSideColumn({
                             €19.04 / month
                             <div
                               style={{
-                                color: "rgb(83, 100, 113)",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "#697884",
                                 fontSize: "13px",
                                 fontWeight: "400",
                                 lineHeight: "16px",
@@ -12204,7 +12857,7 @@ function RightSideColumn({
                         ) : null}
                         <Button
                           onClick={() => handlePhoneVerifiedCheck()}
-                          className={`login-button next-btn ${
+                          className={`${themeName}-white-btn login-button next-btn ${
                             phoneVerifiedErrorMessage ? "mt-2" : ""
                           }`}
                           variant="dark"
@@ -12212,7 +12865,9 @@ function RightSideColumn({
                             width: "100%",
                             height: "36px",
                             color: "white",
-                            backgroundColor: "#0f141a",
+                            backgroundColor:
+                              themeName === "dark-theme" ? "white" : "#0f141a",
+
                             opacity: subErrorPhoneVerifiedTabLoading
                               ? "0.5"
                               : "1",
@@ -12242,11 +12897,16 @@ function RightSideColumn({
                           fontSize: "13px",
                           lineHeight: "16px",
                           fontWeight: "400",
-                          border: "1px solid black",
+                          border:
+                            themeName === "dark-theme"
+                              ? "1px solid rgb(70, 70, 70)"
+                              : "1px solid black",
                           borderRadius: "8px",
                           padding: "6px",
                           position: "relative",
                           top: "120px",
+                          color:
+                            themeName === "dark-theme" ? "#71767A" : "#697884",
                         }}
                       >
                         {`By subscribing, you agree to our `}
@@ -12282,7 +12942,8 @@ function RightSideColumn({
                           : "270px",
                         borderBottomLeftRadius: "16px",
                         borderBottomRightRadius: "16px",
-                        backgroundColor: "#fdfdfe",
+                        backgroundColor:
+                          themeName === "dark-theme" ? "black" : "#fdfdfe",
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
@@ -12304,17 +12965,24 @@ function RightSideColumn({
                             setindividualSubOptionPremiumPlusAnnualTab(true);
                             setindividualSubOptionPremiumPlusMonthlyTab(false);
                           }}
-                          className="individual-subscription-box"
+                          className={`individual-subscription-box individual-subscription-box-${themeName}`}
                           style={{
                             flex: 1,
-                            backgroundColor: "white",
                             maxHeight: "96px",
                             padding: "12px",
                             cursor: "pointer",
                             borderWidth: "1px",
                             borderRadius: "16px",
+                            backgroundColor:
+                              themeName === "dark-theme" ? "black" : "white",
+                            filter:
+                              themeName === "dark-theme"
+                                ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                                : "",
                             boxShadow:
-                              "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                              themeName === "dark-theme"
+                                ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                                : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
                             border: individualSubOptionPremiumPlusAnnualTab
                               ? "2px solid #339bf0"
                               : "2px solid transparent",
@@ -12323,7 +12991,10 @@ function RightSideColumn({
                         >
                           <span
                             style={{
-                              color: "#697884",
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#71767A"
+                                  : "#697884",
                               fontSize: "14px",
                               fontWeight: "400",
                               lineHeight: "16px",
@@ -12333,15 +13004,21 @@ function RightSideColumn({
                             <span
                               style={{
                                 fontSize: "11px",
-                                backgroundColor: "#dcf8eb",
                                 borderRadius: "9999px",
-                                color: "black",
                                 position: "relative",
                                 bottom: "1px",
                                 fontWeight: "700",
                                 lineHeight: "12px",
                                 padding: "4px",
                                 height: "20px",
+                                backgroundColor:
+                                  themeName === "dark-theme"
+                                    ? "#05241A"
+                                    : "#dcf8eb",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#C2F1DC"
+                                    : "rgb(0, 67, 41)",
                               }}
                             >
                               <span>Save 12%</span>
@@ -12350,7 +13027,10 @@ function RightSideColumn({
 
                           <span
                             style={{
-                              color: "rgb(15, 20, 25)",
+                              color:
+                                themeName === "dark-theme"
+                                  ? "white"
+                                  : "rgb(15, 20, 25)",
                               fontSize: "17px",
                               fontWeight: "700",
                               lineHeight: "20px",
@@ -12361,7 +13041,10 @@ function RightSideColumn({
                           </span>
                           <div
                             style={{
-                              color: "rgb(83, 100, 113)",
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#71767A"
+                                  : "#697884",
                               fontSize: "13px",
                               fontWeight: "400",
                               lineHeight: "16px",
@@ -12371,21 +13054,29 @@ function RightSideColumn({
                           </div>
                         </div>
                         <div
-                          className="organization-subscription-box"
+                          className={`individual-subscription-box individual-subscription-box-${themeName}`}
                           onClick={() => {
                             setindividualSubOptionPremiumPlusMonthlyTab(true);
                             setindividualSubOptionPremiumPlusAnnualTab(false);
                           }}
                           style={{
                             flex: 1,
-                            backgroundColor: "white",
                             maxHeight: "96px",
                             padding: "12px",
                             cursor: "pointer",
                             borderWidth: "1px",
                             borderRadius: "16px",
+                            backgroundColor:
+                              themeName === "dark-theme" ? "black" : "white",
+                            filter:
+                              themeName === "dark-theme"
+                                ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                                : "",
+
                             boxShadow:
-                              "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                              themeName === "dark-theme"
+                                ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                                : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
                             border: individualSubOptionPremiumPlusMonthlyTab
                               ? "2px solid #339bf0"
                               : "2px solid transparent",
@@ -12394,7 +13085,10 @@ function RightSideColumn({
                         >
                           <span
                             style={{
-                              color: "#697884",
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#71767A"
+                                  : "#697884",
                               fontSize: "14px",
                               fontWeight: "400",
                               lineHeight: "16px",
@@ -12405,7 +13099,10 @@ function RightSideColumn({
 
                           <div
                             style={{
-                              color: "rgb(15, 20, 25)",
+                              color:
+                                themeName === "dark-theme"
+                                  ? "white"
+                                  : "rgb(15, 20, 25)",
                               fontSize: "17px",
                               fontWeight: "700",
                               lineHeight: "20px",
@@ -12414,7 +13111,10 @@ function RightSideColumn({
                             €9.52 / month
                             <div
                               style={{
-                                color: "rgb(83, 100, 113)",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "#697884",
                                 fontSize: "13px",
                                 fontWeight: "400",
                                 lineHeight: "16px",
@@ -12463,7 +13163,7 @@ function RightSideColumn({
                         ) : null}
                         <Button
                           onClick={() => handlePhoneVerifiedCheck()}
-                          className={`login-button next-btn ${
+                          className={`${themeName}-white-btn login-button next-btn ${
                             phoneVerifiedErrorMessage ? "mt-2" : ""
                           }`}
                           variant="dark"
@@ -12471,7 +13171,9 @@ function RightSideColumn({
                             width: "100%",
                             height: "36px",
                             color: "white",
-                            backgroundColor: "#0f141a",
+                            backgroundColor:
+                              themeName === "dark-theme" ? "white" : "#0f141a",
+
                             opacity: subErrorPhoneVerifiedTabLoading
                               ? "0.5"
                               : "1",
@@ -12497,16 +13199,20 @@ function RightSideColumn({
                         className="mt-1"
                         style={{
                           width: "81.5%",
-
                           margin: "0 auto",
                           fontSize: "13px",
                           lineHeight: "16px",
                           fontWeight: "400",
-                          border: "1px solid black",
+                          border:
+                            themeName === "dark-theme"
+                              ? "1px solid rgb(70, 70, 70)"
+                              : "1px solid black",
                           borderRadius: "8px",
                           padding: "6px",
                           position: "relative",
                           top: "120px",
+                          color:
+                            themeName === "dark-theme" ? "#71767A" : "#697884",
                         }}
                       >
                         {`By subscribing, you agree to our `}
@@ -12542,7 +13248,8 @@ function RightSideColumn({
                           : "270px",
                         borderBottomLeftRadius: "16px",
                         borderBottomRightRadius: "16px",
-                        backgroundColor: "#fdfdfe",
+                        backgroundColor:
+                          themeName === "dark-theme" ? "black" : "#fdfdfe",
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
@@ -12564,17 +13271,24 @@ function RightSideColumn({
                             setindividualSubOptionPremiumPlusAnnualTab(true);
                             setindividualSubOptionPremiumPlusMonthlyTab(false);
                           }}
-                          className="individual-subscription-box"
+                          className={`individual-subscription-box individual-subscription-box-${themeName}`}
                           style={{
                             flex: 1,
-                            backgroundColor: "white",
                             maxHeight: "96px",
                             padding: "12px",
                             cursor: "pointer",
                             borderWidth: "1px",
                             borderRadius: "16px",
+                            backgroundColor:
+                              themeName === "dark-theme" ? "black" : "white",
+                            filter:
+                              themeName === "dark-theme"
+                                ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                                : "",
                             boxShadow:
-                              "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                              themeName === "dark-theme"
+                                ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                                : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
                             border: individualSubOptionPremiumPlusAnnualTab
                               ? "2px solid #339bf0"
                               : "2px solid transparent",
@@ -12583,7 +13297,10 @@ function RightSideColumn({
                         >
                           <span
                             style={{
-                              color: "#697884",
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#71767A"
+                                  : "#697884",
                               fontSize: "14px",
                               fontWeight: "400",
                               lineHeight: "16px",
@@ -12593,25 +13310,34 @@ function RightSideColumn({
                             <span
                               style={{
                                 fontSize: "11px",
-                                backgroundColor: "#dcf8eb",
                                 borderRadius: "9999px",
-                                color: "black",
                                 position: "relative",
                                 bottom: "1px",
                                 fontWeight: "700",
                                 lineHeight: "12px",
                                 padding: "4px",
                                 height: "20px",
+                                backgroundColor:
+                                  themeName === "dark-theme"
+                                    ? "#05241A"
+                                    : "#dcf8eb",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#C2F1DC"
+                                    : "rgb(0, 67, 41)",
                               }}
                             >
-                              <span>SAVE 11%</span>
+                              <span>Save 11%</span>
                             </span>
                           </span>
 
                           <span
                             style={{
+                              color:
+                                themeName === "dark-theme"
+                                  ? "white"
+                                  : "rgb(15, 20, 25)",
                               display: "block",
-                              color: "rgb(15, 20, 25)",
                               fontSize: "17px",
                               fontWeight: "700",
                               lineHeight: "20px",
@@ -12621,7 +13347,10 @@ function RightSideColumn({
                           </span>
                           <div
                             style={{
-                              color: "rgb(83, 100, 113)",
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#71767A"
+                                  : "#697884",
                               fontSize: "13px",
                               fontWeight: "400",
                               lineHeight: "16px",
@@ -12631,21 +13360,29 @@ function RightSideColumn({
                           </div>
                         </div>
                         <div
-                          className="organization-subscription-box"
+                          className={`individual-subscription-box individual-subscription-box-${themeName}`}
                           onClick={() => {
                             setindividualSubOptionPremiumPlusMonthlyTab(true);
                             setindividualSubOptionPremiumPlusAnnualTab(false);
                           }}
                           style={{
                             flex: 1,
-                            backgroundColor: "white",
                             maxHeight: "96px",
                             padding: "12px",
                             cursor: "pointer",
                             borderWidth: "1px",
                             borderRadius: "16px",
+                            backgroundColor:
+                              themeName === "dark-theme" ? "black" : "white",
+                            filter:
+                              themeName === "dark-theme"
+                                ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                                : "",
+
                             boxShadow:
-                              "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                              themeName === "dark-theme"
+                                ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                                : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
                             border: individualSubOptionPremiumPlusMonthlyTab
                               ? "2px solid #339bf0"
                               : "2px solid transparent",
@@ -12654,7 +13391,10 @@ function RightSideColumn({
                         >
                           <span
                             style={{
-                              color: "#697884",
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#71767A"
+                                  : "#697884",
                               fontSize: "14px",
                               fontWeight: "400",
                               lineHeight: "16px",
@@ -12665,7 +13405,10 @@ function RightSideColumn({
 
                           <div
                             style={{
-                              color: "rgb(15, 20, 25)",
+                              color:
+                                themeName === "dark-theme"
+                                  ? "white"
+                                  : "rgb(15, 20, 25)",
                               fontSize: "17px",
                               fontWeight: "700",
                               lineHeight: "20px",
@@ -12674,7 +13417,10 @@ function RightSideColumn({
                             €3.57 / month
                             <div
                               style={{
-                                color: "rgb(83, 100, 113)",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "#697884",
                                 fontSize: "13px",
                                 fontWeight: "400",
                                 lineHeight: "16px",
@@ -12722,7 +13468,7 @@ function RightSideColumn({
                         ) : null}
                         <Button
                           onClick={() => handlePhoneVerifiedCheck()}
-                          className={`login-button next-btn ${
+                          className={`${themeName}-white-btn login-button next-btn ${
                             phoneVerifiedErrorMessage ? "mt-2" : ""
                           }`}
                           variant="dark"
@@ -12730,7 +13476,8 @@ function RightSideColumn({
                             width: "100%",
                             height: "36px",
                             color: "white",
-                            backgroundColor: "#0f141a",
+                            backgroundColor:
+                              themeName === "dark-theme" ? "white" : "#0f141a",
                             opacity: subErrorPhoneVerifiedTabLoading
                               ? "0.5"
                               : "1",
@@ -12760,7 +13507,12 @@ function RightSideColumn({
                           fontSize: "13px",
                           lineHeight: "16px",
                           fontWeight: "400",
-                          border: "1px solid black",
+                          border:
+                            themeName === "dark-theme"
+                              ? "1px solid rgb(70, 70, 70)"
+                              : "1px solid black",
+                          color:
+                            themeName === "dark-theme" ? "#71767A" : "#697884",
                           borderRadius: "8px",
                           padding: "6px",
                           position: "relative",
@@ -14155,11 +14907,7 @@ function RightSideColumn({
                               width: "81.5%",
                               height: "58px",
                             }}
-                            error={
-                              allTextFieldsFilled === "no" && !organizationName
-                                ? "true"
-                                : ""
-                            }
+                            error={organizationNameFilled && !organizationName}
                             InputLabelProps={{
                               style: {
                                 color:
@@ -14178,15 +14926,13 @@ function RightSideColumn({
                               color: "green",
                               "& .Mui-focused input + fieldset": {
                                 border:
-                                  allTextFieldsFilled === "no" &&
-                                  !organizationName
+                                  organizationNameFilled && !organizationName
                                     ? "2px solid rgb(244, 33, 46)!important"
                                     : "2px solid #1d9bf0 !important",
                               },
                               "& .MuiOutlinedInput-notchedOutline": {
                                 borderColor:
-                                  allTextFieldsFilled === "no" &&
-                                  !organizationName
+                                  organizationNameFilled && !organizationName
                                     ? "rgb(244, 33, 46)!important"
                                     : themeName !== "dark-theme"
                                     ? "#cfd9de !important"
@@ -14194,8 +14940,7 @@ function RightSideColumn({
                               },
                               "& .MuiInputLabel-shrink": {
                                 color:
-                                  allTextFieldsFilled === "no" &&
-                                  !organizationName
+                                  organizationNameFilled && !organizationName
                                     ? "rgb(244, 33, 46)!important"
                                     : "#1f9cf0 !important",
                               },
@@ -14277,7 +15022,7 @@ function RightSideColumn({
                             value={yourFullName}
                             onChange={(e) => setYourFullName(e.target.value)}
                             error={
-                              allTextFieldsFilled === "no" && !yourFullName
+                              organizationYourFullNameFilled && !yourFullName
                             }
                             InputLabelProps={{
                               style: {
@@ -14296,13 +15041,15 @@ function RightSideColumn({
                             sx={{
                               "& .Mui-focused input + fieldset": {
                                 border:
-                                  allTextFieldsFilled === "no" && !yourFullName
+                                  organizationYourFullNameFilled &&
+                                  !yourFullName
                                     ? "2px solid rgb(244, 33, 46)!important"
                                     : "2px solid #1d9bf0 !important",
                               },
                               "& .MuiOutlinedInput-notchedOutline": {
                                 borderColor:
-                                  allTextFieldsFilled === "no" && !yourFullName
+                                  organizationYourFullNameFilled &&
+                                  !yourFullName
                                     ? "rgb(244, 33, 46)!important"
                                     : themeName !== "dark-theme"
                                     ? "#cfd9de !important"
@@ -14310,7 +15057,8 @@ function RightSideColumn({
                               },
                               "& .MuiInputLabel-shrink": {
                                 color:
-                                  allTextFieldsFilled === "no" && !yourFullName
+                                  organizationYourFullNameFilled &&
+                                  !yourFullName
                                     ? "rgb(244, 33, 46)!important"
                                     : "#1f9cf0 !important",
                               },
@@ -14331,8 +15079,9 @@ function RightSideColumn({
                               setOrganizationEmailAdress(e.target.value)
                             }
                             error={
-                              allTextFieldsFilled === "no" &&
-                              !organizationEmailAdress
+                              (organizationEmailAdressFilled &&
+                                !organizationEmailAdress) ||
+                              invalidEmailError
                             }
                             InputLabelProps={{
                               style: {
@@ -14351,15 +15100,17 @@ function RightSideColumn({
                             sx={{
                               "& .Mui-focused input + fieldset": {
                                 border:
-                                  allTextFieldsFilled === "no" &&
-                                  !organizationEmailAdress
+                                  (organizationEmailAdressFilled &&
+                                    !organizationEmailAdress) ||
+                                  invalidEmailError
                                     ? "2px solid rgb(244, 33, 46)!important"
                                     : "2px solid #1d9bf0 !important",
                               },
                               "& .MuiOutlinedInput-notchedOutline": {
                                 borderColor:
-                                  allTextFieldsFilled === "no" &&
-                                  !organizationEmailAdress
+                                  (organizationEmailAdressFilled &&
+                                    !organizationEmailAdress) ||
+                                  invalidEmailError
                                     ? "rgb(244, 33, 46) !important"
                                     : themeName !== "dark-theme"
                                     ? "#cfd9de !important"
@@ -14367,14 +15118,15 @@ function RightSideColumn({
                               },
                               "& .MuiInputLabel-shrink": {
                                 color:
-                                  allTextFieldsFilled === "no" &&
-                                  !organizationEmailAdress
+                                  (organizationEmailAdressFilled &&
+                                    !organizationEmailAdress) ||
+                                  invalidEmailError
                                     ? "rgb(244, 33, 46)!important"
                                     : "#1f9cf0 !important",
                               },
                             }}
                           />
-                          {invalidEmailError && !organizationEmailAdress ? (
+                          {invalidEmailError && organizationEmailAdress ? (
                             <div
                               style={{
                                 color: "rgb(244, 33, 46)",
@@ -14405,8 +15157,7 @@ function RightSideColumn({
                               setOrganizationWebSite(e.target.value)
                             }
                             error={
-                              allTextFieldsFilled === "no" &&
-                              !organizationWebSite
+                              organizationWebSiteFilled && !organizationWebSite
                             }
                             InputLabelProps={{
                               style: {
@@ -14425,14 +15176,14 @@ function RightSideColumn({
                             sx={{
                               "& .Mui-focused input + fieldset": {
                                 border:
-                                  allTextFieldsFilled === "no" &&
+                                  organizationWebSiteFilled &&
                                   !organizationWebSite
                                     ? "2px solid rgb(244, 33, 46)!important"
                                     : "2px solid #1d9bf0 !important",
                               },
                               "& .MuiOutlinedInput-notchedOutline": {
                                 borderColor:
-                                  allTextFieldsFilled === "no" &&
+                                  organizationWebSiteFilled &&
                                   !organizationWebSite
                                     ? "rgb(244, 33, 46)!important"
                                     : themeName !== "dark-theme"
@@ -14441,7 +15192,7 @@ function RightSideColumn({
                               },
                               "& .MuiInputLabel-shrink": {
                                 color:
-                                  allTextFieldsFilled === "no" &&
+                                  organizationWebSiteFilled &&
                                   !organizationWebSite
                                     ? "rgb(244, 33, 46)!important"
                                     : "#1f9cf0 !important",
@@ -14473,7 +15224,7 @@ function RightSideColumn({
                                   ? "2px"
                                   : "1px",
                                 borderColor:
-                                  allTextFieldsFilled === "no" &&
+                                  organizationDisplayedOrganizationTypeFilled &&
                                   !displayedOrganizationType
                                     ? "rgb(244, 33, 46)"
                                     : showOrganizationTypeContent
@@ -14506,7 +15257,7 @@ function RightSideColumn({
                                   <span
                                     style={{
                                       color:
-                                        allTextFieldsFilled === "no" &&
+                                        organizationDisplayedOrganizationTypeFilled &&
                                         !displayedOrganizationType
                                           ? "rgb(244, 33, 46)"
                                           : "",
@@ -14719,6 +15470,8 @@ function RightSideColumn({
                   {subErrorPhoneVerifiedTabLoading ? (
                     <Modal.Body
                       style={{
+                        margin: "0px",
+                        padding: "0px",
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "center",
@@ -14770,7 +15523,11 @@ function RightSideColumn({
                             onClick={handleCloseSubscriptionModal}
                             width={20}
                             height={20}
-                            color="rgb(15,20,25)"
+                            color={
+                              themeName === "dark-theme"
+                                ? "white"
+                                : "rgb(15,20,25)"
+                            }
                             fill="currentColor"
                             viewBox="0 0 24 24"
                             aria-hidden="true"
@@ -14805,6 +15562,7 @@ function RightSideColumn({
                             fontSize: "26px",
                             lineHeight: "32px",
                             fontWeight: "800",
+                            color: themeName === "dark-theme" ? "white" : "",
                           }}
                         >
                           Verify your phone number
@@ -14815,7 +15573,10 @@ function RightSideColumn({
                             fontSize: "15px",
                             fontWeight: "400",
                             lineHeight: "20px",
-                            color: "rgb(83, 100, 113)",
+                            color:
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)",
                           }}
                         >
                           Verify your phone number to subscribe for Premium. It
@@ -14825,13 +15586,14 @@ function RightSideColumn({
                           onClick={() => {
                             handleVerifyYourPasswordModalAfterVerifyYourPhoneNumberClick();
                           }}
-                          className="login-button next-btn mt-4 mb-5"
+                          className={`login-button next-btn mt-4 mb-5 ${themeName}-white-btn`}
                           variant="dark"
                           style={{
                             width: "100%",
                             height: "52px",
                             color: "white",
-                            backgroundColor: "#0f141a",
+                            backgroundColor:
+                              themeName === "dark-theme" ? "white" : "#0f141a",
                           }}
                         >
                           Verify your phone number
@@ -14847,6 +15609,8 @@ function RightSideColumn({
                   {subErrorPhoneVerifiedTabLoading ? (
                     <Modal.Body
                       style={{
+                        margin: "0px",
+                        padding: "0px",
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "center",
@@ -14879,20 +15643,24 @@ function RightSideColumn({
                               lineHeight: "36px",
                               fontWeight: "700",
                               fontSize: "31px",
+                              color: themeName === "dark-theme" ? "white" : "",
                             }}
                           >
                             Verify your password
                           </div>
                           <div
                             style={{
-                              color: "rgb(83, 100, 113)",
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#71767A"
+                                  : "rgb(83, 100, 113)",
                               lineHeight: "20px",
                               fontWeight: "400",
                               fontSize: "15px",
                             }}
                             className="mt-2"
                           >
-                            Re-enter your Connectify password to continue.
+                            Re-enter your C password to continue.
                           </div>
                           {/* start to check verify your password  */}
                           <FormControl
@@ -14904,6 +15672,9 @@ function RightSideColumn({
                           >
                             <InputLabel
                               sx={{
+                                color:
+                                  themeName === "dark-theme" ? "#71767B" : "",
+
                                 "&.MuiInputLabel-shrink": {
                                   color: verifyPasswordErrorMessage
                                     ? "rgb(244, 33, 46)!important"
@@ -14917,10 +15688,19 @@ function RightSideColumn({
                             <OutlinedInput
                               autoFocus
                               sx={{
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "black",
                                 "& .MuiOutlinedInput-notchedOutline": {
-                                  borderColor: verifyPasswordErrorMessage
-                                    ? "rgb(244, 33, 46)!important"
-                                    : "#cfd9de !important",
+                                  borderColor:
+                                    themeName === "dark-theme"
+                                      ? "rgb(70, 70, 70) !important"
+                                      : "#cfd9de !important",
+                                  border:
+                                    themeName === "dark-theme"
+                                      ? "1px solid rgb(70, 70, 70) !important"
+                                      : "",
                                 },
                                 "&.Mui-focused .MuiOutlinedInput-notchedOutline":
                                   {
@@ -14942,7 +15722,11 @@ function RightSideColumn({
                                       style={{
                                         cursor: "pointer",
                                       }}
-                                      color="rgb(15, 20, 25)"
+                                      color={
+                                        themeName === "dark-theme"
+                                          ? "white"
+                                          : "rgb(15, 20, 25)"
+                                      }
                                       fill="currentColor"
                                       width={22}
                                       height={22}
@@ -14963,7 +15747,11 @@ function RightSideColumn({
                                       }}
                                       width={22}
                                       height={22}
-                                      color="rgb(15, 20, 25)"
+                                      color={
+                                        themeName === "dark-theme"
+                                          ? "white"
+                                          : "rgb(15, 20, 25)"
+                                      }
                                       fill="currentColor"
                                       viewBox="0 0 24 24"
                                       aria-hidden="true"
@@ -14994,7 +15782,7 @@ function RightSideColumn({
                               position: "relative",
                               bottom: "20px",
                             }}
-                            className="login-button next-btn"
+                            className={`login-button next-btn ${themeName}-white-btn`}
                             variant="dark"
                             onClick={() => {
                               handleCheckIsPasswordInputCorrect();
@@ -15014,7 +15802,7 @@ function RightSideColumn({
                               position: "relative",
                               bottom: "20px",
                             }}
-                            className="forgot-password-btn"
+                            className={`forgot-password-button ${themeName}-black-btn`}
                             variant="light"
                             onClick={() => {
                               setsubErrorPhoneVerifiedTabLoading(true);
@@ -15069,13 +15857,18 @@ function RightSideColumn({
                               fontWeight: "700",
                               fontSize: "31px",
                               letterSpacing: "0.5px",
+                              color:
+                                themeName === "dark-theme" ? "white" : "black",
                             }}
                           >
                             Add a phone number
                           </div>
                           <div
                             style={{
-                              color: "rgb(83, 100, 113)",
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#71767A"
+                                  : "rgb(83, 100, 113)",
                               lineHeight: "20px",
                               fontWeight: "400",
                               fontSize: "15px",
@@ -15102,6 +15895,8 @@ function RightSideColumn({
                                 : "1px",
                               borderColor: showpopoverCountriesAndTheirPhoneCode
                                 ? "#1d9bf0"
+                                : themeName === "dark-theme"
+                                ? "rgb(70,70,70)"
                                 : "#cfd9de",
                             }}
                           >
@@ -15125,14 +15920,26 @@ function RightSideColumn({
                                     : "rgba(83,100,113,1.00)",
                                 }}
                               >
-                                <span>Country code</span>
+                                <span
+                                  style={{
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "",
+                                  }}
+                                >
+                                  Country code
+                                </span>
                                 <div
                                   onClick={handleShowOptions}
                                   className="mt-2 selected-year-string-parent-div"
                                   style={{
                                     fontSize: "17px",
                                     lineHeight: "20px",
-                                    color: "black",
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "white"
+                                        : "black",
                                   }}
                                 >
                                   {country ? (
@@ -15161,6 +15968,8 @@ function RightSideColumn({
                                   color={
                                     showpopoverCountriesAndTheirPhoneCode
                                       ? "#1d9bf0"
+                                      : themeName === "dark-theme"
+                                      ? "rgb(70,70,70)"
                                       : "rgba(83,100,113,1.00)"
                                   }
                                   fill="currentColor"
@@ -15233,6 +16042,18 @@ function RightSideColumn({
                               position: "relative",
                               bottom: "45px",
                             }}
+                            InputProps={{
+                              style: {
+                                color:
+                                  themeName === "dark-theme" ? "white" : "",
+                              },
+                            }}
+                            InputLabelProps={{
+                              style: {
+                                color:
+                                  themeName === "dark-theme" ? "#71767B" : "",
+                              },
+                            }}
                             sx={{
                               "& .Mui-focused input + fieldset": {
                                 border: !validPhoneNumber
@@ -15242,6 +16063,8 @@ function RightSideColumn({
                               "& .MuiOutlinedInput-notchedOutline": {
                                 borderColor: !validPhoneNumber
                                   ? "rgb(244, 33, 46)!important"
+                                  : themeName === "dark-theme"
+                                  ? "rgb(70,70,70) !important"
                                   : "#cfd9de !important",
                               },
                               "& .MuiInputLabel-shrink": {
@@ -15250,7 +16073,7 @@ function RightSideColumn({
                                   : "#1f9cf0 !important",
                               },
                             }}
-                          />
+                          />{" "}
                           <div
                             style={{
                               color: "rgb(244, 33, 46)",
@@ -15280,7 +16103,10 @@ function RightSideColumn({
                             <div
                               className="mt-2"
                               style={{
-                                color: "rgb(83, 100, 113)",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "rgb(83, 100, 113)",
                                 fontSize: "15px",
                                 lineHeight: "20px",
                                 fontWeight: "400",
@@ -15317,8 +16143,8 @@ function RightSideColumn({
                                 }}
                                 className={
                                   clicked
-                                    ? "hover-customize-your-experience-tab-get-more-out-of-variant"
-                                    : "hover-customize-your-experience-tab-get-more-out-of-variant-2"
+                                    ? `hover-customize-your-experience-tab-get-more-out-of-variant ${themeName}-variant-1-hover-add-phoneNumber`
+                                    : `hover-customize-your-experience-tab-get-more-out-of-variant-2 ${themeName}-variant-2-hover-add-phoneNumber`
                                 }
                               >
                                 <div
@@ -15328,6 +16154,8 @@ function RightSideColumn({
                                       : "transparent",
                                     border: clicked
                                       ? "none"
+                                      : themeName === "dark-theme"
+                                      ? "2px solid rgb(70,70,70)"
                                       : "2px solid #536471",
 
                                     borderWidth: "2px ",
@@ -15378,7 +16206,7 @@ function RightSideColumn({
                               position: "relative",
                               bottom: "10px",
                             }}
-                            className="login-button next-btn"
+                            className={`login-button next-btn ${themeName}-white-btn`}
                             variant="dark"
                             onClick={() => {
                               handleSubscriptionInfoNonPhoneVerifiedUser();
@@ -15391,12 +16219,15 @@ function RightSideColumn({
                             style={{
                               width: "81.5%",
                               height: "52px",
-                              color: "black",
+                              color:
+                                themeName === "dark-theme" ? "white" : "black",
                               fontSize: "17px",
                               fontWeight: "700",
                               lineHeight: "20px",
+                              position: "relative",
+                              bottom: "10px",
                             }}
-                            className="forgot-password-btn"
+                            className={`forgot-password ${themeName}-black-btn`}
                             variant="light"
                             onClick={() => {
                               setsubErrorPhoneVerifiedTabLoading(true);
@@ -15477,7 +16308,11 @@ function RightSideColumn({
                               onClick={handleCloseSubscriptionModal}
                               width={20}
                               height={20}
-                              color="rgb(15,20,25)"
+                              color={
+                                themeName === "dark-theme"
+                                  ? "white"
+                                  : "rgb(15,20,25)"
+                              }
                               fill="currentColor"
                               viewBox="0 0 24 24"
                               aria-hidden="true"
@@ -15497,6 +16332,7 @@ function RightSideColumn({
                             fontWeight: "700",
                             fontSize: "31px",
                             letterSpacing: "0.5px",
+                            color: themeName === "dark-theme" ? "white" : "",
                           }}
                         >
                           Verify your phone number
@@ -15504,7 +16340,10 @@ function RightSideColumn({
                         <div
                           className="mt-3"
                           style={{
-                            color: "rgb(83, 100, 113)",
+                            color:
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)",
                             lineHeight: "20px",
                             fontSize: "15px",
                             fontWeight: "400",
@@ -15537,7 +16376,10 @@ function RightSideColumn({
                           >
                             <div
                               style={{
-                                color: "rgb(15, 20, 25)",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "rgb(83, 100, 113)",
                                 fontSize: "15px",
                                 lineHeight: "20px",
                                 fontWeight: "400",
@@ -15547,7 +16389,10 @@ function RightSideColumn({
                             </div>
                             <div
                               style={{
-                                color: "rgb(15, 20, 25)",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "rgb(83, 100, 113)",
                                 fontSize: "15px",
                                 lineHeight: "20px",
                                 fontWeight: "400",
@@ -15573,7 +16418,7 @@ function RightSideColumn({
                               position: "absolute",
                               bottom: "20px",
                             }}
-                            className="login-button next-btn"
+                            className={`login-button next-btn ${themeName}-white-btn`}
                             variant="dark"
                             onClick={() => {
                               handleVerifyPhoneForSubscription();
@@ -15631,7 +16476,11 @@ function RightSideColumn({
                           onClick={handleCloseSubscriptionModal}
                           width={20}
                           height={20}
-                          color="rgb(15,20,25)"
+                          color={
+                            themeName === "dark-theme"
+                              ? "white"
+                              : "rgb(15,20,25)"
+                          }
                           fill="currentColor"
                           viewBox="0 0 24 24"
                           aria-hidden="true"
@@ -15651,6 +16500,7 @@ function RightSideColumn({
                         fontWeight: "700",
                         fontSize: "31px",
                         letterSpacing: "0.5px",
+                        color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
                       Verifying code...
@@ -15658,7 +16508,10 @@ function RightSideColumn({
                     <div
                       className="mt-3"
                       style={{
-                        color: "rgb(83, 100, 113)",
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)",
                         lineHeight: "20px",
                         fontSize: "15px",
                         fontWeight: "400",
@@ -15689,6 +16542,7 @@ function RightSideColumn({
                         lineHeight: "36px",
                         fontSize: "31px",
                         fontWeight: "800",
+                        color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
                       Subscription Error!
@@ -15736,7 +16590,7 @@ function RightSideColumn({
                         width: "65%",
                         height: "52px",
                       }}
-                      className="login-button mt-5"
+                      className={`login-button mt-5 ${themeName}-white-btn`}
                       variant="dark"
                     >
                       Continue to Connectify
@@ -15773,7 +16627,7 @@ function RightSideColumn({
         <Stack
           style={{
             height: "100%",
-            position: "fixed",
+            // position: "fixed",
           }}
           gap={3}
         >
@@ -15795,7 +16649,9 @@ function RightSideColumn({
                   position: "relative",
                   left: "30px",
                 }}
-                fill="currentColor"
+                fill={
+                  themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)"
+                }
                 width={`${1.25}em`}
                 height={`${1.25}em`}
                 viewBox="0 0 24 24"
@@ -15932,7 +16788,11 @@ function RightSideColumn({
                 <>
                   <div
                     style={{
-                      color: "rgb(83, 100, 113)",
+                      color:
+                        themeName === "dark-theme"
+                          ? "#71767A"
+                          : "rgb(83, 100, 113)",
+
                       lineHeight: "20px",
                       fontSize: "15px",
                       fontWeight: "400",
@@ -16087,7 +16947,10 @@ function RightSideColumn({
                                     fontSize: "15px",
                                     fontWeight: "400",
                                     lineHeight: "20px",
-                                    color: "rgb(83, 100, 113)",
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgb(83, 100, 113)",
                                     position: "relative",
                                   }}
                                 >
@@ -16325,7 +17188,10 @@ function RightSideColumn({
                                     lineHeight: "20px",
                                     fontSize: "15px",
                                     fontWeight: "400",
-                                    color: "rgb(83, 100, 113)",
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgb(83, 100, 113)",
                                     overflow: "hidden",
                                     textOverflow: "ellipsis",
                                     whiteSpace: "nowrap",
@@ -16471,7 +17337,7 @@ function RightSideColumn({
               className="p-4"
             >
               <ul
-                className="right-side-bar-column-list"
+                className={`right-side-bar-column-list ${themeName}-right-side-bar-column-list`}
                 style={{
                   display: "flex",
                   flexWrap: "wrap",

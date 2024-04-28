@@ -3,9 +3,21 @@
 
 #root {
   --toastify-color-light: rgba(0, 0, 0, 0.1);
-  --toastify-text-color-light: #757575;
+  --toastify-text-color-light: rgb(83, 100, 113);
 
   --toastify-color-progress-light: linear-gradient(
+    to right,
+    rgb(29, 155, 240),
+    rgb(29, 155, 240),
+    rgb(29, 155, 240),
+    rgb(29, 155, 240),
+    rgb(29, 155, 240),
+    rgb(29, 155, 240)
+  );
+
+  --toastify-color-dark: rgba(0, 0, 0, 0.7);
+  --toastify-text-color-dark: #71767a;
+  --toastify-color-progress-dark: linear-gradient(
     to right,
     rgb(29, 155, 240),
     rgb(29, 155, 240),
@@ -100,6 +112,18 @@ body {
   background-color: #e4f0f9 !important;
   transition-duration: 0.2s !important;
 }
+
+/* popover post detail themes settings start to check  */
+.popover-post-detail-three-dots:hover {
+  background-color: #e4f0f9 !important;
+  transition-duration: 0.2s !important;
+}
+
+.dark-theme-popover-post-detail-three-dots:hover {
+  background-color: #162837 !important;
+  transition-duration: 0.2s !important;
+}
+/* popover post detail themes settings finish to check  */
 
 .message-delete-three-dots-parent-hovered-dark-theme:hover {
   background-color: #162837 !important;
@@ -643,6 +667,10 @@ body {
   word-wrap: break-word;
   line-height: 16px;
   font-size: 13px;
+}
+
+.footer-container-dark-theme a > span {
+  color: #71767a;
 }
 
 span > a {
@@ -1288,6 +1316,11 @@ span > a:hover {
 .hover-reposted-text:hover {
   text-decoration: underline !important;
   text-decoration-color: rgb(83, 100, 113) !important;
+}
+
+.hover-reposted-text-dark-theme:hover {
+  text-decoration: underline !important;
+  text-decoration-color: #71767a !important;
 }
 
 .post-modal-image-fill,
@@ -2077,14 +2110,6 @@ span > a:hover {
 .message-popoover-dark-theme:hover {
   background-color: #181818;
 }
-.delete-conversation-content {
-  padding: 32px;
-}
-
-.delete-conversation-dialog {
-  /* background-color: green; */
-  width: 400px;
-}
 
 .leave-btn-delete-conversation-tab:hover,
 .deactivate-tab-deactivate-btn:hover {
@@ -2792,6 +2817,14 @@ span > a:hover {
   margin: 2px 0px;
 }
 
+.premium-plus-parent-div-dark-theme {
+  color: white;
+}
+
+.slick-arrow {
+  display: none !important;
+}
+
 .exclamation {
   position: relative;
   left: 8px;
@@ -3004,7 +3037,8 @@ select {
 }
 
 .back-drop-dark-theme {
-  background-color: #232e36;
+  background-color: rgb(35, 46, 54) !important;
+  filter: brightness(1.7);
 }
 
 .post-modal-from-left-side-navigation-bar-dark-theme {
@@ -3021,6 +3055,10 @@ select {
 .settings-and-privacy-second-smaller-than-700-width-dark-theme,
 .forgot-password-process-modal-from-change-password-section-dark-theme {
   background-color: black !important;
+}
+
+.logout-modal-variant-parent .modal-dialog {
+  min-width: 322px;
 }
 
 .logout-modal-variant-parent .modal-content {
@@ -3186,8 +3224,18 @@ select {
   min-width: 600px;
 }
 
-.create-account-modal-dark-theme {
+.create-account-modal-dark-theme,
+.comment-modal-dark-theme {
   background-color: black;
+}
+
+.comment-modal {
+  width: 600px !important;
+  height: auto !important;
+}
+
+.ss {
+  background-color: yellow !important;
 }
 
 /* start to check unfollow modal styling for themes */
@@ -3217,8 +3265,201 @@ select {
   min-width: 250px;
 }
 
+.unfollow-modal-general-class div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.dark-theme-sub-basic-modal {
+  background-color: black;
+  filter: drop-shadow(rgb(51, 54, 57) 1px -1px 1px);
+  box-shadow: rgba(255, 255, 255, 0.2) 0px 0px 15px,
+    rgba(255, 255, 255, 0.15) 0px 0px 3px 1px;
+}
+
+.dark-theme-variant-2-hover-add-phoneNumber:hover {
+  background-color: #0c0c0c !important;
+}
+
+.dark-theme-variant-1-hover-add-phoneNumber:hover {
+  background-color: #061019 !important;
+}
+
+.dark-theme-right-side-bar-column-list li {
+  color: #71767a;
+}
+
+.time-stamp-message-detail:hover,
+.time-stamp-message-sent-status:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.dark-theme-post-popover-detail {
+  color: white;
+  line-height: 20px;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.dark-theme-post-popover-detail div {
+  padding: 12px;
+  cursor: pointer;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+.post-popover-detail {
+  color: black;
+  line-height: 20px;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.post-popover-detail div {
+  padding: 12px;
+  cursor: pointer;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+/* start to check deletepost modal  */
+.delete-post div,
+.leave-conversation div {
+  display: flex;
+  justify-content: center;
+}
+
+.delete-post-modal,
+.leave-conversation-modal {
+  width: 320px;
+  background-color: white;
+}
+
+.delete-post-modal-dark-theme,
+.leave-conversation-modal-dark-theme {
+  width: 320px;
+  background-color: black;
+}
+
+.dark-theme-red-btn:hover,
+.red-btn:hover {
+  background-color: #dc1f29 !important;
+  transition-duration: 0.2s;
+}
+/* finish to check deletepost modal  */
+
+/* cleaning the outofill backgroundcolor from browser settings start to check  */
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  transition: background-color 600000s 0s, color 600000s 0s;
+}
+input[data-autocompleted] {
+  background-color: transparent !important;
+} /* cleaning the outofill backgroundcolor from browser settings finish to check */
+
 /* finish to check unfollow modal styling for themes */
 
 /* general classname for backgroundcolor modal according to the theme finish to check */
 
 /* finish to check modals dark theme and etc. styling  */
+
+/* theme toggle mode styling start to check  */
+.Activate-dark-mode svg {
+}
+
+.Activate-light-mode svg {
+}
+
+.Activate-light-mode svg {
+  transform: rotate(40deg) !important;
+  transition-duration: 0.2s;
+}
+
+.Activate-dark-mode svg {
+  transform: rotate(90deg) !important;
+  transition-duration: 0.2s;
+}
+
+.Activate-dark-mode .upJhz g circle {
+  scale: 0;
+  transition-duration: 0.1s;
+}
+@keyframes bounceAnimationFirst {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  50% {
+    transform: translateX(-1px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+.Activate-dark-mode .upJhz g circle:nth-child(1) {
+  scale: 1;
+  transition-delay: 0.1s;
+}
+
+.Activate-dark-mode .upJhz g circle:nth-child(2) {
+  scale: 1;
+  transition-delay: 0.2s;
+}
+.Activate-dark-mode .upJhz g circle:nth-child(3) {
+  scale: 1;
+  transition-delay: 0.3s;
+}
+.Activate-dark-mode .upJhz g circle:nth-child(4) {
+  scale: 1;
+  transition-delay: 0.4s;
+}
+.Activate-dark-mode .upJhz g circle:nth-child(5) {
+  scale: 1;
+  transition-delay: 0.5s;
+}
+.Activate-dark-mode .upJhz g circle:nth-child(6) {
+  scale: 1;
+  transition-delay: 0.6s;
+}
+
+.Activate-light-mode .upJhz g circle {
+  scale: 0;
+  transition-duration: 0.2s;
+}
+
+.Activate-dark-mode .upJhz #moon-mask-main-nav circle {
+  cx: 25px;
+  cy: 8px;
+  transition-duration: 0.2s;
+}
+
+.Activate-light-mode .upJhz #moon-mask-main-nav circle {
+  cx: 10px;
+  cy: 2px;
+  transition-duration: 0.2s;
+}
+
+/* .Activate-dark-mode .upJhz circle {
+  transition-duration: 0.3s;
+} */
+
+.Activate-light-mode .upJhz circle {
+  r: 8px;
+  transition-duration: 0.2s;
+}
+
+.hover-theme-dark-theme:hover {
+  background-color: white !important;
+}
+/* theme toggle mode styling finish to check  */
+
+/* modallere dialog classname vermek gerek diğer türlü styling bozuluyor ve modal harici örneğin inputlarada border radius uygulanıyor start to check  */
+/* .modal-dialog div {
+  border-radius: 16px !important;
+} */
+/* modallere dialog classname vermek gerek diğer türlü styling bozuluyor ve modal harici örneğin inputlarada border radius uygulanıyor finish to check  */

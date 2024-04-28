@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserContext";
-import { Container, Row, Col, Stack, Button, Accordion } from "react-bootstrap";
+import { Container, Row, Col, Stack, Accordion } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { CommentModal } from "../components/ui/Modal";
 
@@ -20,6 +20,7 @@ import io from "socket.io-client";
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
 import { ThemeContext } from "../context/ThemeContext";
+import PostPopover from "../components/three-dots-popover/Popover";
 
 function UserProfile() {
   const [
@@ -28,8 +29,6 @@ function UserProfile() {
     darkModeActive,
     cyberpunkModeActive,
   ] = useContext(ThemeContext);
-
-  const socket = io.connect(`${API_URL}`);
 
   const navigate = useNavigate();
 
@@ -90,7 +89,6 @@ function UserProfile() {
   // use effect to grab current mouse click location finish to check
 
   const [userprofiledata, setUserprofiledata] = useState([]);
-  // const { getToken, userInfo, socket } = useContext(UserContext);
   const { getToken, userInfo } = useContext(UserContext);
   const [favoriteWindow, setFavoriteWindow] = useState("hide");
   const [postsWindow, setPostWindow] = useState("");
@@ -100,6 +98,8 @@ function UserProfile() {
   const [isLoading, setIsLoading] = useState(false);
   const [profileImage, setprofileImage] = useState("");
   const [completedProfileImage, setcompletedProfileImage] = useState(false);
+
+  const socket = io.connect(`${API_URL}`);
 
   // start to check shared post view message
   const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
@@ -184,7 +184,6 @@ function UserProfile() {
             draggable: true,
             progress: undefined,
             transition: Bounce,
-            theme: "light",
           }
         );
       } else {
@@ -256,39 +255,30 @@ function UserProfile() {
         return err;
       });
   };
-  const handleDeletePostFromProfilePage = (postId) => {
-    axios
-      .post(
-        `${API_URL}/home/delete-post`,
-        { userId: userInfo._id, postId },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        if (favoriteWindow === "") {
-          setTimeout(() => {
-            handleGetFavorites();
-          }, 500);
-        } else if (postsWindow === "") {
-          setTimeout(() => {
-            handleShowPostsProfilePage();
-          }, 500);
-        }
 
-        setError("");
-      })
-      .catch((error) => {
-        const { errorMessage } = error.response.data;
-
-        setError(errorMessage);
-      });
+  const postDeletedMessage = () => {
+    messageApi.success({
+      type: "success",
+      content: <div>Your post was deleted</div>,
+      duration: 6,
+      className: "custom-message-style",
+    });
   };
 
-  const handleShowDetailPostFromProfilePage = (postId) => {
-    console.log(postId);
+  const handleDeletePostFromProfilePage = () => {
+    if (favoriteWindow === "") {
+      setTimeout(() => {
+        handleGetFavorites();
+        postDeletedMessage();
+      }, 500);
+    } else if (postsWindow === "") {
+      setTimeout(() => {
+        handleShowPostsProfilePage();
+        postDeletedMessage();
+      }, 500);
+    }
+
+    setError("");
   };
 
   const handlePostLikesFromProfilePage = (postId, findedPost) => {
@@ -580,7 +570,7 @@ function UserProfile() {
   return (
     <>
       {contextHolder}
-      <ToastContainer />
+      <ToastContainer theme={themeName === "dark-theme" ? "dark" : "light"} />
 
       <ResponsiveNavigationBarBottom
         refreshPosts={() => handleShowPostsProfilePage()}
@@ -695,7 +685,15 @@ function UserProfile() {
                     }}
                   >
                     <div>{userInfo.username}</div>
-                    <div className="profile-paragraph">
+                    <div
+                      style={{
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)",
+                      }}
+                      className="profile-paragraph"
+                    >
                       {userInfo.posts.length} posts
                     </div>
                   </div>
@@ -812,7 +810,14 @@ function UserProfile() {
                   >
                     {userInfo.username}
                   </div>
-                  <div style={{ color: "rgb(83, 100, 113)" }}>
+                  <div
+                    style={{
+                      color:
+                        themeName === "dark-theme"
+                          ? "#71767A"
+                          : "rgb(83, 100, 113)",
+                    }}
+                  >
                     @{userInfo.username}
                   </div>
                   <div>
@@ -861,7 +866,10 @@ function UserProfile() {
                       <span
                         style={{
                           cursor: "pointer",
-                          color: "rgb(83, 100, 113)",
+                          color:
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)",
                           fontSize: "14px",
                           lineHeight: "16px",
                           fontWeight: "400",
@@ -895,7 +903,10 @@ function UserProfile() {
                       <span
                         style={{
                           cursor: "pointer",
-                          color: "rgb(83, 100, 113)",
+                          color:
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)",
                           fontSize: "14px",
                           lineHeight: "16px",
                           fontWeight: "400",
@@ -951,7 +962,10 @@ function UserProfile() {
                     <span
                       style={{
                         fontWeight: "400",
-                        color: "rgb(83,100,113)",
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)",
                       }}
                     >
                       Posts
@@ -990,7 +1004,10 @@ function UserProfile() {
                     <span
                       style={{
                         fontWeight: "400",
-                        color: "rgb(83,100,113)",
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)",
                       }}
                     >
                       Likes
@@ -1062,21 +1079,32 @@ function UserProfile() {
                             }}
                             className="posts-details outside-of-inner-circle-actions"
                           >
-                            <div className="post-head">
+                            <div
+                              style={{
+                                cursor: "pointer",
+                              }}
+                              className="post-head"
+                            >
                               {getRepostedIds(post).includes(userInfo._id) &&
                               post.isReposted ? (
                                 <>
                                   <svg
                                     style={{
                                       marginLeft: "20px",
+                                      position: "relative",
+                                      top: "5px",
+                                      left: "20px",
                                     }}
                                     width={16}
                                     height={16}
                                     viewBox="0 0 24 24"
                                     aria-hidden="true"
                                     className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                    color="rgb(83, 100, 113)"
-                                    fill="currentColor"
+                                    fill={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgb(83, 100, 113)"
+                                    }
                                   >
                                     <g>
                                       <path
@@ -1087,15 +1115,21 @@ function UserProfile() {
                                     </g>
                                   </svg>
                                   <Link
-                                    className="hover-reposted-text"
+                                    className={`hover-reposted-text hover-reposted-text-${themeName}`}
                                     style={{
                                       fontSize: "13px",
                                       lineHeight: "16px",
                                       fontWeight: "700",
-                                      color: "rgb(83, 100, 113)",
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgb(83, 100, 113)",
                                       marginLeft: "10px",
                                       cursor: "pointer",
                                       textDecoration: "none",
+                                      position: "relative",
+                                      top: "5px",
+                                      left: "15px",
                                     }}
                                     onClick={() => setclickedPostBox(post)}
                                     to={`/profile/${post.reposted[0]._id}`}
@@ -1218,7 +1252,10 @@ function UserProfile() {
                                       to={`/profile/${post.userId._id}`}
                                       style={{
                                         textDecoration: "none",
-                                        color: "rgb(83, 100, 113)",
+                                        color:
+                                          themeName === "dark-theme"
+                                            ? "#71767A"
+                                            : "rgb(83, 100, 113)",
                                         lineHeight: "20px",
                                         fontSize: "15px",
                                         fontWeight: "400",
@@ -1242,7 +1279,10 @@ function UserProfile() {
                                       <span
                                         className="post-circle-date-post-detail"
                                         style={{
-                                          color: "rgb(83, 100, 113)",
+                                          color:
+                                            themeName === "dark-theme"
+                                              ? "#71767A"
+                                              : "rgb(83, 100, 113)",
                                           lineHeight: "20px",
                                           fontSize: "15px",
                                           fontWeight: "400",
@@ -1263,57 +1303,12 @@ function UserProfile() {
 
                               {/* three dots svg start to check */}
                               <div className="p-1 ms-auto">
-                                <span>
-                                  {/* show if post owner userId !equal currentUserId */}
-                                  {post.userId &&
-                                  post.userId._id !== userInfo._id ? (
-                                    <svg
-                                      style={{
-                                        cursor: "pointer",
-                                        backgroundColor: "rgb(29, 155, 240)",
-                                      }}
-                                      onClick={() =>
-                                        handleShowDetailPostFromProfilePage(
-                                          post._id
-                                        )
-                                      }
-                                      color="rgb(83, 100, 113)"
-                                      fill="currentColor"
-                                      width={`${1.25}em`}
-                                      height={`${1.25}em`}
-                                      viewBox="0 0 24 24"
-                                      aria-hidden="true"
-                                      className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                    >
-                                      <g>
-                                        <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                      </g>
-                                    </svg>
-                                  ) : (
-                                    <svg
-                                      style={{
-                                        cursor: "pointer",
-                                        backgroundColor: "crimson",
-                                      }}
-                                      onClick={() =>
-                                        handleDeletePostFromProfilePage(
-                                          post._id
-                                        )
-                                      }
-                                      color="rgb(83, 100, 113)"
-                                      fill="currentColor"
-                                      width={`${1.25}em`}
-                                      height={`${1.25}em`}
-                                      viewBox="0 0 24 24"
-                                      aria-hidden="true"
-                                      className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                    >
-                                      <g>
-                                        <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                      </g>
-                                    </svg>
-                                  )}
-                                </span>
+                                <PostPopover
+                                  postDeletionProcess={
+                                    handleDeletePostFromProfilePage
+                                  }
+                                  post={post}
+                                />
                               </div>
                               {/* three dots svg finish to check */}
                             </Stack>
@@ -1342,7 +1337,10 @@ function UserProfile() {
                                 >
                                   <span
                                     style={{
-                                      color: "rgb(83, 100, 113)",
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgb(83, 100, 113)",
                                       fontSize: "15px",
                                       lineHeight: "20px",
                                       fontWeight: "400",
@@ -1496,8 +1494,11 @@ function UserProfile() {
                                     viewBox="0 0 24 24"
                                     aria-hidden="true"
                                     className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                    color="rgb(83, 100, 113)"
-                                    fill="currentColor"
+                                    fill={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgb(83, 100, 113)"
+                                    }
                                   >
                                     <g>
                                       <path
@@ -1522,7 +1523,10 @@ function UserProfile() {
                                   <span
                                     className="post-description"
                                     style={{
-                                      color: "rgb(83, 100, 113)",
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgb(83, 100, 113)",
                                     }}
                                   >
                                     {post.reposted.length ? (
@@ -1587,8 +1591,11 @@ function UserProfile() {
                                         height={`${1.25}em`}
                                         viewBox="0 0 24 24"
                                         aria-hidden="true"
-                                        color="rgb(83, 100, 113)"
-                                        fill="currentColor"
+                                        fill={
+                                          themeName === "dark-theme"
+                                            ? "#71767A"
+                                            : "rgb(83, 100, 113)"
+                                        }
                                         className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                                       >
                                         <g>
@@ -1597,7 +1604,16 @@ function UserProfile() {
                                       </svg>
                                       <span className="post-description">
                                         {post.likes.length ? (
-                                          <span>{post.likes.length}</span>
+                                          <span
+                                            style={{
+                                              color:
+                                                themeName === "dark-theme"
+                                                  ? "#71767A"
+                                                  : "rgb(83, 100, 113)",
+                                            }}
+                                          >
+                                            {post.likes.length}
+                                          </span>
                                         ) : null}
                                       </span>
                                     </div>
@@ -1675,7 +1691,10 @@ function UserProfile() {
                     </div>
                     <div
                       style={{
-                        color: "rgb(83, 100, 113)",
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)",
                         lineHeight: "20px",
                         fontSize: "15px",
                         fontWeight: "400",
@@ -1833,7 +1852,10 @@ function UserProfile() {
                                         to={`/profile/${favorite.userId._id}`}
                                         style={{
                                           textDecoration: "none",
-                                          color: "rgb(83, 100, 113)",
+                                          color:
+                                            themeName === "dark-theme"
+                                              ? "#71767A"
+                                              : "rgb(83, 100, 113)",
                                           lineHeight: "20px",
                                           fontSize: "15px",
                                           fontWeight: "400",
@@ -1862,7 +1884,10 @@ function UserProfile() {
                                         <span
                                           className="post-circle-date-post-detail"
                                           style={{
-                                            color: "rgb(83, 100, 113)",
+                                            color:
+                                              themeName === "dark-theme"
+                                                ? "#71767A"
+                                                : "rgb(83, 100, 113)",
                                             lineHeight: "20px",
                                             fontSize: "15px",
                                             fontWeight: "400",
@@ -1883,57 +1908,12 @@ function UserProfile() {
 
                                 {/* three dots svg start to check */}
                                 <div className="p-1 ms-auto">
-                                  <span className="svg-three-dots-post-detail">
-                                    {/* show if post owner userId !equal currentUserId */}
-                                    {favorite.userId &&
-                                    favorite.userId._id !== userInfo._id ? (
-                                      <svg
-                                        style={{
-                                          cursor: "pointer",
-                                          backgroundColor: "rgb(29, 155, 240)",
-                                        }}
-                                        onClick={() =>
-                                          handleShowDetailPostFromProfilePage(
-                                            favorite._id
-                                          )
-                                        }
-                                        color="rgb(83, 100, 113)"
-                                        fill="currentColor"
-                                        width={`${1.25}em`}
-                                        height={`${1.25}em`}
-                                        viewBox="0 0 24 24"
-                                        aria-hidden="true"
-                                        className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                      >
-                                        <g>
-                                          <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                        </g>
-                                      </svg>
-                                    ) : (
-                                      <svg
-                                        style={{
-                                          cursor: "pointer",
-                                          backgroundColor: "crimson",
-                                        }}
-                                        onClick={() =>
-                                          handleDeletePostFromProfilePage(
-                                            favorite._id
-                                          )
-                                        }
-                                        color="rgb(83, 100, 113)"
-                                        fill="currentColor"
-                                        width={`${1.25}em`}
-                                        height={`${1.25}em`}
-                                        viewBox="0 0 24 24"
-                                        aria-hidden="true"
-                                        className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                      >
-                                        <g>
-                                          <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                        </g>
-                                      </svg>
-                                    )}
-                                  </span>
+                                  <PostPopover
+                                    postDeletionProcess={
+                                      handleDeletePostFromProfilePage
+                                    }
+                                    post={favorite}
+                                  />
                                 </div>
                                 {/* three dots svg finish to check */}
                               </Stack>
@@ -2099,6 +2079,8 @@ function UserProfile() {
                                       fill={
                                         favorite.reposted.includes(userInfo._id)
                                           ? "rgb(0, 186, 124)"
+                                          : themeName === "dark-theme"
+                                          ? "#71767A"
                                           : "rgb(83, 100, 113)"
                                       }
                                     >
@@ -2117,6 +2099,8 @@ function UserProfile() {
                                           userInfo._id
                                         )
                                           ? "rgb(0, 186, 124)"
+                                          : themeName === "dark-theme"
+                                          ? "#71767A"
                                           : "rgb(83, 100, 113)",
                                       }}
                                     >
@@ -2281,7 +2265,10 @@ function UserProfile() {
                     </div>
                     <div
                       style={{
-                        color: "rgb(83, 100, 113)",
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)",
                         lineHeight: "20px",
                         fontSize: "15px",
                         fontWeight: "400",
