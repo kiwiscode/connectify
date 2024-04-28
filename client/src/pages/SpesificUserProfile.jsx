@@ -21,6 +21,7 @@ import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColum
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import { ThemeContext } from "../context/ThemeContext";
 import UnfollowModal from "../components/unfollow-modal/UnfollowModal";
+import PostPopover from "../components/three-dots-popover/Popover";
 
 function SpesificUserProfile() {
   const [
@@ -29,7 +30,6 @@ function SpesificUserProfile() {
     darkModeActive,
     cyberpunkModeActive,
   ] = useContext(ThemeContext);
-  const socket = io.connect(`${API_URL}`);
 
   const { id } = useParams();
 
@@ -107,6 +107,7 @@ function SpesificUserProfile() {
   const [error, setError] = useState("");
   const [show, setShow] = useState("hide");
   const [isLoading, setIsLoading] = useState(false);
+  const socket = io.connect(`${API_URL}`);
 
   // socket io 1 client start to check
   const [notificationTest, setnotificationTest] = useState([]);
@@ -274,7 +275,6 @@ function SpesificUserProfile() {
             draggable: true,
             progress: undefined,
             transition: Bounce,
-            theme: "light",
           }
         );
       } else {
@@ -545,39 +545,28 @@ function SpesificUserProfile() {
       });
   };
 
-  const handleDeletePostFromSpesificUserProfilePage = (postId) => {
-    setpostId(postId);
-    axios
-      .post(
-        `${API_URL}/home/delete-post`,
-        { userId: userInfo._id, postId },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        if (favoriteWindow === "") {
-          setTimeout(() => {
-            handleShowSpesificUserProfilePageFavorites();
-          }, 500);
-        } else if (postsWindow === "") {
-          setTimeout(() => {
-            handleShowSpesificUserProfilePagePosts();
-          }, 500);
-        }
-        setError("");
-      })
-      .catch((error) => {
-        const { errorMessage } = error.response.data;
-
-        setError(errorMessage);
-      });
+  const postDeletedMessage = () => {
+    messageApi.success({
+      type: "success",
+      content: <div>Your post was deleted</div>,
+      duration: 6,
+      className: "custom-message-style",
+    });
   };
 
-  const handleShowDetailPostFromSpesificUserProfilePage = () => {
-    console.log("Button Clicked");
+  const handleDeletePostFromSpesificUserProfilePage = () => {
+    if (favoriteWindow === "") {
+      setTimeout(() => {
+        handleShowSpesificUserProfilePageFavorites();
+        postDeletedMessage();
+      }, 500);
+    } else if (postsWindow === "") {
+      setTimeout(() => {
+        handleShowSpesificUserProfilePagePosts();
+        postDeletedMessage();
+      }, 500);
+    }
+    setError("");
   };
 
   const handleRepost = (postId, findedPost) => {
@@ -718,7 +707,7 @@ function SpesificUserProfile() {
   return (
     <>
       {contextHolder}
-      <ToastContainer />
+      <ToastContainer theme={themeName === "dark-theme" ? "dark" : "light"} />
       <ResponsiveNavigationBarBottom
         refreshPosts={() => handleShowSpesificUserProfilePagePosts()}
         setLoadingTrue={() => setLoadingTrue()}
@@ -834,7 +823,15 @@ function SpesificUserProfile() {
                   >
                     <div>{profileInfo.username}</div>
                     {profileInfo.posts && (
-                      <div className="profile-paragraph">
+                      <div
+                        style={{
+                          color:
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)",
+                        }}
+                        className="profile-paragraph"
+                      >
                         {profileInfo.posts.length} posts
                       </div>
                     )}
@@ -1042,42 +1039,70 @@ function SpesificUserProfile() {
                   >
                     {profileInfo.username}
                   </div>
-                  <div style={{ color: "rgb(83, 100, 113)" }}>
+                  <div
+                    style={{
+                      color:
+                        themeName === "dark-theme"
+                          ? "#71767A"
+                          : "rgb(83, 100, 113)",
+                    }}
+                  >
                     @{profileInfo.username}
                     {""}
                     {""}
                     {profileInfo._id !== userInfo._id ? (
-                      <span
-                        style={{
-                          backgroundColor: getFollowingIds(
-                            profileInfo.following
-                          )
-                            ? getFollowingIds(profileInfo.following).includes(
-                                userInfo._id
-                              )
-                              ? "rgb(239, 243, 244)"
-                              : null
-                            : null,
-                          color: "rgb(83, 100, 113)",
-                          marginLeft: "4px",
-                          fontWeight: "500",
-                          lineHeight: "12px",
-                          fontSize: "11px",
-                          paddingLeft: "4px",
-                          paddingRight: "4px",
-                          paddingBottom: "2px",
-                          paddingTop: "2px",
-                          borderRadius: "3px",
-                        }}
-                      >
-                        {getFollowingIds(profileInfo.following)
-                          ? getFollowingIds(profileInfo.following).includes(
-                              userInfo._id
-                            )
-                            ? "Follows you"
-                            : null
-                          : null}
-                      </span>
+                      <>
+                        {getFollowingIds(profileInfo?.following)?.includes(
+                          userInfo._id
+                        ) ? (
+                          <>
+                            <span
+                              style={{
+                                backgroundColor:
+                                  themeName === "dark-theme"
+                                    ? "#202327"
+                                    : "rgba(239,243,244,1.00)",
+                                // getFollowingIds(
+                                //   profileInfo.following
+                                // )
+                                //   ? getFollowingIds(
+                                //       profileInfo.following
+                                //     ).includes(userInfo._id) &&
+                                //     themeName === "dark-theme"
+                                //     ? "#202327"
+                                //     : themeName === "dark-theme"
+                                //     ? "black"
+                                //     : themeName === "light-theme"
+                                //     ? "white"
+                                //     : null
+                                //   : null,
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "rgb(83, 100, 113)",
+
+                                marginLeft: "4px",
+                                fontWeight: "500",
+                                lineHeight: "12px",
+                                fontSize: "11px",
+                                paddingLeft: "4px",
+                                paddingRight: "4px",
+                                paddingBottom: "2px",
+                                paddingTop: "2px",
+                                borderRadius: "3px",
+                              }}
+                            >
+                              {getFollowingIds(profileInfo.following)
+                                ? getFollowingIds(
+                                    profileInfo.following
+                                  ).includes(userInfo._id)
+                                  ? "Follows you"
+                                  : null
+                                : null}
+                            </span>
+                          </>
+                        ) : null}
+                      </>
                     ) : null}
                   </div>
                   <div>
@@ -1134,7 +1159,10 @@ function SpesificUserProfile() {
                       <span
                         style={{
                           cursor: "pointer",
-                          color: "rgb(83, 100, 113)",
+                          color:
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)",
                           fontSize: "14px",
                           lineHeight: "16px",
                           fontWeight: "400",
@@ -1165,7 +1193,10 @@ function SpesificUserProfile() {
                       </span>{" "}
                       <span
                         style={{
-                          color: "rgb(83, 100, 113)",
+                          color:
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)",
                           fontSize: "14px",
                           lineHeight: "16px",
                           fontWeight: "400",
@@ -1230,7 +1261,10 @@ function SpesificUserProfile() {
                     <span
                       style={{
                         fontWeight: "400",
-                        color: "rgb(83,100,113)",
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)",
                       }}
                     >
                       Posts
@@ -1270,7 +1304,10 @@ function SpesificUserProfile() {
                     <span
                       style={{
                         fontWeight: "400",
-                        color: "rgb(83,100,113)",
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)",
                       }}
                     >
                       Likes
@@ -1364,8 +1401,11 @@ function SpesificUserProfile() {
                                     viewBox="0 0 24 24"
                                     aria-hidden="true"
                                     className="repost-svg-post-box svg-repost-post box svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                    color="rgb(83, 100, 113)"
-                                    fill="currentColor"
+                                    fill={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgb(83, 100, 113)"
+                                    }
                                   >
                                     <g>
                                       <path
@@ -1376,12 +1416,15 @@ function SpesificUserProfile() {
                                     </g>
                                   </svg>
                                   <Link
-                                    className="hover-reposted-text"
+                                    className={`hover-reposted-text hover-reposted-text-${themeName}`}
                                     style={{
                                       fontSize: "13px",
                                       lineHeight: "16px",
                                       fontWeight: "700",
-                                      color: "rgb(83, 100, 113)",
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgb(83, 100, 113)",
                                       marginLeft: "10px",
                                       cursor: "pointer",
                                       textDecoration: "none",
@@ -1396,18 +1439,28 @@ function SpesificUserProfile() {
                               {/* start to check */}
                               {post.isReposted &&
                               userInfo._id !== profileInfo._id ? (
-                                <div>
+                                <div
+                                  style={{
+                                    cursor: "pointer",
+                                  }}
+                                >
                                   <svg
                                     style={{
                                       marginLeft: "20px",
+                                      position: "relative",
+                                      top: "5px",
+                                      left: "20px",
                                     }}
                                     width={`16px`}
                                     height={`16px`}
                                     viewBox="0 0 24 24"
                                     aria-hidden="true"
                                     className="repost-svg-post-box svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                    color="rgb(83, 100, 113)"
-                                    fill="currentColor"
+                                    fill={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgb(83, 100, 113)"
+                                    }
                                   >
                                     <g>
                                       <path
@@ -1418,15 +1471,21 @@ function SpesificUserProfile() {
                                     </g>
                                   </svg>
                                   <Link
-                                    className="hover-reposted-text"
+                                    className={`hover-reposted-text hover-reposted-text-${themeName}`}
                                     style={{
                                       fontSize: "13px",
                                       lineHeight: "16px",
                                       fontWeight: "700",
-                                      color: "rgb(83, 100, 113)",
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgb(83, 100, 113)",
                                       marginLeft: "10px",
                                       cursor: "pointer",
                                       textDecoration: "none",
+                                      position: "relative",
+                                      top: "5px",
+                                      left: "15px",
                                     }}
                                     onClick={() => setclickedPostBox(post)}
                                     to={`/profile/${post.reposted[0]._id}`}
@@ -1552,7 +1611,10 @@ function SpesificUserProfile() {
                                       to={`/profile/${post.userId._id}`}
                                       style={{
                                         textDecoration: "none",
-                                        color: "rgb(83, 100, 113)",
+                                        color:
+                                          themeName === "dark-theme"
+                                            ? "#71767A"
+                                            : "rgb(83, 100, 113)",
                                         lineHeight: "20px",
                                         fontSize: "15px",
                                         fontWeight: "400",
@@ -1575,7 +1637,10 @@ function SpesificUserProfile() {
                                     >
                                       <span
                                         style={{
-                                          color: "rgb(83, 100, 113)",
+                                          color:
+                                            themeName === "dark-theme"
+                                              ? "#71767A"
+                                              : "rgb(83, 100, 113)",
                                           lineHeight: "20px",
                                           fontSize: "15px",
                                           fontWeight: "400",
@@ -1600,57 +1665,12 @@ function SpesificUserProfile() {
                         
                         {/* three dots svg start to check */}
                               <div className="p-1 ms-auto">
-                                <span>
-                                  {/* show if post owner userId !equal currentUserId */}
-                                  {post.userId &&
-                                  post.userId._id !== userInfo._id ? (
-                                    <svg
-                                      style={{
-                                        cursor: "pointer",
-                                        backgroundColor: "rgb(29, 155, 240)",
-                                      }}
-                                      onClick={() =>
-                                        handleShowSpesificUserProfilePagePosts(
-                                          post._id
-                                        )
-                                      }
-                                      color="rgb(83, 100, 113)"
-                                      fill="currentColor"
-                                      width={`${1.25}em`}
-                                      height={`${1.25}em`}
-                                      viewBox="0 0 24 24"
-                                      aria-hidden="true"
-                                      className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                    >
-                                      <g>
-                                        <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                      </g>
-                                    </svg>
-                                  ) : (
-                                    <svg
-                                      style={{
-                                        cursor: "pointer",
-                                        backgroundColor: "crimson",
-                                      }}
-                                      onClick={() =>
-                                        handleDeletePostFromSpesificUserProfilePage(
-                                          post._id
-                                        )
-                                      }
-                                      color="rgb(83, 100, 113)"
-                                      fill="currentColor"
-                                      width={`${1.25}em`}
-                                      height={`${1.25}em`}
-                                      viewBox="0 0 24 24"
-                                      aria-hidden="true"
-                                      className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                    >
-                                      <g>
-                                        <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                      </g>
-                                    </svg>
-                                  )}
-                                </span>
+                                <PostPopover
+                                  postDeletionProcess={
+                                    handleDeletePostFromSpesificUserProfilePage
+                                  }
+                                  post={post}
+                                />
                               </div>
                               {/* three dots svg finish to check */}
                             </Stack>
@@ -1679,7 +1699,10 @@ function SpesificUserProfile() {
                                 >
                                   <span
                                     style={{
-                                      color: "rgb(83, 100, 113)",
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgb(83, 100, 113)",
                                       fontSize: "15px",
                                       lineHeight: "20px",
                                       fontWeight: "400",
@@ -1839,8 +1862,11 @@ function SpesificUserProfile() {
                                     viewBox="0 0 24 24"
                                     aria-hidden="true"
                                     className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                    color="rgb(83, 100, 113)"
-                                    fill="currentColor"
+                                    fill={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgb(83, 100, 113)"
+                                    }
                                   >
                                     <g>
                                       <path
@@ -1865,7 +1891,10 @@ function SpesificUserProfile() {
                                   <span
                                     className="post-description"
                                     style={{
-                                      color: "rgb(83, 100, 113)",
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgb(83, 100, 113)",
                                     }}
                                   >
                                     {post.reposted.length ? (
@@ -1930,8 +1959,11 @@ function SpesificUserProfile() {
                                         height={`${1.25}em`}
                                         viewBox="0 0 24 24"
                                         aria-hidden="true"
-                                        color="rgb(83, 100, 113)"
-                                        fill="currentColor"
+                                        fill={
+                                          themeName === "dark-theme"
+                                            ? "#71767A"
+                                            : "rgb(83, 100, 113)"
+                                        }
                                         className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                                       >
                                         <g>
@@ -1940,7 +1972,16 @@ function SpesificUserProfile() {
                                       </svg>
                                       <span className="post-description">
                                         {post.likes.length ? (
-                                          <span>{post.likes.length}</span>
+                                          <span
+                                            style={{
+                                              color:
+                                                themeName === "dark-theme"
+                                                  ? "#71767A"
+                                                  : "rgb(83, 100, 113)",
+                                            }}
+                                          >
+                                            {post.likes.length}
+                                          </span>
                                         ) : null}
                                       </span>
                                     </div>
@@ -2021,10 +2062,14 @@ function SpesificUserProfile() {
                           " " +
                           "haven’t posted anything yet"
                         : "You haven't posted anything yet."}
+                      asd
                     </div>
                     <div
                       style={{
-                        color: "rgb(83, 100, 113)",
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)",
                         lineHeight: "20px",
                         fontSize: "15px",
                         fontWeight: "400",
@@ -2186,7 +2231,10 @@ function SpesificUserProfile() {
                                           to={`/profile/${favorite.userId._id}`}
                                           style={{
                                             textDecoration: "none",
-                                            color: "rgb(83, 100, 113)",
+                                            color:
+                                              themeName === "dark-theme"
+                                                ? "#71767A"
+                                                : "rgb(83, 100, 113)",
                                             lineHeight: "20px",
                                             fontSize: "15px",
                                             fontWeight: "400",
@@ -2215,7 +2263,10 @@ function SpesificUserProfile() {
                                           <span
                                             className="post-circle-date-post-detail"
                                             style={{
-                                              color: "rgb(83, 100, 113)",
+                                              color:
+                                                themeName === "dark-theme"
+                                                  ? "#71767A"
+                                                  : "rgb(83, 100, 113)",
                                               lineHeight: "20px",
                                               fontSize: "15px",
                                               fontWeight: "400",
@@ -2238,58 +2289,12 @@ function SpesificUserProfile() {
 
                                   {/* three dots svg start to check */}
                                   <div className="p-1 ms-auto">
-                                    <span className="svg-three-dots-post-detail">
-                                      {/* show if post owner userId !equal currentUserId */}
-                                      {favorite.userId &&
-                                      favorite.userId._id !== userInfo._id ? (
-                                        <svg
-                                          style={{
-                                            cursor: "pointer",
-                                            backgroundColor:
-                                              "rgb(29, 155, 240)",
-                                          }}
-                                          onClick={() =>
-                                            handleShowDetailPostFromSpesificUserProfilePage(
-                                              favorite._id
-                                            )
-                                          }
-                                          color="rgb(83, 100, 113)"
-                                          fill="currentColor"
-                                          width={`${1.25}em`}
-                                          height={`${1.25}em`}
-                                          viewBox="0 0 24 24"
-                                          aria-hidden="true"
-                                          className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                        >
-                                          <g>
-                                            <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                          </g>
-                                        </svg>
-                                      ) : (
-                                        <svg
-                                          style={{
-                                            cursor: "pointer",
-                                            backgroundColor: "crimson",
-                                          }}
-                                          onClick={() =>
-                                            handleDeletePostFromSpesificUserProfilePage(
-                                              favorite._id
-                                            )
-                                          }
-                                          color="rgb(83, 100, 113)"
-                                          fill="currentColor"
-                                          width={`${1.25}em`}
-                                          height={`${1.25}em`}
-                                          viewBox="0 0 24 24"
-                                          aria-hidden="true"
-                                          className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                        >
-                                          <g>
-                                            <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                          </g>
-                                        </svg>
-                                      )}
-                                    </span>
+                                    <PostPopover
+                                      postDeletionProcess={
+                                        handleDeletePostFromSpesificUserProfilePage
+                                      }
+                                      post={favorite}
+                                    />
                                   </div>
                                   {/* three dots svg finish to check */}
                                 </Stack>
@@ -2460,8 +2465,11 @@ function SpesificUserProfile() {
                                         viewBox="0 0 24 24"
                                         aria-hidden="true"
                                         className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                        color="rgb(83, 100, 113)"
-                                        fill="currentColor"
+                                        fill={
+                                          themeName === "dark-theme"
+                                            ? "#71767A"
+                                            : "rgb(83, 100, 113)"
+                                        }
                                       >
                                         <g>
                                           <path
@@ -2474,7 +2482,10 @@ function SpesificUserProfile() {
                                       <span
                                         className="post-description"
                                         style={{
-                                          color: "rgb(83, 100, 113)",
+                                          color:
+                                            themeName === "dark-theme"
+                                              ? "#71767A"
+                                              : "rgb(83, 100, 113)",
                                         }}
                                       >
                                         {favorite.reposted.length ? (
@@ -2551,8 +2562,11 @@ function SpesificUserProfile() {
                                           height={`${1.25}em`}
                                           viewBox="0 0 24 24"
                                           aria-hidden="true"
-                                          color="rgb(83, 100, 113)"
-                                          fill="currentColor"
+                                          fill={
+                                            themeName === "dark-theme"
+                                              ? "#71767A"
+                                              : "rgb(83, 100, 113)"
+                                          }
                                           className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                                         >
                                           <g>
@@ -2561,7 +2575,16 @@ function SpesificUserProfile() {
                                         </svg>
                                         <span className="post-description">
                                           {favorite.likes.length ? (
-                                            <span>{favorite.likes.length}</span>
+                                            <span
+                                              style={{
+                                                color:
+                                                  themeName === "dark-theme"
+                                                    ? "#71767A"
+                                                    : "rgb(83, 100, 113)",
+                                              }}
+                                            >
+                                              {favorite.likes.length}
+                                            </span>
                                           ) : null}
                                         </span>
                                       </div>
@@ -2649,7 +2672,10 @@ function SpesificUserProfile() {
                     </div>
                     <div
                       style={{
-                        color: "rgb(83, 100, 113)",
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)",
                         lineHeight: "20px",
                         fontSize: "15px",
                         fontWeight: "400",

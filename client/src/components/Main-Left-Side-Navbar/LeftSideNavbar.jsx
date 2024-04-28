@@ -362,6 +362,8 @@ function LeftSideNavBar({
 
   const { height, width } = useWindowDimensions();
 
+  const checkUnReadMessages = () => {};
+
   return (
     <>
       <Col
@@ -416,7 +418,7 @@ function LeftSideNavBar({
               </div>
             </NavLink>
             {/* Second */}
-            <Link
+            <NavLink
               // to={"/home"}
               onClick={locateHomePage}
               className={`home-nav-link home-nav-link-${themeName}`}
@@ -471,7 +473,7 @@ function LeftSideNavBar({
                   </span>
                 </div>
               </span>
-            </Link>
+            </NavLink>
             {/* Third */}
 
             <NavLink
@@ -496,36 +498,40 @@ function LeftSideNavBar({
                     position: "relative",
                   }}
                 >
-                  {unReadNotifications?.length === 0 ? null : (
-                    <div
-                      style={{
-                        cursor: "pointer",
-                        position: "absolute",
-                        backgroundColor: "rgb(29, 155, 240)",
-                        boxSizing: "content-box",
-                        top: "4px",
-                        left: "24px",
-                        minWidth: "18px",
-                        minHeight: "18px",
-                        borderRadius: "50%",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        border: "1px solid white",
-                      }}
-                    >
-                      {" "}
-                      <span
-                        style={{
-                          fontWeight: "400",
-                          fontSize: "11px",
-                          lineHeight: "12px",
-                          color: "white",
-                        }}
-                      >
-                        {unReadNotifications?.length}
-                      </span>
-                    </div>
+                  {width < 1200 ? null : (
+                    <>
+                      {unReadNotifications?.length === 0 ? null : (
+                        <div
+                          style={{
+                            cursor: "pointer",
+                            position: "absolute",
+                            backgroundColor: "rgb(29, 155, 240)",
+                            boxSizing: "content-box",
+                            top: "4px",
+                            left: "24px",
+                            minWidth: "18px",
+                            minHeight: "18px",
+                            borderRadius: "50%",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            border: "1px solid white",
+                          }}
+                        >
+                          {" "}
+                          <span
+                            style={{
+                              fontWeight: "400",
+                              fontSize: "11px",
+                              lineHeight: "12px",
+                              color: "white",
+                            }}
+                          >
+                            {unReadNotifications?.length}
+                          </span>
+                        </div>
+                      )}
+                    </>
                   )}
                   <svg
                     style={{}}
@@ -584,8 +590,44 @@ function LeftSideNavBar({
                   style={{
                     display: "inline-block",
                     padding: "12px",
+                    position: "relative",
                   }}
                 >
+                  {width < 1200 ? null : (
+                    <>
+                      {unReadNotifications?.length === 0 ? null : (
+                        <div
+                          style={{
+                            cursor: "pointer",
+                            position: "absolute",
+                            backgroundColor: "rgb(29, 155, 240)",
+                            boxSizing: "content-box",
+                            top: "4px",
+                            left: "24px",
+                            minWidth: "18px",
+                            minHeight: "18px",
+                            borderRadius: "50%",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            border: "1px solid white",
+                          }}
+                        >
+                          {" "}
+                          <span
+                            style={{
+                              fontWeight: "400",
+                              fontSize: "11px",
+                              lineHeight: "12px",
+                              color: "white",
+                            }}
+                          >
+                            {unReadNotifications?.length}
+                          </span>
+                        </div>
+                      )}
+                    </>
+                  )}
                   <svg
                     color={themeName === "dark-theme" ? "white" : ""}
                     fill="currentColor"

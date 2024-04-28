@@ -282,8 +282,8 @@ const handleDeleteReposts = (req, res) => {
             }
           })
           .catch(() => {});
-        // notified olması mümkün olan kullanıcıdan notificationı silme veya bırakma işlemi finish to check
       }
+      // notified olması mümkün olan kullanıcıdan notificationı silme veya bırakma işlemi finish to check
 
       if (post.isComment) {
         console.log("This post is comment =>", post);
@@ -291,14 +291,16 @@ const handleDeleteReposts = (req, res) => {
           .then((commentFromDataBase) => {
             // splice the user id from comment start to check
 
-            const newRepostedArray = commentFromDataBase[0].reposted.filter(
+            const newRepostedArray = commentFromDataBase[0]?.reposted.filter(
               (eachLiker) => {
                 return eachLiker._id.toString() !== userId;
               }
             );
 
-            commentFromDataBase[0].reposted = newRepostedArray;
-            commentFromDataBase[0].save();
+            if (commentFromDataBase[0]) {
+              commentFromDataBase[0].reposted = newRepostedArray;
+              commentFromDataBase[0].save();
+            }
 
             // splice the user id from comment finish to check
           })

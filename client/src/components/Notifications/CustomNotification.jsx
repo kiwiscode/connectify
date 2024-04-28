@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
+import { ThemeContext } from "../../context/ThemeContext";
 
 const CustomNotification = ({
   senderName,
@@ -14,7 +15,12 @@ const CustomNotification = ({
   const redirectPostDetailIfNoContentOnlyImage = () => {
     navigate(`/${senderInfo.username}/status/${contactHasBeenMade._id}`);
   };
-
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
   console.log("Contact has been made =>", contactHasBeenMade);
   return (
     <>
@@ -29,9 +35,20 @@ const CustomNotification = ({
           alignItems: "center",
           padding: "10px",
           borderRadius: "8px",
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Gölgelendirme efekti
-          background: "#fff", // Arkaplan rengi
-          border: "1px solid #e1e8ed", // Kenarlık rengi
+          filter:
+            themeName === "dark-theme"
+              ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+              : "",
+
+          boxShadow:
+            themeName === "dark-theme"
+              ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+              : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
+          background: themeName === "dark-theme" ? "black" : "#fff",
+          border:
+            themeName === "dark-theme"
+              ? "1px solid rgb(70,70,70)"
+              : "1px solid #e1e8ed",
         }}
       >
         <Link
@@ -90,7 +107,12 @@ const CustomNotification = ({
                     }}
                     to={`/profile/${senderInfo._id}`}
                   >
-                    <span className="post-detail-underline-text-2">
+                    <span
+                      style={{
+                        color: themeName === "dark-theme" ? "white" : "black",
+                      }}
+                      className="post-detail-underline-text-2"
+                    >
                       {senderInfo.fullname}
                     </span>
                   </Link>{" "}
@@ -107,7 +129,13 @@ const CustomNotification = ({
                 }}
                 to={`/${userInfo.username}/status/${contactHasBeenMade._id}`}
               >
-                <p>{contactHasBeenMade.content}</p>
+                <p
+                  style={{
+                    color: themeName === "dark-theme" ? "white" : "",
+                  }}
+                >
+                  {contactHasBeenMade.content}
+                </p>
               </Link>
             </>
           )}
@@ -125,7 +153,12 @@ const CustomNotification = ({
                     }}
                     to={`/profile/${senderInfo._id}`}
                   >
-                    <span className="post-detail-underline-text-2">
+                    <span
+                      style={{
+                        color: themeName === "dark-theme" ? "white" : "black",
+                      }}
+                      className="post-detail-underline-text-2"
+                    >
                       {senderInfo.fullname}
                     </span>
                   </Link>{" "}
@@ -162,7 +195,12 @@ const CustomNotification = ({
                     }}
                     to={`/profile/${senderInfo._id}`}
                   >
-                    <span className="post-detail-underline-text-2">
+                    <span
+                      style={{
+                        color: themeName === "dark-theme" ? "white" : "black",
+                      }}
+                      className="post-detail-underline-text-2"
+                    >
                       {senderInfo.fullname}
                     </span>
                   </Link>{" "}
@@ -200,7 +238,12 @@ const CustomNotification = ({
                     }}
                     to={`/profile/${senderInfo._id}`}
                   >
-                    <span className="post-detail-underline-text-2">
+                    <span
+                      style={{
+                        color: themeName === "dark-theme" ? "white" : "black",
+                      }}
+                      className="post-detail-underline-text-2"
+                    >
                       {senderInfo.fullname}
                     </span>
                   </Link>{" "}
@@ -226,7 +269,12 @@ const CustomNotification = ({
                     }}
                     to={`/profile/${senderInfo._id}`}
                   >
-                    <span className="post-detail-underline-text-2">
+                    <span
+                      style={{
+                        color: themeName === "dark-theme" ? "white" : "black",
+                      }}
+                      className="post-detail-underline-text-2"
+                    >
                       {senderInfo.fullname}
                     </span>
                   </Link>{" "}

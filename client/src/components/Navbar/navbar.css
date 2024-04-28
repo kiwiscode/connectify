@@ -12,16 +12,18 @@
   }
 
   .responsive-navigation-bar-bottom {
-    background-color: white !important;
     border-top: 1px solid rgba(0, 0, 0, 0.1) !important;
     outline-style: none !important;
     bottom: 0px !important;
     display: flex !important;
     width: 100% !important;
-
     justify-content: space-around !important;
     position: fixed !important;
     z-index: 9999 !important;
+  }
+
+  .responsive-navigation-bar-bottom div a a {
+    text-decoration: none;
   }
 
   .responsive-navigation-bar-bottom div {
@@ -30,6 +32,11 @@
 
   .responsive-navigation-bar-bottom div:hover {
     background-color: #e7e7e8;
+  }
+
+  .responsive-navigation-bar-bottom-dark-theme div:hover {
+    background-color: #061019;
+    transition-duration: 0.2s;
   }
 }
 

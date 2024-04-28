@@ -9,10 +9,6 @@ const themes = {
     backgroundColor: "white",
     color: "black",
   },
-  cyberpunk: {
-    backgroundColor: "rgba(255,243,72,255)",
-    color: "black",
-  },
 };
 
 export const ThemeContext = createContext();
@@ -20,17 +16,23 @@ export const ThemeContext = createContext();
 export const ThemeProvider = ({ children }) => {
   const [themeName, setThemeName] = useState("light-theme");
 
-  const lightModeActive = () => {
-    localStorage.setItem("themeName", "light-theme");
-    setThemeName("light-theme");
-  };
-  const darkModeActive = () => {
-    localStorage.setItem("themeName", "dark-theme");
-    setThemeName("dark-theme");
-  };
-  const cyberpunkModeActive = () => {
-    localStorage.setItem("themeName", "cyberpunk-theme");
-    setThemeName("cyberpunk-theme");
+  const toggleThemeBetweenLightDarkMode = () => {
+    if (themeName === "dark-theme") {
+      console.log("Function is working first condition !");
+
+      localStorage.setItem("themeName", "light-theme");
+      setThemeName("light-theme");
+    } else if (themeName === "light-theme") {
+      console.log("Function is working second condition !");
+
+      localStorage.setItem("themeName", "dark-theme");
+      setThemeName("dark-theme");
+    } else {
+      console.log("Function is working third condition !");
+
+      localStorage.setItem("themeName", "light-theme");
+      setThemeName("light-theme");
+    }
   };
 
   const theme =
@@ -38,8 +40,6 @@ export const ThemeProvider = ({ children }) => {
       ? themes.light
       : themeName === "dark-theme"
       ? themes.dark
-      : themeName === "cyberpunk-theme"
-      ? themes.cyberpunk
       : {};
 
   useEffect(() => {
@@ -51,12 +51,7 @@ export const ThemeProvider = ({ children }) => {
 
   return (
     <ThemeContext.Provider
-      value={[
-        { theme, themeName },
-        lightModeActive,
-        darkModeActive,
-        cyberpunkModeActive,
-      ]}
+      value={[{ theme, themeName }, toggleThemeBetweenLightDarkMode]}
     >
       {children}
     </ThemeContext.Provider>

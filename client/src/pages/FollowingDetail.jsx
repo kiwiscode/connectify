@@ -20,12 +20,11 @@ import { ThemeContext } from "../context/ThemeContext";
 import UnfollowModal from "../components/unfollow-modal/UnfollowModal";
 
 function FollowingDetailPage() {
-  const socket = io.connect(`${API_URL}`);
   const { userId } = useParams();
+  const socket = io.connect(`${API_URL}`);
 
   const navigate = useNavigate();
 
-  // const { getToken, userInfo, socket } = useContext(UserContext);
   const { getToken, userInfo } = useContext(UserContext);
 
   const [following, setFollowing] = useState([]);
@@ -140,7 +139,6 @@ function FollowingDetailPage() {
             draggable: true,
             progress: undefined,
             transition: Bounce,
-            theme: "light",
           }
         );
       } else {
@@ -165,6 +163,8 @@ function FollowingDetailPage() {
           ? "rgb(29, 155, 240"
           : activeTab === tab && themeName === "dark-theme"
           ? "white"
+          : themeName === "dark-theme"
+          ? "#71767A"
           : "rgb(83,100,113)",
       fontWeight: activeTab === tab ? "700" : "400",
       lineHeight: "20px",
@@ -242,7 +242,7 @@ function FollowingDetailPage() {
   return (
     <>
       {contextHolder}
-      <ToastContainer />
+      <ToastContainer theme={themeName === "dark-theme" ? "dark" : "light"} />
 
       <ResponsiveNavigationBarBottom />
       {/* <ResponsiveNavigationBarTop /> */}
@@ -350,7 +350,15 @@ function FollowingDetailPage() {
                 }}
               >
                 <div>{followingofthemonitoreduser.username}</div>
-                <div className="profile-paragraph">
+                <div
+                  style={{
+                    color:
+                      themeName === "dark-theme"
+                        ? "#71767A"
+                        : "rgb(83, 100, 113)",
+                  }}
+                  className="profile-paragraph"
+                >
                   @{followingofthemonitoreduser.username}
                 </div>
               </div>
@@ -600,7 +608,10 @@ function FollowingDetailPage() {
                                       fontSize: "15px",
                                       fontWeight: "400",
                                       lineHeight: "20px",
-                                      color: "rgb(83, 100, 113)",
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgb(83, 100, 113)",
                                       position: "relative",
                                     }}
                                   >
@@ -616,13 +627,16 @@ function FollowingDetailPage() {
                                       marginLeft: "4px",
                                       fontWeight: "500",
                                       lineHeight: "10px",
-                                      color: "rgb(83, 100, 113)",
                                       fontSize: "11px",
                                       wordWrap: "break-word",
                                       whiteSpace: "nowrap",
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgb(83, 100, 113)",
                                       backgroundColor:
                                         themeName === "dark-theme"
-                                          ? "#24282b"
+                                          ? "#202327"
                                           : "rgba(239,243,244,1.00)",
                                       borderRadius: "3px",
                                       padding: "4px",
@@ -733,7 +747,10 @@ function FollowingDetailPage() {
                     </div>
                     <div
                       style={{
-                        color: "rgb(83, 100, 113)",
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)",
                         lineHeight: "20px",
                         fontSize: "15px",
                         fontWeight: "400",
