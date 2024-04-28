@@ -28,6 +28,8 @@ router.post("/login-variant-one-result", (req, res) => {
     isVariantOneResultRouteSuccess
   );
 
+  req.session.currentUser = "Hello World!";
+
   const userFirstInfoFromStepOne = authentication.usernameOrEmail;
 
   const passwordFromReqBody = authentication.password;
@@ -197,7 +199,9 @@ const handleLoginSuccess = (req, res, next) => {
     console.log("Req user =>", req.user?.username);
     if (req.user) {
       // when working on local version
-      res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+      // res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+      res.setHeader("Access-Control-Allow-Origin", "*");
+
       // when working on deployment version
       // ??
       res.setHeader("Access-Control-Allow-Credentials", "true");

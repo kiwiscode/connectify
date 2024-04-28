@@ -667,7 +667,10 @@ function Posts() {
                   <div>
                     <span
                       style={{
-                        color: "rgb(83, 100, 113)",
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)",
                         fontSize: "15px",
                         lineHeight: "20px",
                         fontWeight: "400",

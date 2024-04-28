@@ -23,6 +23,7 @@ import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 
 import { Bounce, ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import CustomNotification from "../components/Notifications/CustomNotification";
 
@@ -39,6 +40,7 @@ import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColum
 import useWindowDimensions from "../hooks/getWindowDimensions";
 import { TextField } from "@mui/material";
 import { ThemeContext } from "../context/ThemeContext";
+import PostPopover from "../components/three-dots-popover/Popover";
 
 function MainPage() {
   const [
@@ -49,6 +51,7 @@ function MainPage() {
   ] = useContext(ThemeContext);
 
   const socket = io.connect(`${API_URL}`);
+
   const [isSubModalOpened, setIsSubModalOpened] = useState(false);
   const [tabIndexValue, settabIndexValue] = useState(null);
   const handleModalToggle = (modalOpen) => {
@@ -250,22 +253,6 @@ function MainPage() {
     }
   };
   const [shouldHide, setshouldHide] = useState(true);
-
-  // socket io 4 client start to check
-
-  // socket io 4 client start to check
-  // useEffect(() => {
-  //   console.log("Here is working !");
-  //   setshouldHide(true);
-  //   handleShowPostsHomePage();
-
-  //   socket.on("socket_id_for_user", (socketId) => {
-  //     localStorage.setItem("socketId", socketId);
-  //   });
-
-  //   socket.emit("setUsername", userInfo.username);
-  // }, []);
-  // socket io 4 client finish to check
 
   const getUser = async () => {
     try {
@@ -585,33 +572,21 @@ function MainPage() {
       });
   };
 
-  const handleDeletePostFromHomePage = (postId) => {
-    setpostId(postId);
-    axios
-      .post(
-        `${API_URL}/home/delete-post`,
-        { userId: userInfo._id, postId },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        setTimeout(() => {
-          handleShowPostsHomePage();
-          setError("");
-        }, 500);
-      })
-      .catch((error) => {
-        const { errorMessage } = error.response.data;
-
-        setError(errorMessage);
-      });
+  const postDeletedMessage = () => {
+    messageApi.success({
+      type: "success",
+      content: <div>Your post was deleted</div>,
+      duration: 6,
+      className: "custom-message-style",
+    });
   };
 
-  const handleShowDetailPostFromHomePage = (postId) => {
-    console.log(postId);
+  const handleDeletePostFromHomePage = () => {
+    setTimeout(() => {
+      handleShowPostsHomePage();
+      postDeletedMessage();
+      setError("");
+    }, 500);
   };
 
   const handlePost = () => {
@@ -771,7 +746,7 @@ function MainPage() {
           ? "rgb(29, 155, 240"
           : activeTab === tab && themeName === "dark-theme"
           ? "white"
-          : "rgb(83,100,113)",
+          : "#71767A",
       fontWeight: activeTab === tab ? "700" : "400",
       lineHeight: "20px",
       fontSize: "15px",
@@ -1025,63 +1000,6 @@ function MainPage() {
       });
   };
 
-  // useEffects start to check
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/individual-subscribe-checkout-success`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        console.log("Response for subscription =>", response);
-        if (response.status === 200) {
-          setsubscriptionCompletedStatus(200);
-        }
-      })
-      .catch((error) => {
-        setsubscriptionCompletedStatus(500);
-        // console.log("Error for subscription =>", error);
-      });
-  }, []);
-
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/organization-basic-subscribe-checkout-success`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        console.log("Response for subscription =>", response);
-        if (response.status === 200) {
-          setsubscriptionCompletedStatus(200);
-        }
-      })
-      .catch((error) => {
-        setsubscriptionCompletedStatus(500);
-        // console.log("Error for subscription =>", error);
-      });
-  }, []);
-
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/organization-full-access-subscribe-checkout-success`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        console.log("Response for subscription =>", response);
-        if (response.status === 200) {
-          setsubscriptionCompletedStatus(200);
-        }
-      })
-      .catch((error) => {
-        setsubscriptionCompletedStatus(500);
-        // console.log("Error for subscription =>", error);
-      });
-  }, []);
   useEffect(() => {
     axios
       .post(
@@ -1204,7 +1122,6 @@ function MainPage() {
             draggable: true,
             progress: undefined,
             transition: Bounce,
-            theme: "light",
           }
         );
       } else {
@@ -1292,6 +1209,9 @@ function MainPage() {
                 show={showSubscriptionCompletedModal}
                 onHide={handleCloseSubscriptionCompletedModal}
                 centered={true}
+                contentClassName={
+                  themeName === "dark-theme" ? "dark-theme-spinner-modal" : ""
+                }
               >
                 <Modal.Body
                   style={{
@@ -1307,6 +1227,7 @@ function MainPage() {
                       lineHeight: "36px",
                       fontSize: "31px",
                       fontWeight: "800",
+                      color: themeName === "dark-theme" ? "white" : "",
                     }}
                   >
                     Subscription Completed!
@@ -1368,7 +1289,7 @@ function MainPage() {
                       width: "65%",
                       height: "52px",
                     }}
-                    className="login-button mt-5"
+                    className={`login-button mt-5 ${themeName}-white-btn`}
                     variant="dark"
                   >
                     Continue to Connectify
@@ -1383,6 +1304,12 @@ function MainPage() {
                 show={showSubscriptionCompletedModal}
                 onHide={handleCloseSubscriptionCompletedModal}
                 centered={true}
+                contentClassName={
+                  themeName === "dark-theme" ? "dark-theme-spinner-modal" : ""
+                }
+                backdropClassName={
+                  themeName === "dark-theme" ? `back-drop-${themeName}` : ""
+                }
               >
                 <Modal.Body
                   style={{
@@ -1398,6 +1325,7 @@ function MainPage() {
                       lineHeight: "36px",
                       fontSize: "31px",
                       fontWeight: "800",
+                      color: themeName === "dark-theme" ? "white" : "black",
                     }}
                   >
                     Subscription Completed!
@@ -1459,7 +1387,7 @@ function MainPage() {
                       width: "65%",
                       height: "52px",
                     }}
-                    className="login-button mt-5"
+                    className={`login-button mt-5 ${themeName}-white-btn`}
                     variant="dark"
                   >
                     Continue to Connectify
@@ -2221,7 +2149,7 @@ function MainPage() {
           </Modal>
         </>
       )}
-      <ToastContainer />
+      <ToastContainer theme={themeName === "dark-theme" ? "dark" : "light"} />
       <ResponsiveNavigationBarBottom
         refreshPosts={() => handleShowPostsHomePage()}
         setLoadingTrue={() => setLoadingTrue()}
@@ -2640,7 +2568,6 @@ function MainPage() {
                                   <div
                                     style={{
                                       position: "relative",
-                                      top: "5px",
                                     }}
                                     className="post-head"
                                   >
@@ -2656,7 +2583,6 @@ function MainPage() {
                                       >
                                         <svg
                                           style={{
-                                            color: "rgb(83, 100, 113)",
                                             marginLeft: "20px",
                                             position: "relative",
                                             top: "5px",
@@ -2667,8 +2593,11 @@ function MainPage() {
                                           viewBox="0 0 24 24"
                                           aria-hidden="true"
                                           className="repost-svg-post-box svg-repost-post box svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                          color="rgb(83, 100, 113)"
-                                          fill="currentColor"
+                                          fill={
+                                            themeName === "dark-theme"
+                                              ? "#71767A"
+                                              : "rgb(83, 100, 113)"
+                                          }
                                         >
                                           <g>
                                             <path
@@ -2679,12 +2608,15 @@ function MainPage() {
                                           </g>
                                         </svg>
                                         <Link
-                                          className="hover-reposted-text"
+                                          className={`hover-reposted-text hover-reposted-text-${themeName}`}
                                           style={{
                                             fontSize: "13px",
                                             lineHeight: "16px",
                                             fontWeight: "700",
-                                            color: "rgb(83, 100, 113)",
+                                            color:
+                                              themeName === "dark-theme"
+                                                ? "#71767A"
+                                                : "rgb(83, 100, 113)",
                                             marginLeft: "10px",
                                             cursor: "pointer",
                                             textDecoration: "none",
@@ -2708,22 +2640,26 @@ function MainPage() {
                                     post.reposted[0]._id !== userInfo._id ? (
                                       <div
                                         style={{
-                                          position: "relative",
-                                          left: "6px",
+                                          cursor: "pointer",
                                         }}
                                       >
                                         <svg
                                           style={{
-                                            color: "rgb(83, 100, 113)",
                                             marginLeft: "20px",
+                                            position: "relative",
+                                            top: "5px",
+                                            left: "20px",
                                           }}
                                           width={`16px`}
                                           height={`16px`}
                                           viewBox="0 0 24 24"
                                           aria-hidden="true"
                                           className="repost-svg-post-box svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                          color="rgb(83, 100, 113)"
-                                          fill="currentColor"
+                                          fill={
+                                            themeName === "dark-theme"
+                                              ? "#71767A"
+                                              : "rgb(83, 100, 113)"
+                                          }
                                         >
                                           <g>
                                             <path
@@ -2740,12 +2676,18 @@ function MainPage() {
                                                 fontSize: "13px",
                                                 lineHeight: "16px",
                                                 fontWeight: "700",
-                                                color: "rgb(83, 100, 113)",
+                                                color:
+                                                  themeName === "dark-theme"
+                                                    ? "#71767A"
+                                                    : "rgb(83, 100, 113)",
                                                 marginLeft: "10px",
                                                 cursor: "pointer",
                                                 textDecoration: "none",
+                                                position: "relative",
+                                                top: "5px",
+                                                left: "15px",
                                               }}
-                                              className="hover-reposted-text"
+                                              className={`hover-reposted-text hover-reposted-text-${themeName}`}
                                               onClick={() =>
                                                 setclickedPostBox(post)
                                               }
@@ -2877,7 +2819,10 @@ function MainPage() {
                                             to={`/profile/${post.userId._id}`}
                                             style={{
                                               textDecoration: "none",
-                                              color: "rgb(83, 100, 113)",
+                                              color:
+                                                themeName === "dark-theme"
+                                                  ? "#71767A"
+                                                  : "rgb(83, 100, 113)",
                                               lineHeight: "20px",
                                               fontSize: "15px",
                                               fontWeight: "400",
@@ -2906,7 +2851,10 @@ function MainPage() {
                                             <span
                                               className="post-circle-date-post-detail"
                                               style={{
-                                                color: "rgb(83, 100, 113)",
+                                                color:
+                                                  themeName === "dark-theme"
+                                                    ? "#71767A"
+                                                    : "rgb(83, 100, 113)",
                                                 lineHeight: "20px",
                                                 fontSize: "15px",
                                                 fontWeight: "400",
@@ -2926,58 +2874,12 @@ function MainPage() {
                                     {/* post owner full name + verified account svg + post owner user name + post created date  finish to check  */}
                                     {/* three dots svg start to check */}
                                     <div className="p-1 ms-auto">
-                                      <span className="svg-three-dots-post-detail">
-                                        {/* show if post owner userId !equal currentUserId */}
-                                        {post.userId &&
-                                        post.userId._id !== userInfo._id ? (
-                                          <svg
-                                            style={{
-                                              cursor: "pointer",
-                                              backgroundColor:
-                                                "rgb(29, 155, 240)",
-                                            }}
-                                            onClick={() =>
-                                              handleShowDetailPostFromHomePage(
-                                                post._id
-                                              )
-                                            }
-                                            color="rgb(83, 100, 113)"
-                                            fill="currentColor"
-                                            width={`${1.25}em`}
-                                            height={`${1.25}em`}
-                                            viewBox="0 0 24 24"
-                                            aria-hidden="true"
-                                            className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                          >
-                                            <g>
-                                              <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                            </g>
-                                          </svg>
-                                        ) : (
-                                          <svg
-                                            style={{
-                                              cursor: "pointer",
-                                              backgroundColor: "crimson",
-                                            }}
-                                            onClick={() =>
-                                              handleDeletePostFromHomePage(
-                                                post._id
-                                              )
-                                            }
-                                            color="rgb(83, 100, 113)"
-                                            fill="currentColor"
-                                            width={`${1.25}em`}
-                                            height={`${1.25}em`}
-                                            viewBox="0 0 24 24"
-                                            aria-hidden="true"
-                                            className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                          >
-                                            <g>
-                                              <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                            </g>
-                                          </svg>
-                                        )}
-                                      </span>
+                                      <PostPopover
+                                        postDeletionProcess={
+                                          handleDeletePostFromHomePage
+                                        }
+                                        post={post}
+                                      />
                                     </div>
                                     {/* three dots svg finish to check */}
                                   </Stack>
@@ -3010,7 +2912,10 @@ function MainPage() {
                                       >
                                         <span
                                           style={{
-                                            color: "rgb(83, 100, 113)",
+                                            color:
+                                              themeName === "dark-theme"
+                                                ? "#71767A"
+                                                : "rgb(83, 100, 113)",
                                             fontSize: "15px",
                                             lineHeight: "20px",
                                             fontWeight: "400",
@@ -3203,6 +3108,8 @@ function MainPage() {
                                                 userInfo._id
                                               )
                                                 ? "rgb(0, 186, 124)"
+                                                : themeName === "dark-theme"
+                                                ? "#71767A"
                                                 : "rgb(83, 100, 113)"
                                             }
                                           >
@@ -3223,6 +3130,8 @@ function MainPage() {
                                                   userInfo._id
                                                 )
                                                   ? "rgb(0, 186, 124)"
+                                                  : themeName === "dark-theme"
+                                                  ? "#71767A"
                                                   : "rgb(83, 100, 113)",
                                             }}
                                           >
@@ -3299,9 +3208,12 @@ function MainPage() {
                                             height={`${1.25}em`}
                                             viewBox="0 0 24 24"
                                             aria-hidden="true"
-                                            color="rgb(83, 100, 113)"
-                                            fill="currentColor"
                                             className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                            fill={
+                                              themeName === "dark-theme"
+                                                ? "#71767A"
+                                                : "rgb(83, 100, 113)"
+                                            }
                                           >
                                             <g>
                                               <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
@@ -3309,7 +3221,16 @@ function MainPage() {
                                           </svg>
                                           <span className="post-description">
                                             {post.likes.length ? (
-                                              <span>{post.likes.length}</span>
+                                              <span
+                                                style={{
+                                                  color:
+                                                    themeName === "dark-theme"
+                                                      ? "#71767A"
+                                                      : "rgb(83, 100, 113)",
+                                                }}
+                                              >
+                                                {post.likes.length}
+                                              </span>
                                             ) : null}
                                           </span>
                                         </div>
@@ -3402,7 +3323,10 @@ function MainPage() {
                         </div>
                         <div
                           style={{
-                            color: "rgb(83, 100, 113)",
+                            color:
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)",
                             lineHeight: "20px",
                             fontSize: "15px",
                             fontWeight: "400",
@@ -3447,31 +3371,38 @@ function MainPage() {
                                 }}
                                 className="posts-details outside-of-inner-circle-actions"
                               >
-                                <div className="post-head">
+                                <div
+                                  style={{
+                                    position: "relative",
+                                  }}
+                                  className="post-head"
+                                >
                                   {/* start to check */}
                                   {post.reposted.length > 0 &&
                                   post.isReposted &&
                                   post.reposted[0]._id === userInfo._id ? (
                                     <div
-                                      className="you-reposted-head"
                                       style={{
                                         cursor: "pointer",
-                                        position: "relative",
-                                        left: "6px",
                                       }}
                                     >
                                       <svg
                                         style={{
-                                          color: "rgb(83, 100, 113)",
                                           marginLeft: "20px",
+                                          position: "relative",
+                                          top: "5px",
+                                          left: "20px",
                                         }}
                                         width={`16px`}
                                         height={`16px`}
                                         viewBox="0 0 24 24"
                                         aria-hidden="true"
                                         className="repost-svg-post-box svg-repost-post box svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                        color="rgb(83, 100, 113)"
-                                        fill="currentColor"
+                                        fill={
+                                          themeName === "dark-theme"
+                                            ? "#71767A"
+                                            : "rgb(83, 100, 113)"
+                                        }
                                       >
                                         <g>
                                           <path
@@ -3482,15 +3413,21 @@ function MainPage() {
                                         </g>
                                       </svg>
                                       <Link
-                                        className="hover-reposted-text"
+                                        className={`hover-reposted-text hover-reposted-text-${themeName}`}
                                         style={{
                                           fontSize: "13px",
                                           lineHeight: "16px",
                                           fontWeight: "700",
-                                          color: "rgb(83, 100, 113)",
+                                          color:
+                                            themeName === "dark-theme"
+                                              ? "#71767A"
+                                              : "rgb(83, 100, 113)",
                                           marginLeft: "10px",
                                           cursor: "pointer",
                                           textDecoration: "none",
+                                          position: "relative",
+                                          top: "5px",
+                                          left: "15px",
                                         }}
                                         onClick={() => setclickedPostBox(post)}
                                         to={`/profile/${post.reposted[0]._id}`}
@@ -3506,22 +3443,26 @@ function MainPage() {
                                   post.reposted[0]._id !== userInfo._id ? (
                                     <div
                                       style={{
-                                        position: "relative",
-                                        left: "6px",
+                                        cursor: "pointer",
                                       }}
                                     >
                                       <svg
                                         style={{
-                                          color: "rgb(83, 100, 113)",
                                           marginLeft: "20px",
+                                          position: "relative",
+                                          top: "5px",
+                                          left: "20px",
                                         }}
                                         width={`16px`}
                                         height={`16px`}
                                         viewBox="0 0 24 24"
                                         aria-hidden="true"
                                         className="repost-svg-post-box svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                        color="rgb(83, 100, 113)"
-                                        fill="currentColor"
+                                        fill={
+                                          themeName === "dark-theme"
+                                            ? "#71767A"
+                                            : "rgb(83, 100, 113)"
+                                        }
                                       >
                                         <g>
                                           <path
@@ -3538,12 +3479,18 @@ function MainPage() {
                                               fontSize: "13px",
                                               lineHeight: "16px",
                                               fontWeight: "700",
-                                              color: "rgb(83, 100, 113)",
+                                              color:
+                                                themeName === "dark-theme"
+                                                  ? "#71767A"
+                                                  : "rgb(83, 100, 113)",
                                               marginLeft: "10px",
                                               cursor: "pointer",
                                               textDecoration: "none",
+                                              position: "relative",
+                                              top: "5px",
+                                              left: "15px",
                                             }}
-                                            className="hover-reposted-text"
+                                            className={`hover-reposted-text hover-reposted-text-${themeName}`}
                                             onClick={() =>
                                               setclickedPostBox(post)
                                             }
@@ -3679,7 +3626,10 @@ function MainPage() {
                                           to={`/profile/${post.userId._id}`}
                                           style={{
                                             textDecoration: "none",
-                                            color: "rgb(83, 100, 113)",
+                                            color:
+                                              themeName === "dark-theme"
+                                                ? "#71767A"
+                                                : "rgb(83, 100, 113)",
                                             lineHeight: "20px",
                                             fontSize: "15px",
                                             fontWeight: "400",
@@ -3706,7 +3656,10 @@ function MainPage() {
                                           <span
                                             className="post-circle-date-post-detail"
                                             style={{
-                                              color: "rgb(83, 100, 113)",
+                                              color:
+                                                themeName === "dark-theme"
+                                                  ? "#71767A"
+                                                  : "rgb(83, 100, 113)",
                                               lineHeight: "20px",
                                               fontSize: "15px",
                                               fontWeight: "400",
@@ -3727,58 +3680,12 @@ function MainPage() {
 
                                   {/* three dots svg start to check */}
                                   <div className="p-1 ms-auto">
-                                    <span>
-                                      {/* show if post owner userId !equal currentUserId */}
-                                      {post.userId &&
-                                      post.userId._id !== userInfo._id ? (
-                                        <svg
-                                          style={{
-                                            cursor: "pointer",
-                                            backgroundColor:
-                                              "rgb(29, 155, 240)",
-                                          }}
-                                          onClick={() =>
-                                            handleShowDetailPostFromHomePage(
-                                              post._id
-                                            )
-                                          }
-                                          color="rgb(83, 100, 113)"
-                                          fill="currentColor"
-                                          width={`${1.25}em`}
-                                          height={`${1.25}em`}
-                                          viewBox="0 0 24 24"
-                                          aria-hidden="true"
-                                          className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                        >
-                                          <g>
-                                            <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                          </g>
-                                        </svg>
-                                      ) : (
-                                        <svg
-                                          style={{
-                                            cursor: "pointer",
-                                            backgroundColor: "crimson",
-                                          }}
-                                          onClick={() =>
-                                            handleDeletePostFromHomePage(
-                                              post._id
-                                            )
-                                          }
-                                          color="rgb(83, 100, 113)"
-                                          fill="currentColor"
-                                          width={`${1.25}em`}
-                                          height={`${1.25}em`}
-                                          viewBox="0 0 24 24"
-                                          aria-hidden="true"
-                                          className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                        >
-                                          <g>
-                                            <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                          </g>
-                                        </svg>
-                                      )}
-                                    </span>
+                                    <PostPopover
+                                      postDeletionProcess={
+                                        handleDeletePostFromHomePage
+                                      }
+                                      post={post}
+                                    />
                                   </div>
                                   {/* three dots svg finish to check */}
                                 </Stack>
@@ -3808,7 +3715,10 @@ function MainPage() {
                                     >
                                       <span
                                         style={{
-                                          color: "rgb(83, 100, 113)",
+                                          color:
+                                            themeName === "dark-theme"
+                                              ? "#71767A"
+                                              : "rgb(83, 100, 113)",
                                           fontSize: "15px",
                                           lineHeight: "20px",
                                           fontWeight: "400",
@@ -3991,6 +3901,8 @@ function MainPage() {
                                             !shouldHide &&
                                             post.reposted.includes(userInfo._id)
                                               ? "rgb(0, 186, 124)"
+                                              : themeName === "dark-theme"
+                                              ? "#71767A"
                                               : "rgb(83, 100, 113)"
                                           }
                                         >
@@ -4011,6 +3923,8 @@ function MainPage() {
                                                 userInfo._id
                                               )
                                                 ? "rgb(0, 186, 124)"
+                                                : themeName === "dark-theme"
+                                                ? "#71767A"
                                                 : "rgb(83, 100, 113)",
                                           }}
                                         >
@@ -4085,8 +3999,11 @@ function MainPage() {
                                           height={`${1.25}em`}
                                           viewBox="0 0 24 24"
                                           aria-hidden="true"
-                                          color="rgb(83, 100, 113)"
-                                          fill="currentColor"
+                                          fill={
+                                            themeName === "dark-theme"
+                                              ? "#71767A"
+                                              : "rgb(83, 100, 113)"
+                                          }
                                           className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                                         >
                                           <g>
@@ -4095,7 +4012,16 @@ function MainPage() {
                                         </svg>
                                         <span className="post-description">
                                           {post.likes.length ? (
-                                            <span>{post.likes.length}</span>
+                                            <span
+                                              style={{
+                                                color:
+                                                  themeName === "dark-theme"
+                                                    ? "#71767A"
+                                                    : "rgb(83, 100, 113)",
+                                              }}
+                                            >
+                                              {post.likes.length}
+                                            </span>
                                           ) : null}
                                         </span>
                                       </div>
@@ -4175,7 +4101,10 @@ function MainPage() {
                         </div>
                         <div
                           style={{
-                            color: "rgb(83, 100, 113)",
+                            color:
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)",
                             lineHeight: "20px",
                             fontSize: "15px",
                             fontWeight: "400",

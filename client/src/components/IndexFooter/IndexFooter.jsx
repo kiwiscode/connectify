@@ -1,4 +1,13 @@
+import { useContext } from "react";
+import { ThemeContext } from "../../context/ThemeContext";
+
 function IndexFooter() {
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
   return (
     <>
       <div
@@ -8,7 +17,7 @@ function IndexFooter() {
           minHeight: "72px",
           padding: "12px 16px",
         }}
-        className="footer-container mt-3"
+        className={`footer-container mt-3 footer-container-${themeName}`}
       >
         <a href="">
           <span>About</span>

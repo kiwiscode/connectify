@@ -12,13 +12,13 @@ import {
 
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
+import io from "socket.io-client";
 
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import CustomNotification from "../components/Notifications/CustomNotification";
 import { message } from "antd";
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
-import axios from "axios";
 import { ThemeContext } from "../context/ThemeContext";
 
 // when working on local version
@@ -27,10 +27,11 @@ const API_URL = "http://localhost:3000";
 // when working on deployment version
 // ?
 
-// const socket = io.connect(API_URL);
 function ChatDetailsPage() {
   const { chatRoomId } = useParams();
-  const { userInfo, getToken, socket } = useContext(UserContext);
+  const { userInfo } = useContext(UserContext);
+  const socket = io.connect(`${API_URL}`);
+
   const [spesificRoom, setspesificRoom] = useState([]);
   const [selectedUser, setselectedUser] = useState([]);
   const [currentMessage, setCurrentMessage] = useState("");
@@ -125,7 +126,6 @@ function ChatDetailsPage() {
               draggable: true,
               progress: undefined,
               transition: Bounce,
-              theme: "light",
             }
           );
         }
@@ -165,13 +165,6 @@ function ChatDetailsPage() {
       socket.off("receive_spesific_room_message");
     };
   }, [socket, room, chatRoomId, userInfo._id]);
-
-  // useEffect(() => {
-  //   // Bileşen unmount temizliği
-  //   return () => {
-  //     socket.disconnect();
-  //   };
-  // }, []); // Boş dependency array
 
   // mesajların render edildiği kısım start to check
   socket.on("send_spesific_chat_details", (data) => {
@@ -322,7 +315,7 @@ function ChatDetailsPage() {
   return (
     <>
       {contextHolder}
-      <ToastContainer />
+      <ToastContainer theme={themeName === "dark-theme" ? "dark" : "light"} />
       <Container
         style={{
           overflowX: "hidden",
@@ -535,7 +528,10 @@ function ChatDetailsPage() {
                           fontWeight: "400",
                           fontSize: "15px",
 
-                          color: "rgb(83, 100, 113)",
+                          color:
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)",
                         }}
                       >
                         @{selectedUser[0].username}
@@ -546,7 +542,10 @@ function ChatDetailsPage() {
                           margin: "15px 0px",
                           fontWeight: "400",
                           fontSize: "14px",
-                          color: "rgb(83, 100, 113)",
+                          color:
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)",
                         }}
                       >
                         Joined{" "}
@@ -560,8 +559,8 @@ function ChatDetailsPage() {
                                 style={{
                                   color:
                                     themeName === "dark-theme"
-                                      ? "rgb(83, 100, 113)"
-                                      : "rgba(0,0,0,0.6)",
+                                      ? "#71767A"
+                                      : "rgb(83, 100, 113)",
                                   lineHeight: "16px",
                                   fontWeight: "400",
                                   fontSize: "14px",
@@ -574,8 +573,8 @@ function ChatDetailsPage() {
                                 style={{
                                   color:
                                     themeName === "dark-theme"
-                                      ? "rgb(83, 100, 113)"
-                                      : "rgba(0,0,0,0.6)",
+                                      ? "#71767A"
+                                      : "rgb(83, 100, 113)",
                                   lineHeight: "16px",
                                   fontWeight: "400",
                                   fontSize: "14px",
@@ -589,7 +588,10 @@ function ChatDetailsPage() {
                       </div>
                       <div
                         style={{
-                          color: "rgb(83, 100, 113)",
+                          color:
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)",
                           fontSize: "13px",
                           lineHeight: "16px",
                           fontWeight: "400",
@@ -656,20 +658,47 @@ function ChatDetailsPage() {
                       <p id="time">
                         {eachMessage.timestamp ? (
                           <>
-                            <span>
+                            <span
+                              className="time-stamp-message-detail"
+                              style={{
+                                // backgroundColor: "yellow",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "rgb(83, 100, 113)",
+                              }}
+                            >
                               {new Date(eachMessage.timestamp).toLocaleString(
                                 "en-US",
                                 {
-                                  weekday: "short",
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "2-digit",
                                   hour: "numeric",
                                   minute: "numeric",
+                                  // second: "numeric",
                                   hour12: true,
                                 }
                               )}
                             </span>
                           </>
                         ) : (
-                          <span>{eachMessage.time}</span>
+                          <span
+                            style={{
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#71767A"
+                                  : "rgb(83, 100, 113)",
+                            }}
+                          >
+                            <span className="time-stamp-message-detail">
+                              {eachMessage.time}
+                            </span>
+                            ·
+                            <span className="time-stamp-message-sent-status">
+                              Sent
+                            </span>
+                          </span>
                         )}
                       </p>
                     </div>

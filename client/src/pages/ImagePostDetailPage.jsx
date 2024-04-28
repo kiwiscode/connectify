@@ -16,17 +16,18 @@ const API_URL = "http://localhost:3000";
 import io from "socket.io-client";
 import { CommentModal } from "../components/ui/Modal";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
+import { ThemeContext } from "../context/ThemeContext";
 
 function PostDetailPage() {
-  const socket = io.connect(`${API_URL}`);
   const { postOwner, postId } = useParams();
   const [detailedPost, setdetailedPost] = useState([]);
-  // const { userInfo, getToken, socket } = useContext(UserContext);
   const { userInfo, getToken } = useContext(UserContext);
   const [commentedForThisPost, setcommentedForThisPost] = useState([]);
   const [commentedForThisUsersPost, setcommentedForThisUsersPost] = useState(
     []
   );
+
+  const socket = io.connect(`${API_URL}`);
   const [postDetailPostId, setpostDetailPostId] = useState("");
 
   const [shouldHide, setshouldHide] = useState(true);
@@ -80,7 +81,6 @@ function PostDetailPage() {
             draggable: true,
             progress: undefined,
             transition: Bounce,
-            theme: "light",
           }
         );
       } else {
@@ -456,9 +456,16 @@ function PostDetailPage() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  const [
+    { theme, themeName },
+    lightModeActive,
+    darkModeActive,
+    cyberpunkModeActive,
+  ] = useContext(ThemeContext);
   return (
     <>
-      <ToastContainer />
+      <ToastContainer theme={themeName === "dark-theme" ? "dark" : "light"} />
       <Container style={{}} fluid>
         <Row
           style={{

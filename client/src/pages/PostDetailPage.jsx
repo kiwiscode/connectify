@@ -18,6 +18,7 @@ import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import { ThemeContext } from "../context/ThemeContext";
+import PostPopover from "../components/three-dots-popover/Popover";
 function PostDetailPage() {
   const [
     { theme, themeName },
@@ -26,11 +27,12 @@ function PostDetailPage() {
     cyberpunkModeActive,
   ] = useContext(ThemeContext);
 
-  const socket = io.connect(`${API_URL}`);
   const { postOwner, postId } = useParams();
   const [detailedPost, setdetailedPost] = useState([]);
-  // const { userInfo, getToken, socket } = useContext(UserContext);
+
   const { userInfo, getToken } = useContext(UserContext);
+  const socket = io.connect(`${API_URL}`);
+
   const [commentedForThisPost, setcommentedForThisPost] = useState([]);
   const [commentedForThisUsersPost, setcommentedForThisUsersPost] = useState(
     []
@@ -127,7 +129,6 @@ function PostDetailPage() {
             draggable: true,
             progress: undefined,
             transition: Bounce,
-            theme: "light",
           }
         );
       } else {
@@ -383,28 +384,20 @@ function PostDetailPage() {
       });
   };
 
-  const handleDeletePostPostDetailPage = (postId) => {
-    setpostDetailPostId(postId);
-    axios
-      .post(
-        `${API_URL}/home/delete-post`,
-        { userId: userInfo._id, postId },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        setTimeout(() => {
-          refreshPostDetailPage();
-        }, 500);
-      })
-      .catch((error) => {
-        const { errorMessage } = error.response.data;
+  const postDeletedMessage = () => {
+    messageApi.success({
+      type: "success",
+      content: <div>Your post was deleted</div>,
+      duration: 6,
+      className: "custom-message-style",
+    });
+  };
 
-        console.log("Error =>", errorMessage);
-      });
+  const handleDeletePostPostDetailPage = () => {
+    setTimeout(() => {
+      refreshPostDetailPage();
+      postDeletedMessage();
+    }, 500);
   };
 
   const getRepostedIds = (array) => {
@@ -528,7 +521,7 @@ function PostDetailPage() {
   return (
     <>
       {contextHolder}
-      <ToastContainer />
+      <ToastContainer theme={themeName === "dark-theme" ? "dark" : "light"} />
       <ResponsiveNavigationBarBottom />
       <Container
         style={{
@@ -833,7 +826,10 @@ function PostDetailPage() {
                             >
                               <span
                                 style={{
-                                  color: "rgb(83, 100, 113)",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "#71767A"
+                                      : "rgb(83, 100, 113)",
                                   lineHeight: "20px",
                                   fontSize: "15px",
                                   fontWeight: "400",
@@ -851,7 +847,10 @@ function PostDetailPage() {
                             >
                               <span
                                 style={{
-                                  color: "rgb(83, 100, 113)",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "#71767A"
+                                      : "rgb(83, 100, 113)",
                                   lineHeight: "20px",
                                   fontSize: "15px",
                                   fontWeight: "400",
@@ -866,63 +865,20 @@ function PostDetailPage() {
                                 </span>
                               </span>
                             </Link>
-                            {/* three dots svg start to check */}
-                            <span
+
+                            <div
                               style={{
                                 float: "right",
                               }}
                             >
-                              {/* show if post owner userId !equal currentUserId */}
-                              {commentedForThisPost.userId &&
-                              commentedForThisPost.userId._id !==
-                                userInfo._id ? (
-                                <svg
-                                  style={{
-                                    cursor: "pointer",
-                                    backgroundColor: "rgb(29, 155, 240)",
-                                  }}
-                                  onClick={() =>
-                                    handleShowDetailPostFromPostDetailPage(
-                                      commentedForThisPost._id
-                                    )
-                                  }
-                                  color="rgb(83, 100, 113)"
-                                  fill="currentColor"
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                >
-                                  <g>
-                                    <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                  </g>
-                                </svg>
-                              ) : (
-                                <svg
-                                  style={{
-                                    cursor: "pointer",
-                                    backgroundColor: "crimson",
-                                  }}
-                                  onClick={() =>
-                                    handleDeletePostPostDetailPage(
-                                      commentedForThisPost._id
-                                    )
-                                  }
-                                  color="rgb(83, 100, 113)"
-                                  fill="currentColor"
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                >
-                                  <g>
-                                    <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                  </g>
-                                </svg>
-                              )}
-                            </span>
+                              <PostPopover
+                                postDetailPageActive={true}
+                                post={commentedForThisPost}
+                                postDeletionProcess={
+                                  handleDeletePostPostDetailPage
+                                }
+                              />
+                            </div>
 
                             {/* three dots svg finish to check */}
 
@@ -1049,7 +1005,11 @@ function PostDetailPage() {
                                   viewBox="0 0 24 24"
                                   aria-hidden="true"
                                   className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                  fill={"rgb(83, 100, 113)"}
+                                  fill={
+                                    themeName === "dark-theme"
+                                      ? "#71767A"
+                                      : "rgb(83, 100, 113)"
+                                  }
                                 >
                                   <g>
                                     <path
@@ -1061,7 +1021,12 @@ function PostDetailPage() {
                                 </svg>
                                 <span
                                   className="post-description"
-                                  style={{ color: "rgb(83, 100, 113)" }}
+                                  style={{
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgb(83, 100, 113)",
+                                  }}
                                 >
                                   <span>
                                     {commentedForThisPost.reposted.length}
@@ -1167,8 +1132,11 @@ function PostDetailPage() {
                                   height={`${1.25}em`}
                                   viewBox="0 0 24 24"
                                   aria-hidden="true"
-                                  color="rgb(83, 100, 113)"
-                                  fill="currentColor"
+                                  fill={
+                                    themeName === "dark-theme"
+                                      ? "#71767A"
+                                      : "rgb(83, 100, 113)"
+                                  }
                                   className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                                 >
                                   <g>
@@ -1177,7 +1145,14 @@ function PostDetailPage() {
                                 </svg>
                                 <span className="post-description">
                                   {commentedForThisPost.likes.length ? (
-                                    <span>
+                                    <span
+                                      style={{
+                                        color:
+                                          themeName === "dark-theme"
+                                            ? "#71767A"
+                                            : "rgb(83, 100, 113)",
+                                      }}
+                                    >
                                       {commentedForThisPost.likes.length}
                                     </span>
                                   ) : null}
@@ -1226,15 +1201,23 @@ function PostDetailPage() {
               /* eğer comment yazılan ana post silindiyse start to check */
               <div
                 style={{
-                  marginBottom: "5px",
-                  backgroundColor: "rgba(247,249,249,1.00)",
+                  backgroundColor:
+                    themeName === "dark-theme"
+                      ? "black"
+                      : "rgba(247,249,249,1.00)",
                   wordWrap: "break-word",
                   padding: "12px 4px 12px 4px",
                   borderStyle: "solid",
                   borderWidth: "1px",
-                  borderColor: "rgba(239,243,244,1.00)",
+                  border:
+                    themeName !== "dark-theme"
+                      ? "1px solid rgba(0, 0, 0, 0.1)"
+                      : // : "0.1px solid rgb(70, 70, 70)",
+                        "1px solid rgb(70, 70, 70)",
                   borderRadius: "16px",
                   fontSize: "15px",
+                  marginLeft: "15px",
+                  marginRight: "15px",
                 }}
               >
                 <span
@@ -1277,7 +1260,11 @@ function PostDetailPage() {
                 <div
                   className="responsive-comment-line"
                   style={{
-                    border: "1px solid rgba(0, 0, 0, 0.2)",
+                    border:
+                      themeName !== "dark-theme"
+                        ? "1px solid rgba(0, 0, 0, 0.2)"
+                        : // : "0.1px solid rgb(70, 70, 70)",
+                          "1px solid rgb(70, 70, 70)",
                     margin: "5px 0px 5px 0px",
                     width: "2px",
                     height: `8px`,
@@ -1349,564 +1336,527 @@ function PostDetailPage() {
             ) : null}
             {/* deactivated post owner detected finish to check  */}
 
-            <Container>
-              <Row
-                style={{
-                  padding: "6px 0px 0px 0px",
-                }}
-              >
-                <Col
-                  xs={2}
-                  sm={2}
-                  md={2}
-                  lg={2}
-                  xxl={2}
-                  style={{
-                    textAlign: "center",
-                  }}
-                >
-                  {/* profile image start to check */}
+            {/* BUG post comment olmadığında ve comment.lengthi olduğunda burası görünüyor ! start to check  */}
 
-                  <div>
-                    {detailedPost.userId ? (
-                      detailedPost.userId.imageUrl.slice(0, 3) !== "../" ? (
+            {commentedForThisPost?._id !== detailedPost?._id ? (
+              <>
+                <Container>
+                  <Row
+                    style={{
+                      padding: "6px 0px 0px 0px",
+                    }}
+                  >
+                    <Col
+                      xs={2}
+                      sm={2}
+                      md={2}
+                      lg={2}
+                      xxl={2}
+                      style={{
+                        textAlign: "center",
+                      }}
+                    >
+                      {/* profile image start to check */}
+
+                      <div>
+                        {detailedPost.userId ? (
+                          detailedPost.userId.imageUrl.slice(0, 3) !== "../" ? (
+                            <Link
+                              style={{ cursor: "pointer" }}
+                              to={`/profile/${
+                                detailedPost.userId
+                                  ? detailedPost.userId._id
+                                  : null
+                              }`}
+                            >
+                              <img
+                                width={40}
+                                height={40}
+                                src={detailedPost.userId.imageUrl}
+                                alt=""
+                                style={{
+                                  borderRadius: "50%",
+                                }}
+                              />
+                            </Link>
+                          ) : (
+                            <Link
+                              to={`/profile/${
+                                detailedPost.userId
+                                  ? detailedPost.userId._id
+                                  : null
+                              }`}
+                              style={{ cursor: "pointer" }}
+                            >
+                              {" "}
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="40"
+                                height="40"
+                                fill="rgb(83, 100, 113)"
+                                className="bi bi-person-circle"
+                                viewBox="0 0 16 16"
+                                style={{
+                                  borderRadius: "50%",
+                                }}
+                              >
+                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                              </svg>
+                            </Link>
+                          )
+                        ) : null}
+                      </div>
+
+                      {/* profile image finish to check  */}
+                    </Col>
+                    <Col xs={10} sm={10} md={10} lg={10} xxl={10}>
+                      {/* start to check post owner full name + post owner user name  */}
+                      <div>
                         <Link
-                          style={{ cursor: "pointer" }}
-                          to={`/profile/${
-                            detailedPost.userId ? detailedPost.userId._id : null
-                          }`}
+                          to={
+                            detailedPost.userId
+                              ? `/profile/${detailedPost.userId._id}`
+                              : ""
+                          }
+                          style={{
+                            textDecoration: "none",
+                          }}
                         >
-                          <img
-                            width={40}
-                            height={40}
-                            src={detailedPost.userId.imageUrl}
-                            alt=""
+                          <span
+                            className="post-detail-underline-text-2"
                             style={{
-                              borderRadius: "50%",
-                            }}
-                          />
-                        </Link>
-                      ) : (
-                        <Link
-                          to={`/profile/${
-                            detailedPost.userId ? detailedPost.userId._id : null
-                          }`}
-                          style={{ cursor: "pointer" }}
-                        >
-                          {" "}
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="40"
-                            height="40"
-                            fill="rgb(83, 100, 113)"
-                            className="bi bi-person-circle"
-                            viewBox="0 0 16 16"
-                            style={{
-                              borderRadius: "50%",
+                              color:
+                                themeName === "dark-theme" ? "white" : "black",
+                              lineHeight: "20px",
+                              fontWeight: "700",
+                              fontSize: "15px",
                             }}
                           >
-                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                            <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                          </svg>
+                            {detailedPost.authorFullName}
+                          </span>
                         </Link>
-                      )
-                    ) : null}
-                  </div>
 
-                  {/* profile image finish to check  */}
-                </Col>
-                <Col xs={10} sm={10} md={10} lg={10} xxl={10}>
-                  {/* start to check post owner full name + post owner user name  */}
-                  <div>
-                    <Link
-                      to={
-                        detailedPost.userId
-                          ? `/profile/${detailedPost.userId._id}`
-                          : ""
-                      }
-                      style={{
-                        textDecoration: "none",
-                      }}
-                    >
-                      <span
-                        className="post-detail-underline-text-2"
+                        {/* three dots svg start to check */}
+                        <span
+                          style={{
+                            float: "right",
+                          }}
+                        >
+                          <PostPopover
+                            postDetailPageActive={true}
+                            post={detailedPost}
+                            postDeletionProcess={handleDeletePostPostDetailPage}
+                          />
+                        </span>
+
+                        {/* three dots svg finish to check */}
+                      </div>
+                      <Link
+                        to={
+                          detailedPost.userId
+                            ? `/profile/${detailedPost.userId._id}`
+                            : ""
+                        }
                         style={{
-                          color: themeName === "dark-theme" ? "white" : "black",
-                          lineHeight: "20px",
-                          fontWeight: "700",
-                          fontSize: "15px",
+                          textDecoration: "none",
                         }}
                       >
-                        {detailedPost.authorFullName}
+                        <span
+                          style={{
+                            color:
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)",
+                            lineHeight: "20px",
+                            fontSize: "15px",
+                            fontWeight: "400",
+                          }}
+                        >
+                          @{detailedPost.authorUserName}
+                        </span>
+                      </Link>
+                      {/* finish to check post owner full name + post owner user name  */}
+                    </Col>
+                  </Row>
+                </Container>
+                {/* post content + post created date start to check */}
+                <Stack direction="vertical" gap={0}>
+                  <div
+                    style={{
+                      marginLeft: "10px",
+                      fontSize: "17px",
+                      fontWeight: "400",
+                      lineHeight: "24px",
+                      overflowWrap: "break-word",
+                      maxWidth: "100%",
+                    }}
+                    className="p-1"
+                  >
+                    <Link
+                      to={`/${detailedPost.authorUserName}/status/${detailedPost._id}`}
+                      style={{ textDecoration: "none", color: "black" }}
+                    >
+                      <span
+                        style={{
+                          marginLeft: "10px",
+                          color: themeName === "dark-theme" ? "white" : "black",
+                        }}
+                      >
+                        {detailedPost.content}
                       </span>
                     </Link>
-
-                    {/* three dots svg start to check */}
-                    <span
-                      style={{
-                        float: "right",
-                      }}
-                    >
-                      {/* show if post owner userId !equal currentUserId */}
-                      {detailedPost.userId &&
-                      detailedPost.userId._id !== userInfo._id ? (
-                        <svg
-                          style={{
-                            cursor: "pointer",
-                            backgroundColor: "rgb(29, 155, 240)",
-                          }}
-                          onClick={() =>
-                            handleShowDetailPostFromPostDetailPage(
-                              detailedPost._id
-                            )
-                          }
-                          color="rgb(83, 100, 113)"
-                          fill="currentColor"
-                          width={`${1.25}em`}
-                          height={`${1.25}em`}
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                          className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                        >
-                          <g>
-                            <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                          </g>
-                        </svg>
-                      ) : (
-                        <svg
-                          style={{
-                            cursor: "pointer",
-                            backgroundColor: "crimson",
-                          }}
-                          onClick={() =>
-                            handleDeletePostPostDetailPage(detailedPost._id)
-                          }
-                          color="rgb(83, 100, 113)"
-                          fill="currentColor"
-                          width={`${1.25}em`}
-                          height={`${1.25}em`}
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                          className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                        >
-                          <g>
-                            <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                          </g>
-                        </svg>
-                      )}
+                    <span>
+                      {detailedPost.image ? (
+                        detailedPost.image.url.slice(0, 3) !== "ima" ? (
+                          <>
+                            <Link
+                              to={`/${detailedPost.authorUserName}/status/${
+                                detailedPost._id
+                              }/photo/${1}`}
+                              style={{
+                                textDecoration: "none",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  overflow: "hidden",
+                                  border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
+                                  borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
+                                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                                }}
+                              >
+                                <img
+                                  src={detailedPost.image.url}
+                                  alt="Description"
+                                  style={{
+                                    width: "100%",
+                                    display: "block",
+                                  }}
+                                />
+                              </div>
+                            </Link>
+                          </>
+                        ) : null
+                      ) : null}
                     </span>
-
-                    {/* three dots svg finish to check */}
                   </div>
                   <Link
                     to={
                       detailedPost.userId
-                        ? `/profile/${detailedPost.userId._id}`
-                        : ""
+                        ? `/${detailedPost.userId.username}/status/${detailedPost._id}`
+                        : null
                     }
                     style={{
                       textDecoration: "none",
                     }}
                   >
-                    <span
+                    <div
                       style={{
-                        color: "rgb(83,100,113)",
-                        lineHeight: "20px",
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)",
                         fontSize: "15px",
                         fontWeight: "400",
+                        lineHeight: "20px",
+                        marginLeft: "10px",
                       }}
+                      className="p-0 mt-3 mb-3 post-detail-underline-text-1"
                     >
-                      @{detailedPost.authorUserName}
-                    </span>
+                      {formatDateString(detailedPost.createdAt)}
+                    </div>
                   </Link>
-                  {/* finish to check post owner full name + post owner user name  */}
-                </Col>
-              </Row>
-            </Container>
-
-            {/* post content + post created date start to check */}
-
-            <Stack direction="vertical" gap={0}>
-              <div
-                style={{
-                  marginLeft: "10px",
-                  fontSize: "17px",
-                  fontWeight: "400",
-                  lineHeight: "24px",
-                  overflowWrap: "break-word",
-                  maxWidth: "100%",
-                }}
-                className="p-1"
-              >
-                <Link
-                  to={`/${detailedPost.authorUserName}/status/${detailedPost._id}`}
-                  style={{ textDecoration: "none", color: "black" }}
-                >
-                  <span
+                  <div
                     style={{
-                      marginLeft: "10px",
-                      color: themeName === "dark-theme" ? "white" : "black",
+                      borderBottom:
+                        themeName !== "dark-theme"
+                          ? "1px solid rgba(0, 0, 0, 0.1)"
+                          : // : "0.1px solid rgb(70, 70, 70)",
+                            "1px solid rgb(70, 70, 70)",
                     }}
-                  >
-                    {detailedPost.content}
-                  </span>
-                </Link>
-                <span>
-                  {detailedPost.image ? (
-                    detailedPost.image.url.slice(0, 3) !== "ima" ? (
-                      <>
-                        <Link
-                          to={`/${detailedPost.authorUserName}/status/${
-                            detailedPost._id
-                          }/photo/${1}`}
-                          style={{
-                            textDecoration: "none",
-                          }}
-                        >
-                          <div
+                  ></div>
+                </Stack>
+                {/* post content + post created date finish to check */}
+                {/* new version favorite repost comment start to check */}
+                <Stack
+                  direction="horizontal"
+                  style={{
+                    justifyContent: "space-between",
+                    // borderBottom: "1px solid rgba(0,0,0,0.1)",
+                  }}
+                >
+                  <div className="p-2">
+                    <CommentModal
+                      refreshPosts={refreshPostDetailPage}
+                      post={detailedPost}
+                      width={`${1.5}em`}
+                      height={`${1.5}em`}
+                      postSharedMessage={postSharedMessage}
+                    />
+                  </div>
+
+                  <div className="p-2">
+                    {detailedPost.reposted && detailedPost.reposted.length ? (
+                      checkIds(detailedPost.reposted).includes(userInfo._id) ? (
+                        <div>
+                          <svg
+                            onClick={() =>
+                              handleDeleteRepostPostDetailPage(detailedPost._id)
+                            }
+                            width={`${1.5}em`}
+                            height={`${1.5}em`}
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                            fill="rgb(0, 186, 124)"
+                          >
+                            <g>
+                              <path
+                                stroke="rgb(83, 100, 113)"
+                                strokeWidth="0.1"
+                                d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                              ></path>
+                            </g>
+                          </svg>
+                          <span
+                            className="post-description"
                             style={{
-                              overflow: "hidden",
-                              border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
-                              borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
-                              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                              color: "rgb(0, 186, 124)",
                             }}
                           >
-                            <img
-                              src={detailedPost.image.url}
-                              alt="Description"
+                            <span>{detailedPost.reposted.length}</span>
+                          </span>
+                        </div>
+                      ) : (
+                        <div>
+                          {" "}
+                          <svg
+                            style={{
+                              cursor: "pointer",
+                            }}
+                            onClick={() =>
+                              handleRepost(detailedPost._id, detailedPost)
+                            }
+                            width={`${1.5}em`}
+                            height={`${1.5}em`}
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                            fill={
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)"
+                            }
+                          >
+                            <g>
+                              <path
+                                stroke="rgb(83, 100, 113)"
+                                strokeWidth="0.1"
+                                d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                              ></path>
+                            </g>
+                          </svg>
+                          <span className="post-description">
+                            <span
                               style={{
-                                width: "100%",
-                                display: "block",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "rgb(83, 100, 113)",
                               }}
-                            />
-                          </div>
-                        </Link>
-                      </>
-                    ) : null
-                  ) : null}
-                </span>
-              </div>
-              <Link
-                to={
-                  detailedPost.userId
-                    ? `/${detailedPost.userId.username}/status/${detailedPost._id}`
-                    : null
-                }
-                style={{
-                  textDecoration: "none",
-                }}
-              >
-                <div
-                  style={{
-                    color: "rgb(83, 100, 113",
-                    fontSize: "15px",
-                    fontWeight: "400",
-                    lineHeight: "20px",
-                    marginLeft: "10px",
-                  }}
-                  className="p-0 mt-3 mb-3 post-detail-underline-text-1"
-                >
-                  {formatDateString(detailedPost.createdAt)}
-                </div>
-              </Link>
-              <div
-                style={{
-                  borderBottom:
-                    themeName !== "dark-theme"
-                      ? "1px solid rgba(0, 0, 0, 0.1)"
-                      : // : "0.1px solid rgb(70, 70, 70)",
-                        "1px solid rgb(70, 70, 70)",
-                }}
-              ></div>
-            </Stack>
-            {/* post content + post created date finish to check */}
+                            >
+                              {detailedPost.reposted.length}
+                            </span>
+                          </span>
+                        </div>
+                      )
+                    ) : (
+                      <div>
+                        {" "}
+                        <svg
+                          style={{
+                            cursor: "pointer",
+                          }}
+                          onClick={() =>
+                            handleRepost(detailedPost._id, detailedPost)
+                          }
+                          width={`${1.5}em`}
+                          height={`${1.5}em`}
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                          fill={
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)"
+                          }
+                        >
+                          <g>
+                            <path
+                              stroke="rgb(83, 100, 113)"
+                              strokeWidth="0.1"
+                              d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                            ></path>
+                          </g>
+                        </svg>
+                        <span
+                          className="post-description"
+                          style={{
+                            color:
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)",
+                          }}
+                        >
+                          <span>
+                            {detailedPost.reposted &&
+                            detailedPost.reposted.length
+                              ? detailedPost.reposted.length
+                              : null}
+                          </span>
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-2">
+                    {detailedPost.likes && detailedPost.likes.length ? (
+                      checkIds(detailedPost.likes).includes(userInfo._id) ? (
+                        <div>
+                          <svg
+                            onClick={() =>
+                              handleDeleteLikePostDetailPage(detailedPost._id)
+                            }
+                            width={`${1.5}em`}
+                            height={`${1.5}em`}
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            fill="rgb(249, 24, 128)"
+                            className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                          >
+                            <g>
+                              <path
+                                stroke="black"
+                                strokeWidth="0.2"
+                                d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"
+                              ></path>
+                            </g>
+                          </svg>
+                          <span className="post-description">
+                            {detailedPost.likes.length ? (
+                              <span
+                                style={{
+                                  color: "rgb(249, 24, 128)",
+                                }}
+                              >
+                                {detailedPost.likes.length}
+                              </span>
+                            ) : null}
+                          </span>
+                        </div>
+                      ) : (
+                        <div>
+                          {" "}
+                          <svg
+                            onClick={() =>
+                              handlePostLikesPostDetailPage(
+                                detailedPost._id,
+                                detailedPost
+                              )
+                            }
+                            width={`${1.5}em`}
+                            height={`${1.5}em`}
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            fill={
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)"
+                            }
+                            className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                          >
+                            <g>
+                              <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
+                            </g>
+                          </svg>
+                          <span className="post-description">
+                            {detailedPost.likes.length ? (
+                              <span
+                                style={{
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "#71767A"
+                                      : "rgb(83, 100, 113)",
+                                }}
+                              >
+                                {detailedPost.likes.length}
+                              </span>
+                            ) : null}
+                          </span>
+                        </div>
+                      )
+                    ) : (
+                      <div>
+                        {" "}
+                        <svg
+                          onClick={() =>
+                            handlePostLikesPostDetailPage(
+                              detailedPost._id,
+                              detailedPost
+                            )
+                          }
+                          width={`${1.5}em`}
+                          height={`${1.5}em`}
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          fill={
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)"
+                          }
+                          className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                        >
+                          <g>
+                            <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
+                          </g>
+                        </svg>
+                        <span className="post-description">{null}</span>
+                      </div>
+                    )}
+                  </div>
+                </Stack>
+                {/* new version favorite repost comment finish to check */}
+              </>
+            ) : (
+              <>Hmm smth went wrong !</>
+            )}
 
-            {/* view post engagements section start to check */}
-            {/* <Stack
-              className="view-post-engagements-section transition-gray-hover"
-              direction="horizontal"
-              style={{
-                cursor: "pointer",
-                justifyContent: "left",
-                borderBottom: detailedPost.userId
-                  ? detailedPost.userId._id === userInfo._id
-                    ? "1px solid rgba(0,0,0,0.1)"
-                    : null
-                  : null,
-              }}
-              gap={0}
-            >
-              <div className="p-2">
-                {detailedPost.userId ? (
-                  detailedPost.userId._id === userInfo._id ? (
-                    <>
-                      <svg
-                        style={{
-                          paddingRight: "4px",
-                          color: "rgba(83,100,113,1.00)",
-                        }}
-                        width={`${1.25}em`}
-                        height={`${1.25}em`}
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                        className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1hvjb8t"
-                        fill="currentColor"
-                      >
-                        <g>
-                          <path d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"></path>
-                        </g>
-                      </svg>
-
-                      <span
-                        className="p-0"
-                        style={{
-                          position: "relative",
-                          top: "1px",
-                          fontSize: "15px",
-                          lineHeight: "20px",
-                          fontWeight: "400",
-                          color: "rgba(83,100,113,1.00)",
-                        }}
-                      >
-                        View post engagements
-                      </span>
-                    </>
-                  ) : null
-                ) : null}
-              </div>
-            </Stack> */}
+            {/* WHAT IS THAT ? IMPORTANT start to check */}
             {detailedPost.userId ? (
               <>
                 {detailedPost.userId._id === userInfo._id ? (
-                  <>
+                  <div
+                    style={{
+                      borderTop:
+                        themeName !== "dark-theme"
+                          ? "1px solid rgba(0, 0, 0, 0.1)"
+                          : // : "0.1px solid rgb(70, 70, 70)",
+                            "1px solid rgb(70, 70, 70)",
+                    }}
+                  >
                     <PostEngagements
                       postDetailPage={true}
                       detailedPost={detailedPost}
                       handleFollowingNotification={handleFollowingNotification}
                     />
-                  </>
+                  </div>
                 ) : null}
               </>
             ) : null}
+            {/* WHAT IS THAT ? IMPORTANT finish to check  */}
 
-            {/* view post engagements section finish to check
-            {/* new version favorite repost comment start to check */}
-            <Stack
-              direction="horizontal"
-              style={{
-                justifyContent: "space-between",
-                // borderBottom: "1px solid rgba(0,0,0,0.1)",
-              }}
-            >
-              <div className="p-2">
-                <CommentModal
-                  refreshPosts={refreshPostDetailPage}
-                  post={detailedPost}
-                  width={`${1.5}em`}
-                  height={`${1.5}em`}
-                  postSharedMessage={postSharedMessage}
-                />
-              </div>
+            {/* BUG post comment olmadığında ve comment.lengthi olduğunda burası görünüyor ! finish to check  */}
 
-              <div className="p-2">
-                {detailedPost.reposted && detailedPost.reposted.length ? (
-                  checkIds(detailedPost.reposted).includes(userInfo._id) ? (
-                    <div>
-                      <svg
-                        onClick={() =>
-                          handleDeleteRepostPostDetailPage(detailedPost._id)
-                        }
-                        width={`${1.5}em`}
-                        height={`${1.5}em`}
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                        className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                        fill="rgb(0, 186, 124)"
-                      >
-                        <g>
-                          <path
-                            stroke="rgb(83, 100, 113)"
-                            strokeWidth="0.1"
-                            d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
-                          ></path>
-                        </g>
-                      </svg>
-                      <span
-                        className="post-description"
-                        style={{
-                          color: "rgb(0, 186, 124)",
-                          //   : "rgb(83, 100, 113)",
-                        }}
-                      >
-                        <span>{detailedPost.reposted.length}</span>
-                      </span>
-                    </div>
-                  ) : (
-                    <div>
-                      {" "}
-                      <svg
-                        style={{
-                          cursor: "pointer",
-                        }}
-                        onClick={() =>
-                          handleRepost(detailedPost._id, detailedPost)
-                        }
-                        width={`${1.5}em`}
-                        height={`${1.5}em`}
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                        className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                        fill={"rgb(83, 100, 113)"}
-                      >
-                        <g>
-                          <path
-                            stroke="rgb(83, 100, 113)"
-                            strokeWidth="0.1"
-                            d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
-                          ></path>
-                        </g>
-                      </svg>
-                      <span
-                        className="post-description"
-                        style={{ color: "rgb(83, 100, 113)" }}
-                      >
-                        <span>{detailedPost.reposted.length}</span>
-                      </span>
-                    </div>
-                  )
-                ) : (
-                  <div>
-                    {" "}
-                    <svg
-                      style={{
-                        cursor: "pointer",
-                      }}
-                      onClick={() =>
-                        handleRepost(detailedPost._id, detailedPost)
-                      }
-                      width={`${1.5}em`}
-                      height={`${1.5}em`}
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                      fill={"rgb(83, 100, 113)"}
-                    >
-                      <g>
-                        <path
-                          stroke="rgb(83, 100, 113)"
-                          strokeWidth="0.1"
-                          d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
-                        ></path>
-                      </g>
-                    </svg>
-                    <span
-                      className="post-description"
-                      style={{
-                        color: "rgb(83, 100, 113)",
-                      }}
-                    >
-                      <span>
-                        {detailedPost.reposted && detailedPost.reposted.length
-                          ? detailedPost.reposted.length
-                          : null}
-                      </span>
-                    </span>
-                  </div>
-                )}
-              </div>
-              <div className="p-2">
-                {detailedPost.likes && detailedPost.likes.length ? (
-                  checkIds(detailedPost.likes).includes(userInfo._id) ? (
-                    <div>
-                      <svg
-                        onClick={() =>
-                          handleDeleteLikePostDetailPage(detailedPost._id)
-                        }
-                        width={`${1.5}em`}
-                        height={`${1.5}em`}
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                        fill="rgb(249, 24, 128)"
-                        className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                      >
-                        <g>
-                          <path
-                            stroke="black"
-                            strokeWidth="0.2"
-                            d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"
-                          ></path>
-                        </g>
-                      </svg>
-                      <span className="post-description">
-                        {detailedPost.likes.length ? (
-                          <span
-                            style={{
-                              color: "rgb(249, 24, 128)",
-                            }}
-                          >
-                            {detailedPost.likes.length}
-                          </span>
-                        ) : null}
-                      </span>
-                    </div>
-                  ) : (
-                    <div>
-                      {" "}
-                      <svg
-                        onClick={() =>
-                          handlePostLikesPostDetailPage(
-                            detailedPost._id,
-                            detailedPost
-                          )
-                        }
-                        width={`${1.5}em`}
-                        height={`${1.5}em`}
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                        color="rgb(83, 100, 113)"
-                        fill="currentColor"
-                        className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                      >
-                        <g>
-                          <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
-                        </g>
-                      </svg>
-                      <span className="post-description">
-                        {detailedPost.likes.length ? (
-                          <span>{detailedPost.likes.length}</span>
-                        ) : null}
-                      </span>
-                    </div>
-                  )
-                ) : (
-                  <div>
-                    {" "}
-                    <svg
-                      onClick={() =>
-                        handlePostLikesPostDetailPage(
-                          detailedPost._id,
-                          detailedPost
-                        )
-                      }
-                      width={`${1.5}em`}
-                      height={`${1.5}em`}
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      color="rgb(83, 100, 113)"
-                      fill="currentColor"
-                      className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                    >
-                      <g>
-                        <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
-                      </g>
-                    </svg>
-                    <span className="post-description">{null}</span>
-                  </div>
-                )}
-              </div>
-            </Stack>
-
-            {/* new version favorite repost comment finish to check */}
             <div
               style={{
                 borderBottom:
@@ -1964,8 +1914,7 @@ function PostDetailPage() {
                                         borderBottom:
                                           themeName !== "dark-theme"
                                             ? "1px solid rgba(0, 0, 0, 0.1)"
-                                            : // : "0.1px solid rgb(70, 70, 70)",
-                                              "1px solid rgb(70, 70, 70)",
+                                            : "1px solid rgb(70, 70, 70)",
                                       }}
                                       className="all-posts"
                                     >
@@ -2138,60 +2087,13 @@ function PostDetailPage() {
 
                                             {/* three dots svg start to check */}
                                             <div className="p-1 ms-auto">
-                                              <span>
-                                                {/* show if post owner userId !equal currentUserId */}
-                                                {eachComment.userId &&
-                                                eachComment.userId._id !==
-                                                  userInfo._id ? (
-                                                  <svg
-                                                    style={{
-                                                      cursor: "pointer",
-                                                      backgroundColor:
-                                                        "rgb(29, 155, 240)",
-                                                    }}
-                                                    onClick={() =>
-                                                      handleShowDetailPostFromPostDetailPage(
-                                                        eachComment.postId
-                                                      )
-                                                    }
-                                                    color="rgb(83, 100, 113)"
-                                                    fill="currentColor"
-                                                    width={`${1.25}em`}
-                                                    height={`${1.25}em`}
-                                                    viewBox="0 0 24 24"
-                                                    aria-hidden="true"
-                                                    className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                                  >
-                                                    <g>
-                                                      <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                                    </g>
-                                                  </svg>
-                                                ) : (
-                                                  <svg
-                                                    style={{
-                                                      cursor: "pointer",
-                                                      backgroundColor:
-                                                        "crimson",
-                                                    }}
-                                                    onClick={() =>
-                                                      handleDeletePostPostDetailPage(
-                                                        eachComment.postId
-                                                      )
-                                                    }
-                                                    color="rgb(83, 100, 113)"
-                                                    fill="currentColor"
-                                                    width={`${1.25}em`}
-                                                    height={`${1.25}em`}
-                                                    viewBox="0 0 24 24"
-                                                    aria-hidden="true"
-                                                    className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                                  >
-                                                    <g>
-                                                      <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                                    </g>
-                                                  </svg>
-                                                )}
-                                              </span>
+                                              <PostPopover
+                                                postDetailPageActive={true}
+                                                post={eachComment}
+                                                postDeletionProcess={
+                                                  handleDeletePostPostDetailPage
+                                                }
+                                              />
                                             </div>
                                             {/* three dots svg finish to check */}
                                           </Stack>
@@ -2365,6 +2267,9 @@ function PostDetailPage() {
                                                         userInfo._id
                                                       )
                                                         ? "rgb(0, 186, 124)"
+                                                        : themeName ===
+                                                          "dark-theme"
+                                                        ? "#71767A"
                                                         : "rgb(83, 100, 113)"
                                                     }
                                                   >
@@ -2385,6 +2290,9 @@ function PostDetailPage() {
                                                           userInfo._id
                                                         )
                                                           ? "rgb(0, 186, 124)"
+                                                          : themeName ===
+                                                            "dark-theme"
+                                                          ? "#71767A"
                                                           : "rgb(83, 100, 113)",
                                                     }}
                                                   >
@@ -2461,8 +2369,11 @@ function PostDetailPage() {
                                                     height={`${1.25}em`}
                                                     viewBox="0 0 24 24"
                                                     aria-hidden="true"
-                                                    color="rgb(83, 100, 113)"
-                                                    fill="currentColor"
+                                                    fill={
+                                                      themeName === "dark-theme"
+                                                        ? "#71767A"
+                                                        : "rgb(83, 100, 113)"
+                                                    }
                                                     className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                                                   >
                                                     <g>
@@ -2472,7 +2383,15 @@ function PostDetailPage() {
                                                   <span className="post-description">
                                                     {eachComment.likes
                                                       .length ? (
-                                                      <span>
+                                                      <span
+                                                        style={{
+                                                          color:
+                                                            themeName ===
+                                                            "dark-theme"
+                                                              ? "#71767A"
+                                                              : "rgb(83, 100, 113)",
+                                                        }}
+                                                      >
                                                         {
                                                           eachComment.likes
                                                             .length
@@ -2507,10 +2426,16 @@ function PostDetailPage() {
             detailedPost.comments &&
             detailedPost.comments.length ? (
               <Accordion defaultActiveKey="0">
-                <Accordion.Item style={{ border: "none" }} eventKey="1">
+                <Accordion.Item
+                  style={{
+                    border: "none",
+                    backgroundColor: themeName === "dark-theme" ? "black" : "",
+                  }}
+                  eventKey="1"
+                >
                   <Accordion.Header
                     style={{ border: "none" }}
-                    className="accordion-2"
+                    className={`accordion-2 accordion-2-${themeName}`}
                   >
                     <div
                       style={{
@@ -2540,7 +2465,9 @@ function PostDetailPage() {
                                     <div
                                       style={{
                                         borderBottom:
-                                          "1px solid rgba(0,0,0,0.1)",
+                                          themeName !== "dark-theme"
+                                            ? "1px solid rgba(0, 0, 0, 0.1)"
+                                            : "1px solid rgb(70, 70, 70)",
                                       }}
                                       className="all-posts"
                                     >
@@ -2626,6 +2553,11 @@ function PostDetailPage() {
                                                         fontWeight: "700",
                                                         fontSize: "15px",
                                                         lineHeight: "20px",
+                                                        color:
+                                                          themeName ===
+                                                          "dark-theme"
+                                                            ? "white"
+                                                            : "black",
                                                       }}
                                                     >
                                                       {
@@ -2658,7 +2590,10 @@ function PostDetailPage() {
                                                     style={{
                                                       textDecoration: "none",
                                                       color:
-                                                        "rgb(83, 100, 113)",
+                                                        themeName ===
+                                                        "dark-theme"
+                                                          ? "#71767A"
+                                                          : "rgb(83, 100, 113)",
                                                       lineHeight: "20px",
                                                       fontSize: "15px",
                                                       fontWeight: "400",
@@ -2691,7 +2626,10 @@ function PostDetailPage() {
                                                     <span
                                                       style={{
                                                         color:
-                                                          "rgb(83, 100, 113)",
+                                                          themeName ===
+                                                          "dark-theme"
+                                                            ? "#71767A"
+                                                            : "rgb(83, 100, 113)",
                                                         lineHeight: "20px",
                                                         fontSize: "15px",
                                                         fontWeight: "400",
@@ -2714,60 +2652,13 @@ function PostDetailPage() {
 
                                             {/* three dots svg start to check */}
                                             <div className="p-1 ms-auto">
-                                              <span>
-                                                {/* show if post owner userId !equal currentUserId */}
-                                                {eachComment.userId &&
-                                                eachComment.userId._id !==
-                                                  userInfo._id ? (
-                                                  <svg
-                                                    style={{
-                                                      cursor: "pointer",
-                                                      backgroundColor:
-                                                        "rgb(29, 155, 240)",
-                                                    }}
-                                                    onClick={() =>
-                                                      handleShowDetailPostFromPostDetailPage(
-                                                        eachComment.postId
-                                                      )
-                                                    }
-                                                    color="rgb(83, 100, 113)"
-                                                    fill="currentColor"
-                                                    width={`${1.25}em`}
-                                                    height={`${1.25}em`}
-                                                    viewBox="0 0 24 24"
-                                                    aria-hidden="true"
-                                                    className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                                  >
-                                                    <g>
-                                                      <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                                    </g>
-                                                  </svg>
-                                                ) : (
-                                                  <svg
-                                                    style={{
-                                                      cursor: "pointer",
-                                                      backgroundColor:
-                                                        "crimson",
-                                                    }}
-                                                    onClick={() =>
-                                                      handleDeletePostPostDetailPage(
-                                                        eachComment.postId
-                                                      )
-                                                    }
-                                                    color="rgb(83, 100, 113)"
-                                                    fill="currentColor"
-                                                    width={`${1.25}em`}
-                                                    height={`${1.25}em`}
-                                                    viewBox="0 0 24 24"
-                                                    aria-hidden="true"
-                                                    className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                                  >
-                                                    <g>
-                                                      <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                                    </g>
-                                                  </svg>
-                                                )}
-                                              </span>
+                                              <PostPopover
+                                                postDetailPageActive={true}
+                                                post={eachComment}
+                                                postDeletionProcess={
+                                                  handleDeletePostPostDetailPage
+                                                }
+                                              />
                                             </div>
                                             {/* three dots svg finish to check */}
                                           </Stack>
@@ -2798,6 +2689,10 @@ function PostDetailPage() {
                                                   lineHeight: "20px",
                                                   overflowWrap: "break-word",
                                                   maxWidth: "100%",
+                                                  color:
+                                                    themeName === "dark-theme"
+                                                      ? "white"
+                                                      : "black",
                                                 }}
                                                 className="p-2"
                                               >
@@ -2945,6 +2840,9 @@ function PostDetailPage() {
                                                           userInfo._id
                                                         )
                                                           ? "rgb(0, 186, 124)"
+                                                          : themeName ===
+                                                            "dark-theme"
+                                                          ? "#71767A"
                                                           : "rgb(83, 100, 113)"
                                                       }
                                                     >
@@ -2965,6 +2863,9 @@ function PostDetailPage() {
                                                             userInfo._id
                                                           )
                                                             ? "rgb(0, 186, 124)"
+                                                            : themeName ===
+                                                              "dark-theme"
+                                                            ? "#71767A"
                                                             : "rgb(83, 100, 113)",
                                                       }}
                                                     >
@@ -3043,8 +2944,12 @@ function PostDetailPage() {
                                                       height={`${1.25}em`}
                                                       viewBox="0 0 24 24"
                                                       aria-hidden="true"
-                                                      color="rgb(83, 100, 113)"
-                                                      fill="currentColor"
+                                                      fill={
+                                                        themeName ===
+                                                        "dark-theme"
+                                                          ? "#71767A"
+                                                          : "rgb(83, 100, 113)"
+                                                      }
                                                       className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                                                     >
                                                       <g>
@@ -3054,7 +2959,15 @@ function PostDetailPage() {
                                                     <span className="post-description">
                                                       {eachComment.likes
                                                         .length ? (
-                                                        <span>
+                                                        <span
+                                                          style={{
+                                                            color:
+                                                              themeName ===
+                                                              "dark-theme"
+                                                                ? "#71767A"
+                                                                : "rgb(83, 100, 113)",
+                                                          }}
+                                                        >
                                                           {
                                                             eachComment.likes
                                                               .length

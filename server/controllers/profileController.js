@@ -2,10 +2,10 @@ const User = require("../models/User.model");
 const Post = require("../models/Post.model");
 const cloudinary = require("../utils/cloudinary");
 const bcrypt = require("bcryptjs");
-const mongoose = require("mongoose");
 const handleProfile = (req, res) => {
   const userId = req.user.userId;
 
+  console.log("Now we are in profile page !!!");
   User.findById(userId)
     // start to check
 

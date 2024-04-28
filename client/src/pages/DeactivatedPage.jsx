@@ -9,7 +9,7 @@ import {
   Form,
 } from "react-bootstrap";
 
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { SigninModal } from "../components/ui/Modal";
 import { useContext, useState } from "react";
 import axios from "axios";
@@ -21,8 +21,6 @@ const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-
-// const socket = io.connect(API_URL);
 
 function DeactivatedPage() {
   const [fullname, setFullname] = useState("");
@@ -385,7 +383,16 @@ function DeactivatedPage() {
                     }}
                   >
                     <div>Personalization and data</div>
-                    <span style={{}}>Allow some</span>
+                    <span
+                      style={{
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)",
+                      }}
+                    >
+                      Allow some
+                    </span>
                   </div>
                   <div
                     className="ms-auto"
@@ -447,7 +454,16 @@ function DeactivatedPage() {
                     }}
                   >
                     <div>Cookie preferences</div>
-                    <span style={{}}>Manage your cookie experience on C.</span>
+                    <span
+                      style={{
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)",
+                      }}
+                    >
+                      Manage your cookie experience on C.
+                    </span>
                   </div>
                   <div
                     className="ms-auto"
@@ -584,7 +600,10 @@ function DeactivatedPage() {
               </div>
               <div
                 style={{
-                  color: "rgb(83, 100, 113)",
+                  color:
+                    themeName === "dark-theme"
+                      ? "#71767A"
+                      : "rgb(83, 100, 113)",
                   fontSize: "13px",
                   fontWeight: "400",
                   lineHeight: "16px",

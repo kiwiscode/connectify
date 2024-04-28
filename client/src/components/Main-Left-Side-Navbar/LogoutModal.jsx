@@ -21,13 +21,11 @@ import { message, Steps } from "antd";
 import { Divider, List } from "antd";
 import LoadingSpinner from "../ui/LoadingSpinner";
 import { ThemeContext } from "../../context/ThemeContext";
-import { width } from "@mui/system";
 import useWindowDimensions from "../../hooks/getWindowDimensions";
 import {
   Checkbox,
   FormControl,
   FormControlLabel,
-  InputAdornment,
   InputLabel,
   OutlinedInput,
   Radio,
@@ -180,7 +178,8 @@ function LogoutModal({ isLogoutActionActive }) {
               fontSize: "13px",
               lineHeight: "16px",
               fontWeight: "400",
-              color: "rgb(83, 100, 113)",
+              color:
+                themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
               borderBottom:
                 themeName !== "dark-theme"
                   ? "1px solid rgba(0, 0, 0, 0.1)"
@@ -213,7 +212,8 @@ function LogoutModal({ isLogoutActionActive }) {
               fontSize: "13px",
               lineHeight: "16px",
               fontWeight: "400",
-              color: "rgb(83, 100, 113)",
+              color:
+                themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
               borderBottom:
                 themeName !== "dark-theme"
                   ? "1px solid rgba(0, 0, 0, 0.1)"
@@ -230,7 +230,8 @@ function LogoutModal({ isLogoutActionActive }) {
               fontSize: "13px",
               lineHeight: "16px",
               fontWeight: "400",
-              color: "rgb(83, 100, 113)",
+              color:
+                themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
             }}
           >
             To use your current @username or email address with a different
@@ -286,7 +287,8 @@ function LogoutModal({ isLogoutActionActive }) {
               fontSize: "13px",
               lineHeight: "16px",
               fontWeight: "400",
-              color: "rgb(83,100,113)",
+              color:
+                themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
             }}
           >
             Complete your deactivation request by entering the password
@@ -371,7 +373,8 @@ function LogoutModal({ isLogoutActionActive }) {
               fontSize: "13px",
               lineHeight: "16px",
               fontWeight: "400",
-              color: "rgb(83, 100, 113)",
+              color:
+                themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
               borderBottom:
                 themeName !== "dark-theme"
                   ? "1px solid rgba(0, 0, 0, 0.1)"
@@ -403,7 +406,8 @@ function LogoutModal({ isLogoutActionActive }) {
               fontSize: "13px",
               lineHeight: "16px",
               fontWeight: "400",
-              color: "rgb(83, 100, 113)",
+              color:
+                themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
               borderBottom:
                 themeName !== "dark-theme"
                   ? "1px solid rgba(0, 0, 0, 0.1)"
@@ -419,7 +423,8 @@ function LogoutModal({ isLogoutActionActive }) {
               fontSize: "13px",
               lineHeight: "16px",
               fontWeight: "400",
-              color: "rgb(83, 100, 113)",
+              color:
+                themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
               borderBottom:
                 themeName !== "dark-theme"
                   ? "1px solid rgba(0, 0, 0, 0.1)"
@@ -434,7 +439,8 @@ function LogoutModal({ isLogoutActionActive }) {
               fontSize: "13px",
               lineHeight: "16px",
               fontWeight: "400",
-              color: "rgb(83, 100, 113)",
+              color:
+                themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
             }}
           >
             {"Your profile won't be visible to other Connectify users."}
@@ -1077,7 +1083,7 @@ function LogoutModal({ isLogoutActionActive }) {
             showLogoutModal && themeName !== "dark-theme"
               ? "#999999"
               : showLogoutModal && themeName === "dark-theme"
-              ? "#242D35"
+              ? "#232E36"
               : "",
         }}
         size="sm"
@@ -1101,7 +1107,7 @@ function LogoutModal({ isLogoutActionActive }) {
             }}
           >
             <div
-              className="mt-5"
+              className="mt-2"
               style={{
                 width: "100%",
 
@@ -1147,7 +1153,7 @@ function LogoutModal({ isLogoutActionActive }) {
             </Button>
             <Button
               onClick={() => setShowLogoutModal(false)}
-              className={`mt-3 forgot-password-btn ${themeName}-black-btn`}
+              className={`mt-2 forgot-password-btn ${themeName}-black-btn`}
               variant="light"
               style={{
                 width: "256px",
@@ -1237,7 +1243,10 @@ function LogoutModal({ isLogoutActionActive }) {
               <div
                 className="localeInfo-username"
                 style={{
-                  color: "rgb(83, 100, 113)",
+                  color:
+                    themeName === "dark-theme"
+                      ? "#71767A"
+                      : "rgb(83, 100, 113)",
                   fontSize: "15px",
                   lineHeight: "20px",
                   fontWeight: "400",
@@ -1467,7 +1476,8 @@ function LogoutModal({ isLogoutActionActive }) {
               fontSize: "13px",
               lineHeight: "16px",
               fontWeight: "400",
-              color: "rgb(83, 100, 113)",
+              color:
+                themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
               margin: "0px 12px",
             }}
           >
@@ -1568,7 +1578,9 @@ function LogoutModal({ isLogoutActionActive }) {
                                   lineHeight: "16px",
                                   fontWeight: "400",
                                   color:
-                                    "rgb(83, 100, 113)                      ",
+                                    themeName === "dark-theme"
+                                      ? "#71767A"
+                                      : "rgb(83, 100, 113)",
                                 }}
                               >
                                 {item}
@@ -1645,7 +1657,9 @@ function LogoutModal({ isLogoutActionActive }) {
                                       lineHeight: "16px",
                                       fontWeight: "400",
                                       color:
-                                        "rgb(83, 100, 113)                      ",
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgb(83, 100, 113)",
                                     }}
                                   >
                                     {item}
@@ -1721,7 +1735,9 @@ function LogoutModal({ isLogoutActionActive }) {
                                           lineHeight: "16px",
                                           fontWeight: "400",
                                           color:
-                                            "rgb(83, 100, 113)                      ",
+                                            themeName === "dark-theme"
+                                              ? "#71767A"
+                                              : "rgb(83, 100, 113)",
                                         }}
                                       >
                                         {item}.
@@ -1808,7 +1824,10 @@ function LogoutModal({ isLogoutActionActive }) {
                             fontSize: "13px",
                             lineHeight: "16px",
                             fontWeight: "400",
-                            color: "rgb(83, 100, 113)",
+                            color:
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)",
                           }}
                         >
                           @{userInfo.username}
@@ -1871,7 +1890,10 @@ function LogoutModal({ isLogoutActionActive }) {
                             fontSize: "13px",
                             lineHeight: "16px",
                             fontWeight: "400",
-                            color: "rgb(83, 100, 113)",
+                            color:
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)",
                           }}
                         >
                           {userInfo.email}
@@ -1934,7 +1956,10 @@ function LogoutModal({ isLogoutActionActive }) {
                             fontSize: "13px",
                             lineHeight: "16px",
                             fontWeight: "400",
-                            color: "rgb(83, 100, 113)",
+                            color:
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)",
                           }}
                         >
                           {userInfo.verified
@@ -1942,7 +1967,10 @@ function LogoutModal({ isLogoutActionActive }) {
                             : `${(
                                 <span
                                   style={{
-                                    color: "rgb(83, 100, 113)",
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgb(83, 100, 113)",
 
                                     fontSize: "13px",
                                     cursor: "pointer",
@@ -2017,7 +2045,10 @@ function LogoutModal({ isLogoutActionActive }) {
                             fontSize: "13px",
                             lineHeight: "16px",
                             fontWeight: "400",
-                            color: "rgb(83, 100, 113)",
+                            color:
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)",
                           }}
                         >
                           {formatDateTime(userInfo.createdAt)}
