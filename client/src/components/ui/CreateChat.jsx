@@ -13,12 +13,12 @@ const API_URL = "http://localhost:3000";
 // when working on deployment version
 // ?
 
+const socket = io.connect(API_URL);
+
 function CreateChat({ writeMessageButton }) {
   const [show, setShow] = useState(false);
   const [room, setRoom] = useState("");
   const navigate = useNavigate();
-
-  const socket = io.connect(`${API_URL}`);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const [searchString, setSearchString] = useState("");

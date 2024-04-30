@@ -21,17 +21,16 @@ import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import { ThemeContext } from "../context/ThemeContext";
-import io from "socket.io-client";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-
+import io from "socket.io-client";
+const socket = io.connect(`${API_URL}`);
 function MessagesPage() {
   const { userInfo, getToken } = useContext(UserContext);
-  const socket = io.connect(`${API_URL}`);
 
   const [isHovered, setIsHovered] = useState(false);
   const [messageRooms, setmessageRooms] = useState([]);
