@@ -1,6 +1,20 @@
 @tailwind components;
 @tailwind utilities;
+.input-icons {
+  width: 100%;
+  margin-bottom: 10px;
+}
 
+.icon {
+  padding: 10px;
+  min-width: 40px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+}
 #root {
   --toastify-color-light: rgba(0, 0, 0, 0.1);
   --toastify-text-color-light: rgb(83, 100, 113);
@@ -3072,6 +3086,23 @@ select {
   background-color: black;
 }
 
+.logout-modal-variant-parent-smaller-than-700 .modal-dialog {
+  display: flex;
+  justify-content: center;
+}
+
+.logout-modal-variant-parent-smaller-than-700 .modal-content {
+  background-color: white;
+  max-width: 322px;
+  max-height: 358px;
+}
+
+.logout-modal-variant-parent-smaller-than-700-dark-theme .modal-content {
+  background-color: black;
+  max-width: 322px;
+  max-height: 358px;
+}
+
 .dark-theme-black-btn {
   color: white !important;
   outline-style: none;
@@ -3222,6 +3253,10 @@ select {
 .light-theme-spinner-modal {
   min-height: 650px;
   min-width: 600px;
+}
+
+.dark-theme-spinner-modal-sign-in {
+  background-color: black !important;
 }
 
 .create-account-modal-dark-theme,
@@ -3456,6 +3491,45 @@ input[data-autocompleted] {
 .hover-theme-dark-theme:hover {
   background-color: white !important;
 }
+
+.responsive-navigation-bar-bottom-post-modal-dark-theme div {
+  background-color: black;
+}
+
+.display-options-modal div {
+  background-color: white;
+}
+
+.dark-theme-display-options-modal div {
+  background-color: black;
+}
+
+/* display options styling start to check */
+.border-display-font-size-option.non-active {
+  width: 60px;
+  position: relative;
+  border: 2px solid #8fcdf8 !important;
+}
+
+.border-display-font-size-option.active {
+  width: 60px;
+  position: relative;
+  border: 2px solid #1d9bf0 !important;
+}
+
+.border-display-font-size-option-dark-theme.non-active {
+  width: 60px;
+  position: relative;
+  border: 2px solid #8fcdf8 !important;
+}
+
+.border-display-font-size-option-dark-theme.active {
+  width: 60px;
+  position: relative;
+  border: 2px solid #1d9bf0 !important;
+}
+/* display options styling finish to check */
+
 /* theme toggle mode styling finish to check  */
 
 /* modallere dialog classname vermek gerek diğer türlü styling bozuluyor ve modal harici örneğin inputlarada border radius uygulanıyor start to check  */

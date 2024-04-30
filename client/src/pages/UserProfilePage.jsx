@@ -22,6 +22,7 @@ import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
 import { ThemeContext } from "../context/ThemeContext";
 import PostPopover from "../components/three-dots-popover/Popover";
+import useWindowDimensions from "../hooks/getWindowDimensions";
 
 function UserProfile() {
   const [
@@ -566,6 +567,8 @@ function UserProfile() {
     };
   }, []);
 
+  const { height, width } = useWindowDimensions();
+
   return (
     <>
       {contextHolder}
@@ -1051,7 +1054,13 @@ function UserProfile() {
             </span>
             {/* mainpage yani home rotasına tüm twitlerin gösterileceği column burası !  */}
 
-            <div className={`all-posts ${postsWindow}`}>
+            <div
+              style={{
+                height:
+                  width <= 700 && userprofiledata.length < 2 ? "30vh" : "",
+              }}
+              className={`all-posts ${postsWindow}`}
+            >
               {userprofiledata.length ? (
                 <>
                   {userprofiledata.slice(0, visibleTweets).map((post) => (
@@ -1708,7 +1717,13 @@ function UserProfile() {
               )}
             </div>
 
-            <div className={`${favoriteWindow} all-favorites`}>
+            <div
+              style={{
+                height:
+                  width <= 700 && userprofiledata.length < 2 ? "30vh" : "",
+              }}
+              className={`${favoriteWindow} all-favorites`}
+            >
               {favorites.length && hasFalse ? (
                 <>
                   {favorites.slice(0, visibleLikedTweets).map((favorite) => (

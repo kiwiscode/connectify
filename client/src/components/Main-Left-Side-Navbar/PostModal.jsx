@@ -7,6 +7,7 @@ import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { UserContext } from "../../context/UserContext";
 import { ThemeContext } from "../../context/ThemeContext";
+import useWindowDimensions from "../../hooks/getWindowDimensions";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -180,6 +181,7 @@ function PostModal({
     </Popover>
   );
 
+  const { height, width } = useWindowDimensions();
   return (
     <>
       <Button
@@ -238,7 +240,17 @@ function PostModal({
         </svg>
       </Button>
 
-      <Modal show={show} onHide={handleClose}>
+      <Modal
+        dialogClassName="modal-fullscreen"
+        style={{
+          zIndex: "9999",
+          margin: "0px !important",
+          padding: "0px !important",
+        }}
+        show={show}
+        onHide={handleClose}
+        className={`responsive-navigation-bar-bottom-post-modal responsive-navigation-bar-bottom-post-modal-${themeName}`}
+      >
         <Modal.Header
           style={{
             border: "none",
@@ -246,7 +258,7 @@ function PostModal({
         >
           <div
             onClick={handleClose}
-            className="close-button"
+            className={`close-button close-button-${themeName}`}
             style={{ borderRadius: "50%", cursor: "pointer" }}
           >
             <div>
@@ -259,8 +271,7 @@ function PostModal({
                 onClick={handleClose}
                 width={20}
                 height={20}
-                color="rgb(15,20,25)"
-                fill="currentColor"
+                fill={themeName === "dark-theme" ? "white" : ""}
                 viewBox="0 0 24 24"
                 aria-hidden="true"
                 className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
@@ -321,12 +332,17 @@ function PostModal({
                 style={{
                   resize: "none",
                   padding: "8px",
-                  color: "rgba(15,20,25,1.00)",
+                  color:
+                    themeName === "dark-theme"
+                      ? "white"
+                      : "rgba(15,20,25,1.00)",
                   lineHeight: "24px",
                   fontWeight: "400",
                   fontSize: `${content ? "15px" : "20px"}`,
                   width: "100%",
                   height: "100px",
+                  backgroundColor:
+                    themeName === "dark-theme" ? "black" : "transparent",
                 }}
               />
             </div>
@@ -388,7 +404,26 @@ function PostModal({
           </div>
         </Modal.Body>
 
-        <Modal.Footer className="post-modal-footer ml-1">
+        <Modal.Footer
+          style={{
+            margin: "0px",
+            borderTop:
+              themeName !== "dark-theme"
+                ? "1px solid rgba(0, 0, 0, 0.1)"
+                : // : "0.1px solid rgb(70, 70, 70)",
+                  "1px solid rgb(70, 70, 70)",
+            filter:
+              themeName === "dark-theme"
+                ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                : "",
+
+            boxShadow:
+              themeName === "dark-theme"
+                ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
+          }}
+          className="post-modal-footer ml-1"
+        >
           <Stack direction="horizontal" gap={0}>
             {/* INFO */}
             <div
@@ -401,7 +436,7 @@ function PostModal({
                   cursor: "pointer",
                   borderRadius: "50%",
                 }}
-                className="svg-border-parent svg-border-parent-image-choose"
+                className={`svg-border-parent svg-border-parent-${themeName}`}
               >
                 <svg
                   style={{
@@ -440,7 +475,7 @@ function PostModal({
                 overlay={popoverBottom}
               >
                 <div
-                  className="svg-border-parent"
+                  className={`svg-border-parent chat-detail-emoji-svg-border-parent svg-border-parent-${themeName}`}
                   style={{
                     cursor: "pointer",
                     borderRadius: "50%",
@@ -482,6 +517,9 @@ function PostModal({
                 </Button>
               ) : (
                 <Button
+                  style={{
+                    border: "none",
+                  }}
                   variant="primary"
                   onClick={() => handlePost()}
                   className={`emptyContent post-btn compose-tweet-textArea`}

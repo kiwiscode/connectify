@@ -3,8 +3,6 @@ import { UserContext } from "../../context/UserContext";
 import {
   Button,
   Modal,
-  Form,
-  InputGroup,
   Stack,
   Popover,
   OverlayTrigger,
@@ -31,20 +29,21 @@ import {
   Radio,
   RadioGroup,
   TextField,
-  Tooltip,
 } from "@mui/material";
+import RightSideColumn from "../Main-Right-Side-Column/RightSideColumn";
+
+import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import { styled } from "@mui/material/styles";
+
 // when working on local version
 const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
 function LogoutModal({ isLogoutActionActive }) {
-  const [
-    { theme, themeName },
-    lightModeActive,
-    darkModeActive,
-    cyberpunkModeActive,
-  ] = useContext(ThemeContext);
+  const [{ theme, themeName, activeFontSizeOption }, , toggleChangeFontSize] =
+    useContext(ThemeContext);
   const [messageApi, contextHolder] = message.useMessage();
   const successMessage = () => {
     messageApi.success({
@@ -544,6 +543,19 @@ function LogoutModal({ isLogoutActionActive }) {
 
   // start to check
 
+  const [showAfterChangePasswordScreen, setshowAfterChangePasswordScreen] =
+    useState(null);
+
+  const [showDisplayOptionsModal, setshowDisplayOptionsModal] = useState(null);
+
+  const handleCloseDisplayOptionsModal = () => {
+    setshowDisplayOptionsModal(false);
+  };
+
+  const showDisplayModal = () => {
+    setshowDisplayOptionsModal(true);
+  };
+
   const popoverTop = (
     <Popover
       style={{
@@ -556,7 +568,7 @@ function LogoutModal({ isLogoutActionActive }) {
           themeName === "dark-theme"
             ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
             : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
-        width: "19.5%",
+        width: width <= 700 ? "50%" : "19.5%",
         padding: "8px 0px",
         borderWidth: "1px",
         borderRadius: "12px",
@@ -572,6 +584,38 @@ function LogoutModal({ isLogoutActionActive }) {
         }}
         className="logout-body"
       >
+        {width <= 700 ? (
+          <>
+            <div
+              onClick={() => showDisplayModal()}
+              style={{
+                paddingBottom: "12px",
+                paddingTop: "12px",
+                lineHeight: "20px",
+                fontWeight: "700",
+                fontSize: "15px",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                width: "100%",
+                height: "100%",
+              }}
+              className={`logout-p logout-popover logout-popover-${themeName}`}
+            >
+              <span
+                style={{
+                  position: "relative",
+                  left: "10px",
+                  color: themeName === "dark-theme" ? "white" : "",
+                }}
+              >
+                Display
+              </span>
+            </div>
+            <RightSideColumn widthSmaller700={width <= 700 ? true : false} />
+          </>
+        ) : null}
+
         {/* settings icon start to check  */}
         <div
           onClick={handleShow}
@@ -1023,11 +1067,737 @@ function LogoutModal({ isLogoutActionActive }) {
 
   console.log("Is valid password =>", isValidPassword);
 
-  const [showAfterChangePasswordScreen, setshowAfterChangePasswordScreen] =
-    useState(null);
+  const BootstrapTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+  ))(({ theme }) => ({
+    [`& .${tooltipClasses.arrow}`]: {
+      color: "white",
+    },
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: themeName === "dark-theme" ? "#495a68" : "",
+    },
+  }));
+
+  const [hoveredOption, setHoveredOption] = useState(null);
 
   return (
     <>
+      {width <= 700 && (
+        <Modal
+          style={{
+            height: "100%",
+            margin: "0px",
+            padding: "0px",
+          }}
+          show={showDisplayOptionsModal}
+          onHide={handleCloseDisplayOptionsModal}
+          dialogClassName="modal-fullscreen"
+          className={
+            themeName === "dark-theme"
+              ? "dark-theme-display-options-modal"
+              : "display-options-modal"
+          }
+        >
+          <div
+            style={{
+              padding: "16px",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: "5%",
+              }}
+            >
+              <div
+                onClick={handleCloseDisplayOptionsModal}
+                // className="p-2 arrow"
+                className={`p-2 arrow arrow-${themeName}`}
+                style={{
+                  position: "relative",
+                  bottom: "3px",
+                  width: "30px",
+                  height: " 30px",
+                  borderRadius: "50%",
+                  cursor: "pointer",
+                }}
+              >
+                <svg
+                  color={themeName === "dark-theme" ? "white" : ""}
+                  fill="currentColor"
+                  style={{
+                    position: "absolute",
+                    bottom: "5px",
+                    border: "none",
+                    left: "5px",
+                    fontSize: "15px",
+                  }}
+                  width={20}
+                  height={20}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                >
+                  <g>
+                    <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                  </g>
+                </svg>
+              </div>
+              <h2
+                style={{
+                  fontWeight: "700",
+                  lineHeight: "23px",
+                  color: themeName === "dark-theme" ? "white" : "black",
+                }}
+              >
+                Display
+              </h2>
+            </div>
+            <div
+              className="mt-4"
+              style={{
+                lineHeight: "15px",
+                fontSize: "12px",
+                fontWeight: "400",
+                color:
+                  themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
+              }}
+            >
+              Manage your font size, color, and background. These settings
+              affect all the C accounts on this browser.
+            </div>
+            <div>hello world</div>
+
+            <div
+              className="mt-3"
+              style={{
+                margin: "-16px",
+
+                borderBottom:
+                  themeName !== "dark-theme"
+                    ? "1px solid rgba(0, 0, 0, 0.1)"
+                    : // : "0.1px solid rgb(70, 70, 70)",
+                      "1px solid rgb(70, 70, 70)",
+              }}
+            ></div>
+          </div>
+          <div
+            style={{
+              padding: "16px",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "19px",
+                lineHeight: "23px",
+                fontWeight: "800",
+                color: themeName === "dark-theme" ? "white" : "black",
+              }}
+            >
+              Font size
+            </div>
+            <div className="mt-4">
+              <div
+                style={{
+                  display: "flex",
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: "12px",
+                    lineHeight: "14px",
+                    fontWeight: "400",
+                    color: themeName === "dark-theme" ? "white" : "",
+
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <span>Aa</span>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <BootstrapTooltip title="Extra small">
+                    <div
+                      onMouseEnter={() => setHoveredOption("Extra small")}
+                      onMouseLeave={() => setHoveredOption(null)}
+                      style={{
+                        backgroundColor:
+                          hoveredOption === "Extra small" &&
+                          themeName !== "dark-theme"
+                            ? "#e8f2fb"
+                            : hoveredOption === "Extra small" &&
+                              themeName === "dark-theme"
+                            ? "#0a141d                            "
+                            : null,
+                        width: "36px",
+                        height: "36px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginLeft: "15px",
+                        borderRadius: "50%",
+                      }}
+                    >
+                      <div
+                        onClick={() => toggleChangeFontSize("Extra Small 12px")}
+                        style={{
+                          zIndex: 9999,
+                          width: "16px",
+                          height: "16px",
+                          borderRadius: "50%",
+                          backgroundColor:
+                            activeFontSizeOption === "Extra Small 12px" ||
+                            activeFontSizeOption === "Default 16px" ||
+                            activeFontSizeOption === "Small 14px" ||
+                            activeFontSizeOption === "Large 18px" ||
+                            activeFontSizeOption === "Extra Large 20px"
+                              ? "#1C9BEF"
+                              : "#8ECCF8",
+                        }}
+                      ></div>
+                    </div>
+                  </BootstrapTooltip>
+                  <div
+                    style={{
+                      marginLeft: "-10px",
+                      marginRight: "-13px",
+                    }}
+                    className={
+                      themeName !== "dark-theme"
+                        ? `border-display-font-size-option ${
+                            activeFontSizeOption === "Default 16px" ||
+                            activeFontSizeOption === "Small 14px" ||
+                            activeFontSizeOption === "Large 18px" ||
+                            activeFontSizeOption === "Extra Large 20px"
+                              ? "active"
+                              : "non-active"
+                          } `
+                        : `border-display-font-size-option-dark-theme ${
+                            activeFontSizeOption === "Default 16px" ||
+                            activeFontSizeOption === "Small 14px" ||
+                            activeFontSizeOption === "Large 18px" ||
+                            activeFontSizeOption === "Extra Large 20px"
+                              ? "active"
+                              : "non-active"
+                          } `
+                    }
+                  ></div>
+                  <BootstrapTooltip title="Small">
+                    <div
+                      onMouseEnter={() => setHoveredOption("Small")}
+                      onMouseLeave={() => setHoveredOption(null)}
+                      style={{
+                        backgroundColor:
+                          hoveredOption === "Small" &&
+                          themeName !== "dark-theme"
+                            ? "#e8f2fb"
+                            : hoveredOption === "Small" &&
+                              themeName === "dark-theme"
+                            ? "#0a141d                            "
+                            : null,
+                        width: "36px",
+                        height: "36px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderRadius: "50%",
+                      }}
+                    >
+                      <div
+                        onClick={() => toggleChangeFontSize("Small 14px")}
+                        style={{
+                          zIndex: 9999,
+                          width:
+                            activeFontSizeOption === "Default 16px" ||
+                            activeFontSizeOption === "Small 14px" ||
+                            activeFontSizeOption === "Large 18px" ||
+                            activeFontSizeOption === "Extra Large 20px"
+                              ? "16px"
+                              : "10px",
+                          height:
+                            activeFontSizeOption === "Default 16px" ||
+                            activeFontSizeOption === "Small 14px" ||
+                            activeFontSizeOption === "Large 18px" ||
+                            activeFontSizeOption === "Extra Large 20px"
+                              ? "16px"
+                              : "10px",
+                          borderRadius: "50%",
+                          backgroundColor:
+                            activeFontSizeOption === "Default 16px" ||
+                            activeFontSizeOption === "Small 14px" ||
+                            activeFontSizeOption === "Large 18px" ||
+                            activeFontSizeOption === "Extra Large 20px"
+                              ? "#1C9BEF"
+                              : "#8ECCF8",
+                        }}
+                      ></div>
+                    </div>
+                  </BootstrapTooltip>
+                  <div
+                    style={{
+                      marginLeft: "-13px",
+                      marginRight: "-13px",
+                    }}
+                    className={
+                      themeName !== "dark-theme"
+                        ? `border-display-font-size-option ${
+                            activeFontSizeOption === "Default 16px" ||
+                            activeFontSizeOption === "Large 18px" ||
+                            activeFontSizeOption === "Extra Large 20px"
+                              ? "active"
+                              : "non-active"
+                          } `
+                        : `border-display-font-size-option-dark-theme ${
+                            activeFontSizeOption === "Default 16px" ||
+                            activeFontSizeOption === "Large 18px" ||
+                            activeFontSizeOption === "Extra Large 20px"
+                              ? "active"
+                              : "non-active"
+                          } `
+                    }
+                  ></div>
+                  <BootstrapTooltip title="Default">
+                    <div
+                      onMouseEnter={() => setHoveredOption("Default")}
+                      onMouseLeave={() => setHoveredOption(null)}
+                      style={{
+                        backgroundColor:
+                          hoveredOption === "Default" &&
+                          themeName !== "dark-theme"
+                            ? "#e8f2fb"
+                            : hoveredOption === "Default" &&
+                              themeName === "dark-theme"
+                            ? "#0a141d                            "
+                            : null,
+                        width: "36px",
+                        height: "36px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+
+                        borderRadius: "50%",
+                      }}
+                    >
+                      <div
+                        onClick={() => toggleChangeFontSize("Default 16px")}
+                        style={{
+                          zIndex: 9999,
+                          width:
+                            activeFontSizeOption === "Default 16px" ||
+                            activeFontSizeOption === "Large 18px" ||
+                            activeFontSizeOption === "Extra Large 20px"
+                              ? "16px"
+                              : "10px",
+                          height:
+                            activeFontSizeOption === "Default 16px" ||
+                            activeFontSizeOption === "Large 18px" ||
+                            activeFontSizeOption === "Extra Large 20px"
+                              ? "16px"
+                              : "10px",
+                          borderRadius: "50%",
+                          backgroundColor:
+                            activeFontSizeOption === "Default 16px" ||
+                            activeFontSizeOption === "Large 18px" ||
+                            activeFontSizeOption === "Extra Large 20px"
+                              ? "#1C9BEF"
+                              : "#8ECCF8",
+                        }}
+                      ></div>
+                    </div>
+                  </BootstrapTooltip>
+                  <div
+                    style={{
+                      marginLeft: "-13px",
+                      marginRight: "-13px",
+                    }}
+                    className={
+                      themeName !== "dark-theme"
+                        ? `border-display-font-size-option ${
+                            activeFontSizeOption === "Large 18px" ||
+                            activeFontSizeOption === "Extra Large 20px"
+                              ? "active"
+                              : "non-active"
+                          } `
+                        : `border-display-font-size-option-dark-theme ${
+                            activeFontSizeOption === "Large 18px" ||
+                            activeFontSizeOption === "Extra Large 20px"
+                              ? "active"
+                              : "non-active"
+                          } `
+                    }
+                  ></div>
+                  <BootstrapTooltip title="Large">
+                    <div
+                      onMouseEnter={() => setHoveredOption("Large")}
+                      onMouseLeave={() => setHoveredOption(null)}
+                      style={{
+                        backgroundColor:
+                          hoveredOption === "Large" &&
+                          themeName !== "dark-theme"
+                            ? "#e8f2fb"
+                            : hoveredOption === "Large" &&
+                              themeName === "dark-theme"
+                            ? "#0a141d                            "
+                            : null,
+                        width: "36px",
+                        height: "36px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+
+                        borderRadius: "50%",
+                      }}
+                    >
+                      <div
+                        onClick={() => toggleChangeFontSize("Large 18px")}
+                        style={{
+                          zIndex: 9999,
+
+                          width:
+                            activeFontSizeOption === "Large 18px" ||
+                            activeFontSizeOption === "Extra Large 20px"
+                              ? "16px"
+                              : "10px",
+                          height:
+                            activeFontSizeOption === "Large 18px" ||
+                            activeFontSizeOption === "Extra Large 20px"
+                              ? "16px"
+                              : "10px",
+                          borderRadius: "50%",
+                          backgroundColor:
+                            activeFontSizeOption === "Large 18px" ||
+                            activeFontSizeOption === "Extra Large 20px"
+                              ? "#1C9BEF"
+                              : "#8ECCF8",
+                        }}
+                      ></div>
+                    </div>
+                  </BootstrapTooltip>
+                  <div
+                    style={{
+                      marginLeft: "-13px",
+                    }}
+                    className={
+                      themeName !== "dark-theme"
+                        ? `border-display-font-size-option ${
+                            activeFontSizeOption === "Extra Large 20px"
+                              ? "active"
+                              : "non-active"
+                          } `
+                        : `border-display-font-size-option-dark-theme ${
+                            activeFontSizeOption === "Extra Large 20px"
+                              ? "active"
+                              : "non-active"
+                          } `
+                    }
+                  ></div>
+                  <BootstrapTooltip title="Extra large">
+                    <div
+                      onMouseEnter={() => setHoveredOption("Extra large")}
+                      onMouseLeave={() => setHoveredOption(null)}
+                      style={{
+                        backgroundColor:
+                          hoveredOption === "Extra large" &&
+                          themeName !== "dark-theme"
+                            ? "#e8f2fb"
+                            : hoveredOption === "Extra large" &&
+                              themeName === "dark-theme"
+                            ? "#0a141d"
+                            : null,
+                        width: "36px",
+                        height: "36px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginLeft: "-13px",
+                        borderRadius: "50%",
+                      }}
+                    >
+                      <div
+                        onClick={() => toggleChangeFontSize("Extra Large 20px")}
+                        style={{
+                          zIndex: 9999,
+
+                          width:
+                            activeFontSizeOption === "Extra Large 20px"
+                              ? "16px"
+                              : "10px",
+                          height:
+                            activeFontSizeOption === "Extra Large 20px"
+                              ? "16px"
+                              : "10px",
+                          borderRadius: "50%",
+                          backgroundColor:
+                            activeFontSizeOption === "Extra Large 20px"
+                              ? "#1C9BEF"
+                              : "#8ECCF8",
+                        }}
+                      ></div>
+                    </div>
+                  </BootstrapTooltip>
+                </div>
+                <div
+                  style={{
+                    marginLeft: "20px",
+                    fontSize: "18px",
+                    lineHeight: "22px",
+                    fontWeight: "400",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    color: themeName === "dark-theme" ? "white" : "",
+                  }}
+                >
+                  Aa
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            style={{
+              borderBottom:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
+            }}
+          ></div>
+          <div
+            style={{
+              padding: "16px",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "19px",
+                lineHeight: "23px",
+                fontWeight: "800",
+                color: themeName === "dark-theme" ? "white" : "black",
+              }}
+            >
+              Color
+            </div>
+            <div
+              className="mt-4"
+              style={{
+                display: "flex",
+                justifyContent: "space-around",
+              }}
+            >
+              <div
+                style={{
+                  cursor: "pointer",
+                  width: "40px",
+                  height: "40px",
+                  backgroundColor: "#1C9BEF",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRadius: "50%",
+                  border: "none",
+                }}
+              >
+                <svg
+                  width={25}
+                  height={25}
+                  fill="white"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-6zzn7w r-q1j0wu"
+                >
+                  <g>
+                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                  </g>
+                </svg>
+              </div>
+              <Tooltip title="This feature is not yet active. ">
+                <div
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    backgroundColor: "#FFD400",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: "50%",
+                    border: "none",
+                  }}
+                >
+                  {/* <div>B</div> */}
+                </div>
+              </Tooltip>
+
+              <Tooltip title="This feature is not yet active. ">
+                <div
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    backgroundColor: "#F9197F",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: "50%",
+                  }}
+                >
+                  {/* <div>C</div> */}
+                </div>
+              </Tooltip>
+
+              <Tooltip title="This feature is not yet active. ">
+                <div
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    backgroundColor: "#7855FF",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: "50%",
+                  }}
+                >
+                  {/* <div>D</div> */}
+                </div>
+              </Tooltip>
+
+              <Tooltip title="This feature is not yet active. ">
+                <div
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    backgroundColor: "#FE7900",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: "50%",
+                  }}
+                >
+                  {/* <div>E</div> */}
+                </div>
+              </Tooltip>
+
+              <Tooltip title="This feature is not yet active. ">
+                <div
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    backgroundColor: "#00BA7C",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: "50%",
+                  }}
+                >
+                  {/* <div>F</div> */}
+                </div>
+              </Tooltip>
+            </div>
+          </div>
+          <div
+            style={{
+              borderBottom:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
+            }}
+          ></div>{" "}
+          <div
+            style={{
+              padding: "16px",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "19px",
+                lineHeight: "23px",
+                fontWeight: "800",
+                color: themeName === "dark-theme" ? "white" : "black",
+              }}
+            >
+              Background
+            </div>
+            <div
+              className="mt-4"
+              style={{
+                display: "flex",
+                flexDirection: width <= 600 ? "column" : "",
+                justifyContent: "space-between",
+                gap: "2%",
+                position: "relative",
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    width: width <= 600 ? "80vw" : "180px",
+                    marginTop: width <= 600 ? "10px" : "",
+
+                    height: "60px",
+                    backgroundColor: "white",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <div style={{}}>
+                    <div>A</div>
+                    <div>B</div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div
+                  style={{
+                    width: width <= 600 ? "80vw" : "180px",
+                    marginTop: width <= 600 ? "10px" : "",
+                    height: "60px",
+                    backgroundColor: "#15202B",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    border:
+                      themeName !== "dark-theme"
+                        ? "1px solid rgba(0, 0, 0, 0.1)"
+                        : // : "0.1px solid rgb(70, 70, 70)",
+                          "1px solid rgb(70, 70, 70)",
+                  }}
+                >
+                  {/* <div>F</div> */}
+                </div>
+              </div>
+              <div>
+                <div
+                  style={{
+                    width: width <= 600 ? "80vw" : "180px",
+                    marginTop: width <= 600 ? "10px" : "",
+                    height: "60px",
+                    backgroundColor: "black",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    border:
+                      themeName !== "dark-theme"
+                        ? "1px solid rgba(0, 0, 0, 0.1)"
+                        : // : "0.1px solid rgb(70, 70, 70)",
+                          "1px solid rgb(70, 70, 70)",
+                  }}
+                >
+                  {/* <div>F</div> */}
+                </div>
+              </div>
+            </div>
+          </div>
+        </Modal>
+      )}
+
       {contextHolder}
       {showLogoutSpinner ? (
         <>
@@ -1077,7 +1847,11 @@ function LogoutModal({ isLogoutActionActive }) {
       )}
 
       <Modal
-        className={`logout-modal-variant-parent logout-modal-variant-parent-${themeName}`}
+        className={
+          width <= 700
+            ? `logout-modal-variant-parent-smaller-than-700 logout-modal-variant-parent-smaller-than-700-${themeName}`
+            : `logout-modal-variant-parent logout-modal-variant-parent-${themeName}`
+        }
         style={{
           backgroundColor:
             showLogoutModal && themeName !== "dark-theme"
@@ -1172,7 +1946,9 @@ function LogoutModal({ isLogoutActionActive }) {
       {/* popover basic test start to check  */}
       <OverlayTrigger
         trigger="click"
-        placement={`${responsivePlacementLogoutPopup}`}
+        placement={
+          width <= 700 ? "bottom" : `${responsivePlacementLogoutPopup}`
+        }
         overlay={popoverTop}
       >
         {/* start to check  */}
@@ -1182,7 +1958,6 @@ function LogoutModal({ isLogoutActionActive }) {
           style={{
             borderRadius: "9999px",
             cursor: "pointer",
-            // backgroundColor: "yellow",
           }}
           direction="horizontal"
         >
@@ -2933,9 +3708,9 @@ function LogoutModal({ isLogoutActionActive }) {
                     left: "15px",
                   }}
                 >
-                  <Tooltip title="This feature is not yet active. ">
+                  <BootstrapTooltip title="This feature is not yet active. ">
                     Don’t have access to these?
-                  </Tooltip>
+                  </BootstrapTooltip>
                 </span>
               </div>
             </>

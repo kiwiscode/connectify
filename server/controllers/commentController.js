@@ -526,33 +526,6 @@ const addComment = (req, res) => {
                       post.save();
                       newCreatedPost.save();
 
-                      // if (post.isReposted) {
-                      //   Post.findById(
-                      //     post.repostedFromThisOriginalPost[0]._id.toString()
-                      //   )
-                      //     .then((originalPost) => {
-                      //       originalPost.comments.unshift(
-                      //         newCreatedComment._id.toString()
-                      //       );
-                      //       originalPost.save();
-                      //     })
-                      //     .catch((error) => {
-                      //       console.log("Error =>", error);
-                      //     });
-                      // } else {
-                      //   Post.find({ repostedFromThisOriginalPost: postId })
-                      //     .then((referencePost) => {
-                      //       console.log("Reference post =>", referencePost);
-                      //       referencePost[0].comments.unshift(
-                      //         newCreatedComment._id.toString()
-                      //       );
-                      //       referencePost[0].save();
-                      //     })
-                      //     .catch((error) => {
-                      //       console.log(error);
-                      //     });
-                      // }
-
                       return user.save().then(() => {
                         res.status(200).json({ createdPost: newCreatedPost });
                       });
@@ -821,7 +794,7 @@ const addComment = (req, res) => {
                             postId: post.repostedFromThisOriginalPost[0]._id,
                           })
                             .then((findedComment) => {
-                              findedComment[0].comments.unshift(
+                              findedComment[0]?.comments.unshift(
                                 newCreatedComment._id.toString()
                               );
 

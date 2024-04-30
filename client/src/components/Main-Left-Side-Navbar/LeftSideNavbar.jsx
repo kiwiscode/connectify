@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 import LogoutModal from "./LogoutModal";
 import axios from "axios";
@@ -362,7 +362,15 @@ function LeftSideNavBar({
 
   const { height, width } = useWindowDimensions();
 
-  const checkUnReadMessages = () => {};
+  const checkHowManyUnReadMessages = () => {
+    const allUnReadedMessages = userInfo?.messages?.filter((allMessages) => {
+      return allMessages.readed === false;
+    });
+
+    return allUnReadedMessages;
+  };
+
+  console.log("How many unreaded messages =>", checkHowManyUnReadMessages());
 
   return (
     <>
@@ -401,19 +409,33 @@ function LeftSideNavBar({
               <div className="p-2 connectify-basic-icon">
                 {" "}
                 <svg
-                  color={themeName === "dark-theme" ? "white" : ""}
-                  fill="currentColor"
-                  style={{
-                    position: "relative",
-                    left: "15px",
-                  }}
                   xmlns="http://www.w3.org/2000/svg"
-                  width="30"
-                  height="30"
-                  viewBox="0 0 20 20"
+                  width={50}
+                  height={30}
+                  viewBox="0 0 100 100"
                 >
-                  <path d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-                  <path d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+                  {/* İçi dolu bir kare */}
+                  <rect
+                    x="5"
+                    y="5"
+                    width="90"
+                    height="90"
+                    fill="#3b5998"
+                    rx="5"
+                    ry="5"
+                  />
+
+                  <text
+                    x="27.5"
+                    y="70"
+                    fontFamily="Arial"
+                    fontSize="60"
+                    fill="#FFF"
+                    stroke="#FFF"
+                    strokeWidth="2"
+                  >
+                    C
+                  </text>
                 </svg>
               </div>
             </NavLink>
@@ -595,7 +617,7 @@ function LeftSideNavBar({
                 >
                   {width < 1200 ? null : (
                     <>
-                      {unReadNotifications?.length === 0 ? null : (
+                      {checkHowManyUnReadMessages().length < 1 ? null : (
                         <div
                           style={{
                             cursor: "pointer",
@@ -622,7 +644,7 @@ function LeftSideNavBar({
                               color: "white",
                             }}
                           >
-                            {unReadNotifications?.length}
+                            {checkHowManyUnReadMessages().length}
                           </span>
                         </div>
                       )}
