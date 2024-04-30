@@ -34,14 +34,16 @@ const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
+
 import io from "socket.io-client";
+const socket = io.connect(`${API_URL}`);
+
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
 import useWindowDimensions from "../hooks/getWindowDimensions";
 import { TextField } from "@mui/material";
 import { ThemeContext } from "../context/ThemeContext";
 import PostPopover from "../components/three-dots-popover/Popover";
-const socket = io.connect(`${API_URL}`);
 
 function MainPage() {
   const [
@@ -2238,7 +2240,7 @@ function MainPage() {
               <div
                 style={{
                   // borderTop: "0.1px solid rgb(70, 70, 70)",
-                  borderTop: "1px solid rgb(70, 70, 70)",
+                  borderTop: width > 700 ? "1px solid rgb(70, 70, 70)" : "",
                 }}
               ></div>
             ) : (
@@ -2393,7 +2395,7 @@ function MainPage() {
                 // className="responsive-stack-home-page-row"
                 style={{
                   // borderBottom: "0.1px solid rgb(70, 70, 70)",
-                  borderBottom: "1px solid rgb(70, 70, 70)",
+                  borderBottom: width > 700 ? "1px solid rgb(70, 70, 70)" : "",
                 }}
               ></div>
             )}
@@ -2532,7 +2534,12 @@ function MainPage() {
               )}
             </span>
 
-            <div className="all-posts">
+            <div
+              style={{
+                height: width <= 700 ? "100vh" : "",
+              }}
+              className="all-posts"
+            >
               {showForYou ? (
                 <>
                   {posts.length > 0 ? (

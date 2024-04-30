@@ -12,7 +12,6 @@ import {
 
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
-import io from "socket.io-client";
 
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import CustomNotification from "../components/Notifications/CustomNotification";
@@ -27,10 +26,14 @@ const API_URL = "http://localhost:3000";
 // when working on deployment version
 // ?
 
-const socket = io.connect(`${API_URL}`);
+import io from "socket.io-client";
+import axios from "axios";
+import useWindowDimensions from "../hooks/getWindowDimensions";
+const socket = io.connect(API_URL);
+
 function ChatDetailsPage() {
   const { chatRoomId } = useParams();
-  const { userInfo } = useContext(UserContext);
+  const { userInfo, getToken } = useContext(UserContext);
 
   const [spesificRoom, setspesificRoom] = useState([]);
   const [selectedUser, setselectedUser] = useState([]);
@@ -312,6 +315,24 @@ function ChatDetailsPage() {
     cyberpunkModeActive,
   ] = useContext(ThemeContext);
 
+  const handleMarkAsUnReadMessage = (messageRoom) => {
+    axios
+      .post(
+        `${API_URL}/mark-as-un-read-message`,
+        { messageRoom: room },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then(() => {})
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  };
+
+  const { height, width } = useWindowDimensions();
   return (
     <>
       {contextHolder}
@@ -720,7 +741,7 @@ function ChatDetailsPage() {
               style={{
                 position: "relative",
                 top: "1%",
-                transform: "translateY(-20%)",
+                transform: width <= 700 ? "" : "translateY(-20%)",
               }}
               // className="chat-footer-detail"
               className={`chat-footer-detail chat-footer-detail-${themeName} `}
@@ -775,7 +796,10 @@ function ChatDetailsPage() {
                   setCurrentMessage(event.target.value);
                 }}
                 onKeyPress={(event) => {
-                  event.key === "Enter" && sendMessage();
+                  if (event.key === "Enter") {
+                    sendMessage();
+                    handleMarkAsUnReadMessage();
+                  }
                 }}
               />
 
@@ -785,7 +809,10 @@ function ChatDetailsPage() {
                     ? `disabled-button disabled-button-${themeName}`
                     : `send-button send-button-${themeName}`
                 }`}
-                onClick={sendMessage}
+                onClick={() => {
+                  sendMessage();
+                  handleMarkAsUnReadMessage();
+                }}
               >
                 <div>
                   <svg

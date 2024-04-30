@@ -3767,6 +3767,7 @@ function SignUpPage() {
           </Modal>
         </>
       )}
+
       <Col
         style={{
           height: "92.2vh",

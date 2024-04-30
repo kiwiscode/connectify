@@ -16,7 +16,7 @@ import ImagePostDetailPage from "./pages/ImagePostDetailPage";
 import DeactivatedPage from "./pages/DeactivatedPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import { ThemeContext } from "./context/ThemeContext";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UrlContext } from "./context/UrlContext";
 import { UserProvider } from "./context/UserContext";
 
@@ -28,18 +28,20 @@ import ActiveLightModeSound from "./assets/light-mode-active.mp3";
 import ActiveDarkModeSound from "./assets/dark-mode-active.mp3";
 
 function App() {
-  const [{ theme, themeName }, toggleThemeBetweenLightDarkMode] =
-    useContext(ThemeContext);
+  // const { url, urlHistory } = useContext(UrlContext);
+
+  // console.log("Current Url =>", url);
+  // console.log("Url history array =>", urlHistory);
+
+  const [
+    { theme, themeName, activeFontSizeOption },
+    toggleThemeBetweenLightDarkMode,
+  ] = useContext(ThemeContext);
 
   console.log("Theme name =>", themeName);
   console.log("Theme  =>", theme);
 
-  const { url, urlHistory } = useContext(UrlContext);
-
-  console.log("Current Url =>", url);
-  console.log("Url history array =>", urlHistory);
-
-  const [hoveredThemeName, setHoveredThemeName] = useState(null);
+  // const [hoveredThemeName, setHoveredThemeName] = useState(null);
 
   const [play] = useSound(
     themeName === "dark-theme"
@@ -50,6 +52,11 @@ function App() {
   );
 
   console.log("Play =>", play);
+  console.log("Active font size option =>", activeFontSizeOption);
+  const activeFontSizeOptionPixel = activeFontSizeOption.slice(
+    activeFontSizeOption.lastIndexOf(" ") + 1
+  );
+  console.log(activeFontSizeOptionPixel);
 
   return (
     <UserProvider>
@@ -67,7 +74,7 @@ function App() {
         }}
       >
         {/* toggle theme mode start to check test  */}
-        <button
+        {/* <button
           onMouseEnter={
             themeName === "dark-theme"
               ? () => {
@@ -112,7 +119,6 @@ function App() {
             className="sc-a794b73f-1 upJhz"
           >
             <mask id="moon-mask-main-nav">
-              {/* <rect x="0" y="0" width={18} height={18} fill="#FFF"></rect> */}
               <rect x="0" y="0" width={18} height={18} fill={"#FFF"}></rect>
               <circle cx="25" cy="0" r="8" fill="black"></circle>
             </mask>
@@ -247,7 +253,7 @@ function App() {
               ></circle>
             </g>
           </svg>
-        </button>{" "}
+        </button>{" "} */}
         {/* toggle theme mode finish to check test  */}
         <Routes>
           <Route path="/" element={<HomePage />} />

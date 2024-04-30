@@ -169,6 +169,14 @@ function ResponsiveNavigationBarBottom({
   useEffect(() => {
     getActiveUserInfo();
   }, []);
+
+  const checkHowManyUnReadMessages = () => {
+    const allUnReadedMessages = userInfo?.messages?.filter((allMessages) => {
+      return allMessages.readed === false;
+    });
+
+    return allUnReadedMessages;
+  };
   return (
     <>
       {!isSubModalOpened && isSubModalTabIndexNull === null ? (
@@ -285,9 +293,47 @@ function ResponsiveNavigationBarBottom({
                 </svg>
               </NavLink>
             </div>
-            <div className="p-2">
+            <div
+              style={{
+                position: "relative",
+              }}
+              className="p-2"
+            >
               {" "}
               <NavLink onClick={locateMessagesPage}>
+                <>
+                  {checkHowManyUnReadMessages().length < 1 ? null : (
+                    <div
+                      style={{
+                        cursor: "pointer",
+                        position: "absolute",
+                        backgroundColor: "rgb(29, 155, 240)",
+                        boxSizing: "content-box",
+                        top: "4px",
+                        left: "24px",
+                        minWidth: "18px",
+                        minHeight: "18px",
+                        borderRadius: "50%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        border: "1px solid white",
+                      }}
+                    >
+                      {" "}
+                      <span
+                        style={{
+                          fontWeight: "400",
+                          fontSize: "11px",
+                          lineHeight: "12px",
+                          color: "white",
+                        }}
+                      >
+                        {checkHowManyUnReadMessages().length}
+                      </span>
+                    </div>
+                  )}
+                </>
                 <svg
                   color={themeName === "dark-theme" ? "white" : "black"}
                   fill="currentColor"

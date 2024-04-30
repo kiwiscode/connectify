@@ -1,4 +1,4 @@
-import { Accordion, Col, Container, Row, Stack } from "react-bootstrap";
+import { Col, Container, Row, Stack } from "react-bootstrap";
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
 import useWindowDimensions from "../hooks/getWindowDimensions";
@@ -7,7 +7,6 @@ import { UserContext } from "../context/UserContext";
 import axios from "axios";
 import { ThemeContext } from "../context/ThemeContext";
 import { Link } from "react-router-dom";
-import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -135,6 +134,7 @@ function NotificationsPage() {
               borderBottom: "none",
               padding: "0px",
               position: "relative",
+              minHeight: width <= 700 ? "100vh" : "",
             }}
           >
             <Stack

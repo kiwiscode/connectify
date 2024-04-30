@@ -36,7 +36,10 @@ import "react-phone-number-input/style.css";
 import { QRCodeSVG } from "qrcode.react";
 import { ThemeContext } from "../../context/ThemeContext";
 import UnfollowModal from "../unfollow-modal/UnfollowModal";
+import useSound from "use-sound";
 
+import ActiveLightModeSound from "../../assets/light-mode-active.mp3";
+import ActiveDarkModeSound from "../../assets/dark-mode-active.mp3";
 // when working on local version
 const API_URL = "http://localhost:3000";
 // when working on deployment version
@@ -46,13 +49,24 @@ function RightSideColumn({
   onModalToggle,
   tabIndexValue,
   isSubscriptionCompleted,
+  widthSmaller700,
 }) {
   const [
     { theme, themeName },
+    toggleThemeBetweenLightDarkMode,
     lightModeActive,
     darkModeActive,
     cyberpunkModeActive,
   ] = useContext(ThemeContext);
+  const [hoveredThemeName, setHoveredThemeName] = useState(null);
+  const [play] = useSound(
+    themeName === "dark-theme"
+      ? ActiveLightModeSound
+      : themeName === "light-theme"
+      ? ActiveDarkModeSound
+      : null
+  );
+
   const { getToken, userInfo } = useContext(UserContext);
   const [onFocus, setOnFocus] = useState(false);
   const [user, setUser] = useState([]);
@@ -1283,6 +1297,35 @@ function RightSideColumn({
   return (
     <>
       {contextHolder}
+      {widthSmaller700 && (
+        <div
+          onClick={handleShowSubscriptionModal}
+          style={{
+            paddingBottom: "12px",
+            paddingTop: "12px",
+            lineHeight: "20px",
+            fontWeight: "700",
+            fontSize: "15px",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            width: "100%",
+            height: "100%",
+          }}
+          className={`logout-p logout-popover logout-popover-${themeName}`}
+        >
+          <span
+            style={{
+              position: "relative",
+              left: "10px",
+              color: themeName === "dark-theme" ? "white" : "",
+            }}
+          >
+            Premium
+          </span>
+        </div>
+      )}
+
       {width <= 700 ? (
         <>
           {showSubscriptionModal ? (
@@ -16622,12 +16665,17 @@ function RightSideColumn({
           left: "1.5%",
           height: "100vh",
           top: "0px",
+          padding: "0px",
+          margin: "0px",
         }}
       >
+        {" "}
         <Stack
           style={{
             height: "100%",
             // position: "fixed",
+            padding: "0px",
+            margin: "0px",
           }}
           gap={3}
         >
@@ -16663,7 +16711,6 @@ function RightSideColumn({
                 </g>
               </svg>
             </div>
-
             <input
               onFocus={onFocusActive}
               onChange={handleSetSearchTerm}
@@ -16702,8 +16749,7 @@ function RightSideColumn({
                   float: "right",
                   position: "absolute",
                   top: "35px",
-                  right: "40px",
-
+                  right: "17%",
                   borderRadius: "50%",
                 }}
                 className="div-parent-search-input-delete-search-term css-175oi2r r-6koalj r-1777fci"
@@ -16752,7 +16798,6 @@ function RightSideColumn({
                 </div>
               </div>
             ) : null}
-
             {/* close text finish to check right side input  */}
             <div
               className={`scrollbar-add scrollbar-add-${themeName}`}
@@ -16967,6 +17012,194 @@ function RightSideColumn({
               )}
             </div>
             {/* close text start to check right side input  */}
+            <div
+              style={{
+                float: "right",
+              }}
+            ></div>
+            {/* toggle theme mode start to check test  */}
+            <button
+              onMouseEnter={
+                themeName === "dark-theme"
+                  ? () => {
+                      setHoveredThemeName("dark-theme");
+                    }
+                  : () => setHoveredThemeName("light-theme")
+              }
+              onMouseLeave={() => setHoveredThemeName(null)}
+              className={
+                themeName === "dark-theme"
+                  ? `Activate-light-mode`
+                  : themeName === "light-theme"
+                  ? "Activate-dark-mode"
+                  : null
+              }
+              style={{
+                zIndex: 9999,
+                border: "none",
+                backgroundColor: "transparent",
+                transitionDuration: "0.3s",
+                position: "absolute",
+                right: "30px",
+                top: "30px",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              type="button"
+              onClick={() => {
+                play();
+                toggleThemeBetweenLightDarkMode();
+              }}
+            >
+              <svg
+                width={20}
+                height={18}
+                viewBox="0 0 18 18"
+                style={{
+                  transform: "rotate(90deg)",
+                }}
+                className="sc-a794b73f-1 upJhz"
+              >
+                <mask id="moon-mask-main-nav">
+                  <rect x="0" y="0" width={18} height={18} fill={"#FFF"}></rect>
+                  <circle cx="25" cy="0" r="8" fill="black"></circle>
+                </mask>
+                <circle
+                  cx="9"
+                  cy="9"
+                  r="5"
+                  fill={
+                    themeName === "dark-theme" &&
+                    hoveredThemeName !== "dark-theme"
+                      ? "#B9BABC"
+                      : hoveredThemeName === "dark-theme" &&
+                        themeName === "dark-theme"
+                      ? "white"
+                      : themeName === "light-theme" &&
+                        hoveredThemeName !== "light-theme"
+                      ? "#414A54"
+                      : hoveredThemeName === "light-theme" &&
+                        themeName === "light-theme"
+                      ? "black"
+                      : null
+                  }
+                  mask="url(#moon-mask-main-nav)"
+                ></circle>
+                <g>
+                  <circle
+                    cx="17"
+                    cy="9"
+                    r="1.5"
+                    fill={
+                      themeName === "light-theme" &&
+                      hoveredThemeName !== "light-theme"
+                        ? "#414A54"
+                        : themeName === "light-theme" &&
+                          hoveredThemeName === "light-theme"
+                        ? "black"
+                        : null
+                    }
+                    style={{
+                      transformOrigin: "center center",
+                      transform: "scale(1)",
+                    }}
+                  ></circle>
+                  <circle
+                    cx="13"
+                    cy="15.928203"
+                    r="1.5"
+                    fill={
+                      themeName === "light-theme" &&
+                      hoveredThemeName !== "light-theme"
+                        ? "#414A54"
+                        : themeName === "light-theme" &&
+                          hoveredThemeName === "light-theme"
+                        ? "black"
+                        : null
+                    }
+                    style={{
+                      transformOrigin: "center center",
+                      transform: "scale(1)",
+                    }}
+                  ></circle>
+                  <circle
+                    cx="5"
+                    cy="15.928203"
+                    r="1.5"
+                    fill={
+                      themeName === "light-theme" &&
+                      hoveredThemeName !== "light-theme"
+                        ? "#414A54"
+                        : themeName === "light-theme" &&
+                          hoveredThemeName === "light-theme"
+                        ? "black"
+                        : null
+                    }
+                    style={{
+                      transformOrigin: "center center",
+                      transform: "scale(1)",
+                    }}
+                  ></circle>
+                  <circle
+                    cx="1"
+                    cy="9"
+                    r="1.5"
+                    fill={
+                      themeName === "light-theme" &&
+                      hoveredThemeName !== "light-theme"
+                        ? "#414A54"
+                        : themeName === "light-theme" &&
+                          hoveredThemeName === "light-theme"
+                        ? "black"
+                        : null
+                    }
+                    style={{
+                      transformOrigin: "center center",
+                      transform: "scale(1)",
+                    }}
+                  ></circle>
+                  <circle
+                    cx="5"
+                    cy="2.071797"
+                    r="1.5"
+                    fill={
+                      themeName === "light-theme" &&
+                      hoveredThemeName !== "light-theme"
+                        ? "#414A54"
+                        : themeName === "light-theme" &&
+                          hoveredThemeName === "light-theme"
+                        ? "black"
+                        : null
+                    }
+                    style={{
+                      transformOrigin: "center center",
+                      transform: "scale(1)",
+                    }}
+                  ></circle>
+                  <circle
+                    cx="13"
+                    cy="2.071797"
+                    r="1.5"
+                    fill={
+                      themeName === "light-theme" &&
+                      hoveredThemeName !== "light-theme"
+                        ? "#414A54"
+                        : themeName === "light-theme" &&
+                          hoveredThemeName === "light-theme"
+                        ? "black"
+                        : null
+                    }
+                    style={{
+                      transformOrigin: "center center",
+                      transform: "scale(1)",
+                    }}
+                  ></circle>
+                </g>
+              </svg>
+            </button>{" "}
+            {/* toggle theme mode finish to check test  */}
           </div>
           {/* input finish to check  */}
           <div

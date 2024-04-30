@@ -167,7 +167,6 @@ const CustomNotification = ({
               </div>
               <Link
                 style={{
-                  color: "black",
                   textDecoration: "none",
                   fontWeight: "400",
                   fontSize: "15px",
@@ -175,7 +174,13 @@ const CustomNotification = ({
                 }}
                 to={`/${userInfo.username}/status/${contactHasBeenMade._id}`}
               >
-                <p>{contactHasBeenMade.content}</p>
+                <p
+                  style={{
+                    color: themeName === "dark-theme" ? "white" : "black",
+                  }}
+                >
+                  {contactHasBeenMade.content}
+                </p>
               </Link>
 
               {/* Diğer comment tipine özel JSX bileşenleri */}
@@ -209,7 +214,6 @@ const CustomNotification = ({
               </div>
               <Link
                 style={{
-                  color: "black",
                   textDecoration: "none",
                   fontWeight: "400",
                   fontSize: "15px",
@@ -217,7 +221,13 @@ const CustomNotification = ({
                 }}
                 to={`/${userInfo.username}/status/${contactHasBeenMade._id}`}
               >
-                <p>{contactHasBeenMade.content}</p>
+                <p
+                  style={{
+                    color: themeName === "dark-theme" ? "white" : "black",
+                  }}
+                >
+                  {contactHasBeenMade.content}
+                </p>
               </Link>
 
               {/* Repost tipine özel JSX bileşenleri */}
@@ -283,7 +293,7 @@ const CustomNotification = ({
 
                 <p
                   style={{
-                    color: "black",
+                    color: themeName === "dark-theme" ? "white" : "black",
                     fontSize: "15px",
                     fontWeight: "400",
                     lineHeight: "20px",

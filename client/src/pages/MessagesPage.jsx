@@ -28,6 +28,7 @@ const API_URL = "http://localhost:3000";
 // when working on deployment version
 // ?
 import io from "socket.io-client";
+import useWindowDimensions from "../hooks/getWindowDimensions";
 const socket = io.connect(`${API_URL}`);
 function MessagesPage() {
   const { userInfo, getToken } = useContext(UserContext);
@@ -667,6 +668,67 @@ function MessagesPage() {
     }, 500);
   }, []);
 
+  const [thisMessageRoomReaded, setThisMessageRoomReaded] = useState(null);
+
+  const handleMarkAsReadMessage = (messageRoom) => {
+    const localeInfo = JSON.parse(localStorage.getItem("userInfo"));
+
+    if (localeInfo && localeInfo.messages) {
+      const targetMessage = localeInfo.messages.find(
+        (message) => message.room === messageRoom.room
+      );
+      console.log("Locale info =>", localeInfo);
+      console.log("Target message =>", targetMessage);
+      console.log("Message room =>", messageRoom);
+      if (targetMessage) {
+        if (!targetMessage.readed) {
+          targetMessage.readed = true;
+          localStorage.setItem("userInfo", JSON.stringify(localeInfo));
+        }
+      } else {
+        console.log("Message not found.");
+      }
+    } else {
+      console.log("localeInfo not found or messages array not exist.");
+    }
+    axios
+      .post(
+        `${API_URL}/mark-as-read-message`,
+        { messageRoom },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then(() => {})
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  };
+
+  const checkIfReadedLocally = () => {
+    const localeInfo = JSON.parse(localStorage.getItem("userInfo"));
+
+    if (localeInfo && localeInfo.messages) {
+      const unreadMessages = localeInfo.messages.filter(
+        (message) => !message.readed
+      );
+
+      const unreadRoomNames = unreadMessages.map((message) => message.room);
+
+      console.log("Readed özelliği false olan room isimleri:", unreadRoomNames);
+
+      return unreadRoomNames;
+    } else {
+      console.log("localeInfo bulunamadı veya messages dizisi yok.");
+      return [];
+    }
+  };
+
+  console.log(checkIfReadedLocally());
+
+  const { height, width } = useWindowDimensions();
   return (
     <>
       <Modal show={show} onHide={handleClose}>
@@ -890,6 +952,7 @@ function MessagesPage() {
               borderBottom: "none",
               padding: "0px",
               position: "relative",
+              minHeight: width <= 700 ? "100vh" : "",
             }}
           >
             <Stack
@@ -1074,14 +1137,16 @@ function MessagesPage() {
                                       ? `/messages/${eachMessageRoom._id}`
                                       : null
                                   }
-                                  onClick={() =>
+                                  onClick={() => {
                                     isHovered !== eachMessageRoom._id &&
                                     !showMessageDeletePopover
                                       ? redirectToChatDetailPage(
                                           eachMessageRoom._id
                                         )
-                                      : null
-                                  }
+                                      : null;
+
+                                    handleMarkAsReadMessage(eachMessageRoom);
+                                  }}
                                 >
                                   <div
                                     className={`each-message-parent-div each-message-parent-div-${themeName}`}
@@ -1310,18 +1375,25 @@ function MessagesPage() {
                                                     borderRadius: "50%",
                                                   }}
                                                 >
-                                                  <div
-                                                    style={{
-                                                      position: "absolute",
-                                                      right: "50px",
-                                                      top: "14px",
-                                                      backgroundColor:
-                                                        "#1d9bf0",
-                                                      borderRadius: "50%",
-                                                      width: "10px",
-                                                      height: "10px",
-                                                    }}
-                                                  ></div>
+                                                  {checkIfReadedLocally(
+                                                    eachMessageRoom
+                                                  )?.includes(
+                                                    eachMessageRoom?.room
+                                                  ) && (
+                                                    <div
+                                                      style={{
+                                                        position: "absolute",
+                                                        right: "50px",
+                                                        top: "14px",
+                                                        backgroundColor:
+                                                          "#1d9bf0",
+                                                        borderRadius: "50%",
+                                                        width: "10px",
+                                                        height: "10px",
+                                                      }}
+                                                    ></div>
+                                                  )}
+
                                                   <svg
                                                     style={{
                                                       cursor: "pointer",
