@@ -13,11 +13,14 @@ const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
+
 import io from "socket.io-client";
+const socket = io.connect(API_URL);
+
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import { ThemeContext } from "../context/ThemeContext";
 import UnfollowModal from "../components/unfollow-modal/UnfollowModal";
-const socket = io.connect(`${API_URL}`);
+import useWindowDimensions from "../hooks/getWindowDimensions";
 
 function FollowerDetailPage() {
   const { userId } = useParams();
@@ -243,7 +246,7 @@ function FollowerDetailPage() {
     darkModeActive,
     cyberpunkModeActive,
   ] = useContext(ThemeContext);
-
+  const { height, width } = useWindowDimensions();
   return (
     <>
       {contextHolder}
@@ -301,6 +304,7 @@ function FollowerDetailPage() {
               borderBottom: "none",
               padding: "0px",
               position: "relative",
+              minHeight: width <= 700 ? "100vh" : "",
             }}
           >
             <Stack

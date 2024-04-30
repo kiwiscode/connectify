@@ -18,6 +18,7 @@ import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
 import { ThemeContext } from "../context/ThemeContext";
 import UnfollowModal from "../components/unfollow-modal/UnfollowModal";
+import useWindowDimensions from "../hooks/getWindowDimensions";
 const socket = io.connect(`${API_URL}`);
 
 function FollowingDetailPage() {
@@ -239,6 +240,7 @@ function FollowingDetailPage() {
     cyberpunkModeActive,
   ] = useContext(ThemeContext);
 
+  const { height, width } = useWindowDimensions();
   return (
     <>
       {contextHolder}
@@ -295,6 +297,7 @@ function FollowingDetailPage() {
               borderBottom: "none",
               padding: "0px",
               position: "relative",
+              minHeight: width <= 700 ? "100vh" : "",
             }}
           >
             <Stack

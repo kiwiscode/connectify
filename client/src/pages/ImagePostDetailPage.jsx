@@ -13,11 +13,12 @@ const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
+
 import io from "socket.io-client";
-import { CommentModal } from "../components/ui/Modal";
-import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
-import { ThemeContext } from "../context/ThemeContext";
 const socket = io.connect(`${API_URL}`);
+
+import { CommentModal } from "../components/ui/Modal";
+import { ThemeContext } from "../context/ThemeContext";
 
 function PostDetailPage() {
   const { postOwner, postId } = useParams();

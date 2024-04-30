@@ -138,7 +138,6 @@ const handleAddFavorite = (req, res) => {
                 postId: postId,
                 content: post,
               });
-              // user.save();
 
               return user.save().then(() => {
                 res.status(200).json("Favorite added to your favorites");
@@ -164,7 +163,6 @@ const handleAddFavorite = (req, res) => {
               post.likes.unshift(user);
               post.save();
               user.favorites.unshift(originalPost[0]);
-              // user.save();
               Favorite.create({
                 userId: userId,
                 postId: postId,

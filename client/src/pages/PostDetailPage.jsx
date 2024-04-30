@@ -21,6 +21,7 @@ import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColum
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import { ThemeContext } from "../context/ThemeContext";
 import PostPopover from "../components/three-dots-popover/Popover";
+import useWindowDimensions from "../hooks/getWindowDimensions";
 function PostDetailPage() {
   const [
     { theme, themeName },
@@ -519,6 +520,8 @@ function PostDetailPage() {
     };
   }, []);
 
+  const { height, width } = useWindowDimensions();
+
   return (
     <>
       {contextHolder}
@@ -553,7 +556,7 @@ function PostDetailPage() {
                 : ""
             } // 992px - 1400px aralığı
             xxl={5} // 1400px ve sonrası aralığı
-            className={`main-column `}
+            className={`main-column`}
             style={{
               borderLeft:
                 themeName !== "dark-theme"
@@ -569,7 +572,7 @@ function PostDetailPage() {
               borderTop: "none ",
               borderBottom: "none",
               padding: "0px",
-              position: "relative",
+              minHeight: width <= 700 ? "100vh" : "",
             }}
           >
             <Stack direction="horizontal" gap={3}>
@@ -1929,7 +1932,9 @@ function PostDetailPage() {
                                                 3
                                               ) !== "../" ? (
                                                 <Link
-                                                  style={{ cursor: "pointer" }}
+                                                  style={{
+                                                    cursor: "pointer",
+                                                  }}
                                                   to={`/profile/${
                                                     eachComment
                                                       ? eachComment.userId._id
@@ -1956,7 +1961,9 @@ function PostDetailPage() {
                                                       ? eachComment.userId._id
                                                       : null
                                                   }`}
-                                                  style={{ cursor: "pointer" }}
+                                                  style={{
+                                                    cursor: "pointer",
+                                                  }}
                                                 >
                                                   {" "}
                                                   <svg

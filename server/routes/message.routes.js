@@ -8,4 +8,16 @@ router.post(
   messageController.handleDeleteMessage
 );
 
+router.post(
+  "/mark-as-read-message",
+  authenticateToken,
+  messageController.handleMarkAsReadMessage
+);
+
+router.post(
+  "/mark-as-un-read-message",
+  authenticateToken,
+  messageController.handleMarkAsUnReadMessage
+);
+
 module.exports = router;

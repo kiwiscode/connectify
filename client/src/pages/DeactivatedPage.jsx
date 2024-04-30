@@ -15,6 +15,7 @@ import { useContext, useState } from "react";
 import axios from "axios";
 import { Layout, Flex } from "antd";
 import { ThemeContext } from "../context/ThemeContext";
+import useWindowDimensions from "../hooks/getWindowDimensions";
 const { Footer } = Layout;
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -92,6 +93,7 @@ function DeactivatedPage() {
     navigate("/");
   };
 
+  const { height, width } = useWindowDimensions();
   return (
     <>
       {/* start to check signup modal  */}
@@ -635,7 +637,7 @@ function DeactivatedPage() {
             backgroundColor: "rgba(29,155,240,1.00)",
             maxHeight: "72px",
             display: "flex",
-            flexDirection: "column",
+            flexDirection: width <= 700 ? "row" : "column",
             alignItems: "flex-end",
             justifyContent: "center",
             width: "100%",
@@ -679,14 +681,17 @@ function DeactivatedPage() {
               </div>
             </div>
             <div className="p-2 ms-auto">
-              <SigninModal deactivatedScreen={true} />
+              <SigninModal
+                widthSmaller700={width <= 700 ? true : false}
+                deactivatedScreen={true}
+              />
             </div>
-            <div onClick={redirectHomePageToSignUp} className="p-0">
+            <div style={{}} onClick={redirectHomePageToSignUp} className="p-0">
               <Button
                 className="deactivated-footer-signup"
                 style={{
                   cursor: "pointer",
-                  maxWidth: "87px",
+                  maxWidth: width <= 700 ? "200px" : "87px",
                   maxHeight: "36px",
                   textAlign: "center",
                   border: "none",

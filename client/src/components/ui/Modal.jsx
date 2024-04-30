@@ -35,17 +35,14 @@ import {
 } from "@mui/material";
 import { ThemeContext } from "../../context/ThemeContext";
 
-// socket io cleaning up socket.id after logout from online users client start to check
-// import io from "socket.io-client";
-// socket io cleaning up socket.id after logout from online users client finish to check
-
 // when working on local version
 const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-
-function SigninModal({ deactivatedScreen }) {
+import io from "socket.io-client";
+const socket = io.connect(`${API_URL}`);
+function SigninModal({ deactivatedScreen, widthSmaller700 }) {
   const [
     { theme, themeName },
     lightModeActive,
@@ -76,9 +73,6 @@ function SigninModal({ deactivatedScreen }) {
   const handleClose = () => {
     setTabIndex(0);
     setShow(false);
-  };
-  const handleShow = () => {
-    setShow(true);
   };
 
   // option 1 enter a new password start to check
@@ -568,18 +562,18 @@ function SigninModal({ deactivatedScreen }) {
             className="deactivated-footer-login"
             style={{
               cursor: "pointer",
-              maxWidth: "76px",
+              maxWidth: widthSmaller700 ? "200px" : "76px",
               maxHeight: "36px",
               textAlign: "center",
               border: "1px solid rgb(185, 202, 211)",
-              paddingLeft: "16px",
-              paddingRight: "16px",
               borderRadius: "9999px",
               lineHeight: "20px",
               fontSize: "15px",
               fontWeight: "700",
-              padding: "5px",
               backgroundColor: "rgba(29,155,240,1.00)",
+              // padding: "5px",
+              // paddingLeft: "16px",
+              // paddingRight: "16px",
               // backgroundColor: "yellow",
               color: "white",
             }}
@@ -4964,8 +4958,8 @@ function SigninModal({ deactivatedScreen }) {
               }
               contentClassName={
                 themeName === "dark-theme"
-                  ? "dark-theme-spinner-modal"
-                  : "light-theme-spinner-modal"
+                  ? "dark-theme-spinner-modal-sign-in"
+                  : "light-theme-spinner-modal-sign-in"
               }
               dialogClassName={width <= 700 ? "modal-fullscreen" : ""}
             >
@@ -4974,7 +4968,10 @@ function SigninModal({ deactivatedScreen }) {
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
+                  alignItems: "center",
                   height: "643.5px",
+                  padding: "0px",
+                  margin: "0px",
                 }}
                 className="signin-modal-body-child-non-reactivate"
               >
@@ -5010,9 +5007,11 @@ function SigninModal({ deactivatedScreen }) {
                     </g>
                   </svg>{" "}
                 </div>
-                <LoadingSpinner
-                  strokeColor={"rgb(29, 155, 240)"}
-                ></LoadingSpinner>
+                <div>
+                  <LoadingSpinner
+                    strokeColor={"rgb(29, 155, 240)"}
+                  ></LoadingSpinner>
+                </div>
               </Modal.Body>
             </Modal>
           )}
@@ -5040,7 +5039,7 @@ function CommentModal({
   const [showEmojisBar, setshowEmojisBar] = useState("hide");
   const [showSecondModal, setShowSecondModal] = useState(false);
 
-  const { userInfo, socket } = useContext(UserContext);
+  const { userInfo } = useContext(UserContext);
   const maxCharacters = 140;
 
   const [modalImage, setModalImage] = useState("");

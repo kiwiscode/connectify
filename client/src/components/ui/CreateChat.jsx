@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
-import io from "socket.io-client";
 import { UserContext } from "../../context/UserContext";
 import { Link, useNavigate } from "react-router-dom";
 import { Stack } from "react-bootstrap";
@@ -12,7 +11,7 @@ const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-
+import io from "socket.io-client";
 const socket = io.connect(API_URL);
 
 function CreateChat({ writeMessageButton }) {
@@ -48,12 +47,6 @@ function CreateChat({ writeMessageButton }) {
       }
     });
     socket.emit("get_specific_user", userInfo);
-
-    // Component unmount olduğunda temizlik yap
-    // return () => {
-    //   socket.off("getmessageRoomId", handleGetMessageRoomId);
-    //   // socket.disconnect();
-    // };
   }, []);
 
   useEffect(() => {

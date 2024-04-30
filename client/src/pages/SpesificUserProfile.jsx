@@ -23,6 +23,7 @@ import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNaviga
 import { ThemeContext } from "../context/ThemeContext";
 import UnfollowModal from "../components/unfollow-modal/UnfollowModal";
 import PostPopover from "../components/three-dots-popover/Popover";
+import useWindowDimensions from "../hooks/getWindowDimensions";
 
 function SpesificUserProfile() {
   const [
@@ -704,6 +705,8 @@ function SpesificUserProfile() {
   console.log("profile info =>", checkSpesificUserFollowers());
   console.log("is following =>", isFollowing);
 
+  const { height, width } = useWindowDimensions();
+
   return (
     <>
       {contextHolder}
@@ -1353,7 +1356,13 @@ function SpesificUserProfile() {
 
             {/* finish */}
             {/* start to check */}
-            <div className={`all-posts ${postsWindow}`}>
+            <div
+              style={{
+                height:
+                  width <= 700 && profileInfoPosts.length < 2 ? "30vh" : "",
+              }}
+              className={`all-posts ${postsWindow}`}
+            >
               {profileInfoPosts.length ? (
                 <>
                   {profileInfoPosts.slice(0, visibleTweets).map((post) => (
@@ -2087,7 +2096,12 @@ function SpesificUserProfile() {
             </div>
             {/* finish to check */}
             {/* start */}
-            <div className={`${favoriteWindow} all-favorites`}>
+            <div
+              style={{
+                height: width <= 700 && favorites.length < 2 ? "30vh" : "",
+              }}
+              className={`${favoriteWindow} all-favorites`}
+            >
               {favorites.length && hasFalse ? (
                 <>
                   {favorites.slice(0, visibleLikedTweets).map((favorite) => (

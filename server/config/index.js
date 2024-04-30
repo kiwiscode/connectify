@@ -194,11 +194,11 @@ module.exports = (app) => {
                         // new version sözde BUG fix finish to check
 
                         console.log(
-                          "User 1 message room length=>",
+                          "User 1 message room chat length=>",
                           users[0].messages[user1RoomIndex].chat.length
                         );
                         console.log(
-                          "User 2 message room length=>",
+                          "User 2 message room chat length=>",
                           users[1].messages[user2RoomIndex].chat.length
                         );
 
@@ -257,12 +257,6 @@ module.exports = (app) => {
                             "This particular chat id exist already in users messages chat array !!!"
                           );
                         }
-                        // users[0].messages[user1RoomIndex].chat.push(
-                        //   newCreatedChatBetween2User._id
-                        // );
-                        // users[1].messages[user2RoomIndex].chat.push(
-                        //   newCreatedChatBetween2User._id
-                        // );
 
                         console.log(
                           "First user Room =>",
@@ -291,6 +285,15 @@ module.exports = (app) => {
                         users[0].messages.unshift(firstMessageRoom);
                         users[1].messages.unshift(secondMessageRoom);
 
+                        console.log(
+                          "User 1 username - active user =>",
+                          users[0].username
+                        );
+                        console.log(
+                          "User 2 username - selected user =>",
+                          users[1].username
+                        );
+
                         users[0].save();
                         users[1].save();
                         console.log(
@@ -301,42 +304,6 @@ module.exports = (app) => {
                           "User second, first message room after update =>",
                           users[1].messages[user2RoomIndex].room
                         );
-                        // version error start to check
-                        // users[0].save();
-                        // users[1].save();
-                        // version error finish to check
-
-                        // bug fix for version error start to check
-                        // IMPORTANT This lines were causing issue to save chat id 2 times to user spesific chat room chats array start to check
-                        // const updateUser1 = User.findOneAndUpdate(
-                        //   { _id: users[0]._id, "messages.room": data.room },
-                        //   {
-                        //     $push: {
-                        //       "messages.$.chat": newCreatedChatBetween2User._id,
-                        //     },
-                        //   },
-                        //   { new: true }
-                        // );
-
-                        // const updateUser2 = User.findOneAndUpdate(
-                        //   { _id: users[1]._id, "messages.room": data.room },
-                        //   {
-                        //     $push: {
-                        //       "messages.$.chat": newCreatedChatBetween2User._id,
-                        //     },
-                        //   },
-                        //   { new: true }
-                        // );
-
-                        // Promise.all([updateUser1, updateUser2])
-                        //   .then((updatedUsers) => {
-                        //     console.log("Users updated successfully");
-                        //   })
-                        //   .catch((error) => {
-                        //     console.log("Error updating users:", error);
-                        //   });
-                        // IMPORTANT This lines were causing issue to save chat id 2 times to user spesific chat room chats array finish to check
-                        // bug fix for version error finish to check
                       })
                       .catch((error) => {
                         console.log(error);
@@ -563,6 +530,8 @@ module.exports = (app) => {
 
         console.log("Sender name =>", senderName);
         console.log("Receiver  =>", receiver);
+        console.log("Receiver socket id =>", receiver?.socketId);
+
         if (receiver && type !== "message") {
           io.to(receiver.socketId).emit("getNotification", {
             senderName,
