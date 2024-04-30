@@ -15,6 +15,7 @@ const API_URL = "http://localhost:3000";
 // when working on deployment version
 // ?
 import io from "socket.io-client";
+const socket = io.connect(`${API_URL}`);
 
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
@@ -107,7 +108,6 @@ function SpesificUserProfile() {
   const [error, setError] = useState("");
   const [show, setShow] = useState("hide");
   const [isLoading, setIsLoading] = useState(false);
-  const socket = io.connect(`${API_URL}`);
 
   // socket io 1 client start to check
   const [notificationTest, setnotificationTest] = useState([]);

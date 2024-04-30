@@ -41,6 +41,7 @@ import useWindowDimensions from "../hooks/getWindowDimensions";
 import { TextField } from "@mui/material";
 import { ThemeContext } from "../context/ThemeContext";
 import PostPopover from "../components/three-dots-popover/Popover";
+const socket = io.connect(`${API_URL}`);
 
 function MainPage() {
   const [
@@ -49,8 +50,6 @@ function MainPage() {
     darkModeActive,
     cyberpunkModeActive,
   ] = useContext(ThemeContext);
-
-  const socket = io.connect(`${API_URL}`);
 
   const [isSubModalOpened, setIsSubModalOpened] = useState(false);
   const [tabIndexValue, settabIndexValue] = useState(null);

@@ -17,13 +17,13 @@ import io from "socket.io-client";
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import { ThemeContext } from "../context/ThemeContext";
 import UnfollowModal from "../components/unfollow-modal/UnfollowModal";
+const socket = io.connect(`${API_URL}`);
 
 function FollowerDetailPage() {
   const { userId } = useParams();
   const navigate = useNavigate();
 
   const { getToken, userInfo } = useContext(UserContext);
-  const socket = io.connect(`${API_URL}`);
 
   // start to check shared post view message
   const [currentCreatedPost, setcurrentCreatedPost] = useState(null);

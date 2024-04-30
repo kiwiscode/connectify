@@ -17,6 +17,7 @@ import io from "socket.io-client";
 import { CommentModal } from "../components/ui/Modal";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
 import { ThemeContext } from "../context/ThemeContext";
+const socket = io.connect(`${API_URL}`);
 
 function PostDetailPage() {
   const { postOwner, postId } = useParams();
@@ -27,7 +28,6 @@ function PostDetailPage() {
     []
   );
 
-  const socket = io.connect(`${API_URL}`);
   const [postDetailPostId, setpostDetailPostId] = useState("");
 
   const [shouldHide, setshouldHide] = useState(true);

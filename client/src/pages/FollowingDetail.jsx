@@ -18,10 +18,10 @@ import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
 import { ThemeContext } from "../context/ThemeContext";
 import UnfollowModal from "../components/unfollow-modal/UnfollowModal";
+const socket = io.connect(`${API_URL}`);
 
 function FollowingDetailPage() {
   const { userId } = useParams();
-  const socket = io.connect(`${API_URL}`);
 
   const navigate = useNavigate();
 

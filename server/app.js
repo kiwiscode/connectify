@@ -14,14 +14,7 @@ const cors = require("cors");
 const passport = require("passport");
 // let cookieSession = require("cookie-session");
 app.use(passport.initialize());
-/* ================ Creating Cookie Key and link with Passport JS: Start ================  */
-// app.use(
-//   cookieSession({
-//     name: "session",
-//     maxAge: 30 * 86400 * 1000, // expire in 30 days(milli seconds)
-//     keys: ["kiwiscode"],
-//   })
-// );
+
 app.use(
   session({
     secret: process.env.COOKIE_SECRET,
