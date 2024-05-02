@@ -18,13 +18,13 @@ export const ThemeProvider = ({ children }) => {
 
   const [activeFontSizeOption, setactiveFontSizeOption] =
     useState("Default 16px");
-  const [extraSmallFontSizeActive, setextraSmallFontSizeActive] =
-    useState(null);
-  const [smallFontSizeActive, setsmallFontSizeActive] = useState(null);
-  const [defaultFontSizeActive, setdefaultFontSizeActive] = useState(null);
-  const [largeFontSizeActive, setlargeFontSizeActive] = useState(null);
-  const [extraLargeFontSizeActive, setextraLargeFontSizeActive] =
-    useState(null);
+  // const [extraSmallFontSizeActive, setextraSmallFontSizeActive] =
+  //   useState(null);
+  // const [smallFontSizeActive, setsmallFontSizeActive] = useState(null);
+  // const [defaultFontSizeActive, setdefaultFontSizeActive] = useState(null);
+  // const [largeFontSizeActive, setlargeFontSizeActive] = useState(null);
+  // const [extraLargeFontSizeActive, setextraLargeFontSizeActive] =
+  //   useState(null);
 
   // const toggleFontSize = () => {
   //   if (activeFontSizeOption === "Default 16px") {

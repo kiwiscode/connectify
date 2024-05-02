@@ -33,8 +33,11 @@ import {
 import RightSideColumn from "../Main-Right-Side-Column/RightSideColumn";
 
 import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
-import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
+import useSound from "use-sound";
+
+import ActiveLightModeSound from "../../assets/light-mode-active.mp3";
+import ActiveDarkModeSound from "../../assets/dark-mode-active.mp3";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -42,8 +45,11 @@ const API_URL = "http://localhost:3000";
 // when working on deployment version
 // ?
 function LogoutModal({ isLogoutActionActive }) {
-  const [{ theme, themeName, activeFontSizeOption }, , toggleChangeFontSize] =
-    useContext(ThemeContext);
+  const [
+    { theme, themeName, activeFontSizeOption },
+    toggleThemeBetweenLightDarkMode,
+    toggleChangeFontSize,
+  ] = useContext(ThemeContext);
   const [messageApi, contextHolder] = message.useMessage();
   const successMessage = () => {
     messageApi.success({
@@ -549,6 +555,7 @@ function LogoutModal({ isLogoutActionActive }) {
   const [showDisplayOptionsModal, setshowDisplayOptionsModal] = useState(null);
 
   const handleCloseDisplayOptionsModal = () => {
+    // window.location.href = "http://localhost:5173/home";
     setshowDisplayOptionsModal(false);
   };
 
@@ -936,6 +943,13 @@ function LogoutModal({ isLogoutActionActive }) {
   };
 
   const handleCloseForgotPasswordProcessModal = () => {
+    setshowAfterChangePasswordScreen(false);
+    setwhyDidYouChangeyourpasswordScreen(false);
+    setverificationCodeSuccessChangePasswordScreen(false);
+    setShowEnterVerificationCodeScreen(false);
+    setSelectedSection("Your Account");
+    setnewPasswordResetPassword("");
+    setnewPasswordResetPasswordRepeat("");
     setTimeout(() => {
       setTabIndex(0);
     }, 300);
@@ -1055,7 +1069,9 @@ function LogoutModal({ isLogoutActionActive }) {
       setErrorResetPassword(
         "Your password needs to be at least 8 characters. Please enter a longer one."
       );
+      setErrorResetPassword2("");
     } else if (newPasswordResetPassword !== newPasswordResetPasswordRepeat) {
+      setErrorResetPassword("");
       setErrorResetPassword2("Passwords do not match.");
     } else {
       setErrorResetPassword("");
@@ -1079,6 +1095,24 @@ function LogoutModal({ isLogoutActionActive }) {
   }));
 
   const [hoveredOption, setHoveredOption] = useState(null);
+
+  const [checkedTheme, setCheckedTheme] = useState(
+    localStorage.getItem("themeName")
+  );
+  const [lightThemeActive, setLightThemeActive] = useState(false);
+  const [darkThemeActive, setDarkThemeActive] = useState(false);
+
+  // useEffect(() => {
+  //   localStorage.setItem("themeName", checkedTheme);
+  // }, [checkedTheme]);
+
+  const [play] = useSound(
+    themeName === "dark-theme"
+      ? ActiveLightModeSound
+      : themeName === "light-theme"
+      ? ActiveDarkModeSound
+      : null
+  );
 
   return (
     <>
@@ -1146,9 +1180,10 @@ function LogoutModal({ isLogoutActionActive }) {
               </div>
               <h2
                 style={{
+                  fontSize: "20px",
                   fontWeight: "700",
-                  lineHeight: "23px",
-                  color: themeName === "dark-theme" ? "white" : "black",
+                  lineHeight: "24px",
+                  color: themeName === "dark-theme" ? "#E6E9EA" : "black",
                 }}
               >
                 Display
@@ -1167,7 +1202,134 @@ function LogoutModal({ isLogoutActionActive }) {
               Manage your font size, color, and background. These settings
               affect all the C accounts on this browser.
             </div>
-            <div>hello world</div>
+            <div className="mt-4">
+              <div
+                style={{
+                  float: "left",
+                  height: "65px",
+                }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width={50}
+                  height={30}
+                  viewBox="0 0 100 100"
+                >
+                  {/* İçi dolu bir kare */}
+                  <rect
+                    x="5"
+                    y="5"
+                    width="90"
+                    height="90"
+                    fill="#1C9BEF"
+                    rx="5"
+                    ry="5"
+                    style={{
+                      filter: "drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))",
+                    }}
+                  />
+
+                  <text
+                    x="27.5"
+                    y="70"
+                    fontFamily="Arial"
+                    fontSize="60"
+                    fill="#FFF"
+                    stroke="#FFF"
+                    strokeWidth="2"
+                  >
+                    C
+                  </text>
+                </svg>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                }}
+              >
+                <div
+                  style={{
+                    fontWeight: "700",
+                    color: themeName === "dark-theme" ? "#E6E9EA" : "black",
+                  }}
+                >
+                  C
+                </div>
+                <div
+                  style={{
+                    marginLeft: "5px",
+                  }}
+                >
+                  {" "}
+                  <span
+                    style={{
+                      position: "relative",
+                      bottom: "2px",
+                    }}
+                    className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5"
+                  >
+                    <svg
+                      width={`${1.25}em`}
+                      height={`${1.25}em`}
+                      viewBox="0 0 22 22"
+                      aria-label="Verified account"
+                      role="img"
+                      className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                      data-testid="icon-verified"
+                      color="rgba(29,155,240,1.00)"
+                      fill="currentColor"
+                    >
+                      <g>
+                        <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                      </g>
+                    </svg>
+                  </span>{" "}
+                </div>
+
+                <div
+                  style={{
+                    color: themeName === "dark-theme" ? "#71767A" : "",
+                    marginLeft: "5px",
+                  }}
+                >
+                  @C
+                </div>
+                <div
+                  style={{
+                    color: themeName === "dark-theme" ? "#71767A" : "",
+                    marginLeft: "5px",
+                  }}
+                >
+                  <span>&middot;</span>
+                  <span
+                    style={{
+                      marginLeft: "5px",
+                    }}
+                  >
+                    1h
+                  </span>
+                </div>
+              </div>
+              <div
+                style={{
+                  fontSize: "15px",
+                  color: themeName === "dark-theme" ? "#E6E9EA" : "black",
+                }}
+              >
+                At the hart of C are short messages called posts{" "}
+                <span className="double-dash">-</span>- just like this one{" "}
+                <span className="double-dash">-</span>- which can include
+                photos, videos, links, text, hashtags, and mentions like{" "}
+                <span
+                  style={{
+                    color: "#1C9BEF",
+                  }}
+                >
+                  @C
+                </span>
+                .
+              </div>
+            </div>
 
             <div
               className="mt-3"
@@ -1192,7 +1354,7 @@ function LogoutModal({ isLogoutActionActive }) {
                 fontSize: "19px",
                 lineHeight: "23px",
                 fontWeight: "800",
-                color: themeName === "dark-theme" ? "white" : "black",
+                color: themeName === "dark-theme" ? "#E6E9EA" : "black",
               }}
             >
               Font size
@@ -1208,7 +1370,7 @@ function LogoutModal({ isLogoutActionActive }) {
                     fontSize: "12px",
                     lineHeight: "14px",
                     fontWeight: "400",
-                    color: themeName === "dark-theme" ? "white" : "",
+                    color: themeName === "dark-theme" ? "#E6E9EA" : "black",
 
                     display: "flex",
                     justifyContent: "center",
@@ -1244,14 +1406,21 @@ function LogoutModal({ isLogoutActionActive }) {
                         alignItems: "center",
                         marginLeft: "15px",
                         borderRadius: "50%",
+                        cursor: "pointer",
                       }}
                     >
                       <div
                         onClick={() => toggleChangeFontSize("Extra Small 12px")}
                         style={{
                           zIndex: 9999,
-                          width: "16px",
-                          height: "16px",
+                          width:
+                            activeFontSizeOption !== "Extra Small 12px"
+                              ? "10px"
+                              : "16px",
+                          height:
+                            activeFontSizeOption !== "Extra Small 12px"
+                              ? "10px"
+                              : "16px",
                           borderRadius: "50%",
                           backgroundColor:
                             activeFontSizeOption === "Extra Small 12px" ||
@@ -1267,7 +1436,7 @@ function LogoutModal({ isLogoutActionActive }) {
                   </BootstrapTooltip>
                   <div
                     style={{
-                      marginLeft: "-10px",
+                      marginLeft: "-13px",
                       marginRight: "-13px",
                     }}
                     className={
@@ -1309,6 +1478,7 @@ function LogoutModal({ isLogoutActionActive }) {
                         justifyContent: "center",
                         alignItems: "center",
                         borderRadius: "50%",
+                        cursor: "pointer",
                       }}
                     >
                       <div
@@ -1316,19 +1486,13 @@ function LogoutModal({ isLogoutActionActive }) {
                         style={{
                           zIndex: 9999,
                           width:
-                            activeFontSizeOption === "Default 16px" ||
-                            activeFontSizeOption === "Small 14px" ||
-                            activeFontSizeOption === "Large 18px" ||
-                            activeFontSizeOption === "Extra Large 20px"
-                              ? "16px"
-                              : "10px",
+                            activeFontSizeOption !== "Small 14px"
+                              ? "10px"
+                              : "16px",
                           height:
-                            activeFontSizeOption === "Default 16px" ||
-                            activeFontSizeOption === "Small 14px" ||
-                            activeFontSizeOption === "Large 18px" ||
-                            activeFontSizeOption === "Extra Large 20px"
-                              ? "16px"
-                              : "10px",
+                            activeFontSizeOption !== "Small 14px"
+                              ? "10px"
+                              : "16px",
                           borderRadius: "50%",
                           backgroundColor:
                             activeFontSizeOption === "Default 16px" ||
@@ -1382,8 +1546,8 @@ function LogoutModal({ isLogoutActionActive }) {
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
-
                         borderRadius: "50%",
+                        cursor: "pointer",
                       }}
                     >
                       <div
@@ -1391,17 +1555,13 @@ function LogoutModal({ isLogoutActionActive }) {
                         style={{
                           zIndex: 9999,
                           width:
-                            activeFontSizeOption === "Default 16px" ||
-                            activeFontSizeOption === "Large 18px" ||
-                            activeFontSizeOption === "Extra Large 20px"
-                              ? "16px"
-                              : "10px",
+                            activeFontSizeOption !== "Default 16px"
+                              ? "10px"
+                              : "16px",
                           height:
-                            activeFontSizeOption === "Default 16px" ||
-                            activeFontSizeOption === "Large 18px" ||
-                            activeFontSizeOption === "Extra Large 20px"
-                              ? "16px"
-                              : "10px",
+                            activeFontSizeOption !== "Default 16px"
+                              ? "10px"
+                              : "16px",
                           borderRadius: "50%",
                           backgroundColor:
                             activeFontSizeOption === "Default 16px" ||
@@ -1452,8 +1612,8 @@ function LogoutModal({ isLogoutActionActive }) {
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
-
                         borderRadius: "50%",
+                        cursor: "pointer",
                       }}
                     >
                       <div
@@ -1462,15 +1622,13 @@ function LogoutModal({ isLogoutActionActive }) {
                           zIndex: 9999,
 
                           width:
-                            activeFontSizeOption === "Large 18px" ||
-                            activeFontSizeOption === "Extra Large 20px"
-                              ? "16px"
-                              : "10px",
+                            activeFontSizeOption !== "Large 18px"
+                              ? "10px"
+                              : "16px",
                           height:
-                            activeFontSizeOption === "Large 18px" ||
-                            activeFontSizeOption === "Extra Large 20px"
-                              ? "16px"
-                              : "10px",
+                            activeFontSizeOption !== "Large 18px"
+                              ? "10px"
+                              : "16px",
                           borderRadius: "50%",
                           backgroundColor:
                             activeFontSizeOption === "Large 18px" ||
@@ -1519,6 +1677,7 @@ function LogoutModal({ isLogoutActionActive }) {
                         alignItems: "center",
                         marginLeft: "-13px",
                         borderRadius: "50%",
+                        cursor: "pointer",
                       }}
                     >
                       <div
@@ -1553,7 +1712,7 @@ function LogoutModal({ isLogoutActionActive }) {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    color: themeName === "dark-theme" ? "white" : "",
+                    color: themeName === "dark-theme" ? "#E6E9EA" : "black",
                   }}
                 >
                   Aa
@@ -1580,7 +1739,7 @@ function LogoutModal({ isLogoutActionActive }) {
                 fontSize: "19px",
                 lineHeight: "23px",
                 fontWeight: "800",
-                color: themeName === "dark-theme" ? "white" : "black",
+                color: themeName === "dark-theme" ? "#E6E9EA" : "black",
               }}
             >
               Color
@@ -1719,7 +1878,7 @@ function LogoutModal({ isLogoutActionActive }) {
                 fontSize: "19px",
                 lineHeight: "23px",
                 fontWeight: "800",
-                color: themeName === "dark-theme" ? "white" : "black",
+                color: themeName === "dark-theme" ? "#E6E9EA" : "black",
               }}
             >
               Background
@@ -1734,46 +1893,229 @@ function LogoutModal({ isLogoutActionActive }) {
                 position: "relative",
               }}
             >
-              <div>
+              <div
+                style={{
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  if (themeName !== "light-theme") {
+                    toggleThemeBetweenLightDarkMode();
+                    play();
+                  }
+                }}
+              >
                 <div
                   style={{
                     width: width <= 600 ? "80vw" : "180px",
                     marginTop: width <= 600 ? "10px" : "",
-
                     height: "60px",
-                    backgroundColor: "white",
                     display: "flex",
-                    justifyContent: "center",
+                    justifyContent: "space-evenly",
                     alignItems: "center",
+                    backgroundColor: "white",
+                    border:
+                      themeName !== "dark-theme" ? "2px solid #1d9bf0" : "",
+                    borderRadius: "4px",
                   }}
                 >
-                  <div style={{}}>
-                    <div>A</div>
-                    <div>B</div>
+                  <div
+                    style={{
+                      backgroundColor: "transparent",
+                    }}
+                  >
+                    {" "}
+                    <div
+                      style={{
+                        width: "40px",
+                        height: "40px",
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                        position: "relative",
+                        backgroundColor: "transparent",
+                      }}
+                      className={
+                        themeName === "light-theme"
+                          ? `ms-auto hover-forgot-password-send-email-stack-svg-verified-email
+                                 hover-forgot-password-send-email-stack-svg-verified-email-${themeName}`
+                          : `ms-auto 
+                                  hover-forgot-password-send-email-stack-svg-verified-email-variant-2 hover-forgot-password-send-email-stack-svg-verified-email-variant-2-${themeName}`
+                      }
+                    >
+                      <div
+                        style={{
+                          backgroundColor:
+                            themeName === "light-theme"
+                              ? "#1d9bf0"
+                              : "transparent",
+                          border:
+                            themeName === "light-theme"
+                              ? "none"
+                              : themeName !== "dark-theme"
+                              ? "2px solid #71767A"
+                              : "2px solid rgb(70, 70, 70)",
+                          width: "20px",
+                          height: "20px",
+                          position: "relative",
+                          left: "10px",
+                          top: "10px",
+                          borderRadius: "50%",
+                        }}
+                      >
+                        <svg
+                          style={{
+                            position: "relative",
+                            left: "2px",
+                            bottom: "4px",
+                            display:
+                              themeName === "light-theme" ? "initial" : "none",
+                          }}
+                          width={16}
+                          height={16}
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
+                          fill={
+                            themeName === "light-theme" &&
+                            themeName === "light-theme"
+                              ? "white"
+                              : ""
+                          }
+                        >
+                          <g>
+                            <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                          </g>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      backgroundColor: "transparent",
+                      color: "black",
+                      fontSize: "15px",
+                      fontWeight: "700",
+                    }}
+                  >
+                    Default
                   </div>
                 </div>
               </div>
-              <div>
-                <div
-                  style={{
-                    width: width <= 600 ? "80vw" : "180px",
-                    marginTop: width <= 600 ? "10px" : "",
-                    height: "60px",
-                    backgroundColor: "#15202B",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    border:
-                      themeName !== "dark-theme"
-                        ? "1px solid rgba(0, 0, 0, 0.1)"
-                        : // : "0.1px solid rgb(70, 70, 70)",
-                          "1px solid rgb(70, 70, 70)",
-                  }}
-                >
-                  {/* <div>F</div> */}
+              <BootstrapTooltip title="This feature is not yet active. ">
+                <div>
+                  <div
+                    style={{
+                      width: width <= 600 ? "80vw" : "180px",
+                      marginTop: width <= 600 ? "10px" : "",
+                      height: "60px",
+                      backgroundColor: "#15202B",
+                      display: "flex",
+                      justifyContent: "space-evenly",
+                      alignItems: "center",
+                      border:
+                        // themeName === "dark-theme"
+                        //   ? "2px solid #1d9bf0"
+                        //   : themeName === "light-theme"
+                        //   ? "none"
+                        //   :
+                        "1px solid rgb(70,70,70)",
+                      borderRadius: "4px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        backgroundColor: "transparent",
+                      }}
+                    >
+                      {" "}
+                      <div
+                        style={{
+                          width: "40px",
+                          height: "40px",
+                          borderRadius: "50%",
+                          cursor: "pointer",
+                          position: "relative",
+                          backgroundColor: "#15202B",
+                          // backgroundColor: "transparent",
+                        }}
+                        // className={
+                        //   dimThemeActive
+                        //     ? `ms-auto hover-forgot-password-send-email-stack-svg-verified-email
+                        //            hover-forgot-password-send-email-stack-svg-verified-email-${themeName}`
+                        //     : `ms-auto
+                        //             hover-forgot-password-send-email-stack-svg-verified-email-variant-2 hover-forgot-password-send-email-stack-svg-verified-email-variant-2-${themeName}`
+                        // }
+                        // onClick={() => {
+                        //   setLightThemeActive(!dimThemeActive);
+                        //   setLightThemeActive(false);
+                        //   setCheckedTheme("light-theme");
+                        // }}
+                      >
+                        <div
+                          style={{
+                            // backgroundColor: dimThemeActive
+                            //   ? "#1d9bf0"
+                            //   : "transparent",
+                            // border: dimThemeActive
+                            //   ? "none"
+                            //   : themeName !== "dark-theme"
+                            //   ? "2px solid #71767A"
+                            //   : "2px solid rgb(70, 70, 70)",
+                            backgroundColor: "#15202B",
+                            border: "2px solid rgb(70, 70, 70)",
+                            width: "20px",
+                            height: "20px",
+                            position: "relative",
+                            left: "10px",
+                            top: "10px",
+                            borderRadius: "50%",
+                          }}
+                        >
+                          <svg
+                            style={{
+                              position: "relative",
+                              left: "0px",
+                              bottom: "6px",
+                              display: "none",
+                            }}
+                            width={16}
+                            height={16}
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
+                            color="white"
+                            fill="currentColor"
+                          >
+                            <g>
+                              <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                            </g>
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        backgroundColor: "transparent",
+                        color: "#F6F9F9",
+                        fontSize: "15px",
+                        fontWeight: "700",
+                      }}
+                    >
+                      Dim
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div>
+              </BootstrapTooltip>
+              <div
+                style={{
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  if (themeName !== "dark-theme") {
+                    toggleThemeBetweenLightDarkMode();
+                    play();
+                  }
+                }}
+              >
                 <div
                   style={{
                     width: width <= 600 ? "80vw" : "180px",
@@ -1781,16 +2123,88 @@ function LogoutModal({ isLogoutActionActive }) {
                     height: "60px",
                     backgroundColor: "black",
                     display: "flex",
-                    justifyContent: "center",
+                    justifyContent: "space-evenly",
                     alignItems: "center",
                     border:
-                      themeName !== "dark-theme"
-                        ? "1px solid rgba(0, 0, 0, 0.1)"
-                        : // : "0.1px solid rgb(70, 70, 70)",
-                          "1px solid rgb(70, 70, 70)",
+                      themeName === "dark-theme" ? "2px solid #1d9bf0" : "",
+                    borderRadius: "4px",
                   }}
                 >
-                  {/* <div>F</div> */}
+                  <div
+                    style={{
+                      backgroundColor: "transparent",
+                    }}
+                  >
+                    {" "}
+                    <div
+                      style={{
+                        width: "40px",
+                        height: "40px",
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                        position: "relative",
+                        backgroundColor: "transparent",
+                      }}
+                      className={
+                        themeName === "dark-theme"
+                          ? `ms-auto hover-forgot-password-send-email-stack-svg-verified-email
+                                 hover-forgot-password-send-email-stack-svg-verified-email-${themeName}`
+                          : `ms-auto 
+                                  hover-forgot-password-send-email-stack-svg-verified-email-variant-2 hover-forgot-password-send-email-stack-svg-verified-email-variant-2-${themeName}`
+                      }
+                    >
+                      <div
+                        style={{
+                          backgroundColor:
+                            themeName === "dark-theme"
+                              ? "#1d9bf0"
+                              : "transparent",
+                          border:
+                            themeName === "dark-theme"
+                              ? "none"
+                              : themeName !== "dark-theme"
+                              ? "2px solid #71767A"
+                              : "2px solid rgb(70, 70, 70)",
+                          width: "20px",
+                          height: "20px",
+                          position: "relative",
+                          left: "10px",
+                          top: "10px",
+                          borderRadius: "50%",
+                        }}
+                      >
+                        <svg
+                          style={{
+                            position: "relative",
+                            left: "2px",
+                            bottom: "4px",
+                            display:
+                              themeName === "dark-theme" ? "initial" : "none",
+                          }}
+                          width={16}
+                          height={16}
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
+                          fill={themeName === "dark-theme" ? "white" : ""}
+                        >
+                          <g>
+                            <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                          </g>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      backgroundColor: "transparent",
+                      color: "#E6E9EA",
+                      fontSize: "15px",
+                      fontWeight: "700",
+                    }}
+                  >
+                    Lights out
+                  </div>
                 </div>
               </div>
             </div>
@@ -2949,9 +3363,8 @@ function LogoutModal({ isLogoutActionActive }) {
                   ) : null}
                   <>
                     <div
-                      className="mt-1 forgot-password-logout-settings-and-privacy-modal"
+                      className="mt-1 "
                       style={{
-                        cursor: "pointer",
                         display: !errorInputStyle3 ? "inline-block" : "none",
                         color: "rgb(29, 155, 240)",
                         textAlign: "left",
@@ -2964,8 +3377,10 @@ function LogoutModal({ isLogoutActionActive }) {
                       }}
                     >
                       <span
+                        className="forgot-password-logout-settings-and-privacy-modal"
                         onClick={() => startForgotPasswordProcess()}
                         style={{
+                          cursor: "pointer",
                           position: "relative",
                           left: "10px",
                         }}
@@ -3790,7 +4205,10 @@ function LogoutModal({ isLogoutActionActive }) {
                       border: "2px solid #1d9bf0 !important",
                     },
                     "& .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#cfd9de !important",
+                      border:
+                        themeName === "dark-theme"
+                          ? "1px solid rgb(70,70,70) !important"
+                          : "1px solid #cfd9de !important",
                     },
                     "& .MuiInputLabel-shrink": {
                       color: "#1f9cf0 !important",
@@ -4189,6 +4607,7 @@ function LogoutModal({ isLogoutActionActive }) {
                   }}
                 >
                   <Button
+                    className="reset-password-btn"
                     onClick={resetPassword}
                     style={{
                       height: "45px",
@@ -4200,6 +4619,7 @@ function LogoutModal({ isLogoutActionActive }) {
                       minHeight: "36px",
                       fontSize: "15px",
                       cursor: "pointer",
+                      borderRadius: "9999px",
                     }}
                   >
                     Reset password

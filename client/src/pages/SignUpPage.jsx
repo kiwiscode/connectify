@@ -3830,7 +3830,7 @@ function SignUpPage() {
           <div className="responsive-input-group">
             <div>
               <Button
-                onClick={googleAuth}
+                // onClick={googleAuth}
                 style={{
                   backgroundColor: "transparent",
                   borderWidth: "1px",
@@ -3848,7 +3848,7 @@ function SignUpPage() {
                         "1px solid rgb(70, 70, 70)",
                 }}
                 variant="light"
-                className="google-variant-sign-in"
+                className={`google-variant-sign-in google-variant-sign-in-${themeName}`}
               >
                 <span
                   style={{

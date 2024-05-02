@@ -32,18 +32,22 @@ function HomePage() {
             }}
           >
             <svg
+              fill="yellow"
               xmlns="http://www.w3.org/2000/svg"
               width={712}
               height={438}
-              viewBox="0 0 100 100"
+              // height={438}
+              viewBox="0 0 100 110"
+              style={{
+                filter: "drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))",
+              }}
             >
-              {/* İçi dolu bir kare */}
               <rect
                 x="5"
                 y="5"
                 width="90"
                 height="90"
-                fill="#3b5998"
+                fill="#1C9BEF"
                 rx="5"
                 ry="5"
               >
@@ -70,15 +74,36 @@ function HomePage() {
               </rect>
 
               <text
+                className="text-test"
                 x="27.5"
                 y="70"
                 fontFamily="Arial"
-                fontSize="60"
+                fontSize="22"
                 fill="#FFF"
                 stroke="#FFF"
                 strokeWidth="2"
+                style={{}}
               >
-                C
+                <animate
+                  attributeName="y"
+                  values="70; 85; 70"
+                  dur="1s"
+                  keyTimes="0; 0.5; 1"
+                  calcMode="spline"
+                  keySplines="0.4 0 0.2 1; 0.4 0 0.2 1"
+                  repeatCount="1"
+                />
+                <animate
+                  attributeName="x"
+                  values="27.5; 42.5; 27.5"
+                  dur="1s"
+                  begin="1s"
+                  keyTimes="0; 0.5; 1"
+                  calcMode="spline"
+                  keySplines="0.4 0 0.2 1; 0.4 0 0.2 1"
+                  repeatCount="1"
+                />{" "}
+                Connectify
               </text>
             </svg>
           </Col>

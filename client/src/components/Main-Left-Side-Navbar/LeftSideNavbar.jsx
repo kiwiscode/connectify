@@ -31,6 +31,7 @@ function LeftSideNavBar({
   setLoadingFalse,
   visible,
   parentCallBack,
+  parentCallBackSecond,
 }) {
   const [
     { theme, themeName },
@@ -153,8 +154,12 @@ function LeftSideNavBar({
   const handleClose = () => {
     setShow(false);
     setShowSecondModal(false);
+    parentCallBackSecond(false);
   };
-  const handleShow = () => setShow(true);
+  const handleShow = () => {
+    parentCallBackSecond(true);
+    setShow(true);
+  };
 
   const handlePost = () => {
     if (content || chosenEmoji || modalImage) {
@@ -370,7 +375,7 @@ function LeftSideNavBar({
     return allUnReadedMessages;
   };
 
-  console.log("How many unreaded messages =>", checkHowManyUnReadMessages());
+  console.log("how many unread messages =>", checkHowManyUnReadMessages());
 
   return (
     <>
@@ -420,9 +425,12 @@ function LeftSideNavBar({
                     y="5"
                     width="90"
                     height="90"
-                    fill="#3b5998"
+                    fill="#1C9BEF"
                     rx="5"
                     ry="5"
+                    style={{
+                      filter: "drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))",
+                    }}
                   />
 
                   <text
@@ -617,7 +625,7 @@ function LeftSideNavBar({
                 >
                   {width < 1200 ? null : (
                     <>
-                      {checkHowManyUnReadMessages().length < 1 ? null : (
+                      {!checkHowManyUnReadMessages()?.length ? null : (
                         <div
                           style={{
                             cursor: "pointer",
@@ -644,7 +652,7 @@ function LeftSideNavBar({
                               color: "white",
                             }}
                           >
-                            {checkHowManyUnReadMessages().length}
+                            {checkHowManyUnReadMessages()?.length}
                           </span>
                         </div>
                       )}
@@ -867,7 +875,9 @@ function LeftSideNavBar({
                     </div>
                   </div>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body
+                  className={`scrollbar-post-modal scrollbar-post-modal-${themeName}`}
+                >
                   <Stack direction="horizontal" gap={1}>
                     <div className="p-0">
                       {" "}
@@ -904,7 +914,6 @@ function LeftSideNavBar({
                         </div>
                       )}
                     </div>
-
                     <div className="p-0 ">
                       <textarea
                         onChange={handleChange}
@@ -944,32 +953,43 @@ function LeftSideNavBar({
                       {modalImage && (
                         <div style={{ position: "relative" }}>
                           <div
-                            className="target"
+                            className="close-image-button"
                             style={{
                               position: "absolute",
-                              top: "10px",
-                              right: "10px",
-                              width: "30px",
-                              height: "30px",
-                              borderRadius: "50%",
-                              background: "rgba(71,73,74,255)",
+                              top: "20px",
+                              right: "20px",
+                              width: "36px",
+                              height: "36px",
+                              backgroundColor: "#4B4F52",
                               display: "flex",
                               justifyContent: "center",
                               alignItems: "center",
+                              borderRadius: "50%",
                               cursor: "pointer",
                             }}
-                            onMouseOver={(e) => handleMouseOver(e)}
-                            onMouseOut={(e) => handleMouseOut(e)}
                             onClick={closeImage}
                           >
-                            <div
-                              style={{
-                                cursor: "pointer",
-                                color: "white",
-                                fontSize: "22px",
-                              }}
-                            >
-                              &times;
+                            <div>
+                              <div>
+                                <svg
+                                  style={{
+                                    border: "none",
+                                    fontSize: "15px",
+                                    margin: "5px",
+                                  }}
+                                  width={20}
+                                  height={20}
+                                  color={"white"}
+                                  fill="currentColor"
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                                >
+                                  <g>
+                                    <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                                  </g>
+                                </svg>{" "}
+                              </div>
                             </div>
                           </div>
                           <img

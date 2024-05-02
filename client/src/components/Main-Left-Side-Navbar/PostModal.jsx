@@ -357,32 +357,43 @@ function PostModal({
               {modalImage && (
                 <div style={{ position: "relative" }}>
                   <div
-                    className="target"
+                    className="close-image-button"
                     style={{
                       position: "absolute",
-                      top: "10px",
-                      right: "10px",
-                      width: "30px",
-                      height: "30px",
-                      borderRadius: "50%",
-                      background: "rgba(71,73,74,255)",
+                      top: "20px",
+                      right: "20px",
+                      width: "36px",
+                      height: "36px",
+                      backgroundColor: "#4B4F52",
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
+                      borderRadius: "50%",
                       cursor: "pointer",
                     }}
-                    onMouseOver={(e) => handleMouseOver(e)}
-                    onMouseOut={(e) => handleMouseOut(e)}
                     onClick={closeImage}
                   >
-                    <div
-                      style={{
-                        cursor: "pointer",
-                        color: "white",
-                        fontSize: "22px",
-                      }}
-                    >
-                      &times;
+                    <div>
+                      <div>
+                        <svg
+                          style={{
+                            border: "none",
+                            fontSize: "15px",
+                            margin: "5px",
+                          }}
+                          width={20}
+                          height={20}
+                          color={"white"}
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                        >
+                          <g>
+                            <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                          </g>
+                        </svg>{" "}
+                      </div>
                     </div>
                   </div>
                   <img

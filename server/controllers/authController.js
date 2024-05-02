@@ -719,7 +719,7 @@ const handleUserPasswordCheck = async (req, res) => {
       throw new Error();
     }
   } catch (error) {
-    console.error("Error during username check:", error);
+    console.error("Error during password check:", error);
     res
       .status(500)
       .json({ errorMessage: "An error occurred during password check." });
