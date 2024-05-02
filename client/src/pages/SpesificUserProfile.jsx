@@ -2071,7 +2071,6 @@ function SpesificUserProfile() {
                           " " +
                           "haven’t posted anything yet"
                         : "You haven't posted anything yet."}
-                      asd
                     </div>
                     <div
                       style={{

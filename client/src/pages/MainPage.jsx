@@ -369,6 +369,14 @@ function MainPage() {
     postSharedMessage(childData.authorUserName, childData._id);
   };
 
+  const [postModalOpenedFromLeftSide, setPostModalOpenedFromLeftSide] =
+    useState(false);
+
+  const handleCallBackForModalOpenedStateFromChild = (childData) => {
+    console.log("Child data received from child => ", childData);
+    setPostModalOpenedFromLeftSide(childData);
+  };
+
   const [messageApi, contextHolder] = message.useMessage();
 
   const postSharedMessage = (postOwner, postId) => {
@@ -1306,7 +1314,9 @@ function MainPage() {
                 onHide={handleCloseSubscriptionCompletedModal}
                 centered={true}
                 contentClassName={
-                  themeName === "dark-theme" ? "dark-theme-spinner-modal" : ""
+                  themeName === "dark-theme"
+                    ? "dark-theme-subscription-completed-modal"
+                    : ""
                 }
                 backdropClassName={
                   themeName === "dark-theme" ? `back-drop-${themeName}` : ""
@@ -2151,13 +2161,17 @@ function MainPage() {
         </>
       )}
       <ToastContainer theme={themeName === "dark-theme" ? "dark" : "light"} />
-      <ResponsiveNavigationBarBottom
-        refreshPosts={() => handleShowPostsHomePage()}
-        setLoadingTrue={() => setLoadingTrue()}
-        setLoadingFalse={() => setLoadingFalse()}
-        isSubModalOpened={isSubModalOpened}
-        isSubModalTabIndexNull={tabIndexValue}
-      />
+      {!postModalOpenedFromLeftSide && (
+        <ResponsiveNavigationBarBottom
+          refreshPosts={() => handleShowPostsHomePage()}
+          setLoadingTrue={() => setLoadingTrue()}
+          setLoadingFalse={() => setLoadingFalse()}
+          isSubModalOpened={isSubModalOpened}
+          isSubModalTabIndexNull={tabIndexValue}
+          // isPostModalOpened={}
+        />
+      )}
+
       <ResponsiveNavigationBarTop />
       <Container
         style={{
@@ -2179,6 +2193,7 @@ function MainPage() {
             setLoadingTrue={() => setLoadingTrue()}
             setLoadingFalse={() => setLoadingFalse()}
             parentCallBack={handleCallback}
+            parentCallBackSecond={handleCallBackForModalOpenedStateFromChild}
           />
 
           <Col
@@ -2340,32 +2355,43 @@ function MainPage() {
             {image && (
               <div className="p-2" style={{ position: "relative" }}>
                 <div
-                  className="target"
+                  className="close-image-button"
                   style={{
                     position: "absolute",
-                    top: "10px",
-                    right: "10px",
-                    width: "40px",
-                    height: "40px",
-                    borderRadius: "50%",
-                    background: "#47494a",
+                    top: "20px",
+                    right: "20px",
+                    width: "36px",
+                    height: "36px",
+                    backgroundColor: "#4B4F52",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
+                    borderRadius: "50%",
                     cursor: "pointer",
                   }}
-                  onMouseOver={(e) => handleMouseOver(e)}
-                  onMouseOut={(e) => handleMouseOut(e)}
                   onClick={closeImage}
                 >
-                  <div
-                    style={{
-                      cursor: "pointer",
-                      color: "white",
-                      fontSize: "25px",
-                    }}
-                  >
-                    &times;
+                  <div>
+                    <div>
+                      <svg
+                        style={{
+                          border: "none",
+                          fontSize: "15px",
+                          margin: "5px",
+                        }}
+                        width={20}
+                        height={20}
+                        color={"white"}
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                      >
+                        <g>
+                          <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                        </g>
+                      </svg>{" "}
+                    </div>
                   </div>
                 </div>
                 <img
@@ -2374,9 +2400,9 @@ function MainPage() {
                     width: "100%",
                     display: "block",
                     overflow: "hidden",
-                    border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
-                    borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
-                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                    border: "2px solid #ddd",
+                    borderRadius: "8px",
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                   }}
                   src={image ? image : ""}
                   alt=""

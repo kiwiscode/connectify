@@ -994,7 +994,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   Sign in to C
                                 </div>
                                 <Button
-                                  onClick={googleAuth}
+                                  // onClick={googleAuth}
                                   style={{
                                     backgroundColor:
                                       themeName === "dark-theme"
@@ -2160,7 +2160,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                     ? () => {
                                         handleChangePassword();
                                       }
-                                    : () => window.alert("Check errors!")
+                                    : ""
                                 }
                                 className={`login-button mt-5 ${themeName}-white-btn`}
                                 variant="dark"
@@ -3048,7 +3048,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               Sign in to C
                             </div>
                             <Button
-                              onClick={googleAuth}
+                              // onClick={googleAuth}
                               style={{
                                 backgroundColor:
                                   themeName === "dark-theme"
@@ -3252,7 +3252,15 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             >
                               <span>
                                 Don&apos;t have an account?{" "}
-                                <a href="">Sign up</a>
+                                <span
+                                  className="hover-blue-underline"
+                                  onClick={handleCloseLoginModal}
+                                  style={{
+                                    color: "#1C9BEF",
+                                  }}
+                                >
+                                  Sign up
+                                </span>
                               </span>
                             </div>
                           </div>
@@ -4175,7 +4183,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   ? () => {
                                       handleChangePassword();
                                     }
-                                  : () => window.alert("Check errors!")
+                                  : ""
                               }
                               className={`login-button mt-5 ${themeName}-white-btn`}
                               variant="dark"
@@ -4506,11 +4514,13 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               opacity: checkedValue ? "" : 0.5,
                             }}
                             onClick={() => {
-                              setTabLoading(true);
-                              setTimeout(() => {
-                                setTabLoading(false);
-                                checkedValue ? setTabIndex(tabIndex + 1) : null;
-                              }, 500);
+                              if (checkedValue) {
+                                setTabLoading(true);
+                                setTimeout(() => {
+                                  setTabLoading(false);
+                                  setTabIndex(tabIndex + 1);
+                                }, 500);
+                              }
                             }}
                             className={`login-button mt-5 ${themeName}-white-btn`}
                             variant="dark"
@@ -5666,7 +5676,7 @@ function CommentModal({
                 <div>
                   {userInfo ? (
                     <>
-                      {userInfo.imageUrl.slice(0, 3) !== "../" ? (
+                      {userInfo?.imageUrl?.slice(0, 3) !== "../" ? (
                         <img
                           width={40}
                           height={40}

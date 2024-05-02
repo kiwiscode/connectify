@@ -22,6 +22,7 @@ import {
   TextField,
   FormControl,
   InputAdornment,
+  Tooltip,
 } from "@mui/material";
 
 import {
@@ -51,13 +52,8 @@ function RightSideColumn({
   isSubscriptionCompleted,
   widthSmaller700,
 }) {
-  const [
-    { theme, themeName },
-    toggleThemeBetweenLightDarkMode,
-    lightModeActive,
-    darkModeActive,
-    cyberpunkModeActive,
-  ] = useContext(ThemeContext);
+  const [{ theme, themeName }, toggleThemeBetweenLightDarkMode] =
+    useContext(ThemeContext);
   const [hoveredThemeName, setHoveredThemeName] = useState(null);
   const [play] = useSound(
     themeName === "dark-theme"
@@ -8988,7 +8984,7 @@ function RightSideColumn({
               className={
                 tabIndex !== 0 && !isOrganizationSubscriptionClicked
                   ? "subscription-modal-basic-width-smaller-700"
-                  : "signin-modal-parent-non-reactivate"
+                  : "signin-modal-parent-non-reactivate subscribe-modal-abcde"
               }
               show={showSubscriptionModal}
               onHide={handleCloseSubscriptionModal}
@@ -14974,6 +14970,7 @@ function RightSideColumn({
                                     : "2px solid #1d9bf0 !important",
                               },
                               "& .MuiOutlinedInput-notchedOutline": {
+                                borderRadius: "initial !important",
                                 borderColor:
                                   organizationNameFilled && !organizationName
                                     ? "rgb(244, 33, 46)!important"
@@ -15048,6 +15045,7 @@ function RightSideColumn({
                                       ? "#0D0E11 !important"
                                       : "#f7f9fa !important",
                                   height: "60px",
+                                  borderRadius: "initial !important",
                                 },
                               }}
                             />
@@ -15090,6 +15088,8 @@ function RightSideColumn({
                                     : "2px solid #1d9bf0 !important",
                               },
                               "& .MuiOutlinedInput-notchedOutline": {
+                                borderRadius: "initial !important",
+
                                 borderColor:
                                   organizationYourFullNameFilled &&
                                   !yourFullName
@@ -15150,6 +15150,8 @@ function RightSideColumn({
                                     : "2px solid #1d9bf0 !important",
                               },
                               "& .MuiOutlinedInput-notchedOutline": {
+                                borderRadius: "initial !important",
+
                                 borderColor:
                                   (organizationEmailAdressFilled &&
                                     !organizationEmailAdress) ||
@@ -15225,6 +15227,8 @@ function RightSideColumn({
                                     : "2px solid #1d9bf0 !important",
                               },
                               "& .MuiOutlinedInput-notchedOutline": {
+                                borderRadius: "initial !important",
+
                                 borderColor:
                                   organizationWebSiteFilled &&
                                   !organizationWebSite
@@ -15845,7 +15849,7 @@ function RightSideColumn({
                               position: "relative",
                               bottom: "20px",
                             }}
-                            className={`forgot-password-button ${themeName}-black-btn`}
+                            className={`forgot-password-button ${themeName}-black-btn ${themeName}-light-theme-white-btn`}
                             variant="light"
                             onClick={() => {
                               setsubErrorPhoneVerifiedTabLoading(true);
@@ -16270,7 +16274,7 @@ function RightSideColumn({
                               position: "relative",
                               bottom: "10px",
                             }}
-                            className={`forgot-password ${themeName}-black-btn`}
+                            className={`forgot-password-button ${themeName}-black-btn ${themeName}-light-theme-white-btn`}
                             variant="light"
                             onClick={() => {
                               setsubErrorPhoneVerifiedTabLoading(true);
@@ -16686,8 +16690,9 @@ function RightSideColumn({
               right: "40px",
               bottom: "20px",
               marginLeft: "15px",
+              display: "flex",
             }}
-            className="p-4"
+            className="p-4 mt-2"
           >
             <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
               <svg
@@ -16749,7 +16754,7 @@ function RightSideColumn({
                   float: "right",
                   position: "absolute",
                   top: "35px",
-                  right: "17%",
+                  right: "22%",
                   borderRadius: "50%",
                 }}
                 className="div-parent-search-input-delete-search-term css-175oi2r r-6koalj r-1777fci"
@@ -16798,410 +16803,407 @@ function RightSideColumn({
                 </div>
               </div>
             ) : null}
-            {/* close text finish to check right side input  */}
-            <div
-              className={`scrollbar-add scrollbar-add-${themeName}`}
-              style={{
-                overflowY: "auto",
-                overflowX: "hidden",
-                maxHeight: "400px",
-                minHeight: "100px",
-                backgroundColor: themeName === "dark-theme" ? "black" : "white",
-                zIndex: 9999,
-                width: "350px",
-                borderRadius: "8px",
-                border: "none",
-                position: "absolute",
-                padding: "12px",
-                filter:
-                  themeName === "dark-theme"
-                    ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
-                    : "",
+          </div>
+          {/* input finish to check  */}
+          {/* close text finish to check right side input  */}
+          <div
+            className={`scrollbar-add scrollbar-add-${themeName}`}
+            style={{
+              overflowY: "auto",
+              overflowX: "hidden",
+              maxHeight: "400px",
+              minHeight: "100px",
+              backgroundColor: themeName === "dark-theme" ? "black" : "white",
+              zIndex: 9999,
+              width: "350px",
+              borderRadius: "8px",
+              border: "none",
+              position: "absolute",
+              padding: "12px",
+              top: "59px",
+              filter:
+                themeName === "dark-theme"
+                  ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                  : "",
 
-                boxShadow:
-                  themeName === "dark-theme"
-                    ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
-                    : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
+              boxShadow:
+                themeName === "dark-theme"
+                  ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                  : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
 
-                display: onFocus ? "flex" : "none",
-                flexDirection: "column",
+              display: onFocus ? "flex" : "none",
+              flexDirection: "column",
 
-                alignItems: "center",
-              }}
-            >
-              {!searchTerm ? (
-                <>
-                  <div
-                    style={{
-                      color:
-                        themeName === "dark-theme"
-                          ? "#71767A"
-                          : "rgb(83, 100, 113)",
+              alignItems: "center",
+            }}
+          >
+            {!searchTerm ? (
+              <>
+                <div
+                  style={{
+                    color:
+                      themeName === "dark-theme"
+                        ? "#71767A"
+                        : "rgb(83, 100, 113)",
 
-                      lineHeight: "20px",
-                      fontSize: "15px",
-                      fontWeight: "400",
-                    }}
-                  >
-                    Try searching for people
-                  </div>
-                </>
-              ) : (
-                <>
-                  <List
-                    style={{}}
-                    // className="right-side-bar-column-search-bar-list"
-                    className={`right-side-bar-column-search-bar-list right-side-bar-column-search-bar-list-${themeName}`}
-                    size="small"
-                    bordered
-                    header={
-                      <div
+                    lineHeight: "20px",
+                    fontSize: "15px",
+                    fontWeight: "400",
+                  }}
+                >
+                  Try searching for people
+                </div>
+              </>
+            ) : (
+              <>
+                <List
+                  style={{}}
+                  // className="right-side-bar-column-search-bar-list"
+                  className={`right-side-bar-column-search-bar-list right-side-bar-column-search-bar-list-${themeName}`}
+                  size="small"
+                  bordered
+                  header={
+                    <div
+                      style={{
+                        color: themeName === "dark-theme" ? "white" : "black",
+                      }}
+                    >{`Search for "${searchTerm}"`}</div>
+                  }
+                >
+                  {themeName === "dark-theme" ? (
+                    <div
+                      style={{
+                        borderBottom: "0.1px solid rgb(70, 70, 70)",
+                      }}
+                    ></div>
+                  ) : null}
+
+                  {filteredSearchResult.map((eachUser, index) => (
+                    <List.Item
+                      onMouseEnter={() => {
+                        setIsHoveredListItem(index);
+                      }}
+                      onMouseLeave={() => {
+                        setIsHoveredListItem("");
+                      }}
+                      key={index}
+                      style={{
+                        backgroundColor:
+                          isHoveredListItem === index &&
+                          themeName !== "dark-theme"
+                            ? "#f7f9f9"
+                            : isHoveredListItem === index &&
+                              themeName === "dark-theme"
+                            ? "#181818"
+                            : "",
+                        border: "none",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => {
+                        navigate(`/profile/${eachUser._doc._id}`);
+                      }}
+                    >
+                      <Stack
                         style={{
-                          color: themeName === "dark-theme" ? "white" : "black",
+                          width: "100%",
                         }}
-                      >{`Search for "${searchTerm}"`}</div>
-                    }
-                  >
-                    {themeName === "dark-theme" ? (
-                      <div
-                        style={{
-                          borderBottom: "0.1px solid rgb(70, 70, 70)",
-                        }}
-                      ></div>
-                    ) : null}
-
-                    {filteredSearchResult.map((eachUser, index) => (
-                      <List.Item
-                        onMouseEnter={() => {
-                          setIsHoveredListItem(index);
-                        }}
-                        onMouseLeave={() => {
-                          setIsHoveredListItem("");
-                        }}
-                        key={index}
-                        style={{
-                          backgroundColor:
-                            isHoveredListItem === index &&
-                            themeName !== "dark-theme"
-                              ? "#f7f9f9"
-                              : isHoveredListItem === index &&
-                                themeName === "dark-theme"
-                              ? "#181818"
-                              : "",
-                          border: "none",
-                          cursor: "pointer",
-                        }}
-                        onClick={() => {
-                          navigate(`/profile/${eachUser._doc._id}`);
-                        }}
+                        direction="horizontal"
                       >
-                        <Stack
-                          style={{
-                            width: "100%",
-                          }}
-                          direction="horizontal"
-                        >
-                          {eachUser._doc?.imageUrl?.slice(0, 3) !== "../" ? (
+                        {eachUser._doc?.imageUrl?.slice(0, 3) !== "../" ? (
+                          <Link to={`/profile/${eachUser._doc?._id}`}>
+                            <img
+                              src={eachUser._doc?.imageUrl}
+                              alt={`${eachUser._doc?.fullname}'s profile`}
+                              width={40}
+                              height={40}
+                              className="profile-image"
+                              style={{
+                                borderRadius: "50%",
+                              }}
+                            />
+                          </Link>
+                        ) : (
+                          <div>
                             <Link to={`/profile/${eachUser._doc?._id}`}>
-                              <img
-                                src={eachUser._doc?.imageUrl}
-                                alt={`${eachUser._doc?.fullname}'s profile`}
-                                width={40}
-                                height={40}
-                                className="profile-image"
-                                style={{
-                                  borderRadius: "50%",
-                                }}
-                              />
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="40"
+                                height="40"
+                                fill="rgb(83, 100, 113)"
+                                className="bi bi-person-circle"
+                                viewBox="0 0 16 16"
+                              >
+                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                              </svg>
                             </Link>
-                          ) : (
-                            <div>
-                              <Link to={`/profile/${eachUser._doc?._id}`}>
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="40"
-                                  height="40"
-                                  fill="rgb(83, 100, 113)"
-                                  className="bi bi-person-circle"
-                                  viewBox="0 0 16 16"
-                                >
-                                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                  <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                </svg>
-                              </Link>
-                            </div>
-                          )}
-                          {/* User Info */}
-                          <div className="user-info p-2">
-                            {/* Fullname */}
-                            <div
-                              style={{
-                                fontSize: "15px",
-                                fontWeight: "700",
-                                lineHeight: "20px",
-                              }}
-                              className="fullname"
-                            >
-                              <Link
-                                to={`/profile/${eachUser._doc?._id}`}
-                                className="hover-fullname"
-                                style={{
-                                  textDecoration: "none",
-                                  color: "black",
-                                }}
-                              >
-                                <div
-                                  style={{
-                                    fontSize: "15px",
-                                    fontWeight: "700",
-                                    lineHeight: "20px",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    whiteSpace: "nowrap",
-                                    width: "200px",
-                                    color:
-                                      themeName === "dark-theme"
-                                        ? "white"
-                                        : "black",
-                                  }}
-                                >
-                                  {eachUser._doc?.fullname}
-                                </div>
-                              </Link>
-                            </div>
-
-                            {/* Username */}
-                            <div
-                              style={{
-                                fontSize: "15px",
-                                fontWeight: "400",
-                                lineHeight: "20px",
-                                color: "rgb(83, 100, 113)",
-                                position: "relative",
-                              }}
-                              className="username"
-                            >
-                              <Link
-                                style={{
-                                  textDecoration: "none",
-                                }}
-                                to={`/profile/${eachUser._doc?._id}`}
-                              >
-                                <span
-                                  style={{
-                                    fontSize: "15px",
-                                    fontWeight: "400",
-                                    lineHeight: "20px",
-                                    color:
-                                      themeName === "dark-theme"
-                                        ? "#71767A"
-                                        : "rgb(83, 100, 113)",
-                                    position: "relative",
-                                  }}
-                                >
-                                  @{eachUser._doc?.username}
-                                </span>
-                              </Link>
-                            </div>
                           </div>
-                        </Stack>
-                      </List.Item>
-                    ))}
-                  </List>
-                </>
-              )}
-            </div>
-            {/* close text start to check right side input  */}
-            <div
+                        )}
+                        {/* User Info */}
+                        <div className="user-info p-2">
+                          {/* Fullname */}
+                          <div
+                            style={{
+                              fontSize: "15px",
+                              fontWeight: "700",
+                              lineHeight: "20px",
+                            }}
+                            className="fullname"
+                          >
+                            <Link
+                              to={`/profile/${eachUser._doc?._id}`}
+                              className="hover-fullname"
+                              style={{
+                                textDecoration: "none",
+                                color: "black",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  fontSize: "15px",
+                                  fontWeight: "700",
+                                  lineHeight: "20px",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
+                                  width: "200px",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "white"
+                                      : "black",
+                                }}
+                              >
+                                {eachUser._doc?.fullname}
+                              </div>
+                            </Link>
+                          </div>
+
+                          {/* Username */}
+                          <div
+                            style={{
+                              fontSize: "15px",
+                              fontWeight: "400",
+                              lineHeight: "20px",
+                              color: "rgb(83, 100, 113)",
+                              position: "relative",
+                            }}
+                            className="username"
+                          >
+                            <Link
+                              style={{
+                                textDecoration: "none",
+                              }}
+                              to={`/profile/${eachUser._doc?._id}`}
+                            >
+                              <span
+                                style={{
+                                  fontSize: "15px",
+                                  fontWeight: "400",
+                                  lineHeight: "20px",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "#71767A"
+                                      : "rgb(83, 100, 113)",
+                                  position: "relative",
+                                }}
+                              >
+                                @{eachUser._doc?.username}
+                              </span>
+                            </Link>
+                          </div>
+                        </div>
+                      </Stack>
+                    </List.Item>
+                  ))}
+                </List>
+              </>
+            )}
+          </div>
+          {/* close text start to check right side input  */}
+          {/* toggle theme mode start to check test  */}
+          <button
+            onMouseEnter={
+              themeName === "dark-theme"
+                ? () => {
+                    setHoveredThemeName("dark-theme");
+                  }
+                : () => setHoveredThemeName("light-theme")
+            }
+            onMouseLeave={() => setHoveredThemeName(null)}
+            className={
+              themeName === "dark-theme"
+                ? `Activate-light-mode`
+                : themeName === "light-theme"
+                ? "Activate-dark-mode"
+                : null
+            }
+            style={{
+              zIndex: 9999,
+              border: "none",
+              backgroundColor: "transparent",
+              position: "absolute",
+              right: "75px",
+              top: "15px",
+              float: "right",
+              transitionDuration: "0.3s",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            type="button"
+            onClick={() => {
+              play();
+              toggleThemeBetweenLightDarkMode();
+            }}
+          >
+            <svg
+              width={20}
+              height={18}
+              viewBox="0 0 18 18"
               style={{
-                float: "right",
+                transform: "rotate(90deg)",
               }}
-            ></div>
-            {/* toggle theme mode start to check test  */}
-            <button
-              onMouseEnter={
-                themeName === "dark-theme"
-                  ? () => {
-                      setHoveredThemeName("dark-theme");
-                    }
-                  : () => setHoveredThemeName("light-theme")
-              }
-              onMouseLeave={() => setHoveredThemeName(null)}
-              className={
-                themeName === "dark-theme"
-                  ? `Activate-light-mode`
-                  : themeName === "light-theme"
-                  ? "Activate-dark-mode"
-                  : null
-              }
-              style={{
-                zIndex: 9999,
-                border: "none",
-                backgroundColor: "transparent",
-                transitionDuration: "0.3s",
-                position: "absolute",
-                right: "30px",
-                top: "30px",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-              type="button"
-              onClick={() => {
-                play();
-                toggleThemeBetweenLightDarkMode();
-              }}
+              className="sc-a794b73f-1 upJhz"
             >
-              <svg
-                width={20}
-                height={18}
-                viewBox="0 0 18 18"
-                style={{
-                  transform: "rotate(90deg)",
-                }}
-                className="sc-a794b73f-1 upJhz"
-              >
-                <mask id="moon-mask-main-nav">
-                  <rect x="0" y="0" width={18} height={18} fill={"#FFF"}></rect>
-                  <circle cx="25" cy="0" r="8" fill="black"></circle>
-                </mask>
+              <mask id="moon-mask-main-nav">
+                <rect x="0" y="0" width={18} height={18} fill={"#FFF"}></rect>
+                <circle cx="25" cy="0" r="8" fill="black"></circle>
+              </mask>
+              <circle
+                cx="9"
+                cy="9"
+                r="5"
+                fill={
+                  themeName === "dark-theme" &&
+                  hoveredThemeName !== "dark-theme"
+                    ? "#B9BABC"
+                    : hoveredThemeName === "dark-theme" &&
+                      themeName === "dark-theme"
+                    ? "white"
+                    : themeName === "light-theme" &&
+                      hoveredThemeName !== "light-theme"
+                    ? "#414A54"
+                    : hoveredThemeName === "light-theme" &&
+                      themeName === "light-theme"
+                    ? "black"
+                    : null
+                }
+                mask="url(#moon-mask-main-nav)"
+              ></circle>
+              <g>
                 <circle
-                  cx="9"
+                  cx="17"
                   cy="9"
-                  r="5"
+                  r="1.5"
                   fill={
-                    themeName === "dark-theme" &&
-                    hoveredThemeName !== "dark-theme"
-                      ? "#B9BABC"
-                      : hoveredThemeName === "dark-theme" &&
-                        themeName === "dark-theme"
-                      ? "white"
-                      : themeName === "light-theme" &&
-                        hoveredThemeName !== "light-theme"
+                    themeName === "light-theme" &&
+                    hoveredThemeName !== "light-theme"
                       ? "#414A54"
-                      : hoveredThemeName === "light-theme" &&
-                        themeName === "light-theme"
+                      : themeName === "light-theme" &&
+                        hoveredThemeName === "light-theme"
                       ? "black"
                       : null
                   }
-                  mask="url(#moon-mask-main-nav)"
+                  style={{
+                    transformOrigin: "center center",
+                    transform: "scale(1)",
+                  }}
                 ></circle>
-                <g>
-                  <circle
-                    cx="17"
-                    cy="9"
-                    r="1.5"
-                    fill={
-                      themeName === "light-theme" &&
-                      hoveredThemeName !== "light-theme"
-                        ? "#414A54"
-                        : themeName === "light-theme" &&
-                          hoveredThemeName === "light-theme"
-                        ? "black"
-                        : null
-                    }
-                    style={{
-                      transformOrigin: "center center",
-                      transform: "scale(1)",
-                    }}
-                  ></circle>
-                  <circle
-                    cx="13"
-                    cy="15.928203"
-                    r="1.5"
-                    fill={
-                      themeName === "light-theme" &&
-                      hoveredThemeName !== "light-theme"
-                        ? "#414A54"
-                        : themeName === "light-theme" &&
-                          hoveredThemeName === "light-theme"
-                        ? "black"
-                        : null
-                    }
-                    style={{
-                      transformOrigin: "center center",
-                      transform: "scale(1)",
-                    }}
-                  ></circle>
-                  <circle
-                    cx="5"
-                    cy="15.928203"
-                    r="1.5"
-                    fill={
-                      themeName === "light-theme" &&
-                      hoveredThemeName !== "light-theme"
-                        ? "#414A54"
-                        : themeName === "light-theme" &&
-                          hoveredThemeName === "light-theme"
-                        ? "black"
-                        : null
-                    }
-                    style={{
-                      transformOrigin: "center center",
-                      transform: "scale(1)",
-                    }}
-                  ></circle>
-                  <circle
-                    cx="1"
-                    cy="9"
-                    r="1.5"
-                    fill={
-                      themeName === "light-theme" &&
-                      hoveredThemeName !== "light-theme"
-                        ? "#414A54"
-                        : themeName === "light-theme" &&
-                          hoveredThemeName === "light-theme"
-                        ? "black"
-                        : null
-                    }
-                    style={{
-                      transformOrigin: "center center",
-                      transform: "scale(1)",
-                    }}
-                  ></circle>
-                  <circle
-                    cx="5"
-                    cy="2.071797"
-                    r="1.5"
-                    fill={
-                      themeName === "light-theme" &&
-                      hoveredThemeName !== "light-theme"
-                        ? "#414A54"
-                        : themeName === "light-theme" &&
-                          hoveredThemeName === "light-theme"
-                        ? "black"
-                        : null
-                    }
-                    style={{
-                      transformOrigin: "center center",
-                      transform: "scale(1)",
-                    }}
-                  ></circle>
-                  <circle
-                    cx="13"
-                    cy="2.071797"
-                    r="1.5"
-                    fill={
-                      themeName === "light-theme" &&
-                      hoveredThemeName !== "light-theme"
-                        ? "#414A54"
-                        : themeName === "light-theme" &&
-                          hoveredThemeName === "light-theme"
-                        ? "black"
-                        : null
-                    }
-                    style={{
-                      transformOrigin: "center center",
-                      transform: "scale(1)",
-                    }}
-                  ></circle>
-                </g>
-              </svg>
-            </button>{" "}
-            {/* toggle theme mode finish to check test  */}
-          </div>
-          {/* input finish to check  */}
+                <circle
+                  cx="13"
+                  cy="15.928203"
+                  r="1.5"
+                  fill={
+                    themeName === "light-theme" &&
+                    hoveredThemeName !== "light-theme"
+                      ? "#414A54"
+                      : themeName === "light-theme" &&
+                        hoveredThemeName === "light-theme"
+                      ? "black"
+                      : null
+                  }
+                  style={{
+                    transformOrigin: "center center",
+                    transform: "scale(1)",
+                  }}
+                ></circle>
+                <circle
+                  cx="5"
+                  cy="15.928203"
+                  r="1.5"
+                  fill={
+                    themeName === "light-theme" &&
+                    hoveredThemeName !== "light-theme"
+                      ? "#414A54"
+                      : themeName === "light-theme" &&
+                        hoveredThemeName === "light-theme"
+                      ? "black"
+                      : null
+                  }
+                  style={{
+                    transformOrigin: "center center",
+                    transform: "scale(1)",
+                  }}
+                ></circle>
+                <circle
+                  cx="1"
+                  cy="9"
+                  r="1.5"
+                  fill={
+                    themeName === "light-theme" &&
+                    hoveredThemeName !== "light-theme"
+                      ? "#414A54"
+                      : themeName === "light-theme" &&
+                        hoveredThemeName === "light-theme"
+                      ? "black"
+                      : null
+                  }
+                  style={{
+                    transformOrigin: "center center",
+                    transform: "scale(1)",
+                  }}
+                ></circle>
+                <circle
+                  cx="5"
+                  cy="2.071797"
+                  r="1.5"
+                  fill={
+                    themeName === "light-theme" &&
+                    hoveredThemeName !== "light-theme"
+                      ? "#414A54"
+                      : themeName === "light-theme" &&
+                        hoveredThemeName === "light-theme"
+                      ? "black"
+                      : null
+                  }
+                  style={{
+                    transformOrigin: "center center",
+                    transform: "scale(1)",
+                  }}
+                ></circle>
+                <circle
+                  cx="13"
+                  cy="2.071797"
+                  r="1.5"
+                  fill={
+                    themeName === "light-theme" &&
+                    hoveredThemeName !== "light-theme"
+                      ? "#414A54"
+                      : themeName === "light-theme" &&
+                        hoveredThemeName === "light-theme"
+                      ? "black"
+                      : null
+                  }
+                  style={{
+                    transformOrigin: "center center",
+                    transform: "scale(1)",
+                  }}
+                ></circle>
+              </g>
+            </svg>
+          </button>{" "}
+          {/* toggle theme mode finish to check test  */}
           <div
             className={`right-side-column-nav-bar right-side-column-nav-bar-${themeName}`}
             style={{
@@ -17297,259 +17299,271 @@ function RightSideColumn({
                       console.log("Following this user =>", eachUser);
                     }
                     return (
-                      <div
-                        style={{
-                          position: "relative",
-                          right: "10px",
-                        }}
-                        key={eachUser._id}
-                      >
-                        <div>
-                          <Stack
-                            className="each-who-to-follow-user"
+                      <>
+                        {eachUser._id !== userInfo._id && (
+                          <div
                             style={{
-                              width: "108%",
+                              position: "relative",
+                              right: "10px",
                             }}
-                            direction="horizontal"
+                            key={eachUser._id}
                           >
                             <div>
-                              {" "}
-                              {eachUser.imageUrl.slice(0, 3) !== "../" ? (
-                                <>
-                                  <Link
-                                    to={`/profile/${eachUser._id}`}
-                                    style={{
-                                      textDecoration: "none",
-                                      borderRadius: "50%",
-                                    }}
-                                  >
-                                    <img
-                                      width={40}
-                                      height={40}
-                                      style={{
-                                        borderRadius: "50%",
-                                      }}
-                                      src={eachUser.imageUrl}
-                                      alt=""
-                                    />
-                                  </Link>
-                                </>
-                              ) : (
-                                <>
-                                  <Link
-                                    to={`/profile/${eachUser._id}`}
-                                    style={{
-                                      textDecoration: "none",
-                                    }}
-                                  >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      width="40"
-                                      height="40"
-                                      fill="rgb(83, 100, 113)"
-                                      className="bi bi-person-circle"
-                                      viewBox="0 0 16 16"
-                                    >
-                                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                      <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                    </svg>
-                                  </Link>
-                                </>
-                              )}
-                            </div>
-                            <div className="p-3">
-                              <Link
-                                to={`/profile/${eachUser._id}`}
+                              <Stack
+                                className="each-who-to-follow-user"
                                 style={{
-                                  textDecoration: "none",
-                                  color: "black",
+                                  width: "108%",
                                 }}
+                                direction="horizontal"
                               >
-                                <div
-                                  className="hover-fullname"
-                                  style={{
-                                    lineHeight: "20px",
-                                    fontSize: "15px",
-                                    fontWeight: "700",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    whiteSpace: "nowrap",
-                                    width: "120px",
-                                  }}
-                                >
-                                  <span>{eachUser.fullname}</span>
-                                  <span>
-                                    {/* start to check  */}{" "}
-                                    <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
-                                      <svg
-                                        width={`${1.25}em`}
-                                        height={`${1.25}em`}
-                                        viewBox="0 0 22 22"
-                                        aria-label="Verified account"
-                                        role="img"
-                                        className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
-                                        data-testid="icon-verified"
-                                        color="rgba(29,155,240,1.00)"
-                                        fill="currentColor"
+                                <div>
+                                  {" "}
+                                  {eachUser.imageUrl.slice(0, 3) !== "../" ? (
+                                    <>
+                                      <Link
+                                        to={`/profile/${eachUser._id}`}
+                                        style={{
+                                          textDecoration: "none",
+                                          borderRadius: "50%",
+                                        }}
                                       >
-                                        <g>
-                                          <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
-                                        </g>
-                                      </svg>
-                                    </span>{" "}
-                                  </span>{" "}
+                                        <img
+                                          width={40}
+                                          height={40}
+                                          style={{
+                                            borderRadius: "50%",
+                                          }}
+                                          src={eachUser.imageUrl}
+                                          alt=""
+                                        />
+                                      </Link>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Link
+                                        to={`/profile/${eachUser._id}`}
+                                        style={{
+                                          textDecoration: "none",
+                                        }}
+                                      >
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          width="40"
+                                          height="40"
+                                          fill="rgb(83, 100, 113)"
+                                          className="bi bi-person-circle"
+                                          viewBox="0 0 16 16"
+                                        >
+                                          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                          <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                        </svg>
+                                      </Link>
+                                    </>
+                                  )}
                                 </div>
-                              </Link>
-                              <Link
-                                to={`/profile/${eachUser._id}`}
-                                style={{
-                                  textDecoration: "none",
-                                  color: "black",
-                                }}
-                              >
+                                <div className="p-3">
+                                  <Link
+                                    to={`/profile/${eachUser._id}`}
+                                    style={{
+                                      textDecoration: "none",
+                                      color: "black",
+                                    }}
+                                  >
+                                    <div
+                                      className="hover-fullname"
+                                      style={{
+                                        lineHeight: "20px",
+                                        fontSize: "15px",
+                                        fontWeight: "700",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                        whiteSpace: "nowrap",
+                                        width: "120px",
+                                      }}
+                                    >
+                                      <span>{eachUser.fullname}</span>
+                                      <span>
+                                        {/* start to check  */}{" "}
+                                        <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
+                                          <svg
+                                            width={`${1.25}em`}
+                                            height={`${1.25}em`}
+                                            viewBox="0 0 22 22"
+                                            aria-label="Verified account"
+                                            role="img"
+                                            className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                                            data-testid="icon-verified"
+                                            color="rgba(29,155,240,1.00)"
+                                            fill="currentColor"
+                                          >
+                                            <g>
+                                              <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                                            </g>
+                                          </svg>
+                                        </span>{" "}
+                                      </span>{" "}
+                                    </div>
+                                  </Link>
+                                  <Link
+                                    to={`/profile/${eachUser._id}`}
+                                    style={{
+                                      textDecoration: "none",
+                                      color: "black",
+                                    }}
+                                  >
+                                    <div
+                                      // style={{
+                                      //   lineHeight: "20px",
+                                      //   fontSize: "15px",
+                                      //   fontWeight: "700",
+                                      //   overflow: "hidden",
+                                      //   textOverflow: "ellipsis",
+                                      //   whiteSpace: "nowrap",
+                                      //   width: "120px",
+                                      // }}
+                                      style={{
+                                        lineHeight: "20px",
+                                        fontSize: "15px",
+                                        fontWeight: "400",
+                                        color:
+                                          themeName === "dark-theme"
+                                            ? "#71767A"
+                                            : "rgb(83, 100, 113)",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                        whiteSpace: "nowrap",
+                                        width: "120px",
+                                      }}
+                                    >
+                                      @{eachUser.username}
+                                    </div>
+                                  </Link>
+                                  {/* start to check verified icon  */}
+
+                                  {/* finish to check verified icon  */}
+                                </div>
                                 <div
-                                  // style={{
-                                  //   lineHeight: "20px",
-                                  //   fontSize: "15px",
-                                  //   fontWeight: "700",
-                                  //   overflow: "hidden",
-                                  //   textOverflow: "ellipsis",
-                                  //   whiteSpace: "nowrap",
-                                  //   width: "120px",
-                                  // }}
-                                  style={{
-                                    lineHeight: "20px",
-                                    fontSize: "15px",
-                                    fontWeight: "400",
-                                    color:
-                                      themeName === "dark-theme"
-                                        ? "#71767A"
-                                        : "rgb(83, 100, 113)",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    whiteSpace: "nowrap",
-                                    width: "120px",
+                                  onMouseEnter={() => {
+                                    setIsHovered(buttonId);
                                   }}
+                                  onMouseLeave={() => setIsHovered(null)}
+                                  className="ms-auto"
                                 >
-                                  @{eachUser.username}
+                                  <Button
+                                    onClick={() =>
+                                      getFollowingIds(user)?.includes(
+                                        eachUser._id
+                                      )
+                                        ? openUnfollowModal(eachUser)
+                                        : handleFollow(eachUser)
+                                    }
+                                    style={{
+                                      fontSize: "15px",
+                                      lineHeight: "20px",
+                                      fontWeight: "700",
+                                      display: "inline",
+                                      maxWidth: "107px",
+                                      transitionDuration: "0.2s",
+                                      // border:
+                                      //   isHovered === index &&
+                                      //   getFollowingIds(user)?.includes(
+                                      //     eachUser._id
+                                      //   )
+                                      //     ? "1px solid rgba(253,201,206,255)"
+                                      //     : getFollowingIds(user)?.includes(
+                                      //         eachUser._id
+                                      //       )
+                                      //     ? "1px solid rgba(0, 0, 0, 0.1)"
+                                      //     : "1px solid rgb(185, 202, 211)",
+                                      // backgroundColor:
+                                      //   isHovered === index &&
+                                      //   getFollowingIds(user)?.includes(
+                                      //     eachUser._id
+                                      //   )
+                                      //     ? "rgba(255,234,235,255)"
+                                      //     : getFollowingIds(user)?.includes(
+                                      //         eachUser._id
+                                      //       )
+                                      //     ? "transparent"
+                                      //     : "black",
+                                      // color:
+                                      //   isHovered === index &&
+                                      //   getFollowingIds(user).includes(eachUser._id)
+                                      //     ? "rgba(244,34,45,255)"
+                                      //     : getFollowingIds(user)?.includes(
+                                      //         eachUser._id
+                                      //       )
+                                      //     ? "black"
+                                      //     : "white",
+                                      border:
+                                        isHovered === buttonId &&
+                                        isFollowing &&
+                                        themeName !== "dark-theme"
+                                          ? "1px solid rgba(253,201,206,255)"
+                                          : isHovered === buttonId &&
+                                            isFollowing &&
+                                            themeName === "dark-theme"
+                                          ? "1px solid #e71f2c"
+                                          : isFollowing &&
+                                            themeName !== "dark-theme"
+                                          ? "1px solid rgba(0, 0, 0, 0.1)"
+                                          : "1px solid rgb(70, 70, 70)",
+                                      borderRadius: "9999px",
+
+                                      backgroundColor:
+                                        !isFollowing &&
+                                        themeName === "dark-theme"
+                                          ? "white"
+                                          : isHovered === buttonId &&
+                                            isFollowing &&
+                                            themeName !== "dark-theme"
+                                          ? "rgba(255,234,235,255)"
+                                          : isHovered === buttonId &&
+                                            isFollowing &&
+                                            themeName === "dark-theme"
+                                          ? "#230608"
+                                          : isFollowing &&
+                                            themeName === "dark-theme"
+                                          ? "black"
+                                          : isFollowing &&
+                                            themeName !== "dark-theme"
+                                          ? "white"
+                                          : "black",
+                                      color:
+                                        !isFollowing &&
+                                        themeName === "dark-theme"
+                                          ? "black"
+                                          : isHovered === buttonId &&
+                                            isFollowing
+                                          ? "rgba(244,34,45,255)"
+                                          : isFollowing &&
+                                            themeName !== "dark-theme"
+                                          ? "black"
+                                          : "white",
+                                    }}
+                                    className="right-side-bar-button"
+                                    variant="dark"
+                                  >
+                                    {isFollowing
+                                      ? isHovered === buttonId
+                                        ? "Unfollow"
+                                        : "Following"
+                                      : "Follow"}
+                                  </Button>
                                 </div>
-                              </Link>
-                              {/* start to check verified icon  */}
-
-                              {/* finish to check verified icon  */}
+                              </Stack>
                             </div>
-                            <div
-                              onMouseEnter={() => {
-                                setIsHovered(buttonId);
-                              }}
-                              onMouseLeave={() => setIsHovered(null)}
-                              className="ms-auto"
-                            >
-                              <Button
-                                onClick={() =>
-                                  getFollowingIds(user)?.includes(eachUser._id)
-                                    ? openUnfollowModal(eachUser)
-                                    : handleFollow(eachUser)
-                                }
-                                style={{
-                                  fontSize: "15px",
-                                  lineHeight: "20px",
-                                  fontWeight: "700",
-                                  display: "inline",
-                                  maxWidth: "107px",
-                                  transitionDuration: "0.2s",
-                                  // border:
-                                  //   isHovered === index &&
-                                  //   getFollowingIds(user)?.includes(
-                                  //     eachUser._id
-                                  //   )
-                                  //     ? "1px solid rgba(253,201,206,255)"
-                                  //     : getFollowingIds(user)?.includes(
-                                  //         eachUser._id
-                                  //       )
-                                  //     ? "1px solid rgba(0, 0, 0, 0.1)"
-                                  //     : "1px solid rgb(185, 202, 211)",
-                                  // backgroundColor:
-                                  //   isHovered === index &&
-                                  //   getFollowingIds(user)?.includes(
-                                  //     eachUser._id
-                                  //   )
-                                  //     ? "rgba(255,234,235,255)"
-                                  //     : getFollowingIds(user)?.includes(
-                                  //         eachUser._id
-                                  //       )
-                                  //     ? "transparent"
-                                  //     : "black",
-                                  // color:
-                                  //   isHovered === index &&
-                                  //   getFollowingIds(user).includes(eachUser._id)
-                                  //     ? "rgba(244,34,45,255)"
-                                  //     : getFollowingIds(user)?.includes(
-                                  //         eachUser._id
-                                  //       )
-                                  //     ? "black"
-                                  //     : "white",
-                                  border:
-                                    isHovered === buttonId &&
-                                    isFollowing &&
-                                    themeName !== "dark-theme"
-                                      ? "1px solid rgba(253,201,206,255)"
-                                      : isHovered === buttonId &&
-                                        isFollowing &&
-                                        themeName === "dark-theme"
-                                      ? "1px solid #e71f2c"
-                                      : isFollowing &&
-                                        themeName !== "dark-theme"
-                                      ? "1px solid rgba(0, 0, 0, 0.1)"
-                                      : "1px solid rgb(70, 70, 70)",
-                                  borderRadius: "9999px",
-
-                                  backgroundColor:
-                                    !isFollowing && themeName === "dark-theme"
-                                      ? "white"
-                                      : isHovered === buttonId &&
-                                        isFollowing &&
-                                        themeName !== "dark-theme"
-                                      ? "rgba(255,234,235,255)"
-                                      : isHovered === buttonId &&
-                                        isFollowing &&
-                                        themeName === "dark-theme"
-                                      ? "#230608"
-                                      : isFollowing &&
-                                        themeName === "dark-theme"
-                                      ? "black"
-                                      : isFollowing &&
-                                        themeName !== "dark-theme"
-                                      ? "white"
-                                      : "black",
-                                  color:
-                                    !isFollowing && themeName === "dark-theme"
-                                      ? "black"
-                                      : isHovered === buttonId && isFollowing
-                                      ? "rgba(244,34,45,255)"
-                                      : isFollowing &&
-                                        themeName !== "dark-theme"
-                                      ? "black"
-                                      : "white",
-                                }}
-                                className="right-side-bar-button"
-                                variant="dark"
-                              >
-                                {isFollowing
-                                  ? isHovered === buttonId
-                                    ? "Unfollow"
-                                    : "Following"
-                                  : "Follow"}
-                              </Button>
-                            </div>
-                          </Stack>
-                        </div>
-                      </div>
+                          </div>
+                        )}
+                      </>
                     );
                   })
                 : null}
+
               <div
+                className="hover-blue-underline"
                 style={{
+                  cursor: "pointer",
                   color: "rgb(29, 155, 240)",
                   fontSize: "15px",
                   lineHeight: "20px",
@@ -17594,7 +17608,6 @@ function RightSideColumn({
             </div>
           </div>
           {/* unfollow modal start to check  */}
-
           {/* unfollow modal finish to check  */}
         </Stack>
       </Col>
