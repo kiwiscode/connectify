@@ -302,7 +302,7 @@ function ResponsiveNavigationBarBottom({
               {" "}
               <NavLink onClick={locateMessagesPage}>
                 <>
-                  {checkHowManyUnReadMessages().length < 1 ? null : (
+                  {checkHowManyUnReadMessages()?.length < 1 ? null : (
                     <div
                       style={{
                         cursor: "pointer",
@@ -329,7 +329,7 @@ function ResponsiveNavigationBarBottom({
                           color: "white",
                         }}
                       >
-                        {checkHowManyUnReadMessages().length}
+                        {checkHowManyUnReadMessages()?.length}
                       </span>
                     </div>
                   )}

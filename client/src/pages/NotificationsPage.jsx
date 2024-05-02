@@ -7,6 +7,8 @@ import { UserContext } from "../context/UserContext";
 import axios from "axios";
 import { ThemeContext } from "../context/ThemeContext";
 import { Link } from "react-router-dom";
+import { message } from "antd";
+import { CommentModal } from "../components/ui/Modal";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -86,6 +88,66 @@ function NotificationsPage() {
     const getMonth = createdAt.getMonth();
     return `${months[getMonth]} ${createdAt.getDate()}`;
   };
+  const [messageApi, contextHolder] = message.useMessage();
+  const [commentModalClicked, setCommentModalClicked] = useState(null);
+  const postSharedMessage = (postOwner, postId) => {
+    messageApi.success({
+      type: "success",
+      content: (
+        <div>
+          <span>Your post was sent.</span>
+          <>
+            <Link
+              to={`/${postOwner}/status/${postId}`}
+              style={{
+                color: "white",
+                marginLeft: "5px",
+              }}
+            >
+              View
+            </Link>
+          </>
+        </div>
+      ),
+      duration: 6,
+      className: "custom-message-style",
+    });
+  };
+
+  useEffect(() => {
+    const getClickedLocation = (e) => {
+      const targetClassList = e.target.classList;
+      const parentNodeClassName = e.srcElement.parentNode.className;
+      const parentNodeClassNameBaseVal =
+        e.srcElement.parentNode.className.baseVal;
+
+      console.log("target =>", e.target.classList);
+      console.log(
+        "parent node classname =>",
+        e.srcElement.parentNode.className
+      );
+      console.log(
+        "parent node baseVal classname =>",
+        e.srcElement.parentNode.className.baseVal
+      );
+
+      if (
+        targetClassList.contains("bi-chat") ||
+        parentNodeClassName === "comment-parent-div"
+      ) {
+        window.alert("button clicked comment !");
+        setCommentModalClicked(true);
+      } else {
+        setCommentModalClicked(false);
+      }
+    };
+
+    document.body.addEventListener("click", getClickedLocation);
+
+    return () => {
+      document.body.removeEventListener("click", getClickedLocation);
+    };
+  }, []);
 
   return (
     <>
@@ -210,7 +272,11 @@ function NotificationsPage() {
                     <div key={index}>
                       {eachNotification.isComment.value ? (
                         <Link
-                          to={`/${eachNotification?.post?.authorUserName}/status/${eachNotification?.post?._id}`}
+                          to={
+                            !commentModalClicked
+                              ? `/${eachNotification?.post?.authorUserName}/status/${eachNotification?.post?._id}`
+                              : null
+                          }
                           style={{
                             textDecoration: "none",
                             color:
@@ -241,7 +307,11 @@ function NotificationsPage() {
                           >
                             {eachNotification.notificationSender.imageUrl ? (
                               <Link
-                                to={`/profile/${eachNotification.notificationSender._id}`}
+                                to={
+                                  !commentModalClicked
+                                    ? `/profile/${eachNotification.notificationSender._id}`
+                                    : null
+                                }
                                 style={{
                                   height: "120px",
                                   float: "left",
@@ -300,7 +370,11 @@ function NotificationsPage() {
                                   }}
                                 >
                                   <Link
-                                    to={`/profile/${eachNotification.notificationSender._id}`}
+                                    to={
+                                      !commentModalClicked
+                                        ? `/profile/${eachNotification.notificationSender._id}`
+                                        : null
+                                    }
                                     className="hover-fullname"
                                     style={{
                                       fontSize: "15px",
@@ -319,7 +393,11 @@ function NotificationsPage() {
                                     }
                                   </Link>
                                   <Link
-                                    to={`/profile/${eachNotification.notificationSender._id}`}
+                                    to={
+                                      !commentModalClicked
+                                        ? `/profile/${eachNotification.notificationSender._id}`
+                                        : null
+                                    }
                                     style={{
                                       fontSize: "15px",
                                       lineHeight: "20px",
@@ -354,7 +432,11 @@ function NotificationsPage() {
                                       &middot;
                                     </span>
                                     <Link
-                                      to={`/${eachNotification.notificationSender.username}/status/${eachNotification.isComment.commentPostId}`}
+                                      to={
+                                        !commentModalClicked
+                                          ? `/${eachNotification.notificationSender.username}/status/${eachNotification.isComment.commentPostId}`
+                                          : null
+                                      }
                                       className="date-post-detail"
                                       style={{
                                         textDecoration: "none",
@@ -413,7 +495,11 @@ function NotificationsPage() {
                                 >
                                   <div>{"Replying to"}</div>
                                   <Link
-                                    to={`/profile/${eachNotification.notificationReceiver._id}`}
+                                    to={
+                                      !commentModalClicked
+                                        ? `/profile/${eachNotification.notificationReceiver._id}`
+                                        : null
+                                    }
                                     className="replying-to-text"
                                     style={{
                                       fontSize: "15px",
@@ -441,7 +527,11 @@ function NotificationsPage() {
                                 >
                                   {" "}
                                   <Link
-                                    to={`/${eachNotification.notificationSender.username}/status/${eachNotification.isComment.commentPostId}`}
+                                    to={
+                                      !commentModalClicked
+                                        ? `/${eachNotification.notificationSender.username}/status/${eachNotification.isComment.commentPostId}`
+                                        : null
+                                    }
                                     style={{
                                       textDecoration: "none",
                                       color:
@@ -455,6 +545,7 @@ function NotificationsPage() {
                                 </div>
                               </div>
                               <div
+                                className="post-actions-parent-div"
                                 // className="mt-5"
                                 style={{
                                   marginTop: "25px",
@@ -462,8 +553,11 @@ function NotificationsPage() {
                                   justifyContent: "space-between",
                                 }}
                               >
-                                <div>
-                                  <svg
+                                <div
+                                  className="comment-parent-div"
+                                  onClick={() => setCommentModalClicked(true)}
+                                >
+                                  {/* <svg
                                     fill={
                                       themeName === "dark-theme"
                                         ? "#71767A"
@@ -478,7 +572,15 @@ function NotificationsPage() {
                                     <g>
                                       <path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"></path>
                                     </g>
-                                  </svg>
+                                  </svg> */}
+                                  <CommentModal
+                                    post={
+                                      eachNotification ? eachNotification : null
+                                    }
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    postSharedMessage={postSharedMessage}
+                                  />
                                 </div>
                                 <div>
                                   <svg

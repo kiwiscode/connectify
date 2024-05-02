@@ -95,6 +95,15 @@ body {
   transition-duration: 0.2s !important;
 }
 
+.close-image-button:hover {
+  background-color: #57595b !important;
+  transition-duration: 0.2s !important;
+}
+
+.hover-blue-underline:hover {
+  text-decoration: underline;
+}
+
 .login-button-dark-theme {
   background-color: rgb(29, 155, 240) !important;
 }
@@ -660,6 +669,11 @@ body {
 .google-variant-sign-in:hover {
   background-color: #f8fafe !important;
   transition-duration: 0.2s;
+}
+
+.google-variant-sign-in-dark-theme:hover {
+  background-color: #061019 !important;
+  transition-duration: 0.2s !important;
 }
 
 .footer-container {
@@ -2535,6 +2549,10 @@ span > a:hover {
   max-width: 80vw !important;
 }
 
+.subscribe-modal-abcde div div {
+  border-radius: 16px;
+}
+
 /* signin modal content header  */
 .signin-modal-header-child-non-reactivate {
   /* background-color: #607d8b !important; */
@@ -2876,6 +2894,79 @@ span > a:hover {
 
 /* test slider finish to check  */
 
+.post-modal-from-left-side-navigation-bar .modal-content::-webkit-scrollbar {
+  width: 1em;
+}
+.post-modal-from-left-side-navigation-bar
+  .modal-content::-webkit-scrollbar-track {
+  background: #f7f9f9;
+  border-top-right-radius: 100vw;
+  border-bottom-right-radius: 100vw;
+  margin-block: 0.5em;
+  padding: 0;
+  margin: 0;
+}
+
+.post-modal-from-left-side-navigation-bar .modal-content::-webkit-scrollbar {
+  width: 1em;
+}
+
+.post-modal-from-left-side-navigation-bar
+  .modal-content::-webkit-scrollbar-track {
+  background: #f7f9f9;
+  border-top-right-radius: 100vw;
+  border-bottom-right-radius: 100vw;
+  margin-block: 0.5em;
+  padding: 0;
+  margin: 0;
+}
+
+.post-modal-from-left-side-navigation-bar
+  .modal-content::-webkit-scrollbar-thumb {
+  background: #b9cad3;
+  border-radius: 100vw;
+  width: 5px;
+  border: 0.25em solid #f7f9f9;
+}
+
+.post-modal-from-left-side-navigation-bar-dark-theme
+  .modal-content::-webkit-scrollbar {
+  width: 1em;
+}
+
+.post-modal-from-left-side-navigation-bar-dark-theme
+  .modal-content::-webkit-scrollbar-track {
+  background: #3e4144;
+  border-top-right-radius: 100vw;
+  border-bottom-right-radius: 100vw;
+  margin-block: 0.5em;
+  padding: 0;
+  margin: 0;
+}
+
+.post-modal-from-left-side-navigation-bar-dark-theme
+  .modal-content::-webkit-scrollbar-thumb {
+  background: #3e4144;
+  border-radius: 100vw;
+  width: 5px;
+  border: 0.25em solid #16181c;
+}
+
+.post-modal-from-left-side-navigation-bar-dark-theme
+  .modal-content::-webkit-scrollbar {
+  width: 1em;
+}
+
+.post-modal-from-left-side-navigation-bar-dark-theme
+  .modal-content::-webkit-scrollbar-track {
+  background: #16181c;
+  border-top-right-radius: 100vw;
+  border-bottom-right-radius: 100vw;
+  margin-block: 0.5em;
+  padding: 0;
+  margin: 0;
+}
+
 /* scrollbar styling general start to check  */
 .scrollbar-add::-webkit-scrollbar {
   width: 1em;
@@ -2959,6 +3050,7 @@ span > a:hover {
   max-height: 90vh !important;
   max-width: 80vw !important;
 } */
+
 .subscription-modal-basic-width-smaller-700 > .modal-dialog {
   max-width: 600px !important;
 }
@@ -3047,7 +3139,21 @@ select {
 /* start to check modals dark theme and etc. styling  */
 .post-modal-from-left-side-navigation-bar .modal-content {
   width: 600px;
-  height: 300px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.post-modal-from-left-side-navigation-bar-dark-theme .modal-content {
+  width: 600px;
+  max-height: 600px;
+  overflow-y: auto;
+  background-color: black !important;
+  border-radius: 16px;
+}
+
+.width-smaller-700-post-modal-left-side-navigation-bar-dark-theme
+  .modal-content {
+  background-color: black;
 }
 
 .back-drop-dark-theme {
@@ -3055,17 +3161,6 @@ select {
   filter: brightness(1.7);
 }
 
-.post-modal-from-left-side-navigation-bar-dark-theme {
-}
-
-.post-modal-from-left-side-navigation-bar-dark-theme .modal-content {
-  width: 600px;
-  height: 300px;
-  background-color: black !important;
-}
-
-.width-smaller-700-post-modal-left-side-navigation-bar-dark-theme
-  .modal-content,
 .settings-and-privacy-second-smaller-than-700-width-dark-theme,
 .forgot-password-process-modal-from-change-password-section-dark-theme {
   background-color: black !important;
@@ -3247,6 +3342,10 @@ select {
 .dark-theme-spinner-modal {
   min-height: 650px;
   min-width: 600px;
+  background-color: black !important;
+}
+
+.dark-theme-subscription-completed-modal {
   background-color: black !important;
 }
 
@@ -3491,7 +3590,9 @@ input[data-autocompleted] {
 .hover-theme-dark-theme:hover {
   background-color: white !important;
 }
-
+.double-dash {
+  letter-spacing: -0.12em;
+}
 .responsive-navigation-bar-bottom-post-modal-dark-theme div {
   background-color: black;
 }
@@ -3537,3 +3638,45 @@ input[data-autocompleted] {
   border-radius: 16px !important;
 } */
 /* modallere dialog classname vermek gerek diğer türlü styling bozuluyor ve modal harici örneğin inputlarada border radius uygulanıyor finish to check  */
+
+.text-test {
+  animation: letterExpand 1s ease-in-out 1.1s forwards;
+  animation-delay: 1.1s;
+}
+
+@keyframes letterExpand {
+  0% {
+    letter-spacing: 0px;
+  }
+
+  20% {
+    letter-spacing: -0.8px;
+  }
+
+  40% {
+    letter-spacing: -1px;
+  }
+
+  90% {
+    letter-spacing: 0px;
+  }
+
+  100% {
+    letter-spacing: 0px;
+  }
+}
+
+.light-theme-light-theme-white-btn:hover {
+  background-color: #e7e7e8 !important;
+  transition-duration: 0.2s;
+}
+
+.light-theme-light-theme-black-btn:hover {
+  background-color: #272c30 !important;
+  transition-duration: 0.2s;
+}
+
+.reset-password-btn:hover {
+  background-color: #198cd8 !important;
+  transition-duration: 0.2s !important;
+}
