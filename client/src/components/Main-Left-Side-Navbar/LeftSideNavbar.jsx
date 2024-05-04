@@ -17,7 +17,6 @@ import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { UserContext } from "../../context/UserContext";
 import { ThemeContext } from "../../context/ThemeContext";
-import { Badge } from "@mui/material";
 import useWindowDimensions from "../../hooks/getWindowDimensions";
 
 // when working on local version
@@ -207,22 +206,6 @@ function LeftSideNavBar({
     setModalImage("");
   };
 
-  const handleMouseOver = (e) => {
-    const shallowCopy = e.target.classList[0];
-
-    if (shallowCopy === "target") {
-      e.target.style.background = "#595b5b";
-    }
-  };
-
-  const handleMouseOut = (e) => {
-    const shallowCopy = e.target.classList[0];
-
-    if (shallowCopy === "target") {
-      e.target.style.background = "#47494a";
-    }
-  };
-
   const onEmojiClick = (emojiObject) => {
     const sym = emojiObject.unified.split("_");
     const codeArray = [];
@@ -359,23 +342,44 @@ function LeftSideNavBar({
     }
   };
 
-  console.log("Notifications =>", unReadNotifications);
-
   useEffect(() => {
     getActiveUserInfo();
   }, []);
 
   const { height, width } = useWindowDimensions();
 
+  const [userMessageDetails, setUserMessageDetails] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/all-messages`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((responseForMessages) => {
+        console.log("Response for messages =>", responseForMessages);
+        setUserMessageDetails(responseForMessages.data.messages);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  }, []);
+
   const checkHowManyUnReadMessages = () => {
-    const allUnReadedMessages = userInfo?.messages?.filter((allMessages) => {
-      return allMessages.readed === false;
+    const allUnReadedMessages = userMessageDetails?.filter((allMessages) => {
+      if (
+        allMessages.chat &&
+        allMessages.chat.length > 0 &&
+        !allMessages.readed
+      ) {
+        return true;
+      }
+      return false;
     });
 
     return allUnReadedMessages;
   };
-
-  console.log("how many unread messages =>", checkHowManyUnReadMessages());
 
   return (
     <>
@@ -899,7 +903,11 @@ function LeftSideNavBar({
                             xmlns="http://www.w3.org/2000/svg"
                             width="40"
                             height="40"
-                            fill="rgb(83, 100, 113)"
+                            fill={
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)"
+                            }
                             className="bi bi-person-circle"
                             viewBox="0 0 16 16"
                             style={{

@@ -34,8 +34,10 @@ module.exports = (app) => {
     socket.emit("socket_id_for_user", socket.id);
 
     console.log("Online users =>", onlineUsers);
+    // because of this line bug occuring for front end active users inside messagespage.jsx start to check BUG
     const allUsers = await User.find();
     socket.emit("activeUsers", allUsers);
+    // because of this line bug occuring for front end active users inside messagespage.jsx start to check BUG
 
     socket.on("get_specific_user", (data) => {
       console.log("specific user received =>", data.username);

@@ -305,7 +305,11 @@ function PostModal({
                     xmlns="http://www.w3.org/2000/svg"
                     width="40"
                     height="40"
-                    fill="rgb(83, 100, 113)"
+                    fill={
+                      themeName === "dark-theme"
+                        ? "#71767A"
+                        : "rgb(83, 100, 113)"
+                    }
                     className="bi bi-person-circle"
                     viewBox="0 0 16 16"
                     style={{

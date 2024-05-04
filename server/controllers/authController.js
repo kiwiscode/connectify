@@ -185,6 +185,7 @@ const handleLogin = (req, res, next) => {
     .populate("following")
     .populate("favorites")
     .populate("messages")
+
     .then((user) => {
       bcrypt
         .compare(password, user.password)
@@ -760,7 +761,7 @@ const handleUsernameChange = async (req, res) => {
 
 const handleLoginVariantOne = (req, res) => {
   const { authentication } = req.body;
-  console.log("Authentication =>", authentication);
+  console.log("Authentication login variant one =>", authentication);
 
   const userFirstInfo = authentication.usernameOrEmail;
   User.findOne({
@@ -773,6 +774,20 @@ const handleLoginVariantOne = (req, res) => {
     .populate("following")
     .populate("favorites")
     .populate("messages")
+    .populate({
+      path: "messages",
+      populate: {
+        path: "members",
+        model: "User",
+      },
+    })
+    .populate({
+      path: "messages",
+      populate: {
+        path: "chat",
+        model: "Chat",
+      },
+    })
     .then((user) => {
       // variant one login implementation devam et !
       console.log("User =>", user);

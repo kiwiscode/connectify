@@ -72,6 +72,8 @@ function ChatDetailsPage() {
               style={{
                 color: "white",
                 marginLeft: "5px",
+                fontWeight: "700",
+                fontSize: "15px",
               }}
             >
               View
@@ -315,7 +317,7 @@ function ChatDetailsPage() {
     cyberpunkModeActive,
   ] = useContext(ThemeContext);
 
-  const handleMarkAsUnReadMessage = (messageRoom) => {
+  const handleMarkAsUnReadMessage = () => {
     axios
       .post(
         `${API_URL}/mark-as-un-read-message`,
@@ -331,7 +333,13 @@ function ChatDetailsPage() {
         console.log("Error =>", error);
       });
   };
+  const [postModalOpenedFromLeftSide, setPostModalOpenedFromLeftSide] =
+    useState(false);
 
+  const handleCallBackForModalOpenedStateFromChild = (childData) => {
+    console.log("Child data received from child => ", childData);
+    setPostModalOpenedFromLeftSide(childData);
+  };
   const { height, width } = useWindowDimensions();
   return (
     <>
@@ -352,7 +360,10 @@ function ChatDetailsPage() {
             overflowY: "hidden",
           }}
         >
-          <LeftSideNavBar parentCallBack={handleCallback} />
+          <LeftSideNavBar
+            parentCallBackSecond={handleCallBackForModalOpenedStateFromChild}
+            parentCallBack={handleCallback}
+          />
 
           {/* finish to check left bar column */}
 
@@ -521,7 +532,11 @@ function ChatDetailsPage() {
                             xmlns="http://www.w3.org/2000/svg"
                             width="64"
                             height="64"
-                            fill="rgb(83, 100, 113)"
+                            fill={
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)"
+                            }
                             className="bi bi-person-circle"
                             viewBox="0 0 16 16"
                             style={{
