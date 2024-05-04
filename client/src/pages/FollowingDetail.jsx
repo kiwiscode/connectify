@@ -57,6 +57,8 @@ function FollowingDetailPage() {
               style={{
                 color: "white",
                 marginLeft: "5px",
+                fontWeight: "700",
+                fontSize: "15px",
               }}
             >
               View
@@ -239,14 +241,19 @@ function FollowingDetailPage() {
     darkModeActive,
     cyberpunkModeActive,
   ] = useContext(ThemeContext);
+  const [postModalOpenedFromLeftSide, setPostModalOpenedFromLeftSide] =
+    useState(false);
 
+  const handleCallBackForModalOpenedStateFromChild = (childData) => {
+    console.log("Child data received from child => ", childData);
+    setPostModalOpenedFromLeftSide(childData);
+  };
   const { height, width } = useWindowDimensions();
   return (
     <>
       {contextHolder}
       <ToastContainer theme={themeName === "dark-theme" ? "dark" : "light"} />
-
-      <ResponsiveNavigationBarBottom />
+      {!postModalOpenedFromLeftSide && <ResponsiveNavigationBarBottom />}
       {/* <ResponsiveNavigationBarTop /> */}
 
       <Container
@@ -264,7 +271,10 @@ function FollowingDetailPage() {
             overflowY: "hidden",
           }}
         >
-          <LeftSideNavBar parentCallBack={handleCallback} />
+          <LeftSideNavBar
+            parentCallBackSecond={handleCallBackForModalOpenedStateFromChild}
+            parentCallBack={handleCallback}
+          />
 
           {/* following  detail start to check  */}
 
@@ -536,7 +546,11 @@ function FollowingDetailPage() {
                                     xmlns="http://www.w3.org/2000/svg"
                                     width="40"
                                     height="40"
-                                    fill="rgb(83, 100, 113)"
+                                    fill={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgb(83, 100, 113)"
+                                    }
                                     className="bi bi-person-circle"
                                     viewBox="0 0 16 16"
                                     style={{

@@ -75,13 +75,29 @@ const getAllNotifications = async (req, res) => {
             path: "userId",
           },
         },
+      })
+      .populate({
+        path: "notifications",
+        populate: {
+          path: "isComment.commentPostId",
+        },
+      })
+      .populate({
+        path: "notifications",
+        populate: {
+          path: "isComment.commentPostId",
+          populate: {
+            path: "userId",
+          },
+        },
       });
 
     const sortedNotifications = user.notifications.sort(
       (a, b) => b.createdAt - a.createdAt
     );
     res.json({ allNotifications: sortedNotifications });
-  } catch {
+  } catch (error) {
+    console.log("Error =>", error);
     res.status(500).json({
       success: false,
       message: "Error occured while fetching all notifications!",

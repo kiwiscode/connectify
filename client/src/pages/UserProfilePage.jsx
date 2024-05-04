@@ -23,6 +23,8 @@ import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColum
 import { ThemeContext } from "../context/ThemeContext";
 import PostPopover from "../components/three-dots-popover/Popover";
 import useWindowDimensions from "../hooks/getWindowDimensions";
+import RepostAction from "../components/ui/RepostAction";
+import LikeAction from "../components/ui/LikeAction";
 
 function UserProfile() {
   const [
@@ -124,6 +126,8 @@ function UserProfile() {
               style={{
                 color: "white",
                 marginLeft: "5px",
+                fontWeight: "700",
+                fontSize: "15px",
               }}
             >
               View
@@ -223,11 +227,15 @@ function UserProfile() {
       });
   };
 
+  console.log("Favorites =>", favorites);
+
   const checkIfAllFavoritesFromDeactivatedUser = () => {
     return favorites.map((eachFavorite) => {
       return eachFavorite.deactivatedOwner;
     });
   };
+
+  console.log("All favorites =>", favorites);
 
   const hasFalse = checkIfAllFavoritesFromDeactivatedUser().some(
     (item) => item === false
@@ -249,12 +257,15 @@ function UserProfile() {
       })
       .then((response) => {
         setProfile(response.data.user);
+
         setUserprofiledata(response.data.posts);
       })
       .catch((err) => {
         return err;
       });
   };
+
+  console.log("User profile data =>", userprofiledata);
 
   const postDeletedMessage = () => {
     messageApi.success({
@@ -299,13 +310,11 @@ function UserProfile() {
           setTimeout(() => {
             handleGetFavorites();
             handleNotification(findedPost, userInfo, "liked");
-            setError("");
           }, 500);
         } else if (postsWindow === "") {
           setTimeout(() => {
             handleShowPostsProfilePage();
             handleNotification(findedPost, userInfo, "liked");
-            setError("");
           }, 500);
         }
       })
@@ -569,16 +578,26 @@ function UserProfile() {
 
   const { height, width } = useWindowDimensions();
 
+  const [postModalOpenedFromLeftSide, setPostModalOpenedFromLeftSide] =
+    useState(false);
+
+  const handleCallBackForModalOpenedStateFromChild = (childData) => {
+    console.log("Child data received from child => ", childData);
+    setPostModalOpenedFromLeftSide(childData);
+  };
+
   return (
     <>
       {contextHolder}
       <ToastContainer theme={themeName === "dark-theme" ? "dark" : "light"} />
 
-      <ResponsiveNavigationBarBottom
-        refreshPosts={() => handleShowPostsProfilePage()}
-        setLoadingTrue={() => setLoadingTrue()}
-        setLoadingFalse={() => setLoadingFalse()}
-      />
+      {!postModalOpenedFromLeftSide && (
+        <ResponsiveNavigationBarBottom
+          refreshPosts={() => handleShowPostsProfilePage()}
+          setLoadingTrue={() => setLoadingTrue()}
+          setLoadingFalse={() => setLoadingFalse()}
+        />
+      )}
 
       <Container
         style={{
@@ -600,6 +619,7 @@ function UserProfile() {
             setLoadingTrue={() => setLoadingTrue()}
             setLoadingFalse={() => setLoadingFalse()}
             parentCallBack={handleCallback}
+            parentCallBackSecond={handleCallBackForModalOpenedStateFromChild}
           />
 
           {/* start to check  main column */}
@@ -777,7 +797,11 @@ function UserProfile() {
                           xmlns="http://www.w3.org/2000/svg"
                           width="133"
                           height="133"
-                          fill="rgb(83, 100, 113)"
+                          fill={
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)"
+                          }
                           className="bi bi-person-circle"
                           viewBox="0 0 16 16"
                           style={{ cursor: "pointer", borderRadius: "50%" }}
@@ -1194,7 +1218,11 @@ function UserProfile() {
                                       xmlns="http://www.w3.org/2000/svg"
                                       width="40"
                                       height="40"
-                                      fill="rgb(83, 100, 113)"
+                                      fill={
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgb(83, 100, 113)"
+                                      }
                                       className="bi bi-person-circle"
                                       viewBox="0 0 16 16"
                                       style={{
@@ -1458,7 +1486,9 @@ function UserProfile() {
                                   post={post}
                                   width={`${1.25}em`}
                                   height={`${1.25}em`}
-                                  refreshPosts={handleShowPostsProfilePage}
+                                  refreshPosts={() =>
+                                    handleShowPostsProfilePage()
+                                  }
                                   setLoadingFalse={setLoadingFalse}
                                   setLoadingTrue={setLoadingTrue}
                                   postSharedMessage={postSharedMessage}
@@ -1466,167 +1496,39 @@ function UserProfile() {
                               </div>
 
                               {/* start to check */}
-                              <div className="p-1">
-                                {getRepostedIds(post).includes(userInfo._id) ? (
-                                  <svg
-                                    style={{
-                                      cursor: "pointer",
-                                    }}
-                                    onClick={() =>
-                                      handleDeleteRepostProfilePage(post._id)
-                                    }
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                    className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                    color="rgb(0, 186, 124)"
-                                    fill="currentColor"
-                                  >
-                                    <g>
-                                      <path
-                                        stroke="rgb(83, 100, 113)"
-                                        strokeWidth="0.1"
-                                        d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
-                                      ></path>
-                                    </g>
-                                  </svg>
-                                ) : (
-                                  <svg
-                                    style={{
-                                      cursor: "pointer",
-                                    }}
-                                    onClick={() => handleRepost(post._id, post)}
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                    className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                    fill={
-                                      themeName === "dark-theme"
-                                        ? "#71767A"
-                                        : "rgb(83, 100, 113)"
-                                    }
-                                  >
-                                    <g>
-                                      <path
-                                        stroke="rgb(83, 100, 113)"
-                                        strokeWidth="0.1"
-                                        d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
-                                      ></path>
-                                    </g>
-                                  </svg>
-                                )}
-
-                                {getRepostedIds(post).includes(userInfo._id) ? (
-                                  <span
-                                    className="post-description"
-                                    style={{
-                                      color: "rgb(0, 186, 124)",
-                                    }}
-                                  >
-                                    {post.reposted.length}
-                                  </span>
-                                ) : (
-                                  <span
-                                    className="post-description"
-                                    style={{
-                                      color:
-                                        themeName === "dark-theme"
-                                          ? "#71767A"
-                                          : "rgb(83, 100, 113)",
-                                    }}
-                                  >
-                                    {post.reposted.length ? (
-                                      <span>{post.reposted.length}</span>
-                                    ) : null}
-                                  </span>
-                                )}
+                              <div
+                                style={{
+                                  width: "100px",
+                                }}
+                                className="p-1"
+                              >
+                                <RepostAction
+                                  post={post ? post : null}
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  refreshPosts={handleShowPostsProfilePage}
+                                  setLoadingFalse={setLoadingFalse}
+                                  setLoadingTrue={setLoadingTrue}
+                                />
 
                                 {/* start  */}
                               </div>
 
                               {/* finish to check  */}
-                              <div className="p-1">
-                                <div>
-                                  {post.likes.includes(userInfo._id) ? (
-                                    <div>
-                                      <svg
-                                        onClick={() =>
-                                          handleDeleteLikeFromProfilePage(
-                                            post._id
-                                          )
-                                        }
-                                        width={`${1.25}em`}
-                                        height={`${1.25}em`}
-                                        viewBox="0 0 24 24"
-                                        aria-hidden="true"
-                                        fill="rgb(249, 24, 128)"
-                                        className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                      >
-                                        <g>
-                                          <path
-                                            stroke="black"
-                                            strokeWidth="0.2"
-                                            d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"
-                                          ></path>
-                                        </g>
-                                      </svg>
-
-                                      <span className="post-description">
-                                        {post.likes.length ? (
-                                          <span
-                                            style={{
-                                              color: "rgb(249, 24, 128)",
-                                            }}
-                                          >
-                                            {post.likes.length}
-                                          </span>
-                                        ) : null}
-                                      </span>
-                                    </div>
-                                  ) : (
-                                    <div>
-                                      {" "}
-                                      <svg
-                                        onClick={() =>
-                                          handlePostLikesFromProfilePage(
-                                            post._id,
-                                            post
-                                          )
-                                        }
-                                        width={`${1.25}em`}
-                                        height={`${1.25}em`}
-                                        viewBox="0 0 24 24"
-                                        aria-hidden="true"
-                                        fill={
-                                          themeName === "dark-theme"
-                                            ? "#71767A"
-                                            : "rgb(83, 100, 113)"
-                                        }
-                                        className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                      >
-                                        <g>
-                                          <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
-                                        </g>
-                                      </svg>
-                                      <span className="post-description">
-                                        {post.likes.length ? (
-                                          <span
-                                            style={{
-                                              color:
-                                                themeName === "dark-theme"
-                                                  ? "#71767A"
-                                                  : "rgb(83, 100, 113)",
-                                            }}
-                                          >
-                                            {post.likes.length}
-                                          </span>
-                                        ) : null}
-                                      </span>
-                                    </div>
-                                  )}
-                                </div>
+                              <div
+                                style={{
+                                  width: "100px",
+                                }}
+                                className="p-1"
+                              >
+                                <LikeAction
+                                  post={post ? post : null}
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  refreshPosts={handleShowPostsProfilePage}
+                                  setLoadingFalse={setLoadingFalse}
+                                  setLoadingTrue={setLoadingTrue}
+                                />
                               </div>
                             </Stack>
                             {/* new version favorite repost comment finish to check */}
@@ -1654,7 +1556,7 @@ function UserProfile() {
                       <Accordion.Item style={{ border: "none" }} eventKey="1">
                         <Accordion.Header
                           style={{ border: "none" }}
-                          className="accordion-2"
+                          className={`accordion-2 accordion-2-${themeName}`}
                         >
                           <div
                             onClick={handleShowMorePosts}
@@ -1800,7 +1702,11 @@ function UserProfile() {
                                         xmlns="http://www.w3.org/2000/svg"
                                         width={40}
                                         height={40}
-                                        fill="rgb(83, 100, 113)"
+                                        fill={
+                                          themeName === "dark-theme"
+                                            ? "#71767A"
+                                            : "rgb(83, 100, 113)"
+                                        }
                                         className="bi bi-person-circle"
                                         viewBox="0 0 16 16"
                                         style={{
@@ -2038,98 +1944,27 @@ function UserProfile() {
 
                               {/* start to check */}
                               <div
+                                style={{
+                                  width: "100px",
+                                }}
                                 onClick={() => setclickedPostBox(favorite)}
                                 className="p-1 next-to-repost"
                               >
-                                {favorite.reposted.includes(userInfo._id) ? (
-                                  <div>
-                                    <svg
-                                      onClick={() =>
-                                        handleDeleteRepostProfilePage(
-                                          favorite._id
-                                        )
-                                      }
-                                      width={`${1.25}em`}
-                                      height={`${1.25}em`}
-                                      viewBox="0 0 24 24"
-                                      aria-hidden="true"
-                                      className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                      fill="rgb(0, 186, 124)"
-                                    >
-                                      <g>
-                                        <path
-                                          stroke="rgb(83, 100, 113)"
-                                          strokeWidth="0.1"
-                                          d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
-                                        ></path>
-                                      </g>
-                                    </svg>
-
-                                    <span
-                                      style={{ color: "rgb(0, 186, 124)" }}
-                                      className="post-description"
-                                    >
-                                      {/* some test */}
-                                      {favorite.reposted.length ? (
-                                        <span>{favorite.reposted.length}</span>
-                                      ) : null}
-                                    </span>
-                                  </div>
-                                ) : (
-                                  <div>
-                                    {" "}
-                                    <svg
-                                      style={{
-                                        cursor: "pointer",
-                                      }}
-                                      onClick={() =>
-                                        handleRepost(favorite._id, favorite)
-                                      }
-                                      width={`${1.25}em`}
-                                      height={`${1.25}em`}
-                                      viewBox="0 0 24 24"
-                                      aria-hidden="true"
-                                      className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                      fill={
-                                        favorite.reposted.includes(userInfo._id)
-                                          ? "rgb(0, 186, 124)"
-                                          : themeName === "dark-theme"
-                                          ? "#71767A"
-                                          : "rgb(83, 100, 113)"
-                                      }
-                                    >
-                                      <g>
-                                        <path
-                                          stroke="rgb(83, 100, 113)"
-                                          strokeWidth="0.1"
-                                          d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
-                                        ></path>
-                                      </g>
-                                    </svg>
-                                    <span
-                                      className="post-description"
-                                      style={{
-                                        color: favorite.reposted.includes(
-                                          userInfo._id
-                                        )
-                                          ? "rgb(0, 186, 124)"
-                                          : themeName === "dark-theme"
-                                          ? "#71767A"
-                                          : "rgb(83, 100, 113)",
-                                      }}
-                                    >
-                                      {favorite.reposted.length ? (
-                                        <span>{favorite.reposted.length}</span>
-                                      ) : null}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {/* start  */}
+                                <RepostAction
+                                  post={favorite ? favorite : null}
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  refreshPosts={handleGetFavorites}
+                                  setLoadingFalse={setLoadingFalse}
+                                  setLoadingTrue={setLoadingTrue}
+                                />
                               </div>
 
                               {/* finish to check  */}
                               <div
+                                style={{
+                                  width: "100px",
+                                }}
                                 to={`/${favorite.userId.username}/status/${
                                   !favorite.isReposted
                                     ? favorite._id
@@ -2139,73 +1974,14 @@ function UserProfile() {
                                 onClick={() => setclickedPostBox(favorite)}
                                 className="p-1 next-to-like"
                               >
-                                <div>
-                                  {favorite.likes.includes(userInfo._id) ? (
-                                    <div>
-                                      <svg
-                                        onClick={() =>
-                                          handleDeleteLikeFromProfilePage(
-                                            favorite._id
-                                          )
-                                        }
-                                        width={`${1.25}em`}
-                                        height={`${1.25}em`}
-                                        viewBox="0 0 24 24"
-                                        aria-hidden="true"
-                                        fill="rgb(249, 24, 128)"
-                                        className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                      >
-                                        <g>
-                                          <path
-                                            stroke="black"
-                                            strokeWidth="0.2"
-                                            d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"
-                                          ></path>
-                                        </g>
-                                      </svg>
-
-                                      <span className="post-description">
-                                        {favorite.likes.length ? (
-                                          <span
-                                            style={{
-                                              color: "rgb(249, 24, 128)",
-                                            }}
-                                          >
-                                            {favorite.likes.length}
-                                          </span>
-                                        ) : null}
-                                      </span>
-                                    </div>
-                                  ) : (
-                                    <div>
-                                      {" "}
-                                      <svg
-                                        onClick={() =>
-                                          handlePostLikesFromProfilePage(
-                                            favorite._id,
-                                            favorite
-                                          )
-                                        }
-                                        width={`${1.25}em`}
-                                        height={`${1.25}em`}
-                                        viewBox="0 0 24 24"
-                                        aria-hidden="true"
-                                        color="rgb(83, 100, 113)"
-                                        fill="currentColor"
-                                        className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                      >
-                                        <g>
-                                          <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
-                                        </g>
-                                      </svg>
-                                      <span className="post-description">
-                                        {favorite.likes.length ? (
-                                          <span>{favorite.likes.length}</span>
-                                        ) : null}
-                                      </span>
-                                    </div>
-                                  )}
-                                </div>
+                                <LikeAction
+                                  post={favorite ? favorite : null}
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  refreshPosts={handleGetFavorites}
+                                  setLoadingFalse={setLoadingFalse}
+                                  setLoadingTrue={setLoadingTrue}
+                                />
                               </div>
                             </Stack>
                             {/* new version favorite repost comment finish to check */}
@@ -2233,7 +2009,7 @@ function UserProfile() {
                       <Accordion.Item style={{ border: "none" }} eventKey="1">
                         <Accordion.Header
                           style={{ border: "none" }}
-                          className="accordion-2"
+                          className={`accordion-2 accordion-2-${themeName}`}
                         >
                           <div
                             onClick={handleShowMoreLikedTweets}

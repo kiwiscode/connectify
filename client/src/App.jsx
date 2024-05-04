@@ -38,9 +38,6 @@ function App() {
     toggleThemeBetweenLightDarkMode,
   ] = useContext(ThemeContext);
 
-  console.log("Theme name =>", themeName);
-  console.log("Theme  =>", theme);
-
   // const [hoveredThemeName, setHoveredThemeName] = useState(null);
 
   const [play] = useSound(
@@ -51,12 +48,9 @@ function App() {
       : null
   );
 
-  console.log("Play =>", play);
-  console.log("Active font size option =>", activeFontSizeOption);
   const activeFontSizeOptionPixel = activeFontSizeOption.slice(
     activeFontSizeOption.lastIndexOf(" ") + 1
   );
-  console.log(activeFontSizeOptionPixel);
 
   return (
     <UserProvider>

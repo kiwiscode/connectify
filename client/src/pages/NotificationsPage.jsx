@@ -6,7 +6,7 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserContext";
 import axios from "axios";
 import { ThemeContext } from "../context/ThemeContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { message } from "antd";
 import { CommentModal } from "../components/ui/Modal";
 
@@ -15,7 +15,8 @@ const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-
+import io from "socket.io-client";
+const socket = io.connect(`${API_URL}`);
 function NotificationsPage() {
   const { getToken } = useContext(UserContext);
   const { height, width } = useWindowDimensions();
@@ -54,7 +55,6 @@ function NotificationsPage() {
 
       const { allNotifications } = await response.data;
 
-      console.log("Response all notifications =>", allNotifications);
       setAllNotifications(allNotifications);
     } catch (error) {
       console.error(
@@ -67,6 +67,8 @@ function NotificationsPage() {
   useEffect(() => {
     getAllNotifications();
   }, []);
+
+  console.log("All notifications =>", allNotifications);
 
   const months = [
     "Jan",
@@ -89,7 +91,7 @@ function NotificationsPage() {
     return `${months[getMonth]} ${createdAt.getDate()}`;
   };
   const [messageApi, contextHolder] = message.useMessage();
-  const [commentModalClicked, setCommentModalClicked] = useState(null);
+
   const postSharedMessage = (postOwner, postId) => {
     messageApi.success({
       type: "success",
@@ -102,6 +104,8 @@ function NotificationsPage() {
               style={{
                 color: "white",
                 marginLeft: "5px",
+                fontWeight: "700",
+                fontSize: "15px",
               }}
             >
               View
@@ -114,43 +118,300 @@ function NotificationsPage() {
     });
   };
 
-  useEffect(() => {
-    const getClickedLocation = (e) => {
-      const targetClassList = e.target.classList;
-      const parentNodeClassName = e.srcElement.parentNode.className;
-      const parentNodeClassNameBaseVal =
-        e.srcElement.parentNode.className.baseVal;
+  console.log("message api =>", messageApi);
+  // socket io 5 client start to check
+  const handleNotification = (post, userInfo, type) => {
+    console.log("Post =>", post);
+    socket.emit("sendNotification", {
+      senderName: userInfo.username,
+      receiverName: post.userId.username,
+      type: type,
+      contactHasBeenMade: post,
+      senderInfo: userInfo,
+    });
+  };
+  // socket io 5 client finish to check
 
-      console.log("target =>", e.target.classList);
-      console.log(
-        "parent node classname =>",
-        e.srcElement.parentNode.className
-      );
-      console.log(
-        "parent node baseVal classname =>",
-        e.srcElement.parentNode.className.baseVal
-      );
+  const { userInfo } = useContext(UserContext);
 
-      if (
-        targetClassList.contains("bi-chat") ||
-        parentNodeClassName === "comment-parent-div"
-      ) {
-        window.alert("button clicked comment !");
-        setCommentModalClicked(true);
-      } else {
-        setCommentModalClicked(false);
-      }
-    };
+  const handleRepost = (postId, findedPost) => {
+    axios
+      .post(
+        `${API_URL}/repost`,
+        { postId: postId, userId: userInfo._id },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then(() => {
+        setTimeout(() => {
+          handleNotification(findedPost, userInfo, "repost");
+          getAllNotifications();
+          // console.log("Finded post =>", findedPost);
+          // console.log("All notifications =>", allNotifications);
 
-    document.body.addEventListener("click", getClickedLocation);
+          // const findedPostId = findedPost?._id;
 
-    return () => {
-      document.body.removeEventListener("click", getClickedLocation);
-    };
-  }, []);
+          // console.log("Finded post id from func. parameter =>", findedPostId);
+
+          // const findNotification = allNotifications.filter(
+          //   (eachNotification) => {
+          //     return (
+          //       eachNotification.isComment?.commentPostId?._id === findedPostId
+          //     );
+          //   }
+          // )[0];
+
+          // const findedIndex = allNotifications.indexOf(findNotification);
+          // console.log("Finded notification =>", findNotification);
+          // console.log("Finded notification index =>", findedIndex);
+
+          // setAllNotifications((prevState) => {
+          //   return prevState.map((item, index) => {
+          //     if (index === findedIndex && item.isComment) {
+          //       if (item.isComment.commentPostId) {
+          //         const updatedReposted = [
+          //           ...item.isComment.commentPostId.reposted,
+          //           userInfo._id,
+          //         ];
+          //         return {
+          //           ...item,
+          //           isComment: {
+          //             ...item.isComment,
+          //             commentPostId: {
+          //               ...item.isComment.commentPostId,
+          //               reposted: updatedReposted,
+          //             },
+          //           },
+          //         };
+          //       } else {
+          //         window.alert("commentPostId or reposted is not defined");
+          //         return item;
+          //       }
+          //     } else {
+          //       return item;
+          //     }
+          //   });
+          // });
+        }, 500);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleDeleteRepostNotificationsPage = (postId) => {
+    axios
+      .post(
+        `${API_URL}/repost/delete`,
+        { userId: userInfo._id, postId },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then(() => {
+        setTimeout(() => {
+          getAllNotifications();
+          // console.log("Finded post =>", findedPost);
+          // console.log("All notifications =>", allNotifications);
+
+          // const findedPostId = findedPost?._id;
+
+          // console.log("Finded post id from func. parameter =>", findedPostId);
+
+          // const findNotification = allNotifications.filter(
+          //   (eachNotification) => {
+          //     return (
+          //       eachNotification.isComment?.commentPostId?._id === findedPostId
+          //     );
+          //   }
+          // )[0];
+
+          // const findedIndex = allNotifications.indexOf(findNotification);
+          // console.log("Finded notification =>", findNotification);
+          // console.log("Finded notification index =>", findedIndex);
+          // setAllNotifications((prevState) => {
+          //   return prevState.map((item, index) => {
+          //     if (index === findedIndex && item.isComment) {
+          //       if (item.isComment.commentPostId) {
+          //         // updatedReposted dizisinden userInfo._id'yi çıkar
+          //         const updatedReposted =
+          //           item.isComment.commentPostId.reposted.filter(
+          //             (id) => id !== userInfo._id
+          //           );
+
+          //         return {
+          //           ...item,
+          //           isComment: {
+          //             ...item.isComment,
+          //             commentPostId: {
+          //               ...item.isComment.commentPostId,
+          //               reposted: updatedReposted,
+          //             },
+          //           },
+          //         };
+          //       } else {
+          //         window.alert("commentPostId or reposted is not defined");
+          //         return item;
+          //       }
+          //     } else {
+          //       return item;
+          //     }
+          //   });
+          // });
+        }, 500);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  };
+
+  const handlePostLikesFromNotificationsPage = (postId, findedPost) => {
+    axios
+      .post(
+        `${API_URL}/favorite`,
+        { postId },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then(() => {
+        console.log("We are here !!!");
+        setTimeout(() => {
+          handleNotification(findedPost, userInfo, "liked");
+          getAllNotifications();
+          // console.log("Finded post =>", findedPost);
+          // console.log("All notifications =>", allNotifications);
+
+          // const findedPostId = findedPost?._id;
+
+          // console.log("Finded post id from func. parameter =>", findedPostId);
+
+          // const findNotification = allNotifications.filter(
+          //   (eachNotification) => {
+          //     return (
+          //       eachNotification.isComment?.commentPostId?._id === findedPostId
+          //     );
+          //   }
+          // )[0];
+
+          // const findedIndex = allNotifications.indexOf(findNotification);
+          // console.log("Finded notification =>", findNotification);
+          // console.log("Finded notification index =>", findedIndex);
+
+          // setAllNotifications((prevState) => {
+          //   return prevState.map((item, index) => {
+          //     if (index === findedIndex && item.isComment) {
+          //       if (item.isComment.commentPostId) {
+          //         const updatedLikes = [
+          //           ...item.isComment.commentPostId.likes,
+          //           userInfo._id,
+          //         ];
+          //         return {
+          //           ...item,
+          //           isComment: {
+          //             ...item.isComment,
+          //             commentPostId: {
+          //               ...item.isComment.commentPostId,
+          //               likes: updatedLikes,
+          //             },
+          //           },
+          //         };
+          //       } else {
+          //         window.alert("commentPostId or reposted is not defined");
+          //         return item;
+          //       }
+          //     } else {
+          //       return item;
+          //     }
+          //   });
+          // });
+        }, 500);
+      })
+      .catch((error) => {
+        console.log("Error message =>", error);
+      });
+  };
+
+  const handleDeleteLikeFromNotificationsPage = (postId) => {
+    axios
+      .post(
+        `${API_URL}/favorite/delete-favorite`,
+        {
+          userId: userInfo._id,
+          postId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then(() => {
+        setTimeout(() => {
+          getAllNotifications();
+          // console.log("Finded post =>", findedPost);
+          // console.log("All notifications =>", allNotifications);
+
+          // const findedPostId = findedPost?._id;
+
+          // console.log("Finded post id from func. parameter =>", findedPostId);
+
+          // const findNotification = allNotifications.filter(
+          //   (eachNotification) => {
+          //     return (
+          //       eachNotification.isComment?.commentPostId?._id === findedPostId
+          //     );
+          //   }
+          // )[0];
+
+          // const findedIndex = allNotifications.indexOf(findNotification);
+          // console.log("Finded notification =>", findNotification);
+          // console.log("Finded notification index =>", findedIndex);
+          // setAllNotifications((prevState) => {
+          //   return prevState.map((item, index) => {
+          //     if (index === findedIndex && item.isComment) {
+          //       if (item.isComment.commentPostId) {
+          //         const updatedLikes =
+          //           item.isComment.commentPostId.likes.filter(
+          //             (id) => id !== userInfo._id
+          //           );
+
+          //         return {
+          //           ...item,
+          //           isComment: {
+          //             ...item.isComment,
+          //             commentPostId: {
+          //               ...item.isComment.commentPostId,
+          //               likes: updatedLikes,
+          //             },
+          //           },
+          //         };
+          //       } else {
+          //         window.alert("commentPostId or reposted is not defined");
+          //         return item;
+          //       }
+          //     } else {
+          //       return item;
+          //     }
+          //   });
+          // });
+        }, 500);
+      })
+      .catch((err) => {
+        console.log("Error =>", err);
+      });
+  };
 
   return (
     <>
+      {contextHolder}
       <Container
         style={{
           overflowX: "hidden",
@@ -269,269 +530,526 @@ function NotificationsPage() {
               <div className="mt-5">
                 {allNotifications.map((eachNotification, index) => {
                   return (
-                    <div key={index}>
-                      {eachNotification.isComment.value ? (
-                        <Link
-                          to={
-                            !commentModalClicked
-                              ? `/${eachNotification?.post?.authorUserName}/status/${eachNotification?.post?._id}`
-                              : null
-                          }
-                          style={{
-                            textDecoration: "none",
-                            color:
-                              themeName === "dark-theme" ? "white" : "black",
-                          }}
-                        >
-                          <div
-                            className={`notification-is-comment-box notification-is-comment-box-${themeName}`}
+                    <>
+                      <div key={index}>
+                        {eachNotification.isComment.value ? (
+                          <Link
+                            // to={`/${eachNotification?.post?.authorUserName}/status/${eachNotification?.post?._id}`}
                             style={{
-                              cursor: "pointer",
-
-                              minHeight: "121px",
-                              borderTop:
-                                themeName === "dark-theme" &&
-                                allNotifications[0] === eachNotification &&
-                                eachNotification.isComment.value
-                                  ? "1px solid rgb(70, 70, 70)"
-                                  : themeName !== "dark-theme" &&
-                                    allNotifications[0] === eachNotification &&
-                                    eachNotification.isComment.value
-                                  ? "1px solid rgba(0, 0, 0, 0.1)"
-                                  : null,
-                              borderBottom:
-                                themeName === "dark-theme"
-                                  ? "1px solid rgb(70, 70, 70)"
-                                  : "1px solid rgba(0, 0, 0, 0.1)",
+                              textDecoration: "none",
+                              color:
+                                themeName === "dark-theme" ? "white" : "black",
                             }}
                           >
-                            {eachNotification.notificationSender.imageUrl ? (
-                              <Link
-                                to={
-                                  !commentModalClicked
-                                    ? `/profile/${eachNotification.notificationSender._id}`
-                                    : null
-                                }
-                                style={{
-                                  height: "120px",
-                                  float: "left",
-                                  padding: "12px",
-                                }}
-                              >
-                                <img
-                                  width={40}
-                                  height={40}
+                            <div
+                              className={`notification-is-comment-box notification-is-comment-box-${themeName}`}
+                              style={{
+                                cursor: "pointer",
+
+                                minHeight: "121px",
+                                borderTop:
+                                  themeName === "dark-theme" &&
+                                  allNotifications[0] === eachNotification &&
+                                  eachNotification.isComment.value
+                                    ? "1px solid rgb(70, 70, 70)"
+                                    : themeName !== "dark-theme" &&
+                                      allNotifications[0] ===
+                                        eachNotification &&
+                                      eachNotification.isComment.value
+                                    ? "1px solid rgba(0, 0, 0, 0.1)"
+                                    : null,
+                                borderBottom:
+                                  themeName === "dark-theme"
+                                    ? "1px solid rgb(70, 70, 70)"
+                                    : "1px solid rgba(0, 0, 0, 0.1)",
+                              }}
+                            >
+                              {/* here down  */}
+
+                              {eachNotification.notificationSender.imageUrl?.slice(
+                                0,
+                                3
+                              ) !== "../" ? (
+                                <Link
+                                  to={`/profile/${eachNotification.notificationSender._id}`}
                                   style={{
-                                    cursor: "pointer",
-                                    borderRadius: "50%",
+                                    height: "120px",
                                     float: "left",
-                                  }}
-                                  src={
-                                    eachNotification.notificationSender.imageUrl
-                                  }
-                                  alt=""
-                                />
-                              </Link>
-                            ) : (
-                              <Link
-                                style={{
-                                  height: "120px",
-                                  float: "left",
-                                  padding: "12px",
-                                }}
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width={40}
-                                  height={40}
-                                  fill="rgb(83, 100, 113)"
-                                  className="bi bi-person-circle"
-                                  viewBox="0 0 16 16"
-                                  style={{
-                                    cursor: "pointer",
-                                    borderRadius: "50%",
+                                    padding: "12px",
                                   }}
                                 >
-                                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                  <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                </svg>
-                              </Link>
-                            )}
-                            <div className="info-notification-comment-parent-div ">
-                              <div
-                                style={{
-                                  position: "relative",
-                                  top: "15px",
-                                }}
-                              >
+                                  <img
+                                    width={40}
+                                    height={40}
+                                    style={{
+                                      cursor: "pointer",
+                                      borderRadius: "50%",
+                                      float: "left",
+                                    }}
+                                    src={
+                                      eachNotification.notificationSender
+                                        .imageUrl
+                                    }
+                                    alt=""
+                                  />
+                                </Link>
+                              ) : (
+                                <Link
+                                  style={{
+                                    height: "120px",
+                                    float: "left",
+                                    padding: "12px",
+                                  }}
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width={40}
+                                    height={40}
+                                    fill={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgb(83, 100, 113)"
+                                    }
+                                    className="bi bi-person-circle"
+                                    viewBox="0 0 16 16"
+                                    style={{
+                                      cursor: "pointer",
+                                      borderRadius: "50%",
+                                    }}
+                                  >
+                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                  </svg>
+                                </Link>
+                              )}
+
+                              <div className="info-notification-comment-parent-div ">
                                 <div
                                   style={{
-                                    display: "flex",
+                                    position: "relative",
+                                    top: "15px",
                                   }}
                                 >
-                                  <Link
-                                    to={
-                                      !commentModalClicked
-                                        ? `/profile/${eachNotification.notificationSender._id}`
-                                        : null
-                                    }
-                                    className="hover-fullname"
-                                    style={{
-                                      fontSize: "15px",
-                                      lineHeight: "20px",
-                                      fontWeight: "700",
-                                      textDecoration: "none",
-                                      color:
-                                        themeName === "dark-theme"
-                                          ? "white"
-                                          : "black",
-                                    }}
-                                  >
-                                    {
-                                      eachNotification.notificationSender
-                                        .fullname
-                                    }
-                                  </Link>
-                                  <Link
-                                    to={
-                                      !commentModalClicked
-                                        ? `/profile/${eachNotification.notificationSender._id}`
-                                        : null
-                                    }
-                                    style={{
-                                      fontSize: "15px",
-                                      lineHeight: "20px",
-                                      fontWeight: "400",
-                                      marginLeft: "5px",
-                                      textDecoration: "none",
-
-                                      color:
-                                        themeName === "dark-theme"
-                                          ? "#71767A"
-                                          : "rgb(83, 100, 113)",
-                                    }}
-                                  >
-                                    @
-                                    {
-                                      eachNotification.notificationSender
-                                        .username
-                                    }
-                                  </Link>
                                   <div
                                     style={{
-                                      position: "relative",
-                                      bottom: "2px",
+                                      display: "flex",
                                     }}
                                   >
-                                    <span
+                                    <Link
+                                      to={`/profile/${eachNotification.notificationSender._id}`}
+                                      className="hover-fullname"
                                       style={{
-                                        marginLeft: "5px",
-                                        color: "rgb(83, 100, 113)",
+                                        fontSize: "15px",
+                                        lineHeight: "20px",
+                                        fontWeight: "700",
+                                        textDecoration: "none",
+                                        color:
+                                          themeName === "dark-theme"
+                                            ? "white"
+                                            : "black",
                                       }}
                                     >
-                                      &middot;
-                                    </span>
-                                    <Link
-                                      to={
-                                        !commentModalClicked
-                                          ? `/${eachNotification.notificationSender.username}/status/${eachNotification.isComment.commentPostId}`
-                                          : null
+                                      {
+                                        eachNotification.notificationSender
+                                          .fullname
                                       }
-                                      className="date-post-detail"
+                                    </Link>
+                                    <Link
+                                      to={`/profile/${eachNotification.notificationSender._id}`}
                                       style={{
+                                        fontSize: "15px",
+                                        lineHeight: "20px",
+                                        fontWeight: "400",
+                                        marginLeft: "5px",
                                         textDecoration: "none",
+
                                         color:
                                           themeName === "dark-theme"
                                             ? "#71767A"
                                             : "rgb(83, 100, 113)",
                                       }}
                                     >
-                                      {" "}
-                                      {getCreatedDate(
-                                        eachNotification.createdAt
-                                      )}
+                                      @
+                                      {
+                                        eachNotification.notificationSender
+                                          .username
+                                      }
                                     </Link>
-                                  </div>
+                                    <div
+                                      style={{
+                                        position: "relative",
+                                        bottom: "2px",
+                                      }}
+                                    >
+                                      <span
+                                        style={{
+                                          marginLeft: "5px",
+                                          color: "rgb(83, 100, 113)",
+                                        }}
+                                      >
+                                        &middot;
+                                      </span>
+                                      <Link
+                                        to={`/${eachNotification?.isComment?.commentPostId?.userId.username}/status/${eachNotification?.isComment?.commentPostId?._id}`}
+                                        className="date-post-detail"
+                                        style={{
+                                          textDecoration: "none",
+                                          color:
+                                            themeName === "dark-theme"
+                                              ? "#71767A"
+                                              : "rgb(83, 100, 113)",
+                                        }}
+                                      >
+                                        {" "}
+                                        {getCreatedDate(
+                                          eachNotification.createdAt
+                                        )}
+                                      </Link>
+                                    </div>
 
+                                    <div
+                                      style={{
+                                        position: "relative",
+                                        right: "22px",
+                                      }}
+                                      className="ms-auto"
+                                    >
+                                      <svg
+                                        style={{
+                                          cursor: "pointer",
+                                          position: "relative",
+                                        }}
+                                        fill={
+                                          themeName === "dark-theme"
+                                            ? "#71767A"
+                                            : "rgb(83, 100, 113)"
+                                        }
+                                        width={`${1.25}em`}
+                                        height={`${1.25}em`}
+                                        viewBox="0 0 24 24"
+                                        aria-hidden="true"
+                                      >
+                                        <g>
+                                          <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                                        </g>
+                                      </svg>
+                                    </div>
+                                  </div>
                                   <div
                                     style={{
-                                      position: "relative",
-                                      right: "22px",
-                                    }}
-                                    className="ms-auto"
-                                  >
-                                    <svg
-                                      style={{
-                                        cursor: "pointer",
-                                        position: "relative",
-                                      }}
-                                      fill={
+                                      display: "flex",
+                                      color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
-                                          : "rgb(83, 100, 113)"
+                                          : "rgb(83, 100, 113)",
+                                      fontSize: "15px",
+                                      fontWeight: "400",
+                                      lineHeight: "20px",
+                                    }}
+                                  >
+                                    <div>{"Replying to"}</div>
+                                    <Link
+                                      to={`/profile/${eachNotification.notificationReceiver._id}`}
+                                      className="replying-to-text"
+                                      style={{
+                                        fontSize: "15px",
+                                        fontWeight: "400",
+                                        lineHeight: "20px",
+                                        marginLeft: "5px",
+                                        textDecoration: "none",
+                                        color: "rgb(29, 155, 240)",
+                                      }}
+                                    >
+                                      @
+                                      {
+                                        eachNotification.notificationReceiver
+                                          .username
+                                      }
+                                    </Link>
+                                  </div>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      fontSize: "15px",
+                                      fontWeight: "400",
+                                      lineHeight: "20px",
+                                    }}
+                                  >
+                                    {" "}
+                                    <Link
+                                      to={`/${eachNotification?.isComment?.commentPostId?.userId.username}/status/${eachNotification?.isComment?.commentPostId?._id}`}
+                                      style={{
+                                        textDecoration: "none",
+                                        color:
+                                          themeName === "dark-theme"
+                                            ? "white"
+                                            : "black",
+                                      }}
+                                    >
+                                      {eachNotification.isComment.comment}
+                                    </Link>
+                                  </div>
+                                </div>
+                                <div
+                                  className="post-actions-parent-div"
+                                  // className="mt-5"
+                                  style={{
+                                    marginTop: "25px",
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  <div className="comment-parent-div">
+                                    <CommentModal
+                                      post={
+                                        eachNotification.isComment
+                                          ? eachNotification.isComment
+                                              .commentPostId
+                                          : null
+                                      }
+                                      width={`${1.25}em`}
+                                      height={`${1.25}em`}
+                                      refreshPosts={getAllNotifications}
+                                      postSharedMessage={postSharedMessage}
+                                    />
+                                  </div>
+                                  <div
+                                    style={{
+                                      width: "100px",
+                                    }}
+                                    onClick={() =>
+                                      !eachNotification.isComment.commentPostId.reposted.includes(
+                                        userInfo._id
+                                      )
+                                        ? handleRepost(
+                                            eachNotification.isComment
+                                              .commentPostId._id,
+                                            eachNotification.isComment
+                                              .commentPostId
+                                          )
+                                        : handleDeleteRepostNotificationsPage(
+                                            eachNotification.isComment
+                                              .commentPostId._id,
+                                            eachNotification.isComment
+                                              .commentPostId
+                                          )
+                                    }
+                                  >
+                                    <svg
+                                      fill={
+                                        themeName === "dark-theme" &&
+                                        !eachNotification.isComment.commentPostId.reposted.includes(
+                                          userInfo._id
+                                        )
+                                          ? "#71767A"
+                                          : themeName !== "dark-theme" &&
+                                            !eachNotification.isComment.commentPostId.reposted.includes(
+                                              userInfo._id
+                                            )
+                                          ? "rgb(83, 100, 113)"
+                                          : "rgb(0, 186, 124)"
                                       }
                                       width={`${1.25}em`}
                                       height={`${1.25}em`}
                                       viewBox="0 0 24 24"
                                       aria-hidden="true"
+                                      className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                                     >
                                       <g>
-                                        <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                                        <path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"></path>
                                       </g>
                                     </svg>
+                                    <span
+                                      style={{
+                                        fontSize: "13px",
+                                        color:
+                                          themeName === "dark-theme" &&
+                                          !eachNotification.isComment.commentPostId.reposted.includes(
+                                            userInfo._id
+                                          )
+                                            ? "#71767A"
+                                            : themeName !== "dark-theme" &&
+                                              !eachNotification.isComment.commentPostId.reposted.includes(
+                                                userInfo._id
+                                              )
+                                            ? "rgb(83, 100, 113)"
+                                            : "rgb(0, 186, 124)",
+
+                                        fontWeight: "400",
+                                        fontFamily:
+                                          "TwitterChirp, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
+                                        lineHeight: "20px",
+                                        cursor: "pointer",
+                                        marginLeft: "10px",
+                                      }}
+                                    >
+                                      {eachNotification.isComment.commentPostId
+                                        .reposted.length
+                                        ? eachNotification.isComment
+                                            .commentPostId.reposted.length
+                                        : null}
+                                    </span>
+                                  </div>
+                                  <div
+                                    style={{
+                                      width: "100px",
+                                    }}
+                                    onClick={() =>
+                                      !eachNotification.isComment.commentPostId.likes.includes(
+                                        userInfo._id
+                                      )
+                                        ? handlePostLikesFromNotificationsPage(
+                                            eachNotification.isComment
+                                              .commentPostId._id,
+                                            eachNotification.isComment
+                                              .commentPostId
+                                          )
+                                        : handleDeleteLikeFromNotificationsPage(
+                                            eachNotification.isComment
+                                              .commentPostId._id,
+                                            eachNotification.isComment
+                                              .commentPostId
+                                          )
+                                    }
+                                  >
+                                    <svg
+                                      style={{
+                                        position: "relative",
+                                      }}
+                                      fill={
+                                        themeName === "dark-theme" &&
+                                        !eachNotification.isComment.commentPostId.likes.includes(
+                                          userInfo._id
+                                        )
+                                          ? "#71767A"
+                                          : themeName !== "dark-theme" &&
+                                            !eachNotification.isComment.commentPostId.likes.includes(
+                                              userInfo._id
+                                            )
+                                          ? "rgb(83, 100, 113)"
+                                          : "rgb(249, 24, 128)"
+                                      }
+                                      width={`${1.25}em`}
+                                      height={`${1.25}em`}
+                                      viewBox="0 0 24 24"
+                                      aria-hidden="true"
+                                      className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                    >
+                                      {!eachNotification.isComment.commentPostId.likes.includes(
+                                        userInfo._id
+                                      ) ? (
+                                        <g>
+                                          <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
+                                        </g>
+                                      ) : (
+                                        <g>
+                                          <path
+                                            stroke="black"
+                                            strokeWidth="0.2"
+                                            d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"
+                                          ></path>
+                                        </g>
+                                      )}
+                                    </svg>
+                                    <span
+                                      style={{
+                                        fontSize: "13px",
+                                        color:
+                                          themeName === "dark-theme" &&
+                                          !eachNotification.isComment.commentPostId.likes.includes(
+                                            userInfo._id
+                                          )
+                                            ? "#71767A"
+                                            : themeName !== "dark-theme" &&
+                                              !eachNotification.isComment.commentPostId.likes.includes(
+                                                userInfo._id
+                                              )
+                                            ? "rgb(83, 100, 113)"
+                                            : "rgb(249, 24, 128)",
+
+                                        fontWeight: "400",
+                                        fontFamily:
+                                          "TwitterChirp, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
+                                        lineHeight: "20px",
+                                        cursor: "pointer",
+                                        marginLeft: "10px",
+                                      }}
+                                    >
+                                      {eachNotification.isComment.commentPostId
+                                        .likes.length
+                                        ? eachNotification.isComment
+                                            .commentPostId.likes.length
+                                        : null}
+                                    </span>
                                   </div>
                                 </div>
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    color:
-                                      themeName === "dark-theme"
-                                        ? "#71767A"
-                                        : "rgb(83, 100, 113)",
-                                    fontSize: "15px",
-                                    fontWeight: "400",
-                                    lineHeight: "20px",
-                                  }}
-                                >
-                                  <div>{"Replying to"}</div>
-                                  <Link
-                                    to={
-                                      !commentModalClicked
-                                        ? `/profile/${eachNotification.notificationReceiver._id}`
-                                        : null
-                                    }
-                                    className="replying-to-text"
-                                    style={{
-                                      fontSize: "15px",
-                                      fontWeight: "400",
-                                      lineHeight: "20px",
-                                      marginLeft: "5px",
-                                      textDecoration: "none",
-                                      color: "rgb(29, 155, 240)",
-                                    }}
+                              </div>
+                            </div>
+                          </Link>
+                        ) : eachNotification.isFavorite.value ? (
+                          <Link
+                            to={`/${eachNotification?.post?.authorUserName}/status/${eachNotification?.post?._id}`}
+                            style={{
+                              textDecoration: "none",
+                              color:
+                                themeName === "dark-theme" ? "white" : "black",
+                            }}
+                          >
+                            <div
+                              className={`notification-is-favorite-box notification-is-favorite-box-${themeName}`}
+                              style={{
+                                minHeight: "121px",
+                                borderTop:
+                                  themeName === "dark-theme" &&
+                                  allNotifications[0] === eachNotification &&
+                                  eachNotification.isFavorite.value
+                                    ? "1px solid rgb(70, 70, 70)"
+                                    : themeName !== "dark-theme" &&
+                                      allNotifications[0] ===
+                                        eachNotification &&
+                                      eachNotification.isFavorite.value
+                                    ? "1px solid rgba(0, 0, 0, 0.1)"
+                                    : null,
+                                borderBottom:
+                                  themeName === "dark-theme"
+                                    ? "1px solid rgb(70, 70, 70)"
+                                    : "1px solid rgba(0, 0, 0, 0.1)",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  float: "left",
+                                  height: "120px",
+                                  minWidth: "40px",
+                                  padding: "12px",
+                                }}
+                              >
+                                <div>
+                                  <svg
+                                    color="rgb(249, 24, 128)"
+                                    fill="currentColor"
+                                    height={`${2}em`}
+                                    width={`${2}em`}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-vkub15 r-yucp9h"
                                   >
-                                    @
-                                    {
-                                      eachNotification.notificationReceiver
-                                        .username
-                                    }
-                                  </Link>
+                                    <g>
+                                      <path d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
+                                    </g>
+                                  </svg>
                                 </div>
+                              </div>
+                              {eachNotification.notificationSender.imageUrl ? (
                                 <div
                                   style={{
-                                    display: "flex",
-                                    fontSize: "15px",
-                                    fontWeight: "400",
-                                    lineHeight: "20px",
+                                    height: "120px",
+                                    float: "left",
+                                    paddingTop: "10px",
                                   }}
                                 >
-                                  {" "}
                                   <Link
-                                    to={
-                                      !commentModalClicked
-                                        ? `/${eachNotification.notificationSender.username}/status/${eachNotification.isComment.commentPostId}`
-                                        : null
-                                    }
+                                    to={`/profile/${eachNotification.notificationSender._id}`}
                                     style={{
                                       textDecoration: "none",
                                       color:
@@ -540,552 +1058,464 @@ function NotificationsPage() {
                                           : "black",
                                     }}
                                   >
-                                    {eachNotification.isComment.comment}
+                                    {eachNotification.notificationSender.imageUrl?.slice(
+                                      0,
+                                      3
+                                    ) !== "../" ? (
+                                      <div>
+                                        <img
+                                          className="profile-img logout-profile-img"
+                                          src={
+                                            eachNotification.notificationSender
+                                              .imageUrl
+                                          }
+                                          width={40}
+                                          height={40}
+                                          alt=""
+                                          style={{
+                                            borderRadius: "50%",
+                                          }}
+                                        />
+                                      </div>
+                                    ) : (
+                                      <div>
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          width={40}
+                                          fill={
+                                            themeName === "dark-theme"
+                                              ? "#71767A"
+                                              : "rgb(83, 100, 113)"
+                                          }
+                                          className="profile-svg-logout-modal bi bi-person-circle"
+                                          viewBox="0 0 16 16"
+                                          style={{
+                                            borderRadius: "50%",
+                                          }}
+                                        >
+                                          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                          <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                        </svg>
+                                      </div>
+                                    )}
+                                    {/* <img
+                                      width={40}
+                                      height={40}
+                                      style={{
+                                        cursor: "pointer",
+                                        borderRadius: "50%",
+                                      }}
+                                      src={
+                                        eachNotification.notificationSender
+                                          .imageUrl
+                                      }
+                                      alt=""
+                                    /> */}
                                   </Link>
-                                </div>
-                              </div>
-                              <div
-                                className="post-actions-parent-div"
-                                // className="mt-5"
-                                style={{
-                                  marginTop: "25px",
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                }}
-                              >
-                                <div
-                                  className="comment-parent-div"
-                                  onClick={() => setCommentModalClicked(true)}
-                                >
-                                  {/* <svg
-                                    fill={
-                                      themeName === "dark-theme"
-                                        ? "#71767A"
-                                        : "rgb(83, 100, 113)"
-                                    }
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                  >
-                                    <g>
-                                      <path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"></path>
-                                    </g>
-                                  </svg> */}
-                                  <CommentModal
-                                    post={
-                                      eachNotification ? eachNotification : null
-                                    }
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    postSharedMessage={postSharedMessage}
-                                  />
-                                </div>
-                                <div>
-                                  <svg
-                                    fill={
-                                      themeName === "dark-theme"
-                                        ? "#71767A"
-                                        : "rgb(83, 100, 113)"
-                                    }
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                  >
-                                    <g>
-                                      <path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"></path>
-                                    </g>
-                                  </svg>
-                                </div>
-                                <div>
-                                  <svg
+                                  <div
                                     style={{
-                                      position: "relative",
-                                      right: "22px",
+                                      marginTop: "5px",
                                     }}
-                                    fill={
-                                      themeName === "dark-theme"
-                                        ? "#71767A"
-                                        : "rgb(83, 100, 113)"
-                                    }
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                                   >
-                                    <g>
-                                      <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
-                                    </g>
-                                  </svg>
+                                    <Link
+                                      to={`/profile/${eachNotification.notificationSender._id}`}
+                                      style={{
+                                        textDecoration: "none",
+                                        color:
+                                          themeName === "dark-theme"
+                                            ? "white"
+                                            : "black",
+                                      }}
+                                    >
+                                      <span
+                                        className="hover-fullname"
+                                        style={{
+                                          fontSize: "15px",
+                                          lineHeight: "20px",
+                                          fontWeight: "700",
+                                        }}
+                                      >
+                                        {
+                                          eachNotification.notificationSender
+                                            .username
+                                        }
+                                      </span>
+                                    </Link>
+                                    <span
+                                      style={{
+                                        fontSize: "15px",
+                                        lineHeight: "20px",
+                                        fontWeight: "400",
+                                        marginLeft: "5px",
+                                      }}
+                                    >
+                                      liked your post
+                                    </span>
+                                  </div>
+                                  <div
+                                    style={{
+                                      marginLeft: "-2px",
+                                      marginTop: "5px",
+                                      fontSize: "15px",
+                                      lineHeight: "20px",
+                                      fontWeight: "400",
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "#414345"
+                                          : "black",
+                                    }}
+                                  >
+                                    {eachNotification?.post?.content}
+                                  </div>
                                 </div>
-                              </div>
+                              ) : (
+                                <div
+                                  style={{
+                                    height: "120px",
+                                    float: "left",
+                                    paddingTop: "10px",
+                                  }}
+                                >
+                                  <Link
+                                    to={`/profile/${eachNotification.notificationSender._id}`}
+                                    style={{
+                                      textDecoration: "none",
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "white"
+                                          : "black",
+                                    }}
+                                  >
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      width={40}
+                                      height={40}
+                                      fill="rgb(83, 100, 113)"
+                                      className="bi bi-person-circle"
+                                      viewBox="0 0 16 16"
+                                      style={{
+                                        cursor: "pointer",
+                                        borderRadius: "50%",
+                                      }}
+                                    >
+                                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                      <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                    </svg>{" "}
+                                  </Link>
+                                  <div
+                                    style={{
+                                      marginTop: "5px",
+                                    }}
+                                  >
+                                    {" "}
+                                    <Link
+                                      to={`/profile/${eachNotification.notificationSender._id}`}
+                                      style={{
+                                        textDecoration: "none",
+                                        color:
+                                          themeName === "dark-theme"
+                                            ? "white"
+                                            : "black",
+                                      }}
+                                    >
+                                      <span
+                                        className="hover-fullname"
+                                        style={{
+                                          fontSize: "15px",
+                                          lineHeight: "20px",
+                                          fontWeight: "700",
+                                        }}
+                                      >
+                                        {
+                                          eachNotification.notificationSender
+                                            .username
+                                        }
+                                      </span>
+                                    </Link>
+                                    <span
+                                      style={{
+                                        fontSize: "15px",
+                                        lineHeight: "20px",
+                                        fontWeight: "400",
+                                        marginLeft: "5px",
+                                      }}
+                                    >
+                                      liked your post
+                                    </span>
+                                  </div>
+                                  <div
+                                    style={{
+                                      marginTop: "5px",
+                                      fontSize: "15px",
+                                      lineHeight: "20px",
+                                      fontWeight: "400",
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "#414345"
+                                          : "black",
+                                    }}
+                                  >
+                                    {eachNotification.post.content}
+                                  </div>
+                                </div>
+                              )}
                             </div>
-                          </div>
-                        </Link>
-                      ) : eachNotification.isFavorite.value ? (
-                        <Link
-                          to={`/${eachNotification?.post?.authorUserName}/status/${eachNotification?.post?._id}`}
-                          style={{
-                            textDecoration: "none",
-                            color:
-                              themeName === "dark-theme" ? "white" : "black",
-                          }}
-                        >
-                          <div
-                            className={`notification-is-favorite-box notification-is-favorite-box-${themeName}`}
+                          </Link>
+                        ) : eachNotification.isRepost.value ? (
+                          <Link
+                            to={`/${eachNotification?.post?.authorUserName}/status/${eachNotification?.post?._id}`}
                             style={{
-                              minHeight: "121px",
-                              borderTop:
-                                themeName === "dark-theme" &&
-                                allNotifications[0] === eachNotification &&
-                                eachNotification.isFavorite.value
-                                  ? "1px solid rgb(70, 70, 70)"
-                                  : themeName !== "dark-theme" &&
-                                    allNotifications[0] === eachNotification &&
-                                    eachNotification.isFavorite.value
-                                  ? "1px solid rgba(0, 0, 0, 0.1)"
-                                  : null,
-                              borderBottom:
-                                themeName === "dark-theme"
-                                  ? "1px solid rgb(70, 70, 70)"
-                                  : "1px solid rgba(0, 0, 0, 0.1)",
+                              textDecoration: "none",
+                              color:
+                                themeName === "dark-theme" ? "white" : "black",
                             }}
                           >
                             <div
+                              className={`notification-is-repost-box notification-is-repost-box-${themeName}`}
                               style={{
-                                float: "left",
-                                height: "120px",
-                                minWidth: "40px",
-                                padding: "12px",
+                                minHeight: "121px",
+                                borderTop:
+                                  themeName === "dark-theme" &&
+                                  allNotifications[0] === eachNotification &&
+                                  eachNotification.isRepost.value
+                                    ? "1px solid rgb(70, 70, 70)"
+                                    : themeName !== "dark-theme" &&
+                                      allNotifications[0] ===
+                                        eachNotification &&
+                                      eachNotification.isRepost.value
+                                    ? "1px solid rgba(0, 0, 0, 0.1)"
+                                    : null,
+                                borderBottom:
+                                  themeName === "dark-theme"
+                                    ? "1px solid rgb(70, 70, 70)"
+                                    : "1px solid rgba(0, 0, 0, 0.1)",
                               }}
                             >
-                              <div>
+                              <div
+                                style={{
+                                  float: "left",
+
+                                  height: "120px",
+                                  minWidth: "40px",
+                                  padding: "12px",
+                                }}
+                              >
                                 <svg
-                                  color="rgb(249, 24, 128)"
-                                  fill="currentColor"
                                   height={`${2}em`}
                                   width={`${2}em`}
+                                  color="rgb(0, 186, 124)"
+                                  fill="currentColor"
                                   viewBox="0 0 24 24"
                                   aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-vkub15 r-yucp9h"
+                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f r-yucp9h"
                                 >
                                   <g>
-                                    <path d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
+                                    <path d="M4.75 3.79l4.603 4.3-1.706 1.82L6 8.38v7.37c0 .97.784 1.75 1.75 1.75H13V20H7.75c-2.347 0-4.25-1.9-4.25-4.25V8.38L1.853 9.91.147 8.09l4.603-4.3zm11.5 2.71H11V4h5.25c2.347 0 4.25 1.9 4.25 4.25v7.37l1.647-1.53 1.706 1.82-4.603 4.3-4.603-4.3 1.706-1.82L18 15.62V8.25c0-.97-.784-1.75-1.75-1.75z"></path>
                                   </g>
                                 </svg>
                               </div>
+                              {eachNotification.notificationSender.imageUrl ? (
+                                <div
+                                  style={{
+                                    height: "120px",
+                                    float: "left",
+                                    paddingTop: "10px",
+                                  }}
+                                >
+                                  <Link
+                                    to={`/profile/${eachNotification.notificationSender._id}`}
+                                    style={{
+                                      textDecoration: "none",
+                                    }}
+                                  >
+                                    {eachNotification.notificationSender.imageUrl?.slice(
+                                      0,
+                                      3
+                                    ) !== "../" ? (
+                                      <div>
+                                        <img
+                                          className="profile-img logout-profile-img"
+                                          src={
+                                            eachNotification.notificationSender
+                                              .imageUrl
+                                          }
+                                          width={40}
+                                          height={40}
+                                          alt=""
+                                          style={{
+                                            borderRadius: "50%",
+                                          }}
+                                        />
+                                      </div>
+                                    ) : (
+                                      <div>
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          width={40}
+                                          fill={
+                                            themeName === "dark-theme"
+                                              ? "#71767A"
+                                              : "rgb(83, 100, 113)"
+                                          }
+                                          className="profile-svg-logout-modal bi bi-person-circle"
+                                          viewBox="0 0 16 16"
+                                          style={{
+                                            borderRadius: "50%",
+                                          }}
+                                        >
+                                          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                          <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                        </svg>
+                                      </div>
+                                    )}
+                                  </Link>
+                                  <div
+                                    style={{
+                                      marginTop: "5px",
+                                    }}
+                                  >
+                                    <Link
+                                      to={`/profile/${eachNotification.notificationSender._id}`}
+                                      style={{
+                                        textDecoration: "none",
+                                        color:
+                                          themeName === "dark-theme"
+                                            ? "white"
+                                            : "black",
+                                      }}
+                                    >
+                                      <span
+                                        className="hover-fullname"
+                                        style={{
+                                          fontSize: "15px",
+                                          lineHeight: "20px",
+                                          fontWeight: "700",
+                                        }}
+                                      >
+                                        {
+                                          eachNotification.notificationSender
+                                            .username
+                                        }
+                                      </span>
+                                    </Link>
+                                    <span
+                                      style={{
+                                        fontSize: "15px",
+                                        lineHeight: "20px",
+                                        fontWeight: "400",
+                                        marginLeft: "5px",
+                                      }}
+                                    >
+                                      reposted your post
+                                    </span>
+                                  </div>
+                                  <div
+                                    style={{
+                                      marginLeft: "-2px",
+                                      marginTop: "5px",
+                                      fontSize: "15px",
+                                      lineHeight: "20px",
+                                      fontWeight: "400",
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "#414345"
+                                          : "black",
+                                    }}
+                                  >
+                                    {eachNotification?.post?.content}
+                                  </div>
+                                </div>
+                              ) : (
+                                <div
+                                  style={{
+                                    height: "120px",
+                                    float: "left",
+                                    paddingTop: "10px",
+                                  }}
+                                >
+                                  <Link
+                                    to={`/profile/${eachNotification.notificationSender._id}`}
+                                    style={{
+                                      textDecoration: "none",
+                                    }}
+                                  >
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      width={40}
+                                      height={40}
+                                      fill="rgb(83, 100, 113)"
+                                      className="bi bi-person-circle"
+                                      viewBox="0 0 16 16"
+                                      style={{
+                                        cursor: "pointer",
+                                        borderRadius: "50%",
+                                      }}
+                                    >
+                                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                      <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                    </svg>{" "}
+                                  </Link>
+                                  <div
+                                    style={{
+                                      marginTop: "5px",
+                                    }}
+                                  >
+                                    <Link
+                                      to={`/profile/${eachNotification.notificationSender._id}`}
+                                      style={{
+                                        textDecoration: "none",
+                                        color:
+                                          themeName === "dark-theme"
+                                            ? "white"
+                                            : "black",
+                                      }}
+                                    >
+                                      <span
+                                        className="hover-fullname"
+                                        style={{
+                                          fontSize: "15px",
+                                          lineHeight: "20px",
+                                          fontWeight: "700",
+                                        }}
+                                      >
+                                        {
+                                          eachNotification.notificationSender
+                                            .username
+                                        }
+                                      </span>
+                                    </Link>
+                                    <span
+                                      style={{
+                                        fontSize: "15px",
+                                        lineHeight: "20px",
+                                        fontWeight: "400",
+                                        marginLeft: "5px",
+                                      }}
+                                    >
+                                      reposted your post
+                                    </span>
+                                  </div>
+                                  <div
+                                    style={{
+                                      marginTop: "5px",
+                                      fontSize: "15px",
+                                      lineHeight: "20px",
+                                      fontWeight: "400",
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "#414345"
+                                          : "black",
+                                    }}
+                                  >
+                                    {eachNotification.post.content}
+                                  </div>
+                                </div>
+                              )}
                             </div>
-                            {eachNotification.notificationSender.imageUrl ? (
-                              <div
-                                style={{
-                                  height: "120px",
-                                  float: "left",
-                                  paddingTop: "10px",
-                                }}
-                              >
-                                <Link
-                                  to={`/profile/${eachNotification.notificationSender._id}`}
-                                  style={{
-                                    textDecoration: "none",
-                                    color:
-                                      themeName === "dark-theme"
-                                        ? "white"
-                                        : "black",
-                                  }}
-                                >
-                                  <img
-                                    width={40}
-                                    height={40}
-                                    style={{
-                                      cursor: "pointer",
-                                      borderRadius: "50%",
-                                    }}
-                                    src={
-                                      eachNotification.notificationSender
-                                        .imageUrl
-                                    }
-                                    alt=""
-                                  />
-                                </Link>
-                                <div
-                                  style={{
-                                    marginTop: "5px",
-                                  }}
-                                >
-                                  <Link
-                                    to={`/profile/${eachNotification.notificationSender._id}`}
-                                    style={{
-                                      textDecoration: "none",
-                                      color:
-                                        themeName === "dark-theme"
-                                          ? "white"
-                                          : "black",
-                                    }}
-                                  >
-                                    <span
-                                      className="hover-fullname"
-                                      style={{
-                                        fontSize: "15px",
-                                        lineHeight: "20px",
-                                        fontWeight: "700",
-                                      }}
-                                    >
-                                      {
-                                        eachNotification.notificationSender
-                                          .username
-                                      }
-                                    </span>
-                                  </Link>
-                                  <span
-                                    style={{
-                                      fontSize: "15px",
-                                      lineHeight: "20px",
-                                      fontWeight: "400",
-                                      marginLeft: "5px",
-                                    }}
-                                  >
-                                    liked your post
-                                  </span>
-                                </div>
-                                <div
-                                  style={{
-                                    marginLeft: "-2px",
-                                    marginTop: "5px",
-                                    fontSize: "15px",
-                                    lineHeight: "20px",
-                                    fontWeight: "400",
-                                    color:
-                                      themeName === "dark-theme"
-                                        ? "#414345"
-                                        : "black",
-                                  }}
-                                >
-                                  {eachNotification?.post?.content}
-                                </div>
-                              </div>
-                            ) : (
-                              <div
-                                style={{
-                                  height: "120px",
-                                  float: "left",
-                                  paddingTop: "10px",
-                                }}
-                              >
-                                <Link
-                                  to={`/profile/${eachNotification.notificationSender._id}`}
-                                  style={{
-                                    textDecoration: "none",
-                                    color:
-                                      themeName === "dark-theme"
-                                        ? "white"
-                                        : "black",
-                                  }}
-                                >
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width={40}
-                                    height={40}
-                                    fill="rgb(83, 100, 113)"
-                                    className="bi bi-person-circle"
-                                    viewBox="0 0 16 16"
-                                    style={{
-                                      cursor: "pointer",
-                                      borderRadius: "50%",
-                                    }}
-                                  >
-                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                  </svg>{" "}
-                                </Link>
-                                <div
-                                  style={{
-                                    marginTop: "5px",
-                                  }}
-                                >
-                                  {" "}
-                                  <Link
-                                    to={`/profile/${eachNotification.notificationSender._id}`}
-                                    style={{
-                                      textDecoration: "none",
-                                      color:
-                                        themeName === "dark-theme"
-                                          ? "white"
-                                          : "black",
-                                    }}
-                                  >
-                                    <span
-                                      className="hover-fullname"
-                                      style={{
-                                        fontSize: "15px",
-                                        lineHeight: "20px",
-                                        fontWeight: "700",
-                                      }}
-                                    >
-                                      {
-                                        eachNotification.notificationSender
-                                          .username
-                                      }
-                                    </span>
-                                  </Link>
-                                  <span
-                                    style={{
-                                      fontSize: "15px",
-                                      lineHeight: "20px",
-                                      fontWeight: "400",
-                                      marginLeft: "5px",
-                                    }}
-                                  >
-                                    liked your post
-                                  </span>
-                                </div>
-                                <div
-                                  style={{
-                                    marginTop: "5px",
-                                    fontSize: "15px",
-                                    lineHeight: "20px",
-                                    fontWeight: "400",
-                                    color:
-                                      themeName === "dark-theme"
-                                        ? "#414345"
-                                        : "black",
-                                  }}
-                                >
-                                  {eachNotification.post.content}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </Link>
-                      ) : eachNotification.isRepost.value ? (
-                        <Link
-                          to={`/${eachNotification?.post?.authorUserName}/status/${eachNotification?.post?._id}`}
-                          style={{
-                            textDecoration: "none",
-                            color:
-                              themeName === "dark-theme" ? "white" : "black",
-                          }}
-                        >
-                          <div
-                            className={`notification-is-repost-box notification-is-repost-box-${themeName}`}
-                            style={{
-                              minHeight: "121px",
-                              borderTop:
-                                themeName === "dark-theme" &&
-                                allNotifications[0] === eachNotification &&
-                                eachNotification.isRepost.value
-                                  ? "1px solid rgb(70, 70, 70)"
-                                  : themeName !== "dark-theme" &&
-                                    allNotifications[0] === eachNotification &&
-                                    eachNotification.isRepost.value
-                                  ? "1px solid rgba(0, 0, 0, 0.1)"
-                                  : null,
-                              borderBottom:
-                                themeName === "dark-theme"
-                                  ? "1px solid rgb(70, 70, 70)"
-                                  : "1px solid rgba(0, 0, 0, 0.1)",
-                            }}
-                          >
-                            <div
-                              style={{
-                                float: "left",
-
-                                height: "120px",
-                                minWidth: "40px",
-                                padding: "12px",
-                              }}
-                            >
-                              <svg
-                                height={`${2}em`}
-                                width={`${2}em`}
-                                color="rgb(0, 186, 124)"
-                                fill="currentColor"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-o6sn0f r-yucp9h"
-                              >
-                                <g>
-                                  <path d="M4.75 3.79l4.603 4.3-1.706 1.82L6 8.38v7.37c0 .97.784 1.75 1.75 1.75H13V20H7.75c-2.347 0-4.25-1.9-4.25-4.25V8.38L1.853 9.91.147 8.09l4.603-4.3zm11.5 2.71H11V4h5.25c2.347 0 4.25 1.9 4.25 4.25v7.37l1.647-1.53 1.706 1.82-4.603 4.3-4.603-4.3 1.706-1.82L18 15.62V8.25c0-.97-.784-1.75-1.75-1.75z"></path>
-                                </g>
-                              </svg>
-                            </div>
-                            {eachNotification.notificationSender.imageUrl ? (
-                              <div
-                                style={{
-                                  height: "120px",
-                                  float: "left",
-                                  paddingTop: "10px",
-                                }}
-                              >
-                                <Link
-                                  to={`/profile/${eachNotification.notificationSender._id}`}
-                                  style={{
-                                    textDecoration: "none",
-                                  }}
-                                >
-                                  <img
-                                    width={40}
-                                    height={40}
-                                    style={{
-                                      cursor: "pointer",
-                                      borderRadius: "50%",
-                                    }}
-                                    src={
-                                      eachNotification.notificationSender
-                                        .imageUrl
-                                    }
-                                    alt=""
-                                  />
-                                </Link>
-                                <div
-                                  style={{
-                                    marginTop: "5px",
-                                  }}
-                                >
-                                  <Link
-                                    to={`/profile/${eachNotification.notificationSender._id}`}
-                                    style={{
-                                      textDecoration: "none",
-                                      color:
-                                        themeName === "dark-theme"
-                                          ? "white"
-                                          : "black",
-                                    }}
-                                  >
-                                    <span
-                                      className="hover-fullname"
-                                      style={{
-                                        fontSize: "15px",
-                                        lineHeight: "20px",
-                                        fontWeight: "700",
-                                      }}
-                                    >
-                                      {
-                                        eachNotification.notificationSender
-                                          .username
-                                      }
-                                    </span>
-                                  </Link>
-                                  <span
-                                    style={{
-                                      fontSize: "15px",
-                                      lineHeight: "20px",
-                                      fontWeight: "400",
-                                      marginLeft: "5px",
-                                    }}
-                                  >
-                                    reposted your post
-                                  </span>
-                                </div>
-                                <div
-                                  style={{
-                                    marginLeft: "-2px",
-                                    marginTop: "5px",
-                                    fontSize: "15px",
-                                    lineHeight: "20px",
-                                    fontWeight: "400",
-                                    color:
-                                      themeName === "dark-theme"
-                                        ? "#414345"
-                                        : "black",
-                                  }}
-                                >
-                                  {eachNotification?.post?.content}
-                                </div>
-                              </div>
-                            ) : (
-                              <div
-                                style={{
-                                  height: "120px",
-                                  float: "left",
-                                  paddingTop: "10px",
-                                }}
-                              >
-                                <Link
-                                  to={`/profile/${eachNotification.notificationSender._id}`}
-                                  style={{
-                                    textDecoration: "none",
-                                  }}
-                                >
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width={40}
-                                    height={40}
-                                    fill="rgb(83, 100, 113)"
-                                    className="bi bi-person-circle"
-                                    viewBox="0 0 16 16"
-                                    style={{
-                                      cursor: "pointer",
-                                      borderRadius: "50%",
-                                    }}
-                                  >
-                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                  </svg>{" "}
-                                </Link>
-                                <div
-                                  style={{
-                                    marginTop: "5px",
-                                  }}
-                                >
-                                  <Link
-                                    to={`/profile/${eachNotification.notificationSender._id}`}
-                                    style={{
-                                      textDecoration: "none",
-                                      color:
-                                        themeName === "dark-theme"
-                                          ? "white"
-                                          : "black",
-                                    }}
-                                  >
-                                    <span
-                                      className="hover-fullname"
-                                      style={{
-                                        fontSize: "15px",
-                                        lineHeight: "20px",
-                                        fontWeight: "700",
-                                      }}
-                                    >
-                                      {
-                                        eachNotification.notificationSender
-                                          .username
-                                      }
-                                    </span>
-                                  </Link>
-                                  <span
-                                    style={{
-                                      fontSize: "15px",
-                                      lineHeight: "20px",
-                                      fontWeight: "400",
-                                      marginLeft: "5px",
-                                    }}
-                                  >
-                                    reposted your post
-                                  </span>
-                                </div>
-                                <div
-                                  style={{
-                                    marginTop: "5px",
-                                    fontSize: "15px",
-                                    lineHeight: "20px",
-                                    fontWeight: "400",
-                                    color:
-                                      themeName === "dark-theme"
-                                        ? "#414345"
-                                        : "black",
-                                  }}
-                                >
-                                  {eachNotification.post.content}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </Link>
-                      ) : null}
-                    </div>
+                          </Link>
+                        ) : null}
+                      </div>
+                    </>
                   );
                 })}
               </div>

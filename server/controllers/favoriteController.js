@@ -19,6 +19,20 @@ const handleGetFavorites = (req, res) => {
         model: "User",
       },
     })
+    .populate({
+      path: "favorites",
+      populate: {
+        path: "likes",
+        model: "User",
+      },
+    })
+    .populate({
+      path: "favorites",
+      populate: {
+        path: "reposted",
+        model: "User",
+      },
+    })
     .then((userFromDataBase) => {
       console.log(
         "All the favorites from data base for spesific user =>",
@@ -103,6 +117,8 @@ const handleAddFavorite = (req, res) => {
           post.likes.unshift(user);
           post.save();
           user.favorites.unshift(post);
+
+          console.log("Now we are creating favorite !!! first");
           Favorite.create({
             userId: userId,
             postId: postId,
@@ -133,6 +149,8 @@ const handleAddFavorite = (req, res) => {
               post.likes.unshift(user);
               post.save();
               user.favorites.unshift(post);
+              console.log("Now we are creating favorite !!! second");
+
               Favorite.create({
                 userId: userId,
                 postId: postId,
@@ -163,6 +181,8 @@ const handleAddFavorite = (req, res) => {
               post.likes.unshift(user);
               post.save();
               user.favorites.unshift(originalPost[0]);
+              console.log("Now we are creating favorite !!! third");
+
               Favorite.create({
                 userId: userId,
                 postId: postId,
