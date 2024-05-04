@@ -965,7 +965,7 @@ span > a:hover {
     Roboto, Helvetica, Arial, sans-serif;
   line-height: 20px;
   cursor: pointer;
-  margin-left: 10px;
+  margin-left: -3px !important;
 }
 
 .emptyContent {
@@ -3679,4 +3679,40 @@ input[data-autocompleted] {
 .reset-password-btn:hover {
   background-color: #198cd8 !important;
   transition-duration: 0.2s !important;
+}
+
+/* start to check post description  */
+
+.animated-heart {
+  aspect-ratio: 1;
+  animation: heartBeat 0.5s linear;
+}
+
+@keyframes heartBeat {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  40% {
+    transform: scale(0.4);
+  }
+  60% {
+    transform: scale(0.6);
+  }
+  70% {
+    transform: scale(1);
+  }
+  80% {
+    transform: scale(1);
+  }
+  90% {
+    transform: scale(0.8);
+  }
+  100% {
+    transform: scale(1);
+  }
 }

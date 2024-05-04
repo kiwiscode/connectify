@@ -436,6 +436,8 @@ function MessagesPage() {
               style={{
                 color: "white",
                 marginLeft: "5px",
+                fontWeight: "700",
+                fontSize: "15px",
               }}
             >
               View
@@ -706,32 +708,26 @@ function MessagesPage() {
         console.log("Error =>", error);
       });
   };
+  const [postModalOpenedFromLeftSide, setPostModalOpenedFromLeftSide] =
+    useState(false);
 
-  const checkIfReadedLocally = () => {
-    const localeInfo = JSON.parse(localStorage.getItem("userInfo"));
-
-    if (localeInfo && localeInfo.messages) {
-      const unreadMessages = localeInfo.messages.filter(
-        (message) => !message.readed
-      );
-
-      const unreadRoomNames = unreadMessages.map((message) => message.room);
-
-      console.log("Readed özelliği false olan room isimleri:", unreadRoomNames);
-
-      return unreadRoomNames;
-    } else {
-      console.log("localeInfo bulunamadı veya messages dizisi yok.");
-      return [];
-    }
+  const handleCallBackForModalOpenedStateFromChild = (childData) => {
+    console.log("Child data received from child => ", childData);
+    setPostModalOpenedFromLeftSide(childData);
   };
-
-  console.log(checkIfReadedLocally());
-
   const { height, width } = useWindowDimensions();
   return (
     <>
-      <Modal show={show} onHide={handleClose}>
+      <Modal
+        backdropClassName={
+          themeName === "dark-theme" ? `back-drop-${themeName}` : ""
+        }
+        centered
+        show={show}
+        onHide={handleClose}
+        dialogClassName={width <= 700 ? "modal-fullscreen" : ""}
+        contentClassName=""
+      >
         <Modal.Header
           closeButton={false} // closeButton'u devre dışı bırak
           style={{
@@ -739,7 +735,7 @@ function MessagesPage() {
           }}
         >
           <div
-            className="close-button"
+            className={`close-button close-button-${themeName}`}
             style={{ borderRadius: "50%", cursor: "pointer" }}
           >
             <div>
@@ -752,8 +748,7 @@ function MessagesPage() {
                 onClick={handleClose}
                 width={20}
                 height={20}
-                color="rgb(15,20,25)"
-                fill="currentColor"
+                fill={themeName === "dark-theme" ? "white" : "black"}
                 viewBox="0 0 24 24"
                 aria-hidden="true"
                 className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
@@ -768,6 +763,10 @@ function MessagesPage() {
             style={{
               position: "relative",
               marginLeft: "25px",
+              fontWeight: "700",
+              fontSize: "20px",
+              lineHeight: "24px",
+              color: themeName === "dark-theme" ? "white" : "black",
             }}
           >
             New message
@@ -781,6 +780,7 @@ function MessagesPage() {
               value={searchString}
               onChange={handleSearchTermChange}
               style={{
+                color: themeName === "dark-theme" ? "white" : "black",
                 fontSize: "14px",
                 width: "100%",
                 outline: "none",
@@ -896,8 +896,7 @@ function MessagesPage() {
 
       {contextHolder}
       <ToastContainer theme={themeName === "dark-theme" ? "dark" : "light"} />
-
-      <ResponsiveNavigationBarBottom />
+      {!postModalOpenedFromLeftSide && <ResponsiveNavigationBarBottom />}
       <Container
         style={{
           overflowX: "hidden",
@@ -918,6 +917,7 @@ function MessagesPage() {
             setLoadingTrue={() => setLoadingTrue()}
             setLoadingFalse={() => setLoadingFalse()}
             parentCallBack={handleCallback}
+            parentCallBackSecond={handleCallBackForModalOpenedStateFromChild}
           />
 
           {/* finish to check left bar column */}
@@ -1023,7 +1023,7 @@ function MessagesPage() {
 
               {/* create message icon start to check  */}
 
-              <CreateChat writeMessageButton={false} />
+              <CreateChat />
 
               {/* create message icon finish to check  */}
             </Stack>
@@ -1211,7 +1211,12 @@ function MessagesPage() {
                                                         xmlns="http://www.w3.org/2000/svg"
                                                         width="40"
                                                         height="40"
-                                                        fill="rgb(83, 100, 113)"
+                                                        fill={
+                                                          themeName ===
+                                                          "dark-theme"
+                                                            ? "#71767A"
+                                                            : "rgb(83, 100, 113)"
+                                                        }
                                                         className="bi bi-person-circle"
                                                         viewBox="0 0 16 16"
                                                         style={{
@@ -1323,7 +1328,6 @@ function MessagesPage() {
                                                 </span>
                                               </div>
                                             </div>
-                                            {/* <div className="p-0 ms-auto">asd</div> */}
 
                                             <div
                                               style={{
@@ -1375,11 +1379,7 @@ function MessagesPage() {
                                                     borderRadius: "50%",
                                                   }}
                                                 >
-                                                  {checkIfReadedLocally(
-                                                    eachMessageRoom
-                                                  )?.includes(
-                                                    eachMessageRoom?.room
-                                                  ) && (
+                                                  {!eachMessageRoom.readed && (
                                                     <div
                                                       style={{
                                                         position: "absolute",
@@ -1446,56 +1446,7 @@ function MessagesPage() {
                     ))}
                   </div>
                 ) : (
-                  <>
-                    <div style={{ textAlign: "left", padding: "16px" }}>
-                      <div
-                        style={{
-                          lineHeight: "36px",
-                          fontSize: "31px",
-                          fontWeight: "800",
-                          margin: "10px",
-                        }}
-                      >
-                        Welcome to your inbox!
-                      </div>
-                      <div
-                        style={{
-                          color:
-                            themeName === "dark-theme"
-                              ? "#71767A"
-                              : "rgb(83, 100, 113)",
-                          lineHeight: "20px",
-                          fontSize: "15px",
-                          fontWeight: "400",
-                          margin: "10px",
-                        }}
-                      >
-                        Drop a line, share posts and more with private
-                        conversations between you and others on Connectify.
-                      </div>
-                      <button
-                        className="write-a-message-message-page-btn"
-                        style={{
-                          color: "white",
-                          backgroundColor: "rgb(29,155,240)",
-                          margin: "10px",
-                          borderStyle: "none",
-                          borderRadius: "9999px",
-                          minWidth: "52px",
-                          outlineStyle: "none",
-                          cursor: "pointer",
-                          minHeight: "52px",
-                          paddingLeft: "32px",
-                          paddingRight: "32px",
-                          fontWeight: "700",
-                          fontSize: "15px",
-                        }}
-                        onClick={handleShow}
-                      >
-                        Write a message
-                      </button>
-                    </div>
-                  </>
+                  <CreateChat messagesPageWriteAmESSAGEoPTION={true} />
                 )}
               </>
             ) : messagesLoadingbar ? (
@@ -1511,55 +1462,7 @@ function MessagesPage() {
                 </div>
               </div>
             ) : !messageRooms.length ? (
-              <div style={{ textAlign: "left", padding: "16px" }}>
-                <div
-                  style={{
-                    lineHeight: "36px",
-                    fontSize: "31px",
-                    fontWeight: "800",
-                    margin: "10px",
-                  }}
-                >
-                  Welcome to your inbox!
-                </div>
-                <div
-                  style={{
-                    color:
-                      themeName === "dark-theme"
-                        ? "#71767A"
-                        : "rgb(83, 100, 113)",
-
-                    lineHeight: "20px",
-                    fontSize: "15px",
-                    fontWeight: "400",
-                    margin: "10px",
-                  }}
-                >
-                  Drop a line, share posts and more with private conversations
-                  between you and others on Connectify.
-                </div>
-                <button
-                  className="write-a-message-message-page-btn"
-                  style={{
-                    color: "white",
-                    backgroundColor: "rgb(29,155,240)",
-                    margin: "10px",
-                    borderStyle: "none",
-                    borderRadius: "9999px",
-                    minWidth: "52px",
-                    outlineStyle: "none",
-                    cursor: "pointer",
-                    minHeight: "52px",
-                    paddingLeft: "32px",
-                    paddingRight: "32px",
-                    fontWeight: "700",
-                    fontSize: "15px",
-                  }}
-                  onClick={handleShow}
-                >
-                  Write a message
-                </button>
-              </div>
+              <CreateChat messagesPageWriteAmESSAGEoPTION={true} />
             ) : null}
           </Col>
           {/* finish to check main column  */}

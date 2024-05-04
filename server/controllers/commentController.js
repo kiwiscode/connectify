@@ -404,11 +404,11 @@ const addComment = (req, res) => {
                               postId: post.repostedFromThisOriginalPost[0]._id,
                             })
                               .then((findedComment) => {
-                                findedComment[0].comments.unshift(
+                                findedComment[0]?.comments.unshift(
                                   newCreatedComment._id.toString()
                                 );
 
-                                findedComment[0].save();
+                                findedComment[0]?.save();
                               })
                               .catch((error) => {
                                 console.log("ERROR =>", error);

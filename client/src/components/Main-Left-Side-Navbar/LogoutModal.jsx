@@ -1081,8 +1081,6 @@ function LogoutModal({ isLogoutActionActive }) {
     }
   };
 
-  console.log("Is valid password =>", isValidPassword);
-
   const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} classes={{ popper: className }} />
   ))(({ theme }) => ({
@@ -2395,8 +2393,9 @@ function LogoutModal({ isLogoutActionActive }) {
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width={40}
-                  height={40}
-                  fill="rgb(83, 100, 113)"
+                  fill={
+                    themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)"
+                  }
                   className="profile-svg-logout-modal bi bi-person-circle"
                   viewBox="0 0 16 16"
                   style={{
@@ -3974,15 +3973,40 @@ function LogoutModal({ isLogoutActionActive }) {
                   padding: "16px",
                 }}
               >
-                <img
-                  style={{
-                    borderRadius: "50%",
-                  }}
-                  width={48}
-                  height={48}
-                  src={`${userInfo.imageUrl}`}
-                  alt=""
-                />
+                {userInfo?.imageUrl?.slice(0, 3) !== "../" ? (
+                  <div>
+                    <img
+                      className="profile-img logout-profile-img"
+                      src={userInfo?.imageUrl}
+                      width={40}
+                      height={40}
+                      alt=""
+                      style={{
+                        borderRadius: "50%",
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width={40}
+                      fill={
+                        themeName === "dark-theme"
+                          ? "#71767A"
+                          : "rgb(83, 100, 113)"
+                      }
+                      className="profile-svg-logout-modal bi bi-person-circle"
+                      viewBox="0 0 16 16"
+                      style={{
+                        borderRadius: "50%",
+                      }}
+                    >
+                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                      <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                    </svg>
+                  </div>
+                )}
                 <div
                   style={{
                     marginLeft: "10px",
@@ -4330,15 +4354,40 @@ function LogoutModal({ isLogoutActionActive }) {
                     width: "100%",
                   }}
                 >
-                  <img
-                    style={{
-                      borderRadius: "50%",
-                    }}
-                    width={48}
-                    height={48}
-                    src={`${userInfo.imageUrl}`}
-                    alt=""
-                  />
+                  {userInfo?.imageUrl?.slice(0, 3) !== "../" ? (
+                    <div>
+                      <img
+                        className="profile-img logout-profile-img"
+                        src={userInfo?.imageUrl}
+                        width={40}
+                        height={40}
+                        alt=""
+                        style={{
+                          borderRadius: "50%",
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={40}
+                        fill={
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)"
+                        }
+                        className="profile-svg-logout-modal bi bi-person-circle"
+                        viewBox="0 0 16 16"
+                        style={{
+                          borderRadius: "50%",
+                        }}
+                      >
+                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                        <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                      </svg>
+                    </div>
+                  )}
                   <div
                     style={{
                       marginLeft: "10px",

@@ -61,6 +61,15 @@ const handleProfile = (req, res) => {
         model: "User",
       },
     })
+    .populate({
+      path: "posts",
+      populate: {
+        path: "likes",
+        model: "User",
+      },
+    })
+    // .populate("likes")
+
     // finish to check
     // .populate("posts")
     .then((user) => {
@@ -128,9 +137,23 @@ const handleShowSpesificProfile = (req, res) => {
       },
     })
     .populate({
+      path: "posts",
+      populate: {
+        path: "likes",
+        model: "User",
+      },
+    })
+    .populate({
       path: "favorites",
       populate: {
         path: "userId",
+        model: "User",
+      },
+    })
+    .populate({
+      path: "favorites",
+      populate: {
+        path: "likes",
         model: "User",
       },
     })
@@ -148,6 +171,7 @@ const handleShowSpesificProfile = (req, res) => {
         model: "User",
       },
     })
+
     // finish to check
     // .populate("posts")
     .then((response) => {
@@ -255,6 +279,7 @@ const handlecreateChatSpesificUserInformations = (req, res) => {
     .populate("favorites")
     .populate("posts")
     .populate("messages")
+
     .then((user) => {
       console.log(
         "User ready to get current message room id =>",

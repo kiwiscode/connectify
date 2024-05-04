@@ -202,7 +202,20 @@ const handleDeletePost = (req, res) => {
                           notifiedUser.notifications.indexOf(notification);
 
                         notifiedUser.notifications.splice(notificationIndex, 1);
-                        notifiedUser.save();
+
+                        notifiedUser
+                          .updateOne({
+                            notifications: notifiedUser.notifications,
+                          })
+                          .then(() => {
+                            console.log("Notifications updated successfully.");
+                          })
+                          .catch((error) => {
+                            console.error(
+                              "Error updating notifications:",
+                              error
+                            );
+                          });
                       })
                       .catch(() => {
                         const notification = notifiedUser.notifications.find(
@@ -221,8 +234,24 @@ const handleDeletePost = (req, res) => {
                           notifiedUser.notifications.indexOf(notification);
 
                         notifiedUser.notifications.splice(notificationIndex, 1);
-                        notifiedUser.save();
+
+                        notifiedUser
+                          .updateOne({
+                            notifications: notifiedUser.notifications,
+                          })
+                          .then(() => {
+                            console.log(
+                              "Notifications updated successfully 2."
+                            );
+                          })
+                          .catch((error) => {
+                            console.error(
+                              "Error updating notifications:",
+                              error
+                            );
+                          });
                       });
+
                     // belki doesRepostedLength olabilir check et finish to check
                   } else {
                   }

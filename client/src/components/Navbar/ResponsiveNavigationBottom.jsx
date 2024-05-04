@@ -49,6 +49,8 @@ function ResponsiveNavigationBarBottom({
               style={{
                 color: "white",
                 marginLeft: "5px",
+                fontWeight: "700",
+                fontSize: "15px",
               }}
             >
               View

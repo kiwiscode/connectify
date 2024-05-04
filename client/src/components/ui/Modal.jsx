@@ -151,7 +151,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
         authentication: loginInput,
       })
       .then((response) => {
-        console.log("Response =>", response);
+        console.log("Response user logged in =>", response);
         const { token, user } = response.data;
         if (response.status === 201) {
           setTabLoading(true);
@@ -1182,7 +1182,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               >
                                 <div
                                   style={{
-                                    cursor: "pointer",
                                     color:
                                       themeName === "dark-theme"
                                         ? "#71767A                                  "
@@ -1196,14 +1195,16 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 >
                                   <span>
                                     Don&apos;t have an account?{" "}
-                                    <a
+                                    <span
+                                      className="hover-blue-underline"
+                                      onClick={handleCloseLoginModal}
                                       style={{
                                         cursor: "pointer",
+                                        color: "#1C9BEF",
                                       }}
-                                      href=""
                                     >
                                       Sign up
-                                    </a>
+                                    </span>
                                   </span>
                                 </div>
                               </div>
@@ -2853,7 +2854,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   />
                                 </FormControl>
                                 <div
-                                  className="forgot-password-login-variant-one-screen"
                                   onClick={() => {
                                     setTabLoading(true);
                                     setTimeout(() => {
@@ -2864,7 +2864,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                     }, 500);
                                   }}
                                   style={{
-                                    cursor: "pointer",
                                     position: "relative",
                                     left: "10px",
                                     bottom: "5px",
@@ -2875,7 +2874,14 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                     lineHeight: "16px",
                                   }}
                                 >
-                                  Forgot password?
+                                  <span
+                                    className="forgot-password-login-variant-one-screen"
+                                    style={{
+                                      cursor: "pointer",
+                                    }}
+                                  >
+                                    Forgot password?
+                                  </span>
                                 </div>
 
                                 <Button
@@ -2909,21 +2915,18 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                     // height: "52px",
                                   }}
                                 >
-                                  {"Don't have an account?"}
-                                  <span
-                                    onClick={() => {
-                                      navigate("/");
-                                    }}
-                                    className="sign-up-link-login-variant-one"
-                                    style={{
-                                      cursor: "pointer",
-                                      fontSize: "15px",
-                                      fontWeight: "400",
-                                      lineHeight: "20px",
-                                      color: "rgb(29, 155, 240)",
-                                    }}
-                                  >
-                                    <a href="">Sign up</a>
+                                  <span>
+                                    Don&apos;t have an account?{" "}
+                                    <span
+                                      className="hover-blue-underline"
+                                      onClick={handleCloseLoginModal}
+                                      style={{
+                                        cursor: "pointer",
+                                        color: "#1C9BEF",
+                                      }}
+                                    >
+                                      Sign up
+                                    </span>
                                   </span>
                                 </div>
                               </Modal.Body>
@@ -4869,7 +4872,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 />
                               </FormControl>
                               <div
-                                className="forgot-password-login-variant-one-screen"
                                 onClick={() => {
                                   setTabLoading(true);
                                   setTimeout(() => {
@@ -4880,7 +4882,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   }, 500);
                                 }}
                                 style={{
-                                  cursor: "pointer",
                                   position: "relative",
                                   left: "10px",
                                   bottom: "5px",
@@ -4891,7 +4892,14 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   lineHeight: "16px",
                                 }}
                               >
-                                Forgot password?
+                                <span
+                                  className="forgot-password-login-variant-one-screen"
+                                  style={{
+                                    cursor: "pointer",
+                                  }}
+                                >
+                                  Forgot password?
+                                </span>
                               </div>
 
                               <Button
@@ -4925,21 +4933,18 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   // height: "52px",
                                 }}
                               >
-                                {"Don't have an account? "}
-                                <span
-                                  onClick={() => {
-                                    navigate("/");
-                                  }}
-                                  className="sign-up-link-login-variant-one"
-                                  style={{
-                                    cursor: "pointer",
-                                    fontSize: "15px",
-                                    fontWeight: "400",
-                                    lineHeight: "20px",
-                                    color: "rgb(29, 155, 240)",
-                                  }}
-                                >
-                                  <a href="">Sign up</a>
+                                <span>
+                                  Don&apos;t have an account?{" "}
+                                  <span
+                                    className="hover-blue-underline"
+                                    onClick={handleCloseLoginModal}
+                                    style={{
+                                      color: "#1C9BEF",
+                                      cursor: "pointer",
+                                    }}
+                                  >
+                                    Sign up
+                                  </span>
                                 </span>
                               </div>
                             </Modal.Body>
@@ -5221,40 +5226,85 @@ function CommentModal({
     };
   }, []);
 
+  const [commentIconHovered, setCommentIconHovered] = useState(null);
+
   return (
     <>
-      <div>
-        <svg
+      <div
+        style={{
+          width: "100px",
+        }}
+      >
+        <span
           onClick={handleShow}
-          width={width}
-          height={height}
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-          className="bi bi-chat r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-          fill={themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)"}
+          style={{
+            cursor: "pointer",
+            minWidth: "34px",
+            minHeight: "34px",
+            display: "inline-flex",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: "50%",
+            backgroundColor:
+              commentIconHovered && themeName !== "dark-theme"
+                ? "#e4eef7"
+                : commentIconHovered && themeName === "dark-theme"
+                ? "#1e3140"
+                : null,
+          }}
+          onMouseEnter={() => setCommentIconHovered(true)}
+          onMouseLeave={() => setCommentIconHovered(false)}
         >
-          <g>
-            <path
-              stroke={
-                isImagePostDetail
-                  ? "white"
-                  : themeName === "dark-theme"
-                  ? "#71767A"
-                  : "rgb(83, 100, 113)"
-              }
-              strokeWidth="0.1"
-              d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"
-            ></path>
-          </g>
-        </svg>
+          <svg
+            style={{}}
+            width={width}
+            height={height}
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            className="bi bi-chat r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+            fill={
+              themeName === "dark-theme" && !commentIconHovered
+                ? "#71767A"
+                : themeName !== "dark-theme" && !commentIconHovered
+                ? "rgb(83, 100, 113)"
+                : themeName === "dark-theme" && commentIconHovered
+                ? "#1d9aee"
+                : themeName !== "dark-theme" && commentIconHovered
+                ? "#1c94e4"
+                : null
+            }
+          >
+            <g>
+              <path
+                stroke={
+                  isImagePostDetail
+                    ? "white"
+                    : themeName === "dark-theme"
+                    ? "#71767A"
+                    : "rgb(83, 100, 113)"
+                }
+                strokeWidth="0.1"
+                d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"
+              ></path>
+            </g>
+          </svg>
+        </span>
         <span
           className="post-description"
           style={{
             color: isImagePostDetail
               ? "white"
-              : themeName === "dark-theme"
+              : themeName === "dark-theme" && !commentIconHovered
               ? "#71767A"
-              : "rgb(83, 100, 113)",
+              : themeName !== "dark-theme" && !commentIconHovered
+              ? "rgb(83, 100, 113)"
+              : themeName === "dark-theme" && commentIconHovered
+              ? "#1d9aee"
+              : themeName !== "dark-theme" && commentIconHovered
+              ? "#1c94e4"
+              : null,
+            position: "relative",
+            bottom: "5px",
           }}
         >
           {post.comments && post.comments.length ? (
@@ -5335,11 +5385,11 @@ function CommentModal({
                 <div>
                   {post.userId ? (
                     <>
-                      {post.userId.imageUrl.slice(0, 3) !== "../" ? (
+                      {post.userId?.imageUrl?.slice(0, 3) !== "../" ? (
                         <img
                           width={40}
                           height={40}
-                          src={post.userId.imageUrl}
+                          src={post.userId?.imageUrl}
                           alt=""
                           style={{
                             borderRadius: "50%",
@@ -5350,7 +5400,11 @@ function CommentModal({
                           xmlns="http://www.w3.org/2000/svg"
                           width="40"
                           height="40"
-                          fill="rgb(83, 100, 113)"
+                          fill={
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)"
+                          }
                           className="bi bi-person-circle"
                           viewBox="0 0 16 16"
                           style={{
@@ -5691,7 +5745,11 @@ function CommentModal({
                           xmlns="http://www.w3.org/2000/svg"
                           width="40"
                           height="40"
-                          fill="rgb(83, 100, 113)"
+                          fill={
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)"
+                          }
                           className="bi bi-person-circle"
                           viewBox="0 0 16 16"
                           style={{
@@ -5708,7 +5766,11 @@ function CommentModal({
                       xmlns="http://www.w3.org/2000/svg"
                       width="40"
                       height="40"
-                      fill="rgb(83, 100, 113)"
+                      fill={
+                        themeName === "dark-theme"
+                          ? "#71767A"
+                          : "rgb(83, 100, 113)"
+                      }
                       className="bi bi-person-circle"
                       viewBox="0 0 16 16"
                     >

@@ -22,7 +22,7 @@ let isVariantOneResultRouteSuccess = false;
 router.post("/login-variant-one-result", (req, res) => {
   const { authentication } = req.body;
   isVariantOneResultRouteSuccess = true;
-  console.log("Authentication =>", authentication);
+  console.log("Authentication login variant one result =>", authentication);
   console.log(
     "Variant one route akıbeti result route içerisi =>",
     isVariantOneResultRouteSuccess
@@ -45,8 +45,9 @@ router.post("/login-variant-one-result", (req, res) => {
     .populate("followers")
     .populate("following")
     .populate("favorites")
-    .populate("messages")
     .populate("subscriptions")
+    .populate("messages")
+
     .then((user) => {
       console.log("User =>", user.username);
       console.log("User password =>", passwordFromReqBody);
@@ -55,9 +56,7 @@ router.post("/login-variant-one-result", (req, res) => {
         .then((result) => {
           console.log("Result =>", result);
           if (!result) {
-            res
-              .status(501)
-              .json({ errorMessage: "Wrong password!            " });
+            res.status(501).json({ errorMessage: "Wrong password!" });
           } else {
             if (user.isDeactivated) {
               console.log("Deactivated user is here !");

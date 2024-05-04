@@ -202,7 +202,6 @@ function RightSideColumn({
         },
       })
       .then((response) => {
-        console.log("User refresh active => ", response);
         setUser(response.data.user);
       })
       .catch((error) => {
@@ -227,8 +226,6 @@ function RightSideColumn({
       return eachFollowedUser._id;
     });
   };
-
-  console.log("User following =>", allFollowingsFromActiveUser());
 
   const [showUnfollowModal, setshowUnfollowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState("");
@@ -1287,8 +1284,6 @@ function RightSideColumn({
 
   const [boxHoveredIndividual, setBoxHoveredIndividual] = useState(false);
   const [boxHoveredOrganization, setBoxHoveredOrganization] = useState(false);
-
-  console.log("Email correct =>", emailRegex.test("aykt-kav@gmailcom"));
 
   return (
     <>
@@ -16929,7 +16924,11 @@ function RightSideColumn({
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="40"
                                 height="40"
-                                fill="rgb(83, 100, 113)"
+                                fill={
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "rgb(83, 100, 113)"
+                                }
                                 className="bi bi-person-circle"
                                 viewBox="0 0 16 16"
                               >
@@ -17294,9 +17293,8 @@ function RightSideColumn({
                     const isFollowing = allFollowingsFromActiveUser()?.includes(
                       eachUser._id
                     );
-                    console.log("Is following =>", isFollowing);
                     if (isFollowing) {
-                      console.log("Following this user =>", eachUser);
+                      null;
                     }
                     return (
                       <>
@@ -17350,7 +17348,11 @@ function RightSideColumn({
                                           xmlns="http://www.w3.org/2000/svg"
                                           width="40"
                                           height="40"
-                                          fill="rgb(83, 100, 113)"
+                                          fill={
+                                            themeName === "dark-theme"
+                                              ? "#71767A"
+                                              : "rgb(83, 100, 113)"
+                                          }
                                           className="bi bi-person-circle"
                                           viewBox="0 0 16 16"
                                         >
