@@ -514,74 +514,6 @@ function MainPage() {
     setIsLoading(false);
   };
 
-  const handleDeleteLikeFromHomePage = (postId) => {
-    setpostId(postId);
-    axios
-      .post(
-        `${API_URL}/favorite/delete-favorite`,
-        {
-          userId: userInfo._id,
-          postId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        setTimeout(() => {
-          handleShowPostsHomePage();
-        }, 500);
-      })
-      .catch((err) => {
-        console.log("Error =>", err);
-      });
-  };
-
-  const getLikerIds = (array) => {
-    return array.likes.map((eachLiker) => {
-      return eachLiker._id;
-    });
-  };
-
-  const handlePostLikesFromHomePage = (postId, findedPost) => {
-    setpostId(postId);
-
-    console.log("Post id =>", postId);
-
-    axios
-      .post(
-        `${API_URL}/favorite`,
-        { postId },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        console.log("We are here !!!");
-        setTimeout(() => {
-          handleNotification(findedPost, userInfo, "liked");
-          setLoadingTrue();
-          setLoadingFalse();
-          setError("");
-          handleShowPostsHomePage();
-        }, 500);
-      })
-      .catch((error) => {
-        console.log("Error message =>", error);
-
-        if (error.response.data) {
-          const { errorMessage } = error.response.data;
-          setError(errorMessage);
-        } else {
-          setError(error);
-        }
-      });
-  };
-
   const postDeletedMessage = () => {
     messageApi.success({
       type: "success",
@@ -592,11 +524,9 @@ function MainPage() {
   };
 
   const handleDeletePostFromHomePage = () => {
-    setTimeout(() => {
-      handleShowPostsHomePage();
-      postDeletedMessage();
-      setError("");
-    }, 500);
+    handleShowPostsHomePage();
+    postDeletedMessage();
+    setError("");
   };
 
   const handlePost = () => {
@@ -698,27 +628,6 @@ function MainPage() {
     setImage("");
   };
 
-  const handleMouseOver = (e) => {
-    const shallowCopy = e.target.classList[0];
-
-    if (shallowCopy === "target") {
-      e.target.style.background = "#595b5b";
-    }
-  };
-
-  const handleMouseOut = (e) => {
-    const shallowCopy = e.target.classList[0];
-
-    if (shallowCopy === "target") {
-      e.target.style.background = "#47494a";
-    }
-  };
-
-  const getRepostedIds = (array) => {
-    return array.reposted.map((eachRepost) => {
-      return eachRepost._id;
-    });
-  };
   const [activeTab, setActiveTab] = useState("forYou");
   const handleHover = (tab) => {
     setHoveredTab(tab);
@@ -2528,7 +2437,7 @@ function MainPage() {
                       border: "none",
                     }}
                     variant="primary"
-                    onClick={() => handlePost()}
+                    // onClick={() => handlePost()}
                     className={`emptyContent post-btn compose-tweet-textArea `}
                   >
                     Post
@@ -3094,6 +3003,7 @@ function MainPage() {
                                         refreshPosts={handleShowPostsHomePage}
                                         setLoadingFalse={setLoadingFalse}
                                         setLoadingTrue={setLoadingTrue}
+                                        postIndex={index}
                                       />
                                     </div>
                                     <div
@@ -3107,7 +3017,7 @@ function MainPage() {
                                               ?._id
                                       }`}
                                       onClick={() => setclickedPostBox(post)}
-                                      className="p-1 next-to-like"
+                                      className="next-to-like"
                                     >
                                       <LikeAction
                                         post={post ? post : null}
@@ -3116,6 +3026,8 @@ function MainPage() {
                                         refreshPosts={handleShowPostsHomePage}
                                         setLoadingFalse={setLoadingFalse}
                                         setLoadingTrue={setLoadingTrue}
+                                        allPosts={posts}
+                                        postIndex={index}
                                       />
                                     </div>
                                   </Stack>

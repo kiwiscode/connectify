@@ -72,7 +72,7 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
             style={{
               backgroundColor:
                 hoveredOption === "Delete" && themeName === "dark-theme"
-                  ? "#080808"
+                  ? "#181818"
                   : hoveredOption === "Delete" && themeName !== "dark-theme"
                   ? "#f7f7f7"
                   : "",
@@ -121,7 +121,7 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
               backgroundColor:
                 hoveredOption === "Pin to your profile" &&
                 themeName === "dark-theme"
-                  ? "#080808"
+                  ? "#181818"
                   : hoveredOption === "Pin to your profile" &&
                     themeName !== "dark-theme"
                   ? "#f7f7f7"
@@ -163,7 +163,7 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
               backgroundColor:
                 hoveredOption === "Highlight on your profile" &&
                 themeName === "dark-theme"
-                  ? "#080808"
+                  ? "#181818"
                   : hoveredOption === "Highlight on your profile" &&
                     themeName !== "dark-theme"
                   ? "#f7f7f7"
@@ -203,7 +203,7 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
             style={{
               backgroundColor:
                 hoveredOption === "Add/remove" && themeName === "dark-theme"
-                  ? "#080808"
+                  ? "#181818"
                   : hoveredOption === "Add/remove" && themeName !== "dark-theme"
                   ? "#f7f7f7"
                   : "",
@@ -242,7 +242,7 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
               backgroundColor:
                 hoveredOption === "Change who can reply" &&
                 themeName === "dark-theme"
-                  ? "#080808"
+                  ? "#181818"
                   : hoveredOption === "Change who can reply" &&
                     themeName !== "dark-theme"
                   ? "#f7f7f7"
@@ -282,7 +282,7 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
               backgroundColor:
                 hoveredOption === "View post engagements" &&
                 themeName === "dark-theme"
-                  ? "#080808"
+                  ? "#181818"
                   : hoveredOption === "View post engagements" &&
                     themeName !== "dark-theme"
                   ? "#f7f7f7"
@@ -322,7 +322,7 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
             style={{
               backgroundColor:
                 hoveredOption === "Embed post" && themeName === "dark-theme"
-                  ? "#080808"
+                  ? "#181818"
                   : hoveredOption === "Embed post" && themeName !== "dark-theme"
                   ? "#f7f7f7"
                   : "",
@@ -362,7 +362,7 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
               backgroundColor:
                 hoveredOption === "View post analytics" &&
                 themeName === "dark-theme"
-                  ? "#080808"
+                  ? "#181818"
                   : hoveredOption === "View post analytics" &&
                     themeName !== "dark-theme"
                   ? "#f7f7f7"
@@ -411,7 +411,7 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
             style={{
               backgroundColor:
                 hoveredOption === "Follow" && themeName === "dark-theme"
-                  ? "#080808"
+                  ? "#181818"
                   : hoveredOption === "Follow" && themeName !== "dark-theme"
                   ? "#f7f7f7"
                   : "",
@@ -452,7 +452,7 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
             style={{
               backgroundColor:
                 hoveredOption === "Subscribe" && themeName === "dark-theme"
-                  ? "#080808"
+                  ? "#181818"
                   : hoveredOption === "Subscribe" && themeName !== "dark-theme"
                   ? "#f7f7f7"
                   : "",
@@ -493,7 +493,7 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
             style={{
               backgroundColor:
                 hoveredOption === "Add/remove" && themeName === "dark-theme"
-                  ? "#080808"
+                  ? "#181818"
                   : hoveredOption === "Add/remove" && themeName !== "dark-theme"
                   ? "#f7f7f7"
                   : "",
@@ -532,7 +532,7 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
             style={{
               backgroundColor:
                 hoveredOption === "Mute" && themeName === "dark-theme"
-                  ? "#080808"
+                  ? "#181818"
                   : hoveredOption === "Mute" && themeName !== "dark-theme"
                   ? "#f7f7f7"
                   : "",
@@ -570,7 +570,7 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
             style={{
               backgroundColor:
                 hoveredOption === "Block" && themeName === "dark-theme"
-                  ? "#080808"
+                  ? "#181818"
                   : hoveredOption === "Block" && themeName !== "dark-theme"
                   ? "#f7f7f7"
                   : "",
@@ -610,7 +610,7 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
               backgroundColor:
                 hoveredOption === "View post engagements" &&
                 themeName === "dark-theme"
-                  ? "#080808"
+                  ? "#181818"
                   : hoveredOption === "View post engagements" &&
                     themeName !== "dark-theme"
                   ? "#f7f7f7"
@@ -649,7 +649,7 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
             style={{
               backgroundColor:
                 hoveredOption === "Embed post" && themeName === "dark-theme"
-                  ? "#080808"
+                  ? "#181818"
                   : hoveredOption === "Embed post" && themeName !== "dark-theme"
                   ? "#f7f7f7"
                   : "",
@@ -687,7 +687,7 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
             style={{
               backgroundColor:
                 hoveredOption === "Report post" && themeName === "dark-theme"
-                  ? "#080808"
+                  ? "#181818"
                   : hoveredOption === "Report post" &&
                     themeName !== "dark-theme"
                   ? "#f7f7f7"
@@ -727,7 +727,7 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
               backgroundColor:
                 hoveredOption === "Report EU illegal content" &&
                 themeName === "dark-theme"
-                  ? "#080808"
+                  ? "#181818"
                   : hoveredOption === "Report EU illegal content" &&
                     themeName !== "dark-theme"
                   ? "#f7f7f7"
@@ -784,7 +784,7 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
       .then(() => {
         postDeletionProcess();
       })
-      .catch((error) => {
+      .catch(() => {
         // tüm popoover kullanılan yerlerde aynı catch mesajı mevcut start to check INFO
         // const { errorMessage } = error.response.data;
         // setError(errorMessage);

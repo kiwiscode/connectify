@@ -71,6 +71,8 @@ function PostDetailPage() {
               style={{
                 color: "white",
                 marginLeft: "5px",
+                fontWeight: "700",
+                fontSize: "15px",
               }}
             >
               View
@@ -244,150 +246,6 @@ function PostDetailPage() {
       });
   };
 
-  const handleRepost = (postId, findedPost) => {
-    axios
-      .post(
-        `${API_URL}/repost`,
-        { postId: postId, userId: userInfo._id },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        setTimeout(() => {
-          console.log("Detailed post repost situation works !");
-          handleNotification(findedPost, userInfo, "repost");
-          refreshPostDetailPage();
-        }, 500);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const handleDeleteRepostPostDetailPage = (postId) => {
-    axios
-      .post(
-        `${API_URL}/repost/delete`,
-        { postId: postId, userId: userInfo._id },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        setTimeout(() => {
-          console.log("Handle delete repost situation works !");
-          refreshPostDetailPage();
-        }, 500);
-      })
-      .then(() => {})
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const handlePostLikesPostDetailPageCFTUP = (postId, findedPost) => {
-    axios
-      .post(
-        `${API_URL}/favorite`,
-        { postId },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        setTimeout(() => {
-          console.log("Commented for this post like situation it works !");
-          handleNotification(findedPost, userInfo, "liked");
-          refreshPostDetailPage();
-        }, 500);
-      })
-      .catch((error) => {
-        if (error.response) {
-          const { errorMessage } = error.response.data;
-
-          console.log("Error =>", errorMessage);
-        }
-      });
-  };
-
-  const handleRepostCFTUP = (postId, findedPost) => {
-    axios
-      .post(
-        `${API_URL}/repost`,
-        { postId: postId, userId: userInfo._id },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        setTimeout(() => {
-          console.log("Commented for this post repost situation it works !");
-          handleNotification(findedPost, userInfo, "repost");
-          refreshPostDetailPage();
-        }, 500);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const handleDeleteLikePostDetailPageCFTUP = (postId) => {
-    axios
-      .post(
-        `${API_URL}/favorite/delete-favorite`,
-        {
-          userId: userInfo._id,
-          postId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        setTimeout(() => {
-          console.log("Handle delete like commented post situation works !");
-          refreshPostDetailPage();
-        }, 500);
-      })
-      .catch((err) => {
-        return err;
-      });
-  };
-
-  const handleDeleteRepostPostDetailPageCFTUP = (postId) => {
-    axios
-      .post(
-        `${API_URL}/repost/delete`,
-        { postId: postId, userId: userInfo._id },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        setTimeout(() => {
-          console.log("Handle delete repost commented post situation works !");
-          refreshPostDetailPage();
-        }, 500);
-      })
-      .then(() => {})
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
   const postDeletedMessage = () => {
     messageApi.success({
       type: "success",
@@ -398,16 +256,8 @@ function PostDetailPage() {
   };
 
   const handleDeletePostPostDetailPage = () => {
-    setTimeout(() => {
-      refreshPostDetailPage();
-      postDeletedMessage();
-    }, 500);
-  };
-
-  const getRepostedIds = (array) => {
-    return array.reposted.map((eachRepost) => {
-      return eachRepost._id;
-    });
+    refreshPostDetailPage();
+    postDeletedMessage();
   };
 
   const getLikerIds = (array) => {
@@ -453,14 +303,6 @@ function PostDetailPage() {
         console.log(error);
       });
   }, [postId]);
-
-  const checkIds = (arr) => {
-    if (arr.length) {
-      return arr.map((eachItem) => {
-        return eachItem._id;
-      });
-    }
-  };
 
   const months = [
     "Jan",
@@ -510,10 +352,6 @@ function PostDetailPage() {
     } ${inputDate.getDate()}, ${inputDate.getFullYear()}`;
   }
 
-  const handleShowDetailPostFromPostDetailPage = (postId) => {
-    console.log(postId);
-  };
-
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const handleResize = () => {
@@ -536,6 +374,7 @@ function PostDetailPage() {
     console.log("Child data received from child => ", childData);
     setPostModalOpenedFromLeftSide(childData);
   };
+
   return (
     <>
       {contextHolder}
@@ -903,7 +742,6 @@ function PostDetailPage() {
                               }}
                             >
                               <PostPopover
-                                postDetailPageActive={true}
                                 post={commentedForThisPost}
                                 postDeletionProcess={
                                   handleDeletePostPostDetailPage
@@ -1380,8 +1218,8 @@ function PostDetailPage() {
                             float: "right",
                           }}
                         >
+                          {" "}
                           <PostPopover
-                            postDetailPageActive={true}
                             post={detailedPost}
                             postDeletionProcess={handleDeletePostPostDetailPage}
                           />
