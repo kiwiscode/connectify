@@ -3507,10 +3507,19 @@ input[data-autocompleted] {
 
 .Activate-light-mode svg {
 }
-
+@keyframes rotateAnimation {
+  50% {
+    transform: rotate(20deg);
+  }
+  80% {
+    transform: rotate(40deg);
+  }
+  100% {
+    transform: rotate(40deg);
+  }
+}
 .Activate-light-mode svg {
-  transform: rotate(40deg) !important;
-  transition-duration: 0.2s;
+  animation: rotateAnimation 1s ease-in-out forwards;
 }
 
 .Activate-dark-mode svg {
@@ -3522,43 +3531,134 @@ input[data-autocompleted] {
   scale: 0;
   transition-duration: 0.1s;
 }
-@keyframes bounceAnimationFirst {
+
+@keyframes bubbleAnimation1 {
   0% {
-    transform: translateY(0);
-    opacity: 0;
+    cx: 16px;
+    cy: 9px;
   }
   50% {
-    transform: translateX(-1px);
-    opacity: 1;
+    cx: 17.5px;
+    cy: 9px;
   }
   100% {
-    transform: translateY(0);
+    cx: 17px;
+    cy: 9px;
   }
 }
+@keyframes bubbleAnimation4 {
+  0% {
+    cx: 2px;
+    cy: 9px;
+  }
+
+  50% {
+    cx: 0.5px;
+    cy: 9px;
+  }
+
+  100% {
+    cx: 1px;
+    cy: 9px;
+  }
+}
+
+@keyframes bubbleAnimation2 {
+  0% {
+    cx: 12px;
+    cy: 15.928203px;
+  }
+  50% {
+    cx: 14.5px;
+    cy: 15.928203px;
+  }
+  100% {
+    cx: 13px;
+    cy: 15.928203px;
+  }
+}
+
+@keyframes bubbleAnimation6 {
+  0% {
+    cx: 12px;
+    cy: 2.071797px;
+  }
+
+  50% {
+    cx: 14.5px;
+    cy: 2.071797px;
+  }
+
+  100% {
+    cx: 13px;
+    cy: 2.071797px;
+  }
+}
+
+@keyframes bubbleAnimation5 {
+  0% {
+    cx: 5.4px;
+    cy: 3.071797;
+  }
+
+  50% {
+    cx: 4px;
+    cy: 1.5px;
+  }
+
+  100% {
+    cx: 5px;
+    cy: 2.071797px;
+  }
+}
+
+@keyframes bubbleAnimation3 {
+  0% {
+    cx: 6px;
+    cy: 15px;
+  }
+
+  50% {
+    cx: 4px;
+    cy: 16.5px;
+  }
+
+  100% {
+    cx: 5px;
+    cy: 15.928203px;
+  }
+}
+
 .Activate-dark-mode .upJhz g circle:nth-child(1) {
   scale: 1;
   transition-delay: 0.1s;
+  animation: bubbleAnimation1 1s ease-in-out forwards;
 }
 
 .Activate-dark-mode .upJhz g circle:nth-child(2) {
   scale: 1;
   transition-delay: 0.2s;
+  animation: bubbleAnimation2 1s ease-in-out forwards;
 }
 .Activate-dark-mode .upJhz g circle:nth-child(3) {
   scale: 1;
   transition-delay: 0.3s;
+  animation: bubbleAnimation3 1s ease-in-out forwards;
 }
 .Activate-dark-mode .upJhz g circle:nth-child(4) {
   scale: 1;
   transition-delay: 0.4s;
+  animation: bubbleAnimation4 1s ease-in-out forwards;
 }
 .Activate-dark-mode .upJhz g circle:nth-child(5) {
   scale: 1;
   transition-delay: 0.5s;
+  animation: bubbleAnimation5 1s ease-in-out forwards;
 }
 .Activate-dark-mode .upJhz g circle:nth-child(6) {
   scale: 1;
   transition-delay: 0.6s;
+  animation: bubbleAnimation6 1s ease-in-out forwards;
 }
 
 .Activate-light-mode .upJhz g circle {
@@ -3578,10 +3678,6 @@ input[data-autocompleted] {
   transition-duration: 0.2s;
 }
 
-/* .Activate-dark-mode .upJhz circle {
-  transition-duration: 0.3s;
-} */
-
 .Activate-light-mode .upJhz circle {
   r: 8px;
   transition-duration: 0.2s;
@@ -3596,6 +3692,7 @@ input[data-autocompleted] {
 .responsive-navigation-bar-bottom-post-modal-dark-theme div {
   background-color: black;
 }
+/* theme toggle mode styling finish to check  */
 
 .display-options-modal div {
   background-color: white;
@@ -3683,12 +3780,12 @@ input[data-autocompleted] {
 
 /* start to check post description  */
 
-.animated-heart {
+/* .animated-heart {
   aspect-ratio: 1;
-  animation: heartBeat 0.5s linear;
+  animation: heartBeat 0.7s linear;
 }
-
-@keyframes heartBeat {
+*/
+/* @keyframes heartBeat {
   0% {
     transform: scale(0);
     opacity: 0;
@@ -3714,5 +3811,45 @@ input[data-autocompleted] {
   }
   100% {
     transform: scale(1);
+  }
+} */
+@keyframes heart {
+  0%,
+  17.5% {
+    font-size: 0;
+  }
+}
+
+.animated-heart {
+  animation: heart 1s cubic-bezier(0.17, 0.89, 0.15, 1.49) forwards;
+}
+
+.animate-length-slideUp {
+  position: absolute;
+  bottom: 0px;
+  animation: slideUp 0.5s ease forwards;
+}
+
+@keyframes slideUp {
+  from {
+    bottom: 0px;
+  }
+  to {
+    bottom: 30px;
+  }
+}
+
+.animate-length-slideDown {
+  position: relative;
+  bottom: 30px;
+  animation: slideDown 0.5s ease forwards;
+}
+
+@keyframes slideDown {
+  from {
+    bottom: 30px;
+  }
+  to {
+    bottom: 0px;
   }
 }

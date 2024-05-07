@@ -565,15 +565,11 @@ function SpesificUserProfile() {
 
   const handleDeletePostFromSpesificUserProfilePage = () => {
     if (favoriteWindow === "") {
-      setTimeout(() => {
-        handleShowSpesificUserProfilePageFavorites();
-        postDeletedMessage();
-      }, 500);
+      handleShowSpesificUserProfilePageFavorites();
+      postDeletedMessage();
     } else if (postsWindow === "") {
-      setTimeout(() => {
-        handleShowSpesificUserProfilePagePosts();
-        postDeletedMessage();
-      }, 500);
+      handleShowSpesificUserProfilePagePosts();
+      postDeletedMessage();
     }
     setError("");
   };

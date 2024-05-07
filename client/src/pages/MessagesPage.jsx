@@ -183,8 +183,8 @@ function MessagesPage() {
             }}
             className="mt-2"
           >
-            This can’t be undone and it will be removed from your profile, the
-            timeline of any accounts that follow you, and from search results.{" "}
+            This conversation will be deleted from your inbox. Other people in
+            the conversation will still be able to see it.{" "}
           </div>
         </div>
 
