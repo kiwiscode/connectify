@@ -1,15 +1,17 @@
 import axios from "axios";
 import { useContext, useState } from "react";
 import { UserContext } from "../../context/UserContext";
-
+import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
+import { styled } from "@mui/material/styles";
+import { OverlayTrigger, Popover } from "react-bootstrap";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-
 import io from "socket.io-client";
 import { ThemeContext } from "../../context/ThemeContext";
+
 const socket = io.connect(`${API_URL}`);
 
 function RepostAction({
@@ -21,7 +23,19 @@ function RepostAction({
   setLoadingFalse = false,
   setLoadingTrue = false,
   detailedPostComment,
+  postIndex,
 }) {
+  const BootstrapTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+  ))(({ theme }) => ({
+    [`& .${tooltipClasses.arrow}`]: {
+      color: "transparent",
+    },
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: themeName === "dark-theme" ? "#495a68" : "",
+    },
+  }));
+
   const { userInfo, getToken } = useContext(UserContext);
   const [
     { theme, themeName },
@@ -54,17 +68,15 @@ function RepostAction({
         }
       )
       .then(() => {
-        setTimeout(() => {
-          handleNotification(findedPost, userInfo, "repost");
+        handleNotification(findedPost, userInfo, "repost");
 
-          if (setLoadingTrue) {
-            setLoadingTrue();
-          }
-          if (setLoadingFalse) {
-            setLoadingFalse();
-          }
-          refreshPosts();
-        }, 500);
+        if (setLoadingTrue) {
+          setLoadingTrue();
+        }
+        if (setLoadingFalse) {
+          setLoadingFalse();
+        }
+        refreshPosts();
       })
       .catch((error) => {
         console.log(error);
@@ -83,9 +95,7 @@ function RepostAction({
         }
       )
       .then(() => {
-        setTimeout(() => {
-          refreshPosts();
-        }, 500);
+        refreshPosts();
       })
       .catch((error) => {
         console.log("Error =>", error);
@@ -98,144 +108,392 @@ function RepostAction({
     });
   };
 
-  const [repostIconHovered, setRepostIconHovered] = useState(null);
+  const [hoveredOption, setHoveredOption] = useState(null);
 
-  return (
-    <>
-      {post.reposted.length > 0 &&
-      getRepostedIds(post).includes(userInfo._id) ? (
-        <div>
-          <span
-            onClick={() =>
-              handleDeleteRepost(detailedPostComment ? post.postId : post._id)
-            }
-            style={{
-              cursor: "pointer",
-              minWidth: "34px",
-              minHeight: "34px",
-              display: "inline-flex",
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: "50%",
-              backgroundColor:
-                repostIconHovered && themeName !== "dark-theme"
-                  ? "#e3f1eb"
-                  : repostIconHovered && themeName === "dark-theme"
-                  ? "#0c4b34"
-                  : null,
-            }}
-            onMouseEnter={() => setRepostIconHovered(true)}
-            onMouseLeave={() => setRepostIconHovered(false)}
-          >
-            <svg
-              width={`${1.25}em`}
-              height={`${1.25}em`}
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-              className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-              fill="rgb(0, 186, 124)"
+  const popoverBottom = (
+    <Popover
+      className={``}
+      style={{
+        zIndex: 9999,
+        margin: "0px",
+        width: "115px",
+        height: "auto",
+        overflowY: "auto",
+        backgroundColor: themeName === "dark-theme" ? "black" : "white",
+        border: "none",
+        filter:
+          themeName === "dark-theme"
+            ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+            : "",
+        boxShadow:
+          themeName === "dark-theme"
+            ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+            : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
+        borderRadius: "12px",
+      }}
+    >
+      <div>
+        {getRepostedIds(post).includes(userInfo._id) ? (
+          <div>
+            <div
+              onClick={() =>
+                handleDeleteRepost(detailedPostComment ? post.postId : post._id)
+              }
+              onMouseEnter={() => {
+                setHoveredOption("Repost");
+              }}
+              onMouseLeave={() => {
+                setHoveredOption(null);
+              }}
+              style={{
+                padding: "12px 16px",
+                cursor: "pointer",
+                backgroundColor:
+                  hoveredOption === "Repost" && themeName === "dark-theme"
+                    ? "#181818"
+                    : hoveredOption === "Repost" && themeName !== "dark-theme"
+                    ? "#f7f7f7"
+                    : "",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "10%",
+              }}
             >
-              <g>
-                <path
-                  stroke="rgb(83, 100, 113)"
-                  strokeWidth="0.1"
-                  d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
-                ></path>
-              </g>
-            </svg>
-          </span>
+              <span>
+                <svg
+                  fill={themeName === "dark-theme" ? "white" : "black"}
+                  width={`${1.25}em`}
+                  height={`${1.25}em`}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-1q142lx"
+                >
+                  <g>
+                    <path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"></path>
+                  </g>
+                </svg>
+              </span>
 
-          <span
-            style={{
-              cursor: "pointer",
-              color: "rgb(0, 186, 124)",
-              position: "relative",
-              bottom: "5px",
-            }}
-            className="post-description"
-          >
-            {/* some test */}
-            {post.reposted.length ? <span>{post.reposted.length}</span> : null}
-          </span>
-        </div>
-      ) : (
-        <div>
-          {" "}
-          <span
-            onClick={() =>
-              handleRepost(detailedPostComment ? post.postId : post._id, post)
-            }
-            style={{
-              cursor: "pointer",
+              <span
+                style={{
+                  fontSize: "15px",
+                  fontWeight: "700",
+                  lineHeight: "20px",
+                  color: themeName === "dark-theme" ? "white" : "black",
+                }}
+              >
+                Undo repost
+              </span>
+            </div>
 
-              minWidth: "34px",
-              minHeight: "34px",
-              display: "inline-flex",
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: "50%",
-              backgroundColor:
-                repostIconHovered && themeName !== "dark-theme"
-                  ? "#e3f1eb"
-                  : repostIconHovered && themeName === "dark-theme"
-                  ? "#0c4b34"
-                  : null,
-            }}
-            onMouseEnter={() => setRepostIconHovered(true)}
-            onMouseLeave={() => setRepostIconHovered(false)}
-          >
-            <svg
+            <div
+              onMouseEnter={() => {
+                setHoveredOption("Quote");
+              }}
+              onMouseLeave={() => {
+                setHoveredOption(null);
+              }}
               style={{
                 cursor: "pointer",
+                padding: "12px 16px",
+                backgroundColor:
+                  hoveredOption === "Quote" && themeName === "dark-theme"
+                    ? "#181818 "
+                    : hoveredOption === "Quote" && themeName !== "dark-theme"
+                    ? "#f7f7f7"
+                    : "",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "10%",
               }}
-              width={`${1.25}em`}
-              height={`${1.25}em`}
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-              className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-              fill={
-                themeName === "dark-theme" && !repostIconHovered
-                  ? "#71767A"
-                  : themeName !== "dark-theme" && !repostIconHovered
-                  ? "rgb(83, 100, 113)"
-                  : themeName === "dark-theme" && repostIconHovered
-                  ? "rgb(0, 186, 124)"
-                  : themeName !== "dark-theme" && repostIconHovered
-                  ? "rgb(0, 186, 124)"
-                  : null
-              }
             >
-              <g>
-                <path
-                  stroke="rgb(83, 100, 113)"
-                  strokeWidth="0.1"
-                  d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
-                ></path>
-              </g>
-            </svg>
-          </span>
-          <span
-            className="post-description"
+              <span>
+                {" "}
+                <svg
+                  fill={themeName === "dark-theme" ? "white" : "black"}
+                  width={`${1.25}em`}
+                  height={`${1.25}em`}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-1q142lx"
+                >
+                  <g>
+                    <path d="M14.23 2.854c.98-.977 2.56-.977 3.54 0l3.38 3.378c.97.977.97 2.559 0 3.536L9.91 21H3v-6.914L14.23 2.854zm2.12 1.414c-.19-.195-.51-.195-.7 0L5 14.914V19h4.09L19.73 8.354c.2-.196.2-.512 0-.708l-3.38-3.378zM14.75 19l-2 2H21v-2h-6.25z"></path>
+                  </g>
+                </svg>
+              </span>
+
+              <span
+                style={{
+                  fontSize: "15px",
+                  fontWeight: "700",
+                  lineHeight: "20px",
+                  color: themeName === "dark-theme" ? "white" : "black",
+                }}
+              >
+                Quote
+              </span>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <div
+              onClick={() =>
+                handleRepost(detailedPostComment ? post.postId : post._id, post)
+              }
+              onMouseEnter={() => {
+                setHoveredOption("Repost");
+              }}
+              onMouseLeave={() => {
+                setHoveredOption(null);
+              }}
+              style={{
+                padding: "12px 16px",
+                cursor: "pointer",
+                backgroundColor:
+                  hoveredOption === "Repost" && themeName === "dark-theme"
+                    ? "#181818"
+                    : hoveredOption === "Repost" && themeName !== "dark-theme"
+                    ? "#f7f7f7"
+                    : "",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "10%",
+              }}
+            >
+              <span>
+                <svg
+                  fill={themeName === "dark-theme" ? "white" : "black"}
+                  width={`${1.25}em`}
+                  height={`${1.25}em`}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-1q142lx"
+                >
+                  <g>
+                    <path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"></path>
+                  </g>
+                </svg>
+              </span>
+
+              <span
+                style={{
+                  fontSize: "15px",
+                  fontWeight: "700",
+                  lineHeight: "20px",
+                  color: themeName === "dark-theme" ? "white" : "black",
+                }}
+              >
+                Repost
+              </span>
+            </div>
+
+            <div
+              onMouseEnter={() => {
+                setHoveredOption("Quote");
+              }}
+              onMouseLeave={() => {
+                setHoveredOption(null);
+              }}
+              style={{
+                cursor: "pointer",
+                padding: "12px 16px",
+                backgroundColor:
+                  hoveredOption === "Quote" && themeName === "dark-theme"
+                    ? "#181818 "
+                    : hoveredOption === "Quote" && themeName !== "dark-theme"
+                    ? "#f7f7f7"
+                    : "",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "10%",
+              }}
+            >
+              <span>
+                {" "}
+                <svg
+                  fill={themeName === "dark-theme" ? "white" : "black"}
+                  width={`${1.25}em`}
+                  height={`${1.25}em`}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-1q142lx"
+                >
+                  <g>
+                    <path d="M14.23 2.854c.98-.977 2.56-.977 3.54 0l3.38 3.378c.97.977.97 2.559 0 3.536L9.91 21H3v-6.914L14.23 2.854zm2.12 1.414c-.19-.195-.51-.195-.7 0L5 14.914V19h4.09L19.73 8.354c.2-.196.2-.512 0-.708l-3.38-3.378zM14.75 19l-2 2H21v-2h-6.25z"></path>
+                  </g>
+                </svg>
+              </span>
+
+              <span
+                style={{
+                  fontSize: "15px",
+                  fontWeight: "700",
+                  lineHeight: "20px",
+                  color: themeName === "dark-theme" ? "white" : "black",
+                }}
+              >
+                Quote
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+    </Popover>
+  );
+
+  const [repostIconHovered, setRepostIconHovered] = useState(null);
+  return (
+    <>
+      <OverlayTrigger
+        trigger="click"
+        placement="bottom"
+        overlay={popoverBottom}
+      >
+        {post.reposted.length > 0 &&
+        getRepostedIds(post).includes(userInfo._id) ? (
+          <div
             style={{
-              color:
-                themeName === "dark-theme" && !repostIconHovered
-                  ? "#71767A"
-                  : themeName !== "dark-theme" && !repostIconHovered
-                  ? "rgb(83, 100, 113)"
-                  : themeName === "dark-theme" && repostIconHovered
-                  ? "rgb(0, 186, 124)"
-                  : themeName !== "dark-theme" && repostIconHovered
-                  ? "rgb(0, 186, 124)"
-                  : null,
-              position: "relative",
-              bottom: "5px",
               cursor: "pointer",
             }}
           >
-            {post.reposted.length ? <span>{post.reposted.length}</span> : null}
-          </span>
-        </div>
-      )}
+            {" "}
+            <Tooltip title="Undo repost">
+              <span
+                onMouseEnter={() => setRepostIconHovered(true)}
+                onMouseLeave={() => setRepostIconHovered(false)}
+                style={{
+                  cursor: "pointer",
+                  minWidth: "34px",
+                  minHeight: "34px",
+                  display: "inline-flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRadius: "50%",
+                  backgroundColor:
+                    repostIconHovered && themeName !== "dark-theme"
+                      ? "#e3f1eb"
+                      : repostIconHovered && themeName === "dark-theme"
+                      ? "#0c4b34"
+                      : null,
+                }}
+              >
+                <svg
+                  width={`${1.25}em`}
+                  height={`${1.25}em`}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                  fill="rgb(0, 186, 124)"
+                >
+                  <g>
+                    <path
+                      stroke="rgb(83, 100, 113)"
+                      strokeWidth="0.1"
+                      d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                    ></path>
+                  </g>
+                </svg>
+              </span>
+              <span
+                style={{
+                  cursor: "pointer",
+                  color: "rgb(0, 186, 124)",
+                  position: "relative",
+                  bottom: "5px",
+                }}
+                className="post-description"
+              >
+                {post.reposted.length ? (
+                  <span>{post.reposted.length}</span>
+                ) : null}
+              </span>
+            </Tooltip>
+          </div>
+        ) : (
+          <div>
+            <Tooltip title="Repost">
+              <span
+                className={`hover-test hover-test-${themeName}`}
+                onMouseEnter={() => setRepostIconHovered(true)}
+                onMouseLeave={() => setRepostIconHovered(false)}
+                style={{
+                  cursor: "pointer",
+
+                  minWidth: "34px",
+                  minHeight: "34px",
+                  display: "inline-flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRadius: "50%",
+                  backgroundColor:
+                    repostIconHovered && themeName !== "dark-theme"
+                      ? "#e3f1eb"
+                      : repostIconHovered && themeName === "dark-theme"
+                      ? "#0c4b34"
+                      : null,
+                }}
+              >
+                <svg
+                  style={{
+                    cursor: "pointer",
+                  }}
+                  width={`${1.25}em`}
+                  height={`${1.25}em`}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                  fill={
+                    themeName === "dark-theme" && !repostIconHovered
+                      ? "#71767A"
+                      : themeName !== "dark-theme" && !repostIconHovered
+                      ? "rgb(83, 100, 113)"
+                      : themeName === "dark-theme" && repostIconHovered
+                      ? "rgb(0, 186, 124)"
+                      : themeName !== "dark-theme" && repostIconHovered
+                      ? "rgb(0, 186, 124)"
+                      : null
+                  }
+                >
+                  <g>
+                    <path
+                      stroke="rgb(83, 100, 113)"
+                      strokeWidth="0.1"
+                      d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                    ></path>
+                  </g>
+                </svg>
+              </span>
+              <span
+                className="post-description"
+                style={{
+                  color:
+                    themeName === "dark-theme" && !repostIconHovered
+                      ? "#71767A"
+                      : themeName !== "dark-theme" && !repostIconHovered
+                      ? "rgb(83, 100, 113)"
+                      : themeName === "dark-theme" && repostIconHovered
+                      ? "rgb(0, 186, 124)"
+                      : themeName !== "dark-theme" && repostIconHovered
+                      ? "rgb(0, 186, 124)"
+                      : null,
+                  position: "relative",
+                  bottom: "5px",
+                  cursor: "pointer",
+                }}
+              >
+                {post.reposted.length ? (
+                  <span>{post.reposted.length}</span>
+                ) : null}
+              </span>
+            </Tooltip>
+          </div>
+        )}
+      </OverlayTrigger>
     </>
   );
 }

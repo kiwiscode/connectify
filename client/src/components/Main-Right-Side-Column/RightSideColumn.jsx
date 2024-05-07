@@ -17040,6 +17040,7 @@ function RightSideColumn({
               zIndex: 9999,
               border: "none",
               backgroundColor: "transparent",
+
               position: "absolute",
               right: "75px",
               top: "15px",
@@ -17062,8 +17063,9 @@ function RightSideColumn({
               viewBox="0 0 18 18"
               style={{
                 transform: "rotate(90deg)",
+                // zoom: "120%",
               }}
-              className="sc-a794b73f-1 upJhz"
+              className="sc-a794b73f-1 upJhz "
             >
               <mask id="moon-mask-main-nav">
                 <rect x="0" y="0" width={18} height={18} fill={"#FFF"}></rect>
@@ -17097,12 +17099,9 @@ function RightSideColumn({
                   r="1.5"
                   fill={
                     themeName === "light-theme" &&
-                    hoveredThemeName !== "light-theme"
-                      ? "#414A54"
-                      : themeName === "light-theme" &&
-                        hoveredThemeName === "light-theme"
+                    hoveredThemeName === "light-theme"
                       ? "black"
-                      : null
+                      : "#414A54"
                   }
                   style={{
                     transformOrigin: "center center",
@@ -17115,12 +17114,9 @@ function RightSideColumn({
                   r="1.5"
                   fill={
                     themeName === "light-theme" &&
-                    hoveredThemeName !== "light-theme"
-                      ? "#414A54"
-                      : themeName === "light-theme" &&
-                        hoveredThemeName === "light-theme"
+                    hoveredThemeName === "light-theme"
                       ? "black"
-                      : null
+                      : "#414A54"
                   }
                   style={{
                     transformOrigin: "center center",
@@ -17133,12 +17129,9 @@ function RightSideColumn({
                   r="1.5"
                   fill={
                     themeName === "light-theme" &&
-                    hoveredThemeName !== "light-theme"
-                      ? "#414A54"
-                      : themeName === "light-theme" &&
-                        hoveredThemeName === "light-theme"
+                    hoveredThemeName === "light-theme"
                       ? "black"
-                      : null
+                      : "#414A54"
                   }
                   style={{
                     transformOrigin: "center center",
@@ -17151,12 +17144,9 @@ function RightSideColumn({
                   r="1.5"
                   fill={
                     themeName === "light-theme" &&
-                    hoveredThemeName !== "light-theme"
-                      ? "#414A54"
-                      : themeName === "light-theme" &&
-                        hoveredThemeName === "light-theme"
+                    hoveredThemeName === "light-theme"
                       ? "black"
-                      : null
+                      : "#414A54"
                   }
                   style={{
                     transformOrigin: "center center",
@@ -17169,12 +17159,9 @@ function RightSideColumn({
                   r="1.5"
                   fill={
                     themeName === "light-theme" &&
-                    hoveredThemeName !== "light-theme"
-                      ? "#414A54"
-                      : themeName === "light-theme" &&
-                        hoveredThemeName === "light-theme"
+                    hoveredThemeName === "light-theme"
                       ? "black"
-                      : null
+                      : "#414A54"
                   }
                   style={{
                     transformOrigin: "center center",
@@ -17187,12 +17174,9 @@ function RightSideColumn({
                   r="1.5"
                   fill={
                     themeName === "light-theme" &&
-                    hoveredThemeName !== "light-theme"
-                      ? "#414A54"
-                      : themeName === "light-theme" &&
-                        hoveredThemeName === "light-theme"
+                    hoveredThemeName === "light-theme"
                       ? "black"
-                      : null
+                      : "#414A54"
                   }
                   style={{
                     transformOrigin: "center center",

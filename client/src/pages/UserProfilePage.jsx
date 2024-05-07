@@ -278,87 +278,14 @@ function UserProfile() {
 
   const handleDeletePostFromProfilePage = () => {
     if (favoriteWindow === "") {
-      setTimeout(() => {
-        handleGetFavorites();
-        postDeletedMessage();
-      }, 500);
+      handleGetFavorites();
+      postDeletedMessage();
     } else if (postsWindow === "") {
-      setTimeout(() => {
-        handleShowPostsProfilePage();
-        postDeletedMessage();
-      }, 500);
+      handleShowPostsProfilePage();
+      postDeletedMessage();
     }
 
     setError("");
-  };
-
-  const handlePostLikesFromProfilePage = (postId, findedPost) => {
-    setpostId(postId);
-
-    axios
-      .post(
-        `${API_URL}/favorite`,
-        { postId },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        if (favoriteWindow === "") {
-          setTimeout(() => {
-            handleGetFavorites();
-            handleNotification(findedPost, userInfo, "liked");
-          }, 500);
-        } else if (postsWindow === "") {
-          setTimeout(() => {
-            handleShowPostsProfilePage();
-            handleNotification(findedPost, userInfo, "liked");
-          }, 500);
-        }
-      })
-      .catch((error) => {
-        if (error) {
-          const { errorMessage } = error.response.data;
-
-          setError(errorMessage);
-        }
-      });
-  };
-
-  const handleDeleteLikeFromProfilePage = (postId) => {
-    axios
-      .post(
-        `${API_URL}/favorite/delete-favorite`,
-        {
-          userId: userInfo._id,
-          postId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        if (favoriteWindow === "") {
-          setTimeout(() => {
-            handleGetFavorites();
-          }, 500);
-        } else if (postsWindow === "") {
-          setTimeout(() => {
-            handleShowPostsProfilePage();
-          }, 500);
-        }
-      })
-      .catch((error) => {
-        if (error) {
-          const { errorMessage } = error.response.data;
-
-          setError(errorMessage);
-        }
-      });
   };
 
   const months = [

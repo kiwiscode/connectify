@@ -284,7 +284,11 @@ function App() {
             path="/settings/deactivated"
             element={<DeactivatedPage />}
           ></Route>
+
+          {/* test pages start to check  */}
           <Route path="/posts-component-test" element={<Posts />}></Route>
+
+          {/* test pages finish to check  */}
         </Routes>
       </div>
     </UserProvider>
