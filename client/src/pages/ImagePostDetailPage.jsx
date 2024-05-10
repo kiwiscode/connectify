@@ -33,11 +33,6 @@ function PostDetailPage() {
 
   const [shouldHide, setshouldHide] = useState(true);
 
-  // socket io 1 client start to check
-  const [notificationTest, setnotificationTest] = useState([]);
-  const [notificationText, setnotificationText] = useState([]);
-  // socket io 1 client finish to check
-
   // socket io 4 client start to check
   useEffect(() => {
     socket.on("socket_id_for_user", (socketId) => {
@@ -53,11 +48,6 @@ function PostDetailPage() {
   useEffect(() => {
     socket.on("getNotification", (data) => {
       console.log("Data =>", data);
-      if (data.senderName !== userInfo.username) {
-        setnotificationTest((prev) => [...prev, data]);
-      } else {
-        console.log("You cannot send a notification to yourself.");
-      }
     });
 
     socket.on("getText", (data) => {
@@ -1734,9 +1724,6 @@ function PostDetailPage() {
                       <PostEngagements
                         postDetailPage={false}
                         detailedPost={detailedPost}
-                        handleFollowingNotification={
-                          handleFollowingNotification
-                        }
                       />
                     </>
                   ) : null}
@@ -1991,14 +1978,14 @@ function PostDetailPage() {
                       <div>
                         {detailedPost.comments.map((eachComment, index) => {
                           return (
-                            <>
+                            <div key={index}>
                               <div
                                 style={{
                                   borderBottom: "1px solid rgba(0,0,0,0.1)",
                                 }}
                                 className="all-posts"
                               >
-                                <div key={eachComment._id}>
+                                <div>
                                   <div className="posts-details">
                                     <Stack direction="horizontal" gap={1}>
                                       {/* profile image start to check */}
@@ -2474,7 +2461,7 @@ function PostDetailPage() {
                                   </div>
                                 </div>
                               </div>
-                            </>
+                            </div>
                           );
                         })}
                       </div>
@@ -2516,14 +2503,14 @@ function PostDetailPage() {
                       <div>
                         {detailedPost.comments.map((eachComment, index) => {
                           return (
-                            <>
+                            <div key={index}>
                               <div
                                 style={{
                                   borderBottom: "1px solid rgba(0,0,0,0.1)",
                                 }}
                                 className="all-posts"
                               >
-                                <div key={eachComment._id}>
+                                <div>
                                   <div className="posts-details">
                                     <Stack direction="horizontal" gap={1}>
                                       {/* profile image start to check */}
@@ -3014,7 +3001,7 @@ function PostDetailPage() {
                                   </div>
                                 </div>
                               </div>
-                            </>
+                            </div>
                           );
                         })}
                       </div>

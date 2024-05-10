@@ -1,10 +1,8 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 
-import { Button, Modal, Stack, Popover, OverlayTrigger } from "react-bootstrap";
+import { Button, Modal, Stack } from "react-bootstrap";
 
-import data from "@emoji-mart/data";
-import Picker from "@emoji-mart/react";
 import { UserContext } from "../../context/UserContext";
 import { ThemeContext } from "../../context/ThemeContext";
 import useWindowDimensions from "../../hooks/getWindowDimensions";
@@ -13,7 +11,10 @@ const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-
+import Popover from "@mui/material/Popover";
+import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
 // IMPORTANT => refreshPosts as a props !
 function PostModal({
   refreshPosts,
@@ -100,7 +101,7 @@ function PostModal({
             if (refreshPosts) {
               refreshPosts();
             }
-          }, 1500);
+          }, 200);
           setContent("");
         })
         .catch((err) => {
@@ -164,24 +165,6 @@ function PostModal({
     };
   }, []);
 
-  const popoverBottom = (
-    <Popover
-      className={`${showEmojisBar ? "hideEmojiContainer" : ""}`}
-      id="popover-positioned-bottom"
-      title="Popover bottom"
-    >
-      <Picker
-        style={{ padding: "12px" }}
-        data={data}
-        onEmojiSelect={onEmojiClick}
-        maxFrequentRows={0}
-        emojiSize={20}
-        emojiButtonSize={28}
-      />
-    </Popover>
-  );
-
-  const { height, width } = useWindowDimensions();
   return (
     <>
       <Button
@@ -481,40 +464,74 @@ function PostModal({
               />
             </div>
             {/* INFO */}
-            <div className="p-2">
+            <div>
               {/* emoji mart start to check */}
-
-              <OverlayTrigger
-                trigger="click"
-                placement="bottom"
-                overlay={popoverBottom}
-              >
-                <div
-                  className={`svg-border-parent chat-detail-emoji-svg-border-parent svg-border-parent-${themeName}`}
-                  style={{
-                    cursor: "pointer",
-                    borderRadius: "50%",
-                  }}
-                >
-                  <svg
-                    color="rgb(29,155,240)"
-                    fill="currentColor"
-                    width={20}
-                    height={20}
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    className="post-modal-emoji-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                    style={{
-                      cursor: "pointer",
-                    }}
-                  >
-                    <g>
-                      <path d="M8 9.5C8 8.119 8.672 7 9.5 7S11 8.119 11 9.5 10.328 12 9.5 12 8 10.881 8 9.5zm6.5 2.5c.828 0 1.5-1.119 1.5-2.5S15.328 7 14.5 7 13 8.119 13 9.5s.672 2.5 1.5 2.5zM12 16c-2.224 0-3.021-2.227-3.051-2.316l-1.897.633c.05.15 1.271 3.684 4.949 3.684s4.898-3.533 4.949-3.684l-1.896-.638c-.033.095-.83 2.322-3.053 2.322zm10.25-4.001c0 5.652-4.598 10.25-10.25 10.25S1.75 17.652 1.75 12 6.348 1.75 12 1.75 22.25 6.348 22.25 12zm-2 0c0-4.549-3.701-8.25-8.25-8.25S3.75 7.451 3.75 12s3.701 8.25 8.25 8.25 8.25-3.701 8.25-8.25z"></path>
-                    </g>
-                  </svg>
-                </div>
-              </OverlayTrigger>
-
+              <PopupState variant="popover" popupId="demo-popup-popover">
+                {(popupState) => (
+                  <div>
+                    <Button
+                      style={{
+                        border: "none",
+                        backgroundColor: "transparent",
+                      }}
+                      variant="text"
+                      {...bindTrigger(popupState)}
+                    >
+                      <div
+                        className={`svg-border-parent chat-detail-emoji-svg-border-parent svg-border-parent-${themeName}`}
+                        style={{
+                          cursor: "pointer",
+                          borderRadius: "50%",
+                        }}
+                      >
+                        <svg
+                          color="rgb(29,155,240)"
+                          fill="currentColor"
+                          width={20}
+                          height={20}
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className="post-modal-emoji-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                          style={{
+                            cursor: "pointer",
+                          }}
+                        >
+                          <g>
+                            <path d="M8 9.5C8 8.119 8.672 7 9.5 7S11 8.119 11 9.5 10.328 12 9.5 12 8 10.881 8 9.5zm6.5 2.5c.828 0 1.5-1.119 1.5-2.5S15.328 7 14.5 7 13 8.119 13 9.5s.672 2.5 1.5 2.5zM12 16c-2.224 0-3.021-2.227-3.051-2.316l-1.897.633c.05.15 1.271 3.684 4.949 3.684s4.898-3.533 4.949-3.684l-1.896-.638c-.033.095-.83 2.322-3.053 2.322zm10.25-4.001c0 5.652-4.598 10.25-10.25 10.25S1.75 17.652 1.75 12 6.348 1.75 12 1.75 22.25 6.348 22.25 12zm-2 0c0-4.549-3.701-8.25-8.25-8.25S3.75 7.451 3.75 12s3.701 8.25 8.25 8.25 8.25-3.701 8.25-8.25z"></path>
+                          </g>
+                        </svg>
+                      </div>
+                    </Button>
+                    <Popover
+                      {...bindPopover(popupState)}
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "center",
+                      }}
+                      transformOrigin={{
+                        vertical: "top",
+                        horizontal: "center",
+                      }}
+                      className={`${
+                        themeName === "dark-theme"
+                          ? "popover-material-ui-dark-theme"
+                          : themeName !== "dark-theme"
+                          ? "popover-material-ui-light-theme"
+                          : "hideshowMessageDeletePopover "
+                      }`}
+                    >
+                      <Picker
+                        theme={themeName === "dark-theme" ? "dark" : "light"}
+                        data={data}
+                        onEmojiSelect={onEmojiClick}
+                        maxFrequentRows={0}
+                        emojiSize={20}
+                        emojiButtonSize={28}
+                      />
+                    </Popover>
+                  </div>
+                )}
+              </PopupState>
               {/* emoji mart finish to check */}
             </div>
             <div className="p-2 ms-auto">
@@ -536,7 +553,7 @@ function PostModal({
                     border: "none",
                   }}
                   variant="primary"
-                  onClick={() => handlePost()}
+                  // onClick={() => handlePost()}
                   className={`emptyContent post-btn compose-tweet-textArea`}
                 >
                   Post

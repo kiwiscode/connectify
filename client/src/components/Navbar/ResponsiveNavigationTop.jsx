@@ -18,7 +18,7 @@ function ResponsiveNavigationBarTop() {
         gap={5}
       >
         <div className="p-2">
-          <LogoutModal></LogoutModal>{" "}
+          <LogoutModal />
         </div>
         <div className="p-2">
           {" "}

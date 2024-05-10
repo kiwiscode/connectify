@@ -10,15 +10,6 @@ let createdCommentPostId;
 const addComment = (req, res) => {
   const { userId, postId, commentPost, modalImage } = req.body;
 
-  console.log(
-    "user id =>",
-    userId,
-    "post id =>",
-    postId,
-    "comment post =>",
-    commentPost,
-    modalImage ? "modal image" : "no modal image"
-  );
   User.findById(userId)
     .then((user) => {
       Post.findById(postId)
@@ -31,7 +22,6 @@ const addComment = (req, res) => {
             if (post?.userId?.toString() !== userId) {
               User.findById(post?.userId?.toString())
                 .then((notifiedUser) => {
-                  console.log("Notified user =>", notifiedUser);
                   const newNotification = {
                     post: post._id,
                     notificationReceiver: post.userId,
@@ -160,8 +150,6 @@ const addComment = (req, res) => {
                 })
                   .then((newCreatedPost) => {
                     createdCommentPostId = newCreatedPost._id.toString();
-
-                    console.log("This line is working 2 !");
 
                     Comment.create({
                       userId: userId,
@@ -352,8 +340,6 @@ const addComment = (req, res) => {
                 })
                   .then((newCreatedPost) => {
                     createdCommentPostId = newCreatedPost._id.toString();
-
-                    console.log("This line is working 2 !");
 
                     Comment.create({
                       userId: userId,
@@ -550,8 +536,6 @@ const addComment = (req, res) => {
                   .then((newCreatedPost) => {
                     createdCommentPostId = newCreatedPost._id.toString();
 
-                    console.log("This line is working 2 !");
-
                     Comment.create({
                       userId: userId,
                       authorFullName: user.fullname,
@@ -742,8 +726,6 @@ const addComment = (req, res) => {
                   .then((newCreatedPost) => {
                     createdCommentPostId = newCreatedPost._id.toString();
 
-                    console.log("This line is working 2 !");
-
                     Comment.create({
                       userId: userId,
                       authorFullName: user.fullname,
@@ -798,7 +780,9 @@ const addComment = (req, res) => {
                                 newCreatedComment._id.toString()
                               );
 
-                              findedComment[0].save();
+                              if (findedComment[0]) {
+                                findedComment[0].save();
+                              }
                             })
                             .catch((error) => {
                               console.log("ERROR =>", error);

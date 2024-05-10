@@ -16,7 +16,6 @@ const handleRepost = (req, res) => {
           if (post.userId.toString() !== userId) {
             User.findById(post.userId.toString())
               .then((notifiedUser) => {
-                console.log("Notified user =>", notifiedUser);
                 const newNotification = {
                   post: post._id,
                   notificationReceiver: post.userId,
@@ -212,8 +211,6 @@ const handleRepost = (req, res) => {
 const handleDeleteReposts = (req, res) => {
   const { postId } = req.body;
   const { userId } = req.body;
-
-  console.log("POST ID AND USER ID =>", postId, userId);
 
   Post.findById(postId)
     .then((post) => {
@@ -422,7 +419,6 @@ const handleDeleteReposts = (req, res) => {
                   // NOTE finish to check delete if repost notification readed
                   user.posts = filteredUserPostsArray;
                   user.save();
-                  console.log("This line is working 2 =>");
                   res.status(200).json({
                     message:
                       "Reposted post and original post deleted from your profile and posts collection successfully",

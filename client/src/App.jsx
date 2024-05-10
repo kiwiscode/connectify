@@ -1,297 +1,182 @@
+import { Suspense, lazy, useContext, useEffect } from "react";
 import HomePage from "./pages/HomePage";
-import MainPage from "./pages/MainPage";
-import UserProfile from "./pages/UserProfilePage";
-import SpesificUserProfile from "./pages/SpesificUserProfile";
-import { Routes, Route } from "react-router-dom";
+
+const MainPage = lazy(() => import("./pages/MainPage"));
+const UserProfile = lazy(() => import("./pages/UserProfilePage"));
+const SpesificUserProfile = lazy(() => import("./pages/SpesificUserProfile"));
+import { Routes, Route, useLocation } from "react-router-dom";
 import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-toastify/dist/ReactToastify.css";
+const MessagesPage = lazy(() => import("./pages/MessagesPage"));
+const ChatDetailsPage = lazy(() => import("./pages/ChatDetailsPage"));
+const PostDetailPage = lazy(() => import("./pages/PostDetailPage"));
+const FollowingDetailPage = lazy(() => import("./pages/FollowingDetail"));
+const FollowerDetailPage = lazy(() => import("./pages/FollowersDetailPage"));
+const ImagePostDetailPage = lazy(() => import("./pages/ImagePostDetailPage"));
+const DeactivatedPage = lazy(() => import("./pages/DeactivatedPage"));
+const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
 
-import MessagesPage from "./pages/MessagesPage";
-import ChatDetailsPage from "./pages/ChatDetailsPage";
-import PostDetailPage from "./pages/PostDetailPage";
-import FollowingDetailPage from "./pages/FollowingDetail";
-import FollowerDetailPage from "./pages/FollowersDetailPage";
-import ImagePostDetailPage from "./pages/ImagePostDetailPage";
-import DeactivatedPage from "./pages/DeactivatedPage";
-import NotificationsPage from "./pages/NotificationsPage";
 import { ThemeContext } from "./context/ThemeContext";
-import { useContext, useEffect, useState } from "react";
-import { UrlContext } from "./context/UrlContext";
 import { UserProvider } from "./context/UserContext";
 
 import Posts from "./components/Posts/Posts";
 
-import useSound from "use-sound";
+import LoadingSpinner from "./components/ui/LoadingSpinner";
+import { Bounce, ToastContainer, toast } from "react-toastify";
 
-import ActiveLightModeSound from "./assets/light-mode-active.mp3";
-import ActiveDarkModeSound from "./assets/dark-mode-active.mp3";
+// when working on local version
+const API_URL = "http://localhost:3000";
+
+// when working on deployment version
+// ?
+
+import io from "socket.io-client";
+const socket = io.connect(`${API_URL}`);
+import CustomNotification from "./components/Notifications/CustomNotification";
 
 function App() {
-  // const { url, urlHistory } = useContext(UrlContext);
+  const location = useLocation();
+  const path = location.pathname;
 
-  // console.log("Current Url =>", url);
-  // console.log("Url history array =>", urlHistory);
+  console.log("Current path:", path);
 
-  const [
-    { theme, themeName, activeFontSizeOption },
-    toggleThemeBetweenLightDarkMode,
-  ] = useContext(ThemeContext);
+  const [{ theme, themeName }] = useContext(ThemeContext);
 
-  // const [hoveredThemeName, setHoveredThemeName] = useState(null);
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
-  const [play] = useSound(
-    themeName === "dark-theme"
-      ? ActiveLightModeSound
-      : themeName === "light-theme"
-      ? ActiveDarkModeSound
-      : null
-  );
+  useEffect(() => {
+    socket.emit(
+      "current_url_for_checking_if_user_inside_chat_details_page",
+      path
+    );
+    socket.emit("socket_userInfo", userInfo);
+  }, [path]);
 
-  const activeFontSizeOptionPixel = activeFontSizeOption.slice(
-    activeFontSizeOption.lastIndexOf(" ") + 1
-  );
+  useEffect(() => {
+    socket.on("socket_id_for_user", (socketId) => {
+      localStorage.setItem("socketId", socketId);
+    });
+    socket.emit("setUsername", userInfo.username);
+  }, []);
+  useEffect(() => {
+    console.log("Custom notification test !!!");
+    socket.on("getNotification", (data) => {
+      console.log("Data =>", data);
+    });
+
+    socket.on("getText", (data) => {
+      console.log("Data get text =>", data);
+      console.log("User info =>", userInfo);
+
+      if (data.senderName !== userInfo.username) {
+        console.log("Buradayız ve neden çalışmasın ki toast container ???");
+
+        // Path "/messages" veya "/messages/:chatRoomId" ise ve notification type "message" değilse toast göster ???
+
+        toast(
+          <CustomNotification
+            senderName={data.senderName}
+            type={data.type}
+            contactHasBeenMade={data.contactHasBeenMade}
+            senderInfo={data.senderInfo}
+            text={data.text ? data.text : null}
+          />,
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: Bounce,
+          }
+        );
+      } else {
+        console.log("You cannot send a notification to yourself.");
+      }
+    });
+  }, [socket]);
 
   return (
-    <UserProvider>
-      <div
-        className={
-          themeName === "dark-theme"
-            ? "dark-theme"
-            : themeName === "light-theme"
-            ? "light-theme"
-            : null
-        }
-        style={{
-          backgroundColor: theme.backgroundColor,
-          color: theme.color,
-        }}
-      >
-        {/* toggle theme mode start to check test  */}
-        {/* <button
-          onMouseEnter={
-            themeName === "dark-theme"
-              ? () => {
-                  setHoveredThemeName("dark-theme");
-                }
-              : () => setHoveredThemeName("light-theme")
-          }
-          onMouseLeave={() => setHoveredThemeName(null)}
+    <>
+      <UserProvider>
+        <ToastContainer theme={themeName === "dark-theme" ? "dark" : "light"} />{" "}
+        <div
           className={
             themeName === "dark-theme"
-              ? `Activate-light-mode`
+              ? "dark-theme"
               : themeName === "light-theme"
-              ? "Activate-dark-mode"
+              ? "light-theme"
               : null
           }
           style={{
-            zIndex: 9999,
-            border: "none",
-            backgroundColor: "transparent",
-            transitionDuration: "0.3s",
-            position: "fixed",
-            right: "20px",
-            top: "10px",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          type="button"
-          onClick={() => {
-            play();
-            toggleThemeBetweenLightDarkMode();
+            backgroundColor: theme.backgroundColor,
+            color: theme.color,
           }}
         >
-          <svg
-            width={20}
-            height={18}
-            viewBox="0 0 18 18"
-            style={{
-              transform: "rotate(90deg)",
-            }}
-            className="sc-a794b73f-1 upJhz"
+          <Suspense
+            fallback={
+              <LoadingSpinner
+                isSuspense={true}
+                strokeColor={"rgb(29, 155, 240)"}
+              ></LoadingSpinner>
+            }
           >
-            <mask id="moon-mask-main-nav">
-              <rect x="0" y="0" width={18} height={18} fill={"#FFF"}></rect>
-              <circle cx="25" cy="0" r="8" fill="black"></circle>
-            </mask>
-            <circle
-              cx="9"
-              cy="9"
-              r="5"
-              fill={
-                themeName === "dark-theme" && hoveredThemeName !== "dark-theme"
-                  ? "#B9BABC"
-                  : hoveredThemeName === "dark-theme" &&
-                    themeName === "dark-theme"
-                  ? "white"
-                  : themeName === "light-theme" &&
-                    hoveredThemeName !== "light-theme"
-                  ? "#414A54"
-                  : hoveredThemeName === "light-theme" &&
-                    themeName === "light-theme"
-                  ? "black"
-                  : null
-              }
-              mask="url(#moon-mask-main-nav)"
-            ></circle>
-            <g>
-              <circle
-                cx="17"
-                cy="9"
-                r="1.5"
-                fill={
-                  themeName === "light-theme" &&
-                  hoveredThemeName !== "light-theme"
-                    ? "#414A54"
-                    : themeName === "light-theme" &&
-                      hoveredThemeName === "light-theme"
-                    ? "black"
-                    : null
-                }
-                style={{
-                  transformOrigin: "center center",
-                  transform: "scale(1)",
-                }}
-              ></circle>
-              <circle
-                cx="13"
-                cy="15.928203"
-                r="1.5"
-                fill={
-                  themeName === "light-theme" &&
-                  hoveredThemeName !== "light-theme"
-                    ? "#414A54"
-                    : themeName === "light-theme" &&
-                      hoveredThemeName === "light-theme"
-                    ? "black"
-                    : null
-                }
-                style={{
-                  transformOrigin: "center center",
-                  transform: "scale(1)",
-                }}
-              ></circle>
-              <circle
-                cx="5"
-                cy="15.928203"
-                r="1.5"
-                fill={
-                  themeName === "light-theme" &&
-                  hoveredThemeName !== "light-theme"
-                    ? "#414A54"
-                    : themeName === "light-theme" &&
-                      hoveredThemeName === "light-theme"
-                    ? "black"
-                    : null
-                }
-                style={{
-                  transformOrigin: "center center",
-                  transform: "scale(1)",
-                }}
-              ></circle>
-              <circle
-                cx="1"
-                cy="9"
-                r="1.5"
-                fill={
-                  themeName === "light-theme" &&
-                  hoveredThemeName !== "light-theme"
-                    ? "#414A54"
-                    : themeName === "light-theme" &&
-                      hoveredThemeName === "light-theme"
-                    ? "black"
-                    : null
-                }
-                style={{
-                  transformOrigin: "center center",
-                  transform: "scale(1)",
-                }}
-              ></circle>
-              <circle
-                cx="5"
-                cy="2.071797"
-                r="1.5"
-                fill={
-                  themeName === "light-theme" &&
-                  hoveredThemeName !== "light-theme"
-                    ? "#414A54"
-                    : themeName === "light-theme" &&
-                      hoveredThemeName === "light-theme"
-                    ? "black"
-                    : null
-                }
-                style={{
-                  transformOrigin: "center center",
-                  transform: "scale(1)",
-                }}
-              ></circle>
-              <circle
-                cx="13"
-                cy="2.071797"
-                r="1.5"
-                fill={
-                  themeName === "light-theme" &&
-                  hoveredThemeName !== "light-theme"
-                    ? "#414A54"
-                    : themeName === "light-theme" &&
-                      hoveredThemeName === "light-theme"
-                    ? "black"
-                    : null
-                }
-                style={{
-                  transformOrigin: "center center",
-                  transform: "scale(1)",
-                }}
-              ></circle>
-            </g>
-          </svg>
-        </button>{" "} */}
-        {/* toggle theme mode finish to check test  */}
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/home" element={<MainPage />}></Route>
-          <Route path="/notifications" element={<NotificationsPage />}></Route>
-          <Route path="/messages" element={<MessagesPage />}></Route>
-          <Route path="/profile" element={<UserProfile />}></Route>
-          <Route path="/profile/:id" element={<SpesificUserProfile />}></Route>
-          <Route
-            path="/:postOwner/status/:postId"
-            element={<PostDetailPage />}
-          ></Route>
-          <Route
-            path="/messages/:chatRoomId"
-            element={<ChatDetailsPage />}
-          ></Route>
-          {/* new page start to check  INFO => CONTROL STYLING*/}
-          <Route
-            path="/:postOwner/status/:postId/photo/1"
-            element={<ImagePostDetailPage />}
-          ></Route>
-          {/* new page finish to check INFO => CONTROL STYLING */}
-          <Route
-            path="/profile/:userId/following"
-            element={<FollowingDetailPage />}
-          ></Route>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
 
-          <Route
-            path="/profile/:userId/followers"
-            element={<FollowerDetailPage />}
-          ></Route>
+              <Route path="/home" element={<MainPage />}></Route>
 
-          <Route
-            path="/settings/deactivated"
-            element={<DeactivatedPage />}
-          ></Route>
+              <Route
+                path="/notifications"
+                element={<NotificationsPage />}
+              ></Route>
+              <Route path="/messages" element={<MessagesPage />}></Route>
+              <Route path="/profile" element={<UserProfile />}></Route>
+              <Route
+                path="/profile/:id"
+                element={<SpesificUserProfile />}
+              ></Route>
+              <Route
+                path="/:postOwner/status/:postId"
+                element={<PostDetailPage />}
+              ></Route>
+              <Route
+                path="/messages/:chatRoomId"
+                element={<ChatDetailsPage />}
+              ></Route>
+              {/* new page start to check  INFO => CONTROL STYLING*/}
+              <Route
+                path="/:postOwner/status/:postId/photo/1"
+                element={<ImagePostDetailPage />}
+              ></Route>
+              {/* new page finish to check INFO => CONTROL STYLING */}
+              <Route
+                path="/profile/:userId/following"
+                element={<FollowingDetailPage />}
+              ></Route>
 
-          {/* test pages start to check  */}
-          <Route path="/posts-component-test" element={<Posts />}></Route>
+              <Route
+                path="/profile/:userId/followers"
+                element={<FollowerDetailPage />}
+              ></Route>
 
-          {/* test pages finish to check  */}
-        </Routes>
-      </div>
-    </UserProvider>
+              <Route
+                path="/settings/deactivated"
+                element={<DeactivatedPage />}
+              ></Route>
+
+              {/* test pages start to check  */}
+              <Route path="/posts-component-test" element={<Posts />}></Route>
+
+              {/* test pages finish to check  */}
+            </Routes>
+          </Suspense>
+        </div>
+      </UserProvider>
+    </>
   );
 }
 

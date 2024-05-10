@@ -28,8 +28,6 @@ const handleDeleteMessage = (req, res) => {
       },
     })
     .then((user) => {
-      console.log("Finded user =>", user.username);
-
       const userMessages = [...user.messages];
 
       const findedMessageRoom = userMessages.find((eachRoom) => {
@@ -77,38 +75,35 @@ const handleMarkAsReadMessage = (req, res) => {
   const { messageRoom } = req.body;
   const { userId } = req.user;
 
-  const messageRoomName = messageRoom.room;
+  console.log("Message room name =>", messageRoom);
 
-  User.findById(userId)
-    .then((findedUser) => {
-      console.log("Finded user =>", findedUser.username);
-      const findedRoom = findedUser.messages.find((eachMessageRoom) => {
-        return eachMessageRoom.room === messageRoomName;
-      });
+  // User.findById(userId)
+  //   .then((findedUser) => {
+  //     const findedRoom = findedUser.messages.find((eachMessageRoom) => {
+  //       return eachMessageRoom.room === messageRoom;
+  //     });
 
-      const roomIndex = findedUser.messages.indexOf(findedRoom);
-      console.log("Finded room =>", findedRoom);
-      console.log("Finded room index =>", roomIndex);
+  //     const roomIndex = findedUser.messages.indexOf(findedRoom);
 
-      const updateQuery = {
-        $set: {
-          [`messages.${roomIndex}.readed`]: true,
-        },
-      };
+  //     const updateQuery = {
+  //       $set: {
+  //         [`messages.${roomIndex}.readed`]: true,
+  //       },
+  //     };
 
-      User.updateOne({ _id: userId }, updateQuery)
-        .then(() => {
-          res.status(200).json({ message: "Messages readed" });
-        })
-        .catch((error) => {
-          console.error("Error occurred:", error);
-          res.status(500).json({ error: "An error occurred" });
-        });
-    })
-    .catch((error) => {
-      console.error("Error occurred:", error);
-      res.status(500).json({ error: "An error occurred" });
-    });
+  //     User.updateOne({ _id: userId }, updateQuery)
+  //       .then(() => {
+  //         res.status(200).json({ message: "Messages readed" });
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error occurred:", error);
+  //         res.status(500).json({ error: "An error occurred" });
+  //       });
+  //   })
+  //   .catch((error) => {
+  //     console.error("Error occurred:", error);
+  //     res.status(500).json({ error: "An error occurred" });
+  //   });
 };
 
 const handleMarkAsUnReadMessage = (req, res) => {

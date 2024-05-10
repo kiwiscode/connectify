@@ -1,20 +1,14 @@
 import { useState, useContext, useEffect } from "react";
 import { UserContext } from "../../context/UserContext";
-import {
-  Button,
-  Modal,
-  Stack,
-  Popover,
-  OverlayTrigger,
-  FormLabel,
-} from "react-bootstrap";
+import { Button, Modal, Stack } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 // import Picker from "emoji-picker-react";
 import axios from "axios";
 import "../../index.css";
-
+import Popover from "@mui/material/Popover";
+import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 import { message, Steps } from "antd";
 import { Divider, List } from "antd";
 import LoadingSpinner from "../ui/LoadingSpinner";
@@ -44,7 +38,7 @@ const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-function LogoutModal({ isLogoutActionActive }) {
+function LogoutModal() {
   const [
     { theme, themeName, activeFontSizeOption },
     toggleThemeBetweenLightDarkMode,
@@ -555,149 +549,20 @@ function LogoutModal({ isLogoutActionActive }) {
   const [showDisplayOptionsModal, setshowDisplayOptionsModal] = useState(null);
 
   const handleCloseDisplayOptionsModal = () => {
-    // window.location.href = "http://localhost:5173/home";
     setshowDisplayOptionsModal(false);
   };
 
+  const [openLogoutPopover, setopenLogoutPopover] = useState(null);
+
+  const handleCloseLogoutPopoup = () => {
+    setopenLogoutPopover(true);
+  };
+
   const showDisplayModal = () => {
+    handleCloseLogoutPopoup();
     setshowDisplayOptionsModal(true);
   };
 
-  const popoverTop = (
-    <Popover
-      style={{
-        filter:
-          themeName === "dark-theme"
-            ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
-            : "",
-
-        boxShadow:
-          themeName === "dark-theme"
-            ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
-            : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
-        width: width <= 700 ? "50%" : "19.5%",
-        padding: "8px 0px",
-        borderWidth: "1px",
-        borderRadius: "12px",
-        backgroundColor: themeName === "dark-theme" ? "black" : "",
-      }}
-      id="popover-positioned-top"
-      title="Popover top"
-      className={`${showlogoutPopup ? "" : "hideLogoutPopup"}`}
-    >
-      <div
-        style={{
-          height: "12%",
-        }}
-        className="logout-body"
-      >
-        {width <= 700 ? (
-          <>
-            <div
-              onClick={() => showDisplayModal()}
-              style={{
-                paddingBottom: "12px",
-                paddingTop: "12px",
-                lineHeight: "20px",
-                fontWeight: "700",
-                fontSize: "15px",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-                width: "100%",
-                height: "100%",
-              }}
-              className={`logout-p logout-popover logout-popover-${themeName}`}
-            >
-              <span
-                style={{
-                  position: "relative",
-                  left: "10px",
-                  color: themeName === "dark-theme" ? "white" : "",
-                }}
-              >
-                Display
-              </span>
-            </div>
-            <RightSideColumn widthSmaller700={width <= 700 ? true : false} />
-          </>
-        ) : null}
-
-        {/* settings icon start to check  */}
-        <div
-          onClick={handleShow}
-          className={`settings-and-privacy settings-and-privacy-${themeName}`}
-          style={{
-            paddingBottom: "12px",
-            paddingTop: "12px",
-            lineHeight: "20px",
-            fontWeight: "700",
-            fontSize: "15px",
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            cursor: "pointer",
-          }}
-        >
-          <svg
-            color={themeName === "dark-theme" ? "white" : ""}
-            fill="currentColor"
-            style={{
-              position: "relative",
-              left: "10px",
-            }}
-            width={20}
-            height={20}
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-            className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-          >
-            <g>
-              <path d="M10.54 1.75h2.92l1.57 2.36c.11.17.32.25.53.21l2.53-.59 2.17 2.17-.58 2.54c-.05.2.04.41.21.53l2.36 1.57v2.92l-2.36 1.57c-.17.12-.26.33-.21.53l.58 2.54-2.17 2.17-2.53-.59c-.21-.04-.42.04-.53.21l-1.57 2.36h-2.92l-1.58-2.36c-.11-.17-.32-.25-.52-.21l-2.54.59-2.17-2.17.58-2.54c.05-.2-.03-.41-.21-.53l-2.35-1.57v-2.92L4.1 8.97c.18-.12.26-.33.21-.53L3.73 5.9 5.9 3.73l2.54.59c.2.04.41-.04.52-.21l1.58-2.36zm1.07 2l-.98 1.47C10.05 6.08 9 6.5 7.99 6.27l-1.46-.34-.6.6.33 1.46c.24 1.01-.18 2.07-1.05 2.64l-1.46.98v.78l1.46.98c.87.57 1.29 1.63 1.05 2.64l-.33 1.46.6.6 1.46-.34c1.01-.23 2.06.19 2.64 1.05l.98 1.47h.78l.97-1.47c.58-.86 1.63-1.28 2.65-1.05l1.45.34.61-.6-.34-1.46c-.23-1.01.18-2.07 1.05-2.64l1.47-.98v-.78l-1.47-.98c-.87-.57-1.28-1.63-1.05-2.64l.34-1.46-.61-.6-1.45.34c-1.02.23-2.07-.19-2.65-1.05l-.97-1.47h-.78zM12 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5c.82 0 1.5-.67 1.5-1.5s-.68-1.5-1.5-1.5zM8.5 12c0-1.93 1.56-3.5 3.5-3.5 1.93 0 3.5 1.57 3.5 3.5s-1.57 3.5-3.5 3.5c-1.94 0-3.5-1.57-3.5-3.5z"></path>
-            </g>
-          </svg>
-          <span
-            style={{
-              position: "relative",
-              left: "10px",
-              color: themeName === "dark-theme" ? "white" : "",
-            }}
-            className="logout-p"
-          >
-            Settings and privacy
-          </span>
-        </div>
-        {/* settings icon finish to check  */}
-
-        <div
-          style={{
-            paddingBottom: "12px",
-            paddingTop: "12px",
-            lineHeight: "20px",
-            fontWeight: "700",
-            fontSize: "15px",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-            width: "100%",
-            height: "100%",
-          }}
-          className={`logout-p logout-popover logout-popover-${themeName}`}
-          onClick={() => handleOpenLogoutModal()}
-        >
-          <span
-            style={{
-              position: "relative",
-              left: "10px",
-              color: themeName === "dark-theme" ? "white" : "",
-            }}
-          >
-            Log out @{localeInfo?.username}
-          </span>
-        </div>
-      </div>
-    </Popover>
-  );
   const [responsivePlacementLogoutPopup, setresponsivePlacementLogoutPopup] =
     useState("top");
 
@@ -907,23 +772,23 @@ function LogoutModal({ isLogoutActionActive }) {
   const { updateUser } = useContext(UserContext);
   const [user, setUser] = useState([]);
 
-  const getUser = async () => {
-    try {
-      const url = `${API_URL}/auth/login-success`;
-      const { data } = await axios.get(url, { withCredentials: true });
-      updateUser(data.user);
-      setUser(data.user);
-      console.log("data =>", data);
-      localStorage.setItem("userInfo", JSON.stringify(data.user));
-      localStorage.setItem("token", data.token);
-    } catch (err) {
-      console.log("Error =>", err);
-    }
-  };
+  // const getUser = async () => {
+  //   try {
+  //     const url = `${API_URL}/auth/login-success`;
+  //     const { data } = await axios.get(url, { withCredentials: true });
+  //     updateUser(data.user);
+  //     setUser(data.user);
+  //     console.log("data =>", data);
+  //     localStorage.setItem("userInfo", JSON.stringify(data.user));
+  //     localStorage.setItem("token", data.token);
+  //   } catch (err) {
+  //     console.log("Error =>", err);
+  //   }
+  // };
 
-  useEffect(() => {
-    getUser();
-  }, []);
+  // useEffect(() => {
+  //   getUser();
+  // }, []);
 
   const [isHoveredIndex, setIsHoveredIndex] = useState(null);
 
@@ -1094,16 +959,6 @@ function LogoutModal({ isLogoutActionActive }) {
 
   const [hoveredOption, setHoveredOption] = useState(null);
 
-  const [checkedTheme, setCheckedTheme] = useState(
-    localStorage.getItem("themeName")
-  );
-  const [lightThemeActive, setLightThemeActive] = useState(false);
-  const [darkThemeActive, setDarkThemeActive] = useState(false);
-
-  // useEffect(() => {
-  //   localStorage.setItem("themeName", checkedTheme);
-  // }, [checkedTheme]);
-
   const [play] = useSound(
     themeName === "dark-theme"
       ? ActiveLightModeSound
@@ -1120,6 +975,7 @@ function LogoutModal({ isLogoutActionActive }) {
             height: "100%",
             margin: "0px",
             padding: "0px",
+            backgroundColor: themeName === "dark-theme" ? "black" : "white",
           }}
           show={showDisplayOptionsModal}
           onHide={handleCloseDisplayOptionsModal}
@@ -2035,29 +1891,9 @@ function LogoutModal({ isLogoutActionActive }) {
                           backgroundColor: "#15202B",
                           // backgroundColor: "transparent",
                         }}
-                        // className={
-                        //   dimThemeActive
-                        //     ? `ms-auto hover-forgot-password-send-email-stack-svg-verified-email
-                        //            hover-forgot-password-send-email-stack-svg-verified-email-${themeName}`
-                        //     : `ms-auto
-                        //             hover-forgot-password-send-email-stack-svg-verified-email-variant-2 hover-forgot-password-send-email-stack-svg-verified-email-variant-2-${themeName}`
-                        // }
-                        // onClick={() => {
-                        //   setLightThemeActive(!dimThemeActive);
-                        //   setLightThemeActive(false);
-                        //   setCheckedTheme("light-theme");
-                        // }}
                       >
                         <div
                           style={{
-                            // backgroundColor: dimThemeActive
-                            //   ? "#1d9bf0"
-                            //   : "transparent",
-                            // border: dimThemeActive
-                            //   ? "none"
-                            //   : themeName !== "dark-theme"
-                            //   ? "2px solid #71767A"
-                            //   : "2px solid rgb(70, 70, 70)",
                             backgroundColor: "#15202B",
                             border: "2px solid rgb(70, 70, 70)",
                             width: "20px",
@@ -2293,6 +2129,7 @@ function LogoutModal({ isLogoutActionActive }) {
             }}
           >
             <div
+              onClick={handleCloseLogoutPopoup}
               className="mt-2"
               style={{
                 width: "100%",
@@ -2356,116 +2193,293 @@ function LogoutModal({ isLogoutActionActive }) {
 
       {contextHolder}
       {/* popover basic test start to check  */}
-      <OverlayTrigger
-        trigger="click"
-        placement={
-          width <= 700 ? "bottom" : `${responsivePlacementLogoutPopup}`
-        }
-        overlay={popoverTop}
-      >
-        {/* start to check  */}
+      <PopupState variant="popover" popupId="demo-popup-popover">
+        {(popupState) => (
+          <div>
+            <Button
+              style={{
+                border: "none",
+                backgroundColor: "transparent",
+              }}
+              variant="text"
+              {...bindTrigger(popupState)}
+            >
+              <Stack
+                className={`stack-logout-navigation-parent stack-logout-navigation-parent-${themeName}`}
+                style={{
+                  borderRadius: "9999px",
+                  cursor: "pointer",
+                  // padding: "3px",
+                  width: "250px",
+                  position: "relative",
+                  right: "8px",
+                }}
+                direction="horizontal"
+              >
+                <div
+                  style={{ position: "relative", left: "10px" }}
+                  className="profile-img-and-svg"
+                >
+                  {/* start to check */}
+                  {userInfo?.imageUrl?.slice(0, 3) !== "../" ? (
+                    <div>
+                      <img
+                        className="profile-img logout-profile-img"
+                        src={userInfo?.imageUrl}
+                        width={40}
+                        height={40}
+                        alt=""
+                        style={{
+                          borderRadius: "50%",
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={40}
+                        fill={
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)"
+                        }
+                        className="profile-svg-logout-modal bi bi-person-circle"
+                        viewBox="0 0 16 16"
+                        style={{
+                          borderRadius: "50%",
+                        }}
+                      >
+                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                        <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+                {/* finish to check */}
 
-        <Stack
-          className={`stack-logout-navigation-parent stack-logout-navigation-parent-${themeName}`}
-          style={{
-            borderRadius: "9999px",
-            cursor: "pointer",
-          }}
-          direction="horizontal"
-        >
-          <div className="p-2 profile-img-and-svg">
-            {/* start to check */}
-            {userInfo?.imageUrl?.slice(0, 3) !== "../" ? (
-              <div>
-                <img
-                  className="profile-img logout-profile-img"
-                  src={userInfo?.imageUrl}
-                  width={40}
-                  height={40}
-                  alt=""
-                  style={{
-                    borderRadius: "50%",
+                <div
+                  className="p-2 responsive-logout"
+                  style={{ position: "relative", left: "10px" }}
+                >
+                  <div>
+                    <div
+                      className="localeInfo-username"
+                      style={{
+                        color: themeName === "dark-theme" ? "white" : "black",
+                        lineHeight: "20px",
+                        fontWeight: "700",
+                        fontSize: "15px",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        width: "120px",
+                        textAlign: "left",
+                      }}
+                    >
+                      {localeInfo?.username}
+                    </div>
+                    <div
+                      className="localeInfo-username"
+                      style={{
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)",
+                        fontSize: "15px",
+                        lineHeight: "20px",
+                        fontWeight: "400",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        width: "120px",
+                        textAlign: "left",
+                      }}
+                    >
+                      @{localeInfo?.username}
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2 ms-auto responsive-logout">
+                  <svg
+                    style={{
+                      position: "relative",
+                      right: "5px",
+                    }}
+                    color={themeName === "dark-theme" ? "white" : ""}
+                    fill="currentColor"
+                    width={`${1.25}em`}
+                    height={`${1.25}em`}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="bi bi-three-dots none-backgroundColor logout-three-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                  >
+                    <g>
+                      <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                    </g>
+                  </svg>
+                </div>
+              </Stack>
+            </Button>{" "}
+            <Popover
+              open={popupState.open}
+              onClose={popupState.close}
+              {...bindPopover(popupState)}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "center",
+              }}
+              transformOrigin={{
+                vertical: "bottom",
+                horizontal: "center",
+              }}
+              className={`${
+                themeName === "dark-theme"
+                  ? "popover-material-ui-dark-theme"
+                  : themeName !== "dark-theme"
+                  ? "popover-material-ui-light-theme"
+                  : "hideshowMessageDeletePopover "
+              }`}
+            >
+              {" "}
+              <div
+                style={{
+                  height: width <= 700 ? "12%" : "100px",
+                  width: "250px",
+                }}
+                className="logout-body"
+              >
+                {width <= 700 ? (
+                  <>
+                    <div
+                      onClick={() => {
+                        showDisplayModal();
+                        popupState.close();
+                      }}
+                      style={{
+                        paddingBottom: "12px",
+                        paddingTop: "12px",
+                        lineHeight: "20px",
+                        fontWeight: "700",
+                        fontSize: "15px",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        width: "100%",
+                        // height: "100%",
+                      }}
+                      className={`logout-p logout-popover logout-popover-${themeName}`}
+                    >
+                      <span
+                        style={{
+                          position: "relative",
+                          left: "10px",
+                          color: themeName === "dark-theme" ? "white" : "",
+                        }}
+                      >
+                        Display
+                      </span>
+                    </div>
+                    <div
+                      onClick={() => {
+                        // dataFromRightSideColumn ? popupState.close() : null;
+                        popupState.close();
+                      }}
+                    >
+                      <RightSideColumn
+                        widthSmaller700={width <= 700 ? true : false}
+                      />
+                    </div>
+                  </>
+                ) : null}
+
+                {/* settings icon start to check  */}
+                <div
+                  onClick={() => {
+                    handleShow();
+                    popupState.close();
                   }}
-                />
-              </div>
-            ) : (
-              <div>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width={40}
-                  fill={
-                    themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)"
-                  }
-                  className="profile-svg-logout-modal bi bi-person-circle"
-                  viewBox="0 0 16 16"
+                  className={`settings-and-privacy settings-and-privacy-${themeName}`}
                   style={{
-                    borderRadius: "50%",
+                    paddingBottom: "12px",
+                    paddingTop: "12px",
+                    lineHeight: "20px",
+                    fontWeight: "700",
+                    fontSize: "15px",
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    cursor: "pointer",
                   }}
                 >
-                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                  <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                </svg>
+                  <svg
+                    color={themeName === "dark-theme" ? "white" : ""}
+                    fill="currentColor"
+                    style={{
+                      position: "relative",
+                      left: "10px",
+                    }}
+                    width={20}
+                    height={20}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                  >
+                    <g>
+                      <path d="M10.54 1.75h2.92l1.57 2.36c.11.17.32.25.53.21l2.53-.59 2.17 2.17-.58 2.54c-.05.2.04.41.21.53l2.36 1.57v2.92l-2.36 1.57c-.17.12-.26.33-.21.53l.58 2.54-2.17 2.17-2.53-.59c-.21-.04-.42.04-.53.21l-1.57 2.36h-2.92l-1.58-2.36c-.11-.17-.32-.25-.52-.21l-2.54.59-2.17-2.17.58-2.54c.05-.2-.03-.41-.21-.53l-2.35-1.57v-2.92L4.1 8.97c.18-.12.26-.33.21-.53L3.73 5.9 5.9 3.73l2.54.59c.2.04.41-.04.52-.21l1.58-2.36zm1.07 2l-.98 1.47C10.05 6.08 9 6.5 7.99 6.27l-1.46-.34-.6.6.33 1.46c.24 1.01-.18 2.07-1.05 2.64l-1.46.98v.78l1.46.98c.87.57 1.29 1.63 1.05 2.64l-.33 1.46.6.6 1.46-.34c1.01-.23 2.06.19 2.64 1.05l.98 1.47h.78l.97-1.47c.58-.86 1.63-1.28 2.65-1.05l1.45.34.61-.6-.34-1.46c-.23-1.01.18-2.07 1.05-2.64l1.47-.98v-.78l-1.47-.98c-.87-.57-1.28-1.63-1.05-2.64l.34-1.46-.61-.6-1.45.34c-1.02.23-2.07-.19-2.65-1.05l-.97-1.47h-.78zM12 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5c.82 0 1.5-.67 1.5-1.5s-.68-1.5-1.5-1.5zM8.5 12c0-1.93 1.56-3.5 3.5-3.5 1.93 0 3.5 1.57 3.5 3.5s-1.57 3.5-3.5 3.5c-1.94 0-3.5-1.57-3.5-3.5z"></path>
+                    </g>
+                  </svg>
+                  <span
+                    style={{
+                      position: "relative",
+                      left: "10px",
+                      color: themeName === "dark-theme" ? "white" : "",
+                    }}
+                    className="logout-p"
+                  >
+                    Settings and privacy
+                  </span>
+                </div>
+                {/* settings icon finish to check  */}
+                <div
+                  className={`logout-p logout-popover logout-popover-${themeName}`}
+                  onClick={() => {
+                    handleOpenLogoutModal();
+                    popupState.close();
+                  }}
+                  style={{
+                    paddingBottom: "12px",
+                    paddingTop: "5px",
+                    lineHeight: "20px",
+                    fontWeight: "700",
+                    fontSize: "15px",
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    cursor: "pointer",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    width: "100%",
+                  }}
+                >
+                  <span
+                    style={{
+                      position: "relative",
+                      left: "10px",
+                      color: themeName === "dark-theme" ? "white" : "",
+                    }}
+                    className="logout-p"
+                  >
+                    Log out @{localeInfo?.username}
+                  </span>
+                </div>
               </div>
-            )}
+            </Popover>
           </div>
-          {/* finish to check */}
+        )}
+      </PopupState>
 
-          <div className="p-2 responsive-logout">
-            <div>
-              <div
-                className="localeInfo-username"
-                style={{
-                  color: themeName === "dark-theme" ? "white" : "black",
-
-                  lineHeight: "20px",
-                  fontWeight: "700",
-                  fontSize: "15px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                  width: "120px",
-                }}
-              >
-                {localeInfo?.username}
-              </div>
-              <div
-                className="localeInfo-username"
-                style={{
-                  color:
-                    themeName === "dark-theme"
-                      ? "#71767A"
-                      : "rgb(83, 100, 113)",
-                  fontSize: "15px",
-                  lineHeight: "20px",
-                  fontWeight: "400",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                  width: "120px",
-                }}
-              >
-                @{localeInfo?.username}
-              </div>
-            </div>
-          </div>
-          <div className="p-2 ms-auto responsive-logout">
-            <svg
-              color={themeName === "dark-theme" ? "white" : ""}
-              fill="currentColor"
-              width={`${1.25}em`}
-              height={`${1.25}em`}
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-              className="bi bi-three-dots none-backgroundColor logout-three-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-            >
-              <g>
-                <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-              </g>
-            </svg>
-          </div>
-        </Stack>
-        {/* finish to check */}
-      </OverlayTrigger>
       {/* popover basic test finish to check  */}
 
       {/* settings and privacy modal start to check  */}
@@ -2695,281 +2709,283 @@ function LogoutModal({ isLogoutActionActive }) {
               itemLayout="horizontal"
             >
               {data.map((item, index) => (
-                <List.Item
-                  onClick={() => setInitialOptionClicked(true)}
-                  onMouseEnter={() => {
-                    if (!initialOptionClicked) {
-                      setIsHoveredIndex(index);
-                    }
-                  }}
-                  onMouseLeave={() => setIsHoveredIndex(null)}
-                  className="mt-3"
-                  style={{
-                    backgroundColor:
-                      isHoveredIndex === index && themeName !== "dark-theme"
-                        ? "#f7f9f9"
-                        : isHoveredIndex === index && themeName === "dark-theme"
-                        ? "#16181c"
-                        : "",
-                    padding: "12px",
-                    width: "100%",
-                    margin: "0px",
-                  }}
-                  key={index}
-                >
-                  {item && index === 0 ? (
-                    <>
-                      <div
-                        onClick={showAccountInformationSection}
-                        style={{
-                          height: "100px",
-                          padding: "12px",
-                          cursor: "pointer",
-                        }}
-                        className={`${showListItem}`}
-                      >
-                        <Stack direction="horizontal" gap={3}>
-                          <div className="p-2">
-                            <svg
-                              width={`${1.25}em`}
-                              height={`${1.25}em`}
-                              viewBox="0 0 24 24"
-                              aria-hidden="true"
-                              className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
-                              fill={
-                                themeName === "dark-theme"
-                                  ? "#71767A"
-                                  : "rgb(83, 100, 113)"
-                              }
-                            >
-                              <g>
-                                <path d="M5.651 19h12.698c-.337-1.8-1.023-3.21-1.945-4.19C15.318 13.65 13.838 13 12 13s-3.317.65-4.404 1.81c-.922.98-1.608 2.39-1.945 4.19zm.486-5.56C7.627 11.85 9.648 11 12 11s4.373.85 5.863 2.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H3.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46zM12 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM8 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4z"></path>
-                              </g>
-                            </svg>
-                          </div>
-                          <div className="p-2">
-                            {" "}
-                            <div>
-                              <div
-                                style={{
-                                  lineHeight: "20px",
-                                  fontSize: "15px",
-                                  fontWeight: "400",
-                                  color:
-                                    themeName === "dark-theme"
-                                      ? "white"
-                                      : "black",
-                                }}
+                <div key={index}>
+                  <List.Item
+                    onClick={() => setInitialOptionClicked(true)}
+                    onMouseEnter={() => {
+                      if (!initialOptionClicked) {
+                        setIsHoveredIndex(index);
+                      }
+                    }}
+                    onMouseLeave={() => setIsHoveredIndex(null)}
+                    className="mt-3"
+                    style={{
+                      backgroundColor:
+                        isHoveredIndex === index && themeName !== "dark-theme"
+                          ? "#f7f9f9"
+                          : isHoveredIndex === index &&
+                            themeName === "dark-theme"
+                          ? "#16181c"
+                          : "",
+                      padding: "12px",
+                      width: "100%",
+                      margin: "0px",
+                    }}
+                  >
+                    {item && index === 0 ? (
+                      <>
+                        <div
+                          onClick={showAccountInformationSection}
+                          style={{
+                            height: "100px",
+                            padding: "12px",
+                            cursor: "pointer",
+                          }}
+                          className={`${showListItem}`}
+                        >
+                          <Stack direction="horizontal" gap={3}>
+                            <div className="p-2">
+                              <svg
+                                width={`${1.25}em`}
+                                height={`${1.25}em`}
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
+                                fill={
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "rgb(83, 100, 113)"
+                                }
                               >
-                                Account information
-                              </div>
-                              <span
-                                style={{
-                                  fontSize: "13px",
-                                  lineHeight: "16px",
-                                  fontWeight: "400",
-                                  color:
-                                    themeName === "dark-theme"
-                                      ? "#71767A"
-                                      : "rgb(83, 100, 113)",
-                                }}
-                              >
-                                {item}
-                              </span>
+                                <g>
+                                  <path d="M5.651 19h12.698c-.337-1.8-1.023-3.21-1.945-4.19C15.318 13.65 13.838 13 12 13s-3.317.65-4.404 1.81c-.922.98-1.608 2.39-1.945 4.19zm.486-5.56C7.627 11.85 9.648 11 12 11s4.373.85 5.863 2.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H3.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46zM12 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM8 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4z"></path>
+                                </g>
+                              </svg>
                             </div>
-                          </div>
-                          <div className="p-2 ms-auto">
-                            {" "}
-                            <svg
-                              color="rgba(83,100,113,1.00)"
-                              fill="currentColor"
-                              width={`${1.25}em`}
-                              height={`${1.25}em`}
-                              viewBox="0 0 24 24"
-                              aria-hidden="true"
-                              className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1q142lx r-f727ji"
-                            >
-                              <g>
-                                <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
-                              </g>
-                            </svg>
-                          </div>
-                        </Stack>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      {item && index === 1 ? (
-                        <>
-                          <div
-                            onClick={showChangePasswordSection}
-                            style={{
-                              height: "100px",
-                              padding: "12px",
-                              cursor: "pointer",
-                            }}
-                            className={`${showListItem} `}
-                          >
-                            <Stack direction="horizontal" gap={3}>
-                              <div className="p-2">
-                                <svg
-                                  fill={
-                                    themeName === "dark-theme"
-                                      ? "#71767A"
-                                      : "rgb(83, 100, 113)"
-                                  }
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
+                            <div className="p-2">
+                              {" "}
+                              <div>
+                                <div
+                                  style={{
+                                    lineHeight: "20px",
+                                    fontSize: "15px",
+                                    fontWeight: "400",
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "white"
+                                        : "black",
+                                  }}
                                 >
-                                  <g>
-                                    <path d="M13 9.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5zm9.14 1.77l-5.83 5.84-4-1L6.41 22H2v-4.41l5.89-5.9-1-4 5.84-5.83 7.06 2.35 2.35 7.06zm-12.03 1.04L4 18.41V20h1.59l6.1-6.11 4 1 4.17-4.16-1.65-4.94-4.94-1.65-4.16 4.17 1 4z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                              <div className="p-2">
-                                {" "}
-                                <div>
-                                  <div
-                                    style={{
-                                      lineHeight: "20px",
-                                      fontSize: "15px",
-                                      fontWeight: "400",
-                                      color:
-                                        themeName === "dark-theme"
-                                          ? "white"
-                                          : "black",
-                                    }}
-                                  >
-                                    Change your password
-                                  </div>
-                                  <span
-                                    style={{
-                                      fontSize: "13px",
-                                      lineHeight: "16px",
-                                      fontWeight: "400",
-                                      color:
-                                        themeName === "dark-theme"
-                                          ? "#71767A"
-                                          : "rgb(83, 100, 113)",
-                                    }}
-                                  >
-                                    {item}
-                                  </span>
+                                  Account information
                                 </div>
-                              </div>
-                              <div className="p-2 ms-auto">
-                                <svg
-                                  color="rgba(83,100,113,1.00)"
-                                  fill="currentColor"
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1q142lx r-f727ji"
+                                <span
+                                  style={{
+                                    fontSize: "13px",
+                                    lineHeight: "16px",
+                                    fontWeight: "400",
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgb(83, 100, 113)",
+                                  }}
                                 >
-                                  <g>
-                                    <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
-                                  </g>
-                                </svg>
+                                  {item}
+                                </span>
                               </div>
-                            </Stack>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          {item && index === 2 ? (
-                            <>
-                              <div
-                                onClick={showDeactivateAccountSection}
-                                style={{
-                                  height: "100px",
-                                  padding: "12px",
-                                  cursor: "pointer",
-                                }}
-                                className={`${showListItem} `}
+                            </div>
+                            <div className="p-2 ms-auto">
+                              {" "}
+                              <svg
+                                color="rgba(83,100,113,1.00)"
+                                fill="currentColor"
+                                width={`${1.25}em`}
+                                height={`${1.25}em`}
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1q142lx r-f727ji"
                               >
-                                <Stack direction="horizontal" gap={3}>
-                                  <div className="p-2">
-                                    <svg
-                                      fill={
-                                        themeName === "dark-theme"
-                                          ? "#71767A"
-                                          : "rgb(83, 100, 113)"
-                                      }
-                                      width={`${1.25}em`}
-                                      height={`${1.25}em`}
-                                      viewBox="0 0 24 24"
-                                      aria-hidden="true"
-                                      className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
+                                <g>
+                                  <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
+                                </g>
+                              </svg>
+                            </div>
+                          </Stack>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        {item && index === 1 ? (
+                          <>
+                            <div
+                              onClick={showChangePasswordSection}
+                              style={{
+                                height: "100px",
+                                padding: "12px",
+                                cursor: "pointer",
+                              }}
+                              className={`${showListItem} `}
+                            >
+                              <Stack direction="horizontal" gap={3}>
+                                <div className="p-2">
+                                  <svg
+                                    fill={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgb(83, 100, 113)"
+                                    }
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
+                                  >
+                                    <g>
+                                      <path d="M13 9.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5zm9.14 1.77l-5.83 5.84-4-1L6.41 22H2v-4.41l5.89-5.9-1-4 5.84-5.83 7.06 2.35 2.35 7.06zm-12.03 1.04L4 18.41V20h1.59l6.1-6.11 4 1 4.17-4.16-1.65-4.94-4.94-1.65-4.16 4.17 1 4z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                                <div className="p-2">
+                                  {" "}
+                                  <div>
+                                    <div
+                                      style={{
+                                        lineHeight: "20px",
+                                        fontSize: "15px",
+                                        fontWeight: "400",
+                                        color:
+                                          themeName === "dark-theme"
+                                            ? "white"
+                                            : "black",
+                                      }}
                                     >
-                                      <g>
-                                        <path d="M21.398 6.52c-.887-1.79-2.647-2.91-4.601-3.01-1.65-.09-3.367.56-4.796 2.01-1.43-1.45-3.147-2.1-4.798-2.01-1.954.1-3.714 1.22-4.601 3.01-.896 1.81-.846 4.17.514 6.67 1.353 2.48 4.003 5.12 8.382 7.67l.504.3.503-.3c4.378-2.55 7.028-5.19 8.379-7.67 1.36-2.5 1.41-4.86.514-6.67zm-2.27 5.71c-1.074 1.97-3.256 4.27-7.126 6.61-3.872-2.34-6.055-4.64-7.129-6.61-1.112-2.04-1.031-3.7-.479-4.82.561-1.13 1.667-1.84 2.91-1.91 1.077-.05 2.338.38 3.452 1.61L8.588 10.3l4.009 2.5-1.428 2.15 1.665 1.1 2.569-3.85-3.991-2.5 1.405-2.06c1.21-1.63 2.662-2.2 3.88-2.14 1.242.07 2.347.78 2.908 1.91.553 1.12.634 2.78-.477 4.82z"></path>
-                                      </g>
-                                    </svg>
-                                  </div>
-                                  <div className="p-2">
-                                    {" "}
-                                    <div>
-                                      <div
-                                        style={{
-                                          color:
-                                            themeName === "dark-theme"
-                                              ? "white"
-                                              : "black",
-                                          lineHeight: "20px",
-                                          fontSize: "15px",
-                                          fontWeight: "400",
-                                        }}
-                                      >
-                                        Deactivate your account
-                                      </div>
-                                      <span
-                                        style={{
-                                          fontSize: "13px",
-                                          lineHeight: "16px",
-                                          fontWeight: "400",
-                                          color:
-                                            themeName === "dark-theme"
-                                              ? "#71767A"
-                                              : "rgb(83, 100, 113)",
-                                        }}
-                                      >
-                                        {item}.
-                                      </span>
+                                      Change your password
                                     </div>
-                                  </div>
-                                  <div className="p-2  ms-auto">
-                                    <svg
-                                      color="rgba(83,100,113,1.00)"
-                                      fill="currentColor"
-                                      width={`${1.25}em`}
-                                      height={`${1.25}em`}
-                                      viewBox="0 0 24 24"
-                                      aria-hidden="true"
-                                      className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1q142lx r-f727ji"
+                                    <span
+                                      style={{
+                                        fontSize: "13px",
+                                        lineHeight: "16px",
+                                        fontWeight: "400",
+                                        color:
+                                          themeName === "dark-theme"
+                                            ? "#71767A"
+                                            : "rgb(83, 100, 113)",
+                                      }}
                                     >
-                                      <g>
-                                        <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
-                                      </g>
-                                    </svg>
+                                      {item}
+                                    </span>
                                   </div>
-                                </Stack>
-                              </div>
-                            </>
-                          ) : (
-                            <>
-                              Something went wrong, and the modal data cannot be
-                              loaded.
-                            </>
-                          )}
-                        </>
-                      )}
-                    </>
-                  )}
-                </List.Item>
+                                </div>
+                                <div className="p-2 ms-auto">
+                                  <svg
+                                    color="rgba(83,100,113,1.00)"
+                                    fill="currentColor"
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1q142lx r-f727ji"
+                                  >
+                                    <g>
+                                      <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </Stack>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            {item && index === 2 ? (
+                              <>
+                                <div
+                                  onClick={showDeactivateAccountSection}
+                                  style={{
+                                    height: "100px",
+                                    padding: "12px",
+                                    cursor: "pointer",
+                                  }}
+                                  className={`${showListItem} `}
+                                >
+                                  <Stack direction="horizontal" gap={3}>
+                                    <div className="p-2">
+                                      <svg
+                                        fill={
+                                          themeName === "dark-theme"
+                                            ? "#71767A"
+                                            : "rgb(83, 100, 113)"
+                                        }
+                                        width={`${1.25}em`}
+                                        height={`${1.25}em`}
+                                        viewBox="0 0 24 24"
+                                        aria-hidden="true"
+                                        className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
+                                      >
+                                        <g>
+                                          <path d="M21.398 6.52c-.887-1.79-2.647-2.91-4.601-3.01-1.65-.09-3.367.56-4.796 2.01-1.43-1.45-3.147-2.1-4.798-2.01-1.954.1-3.714 1.22-4.601 3.01-.896 1.81-.846 4.17.514 6.67 1.353 2.48 4.003 5.12 8.382 7.67l.504.3.503-.3c4.378-2.55 7.028-5.19 8.379-7.67 1.36-2.5 1.41-4.86.514-6.67zm-2.27 5.71c-1.074 1.97-3.256 4.27-7.126 6.61-3.872-2.34-6.055-4.64-7.129-6.61-1.112-2.04-1.031-3.7-.479-4.82.561-1.13 1.667-1.84 2.91-1.91 1.077-.05 2.338.38 3.452 1.61L8.588 10.3l4.009 2.5-1.428 2.15 1.665 1.1 2.569-3.85-3.991-2.5 1.405-2.06c1.21-1.63 2.662-2.2 3.88-2.14 1.242.07 2.347.78 2.908 1.91.553 1.12.634 2.78-.477 4.82z"></path>
+                                        </g>
+                                      </svg>
+                                    </div>
+                                    <div className="p-2">
+                                      {" "}
+                                      <div>
+                                        <div
+                                          style={{
+                                            color:
+                                              themeName === "dark-theme"
+                                                ? "white"
+                                                : "black",
+                                            lineHeight: "20px",
+                                            fontSize: "15px",
+                                            fontWeight: "400",
+                                          }}
+                                        >
+                                          Deactivate your account
+                                        </div>
+                                        <span
+                                          style={{
+                                            fontSize: "13px",
+                                            lineHeight: "16px",
+                                            fontWeight: "400",
+                                            color:
+                                              themeName === "dark-theme"
+                                                ? "#71767A"
+                                                : "rgb(83, 100, 113)",
+                                          }}
+                                        >
+                                          {item}.
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <div className="p-2  ms-auto">
+                                      <svg
+                                        color="rgba(83,100,113,1.00)"
+                                        fill="currentColor"
+                                        width={`${1.25}em`}
+                                        height={`${1.25}em`}
+                                        viewBox="0 0 24 24"
+                                        aria-hidden="true"
+                                        className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1q142lx r-f727ji"
+                                      >
+                                        <g>
+                                          <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
+                                        </g>
+                                      </svg>
+                                    </div>
+                                  </Stack>
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                Something went wrong, and the modal data cannot
+                                be loaded.
+                              </>
+                            )}
+                          </>
+                        )}
+                      </>
+                    )}
+                  </List.Item>
+                </div>
               ))}
             </List>
           ) : (
@@ -3794,155 +3810,6 @@ function LogoutModal({ isLogoutActionActive }) {
             : `forgot-password-process forgot-password-process-${themeName}`
         }
       >
-        {/* <Modal.Header
-          className="signin-modal-header-child-non-reactivate"
-          style={{
-            border: "none",
-          }}
-        >
-          {current > 0 ? (
-            <div
-              className={`previous-button previous-button-${themeName}`}
-              style={{ borderRadius: "50%", cursor: "pointer" }}
-            >
-              <div>
-                <svg
-                  style={{
-                    border: "none",
-                    fontSize: "15px",
-                    margin: "5px",
-                  }}
-                  color={themeName === "dark-theme" ? "white" : ""}
-                  fill="currentColor"
-                  onClick={() => prev()}
-                  height={20}
-                  width={20}
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                >
-                  <g>
-                    <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
-                  </g>
-                </svg>
-              </div>
-            </div>
-          ) : showDetailAccountInfo ? (
-            <div
-              className={`previous-button previous-button-${themeName}`}
-              style={{ borderRadius: "50%", cursor: "pointer" }}
-            >
-              <div>
-                <svg
-                  color={themeName === "dark-theme" ? "white" : ""}
-                  fill="currentColor"
-                  style={{
-                    border: "none",
-                    fontSize: "15px",
-                    margin: "5px",
-                  }}
-                  onClick={showInitialTab}
-                  height={20}
-                  width={20}
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                >
-                  <g>
-                    <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
-                  </g>
-                </svg>
-              </div>
-            </div>
-          ) : showDetailChangePasswordInfo ? (
-            <div
-              className={`previous-button previous-button-${themeName}`}
-              style={{ borderRadius: "50%", cursor: "pointer" }}
-            >
-              <div>
-                <svg
-                  color={themeName === "dark-theme" ? "white" : ""}
-                  fill="currentColor"
-                  style={{
-                    border: "none",
-                    fontSize: "15px",
-                    margin: "5px",
-                  }}
-                  onClick={showSecondTab}
-                  height={20}
-                  width={20}
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                >
-                  <g>
-                    <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
-                  </g>
-                </svg>
-              </div>
-            </div>
-          ) : showDetailDeactivateAccountInfo ? (
-            <div
-              className={`previous-button previous-button
--${themeName}`}
-              style={{ borderRadius: "50%", cursor: "pointer" }}
-            >
-              <div>
-                <svg
-                  color={themeName === "dark-theme" ? "white" : ""}
-                  fill="currentColor"
-                  style={{
-                    border: "none",
-                    fontSize: "15px",
-                    margin: "5px",
-                  }}
-                  onClick={showThirdTab}
-                  height={20}
-                  width={20}
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                >
-                  <g>
-                    <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
-                  </g>
-                </svg>
-              </div>
-            </div>
-          ) : (
-            <>
-              <div
-                onClick={handleClose}
-                className={`close-button close-button-${themeName}`}
-                style={{ borderRadius: "50%", cursor: "pointer" }}
-              >
-                <div>
-                  <svg
-                    color={
-                      themeName === "dark-theme" ? "white" : "rgb(15,20,25)"
-                    }
-                    fill="currentColor"
-                    style={{
-                      border: "none",
-                      fontSize: "15px",
-                      margin: "5px",
-                    }}
-                    onClick={handleClose}
-                    width={20}
-                    height={20}
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                  >
-                    <g>
-                      <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
-                    </g>
-                  </svg>{" "}
-                </div>
-              </div>
-            </>
-          )}
-        </Modal.Header> */}
         <Modal.Body
           style={{
             padding: "0px",

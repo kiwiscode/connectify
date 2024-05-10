@@ -15,8 +15,7 @@ const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-import io from "socket.io-client";
-const socket = io.connect(`${API_URL}`);
+
 function NotificationsPage() {
   const { getToken } = useContext(UserContext);
   const { height, width } = useWindowDimensions();
@@ -119,18 +118,6 @@ function NotificationsPage() {
   };
 
   console.log("message api =>", messageApi);
-  // socket io 5 client start to check
-  const handleNotification = (post, userInfo, type) => {
-    console.log("Post =>", post);
-    socket.emit("sendNotification", {
-      senderName: userInfo.username,
-      receiverName: post.userId.username,
-      type: type,
-      contactHasBeenMade: post,
-      senderInfo: userInfo,
-    });
-  };
-  // socket io 5 client finish to check
 
   const { userInfo } = useContext(UserContext);
 
@@ -147,54 +134,7 @@ function NotificationsPage() {
       )
       .then(() => {
         setTimeout(() => {
-          handleNotification(findedPost, userInfo, "repost");
           getAllNotifications();
-          // console.log("Finded post =>", findedPost);
-          // console.log("All notifications =>", allNotifications);
-
-          // const findedPostId = findedPost?._id;
-
-          // console.log("Finded post id from func. parameter =>", findedPostId);
-
-          // const findNotification = allNotifications.filter(
-          //   (eachNotification) => {
-          //     return (
-          //       eachNotification.isComment?.commentPostId?._id === findedPostId
-          //     );
-          //   }
-          // )[0];
-
-          // const findedIndex = allNotifications.indexOf(findNotification);
-          // console.log("Finded notification =>", findNotification);
-          // console.log("Finded notification index =>", findedIndex);
-
-          // setAllNotifications((prevState) => {
-          //   return prevState.map((item, index) => {
-          //     if (index === findedIndex && item.isComment) {
-          //       if (item.isComment.commentPostId) {
-          //         const updatedReposted = [
-          //           ...item.isComment.commentPostId.reposted,
-          //           userInfo._id,
-          //         ];
-          //         return {
-          //           ...item,
-          //           isComment: {
-          //             ...item.isComment,
-          //             commentPostId: {
-          //               ...item.isComment.commentPostId,
-          //               reposted: updatedReposted,
-          //             },
-          //           },
-          //         };
-          //       } else {
-          //         window.alert("commentPostId or reposted is not defined");
-          //         return item;
-          //       }
-          //     } else {
-          //       return item;
-          //     }
-          //   });
-          // });
         }, 500);
       })
       .catch((error) => {
@@ -216,53 +156,6 @@ function NotificationsPage() {
       .then(() => {
         setTimeout(() => {
           getAllNotifications();
-          // console.log("Finded post =>", findedPost);
-          // console.log("All notifications =>", allNotifications);
-
-          // const findedPostId = findedPost?._id;
-
-          // console.log("Finded post id from func. parameter =>", findedPostId);
-
-          // const findNotification = allNotifications.filter(
-          //   (eachNotification) => {
-          //     return (
-          //       eachNotification.isComment?.commentPostId?._id === findedPostId
-          //     );
-          //   }
-          // )[0];
-
-          // const findedIndex = allNotifications.indexOf(findNotification);
-          // console.log("Finded notification =>", findNotification);
-          // console.log("Finded notification index =>", findedIndex);
-          // setAllNotifications((prevState) => {
-          //   return prevState.map((item, index) => {
-          //     if (index === findedIndex && item.isComment) {
-          //       if (item.isComment.commentPostId) {
-          //         // updatedReposted dizisinden userInfo._id'yi çıkar
-          //         const updatedReposted =
-          //           item.isComment.commentPostId.reposted.filter(
-          //             (id) => id !== userInfo._id
-          //           );
-
-          //         return {
-          //           ...item,
-          //           isComment: {
-          //             ...item.isComment,
-          //             commentPostId: {
-          //               ...item.isComment.commentPostId,
-          //               reposted: updatedReposted,
-          //             },
-          //           },
-          //         };
-          //       } else {
-          //         window.alert("commentPostId or reposted is not defined");
-          //         return item;
-          //       }
-          //     } else {
-          //       return item;
-          //     }
-          //   });
-          // });
         }, 500);
       })
       .catch((error) => {
@@ -284,54 +177,7 @@ function NotificationsPage() {
       .then(() => {
         console.log("We are here !!!");
         setTimeout(() => {
-          handleNotification(findedPost, userInfo, "liked");
           getAllNotifications();
-          // console.log("Finded post =>", findedPost);
-          // console.log("All notifications =>", allNotifications);
-
-          // const findedPostId = findedPost?._id;
-
-          // console.log("Finded post id from func. parameter =>", findedPostId);
-
-          // const findNotification = allNotifications.filter(
-          //   (eachNotification) => {
-          //     return (
-          //       eachNotification.isComment?.commentPostId?._id === findedPostId
-          //     );
-          //   }
-          // )[0];
-
-          // const findedIndex = allNotifications.indexOf(findNotification);
-          // console.log("Finded notification =>", findNotification);
-          // console.log("Finded notification index =>", findedIndex);
-
-          // setAllNotifications((prevState) => {
-          //   return prevState.map((item, index) => {
-          //     if (index === findedIndex && item.isComment) {
-          //       if (item.isComment.commentPostId) {
-          //         const updatedLikes = [
-          //           ...item.isComment.commentPostId.likes,
-          //           userInfo._id,
-          //         ];
-          //         return {
-          //           ...item,
-          //           isComment: {
-          //             ...item.isComment,
-          //             commentPostId: {
-          //               ...item.isComment.commentPostId,
-          //               likes: updatedLikes,
-          //             },
-          //           },
-          //         };
-          //       } else {
-          //         window.alert("commentPostId or reposted is not defined");
-          //         return item;
-          //       }
-          //     } else {
-          //       return item;
-          //     }
-          //   });
-          // });
         }, 500);
       })
       .catch((error) => {
@@ -356,58 +202,18 @@ function NotificationsPage() {
       .then(() => {
         setTimeout(() => {
           getAllNotifications();
-          // console.log("Finded post =>", findedPost);
-          // console.log("All notifications =>", allNotifications);
-
-          // const findedPostId = findedPost?._id;
-
-          // console.log("Finded post id from func. parameter =>", findedPostId);
-
-          // const findNotification = allNotifications.filter(
-          //   (eachNotification) => {
-          //     return (
-          //       eachNotification.isComment?.commentPostId?._id === findedPostId
-          //     );
-          //   }
-          // )[0];
-
-          // const findedIndex = allNotifications.indexOf(findNotification);
-          // console.log("Finded notification =>", findNotification);
-          // console.log("Finded notification index =>", findedIndex);
-          // setAllNotifications((prevState) => {
-          //   return prevState.map((item, index) => {
-          //     if (index === findedIndex && item.isComment) {
-          //       if (item.isComment.commentPostId) {
-          //         const updatedLikes =
-          //           item.isComment.commentPostId.likes.filter(
-          //             (id) => id !== userInfo._id
-          //           );
-
-          //         return {
-          //           ...item,
-          //           isComment: {
-          //             ...item.isComment,
-          //             commentPostId: {
-          //               ...item.isComment.commentPostId,
-          //               likes: updatedLikes,
-          //             },
-          //           },
-          //         };
-          //       } else {
-          //         window.alert("commentPostId or reposted is not defined");
-          //         return item;
-          //       }
-          //     } else {
-          //       return item;
-          //     }
-          //   });
-          // });
         }, 500);
       })
       .catch((err) => {
         console.log("Error =>", err);
       });
   };
+
+  const [dataFromCommentModal, setDataFromCommentModal] = useState("");
+  function handleDataFromCommentModal(data) {
+    console.log("Data =>", data);
+    setDataFromCommentModal(data);
+  }
 
   return (
     <>
@@ -530,8 +336,8 @@ function NotificationsPage() {
               <div className="mt-5">
                 {allNotifications.map((eachNotification, index) => {
                   return (
-                    <>
-                      <div key={index}>
+                    <div key={index}>
+                      <div>
                         {eachNotification.isComment.value ? (
                           <Link
                             // to={`/${eachNotification?.post?.authorUserName}/status/${eachNotification?.post?._id}`}
@@ -811,6 +617,9 @@ function NotificationsPage() {
                                       height={`${1.25}em`}
                                       refreshPosts={getAllNotifications}
                                       postSharedMessage={postSharedMessage}
+                                      sendDataToParent={
+                                        handleDataFromCommentModal
+                                      }
                                     />
                                   </div>
                                   <div
@@ -1515,7 +1324,7 @@ function NotificationsPage() {
                           </Link>
                         ) : null}
                       </div>
-                    </>
+                    </div>
                   );
                 })}
               </div>

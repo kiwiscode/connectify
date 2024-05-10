@@ -72,30 +72,6 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
 
     socket.on("getmessageRoomId", handleGetMessageRoomId);
 
-    // Server tarafından emit edilen "activeUsers" olayını dinle
-    // socket.on("activeUsers", (users) => {
-    //   const spliceActiveUser = users.filter((eachUser) => {
-    //     return eachUser.username !== userInfo.username;
-    //   });
-    //   setActiveUsers(spliceActiveUser);
-    //   if (searchString !== "") {
-    //     console.log("Active users ve searchstring condition first !!!");
-
-    //     filterUsers(users, searchString);
-    //   } else if (searchString2 !== "") {
-    //     console.log("Active users ve searchstring condition second !!!");
-
-    //     filterUsers(users, searchString2);
-    //   } else if (searchString2 === "") {
-    //     console.log("Active users ve searchstring condition third !!!");
-
-    //     filterUsers([], searchString2);
-    //   } else {
-    //     console.log("Active users ve searchstring condition fourth !!!");
-    //     filterUsers([], searchString);
-    //   }
-    // });
-
     socket.emit("get_specific_user", userInfo);
   }, []);
 
@@ -380,102 +356,101 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
                 </div>
               </div>
             </div>
-            {filteredUsers.map((user) => (
-              <>
-                <div
-                  className={`selected-user-for-dm selected-user-for-dm-${themeName}`}
+            {filteredUsers.map((user, index) => (
+              <div
+                key={index}
+                className={`selected-user-for-dm selected-user-for-dm-${themeName}`}
+              >
+                <Link
+                  onClick={() => selectedUser(user)}
+                  style={{
+                    cursor: "pointer",
+                    textDecoration: "none",
+                  }}
+                  // to={`/messages/${messageRoomId}`}
                 >
-                  <Link
-                    onClick={() => selectedUser(user)}
+                  <Stack
                     style={{
-                      cursor: "pointer",
-                      textDecoration: "none",
+                      margin: "5px",
+                      padding: "5px",
                     }}
-                    // to={`/messages/${messageRoomId}`}
+                    direction="horizontal"
                   >
-                    <Stack
-                      style={{
-                        margin: "5px",
-                        padding: "5px",
-                      }}
-                      direction="horizontal"
-                    >
-                      <div className="p-0">
-                        {" "}
-                        {user.imageUrl.slice(0, 3) !== "../" ? (
-                          <img
+                    <div className="p-0">
+                      {" "}
+                      {user.imageUrl.slice(0, 3) !== "../" ? (
+                        <img
+                          style={{
+                            borderRadius: "50%",
+                          }}
+                          width={40}
+                          height={40}
+                          src={user.imageUrl}
+                          alt=""
+                        />
+                      ) : (
+                        <div>
+                          <svg
                             style={{
                               borderRadius: "50%",
                             }}
+                            xmlns="http://www.w3.org/2000/svg"
                             width={40}
                             height={40}
-                            src={user.imageUrl}
-                            alt=""
-                          />
-                        ) : (
-                          <div>
-                            <svg
-                              style={{
-                                borderRadius: "50%",
-                              }}
-                              xmlns="http://www.w3.org/2000/svg"
-                              width={40}
-                              height={40}
-                              fill={
-                                themeName === "dark-theme"
-                                  ? "#71767A"
-                                  : "rgb(83, 100, 113)"
-                              }
-                              className="bi bi-person-circle"
-                              viewBox="0 0 16 16"
-                            >
-                              <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                              <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                            </svg>
-                          </div>
-                        )}
+                            fill={
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)"
+                            }
+                            className="bi bi-person-circle"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                            <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+                    <div
+                      style={{
+                        marginLeft: "10px",
+                      }}
+                      className="p-0"
+                    >
+                      {" "}
+                      <div
+                        style={{
+                          color:
+                            themeName === "dark-theme"
+                              ? "white"
+                              : "rgb(15, 20, 25)",
+                          fontSize: "15px",
+                          lineHeight: "20px",
+                          fontWeight: "700",
+                          textAlign: "left",
+                        }}
+                      >
+                        {user.fullname}
                       </div>
                       <div
                         style={{
-                          marginLeft: "10px",
+                          marginRight:
+                            user.imageUrl.slice(0, 3) !== "../" ? "" : "32px",
+                          color:
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)",
+                          lineHeight: "20px",
+                          fontSize: "15px",
+                          fontWeight: "400",
                         }}
-                        className="p-0"
                       >
-                        {" "}
-                        <div
-                          style={{
-                            color:
-                              themeName === "dark-theme"
-                                ? "white"
-                                : "rgb(15, 20, 25)",
-                            fontSize: "15px",
-                            lineHeight: "20px",
-                            fontWeight: "700",
-                            textAlign: "left",
-                          }}
-                        >
-                          {user.fullname}
-                        </div>
-                        <div
-                          style={{
-                            marginRight:
-                              user.imageUrl.slice(0, 3) !== "../" ? "" : "32px",
-                            color:
-                              themeName === "dark-theme"
-                                ? "#71767A"
-                                : "rgb(83, 100, 113)",
-                            lineHeight: "20px",
-                            fontSize: "15px",
-                            fontWeight: "400",
-                          }}
-                        >
-                          @{user.username}
-                        </div>
+                        @{user.username}
                       </div>
-                    </Stack>
-                  </Link>
-                </div>
-              </>
+                    </div>
+                  </Stack>
+                </Link>
+              </div>
             ))}
           </div>
           <Modal.Body>
@@ -611,103 +586,102 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
               </div>
             </div>
           </div>
-          {filteredUsers.map((user) => (
-            <>
-              <div
-                className={`selected-user-for-dm selected-user-for-dm-${themeName}`}
+          {filteredUsers.map((user, index) => (
+            <div
+              key={index}
+              className={`selected-user-for-dm selected-user-for-dm-${themeName}`}
+            >
+              <Link
+                onClick={() => selectedUser(user)}
+                style={{
+                  cursor: "pointer",
+                  textDecoration: "none",
+                }}
+                // to={`/messages/${messageRoomId}`}
               >
-                <Link
-                  onClick={() => selectedUser(user)}
+                <Stack
                   style={{
-                    cursor: "pointer",
-                    textDecoration: "none",
+                    margin: "5px",
+                    padding: "5px",
                   }}
-                  // to={`/messages/${messageRoomId}`}
+                  direction="horizontal"
                 >
-                  <Stack
-                    style={{
-                      margin: "5px",
-                      padding: "5px",
-                    }}
-                    direction="horizontal"
-                  >
-                    <div className="p-0">
-                      {" "}
-                      {user.imageUrl.slice(0, 3) !== "../" ? (
-                        <img
+                  <div className="p-0">
+                    {" "}
+                    {user.imageUrl.slice(0, 3) !== "../" ? (
+                      <img
+                        style={{
+                          borderRadius: "50%",
+                        }}
+                        width={40}
+                        height={40}
+                        src={user.imageUrl}
+                        alt=""
+                      />
+                    ) : (
+                      <div className="p-0">
+                        <svg
                           style={{
                             borderRadius: "50%",
                           }}
+                          xmlns="http://www.w3.org/2000/svg"
                           width={40}
                           height={40}
-                          src={user.imageUrl}
-                          alt=""
-                        />
-                      ) : (
-                        <div className="p-0">
-                          <svg
-                            style={{
-                              borderRadius: "50%",
-                            }}
-                            xmlns="http://www.w3.org/2000/svg"
-                            width={40}
-                            height={40}
-                            fill={
-                              themeName === "dark-theme"
-                                ? "#71767A"
-                                : "rgb(83, 100, 113)"
-                            }
-                            className="bi bi-person-circle"
-                            viewBox="0 0 16 16"
-                          >
-                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                            <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                          </svg>
-                        </div>
-                      )}
+                          fill={
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)"
+                          }
+                          className="bi bi-person-circle"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                          <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                  <div
+                    style={{
+                      marginLeft: "10px",
+                    }}
+                    className="p-0"
+                  >
+                    {" "}
+                    <div
+                      style={{
+                        color:
+                          themeName === "dark-theme"
+                            ? "white"
+                            : "rgb(15, 20, 25)",
+                        fontSize: "15px",
+                        lineHeight: "20px",
+                        fontWeight: "700",
+                        textAlign: "left",
+                      }}
+                    >
+                      {user.fullname}
                     </div>
                     <div
                       style={{
-                        marginLeft: "10px",
-                      }}
-                      className="p-0"
-                    >
-                      {" "}
-                      <div
-                        style={{
-                          color:
-                            themeName === "dark-theme"
-                              ? "white"
-                              : "rgb(15, 20, 25)",
-                          fontSize: "15px",
-                          lineHeight: "20px",
-                          fontWeight: "700",
-                          textAlign: "left",
-                        }}
-                      >
-                        {user.fullname}
-                      </div>
-                      <div
-                        style={{
-                          marginRight:
-                            user.imageUrl.slice(0, 3) !== "../" ? "" : "32px",
-                          color:
-                            themeName === "dark-theme"
-                              ? "#71767A"
-                              : "rgb(83, 100, 113)",
+                        marginRight:
+                          user.imageUrl.slice(0, 3) !== "../" ? "" : "32px",
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)",
 
-                          lineHeight: "20px",
-                          fontSize: "15px",
-                          fontWeight: "400",
-                        }}
-                      >
-                        @{user.username}
-                      </div>
+                        lineHeight: "20px",
+                        fontSize: "15px",
+                        fontWeight: "400",
+                      }}
+                    >
+                      @{user.username}
                     </div>
-                  </Stack>
-                </Link>
-              </div>
-            </>
+                  </div>
+                </Stack>
+              </Link>
+            </div>
           ))}
         </div>
         <Modal.Body>

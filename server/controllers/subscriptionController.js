@@ -9,10 +9,7 @@ const handleThisUserPhoneVerified = async (req, res) => {
       "Is phone verified username =>",
       isPhoneVerifiedThisUser.username
     );
-    console.log(
-      "Is phone verified user id =>",
-      isPhoneVerifiedThisUser._id.toString()
-    );
+
     const findedUser = await User.findById(isPhoneVerifiedThisUser._id);
 
     const isPhoneVerified = findedUser.isPhoneVerified;

@@ -15,12 +15,7 @@ const CustomNotification = ({
   const redirectPostDetailIfNoContentOnlyImage = () => {
     navigate(`/${senderInfo.username}/status/${contactHasBeenMade._id}`);
   };
-  const [
-    { theme, themeName },
-    lightModeActive,
-    darkModeActive,
-    cyberpunkModeActive,
-  ] = useContext(ThemeContext);
+  const [{ theme, themeName }] = useContext(ThemeContext);
   console.log("Contact has been made =>", contactHasBeenMade);
   return (
     <>

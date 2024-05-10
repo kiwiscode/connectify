@@ -22,10 +22,7 @@ import ResponsiveNavigationBarTop from "../components/Navbar/ResponsiveNavigatio
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 
-import { Bounce, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-import CustomNotification from "../components/Notifications/CustomNotification";
 
 import { message } from "antd";
 
@@ -34,9 +31,6 @@ const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-
-import io from "socket.io-client";
-const socket = io.connect(`${API_URL}`);
 
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
@@ -48,12 +42,7 @@ import RepostAction from "../components/ui/RepostAction";
 import LikeAction from "../components/ui/LikeAction";
 
 function MainPage() {
-  const [
-    { theme, themeName },
-    lightModeActive,
-    darkModeActive,
-    cyberpunkModeActive,
-  ] = useContext(ThemeContext);
+  const [{ theme, themeName }] = useContext(ThemeContext);
 
   const [isSubModalOpened, setIsSubModalOpened] = useState(false);
   const [tabIndexValue, settabIndexValue] = useState(null);
@@ -80,135 +69,8 @@ function MainPage() {
     setshowSubscriptionCompletedModal(false);
   };
 
-  // useEffect(() => {
-  //   axios
-  //     .get(`${API_URL}/individual-subscribe-checkout-success`, {
-  //       headers: {
-  //         Authorization: `Bearer ${getToken()}`,
-  //       },
-  //     })
-  //     .then((response) => {
-  //       console.log("Response for subscription =>", response);
-  //       if (response.status === 200) {
-  //         setsubscriptionCompletedStatus(200);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       setsubscriptionCompletedStatus(500);
-  //       console.log("Error for subscription =>", error);
-  //     });
-  // }, []);
-
-  // useEffect(() => {
-  //   axios
-  //     .get(`${API_URL}/organization-basic-subscribe-checkout-success`, {
-  //       headers: {
-  //         Authorization: `Bearer ${getToken()}`,
-  //       },
-  //     })
-  //     .then((response) => {
-  //       console.log("Response for subscription =>", response);
-  //       if (response.status === 200) {
-  //         setsubscriptionCompletedStatus(200);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       setsubscriptionCompletedStatus(500);
-  //       console.log("Error for subscription =>", error);
-  //     });
-  // }, []);
-
-  // useEffect(() => {
-  //   axios
-  //     .get(`${API_URL}/organization-full-access-subscribe-checkout-success`, {
-  //       headers: {
-  //         Authorization: `Bearer ${getToken()}`,
-  //       },
-  //     })
-  //     .then((response) => {
-  //       console.log("Response for subscription =>", response);
-  //       if (response.status === 200) {
-  //         setsubscriptionCompletedStatus(200);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       setsubscriptionCompletedStatus(500);
-  //       console.log("Error for subscription =>", error);
-  //     });
-  // }, []);
-
-  // useEffect(() => {
-  //   axios
-  //     .post(
-  //       `${API_URL}/change-subscription-success-modal-status`,
-  //       {},
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${getToken()}`,
-  //         },
-  //       }
-  //     )
-  //     .then((response) => {
-  //       console.log("Response show modal =>", response);
-  //       if (response.status === 200) {
-  //         setshowSubscriptionCompletedModal(true);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.log("Error do not show modal =>", error);
-  //     });
-  // }, [subscriptionCompletedStatus]);
-
   // use effect to grab current mouse click location start to check
   const [clickedPostBox, setclickedPostBox] = useState(null);
-  // useEffect(() => {
-  //   const getClickLocation = (e) => {
-  //     const clickedElementParentClass = e.target.parentNode.className;
-  //     const clickedElementClass = e.target.classList;
-  //     if (
-  //       (clickedElementClass.contains("hover-reposted-text") &&
-  //         clickedElementParentClass !== "post-circle-profile-svg-on-point" &&
-  //         clickedElementParentClass !== "post-circle-profile-image-on-point" &&
-  //         clickedElementParentClass !== "post-circle-postowner-fullname" &&
-  //         clickedElementParentClass !== "post-circle-postowner-username" &&
-  //         clickedElementParentClass !== "post-circle-date-post-detail" &&
-  //         clickedElementParentClass !== "svg-three-dots-post-detail" &&
-  //         clickedElementParentClass === "p-1 next-to-comment") ||
-  //       clickedElementParentClass === "p-1 next-to-repost" ||
-  //       clickedElementParentClass === "p-1 next-to-like" ||
-  //       clickedElementParentClass === "parent-footer-stack" ||
-  //       clickedElementParentClass ===
-  //         "posts-details outside-of-inner-circle-actions" ||
-  //       clickedElementParentClass ===
-  //         "outside-of-inner-circle-action-comment-text vstack gap-1" ||
-  //       clickedElementParentClass === "p-2 parent-comment-text" ||
-  //       clickedElementParentClass ===
-  //         "outside-of-inner-circle-post-info-user-info-svg-three-dots hstack gap-1" ||
-  //       clickedElementParentClass === "mt-0 parent-footer-stack hstack" ||
-  //       clickedElementClass.contains("repost-svg-post-box") ||
-  //       clickedElementParentClass === "post-head" ||
-  //       clickedElementClass.contains("each-post") ||
-  //       clickedElementClass.contains("border-extra") ||
-  //       clickedElementParentClass === "each-post"
-  //     ) {
-  //       if (clickedPostBox) {
-  //         navigate(
-  //           `/${clickedPostBox.userId.username}/status/${
-  //             !clickedPostBox.isReposted
-  //               ? clickedPostBox._id
-  //               : clickedPostBox.repostedFromThisOriginalPost[0]._id
-  //           }`
-  //         );
-  //       }
-  //     }
-  //   };
-
-  //   document.body.addEventListener("click", getClickLocation);
-
-  //   return () => {
-  //     document.body.removeEventListener("click", getClickLocation);
-  //   };
-  // }, [clickedPostBox]);
 
   // use effect to grab current mouse click location finish to check
 
@@ -228,11 +90,6 @@ function MainPage() {
   const [tabLoading, setTabLoading] = useState(false);
 
   const [user, setUser] = useState(null);
-
-  // socket io 1 client start to check
-  const [notificationTest, setnotificationTest] = useState([]);
-  const [notificationText, setnotificationText] = useState([]);
-  // socket io 1 client finish to check
 
   const [postsLoadingSpinner, setPostsLoadingSpinner] = useState(null);
 
@@ -254,60 +111,6 @@ function MainPage() {
   };
   const [shouldHide, setshouldHide] = useState(true);
 
-  const getUser = async () => {
-    try {
-      const url = `${API_URL}/auth/login-success`;
-
-      const { data } = await axios.get(url, { withCredentials: true });
-      updateUser(data.user);
-      setUser(data.user);
-      localStorage.setItem("userInfo", JSON.stringify(data.user));
-      localStorage.setItem("token", data.token);
-      if (
-        data.user.signedUpWithVariantOne?.isSignedUpWithVariantOne &&
-        (!data.user.signedUpWithVariantOne
-          ?.isProfileImageCustomizationModalShown ||
-          !data.user.signedUpWithVariantOne?.isUsernameCustomizationModalShown)
-      ) {
-        setTabIndex(0);
-        setshowPickProfilePictureModal(true);
-        setshowModalForProfilePictureOrUsernameOrBoth(true);
-      } else if (
-        data.user.signedUpWithGoogle?.isSignedUpWithGoogle &&
-        !data.user.signedUpWithGoogle?.isUsernameCustomizationModalShown
-      ) {
-        setTabIndex(1);
-        setshowWhatShouldWeCallYouModal(true);
-        setshowModalForProfilePictureOrUsernameOrBoth(true);
-        console.log(
-          "User created account by using google show What should we call you modal for editing username !!"
-        );
-      } else {
-        console.log(
-          "User is already signed up with google or variant one and did or did not change profile picture or username !"
-        );
-      }
-    } catch (err) {
-      return err;
-      // console.log("Error =>", err);
-    }
-  };
-
-  // useEffect(() => {
-  //   if (
-  //     userInfo?.signedUpWithVariantOne?.isSignedUpWithVariantOne &&
-  //     (!userInfo?.signedUpWithVariantOne
-  //       ?.isProfileImageCustomizationModalShown ||
-  //       !userInfo?.signedUpWithVariantOne?.isUsernameCustomizationModalShown)
-  //   ) {
-  //     console.log("We are here right now !");
-  //     setTabIndex(0);
-  //     setshowPickProfilePictureModal(true);
-  //     setshowModalForProfilePictureOrUsernameOrBoth(true);
-  //   }
-  //   getUser();
-  // }, []);
-
   const [activeUser, setActiveUser] = useState([]);
   const refreshActiveUser = () => {
     axios
@@ -324,11 +127,9 @@ function MainPage() {
         console.log("Error =>", error);
       });
   };
-
-  // useEffect(() => {
-  //   refreshActiveUser();
-  // }, []);
-
+  useEffect(() => {
+    refreshActiveUser();
+  }, []);
   // create account variant 1 flow finish to check
 
   const [posts, setPosts] = useState([]);
@@ -419,60 +220,6 @@ function MainPage() {
         console.log("Error =>", error);
       });
   };
-
-  // useEffect(() => {
-  //   socket.on("getNotification", (data) => {
-  //     console.log("Data =>", data);
-  //     if (data.senderName !== userInfo.username) {
-  //       setnotificationTest((prev) => [...prev, data]);
-  //     } else {
-  //       console.log("You cannot send a notification to yourself.");
-  //     }
-  //   });
-
-  //   socket.on("getText", (data) => {
-  //     console.log("Data get text =>", data);
-  //     if (data.senderName !== userInfo.username) {
-  //       setnotificationText(data);
-
-  //       toast(
-  //         <CustomNotification
-  //           senderName={data.senderName}
-  //           type={data.type}
-  //           contactHasBeenMade={data.contactHasBeenMade}
-  //           senderInfo={data.senderInfo}
-  //           text={data.text ? data.text : null}
-  //         />,
-  //         {
-  //           position: "top-right",
-  //           autoClose: 5000,
-  //           hideProgressBar: false,
-  //           closeOnClick: true,
-  //           pauseOnHover: true,
-  //           draggable: true,
-  //           progress: undefined,
-  //           transition: Bounce,
-  //           theme: "light",
-  //         }
-  //       );
-  //     } else {
-  //       console.log("You cannot send a notification to yourself.");
-  //     }
-  //   });
-  // }, [socket]);
-
-  // socket io 5 client start to check
-  const handleNotification = (post, userInfo, type) => {
-    console.log("Post =>", post);
-    socket.emit("sendNotification", {
-      senderName: userInfo.username,
-      receiverName: post.userId.username,
-      type: type,
-      contactHasBeenMade: post,
-      senderInfo: userInfo,
-    });
-  };
-  // socket io 5 client finish to check
 
   const handleChange = (event) => {
     const inputText = event.target.value;
@@ -566,7 +313,7 @@ function MainPage() {
               response.data.createdPost._id
             );
             setLoadingFalse();
-          }, 1200);
+          }, 200);
         })
         .catch((err) => {
           return err;
@@ -576,52 +323,6 @@ function MainPage() {
 
       console.log("Nothing to share !");
     }
-  };
-
-  const handleRepost = (postId, findedPost) => {
-    axios
-      .post(
-        `${API_URL}/repost`,
-        { postId: postId, userId: userInfo._id },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        setTimeout(() => {
-          handleNotification(findedPost, userInfo, "repost");
-          setLoadingTrue();
-          setLoadingFalse();
-          setError("");
-          handleShowPostsHomePage();
-        }, 500);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const handleDeleteRepostMainPage = (postId) => {
-    axios
-      .post(
-        `${API_URL}/repost/delete`,
-        { userId: userInfo._id, postId },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        setTimeout(() => {
-          handleShowPostsHomePage();
-        }, 500);
-      })
-      .catch((error) => {
-        console.log("Error =>", error);
-      });
   };
 
   const closeImage = () => {
@@ -658,8 +359,6 @@ function MainPage() {
 
   const getTabStyle = (tab) => {
     return {
-      // textDecoration: activeTab === tab ? "underline" : "none",
-      // background: hoveredTab === tab ? "purple" : "none",
       color:
         activeTab === tab && themeName !== "dark-theme"
           ? "rgb(29, 155, 240"
@@ -672,7 +371,7 @@ function MainPage() {
       cursor: "pointer",
       flex: 1,
       textAlign: "center",
-      transition: "background 0.3s", // Hover efekti için geçiş efekti
+      transition: "background 0.3s",
     };
   };
 
@@ -686,28 +385,6 @@ function MainPage() {
     setChosenEmoji(emoji);
     setContent((prevText) => prevText + emoji);
   };
-
-  // useEffect(() => {
-  //   const closeEmojiContainer = (e) => {
-  //     if (
-  //       e.target.classList.contains("post-modal-emoji-picker") ||
-  //       e.srcElement.parentElement.className ===
-  //         "svg-border-parent show-emoji" ||
-  //       e.srcElement.parentNode.className === "p-2" ||
-  //       e.target.classList.value === ""
-  //     ) {
-  //       setshowEmojisBar(false);
-  //     } else {
-  //       setshowEmojisBar(true);
-  //     }
-  //   };
-
-  //   document.body.addEventListener("click", closeEmojiContainer);
-
-  //   return () => {
-  //     document.body.removeEventListener("click", closeEmojiContainer);
-  //   };
-  // }, []);
 
   const popoverBottom = (
     <Popover
@@ -740,14 +417,6 @@ function MainPage() {
   const handleResize = () => {
     setWindowWidth(window.innerWidth);
   };
-
-  // useEffect(() => {
-  //   window.addEventListener("resize", handleResize);
-
-  //   return () => {
-  //     window.removeEventListener("resize", handleResize);
-  //   };
-  // }, []);
 
   const [completedProfileImage, setcompletedProfileImage] = useState(false);
 
@@ -795,10 +464,6 @@ function MainPage() {
       setprofileImage(reader.result);
     };
   };
-
-  // useEffect(() => {
-  //   changeProfileImage();
-  // }, [profileImage, completedProfileImage]);
 
   const [username, setUsername] = useState("");
   const [usernameValidated, setusernameValidated] = useState(false);
@@ -854,10 +519,6 @@ function MainPage() {
         }
       });
   };
-
-  // useEffect(() => {
-  //   checkUsernameDuplicate();
-  // }, [username]);
 
   const changeUsername = () => {
     axios
@@ -991,6 +652,45 @@ function MainPage() {
     };
   }, [clickedPostBox]);
 
+  // const getUser = async () => {
+  //   try {
+  //     const url = `${API_URL}/auth/login-success`;
+
+  //     const { data } = await axios.get(url, { withCredentials: true });
+  //     updateUser(data.user);
+  //     setUser(data.user);
+  //     localStorage.setItem("userInfo", JSON.stringify(data.user));
+  //     localStorage.setItem("token", data.token);
+  //     if (
+  //       data.user.signedUpWithVariantOne?.isSignedUpWithVariantOne &&
+  //       (!data.user.signedUpWithVariantOne
+  //         ?.isProfileImageCustomizationModalShown ||
+  //         !data.user.signedUpWithVariantOne?.isUsernameCustomizationModalShown)
+  //     ) {
+  //       setTabIndex(0);
+  //       setshowPickProfilePictureModal(true);
+  //       setshowModalForProfilePictureOrUsernameOrBoth(true);
+  //     } else if (
+  //       data.user.signedUpWithGoogle?.isSignedUpWithGoogle &&
+  //       !data.user.signedUpWithGoogle?.isUsernameCustomizationModalShown
+  //     ) {
+  //       setTabIndex(1);
+  //       setshowWhatShouldWeCallYouModal(true);
+  //       setshowModalForProfilePictureOrUsernameOrBoth(true);
+  //       console.log(
+  //         "User created account by using google show What should we call you modal for editing username !!"
+  //       );
+  //     } else {
+  //       console.log(
+  //         "User is already signed up with google or variant one and did or did not change profile picture or username !"
+  //       );
+  //     }
+  //   } catch (err) {
+  //     return err;
+  //     // console.log("Error =>", err);
+  //   }
+  // };
+
   useEffect(() => {
     if (
       userInfo?.signedUpWithVariantOne?.isSignedUpWithVariantOne &&
@@ -1003,51 +703,8 @@ function MainPage() {
       setshowPickProfilePictureModal(true);
       setshowModalForProfilePictureOrUsernameOrBoth(true);
     }
-    getUser();
+    // getUser();
   }, []);
-  useEffect(() => {
-    refreshActiveUser();
-  }, []);
-
-  useEffect(() => {
-    socket.on("getNotification", (data) => {
-      console.log("Data =>", data);
-      if (data.senderName !== userInfo.username) {
-        setnotificationTest((prev) => [...prev, data]);
-      } else {
-        console.log("You cannot send a notification to yourself.");
-      }
-    });
-
-    socket.on("getText", (data) => {
-      console.log("Data get text =>", data);
-      if (data.senderName !== userInfo.username) {
-        setnotificationText(data);
-
-        toast(
-          <CustomNotification
-            senderName={data.senderName}
-            type={data.type}
-            contactHasBeenMade={data.contactHasBeenMade}
-            senderInfo={data.senderInfo}
-            text={data.text ? data.text : null}
-          />,
-          {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            transition: Bounce,
-          }
-        );
-      } else {
-        console.log("You cannot send a notification to yourself.");
-      }
-    });
-  }, [socket]);
 
   useEffect(() => {
     const closeEmojiContainer = (e) => {
@@ -1088,16 +745,6 @@ function MainPage() {
   }, [username]);
 
   useEffect(() => {
-    // setshouldHide(true);
-
-    socket.on("socket_id_for_user", (socketId) => {
-      localStorage.setItem("socketId", socketId);
-    });
-
-    socket.emit("setUsername", userInfo.username);
-  }, []);
-
-  useEffect(() => {
     setPostsLoadingSpinner(true);
 
     setTimeout(() => {
@@ -1108,6 +755,11 @@ function MainPage() {
 
   // useEffects finish to check
 
+  const [dataFromCommentModal, setDataFromCommentModal] = useState("");
+  function handleDataFromCommentModal(data) {
+    console.log("Data =>", data);
+    setDataFromCommentModal(data);
+  }
   return (
     <>
       {contextHolder}
@@ -2068,8 +1720,7 @@ function MainPage() {
           </Modal>
         </>
       )}
-      <ToastContainer theme={themeName === "dark-theme" ? "dark" : "light"} />
-      {!postModalOpenedFromLeftSide && (
+      {!postModalOpenedFromLeftSide && !dataFromCommentModal && (
         <ResponsiveNavigationBarBottom
           refreshPosts={() => handleShowPostsHomePage()}
           setLoadingTrue={() => setLoadingTrue()}
@@ -2955,7 +2606,7 @@ function MainPage() {
                                             src={post.image.url}
                                             alt="Description"
                                             style={{
-                                              width: "100%",
+                                              maxWidth: "100%",
                                               display: "block",
                                             }}
                                           />
@@ -2987,6 +2638,9 @@ function MainPage() {
                                         setLoadingFalse={setLoadingFalse}
                                         setLoadingTrue={setLoadingTrue}
                                         postSharedMessage={postSharedMessage}
+                                        sendDataToParent={
+                                          handleDataFromCommentModal
+                                        }
                                       />
                                     </div>
                                     <div
@@ -3143,7 +2797,7 @@ function MainPage() {
                       {followingPosts.followingPosts
                         .slice(0, visibleFollowingTweets)
                         .map((post, index) => (
-                          <>
+                          <div key={index}>
                             <div
                               onClick={() => {
                                 console.log("Post box parent class =>", post);
@@ -3154,7 +2808,6 @@ function MainPage() {
                                   ? `each-post-${themeName}`
                                   : "each-post"
                               }
-                              key={post._id}
                             >
                               <div
                                 style={{
@@ -3639,6 +3292,9 @@ function MainPage() {
                                       setLoadingFalse={setLoadingFalse}
                                       setLoadingTrue={setLoadingTrue}
                                       postSharedMessage={postSharedMessage}
+                                      sendDataToParent={
+                                        handleDataFromCommentModal
+                                      }
                                     />
                                   </div>
                                   <div
@@ -3697,7 +3353,7 @@ function MainPage() {
                                 }}
                               ></div>
                             </div>
-                          </>
+                          </div>
                         ))}
                       {visibleFollowingTweets <
                         followingPosts.followingPosts.length && (
