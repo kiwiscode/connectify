@@ -217,7 +217,7 @@ body {
 }
 
 .each-message-parent-div-dark-theme:hover {
-  background-color: #181818 !important ;
+  background-color: #16181c !important ;
 }
 
 .spesific-profile-svg-three-dots:hover,
@@ -351,12 +351,17 @@ body {
   font-size: 15px;
   width: 100%;
 }
+.message-input::placeholder {
+  color: rgb(83, 100, 113);
+}
+
+.message-input-dark-theme::placeholder {
+  color: #71767a;
+}
 
 .chat-footer-detail {
   height: 50px;
   margin: 5px;
-  display: flex;
-  align-items: center;
   padding: 8px;
   background-color: rgba(239, 243, 244, 1);
   border-bottom-left-radius: 16px;
@@ -407,7 +412,7 @@ body {
 }
 
 .spesific-room-message-other-dark-theme {
-  background-color: #202327 !important;
+  background-color: #2f3336 !important;
   color: white !important;
   border-color: rgb(207, 217, 222);
   border-radius: 24px;
@@ -2132,13 +2137,6 @@ span > a:hover {
   display: none;
 }
 
-.message-popoover:hover {
-  background-color: #f7f7f7;
-}
-.message-popoover-dark-theme:hover {
-  background-color: #181818;
-}
-
 .leave-btn-delete-conversation-tab:hover,
 .deactivate-tab-deactivate-btn:hover {
   background-color: #dc1f29 !important;
@@ -3360,7 +3358,7 @@ select {
 
 .create-account-modal-dark-theme,
 .comment-modal-dark-theme {
-  background-color: black;
+  background-color: black !important;
 }
 
 .comment-modal {
@@ -3840,7 +3838,7 @@ input[data-autocompleted] {
 }
 
 .animate-length-slideDown {
-  position: relative;
+  position: absolute;
   bottom: 30px;
   animation: slideDown 0.5s ease forwards;
 }
@@ -3853,3 +3851,110 @@ input[data-autocompleted] {
     bottom: 0px;
   }
 }
+
+/* typing indicator animation start to check  */
+.typing_indicator-light-theme {
+  background-color: #eff3f4;
+  border-radius: 24px;
+  border-bottom-left-radius: 4px;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.typing_indicator-dark-theme {
+  background-color: #212327;
+  border-radius: 24px;
+  border-bottom-left-radius: 4px;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+/* typing indicator animation start to check  */
+@keyframes scaleAnimation {
+  0%,
+  100%,
+  60% {
+    transform: scale(1);
+    background-color: #3780b3;
+  }
+  0% {
+  }
+  33.33% {
+    transform: scale(1.2);
+    background-color: #3286bf;
+  }
+  80% {
+    background-color: #2c8ccc;
+  }
+  100% {
+    background-color: #1c9bef;
+  }
+}
+.typing_indicator-dark-theme .first-div-dark-theme,
+.typing_indicator-light-theme .first-div-light-theme {
+  /* animation: firstTypingIndicatorBall 1s linear forwards; */
+  animation: scaleAnimation 1s infinite;
+  animation-delay: 0s;
+}
+
+.typing_indicator-dark-theme .second-div-dark-theme,
+.typing_indicator-light-theme .second-div-light-theme {
+  /* animation: firstTypingIndicatorBall 1s linear forwards; */
+  animation: scaleAnimation 1s infinite;
+  animation-delay: 0.2s;
+}
+
+.typing_indicator-dark-theme .third-div-dark-theme,
+.typing_indicator-light-theme .third-div-light-theme {
+  /* animation: firstTypingIndicatorBall 1s linear forwards; */
+  animation: scaleAnimation 1s infinite;
+  animation-delay: 0.4s;
+}
+/* typing indicator animation finish to check  */
+.message-popoover:hover {
+  background-color: #f7f7f7;
+}
+
+.message-popoover-dark-theme:hover {
+  background-color: #181818 !important;
+}
+
+/* filter:
+themeName === "dark-theme"
+  ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+  : "",
+
+boxShadow:
+themeName === "dark-theme"
+  ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+  : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)", */
+
+/* material ui popover style classnames general start to check  */
+.popover-material-ui-light-theme .MuiPaper-root {
+  background-color: white !important;
+  box-shadow: 0 0 15px rgba(101, 119, 134, 0.2),
+    0 0 5px 3px rgba(101, 119, 134, 0.15) !important;
+  overflow-y: hidden !important;
+}
+
+.popover-material-ui-dark-theme .MuiPaper-root {
+  background-color: black !important;
+  filter: drop-shadow(rgb(51, 54, 57) 1px -1px 1px) !important;
+  box-shadow: rgba(255, 255, 255, 0.2) 0px 0px 15px,
+    rgba(255, 255, 255, 0.15) 0px 0px 3px 1px !important;
+  overflow-y: hidden !important;
+}
+
+.MuiPopover-root {
+}
+
+.MuiPaper-root {
+  border-radius: 12px !important;
+}
+.MuiBackdrop-root {
+}
+/* material ui popover style classnames general finish to check  */
+
+/* emoji picker styling for dark theme start to check general  */
+
+/* emoji picker styling for dark theme finish to check general  */

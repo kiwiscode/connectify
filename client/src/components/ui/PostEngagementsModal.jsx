@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
-import { Modal, Stack, Button, Row } from "react-bootstrap";
+import { Modal, Stack, Button } from "react-bootstrap";
 import { UserContext } from "../../context/UserContext";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ThemeContext } from "../../context/ThemeContext";
 import UnfollowModal from "../unfollow-modal/UnfollowModal";
 import useWindowDimensions from "../../hooks/getWindowDimensions";
@@ -12,25 +12,21 @@ const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
+
+import io from "socket.io-client";
+const socket = io.connect(`${API_URL}`);
+
 function PostEngagements({
   detailedPost,
-  handleFollowingNotification,
   postDetailPage,
   imagePostDetailPage,
 }) {
   const [show, setShow] = useState(false);
 
-  const { userInfo, getToken, socket } = useContext(UserContext);
+  const { userInfo, getToken } = useContext(UserContext);
   const [showLikes, setshowLikes] = useState(true);
   const [showReposts, setshowReposts] = useState(false);
   const [activeTab, setActiveTab] = useState("forYou");
-
-  // const handleShowDetailedPostReposts = () => {
-  //   console.log("Show detailed post reposts !");
-  // };
-  // const handleShowDetailedPostLikes = () => {
-  //   console.log("Show detailed post likes !");
-  // };
 
   const handleShowReposts = () => {
     console.log(
@@ -49,8 +45,6 @@ function PostEngagements({
     setshowReposts(true);
     setShow(true);
   };
-
-  const navigate = useNavigate();
 
   const handleShowLikes = () => {
     console.log(detailedPost.likes ? detailedPost.likes : "No likes yet");
@@ -152,23 +146,20 @@ function PostEngagements({
 
   const handleCloseUnfollowModal = () => setshowUnfollowModal(false);
 
-  // // socket io 5 client start to check
-  // const handleNotification = (selectedUser, userInfo, type) => {
-  //   console.log("Sending notification to => ", selectedUser.username);
+  const handleFollowingNotification = (selectedUser, userInfo, type) => {
+    console.log("Sending notification to => ", selectedUser.username);
 
-  //   socket.emit("sendNotification", {
-  //     senderName: userInfo.username,
-  //     receiverName: selectedUser.username,
-  //     type: type,
-  //     contactHasBeenMade: userInfo,
-  //     senderInfo: userInfo,
-  //   });
-  // };
-  // // socket io 5 client finish to check
+    socket.emit("sendNotification", {
+      senderName: userInfo.username,
+      receiverName: selectedUser.username,
+      type: type,
+      contactHasBeenMade: userInfo,
+      senderInfo: userInfo,
+    });
+  };
 
   const handleUnfollow = (unfollowedUser) => {
     console.log("Clicked user =>", unfollowedUser);
-    console.log("Clicked unfollowed user id =>", unfollowedUser._id);
     axios
       .post(
         `${API_URL}/unfollow
@@ -266,15 +257,7 @@ function PostEngagements({
         </div>
       </Stack>
       {/* view post engagements section finish to check */}
-      {/* <div
-        style={{
-          borderBottom:
-            (themeName !== "dark-theme" && postDetailPage) || !postDetailPage
-              ? "1px solid rgba(0, 0, 0, 0.1)"
-              : // : "0.1px solid rgb(70, 70, 70)",
-                "1px solid rgb(70, 70, 70)",
-        }}
-      ></div> */}
+
       <Modal
         show={show}
         onHide={handleClose}
@@ -1056,8 +1039,8 @@ function PostEngagements({
           )}
         </div>
       </Modal>
-      {/* unfollow modal start to check  */}
 
+      {/* unfollow modal start to check  */}
       <UnfollowModal
         selectedUser={selectedUser}
         handleUnfollow={handleUnfollow}

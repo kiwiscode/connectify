@@ -1,4 +1,8 @@
-const LoadingSpinner = ({ strokeColor, isCheckoutProcess }) => {
+import { useContext } from "react";
+import { ThemeContext } from "../../context/ThemeContext";
+
+const LoadingSpinner = ({ strokeColor, isCheckoutProcess, isSuspense }) => {
+  const [{ theme, themeName }] = useContext(ThemeContext);
   return (
     <>
       <div
@@ -6,6 +10,9 @@ const LoadingSpinner = ({ strokeColor, isCheckoutProcess }) => {
           display: "flex",
           justifyContent: "center",
           padding: isCheckoutProcess ? "" : "16px 0px",
+          height: isSuspense ? "100vh" : "",
+          width: isSuspense ? "100%" : "",
+          alignItems: isSuspense ? "center" : "",
         }}
       >
         <div className="spinner bottomSpinner">
@@ -22,7 +29,7 @@ const LoadingSpinner = ({ strokeColor, isCheckoutProcess }) => {
                 cy="14"
                 r="12"
                 fill="none"
-                stroke="#000"
+                stroke={themeName === "dark-theme" ? "#3187CD" : "#000"}
                 strokeWidth="4"
                 opacity=".15"
               />

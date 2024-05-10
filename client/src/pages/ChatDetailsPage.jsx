@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import {
@@ -13,8 +13,6 @@ import {
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 
-import { Bounce, ToastContainer, toast } from "react-toastify";
-import CustomNotification from "../components/Notifications/CustomNotification";
 import { message } from "antd";
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
@@ -32,6 +30,7 @@ import useWindowDimensions from "../hooks/getWindowDimensions";
 const socket = io.connect(API_URL);
 
 function ChatDetailsPage() {
+  const scrollRef = useRef();
   const { chatRoomId } = useParams();
   const { userInfo, getToken } = useContext(UserContext);
 
@@ -42,11 +41,6 @@ function ChatDetailsPage() {
   const [disabled, setDisabled] = useState(true);
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [showEmojisBar, setshowEmojisBar] = useState("hide");
-  const [showSecondModal, setShowSecondModal] = useState(false);
-  // socket io 1 client start to check
-  const [notificationTest, setnotificationTest] = useState([]);
-  const [notificationText, setnotificationText] = useState([]);
-  // socket io 1 client finish to check
 
   const navigate = useNavigate();
 
@@ -87,60 +81,8 @@ function ChatDetailsPage() {
   };
   // finish to check shared post view message
 
-  // socket io 4 client start to check
   useEffect(() => {
-    socket.on("socket_id_for_user", (socketId) => {
-      console.log("socket id received from backend =>", socketId);
-
-      localStorage.setItem("socketId", socketId);
-    });
-
-    socket.emit("setUsername", userInfo.username);
-  }, []);
-  // socket io 4 client finish to check
-
-  useEffect(() => {
-    socket.on("getNotification", (data) => {
-      console.log("Data =>", data);
-      if (data.senderName !== userInfo.username) {
-        setnotificationTest((prev) => [...prev, data]);
-      } else {
-        console.log("Kendine notification mu göndericeksin ? ");
-      }
-    });
-
-    socket.on("getText", (data) => {
-      console.log("Data get text =>", data);
-      if (data.senderName !== userInfo.username) {
-        setnotificationText(data);
-        if (data.type !== "message") {
-          toast(
-            <CustomNotification
-              senderName={data.senderName}
-              type={data.type}
-              contactHasBeenMade={data.contactHasBeenMade}
-              senderInfo={data.senderInfo}
-              text={data.text ? data.text : null}
-            />,
-            {
-              position: "top-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              transition: Bounce,
-            }
-          );
-        }
-      } else {
-        console.log("You cannot send a notification to yourself.");
-      }
-    });
-  }, [socket]);
-
-  useEffect(() => {
+    // start to check refactoring from messages page
     socket.emit("send_spesific_chatRoomId", chatRoomId);
     socket.emit("send_spesific_userId", userInfo._id);
 
@@ -153,15 +95,12 @@ function ChatDetailsPage() {
       activeUser: userInfo,
       selectedUser: selectedUser[0],
     });
+    // finish to check refactoring from messages page
 
     // start to check Mesajlar karşılıklı olarak receive ediliyor başarılı şekilde tek gereken render etmek kaldı !
-
     socket.on("receive_spesific_room_message", (data) => {
-      console.log("Received message =>", data);
       setspesificRoom((list) => [...list, data]);
-      console.log("spesific room inside use effect=>", spesificRoom);
     });
-
     // finish to check Mesajlar karşılıklı olarak receive ediliyor başarılı şekilde tek gereken render etmek kaldı !
 
     return () => {
@@ -177,10 +116,15 @@ function ChatDetailsPage() {
     setRoom(room);
     setspesificRoom(messages);
   });
+
+  const [typeIndicatorResult, setShowTypingIndicator] = useState(null);
+
   // mesajların render edildiği kısım finish to check
 
   const sendMessage = async () => {
-    if (currentMessage !== "") {
+    setDisabled(currentMessage.length || chosenEmoji ? false : true);
+
+    if (currentMessage !== "" && chosenEmoji !== "") {
       const messageData = {
         room: room,
         sender: userInfo.username,
@@ -214,8 +158,9 @@ function ChatDetailsPage() {
       await socket.emit("send_spesific_room_message", messageData);
       setspesificRoom((list) => [...list, messageData]);
       setCurrentMessage("");
-
       handleNotification(selectedUser[0], userInfo, "message", currentMessage);
+    } else {
+      setDisabled(true);
     }
   };
 
@@ -290,10 +235,8 @@ function ChatDetailsPage() {
     </Popover>
   );
 
-  const redirectToMessages = () => {
-    setTimeout(() => {
-      window.location.href = "http://localhost:5173/messages";
-    }, 1000);
+  const navigateMinusOne = () => {
+    navigate(-1);
   };
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -310,41 +253,113 @@ function ChatDetailsPage() {
     };
   }, []);
 
-  const [
-    { theme, themeName },
-    lightModeActive,
-    darkModeActive,
-    cyberpunkModeActive,
-  ] = useContext(ThemeContext);
+  const [{ theme, themeName }] = useContext(ThemeContext);
 
-  const handleMarkAsUnReadMessage = () => {
-    axios
-      .post(
-        `${API_URL}/mark-as-un-read-message`,
-        { messageRoom: room },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {})
-      .catch((error) => {
-        console.log("Error =>", error);
-      });
-  };
   const [postModalOpenedFromLeftSide, setPostModalOpenedFromLeftSide] =
     useState(false);
 
   const handleCallBackForModalOpenedStateFromChild = (childData) => {
-    console.log("Child data received from child => ", childData);
     setPostModalOpenedFromLeftSide(childData);
   };
   const { height, width } = useWindowDimensions();
+
+  // socket test real time typing indicator room in start to check
+  const [sameTimeSameRoom, setSameTimeSameRoom] = useState(null);
+
+  useEffect(() => {
+    socket.on("same_time_same_room", (data) => {
+      setSameTimeSameRoom(true);
+    });
+  }, [socket, chatRoomId, userInfo._id]);
+
+  const [activeUsersInRoom, setActiveUsersInRoom] = useState(null);
+
+  const [youCanShowTypingIndicator, setYouCanShowTypingIndicator] =
+    useState(null);
+
+  useEffect(() => {
+    socket.on("interactedChatRooms", (data) => {
+      setActiveUsersInRoom(data);
+
+      const findTheCorrectRoom = data?.interactedChatRooms.find((eachRoom) => {
+        return eachRoom.room.roomName === data?.room;
+      });
+
+      const userActiveStatusFirstUser =
+        findTheCorrectRoom.room.activeUsers[0].user1.isActiveInRoom;
+      const userActiveStatusSecondUser =
+        findTheCorrectRoom.room.activeUsers[0].user2.isActiveInRoom;
+
+      console.log(
+        "Active user status inside finded room =>",
+        userActiveStatusFirstUser,
+        userActiveStatusSecondUser
+      );
+      if (userActiveStatusFirstUser && userActiveStatusSecondUser) {
+        setYouCanShowTypingIndicator(true);
+      }
+    });
+  }, []);
+
+  const handleChangeCurrentMessage = (event) => {
+    setCurrentMessage(event.target.value);
+    setDisabled(event.target.value || chosenEmoji ? false : true);
+
+    if (youCanShowTypingIndicator && currentMessage.length >= 4) {
+      socket.emit("typing_indicator", {
+        typingStatus: true,
+        whoIsTypingImage: userInfo.imageUrl,
+        whoIsTypingUserName: userInfo.username,
+        whoIsTypingFullName: userInfo.fullname,
+      });
+    } else if (youCanShowTypingIndicator && currentMessage.length <= 4) {
+      socket.emit("typing_indicator", {
+        typingStatus: false,
+        whoIsTypingImage: userInfo.imageUrl,
+        whoIsTypingUserName: userInfo.username,
+        whoIsTypingFullName: userInfo.fullname,
+      });
+      scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+
+      setShowTypingIndicator(null);
+    }
+  };
+
+  useEffect(() => {
+    socket.on("typing_result", (data) => {
+      if (data) {
+        if (
+          data.data.whoIsTypingUserName !== userInfo.username &&
+          currentMessage.length >= 4 &&
+          data.data.typingStatus
+        ) {
+          console.log(data.data, " ", "typing...");
+
+          scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+          setShowTypingIndicator(data.data);
+        } else if (
+          data.data.whoIsTypingUserName !== userInfo.username &&
+          currentMessage.length <= 4 &&
+          !data.data.typingStatus
+        ) {
+          console.log(
+            "Length smaller than or equal 4 do not show any typing indicator..."
+          );
+          scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+          setShowTypingIndicator(null);
+        }
+      }
+    });
+  }, [socket, currentMessage]);
+
+  // socket test real time typing indicator room in finish to check
+  useEffect(() => {
+    setShowTypingIndicator(null);
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [spesificRoom]);
   return (
     <>
       {contextHolder}
-      <ToastContainer theme={themeName === "dark-theme" ? "dark" : "light"} />
       <Container
         style={{
           overflowX: "hidden",
@@ -407,7 +422,7 @@ function ChatDetailsPage() {
                 <>
                   <Stack direction="horizontal" gap={3}>
                     <Link
-                      onClick={redirectToMessages}
+                      onClick={navigateMinusOne}
                       to={"/messages"}
                       // className="p-2 arrow"
                       className={
@@ -644,7 +659,7 @@ function ChatDetailsPage() {
 
             {/* start to check render messages with spesific user  */}
             <div
-              className={`scrollbar-add scrollbar-add-${themeName}`}
+              className={`scrollbar-add scrollbar-add-${themeName} mt-2`}
               style={{
                 overflowY: "auto",
                 maxHeight: "500px",
@@ -654,7 +669,11 @@ function ChatDetailsPage() {
               }}
             >
               {spesificRoom.map((eachMessage, index) => (
-                <div style={{ margin: "0px 3px 0px 3px" }} key={index}>
+                <div
+                  ref={scrollRef}
+                  style={{ padding: "0px 12px 0px 12px" }}
+                  key={index}
+                >
                   <div>
                     <div
                       style={{
@@ -665,9 +684,9 @@ function ChatDetailsPage() {
                             : "flex-start",
                       }}
                       className="spesific-room-message-main-container"
-                      key={index}
                     >
                       <div
+                        style={{}}
                         className={
                           userInfo.username === eachMessage.sender
                             ? `spesific-room-message-you`
@@ -682,7 +701,6 @@ function ChatDetailsPage() {
                           </div>
                         </div>
                       </div>
-                      <></>
                     </div>
                     <div
                       className={
@@ -740,7 +758,119 @@ function ChatDetailsPage() {
                     </div>
                   </div>
                 </div>
-              ))}
+              ))}{" "}
+              {typeIndicatorResult && (
+                <div
+                  className="mb-2"
+                  style={{
+                    padding: "0px 12px 0px 12px",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "inline-flex",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    {typeIndicatorResult.whoIsTypingImage?.slice(0, 3) !==
+                    "../" ? (
+                      <img
+                        style={{
+                          borderRadius: "50%",
+                        }}
+                        src={typeIndicatorResult.whoIsTypingImage}
+                        alt=""
+                        width={40}
+                        height={40}
+                      />
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="40"
+                        height="40"
+                        color={
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)"
+                        }
+                        fill="currentColor"
+                        className="bi bi-person-circle"
+                        viewBox="0 0 16 16"
+                        style={{ cursor: "pointer", borderRadius: "50%" }}
+                      >
+                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                        <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                      </svg>
+                    )}
+                    <div
+                      className={
+                        themeName === "dark-theme"
+                          ? "typing_indicator-dark-theme"
+                          : "typing_indicator-light-theme"
+                      }
+                      style={{
+                        position: "relative",
+                        padding: "12px 16px",
+                        left: "8px",
+                        width: "90px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <div
+                          className={
+                            themeName === "dark-theme"
+                              ? "first-div-dark-theme"
+                              : "first-div-light-theme"
+                          }
+                          style={{
+                            backgroundColor: "#71767a",
+                            borderRadius: "50%",
+                            height: "14px",
+                            width: "14px",
+                          }}
+                        ></div>
+                        <div
+                          className={
+                            themeName === "dark-theme"
+                              ? "second-div-dark-theme"
+                              : "second-div-light-theme"
+                          }
+                          style={{
+                            marginLeft: "5px",
+                            backgroundColor: "#71767a",
+                            borderRadius: "50%",
+                            height: "14px",
+                            width: "14px",
+                          }}
+                        ></div>
+                        <div
+                          className={
+                            themeName === "dark-theme"
+                              ? "third-div-dark-theme"
+                              : "third-div-light-theme"
+                          }
+                          style={{
+                            marginLeft: "5px",
+                            backgroundColor: "#71767a",
+                            borderRadius: "50%",
+                            height: "14px",
+                            width: "14px",
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                    {/* test */}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div
@@ -752,16 +882,22 @@ function ChatDetailsPage() {
                       "1px solid rgb(70, 70, 70)",
               }}
             ></div>
+
             <div
               style={{
                 position: "relative",
-                top: "1%",
                 transform: width <= 700 ? "" : "translateY(-20%)",
+                display: "flex",
+                alignItems: "center",
               }}
               // className="chat-footer-detail"
-              className={`chat-footer-detail chat-footer-detail-${themeName} `}
+              className={
+                width <= 700
+                  ? `chat-footer-detail chat-footer-detail-${themeName}`
+                  : `chat-footer-detail chat-footer-detail-${themeName} mt-3`
+              }
             >
-              <div className="p-2 chat-detail-emoji">
+              <div className="chat-detail-emoji">
                 {/* emoji mart start to check */}
 
                 <OverlayTrigger
@@ -798,6 +934,7 @@ function ChatDetailsPage() {
                 {/* emoji mart finish to check */}
               </div>
               <input
+                autoFocus
                 // className="message-input"
                 style={{
                   color: themeName === "dark-theme" ? "white" : "black",
@@ -807,13 +944,11 @@ function ChatDetailsPage() {
                 value={currentMessage}
                 placeholder="Start a new message"
                 onChange={(event) => {
-                  setDisabled(event.target.value ? false : true);
-                  setCurrentMessage(event.target.value);
+                  handleChangeCurrentMessage(event);
                 }}
                 onKeyPress={(event) => {
                   if (event.key === "Enter") {
                     sendMessage();
-                    handleMarkAsUnReadMessage();
                   }
                 }}
               />
@@ -826,7 +961,6 @@ function ChatDetailsPage() {
                 }`}
                 onClick={() => {
                   sendMessage();
-                  handleMarkAsUnReadMessage();
                 }}
               >
                 <div>

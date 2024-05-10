@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { Stack } from "react-bootstrap";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import "./navbar.css";
 import { message } from "antd";
 import PostModal from "../Main-Left-Side-Navbar/PostModal";
@@ -22,6 +22,7 @@ function ResponsiveNavigationBarBottom({
   isUserSpesificProfile,
   isSubModalOpened,
   isSubModalTabIndexNull,
+  isDisplayOptionActive,
 }) {
   const [prevScrollPos, setPrevScrollPos] = useState(window.pageYOffset);
   const [visible, setVisible] = useState(true);
@@ -61,12 +62,6 @@ function ResponsiveNavigationBarBottom({
       duration: 6,
       className: "custom-message-style-responsive",
     });
-  };
-
-  const redirectToMessages = () => {
-    setTimeout(() => {
-      window.location.href = "http://localhost:5173/messages";
-    }, 1000);
   };
 
   const handleScroll = () => {
@@ -114,37 +109,7 @@ function ResponsiveNavigationBarBottom({
     }
   };
 
-  const locateHomePage = () => {
-    if (window.location.href !== "http://localhost:5173/home") {
-      window.location.href = "http://localhost:5173/home";
-    }
-  };
-
-  const locateNotificationsPage = () => {
-    if (window.location.href !== "http://localhost:5173/notifications") {
-      changeNotificationReadedStatus();
-      window.location.href = "http://localhost:5173/notifications";
-    }
-  };
-
-  const locateMessagesPage = () => {
-    if (window.location.href !== "http://localhost:5173/messages") {
-      window.location.href = "http://localhost:5173/messages";
-    }
-  };
-
-  const locateProfilePage = () => {
-    if (window.location.href !== "http://localhost:5173/profile") {
-      window.location.href = "http://localhost:5173/profile";
-    }
-  };
-
-  const [
-    { theme, themeName },
-    lightModeActive,
-    darkModeActive,
-    cyberpunkModeActive,
-  ] = useContext(ThemeContext);
+  const [{ theme, themeName }] = useContext(ThemeContext);
   const [unReadNotifications, setUnReadNotifications] = useState([]);
   const getActiveUserInfo = async () => {
     try {
@@ -211,8 +176,8 @@ function ResponsiveNavigationBarBottom({
           >
             <div className="p-2">
               <NavLink
-                // to="/home"
-                onClick={locateHomePage}
+                to="/home"
+                // onClick={locateHomePage}
               >
                 <svg
                   color={themeName === "dark-theme" ? "white" : "black"}
@@ -240,7 +205,10 @@ function ResponsiveNavigationBarBottom({
               }}
               className="p-2"
             >
-              <NavLink onClick={locateNotificationsPage}>
+              <NavLink
+                to={"/notifications"}
+                //  onClick={locateNotificationsPage}
+              >
                 <>
                   {unReadNotifications?.length === 0 ? null : (
                     <div
@@ -302,7 +270,10 @@ function ResponsiveNavigationBarBottom({
               className="p-2"
             >
               {" "}
-              <NavLink onClick={locateMessagesPage}>
+              <NavLink
+                to={"/messages"}
+                // onClick={locateMessagesPage}
+              >
                 <>
                   {checkHowManyUnReadMessages()?.length < 1 ? null : (
                     <div
@@ -358,7 +329,10 @@ function ResponsiveNavigationBarBottom({
             </div>
             <div className="p-2">
               {" "}
-              <NavLink onClick={locateProfilePage}>
+              <NavLink
+                to={"/profile"}
+                // onClick={locateProfilePage}
+              >
                 <svg
                   color={themeName === "dark-theme" ? "white" : "black"}
                   fill="currentColor"

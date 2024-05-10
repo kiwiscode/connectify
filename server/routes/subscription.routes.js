@@ -42,37 +42,6 @@ let paymentCreatedSuccessfully;
 
 // global variables finish to check
 
-console.log(
-  "All global variables =>",
-  isVerifyCodeCorrect,
-  isPhoneNumberMatch,
-  subscriptionProcessError,
-  premiumInfoGlobal,
-  premiumRoleGlobal,
-  verifyPhoneCodeGlobal,
-  countryShortCutGlobal,
-  countryPhoneCodeGlobal,
-  selectedCountryGlobal,
-  phoneNumberGlobal,
-  resultPhoneNumberGlobal,
-  userInfoGlobal,
-  organizationSubPremiumRoleGlobal,
-  organizationSubPremiumTypeGlobal,
-  organizationSubPlanTypeBasicGlobal,
-  organizationSubPlanPriceBasicGlobal,
-  organizationSubPlanTypeFullAccessGlobal,
-  organizationSubPlanPriceFullAccessGlobal,
-  organizationNameGlobal,
-  yourFullNameGlobal,
-  organizationEmailAdressGlobal,
-  organizationWebSiteGlobal,
-  displayedOrganizationTypeGlobal,
-  individualSubscriptionCanStart,
-  organizationBasicSubscriptionCanStart,
-  organizationFullAccessSubscriptionCanStart,
-  paymentCreatedSuccessfully
-);
-
 // twilio settings start to check
 const { MessagingResponse } = require("twilio").twiml;
 // twilio settings finish to check
@@ -294,7 +263,6 @@ router.post("/stripe-webhook", express.json(), async (request, response) => {
     const event = request.body;
     console.log("User info =>", userInfoGlobal, premiumInfoGlobal);
     const userId = premiumInfoGlobal?.user._id || userInfoGlobal?._id;
-    console.log("User id =>", userId);
     const findedUser = await User.findById(userId);
     console.log("Got payload ", JSON.stringify(event, null, 2));
 
@@ -546,7 +514,6 @@ router.post("/stripe-webhook", express.json(), async (request, response) => {
                   createdSubscription._id.toString()
                 );
                 await findedUser.save();
-                console.log("This line is working 2");
 
                 // clean all global variables for every checkout success process start to check
                 userInfoGlobal = undefined;
@@ -941,15 +908,7 @@ router.post(
       const { userId } = req.user;
       const user = await User.findById(userId);
 
-      console.log(
-        "Check subscription modal shown status =>",
-        user.successSubscriptionModalShown
-      );
-
-      console.log("Check has subsciprion status =>", user.hasSubscription);
-
       if (user.successSubscriptionModalShown && user.hasSubscription) {
-        console.log("Here 4");
         // clean all global variables for every checkout success process start to check
         premiumInfoGlobal = undefined;
         premiumRoleGlobal = undefined;
@@ -1015,7 +974,6 @@ router.post(
         user.successSubscriptionModalShown = true;
         await user.save();
       } else if (!user.successSubscriptionModalShown && !user.hasSubscription) {
-        console.log("Here 2");
         // clean all global variables for every checkout success process start to check
         premiumInfoGlobal = undefined;
         premiumRoleGlobal = undefined;
@@ -1042,7 +1000,16 @@ router.post(
         organizationFullAccessSubscriptionCanStart = undefined;
         // paymentCreatedSuccessfully = undefined;
         // clean all global variables for every checkout success process finish to check
-        return;
+        res.status(404).json({
+          success: false,
+          message:
+            "User does not have a subscription, therefore a modal cannot be shown.",
+        });
+      } else {
+        res.status(501).json({
+          success: true,
+          message: "Error occured!",
+        });
       }
     } catch {
       console.log("Here 1");

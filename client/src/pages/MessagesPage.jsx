@@ -1,35 +1,29 @@
 import { useContext, useEffect, useState } from "react";
+
 import { UserContext } from "../context/UserContext";
-import {
-  Col,
-  Row,
-  Container,
-  Stack,
-  Modal,
-  OverlayTrigger,
-  Popover,
-  Button,
-} from "react-bootstrap";
+
+import { Col, Row, Container, Stack, Modal, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import CreateChat from "../components/ui/CreateChat";
-import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
-import { Bounce, ToastContainer, toast } from "react-toastify";
-import CustomNotification from "../components/Notifications/CustomNotification";
+
 import { List, message } from "antd";
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import { ThemeContext } from "../context/ThemeContext";
+import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
+
+import Popover from "@mui/material/Popover";
+import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-import io from "socket.io-client";
+
 import useWindowDimensions from "../hooks/getWindowDimensions";
-const socket = io.connect(`${API_URL}`);
 function MessagesPage() {
   const { userInfo, getToken } = useContext(UserContext);
 
@@ -40,7 +34,6 @@ function MessagesPage() {
     useState(false);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
   const [showDeleteConversationModal, setShowDeleteConversationModal] =
     useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -51,8 +44,6 @@ function MessagesPage() {
   const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
   const [receivedMessageRoom, setReceivedMessageRoom] = useState(null);
 
-  const [notificationTest, setnotificationTest] = useState([]);
-  const [notificationText, setnotificationText] = useState([]);
   const [activeUsers, setActiveUsers] = useState([]);
   const [searchString, setSearchString] = useState("");
 
@@ -61,18 +52,49 @@ function MessagesPage() {
   const [room, setRoom] = useState("");
   const [showThreeDots, setShowThreeDots] = useState(false);
   const navigate = useNavigate();
-  const [
-    { theme, themeName },
-    lightModeActive,
-    darkModeActive,
-    cyberpunkModeActive,
-  ] = useContext(ThemeContext);
+  const [{ theme, themeName }] = useContext(ThemeContext);
+
+  const handleReadMessage = async (roomName) => {
+    console.log("room =>", room);
+    try {
+      const url = await axios.post(
+        `${API_URL}/mark-as-read-message`,
+        {
+          messageRoom: room,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      const response = url.data;
+
+      console.log("Response =>", response);
+    } catch (error) {
+      console.error("Error =>", error);
+    }
+  };
+
   useEffect(() => {
-    socket.on("receive_specific_user_message_rooms", (data) => {
-      setfilteredRooms(data.messages);
-      setmessageRooms(data.messages);
-    });
+    axios
+      .get(`${API_URL}/all-messages`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((responseForMessages) => {
+        setfilteredRooms(responseForMessages.data.messages);
+        setmessageRooms(responseForMessages.data.messages);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
   }, []);
+
+  useEffect(() => {}, []);
+
   useEffect(() => {
     const closePopover = (e) => {
       if (
@@ -90,10 +112,6 @@ function MessagesPage() {
     return () => {
       document.body.removeEventListener("click", closePopover);
     };
-  }, []);
-
-  useEffect(() => {
-    socket.emit("get_specific_user", userInfo);
   }, []);
 
   const handleShowDeleteConversationModal = () => {
@@ -135,6 +153,8 @@ function MessagesPage() {
         console.log("Error =>", error);
       });
   };
+
+  const [isHoveredPopoverItem, setisHoveredPopoverItem] = useState(null);
 
   const deleteModalOutput = [
     <Modal
@@ -225,195 +245,6 @@ function MessagesPage() {
     </Modal>,
   ];
 
-  const popoverLeft = (
-    <Popover
-      style={{
-        filter:
-          themeName === "dark-theme"
-            ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
-            : "",
-        boxShadow:
-          themeName === "dark-theme"
-            ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
-            : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
-        backgroundColor: themeName === "dark-theme" ? "black" : "",
-      }}
-      id="popover-positioned-left"
-      title="Popover left"
-      className={`${
-        showMessageDeletePopover ? "" : "hideshowMessageDeletePopover"
-      }`}
-    >
-      <div>
-        <List size="small">
-          <List.Item
-            style={{
-              padding: "12px 16px",
-
-              opacity: "0.5",
-              borderBottom:
-                themeName !== "dark-theme"
-                  ? "1px solid rgba(0, 0, 0, 0.1)"
-                  : "1px solid rgb(70, 70, 70)",
-            }}
-          >
-            <Stack direction="horizontal" gap={2}>
-              <svg
-                color={
-                  themeName === "dark-theme" ? "white" : "rgba(15,20,25,1.00)"
-                }
-                fill="currentcolor"
-                width={`${1.25}em`}
-                height={`${1.25}em`}
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-1q142lx"
-              >
-                <g>
-                  <path d="M17 9.76V4.5C17 3.12 15.88 2 14.5 2h-5C8.12 2 7 3.12 7 4.5v5.26L3.88 16H11v5l1 2 1-2v-5h7.12L17 9.76zM7.12 14L9 10.24V4.5c0-.28.22-.5.5-.5h5c.28 0 .5.22.5.5v5.74L16.88 14H7.12z"></path>
-                </g>
-              </svg>
-              <span
-                style={{
-                  lineHeight: "20px",
-                  fontWeight: "700",
-                  fontSize: "15px",
-                  color: themeName === "dark-theme" ? "white" : "black ",
-                }}
-              >
-                Pin conversation
-              </span>
-            </Stack>
-          </List.Item>
-          <List.Item
-            style={{
-              padding: "12px 16px",
-              opacity: "0.5",
-              borderBottom:
-                themeName !== "dark-theme"
-                  ? "1px solid rgba(0, 0, 0, 0.1)"
-                  : "1px solid rgb(70, 70, 70)",
-            }}
-          >
-            <Stack direction="horizontal" gap={2}>
-              <svg
-                color={
-                  themeName === "dark-theme" ? "white" : "rgba(15,20,25,1.00)"
-                }
-                fill="currentcolor"
-                width={`${1.25}em`}
-                height={`${1.25}em`}
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-1q142lx"
-              >
-                <g>
-                  <path d="M20.29 2.29l-2.34 2.34C16.47 3.01 14.34 2 12 2 7.93 2 4.51 5.02 4 9.05L2.87 18h1.72l-2.3 2.29 1.42 1.42 18-18-1.42-1.42zM6.59 16H5.13l.85-6.7C6.36 6.27 8.94 4 12 4c1.79 0 3.42.78 4.54 2.05L6.59 16zM12 22c-1.57 0-2.98-.73-3.89-1.86l1.42-1.43c.55.78 1.45 1.29 2.47 1.29 1.31 0 2.42-.83 2.83-2H12v-2h6.86l-.74-5.87 1.76-1.76c.05.22.08.44.11.67L21.14 18H16.9c-.46 2.28-2.48 4-4.9 4z"></path>
-                </g>
-              </svg>
-              <span
-                style={{
-                  lineHeight: "20px",
-                  fontWeight: "700",
-                  fontSize: "15px",
-
-                  color:
-                    themeName === "dark-theme"
-                      ? "white"
-                      : "rgba(15,20,25,1.00)",
-                }}
-              >
-                Snooze conversation
-              </span>
-            </Stack>
-          </List.Item>
-          <List.Item
-            style={{
-              padding: "12px 16px",
-              opacity: "0.5",
-              borderBottom:
-                themeName !== "dark-theme"
-                  ? "1px solid rgba(0, 0, 0, 0.1)"
-                  : "1px solid rgb(70, 70, 70)",
-            }}
-          >
-            <Stack direction="horizontal" gap={2}>
-              <svg
-                color={
-                  themeName === "dark-theme" ? "white" : "rgba(15,20,25,1.00)"
-                }
-                fill="currentcolor"
-                width={`${1.25}em`}
-                height={`${1.25}em`}
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-1q142lx"
-              >
-                <g>
-                  <path d="M3 2h18.61l-3.5 7 3.5 7H5v6H3V2zm2 12h13.38l-2.5-5 2.5-5H5v10z"></path>
-                </g>
-              </svg>
-              <span
-                style={{
-                  lineHeight: "20px",
-                  fontWeight: "700",
-                  fontSize: "15px",
-                  color:
-                    themeName === "dark-theme"
-                      ? "white"
-                      : "rgba(15,20,25,1.00)",
-                }}
-              >
-                Report conversation
-              </span>
-            </Stack>
-          </List.Item>
-          <List.Item
-            // className="message-popoover"
-            className={`message-popoover message-popoover-${themeName}`}
-            style={{
-              padding: "12px 16px",
-              cursor: "pointer",
-              borderBottomLeftRadius: "6px",
-              borderBottomRightRadius: "6px",
-            }}
-            onClick={() => handleShowDeleteConversationModal()}
-          >
-            {" "}
-            <Stack direction="horizontal" gap={2}>
-              <svg
-                style={{}}
-                color="#f2212e
-                "
-                fill="currentcolor"
-                width={`${1.25}em`}
-                height={`${1.25}em`}
-                viewBox="0 0 32 32"
-                aria-hidden="true"
-                className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1q142lx r-9l7dzd"
-              >
-                <g>
-                  <path d="M20 23h-2v-8h2v8zm-6-8h-2v8h2v-8zm14-5h-1.713l-1.111 15.577C25.038 27.496 23.424 29 21.5 29H10.486c-1.915 0-3.522-1.496-3.66-3.405L5.699 10H4V8h7V6c0-1.654 1.346-3 3-3h4c1.654 0 3 1.346 3 3v2h7v2zM13 8h6V6c0-.551-.449-1-1-1h-4c-.551 0-1 .449-1 1v2zm11.281 2H7.705l1.117 15.451c.062.869.793 1.549 1.665 1.549H21.5c.88 0 1.619-.688 1.681-1.565L24.282 10z"></path>
-                </g>
-              </svg>
-              <span
-                style={{
-                  color: "#f2212e",
-                  lineHeight: "20px",
-                  fontWeight: "700",
-                  fontSize: "15px",
-                }}
-              >
-                Delete conversation
-              </span>
-            </Stack>
-          </List.Item>
-        </List>
-      </div>
-      <div></div>
-    </Popover>
-  );
-
   // start to check shared post view message
 
   const handleCallback = (childData) => {
@@ -451,63 +282,6 @@ function MessagesPage() {
   };
   // finish to check shared post view message
 
-  // socket io 1 client start to check
-
-  // socket io 1 client finish to check
-
-  // socket io 4 client start to check
-  useEffect(() => {
-    socket.on("socket_id_for_user", (socketId) => {
-      console.log("socket id received from backend =>", socketId);
-
-      localStorage.setItem("socketId", socketId);
-    });
-
-    socket.emit("setUsername", userInfo.username);
-  }, []);
-  // socket io 4 client finish to check
-
-  useEffect(() => {
-    socket.on("getNotification", (data) => {
-      console.log("Data =>", data);
-      if (data.senderName !== userInfo.username) {
-        setnotificationTest((prev) => [...prev, data]);
-      } else {
-        console.log("Kendine notification mu göndericeksin ? ");
-      }
-    });
-
-    socket.on("getText", (data) => {
-      console.log("Data get text =>", data);
-      if (data.senderName !== userInfo.username) {
-        setnotificationText(data);
-        if (data.type !== "message") {
-          toast(
-            <CustomNotification
-              senderName={data.senderName}
-              type={data.type}
-              contactHasBeenMade={data.contactHasBeenMade}
-              senderInfo={data.senderInfo}
-              text={data.text ? data.text : null}
-            />,
-            {
-              position: "top-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              transition: Bounce,
-            }
-          );
-        }
-      } else {
-        console.log("You cannot send a notification to yourself.");
-      }
-    });
-  }, [socket]);
-
   const filterUsers = (users, term) => {
     const filtered = users.filter((user) =>
       user.username.toLowerCase().startsWith(term.toLowerCase())
@@ -520,43 +294,39 @@ function MessagesPage() {
     }
   };
 
-  const handleSearchTermChange = (e) => {
-    const term = e.target.value;
-    setSearchString(term);
-    if (searchString !== "" && term !== "") {
-      filterUsers(activeUsers, term);
-    } else {
-      setFilteredUsers([]);
-    }
-  };
-
   useEffect(() => {
-    // Server tarafından emit edilen "activeUsers" olayını dinle
-    socket.on("activeUsers", (users) => {
-      const spliceActiveUser = users.filter((eachUser) => {
-        return eachUser.username !== userInfo.username;
+    axios
+      .get(`${API_URL}/all-users`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        const allUsersFromDB = response.data;
+
+        const spliceActiveUser = allUsersFromDB.filter((eachUser) => {
+          return eachUser.username !== userInfo.username;
+        });
+        setActiveUsers(spliceActiveUser);
+
+        console.log("Active users =>", spliceActiveUser);
+      })
+      .catch((err) => {
+        return err;
       });
-      setActiveUsers(spliceActiveUser);
-      if (searchString !== "") {
-        filterUsers(users, searchString);
-      } else {
-        filterUsers([], searchString);
-      }
-    });
   }, []);
 
-  const selectedUser = (user) => {
-    const room = [userInfo.username, user.username].sort().join("_");
+  useEffect(() => {
+    if (searchString !== "") {
+      filterUsers(activeUsers, searchString);
+    } else {
+      filterUsers([], searchString);
+    }
+  }, [searchString]);
 
-    setRoom(room);
-    // Emit an event to join the room with the selected user
-    socket.emit("join_user_room", { activeUser: userInfo, selectedUser: user });
+  const redirectToChatDetailPage = (chatRoomId) => {
+    window.location.href = `http://localhost:5173/messages/${chatRoomId}`;
   };
-
-  // socket.on("receive_spesific_user_message_rooms", (data) => {
-  //   setfilteredRooms(data.messages);
-  //   setmessageRooms(data.messages);
-  // });
 
   // start to check filtering rooms
   const filterRoom = (array, searchTerm) => {
@@ -643,9 +413,6 @@ function MessagesPage() {
     return result[0];
   };
 
-  const redirectToChatDetailPage = (roomId) => {
-    window.location.href = `http://localhost:5173/messages/${roomId}`;
-  };
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const handleResize = () => {
@@ -662,52 +429,12 @@ function MessagesPage() {
 
   const [messagesLoadingbar, setmessagesLoadingbar] = useState(true);
 
-  const [showEmptyInboxMessage, setshowEmptyInboxMessage] = useState(false);
-
   useEffect(() => {
     setTimeout(() => {
       setmessagesLoadingbar(false);
     }, 500);
   }, []);
 
-  const [thisMessageRoomReaded, setThisMessageRoomReaded] = useState(null);
-
-  const handleMarkAsReadMessage = (messageRoom) => {
-    const localeInfo = JSON.parse(localStorage.getItem("userInfo"));
-
-    if (localeInfo && localeInfo.messages) {
-      const targetMessage = localeInfo.messages.find(
-        (message) => message.room === messageRoom.room
-      );
-      console.log("Locale info =>", localeInfo);
-      console.log("Target message =>", targetMessage);
-      console.log("Message room =>", messageRoom);
-      if (targetMessage) {
-        if (!targetMessage.readed) {
-          targetMessage.readed = true;
-          localStorage.setItem("userInfo", JSON.stringify(localeInfo));
-        }
-      } else {
-        console.log("Message not found.");
-      }
-    } else {
-      console.log("localeInfo not found or messages array not exist.");
-    }
-    axios
-      .post(
-        `${API_URL}/mark-as-read-message`,
-        { messageRoom },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {})
-      .catch((error) => {
-        console.log("Error =>", error);
-      });
-  };
   const [postModalOpenedFromLeftSide, setPostModalOpenedFromLeftSide] =
     useState(false);
 
@@ -718,185 +445,13 @@ function MessagesPage() {
   const { height, width } = useWindowDimensions();
   return (
     <>
-      <Modal
-        backdropClassName={
-          themeName === "dark-theme" ? `back-drop-${themeName}` : ""
-        }
-        centered
-        show={show}
-        onHide={handleClose}
-        dialogClassName={width <= 700 ? "modal-fullscreen" : ""}
-        contentClassName=""
-      >
-        <Modal.Header
-          closeButton={false} // closeButton'u devre dışı bırak
-          style={{
-            border: "none",
-          }}
-        >
-          <div
-            className={`close-button close-button-${themeName}`}
-            style={{ borderRadius: "50%", cursor: "pointer" }}
-          >
-            <div>
-              <svg
-                style={{
-                  border: "none",
-                  fontSize: "15px",
-                  margin: "5px",
-                }}
-                onClick={handleClose}
-                width={20}
-                height={20}
-                fill={themeName === "dark-theme" ? "white" : "black"}
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-              >
-                <g>
-                  <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
-                </g>
-              </svg>{" "}
-            </div>
-          </div>
-          <span
-            style={{
-              position: "relative",
-              marginLeft: "25px",
-              fontWeight: "700",
-              fontSize: "20px",
-              lineHeight: "24px",
-              color: themeName === "dark-theme" ? "white" : "black",
-            }}
-          >
-            New message
-          </span>
-        </Modal.Header>
-        <div className="joinChatContainer">
-          <div>
-            <input
-              type="text"
-              placeholder="Search people"
-              value={searchString}
-              onChange={handleSearchTermChange}
-              style={{
-                color: themeName === "dark-theme" ? "white" : "black",
-                fontSize: "14px",
-                width: "100%",
-                outline: "none",
-                border: "none",
-                borderRadius: "0px",
-                borderBottom: "1px solid rgba(0,0,0,0.1)",
-              }}
-            />
-          </div>
-          {!showEmptyInboxMessage &&
-          filteredRooms.length &&
-          !messagesLoadingbar ? (
-            <>
-              {filteredUsers.map((user) => (
-                <>
-                  <div className="selected-user-for-dm">
-                    <Link
-                      onClick={() => selectedUser(user)}
-                      style={{
-                        cursor: "pointer",
-                        textDecoration: "none",
-                      }}
-                      // to={`/messages/${messageRoomId}`}
-                    >
-                      <Stack
-                        style={{
-                          margin: "5px",
-                          padding: "5px",
-                        }}
-                        direction="horizontal"
-                      >
-                        <div className="p-0">
-                          {" "}
-                          {user.imageUrl.slice(0, 3) !== "../" ? (
-                            <img
-                              style={{
-                                borderRadius: "50%",
-                              }}
-                              width={40}
-                              height={40}
-                              src={user.imageUrl}
-                              alt=""
-                            />
-                          ) : (
-                            <div>
-                              <svg
-                                style={{
-                                  borderRadius: "50%",
-                                }}
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="40"
-                                height="40"
-                                fill="rgb(83, 100, 113)"
-                                className="bi bi-person-circle"
-                                viewBox="0 0 16 16"
-                              >
-                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                              </svg>
-                            </div>
-                          )}
-                        </div>
-                        <div
-                          style={{
-                            marginLeft: "10px",
-                          }}
-                          className="p-0"
-                        >
-                          {" "}
-                          <div
-                            style={{
-                              color: "rgb(15, 20, 25)",
-                              fontSize: "15px",
-                              lineHeight: "20px",
-                              fontWeight: "700",
-                            }}
-                          >
-                            {user.fullname}
-                          </div>
-                          <div
-                            style={{
-                              marginRight:
-                                user.imageUrl.slice(0, 3) !== "../"
-                                  ? ""
-                                  : "32px",
-                              color: "rgb(83, 100, 113)",
-                              lineHeight: "20px",
-                              fontSize: "15px",
-                              fontWeight: "400",
-                            }}
-                          >
-                            @{user.username}
-                          </div>
-                        </div>
-                      </Stack>
-                    </Link>
-                  </div>
-                </>
-              ))}
-            </>
-          ) : null}
-        </div>
-        <Modal.Body>
-          {/* start to check  search create message search bar*/}
-
-          {/* finish to check  */}
-        </Modal.Body>
-      </Modal>
-
+      {" "}
       {/* start to check delete conversation modal  */}
       {deleteModalOutput[0]}
       {/* finish to check delete conversation modal  */}
-
       {contextHolder}
-      <ToastContainer theme={themeName === "dark-theme" ? "dark" : "light"} />
-      {!postModalOpenedFromLeftSide && <ResponsiveNavigationBarBottom />}
+      {!postModalOpenedFromLeftSide && <ResponsiveNavigationBarBottom />}{" "}
+      <ResponsiveNavigationBarBottom />
       <Container
         style={{
           overflowX: "hidden",
@@ -1110,130 +665,206 @@ function MessagesPage() {
                 {filteredRooms?.length &&
                 checkIfAllFilteredRoomsChatEmpty(filteredRooms) !== 0 ? (
                   <div className="mt-3">
-                    {filteredRooms.map((eachMessageRoom) => (
-                      <>
-                        <div key={eachMessageRoom._id}>
-                          {eachMessageRoom.deactivatedMember ? null : (
-                            <div>
-                              {eachMessageRoom.chat.length > 0 ? (
+                    {filteredRooms.map((eachMessageRoom, index) => (
+                      <div key={index}>
+                        {eachMessageRoom.deactivatedMember ? null : (
+                          <div>
+                            {eachMessageRoom.chat.length > 0 ? (
+                              <div
+                                onMouseEnter={() => {
+                                  setShowThreeDots(index);
+                                }}
+                                onMouseLeave={() => {
+                                  setShowThreeDots(false);
+                                  setshowMessageDeletePopover(false);
+                                }}
+                                style={{
+                                  position: "relative",
+                                  cursor: "pointer",
+                                  listStyleType: "none",
+                                  textDecoration: "none",
+                                }}
+                                // onClick={() => {
+                                //   isHovered !== eachMessageRoom._id &&
+                                //   !showMessageDeletePopover
+                                //     ? redirectToChatDetailPage(
+                                //         eachMessageRoom._id
+                                //       )
+                                //     : null;
+                                // }}
+                              >
                                 <div
-                                  onMouseEnter={() => {
-                                    setShowThreeDots(eachMessageRoom._id);
-                                  }}
-                                  onMouseLeave={() => {
-                                    setShowThreeDots(false);
-                                    setshowMessageDeletePopover(false);
-                                  }}
-                                  key={eachMessageRoom._id}
+                                  className={`each-message-parent-div each-message-parent-div-${themeName}`}
                                   style={{
-                                    position: "relative",
-                                    cursor: "pointer",
-                                    listStyleType: "none",
-                                    textDecoration: "none",
-                                  }}
-                                  to={
-                                    isHovered !== eachMessageRoom._id &&
-                                    !showMessageDeletePopover
-                                      ? `/messages/${eachMessageRoom._id}`
-                                      : null
-                                  }
-                                  onClick={() => {
-                                    isHovered !== eachMessageRoom._id &&
-                                    !showMessageDeletePopover
-                                      ? redirectToChatDetailPage(
-                                          eachMessageRoom._id
-                                        )
-                                      : null;
+                                    minHeight: "73px",
+                                    paddingLeft: "12px",
+                                    paddingRight: "12px",
 
-                                    handleMarkAsReadMessage(eachMessageRoom);
+                                    backgroundColor:
+                                      eachMessageRoom.readed &&
+                                      themeName !== "dark-theme"
+                                        ? "white"
+                                        : !eachMessageRoom.readed &&
+                                          themeName !== "dark-theme"
+                                        ? "#EFF3F4"
+                                        : eachMessageRoom.readed &&
+                                          themeName === "dark-theme"
+                                        ? "black"
+                                        : !eachMessageRoom.readed &&
+                                          themeName === "dark-theme"
+                                        ? "#181818"
+                                        : "",
                                   }}
                                 >
-                                  <div
-                                    className={`each-message-parent-div each-message-parent-div-${themeName}`}
-                                    style={{
-                                      minHeight: "73px",
-                                      paddingLeft: "12px",
-                                      paddingRight: "12px",
-                                      backgroundColor:
-                                        eachMessageRoom.readed &&
-                                        themeName !== "dark-theme"
-                                          ? "white"
-                                          : !eachMessageRoom.readed &&
-                                            themeName !== "dark-theme"
-                                          ? "#f7f9f9"
-                                          : eachMessageRoom.readed &&
-                                            themeName === "dark-theme"
-                                          ? "black"
-                                          : !eachMessageRoom.readed &&
-                                            themeName === "dark-theme"
-                                          ? "#181818"
-                                          : "",
-                                    }}
-                                  >
-                                    {eachMessageRoom.chat &&
-                                      eachMessageRoom.chat.length > 0 && (
-                                        <>
-                                          <Stack
+                                  {eachMessageRoom.chat &&
+                                    eachMessageRoom.chat.length > 0 && (
+                                      <>
+                                        <Stack
+                                          style={{
+                                            margin: "0px 5px",
+                                            padding: "5px",
+                                          }}
+                                          direction="horizontal"
+                                        >
+                                          <div className="p-0">
+                                            {" "}
+                                            {getMemberNotEqualActiveUser(
+                                              eachMessageRoom
+                                            ) ? (
+                                              <>
+                                                {getMemberNotEqualActiveUser(
+                                                  eachMessageRoom
+                                                ).imageUrl.slice(0, 3) !==
+                                                "../" ? (
+                                                  <>
+                                                    <img
+                                                      width={40}
+                                                      height={40}
+                                                      style={{
+                                                        borderRadius: "50%",
+                                                      }}
+                                                      src={
+                                                        getMemberNotEqualActiveUser(
+                                                          eachMessageRoom
+                                                        ).imageUrl
+                                                      }
+                                                      alt=""
+                                                    />
+                                                  </>
+                                                ) : (
+                                                  <>
+                                                    <svg
+                                                      xmlns="http://www.w3.org/2000/svg"
+                                                      width="40"
+                                                      height="40"
+                                                      fill={
+                                                        themeName ===
+                                                        "dark-theme"
+                                                          ? "#71767A"
+                                                          : "rgb(83, 100, 113)"
+                                                      }
+                                                      className="bi bi-person-circle"
+                                                      viewBox="0 0 16 16"
+                                                      style={{
+                                                        borderRadius: "50%",
+                                                      }}
+                                                    >
+                                                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                                      <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                                    </svg>
+                                                  </>
+                                                )}
+                                              </>
+                                            ) : null}
+                                          </div>
+                                          <div
                                             style={{
-                                              margin: "5px",
-                                              padding: "5px",
+                                              marginLeft: "10px",
                                             }}
-                                            direction="horizontal"
+                                            className="p-0"
                                           >
-                                            <div className="p-0">
-                                              {" "}
-                                              {getMemberNotEqualActiveUser(
-                                                eachMessageRoom
-                                              ) ? (
+                                            <span
+                                              style={{
+                                                color:
+                                                  themeName === "dark-theme"
+                                                    ? "white"
+                                                    : "rgb(15, 20, 25)",
+
+                                                fontSize: "15px",
+                                                fontWeight: "700",
+                                                lineHeight: "20px",
+                                              }}
+                                            >
+                                              {eachMessageRoom.members[1] &&
+                                              eachMessageRoom.members[0] ? (
                                                 <>
-                                                  {getMemberNotEqualActiveUser(
-                                                    eachMessageRoom
-                                                  ).imageUrl.slice(0, 3) !==
-                                                  "../" ? (
-                                                    <>
-                                                      <img
-                                                        width={40}
-                                                        height={40}
-                                                        style={{
-                                                          borderRadius: "50%",
-                                                        }}
-                                                        src={
-                                                          getMemberNotEqualActiveUser(
-                                                            eachMessageRoom
-                                                          ).imageUrl
-                                                        }
-                                                        alt=""
-                                                      />
-                                                    </>
-                                                  ) : (
-                                                    <>
-                                                      <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        width="40"
-                                                        height="40"
-                                                        fill={
-                                                          themeName ===
-                                                          "dark-theme"
-                                                            ? "#71767A"
-                                                            : "rgb(83, 100, 113)"
-                                                        }
-                                                        className="bi bi-person-circle"
-                                                        viewBox="0 0 16 16"
-                                                        style={{
-                                                          borderRadius: "50%",
-                                                        }}
-                                                      >
-                                                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                                        <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                                      </svg>
-                                                    </>
-                                                  )}
+                                                  {eachMessageRoom.members[1]
+                                                    .fullname !==
+                                                  userInfo.fullname
+                                                    ? eachMessageRoom.members[1]
+                                                        .fullname
+                                                    : eachMessageRoom.members[0]
+                                                        .fullname}{" "}
                                                 </>
                                               ) : null}
-                                            </div>
+                                            </span>
+                                            <span
+                                              style={{
+                                                color:
+                                                  themeName === "dark-theme"
+                                                    ? "#71767A"
+                                                    : "rgb(83, 100, 113)",
+                                                fontSize: "15px",
+                                                lineHeight: "20px",
+                                                fontWeight: "400",
+                                              }}
+                                            >
+                                              @
+                                              {eachMessageRoom.members[1] &&
+                                              eachMessageRoom.members[0] ? (
+                                                <>
+                                                  {eachMessageRoom.members[1]
+                                                    .username !==
+                                                  userInfo.username
+                                                    ? eachMessageRoom.members[1]
+                                                        .username
+                                                    : eachMessageRoom.members[0]
+                                                        .username}{" "}
+                                                </>
+                                              ) : null}
+                                            </span>
+                                            <span
+                                              style={{
+                                                color:
+                                                  themeName === "dark-theme"
+                                                    ? "#71767A"
+                                                    : "rgb(83, 100, 113)",
+                                                fontSize: "15px",
+                                                lineHeight: "20px",
+                                                fontWeight: "400",
+                                              }}
+                                            >
+                                              {" "}
+                                              ·{" "}
+                                              {eachMessageRoom.chat[0]
+                                                ? getCreatedRoomDate(
+                                                    eachMessageRoom.chat[0]
+                                                      .messages[0].timestamp
+                                                  )
+                                                : ""}
+                                            </span>
                                             <div
                                               style={{
-                                                marginLeft: "10px",
+                                                overflow: "hidden",
+                                                textOverflow: "ellipsis",
+                                                whiteSpace: "nowrap",
+                                                maxWidth:
+                                                  eachMessageRoom.chat[
+                                                    eachMessageRoom.chat
+                                                      .length - 1
+                                                  ].messages[0].text.length > 50
+                                                    ? "450px"
+                                                    : null,
                                               }}
                                               className="p-0"
                                             >
@@ -1241,208 +872,403 @@ function MessagesPage() {
                                                 style={{
                                                   color:
                                                     themeName === "dark-theme"
-                                                      ? "white"
-                                                      : "rgb(15, 20, 25)",
-
-                                                  fontSize: "15px",
-                                                  fontWeight: "700",
-                                                  lineHeight: "20px",
-                                                }}
-                                              >
-                                                {eachMessageRoom.members[1] &&
-                                                eachMessageRoom.members[0] ? (
-                                                  <>
-                                                    {eachMessageRoom.members[1]
-                                                      .fullname !==
-                                                    userInfo.fullname
-                                                      ? eachMessageRoom
-                                                          .members[1].fullname
-                                                      : eachMessageRoom
-                                                          .members[0]
-                                                          .fullname}{" "}
-                                                  </>
-                                                ) : null}
-                                              </span>
-                                              <span
-                                                style={{
-                                                  color:
-                                                    themeName === "dark-theme"
                                                       ? "#71767A"
                                                       : "rgb(83, 100, 113)",
-                                                  fontSize: "15px",
-                                                  lineHeight: "20px",
-                                                  fontWeight: "400",
                                                 }}
                                               >
-                                                @
-                                                {eachMessageRoom.members[1] &&
-                                                eachMessageRoom.members[0] ? (
-                                                  <>
-                                                    {eachMessageRoom.members[1]
-                                                      .username !==
-                                                    userInfo.username
-                                                      ? eachMessageRoom
-                                                          .members[1].username
-                                                      : eachMessageRoom
-                                                          .members[0]
-                                                          .username}{" "}
-                                                  </>
-                                                ) : null}
+                                                {
+                                                  eachMessageRoom.chat[
+                                                    eachMessageRoom.chat
+                                                      .length - 1
+                                                  ].messages[0].text
+                                                }
                                               </span>
-                                              <span
-                                                style={{
-                                                  color:
-                                                    themeName === "dark-theme"
-                                                      ? "#71767A"
-                                                      : "rgb(83, 100, 113)",
-                                                  fontSize: "15px",
-                                                  lineHeight: "20px",
-                                                  fontWeight: "400",
-                                                }}
-                                              >
-                                                {" "}
-                                                ·{" "}
-                                                {eachMessageRoom.chat[0]
-                                                  ? getCreatedRoomDate(
-                                                      eachMessageRoom.chat[0]
-                                                        .messages[0].timestamp
-                                                    )
-                                                  : ""}
-                                              </span>
-                                              <div className="p-0">
-                                                {" "}
-                                                <span
-                                                  style={{
-                                                    color:
-                                                      themeName === "dark-theme"
-                                                        ? "#71767A"
-                                                        : "rgb(83, 100, 113)",
-                                                  }}
-                                                >
-                                                  {
-                                                    eachMessageRoom.chat[
-                                                      eachMessageRoom.chat
-                                                        .length - 1
-                                                    ].messages[0].text
-                                                  }
-                                                </span>
-                                              </div>
                                             </div>
+                                          </div>
 
-                                            <div
-                                              style={{
-                                                marginTop: "5px",
-                                              }}
-                                              onClick={() =>
-                                                grabTheMessageRoom(
-                                                  eachMessageRoom
-                                                )
-                                              }
-                                              onMouseEnter={() => {
-                                                console.log(
-                                                  "Message room id =>",
-                                                  eachMessageRoom._id
-                                                );
-                                                setIsHovered(
-                                                  eachMessageRoom._id
-                                                );
-                                                // setshowMessageDeletePopover(true);
-                                              }}
-                                              onMouseLeave={() => {
-                                                setIsHovered(false);
-                                                setshowMessageDeletePopover(
-                                                  false
-                                                );
-                                              }}
-                                              className={`p-2 ms-auto message-icon`}
+                                          <div
+                                            style={{
+                                              marginTop: "5px",
+                                            }}
+                                            onClick={() =>
+                                              grabTheMessageRoom(
+                                                eachMessageRoom
+                                              )
+                                            }
+                                            onMouseEnter={() => {
+                                              console.log(
+                                                "Message room id =>",
+                                                eachMessageRoom._id
+                                              );
+                                              setIsHovered(eachMessageRoom._id);
+                                              // setshowMessageDeletePopover(true);
+                                            }}
+                                            onMouseLeave={() => {
+                                              setIsHovered(false);
+                                              setshowMessageDeletePopover(
+                                                false
+                                              );
+                                            }}
+                                            className={`p-2 ms-auto message-icon`}
+                                          >
+                                            {/* modern popover test start to check  */}
+                                            <PopupState
+                                              variant="popover"
+                                              popupId="demo-popup-popover"
                                             >
-                                              <OverlayTrigger
-                                                trigger="click"
-                                                placement="left"
-                                                overlay={popoverLeft}
-                                              >
+                                              {(popupState) => (
                                                 <div
                                                   onClick={() => {
                                                     setshowMessageDeletePopover(
                                                       !showMessageDeletePopover
                                                     );
                                                   }}
-                                                  className={
-                                                    isHovered ===
-                                                      eachMessageRoom._id &&
-                                                    themeName !== "dark-theme"
-                                                      ? `message-delete-three-dots-parent message-delete-three-dots-parent-hovered`
-                                                      : `message-delete-three-dots-parent-dark-theme message-delete-three-dots-parent-hovered-dark-theme`
-                                                  }
-                                                  style={{
-                                                    cursor: "pointer",
-                                                    borderRadius: "50%",
-                                                  }}
                                                 >
-                                                  {!eachMessageRoom.readed && (
-                                                    <div
-                                                      style={{
-                                                        position: "absolute",
-                                                        right: "50px",
-                                                        top: "14px",
-                                                        backgroundColor:
-                                                          "#1d9bf0",
-                                                        borderRadius: "50%",
-                                                        width: "10px",
-                                                        height: "10px",
-                                                      }}
-                                                    ></div>
-                                                  )}
-
-                                                  <svg
+                                                  <Button
                                                     style={{
-                                                      cursor: "pointer",
-                                                      position: "relative",
-                                                      left: "10px",
-                                                      top: "5px",
+                                                      border: "none",
+                                                      backgroundColor:
+                                                        "transparent",
                                                     }}
-                                                    color={
-                                                      isHovered ===
-                                                      eachMessageRoom._id
-                                                        ? "#259ef0"
-                                                        : themeName ===
-                                                          "dark-theme"
-                                                        ? "#71767A"
-                                                        : "rgb(83, 100, 113)"
-                                                    }
-                                                    fill="currentColor"
-                                                    width={`${1.25}em`}
-                                                    height={`${1.25}em`}
-                                                    viewBox="0 0 24 24"
-                                                    aria-hidden="true"
-                                                    className={`${
-                                                      showThreeDots ===
-                                                      eachMessageRoom._id
-                                                        ? ""
-                                                        : "hide"
-                                                    } message-delete-three-dots bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi`}
+                                                    variant="text"
+                                                    {...bindTrigger(popupState)}
                                                   >
-                                                    <g>
-                                                      <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                                    </g>
-                                                  </svg>
+                                                    <div
+                                                      className={
+                                                        isHovered ===
+                                                          eachMessageRoom._id &&
+                                                        themeName !==
+                                                          "dark-theme"
+                                                          ? `message-delete-three-dots-parent message-delete-three-dots-parent-hovered`
+                                                          : `message-delete-three-dots-parent-dark-theme message-delete-three-dots-parent-hovered-dark-theme`
+                                                      }
+                                                      style={{
+                                                        cursor: "pointer",
+                                                        borderRadius: "50%",
+                                                      }}
+                                                    >
+                                                      {!eachMessageRoom.readed && (
+                                                        <div
+                                                          style={{
+                                                            position:
+                                                              "absolute",
+                                                            right: "50px",
+                                                            top: "14px",
+                                                            backgroundColor:
+                                                              "#1d9bf0",
+                                                            borderRadius: "50%",
+                                                            width: "10px",
+                                                            height: "10px",
+                                                          }}
+                                                        ></div>
+                                                      )}
+
+                                                      <svg
+                                                        style={{
+                                                          cursor: "pointer",
+                                                          position: "relative",
+                                                          top: "5px",
+                                                        }}
+                                                        color={
+                                                          isHovered ===
+                                                          eachMessageRoom._id
+                                                            ? "#259ef0"
+                                                            : themeName ===
+                                                              "dark-theme"
+                                                            ? "#71767A"
+                                                            : "rgb(83, 100, 113)"
+                                                        }
+                                                        fill="currentColor"
+                                                        width={`${1.25}em`}
+                                                        height={`${1.25}em`}
+                                                        viewBox="0 0 24 24"
+                                                        aria-hidden="true"
+                                                        className={`${
+                                                          showThreeDots ===
+                                                          index
+                                                            ? ""
+                                                            : "hide"
+                                                        } message-delete-three-dots bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi`}
+                                                      >
+                                                        <g>
+                                                          <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                                                        </g>
+                                                      </svg>
+                                                    </div>
+                                                  </Button>
+                                                  <Popover
+                                                    onClose={popupState.close}
+                                                    open={popupState.open}
+                                                    {...bindPopover(popupState)}
+                                                    anchorOrigin={{
+                                                      vertical: "top",
+                                                      horizontal: "right",
+                                                    }}
+                                                    transformOrigin={{
+                                                      vertical: "top",
+                                                      horizontal: "right",
+                                                    }}
+                                                    className={`${
+                                                      showMessageDeletePopover &&
+                                                      themeName === "dark-theme"
+                                                        ? "popover-material-ui-dark-theme"
+                                                        : showMessageDeletePopover &&
+                                                          themeName !==
+                                                            "dark-theme"
+                                                        ? "popover-material-ui-light-theme"
+                                                        : "hideshowMessageDeletePopover "
+                                                    }`}
+                                                  >
+                                                    <div>
+                                                      {" "}
+                                                      <List size="small">
+                                                        <List.Item
+                                                          style={{
+                                                            padding:
+                                                              "12px 16px",
+
+                                                            opacity: "0.5",
+                                                            borderBottom:
+                                                              themeName !==
+                                                              "dark-theme"
+                                                                ? "1px solid rgba(0, 0, 0, 0.1)"
+                                                                : "1px solid rgb(70, 70, 70)",
+                                                          }}
+                                                        >
+                                                          <Stack
+                                                            direction="horizontal"
+                                                            gap={2}
+                                                          >
+                                                            <svg
+                                                              color={
+                                                                themeName ===
+                                                                "dark-theme"
+                                                                  ? "white"
+                                                                  : "rgba(15,20,25,1.00)"
+                                                              }
+                                                              fill="currentcolor"
+                                                              width={`${1.25}em`}
+                                                              height={`${1.25}em`}
+                                                              viewBox="0 0 24 24"
+                                                              aria-hidden="true"
+                                                              className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-1q142lx"
+                                                            >
+                                                              <g>
+                                                                <path d="M17 9.76V4.5C17 3.12 15.88 2 14.5 2h-5C8.12 2 7 3.12 7 4.5v5.26L3.88 16H11v5l1 2 1-2v-5h7.12L17 9.76zM7.12 14L9 10.24V4.5c0-.28.22-.5.5-.5h5c.28 0 .5.22.5.5v5.74L16.88 14H7.12z"></path>
+                                                              </g>
+                                                            </svg>
+                                                            <span
+                                                              style={{
+                                                                lineHeight:
+                                                                  "20px",
+                                                                fontWeight:
+                                                                  "700",
+                                                                fontSize:
+                                                                  "15px",
+                                                                color:
+                                                                  themeName ===
+                                                                  "dark-theme"
+                                                                    ? "white"
+                                                                    : "black ",
+                                                              }}
+                                                            >
+                                                              Pin conversation
+                                                            </span>
+                                                          </Stack>
+                                                        </List.Item>
+                                                        <List.Item
+                                                          style={{
+                                                            padding:
+                                                              "12px 16px",
+                                                            opacity: "0.5",
+                                                            borderBottom:
+                                                              themeName !==
+                                                              "dark-theme"
+                                                                ? "1px solid rgba(0, 0, 0, 0.1)"
+                                                                : "1px solid rgb(70, 70, 70)",
+                                                          }}
+                                                        >
+                                                          <Stack
+                                                            direction="horizontal"
+                                                            gap={2}
+                                                          >
+                                                            <svg
+                                                              color={
+                                                                themeName ===
+                                                                "dark-theme"
+                                                                  ? "white"
+                                                                  : "rgba(15,20,25,1.00)"
+                                                              }
+                                                              fill="currentcolor"
+                                                              width={`${1.25}em`}
+                                                              height={`${1.25}em`}
+                                                              viewBox="0 0 24 24"
+                                                              aria-hidden="true"
+                                                              className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-1q142lx"
+                                                            >
+                                                              <g>
+                                                                <path d="M20.29 2.29l-2.34 2.34C16.47 3.01 14.34 2 12 2 7.93 2 4.51 5.02 4 9.05L2.87 18h1.72l-2.3 2.29 1.42 1.42 18-18-1.42-1.42zM6.59 16H5.13l.85-6.7C6.36 6.27 8.94 4 12 4c1.79 0 3.42.78 4.54 2.05L6.59 16zM12 22c-1.57 0-2.98-.73-3.89-1.86l1.42-1.43c.55.78 1.45 1.29 2.47 1.29 1.31 0 2.42-.83 2.83-2H12v-2h6.86l-.74-5.87 1.76-1.76c.05.22.08.44.11.67L21.14 18H16.9c-.46 2.28-2.48 4-4.9 4z"></path>
+                                                              </g>
+                                                            </svg>
+                                                            <span
+                                                              style={{
+                                                                lineHeight:
+                                                                  "20px",
+                                                                fontWeight:
+                                                                  "700",
+                                                                fontSize:
+                                                                  "15px",
+
+                                                                color:
+                                                                  themeName ===
+                                                                  "dark-theme"
+                                                                    ? "white "
+                                                                    : "rgba(15,20,25,1.00)",
+                                                              }}
+                                                            >
+                                                              Snooze
+                                                              conversation
+                                                            </span>
+                                                          </Stack>
+                                                        </List.Item>
+                                                        <List.Item
+                                                          style={{
+                                                            padding:
+                                                              "12px 16px",
+                                                            opacity: "0.5",
+                                                            borderBottom:
+                                                              themeName !==
+                                                              "dark-theme"
+                                                                ? "1px solid rgba(0, 0, 0, 0.1)"
+                                                                : "1px solid rgb(70, 70, 70)",
+                                                          }}
+                                                        >
+                                                          <Stack
+                                                            direction="horizontal"
+                                                            gap={2}
+                                                          >
+                                                            <svg
+                                                              color={
+                                                                themeName ===
+                                                                "dark-theme"
+                                                                  ? "white"
+                                                                  : "rgba(15,20,25,1.00)"
+                                                              }
+                                                              fill="currentcolor"
+                                                              width={`${1.25}em`}
+                                                              height={`${1.25}em`}
+                                                              viewBox="0 0 24 24"
+                                                              aria-hidden="true"
+                                                              className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-1q142lx"
+                                                            >
+                                                              <g>
+                                                                <path d="M3 2h18.61l-3.5 7 3.5 7H5v6H3V2zm2 12h13.38l-2.5-5 2.5-5H5v10z"></path>
+                                                              </g>
+                                                            </svg>
+                                                            <span
+                                                              style={{
+                                                                lineHeight:
+                                                                  "20px",
+                                                                fontWeight:
+                                                                  "700",
+                                                                fontSize:
+                                                                  "15px",
+                                                                color:
+                                                                  themeName ===
+                                                                  "dark-theme"
+                                                                    ? "white"
+                                                                    : "rgba(15,20,25,1.00)",
+                                                              }}
+                                                            >
+                                                              Report
+                                                              conversation
+                                                            </span>
+                                                          </Stack>
+                                                        </List.Item>
+                                                        <List.Item
+                                                          onMouseEnter={() =>
+                                                            setisHoveredPopoverItem(
+                                                              index
+                                                            )
+                                                          }
+                                                          onMouseLeave={() =>
+                                                            setisHoveredPopoverItem(
+                                                              null
+                                                            )
+                                                          }
+                                                          className={`message-popoover message-popoover-${themeName}`}
+                                                          style={{
+                                                            padding:
+                                                              "12px 16px",
+                                                            cursor: "pointer",
+                                                            borderBottomLeftRadius:
+                                                              "6px",
+                                                            borderBottomRightRadius:
+                                                              "6px",
+                                                          }}
+                                                          onClick={() => {
+                                                            handleShowDeleteConversationModal();
+                                                            popupState.close();
+                                                          }}
+                                                        >
+                                                          {" "}
+                                                          <Stack
+                                                            direction="horizontal"
+                                                            gap={2}
+                                                          >
+                                                            <svg
+                                                              style={{}}
+                                                              color="#f2212e
+                "
+                                                              fill="currentcolor"
+                                                              width={`${1.25}em`}
+                                                              height={`${1.25}em`}
+                                                              viewBox="0 0 32 32"
+                                                              aria-hidden="true"
+                                                              className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1q142lx r-9l7dzd"
+                                                            >
+                                                              <g>
+                                                                <path d="M20 23h-2v-8h2v8zm-6-8h-2v8h2v-8zm14-5h-1.713l-1.111 15.577C25.038 27.496 23.424 29 21.5 29H10.486c-1.915 0-3.522-1.496-3.66-3.405L5.699 10H4V8h7V6c0-1.654 1.346-3 3-3h4c1.654 0 3 1.346 3 3v2h7v2zM13 8h6V6c0-.551-.449-1-1-1h-4c-.551 0-1 .449-1 1v2zm11.281 2H7.705l1.117 15.451c.062.869.793 1.549 1.665 1.549H21.5c.88 0 1.619-.688 1.681-1.565L24.282 10z"></path>
+                                                              </g>
+                                                            </svg>
+                                                            <span
+                                                              style={{
+                                                                color:
+                                                                  "#f2212e",
+                                                                lineHeight:
+                                                                  "20px",
+                                                                fontWeight:
+                                                                  "700",
+                                                                fontSize:
+                                                                  "15px",
+                                                              }}
+                                                            >
+                                                              Delete
+                                                              conversation
+                                                            </span>
+                                                          </Stack>
+                                                        </List.Item>
+                                                      </List>
+                                                    </div>
+                                                  </Popover>
                                                 </div>
-                                              </OverlayTrigger>
-                                            </div>
-                                          </Stack>
+                                              )}
+                                            </PopupState>
+                                            {/* modern popover test finish to check  */}
+                                          </div>
+                                        </Stack>
 
-                                          {/* message text is here ? start to check  */}
+                                        {/* message text is here ? start to check  */}
 
-                                          {/* message text is here ? finish to check  */}
-                                        </>
-                                      )}
-                                  </div>
+                                        {/* message text is here ? finish to check  */}
+                                      </>
+                                    )}
                                 </div>
-                              ) : null}
-                            </div>
-                          )}
-                        </div>
-                      </>
+                              </div>
+                            ) : null}
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </div>
                 ) : (

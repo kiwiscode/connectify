@@ -131,3 +131,17 @@ const userSchema = new Schema(
 const User = model("User", userSchema);
 
 module.exports = User;
+
+// let interactedChatRooms = [
+//   {
+//     room: {
+//       roomName: "",
+//       activeUsers: [
+//         {
+//           user1: { username: null, socketId: null, isActiveInRoom: false },
+//           user2: { username: null, socketId: null, isActiveInRoom: false },
+//         },
+//       ],
+//     },
+//   },
+// ];

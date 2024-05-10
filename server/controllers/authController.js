@@ -128,8 +128,6 @@ const handleSignup = async (req, res, next) => {
         .genSalt(saltRounds)
         .then((salt) => bcrypt.hash(password, salt))
         .then((hashedPassword) => {
-          console.log("THIS LINE IS WORKING 2");
-
           fullname = capitalize(fullname);
           console.log("THIS LINE IS WORKING 3");
           return User.create({
@@ -431,7 +429,6 @@ const handleDeactivatedUserLoginBack = (req, res) => {
                         user._id.toString() !==
                         userRequestingReactivation._id.toString()
                       ) {
-                        console.log("This line is working 2 !!!");
                         message.deactivatedMember = false;
                         user.save();
                       }
@@ -596,7 +593,6 @@ const handleChangeModalStatusVariantOne = (req, res) => {
   console.log(req.body);
   const { userId } = req.body;
 
-  console.log("User id =>", userId);
   User.findById(userId)
     .then((user) => {
       user.signedUpWithVariantOne.isProfileImageCustomizationModalShown = true;
@@ -620,7 +616,6 @@ const handleChangeModalStatusVariantOneModal2 = (req, res) => {
   console.log(req.body);
   const { userId } = req.body;
 
-  console.log("User id =>", userId);
   User.findById(userId)
     .then((user) => {
       user.signedUpWithVariantOne.isUsernameCustomizationModalShown = true;
@@ -646,7 +641,6 @@ const handleUsernameCheck = async (req, res) => {
   try {
     const { username } = req.body;
     const checkUserName = username.toLowerCase();
-    console.log("test");
     const allUsers = await User.find();
 
     const allUserNames = allUsers.map((eachUser) =>
@@ -660,15 +654,11 @@ const handleUsernameCheck = async (req, res) => {
       }
     }
 
-    console.log("Username =>", username);
-
     if (allUserNames.includes(checkUserName)) {
       res.status(409).json({
         errorMessage: "That username has been taken. Please choose another.",
       });
     } else {
-      console.log("Username not exist! You can choose this one!");
-
       if (username.length <= 15 && username.length >= 4 && countSpaces < 1) {
         res.status(200).json({
           successMessage:
@@ -689,8 +679,6 @@ const handleUsernameCheck = async (req, res) => {
         });
       }
     }
-
-    console.log("Username from front end =>", username);
   } catch (error) {
     console.error("Error during username check:", error);
     res
@@ -731,8 +719,6 @@ const handleUsernameChange = async (req, res) => {
   try {
     const { username, userId } = req.body;
 
-    console.log("Username =>", username);
-    console.log("User id =>", userId);
     const user = await User.findById(userId);
 
     if (!user) {

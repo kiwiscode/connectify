@@ -9,6 +9,15 @@ const Post = require("../models/Post.model");
 const { default: mongoose } = require("mongoose");
 const router = express();
 let onlineUsers = [];
+let interactedChatRooms = [];
+let currentUrlForSocketId = null;
+let socketUserUsername = null;
+
+// state for deciding what to do if they are in same room ! start to check
+let isBothUserOpenedMessageRoom = null;
+// state for deciding what to do if they are in same room ! finish to check
+
+let testThousand;
 
 module.exports = (app) => {
   const server = http.createServer(app);
@@ -29,43 +38,108 @@ module.exports = (app) => {
   });
 
   io.on("connection", async (socket) => {
-    console.log("User connected =>", socket.id);
-
+    console.log("Active socket id =>", socket.id);
     socket.emit("socket_id_for_user", socket.id);
-
-    console.log("Online users =>", onlineUsers);
-    // because of this line bug occuring for front end active users inside messagespage.jsx start to check BUG
-    const allUsers = await User.find();
-    socket.emit("activeUsers", allUsers);
-    // because of this line bug occuring for front end active users inside messagespage.jsx start to check BUG
-
-    socket.on("get_specific_user", (data) => {
-      console.log("specific user received =>", data.username);
-      User.findById(data._id)
-        .populate({
-          path: "messages",
-          populate: {
-            path: "members",
-            model: "User",
-          },
-        })
-        .populate({
-          path: "messages",
-          populate: {
-            path: "chat",
-            model: "Chat",
-          },
-        })
-        .then((user) => {
-          socket.emit("receive_specific_user_message_rooms", user);
-        })
-        .catch((error) => {
-          console.log("Error =>", error);
-        });
+    socket.on("socket_userInfo", (data) => {
+      console.log("Data user info =>", data?.username);
+      socketUserUsername = data?.username;
     });
 
+    socket.on(
+      "current_url_for_checking_if_user_inside_chat_details_page",
+      (data) => {
+        currentUrlForSocketId = data;
+      }
+    );
+
+    console.log(interactedChatRooms, "---------");
+
+    setTimeout(() => {
+      const activeUser = interactedChatRooms.find((room) =>
+        // Oda içindeki activeUsers listesini kontrol et
+        room.room.activeUsers.some(
+          (activeUser) =>
+            activeUser.user1.username === socketUserUsername ||
+            activeUser.user2.username === socketUserUsername
+        )
+      );
+
+      const activeUserIndex = interactedChatRooms?.indexOf(activeUser);
+
+      // Eğer current url "/messages/" ile başlıyorsa
+      if (currentUrlForSocketId?.startsWith("/messages/")) {
+        console.log("Chat detail page route active.----------------- ");
+      } else {
+        isBothUserOpenedMessageRoom = false;
+        console.log(
+          "They are not in same room right now one of them left the room ://"
+        );
+
+        console.log("Current URL '/messages/' ile başlamıyor.--------------");
+        console.log(
+          "Interacted chat rooms user when chat detail page not active =>",
+          interactedChatRooms[activeUserIndex]?.room.activeUsers
+        );
+        const ifUserNameIsInsideOfArray = interactedChatRooms[
+          activeUserIndex
+        ]?.room.activeUsers.some(
+          (activeUser) =>
+            activeUser.user1.username === socketUserUsername ||
+            activeUser.user2.username === socketUserUsername
+        );
+
+        const user1Username =
+          interactedChatRooms[activeUserIndex]?.room.activeUsers[0]?.user1
+            ?.username;
+        const user2Username =
+          interactedChatRooms[activeUserIndex]?.room.activeUsers[0]?.user2
+            ?.username;
+
+        if (ifUserNameIsInsideOfArray && user1Username === socketUserUsername) {
+          if (interactedChatRooms[activeUserIndex]) {
+            // interactedChatRooms[activeUserIndex].room.roomName = "";
+            interactedChatRooms[
+              activeUserIndex
+            ].room.activeUsers[0].user1.username = null;
+            interactedChatRooms[
+              activeUserIndex
+            ].room.activeUsers[0].user1.socketId = null;
+            interactedChatRooms[
+              activeUserIndex
+            ].room.activeUsers[0].user1.isActiveInRoom = false;
+          }
+        } else if (
+          ifUserNameIsInsideOfArray &&
+          user2Username === socketUserUsername
+        ) {
+          if (interactedChatRooms[activeUserIndex]) {
+            // interactedChatRooms[activeUserIndex].room.roomName = "";
+            interactedChatRooms[
+              activeUserIndex
+            ].room.activeUsers[0].user2.username = null;
+            interactedChatRooms[
+              activeUserIndex
+            ].room.activeUsers[0].user2.socketId = null;
+            interactedChatRooms[
+              activeUserIndex
+            ].room.activeUsers[0].user2.isActiveInRoom = false;
+          }
+        }
+
+        console.log(
+          "Interacted chat rooms arrayinin yeni hali =>",
+          interactedChatRooms[0]?.room?.activeUsers
+        );
+      }
+    }, 1000);
+
+    console.log("User connected =>", socket.id);
+    console.log("Online users =>", onlineUsers);
+
     socket.on("send_spesific_chatRoomId", (chatRoomId) => {
+      console.log("Chat room received =>", chatRoomId);
       socket.on("send_spesific_userId", (userId) => {
+        console.log("User id received =>", userId);
         User.findById(userId)
           .populate({
             path: "messages",
@@ -115,32 +189,119 @@ module.exports = (app) => {
 
             let chatDetailActiveUser;
             let chatDetailSelectedUser;
+
             socket.on("join_spesific_message_room", (data) => {
               const { activeUser, selectedUser } = data;
-              const room = [activeUser.username, selectedUser.username]
+
+              const room = [activeUser?.username, selectedUser?.username]
                 .sort()
                 .join("_");
+
+              const activeRoomWithUsers = interactedChatRooms.find(
+                (eachRoom) => {
+                  return eachRoom.room.roomName === room;
+                }
+              );
+              console.log("Active room with users =>", activeRoomWithUsers);
+              console.log("Current url =>", currentUrlForSocketId);
+              console.log("Chat room id =>", chatRoomId);
+
+              const indexOfThisRoom =
+                interactedChatRooms.indexOf(activeRoomWithUsers);
+              setTimeout(() => {
+                if (!activeRoomWithUsers) {
+                  console.log("Now here is working 1 !");
+                  interactedChatRooms.push({
+                    room: {
+                      roomName: room,
+                      activeUsers: [
+                        {
+                          user1: {
+                            username: activeUser.username,
+                            socketId: socket.id,
+                            isActiveInRoom: true,
+                          },
+                          user2: {
+                            username: null,
+                            socketId: null,
+                            isActiveInRoom: false,
+                          },
+                        },
+                      ],
+                    },
+                  });
+                } else {
+                  if (
+                    interactedChatRooms[indexOfThisRoom].room.activeUsers[0]
+                      .user1.username === null
+                  ) {
+                    console.log("Now here is working 2 !");
+                    interactedChatRooms[indexOfThisRoom].room.roomName = room;
+                    interactedChatRooms[
+                      indexOfThisRoom
+                    ].room.activeUsers[0].user1 = {
+                      username: activeUser.username,
+                      socketId: socket.id,
+                      isActiveInRoom: true,
+                    };
+                  } else if (
+                    interactedChatRooms[indexOfThisRoom].room.activeUsers[0]
+                      .user2.username === null
+                  ) {
+                    console.log("Now here is working 3 !");
+                    interactedChatRooms[indexOfThisRoom].room.roomName = room;
+                    interactedChatRooms[
+                      indexOfThisRoom
+                    ].room.activeUsers[0].user2 = {
+                      username: activeUser.username,
+                      socketId: socket.id,
+                      isActiveInRoom: true,
+                    };
+                  }
+                }
+              }, 500);
+
+              setTimeout(() => {
+                if (
+                  interactedChatRooms[indexOfThisRoom]?.room.activeUsers[0]
+                    .user2.isActiveInRoom &&
+                  interactedChatRooms[indexOfThisRoom]?.room.activeUsers[0]
+                    .user1.isActiveInRoom
+                ) {
+                  isBothUserOpenedMessageRoom = true;
+                  console.log(
+                    "Burası çalışıyor ve onaylandı ! yani iki userda aynı anda aynı odadalar şu an ..."
+                  );
+                } else {
+                  console.log(
+                    "Burası çalışıyor ve onaylanamadı ! yani iki userda aynı anda aynı odada değiller şu an ..."
+                  );
+                }
+              }, 1250);
 
               chatDetailActiveUser = activeUser;
               chatDetailSelectedUser = selectedUser;
 
-              console.log(
-                "Chat detail active user => ",
-                chatDetailActiveUser.username
-              );
-              console.log(
-                "Chat detail selected user => ",
-                chatDetailSelectedUser.username
-              );
               socket.join(room);
 
+              setTimeout(() => {
+                io.to(room).emit("interactedChatRooms", {
+                  interactedChatRooms,
+                  room,
+                });
+              }, 2500);
+
+              socket.on("typing_indicator", (data) => {
+                console.log("Data received from client=>", data);
+                io.to(room).emit("typing_result", {
+                  data,
+                });
+              });
+
               socket.on("send_spesific_room_message", async (data) => {
-                console.log("This line is working => 8 _", data);
                 socket
                   .to(data.room)
                   .emit("receive_spesific_room_message", data);
-
-                console.log("Data.room =>", data.room);
 
                 const newChat = {
                   sender: data.sender,
@@ -153,11 +314,6 @@ module.exports = (app) => {
                   messages: [newChat],
                 })
                   .then((newCreatedChatBetween2User) => {
-                    console.log("Active user id =>", chatDetailActiveUser._id);
-                    console.log(
-                      "Selected user id =>",
-                      chatDetailSelectedUser._id
-                    );
                     User.find({
                       _id: {
                         $in: [
@@ -175,35 +331,13 @@ module.exports = (app) => {
                         });
                         const user1RoomIndex =
                           users[0].messages.indexOf(user1Room);
+
                         const user2Room = users[1].messages.find((eachRoom) => {
                           return eachRoom.room === data.room;
                         });
-
                         const user2RoomIndex =
                           users[1].messages.indexOf(user2Room);
-
-                        console.log("User 1 username =>", users[0].username);
-                        console.log("User 2 username =>", users[1].username);
-
-                        console.log(
-                          "User 1 message room index =>",
-                          user1RoomIndex
-                        );
-                        console.log(
-                          "User 2 message room index =>",
-                          user2RoomIndex
-                        );
                         // new version sözde BUG fix finish to check
-
-                        console.log(
-                          "User 1 message room chat length=>",
-                          users[0].messages[user1RoomIndex].chat.length
-                        );
-                        console.log(
-                          "User 2 message room chat length=>",
-                          users[1].messages[user2RoomIndex].chat.length
-                        );
-
                         const userOneChatCollectionIds = users[0].messages[
                           user1RoomIndex
                         ].chat.map((eachChatIndividualMessage) => {
@@ -214,30 +348,6 @@ module.exports = (app) => {
                         ].chat.map((eachChatIndividualMessage) => {
                           return eachChatIndividualMessage._id.toString();
                         });
-
-                        console.log(
-                          "User one chat collections between action user =>",
-                          userOneChatCollectionIds
-                        );
-                        console.log(
-                          "User second chat collections between action user =>",
-                          userSecondChatCollectionIds
-                        );
-
-                        console.log(
-                          "New created chat between two user id =>",
-                          newCreatedChatBetween2User._id.toString()
-                        );
-
-                        console.log(
-                          "Condition result =>",
-                          !userOneChatCollectionIds.includes(
-                            newCreatedChatBetween2User._id.toString()
-                          ) &&
-                            !userSecondChatCollectionIds.includes(
-                              newCreatedChatBetween2User._id.toString()
-                            )
-                        );
 
                         if (
                           !userOneChatCollectionIds.includes(
@@ -254,38 +364,157 @@ module.exports = (app) => {
                           users[1].messages[user2RoomIndex].chat.push(
                             newCreatedChatBetween2User._id
                           );
+                          users[0].save();
+                          users[1].save();
                         } else {
                           console.log(
                             "This particular chat id exist already in users messages chat array !!!"
                           );
                         }
 
-                        console.log(
-                          "First user Room =>",
-                          users[0].messages[user1RoomIndex].room
-                        );
-                        console.log(
-                          "Second user Room =>",
-                          users[1].messages[user2RoomIndex].room
-                        );
-                        console.log(users[0].messages[user1RoomIndex].room);
-
                         const firstMessageRoom =
                           users[0].messages[user1RoomIndex];
                         const secondMessageRoom =
                           users[1].messages[user2RoomIndex];
-                        console.log(
-                          "User first, first message room before update =>",
-                          users[0].messages[user1RoomIndex].room
-                        );
-                        console.log(
-                          "User second, first message room before update =>",
-                          users[1].messages[user2RoomIndex].room
-                        );
-                        users[0].messages.splice(user1RoomIndex, 1);
-                        users[1].messages.splice(user2RoomIndex, 1);
-                        users[0].messages.unshift(firstMessageRoom);
-                        users[1].messages.unshift(secondMessageRoom);
+
+                        setTimeout(() => {
+                          console.log("User ids first =>", users[0]._id);
+                          console.log("User ids second =>", users[1]._id);
+                          if (isBothUserOpenedMessageRoom) {
+                            console.log("Burada çalışıyoruz şu anda !");
+
+                            users[0].messages.splice(user1RoomIndex, 1);
+                            users[1].messages.splice(user2RoomIndex, 1);
+                            users[0].messages.unshift(firstMessageRoom);
+                            users[1].messages.unshift(secondMessageRoom);
+
+                            setTimeout(() => {
+                              User.updateOne(
+                                { _id: users[0]._id },
+                                {
+                                  $set: {
+                                    [`messages.0.readed`]: true,
+                                  },
+                                }
+                              )
+                                .then((response) => {
+                                  console.log(
+                                    "Response after first update !",
+                                    response
+                                  );
+                                  return User.updateOne(
+                                    { _id: users[1]._id },
+                                    {
+                                      $set: {
+                                        [`messages.0.readed`]: true,
+                                      },
+                                    }
+                                  );
+                                })
+                                .then((response) => {
+                                  console.log(
+                                    "Response after second update !",
+                                    response
+                                  );
+                                })
+                                .catch((error) => {
+                                  console.log("ERROR =>", error);
+                                });
+                            }, 1000);
+                          } else {
+                            console.log("Burada çalışıyoruz şu anda 2!");
+
+                            console.log(
+                              "users[0].username =>",
+
+                              users[0].username,
+                              "users[1].username =>",
+                              users[1].username,
+                              "message sender username =>",
+                              data.sender
+                            );
+
+                            if (users[0].username === data.sender) {
+                              console.log("Şimdi de bu kısımdayız 1 !!!");
+                              users[0].messages.splice(user1RoomIndex, 1);
+                              users[1].messages.splice(user2RoomIndex, 1);
+                              users[0].messages.unshift(firstMessageRoom);
+                              users[1].messages.unshift(secondMessageRoom);
+                              setTimeout(() => {
+                                User.updateOne(
+                                  { _id: users[0]._id },
+                                  {
+                                    $set: {
+                                      [`messages.0.readed`]: true,
+                                    },
+                                  }
+                                )
+                                  .then((response) => {
+                                    console.log(
+                                      "Response after first update !",
+                                      response
+                                    );
+                                    return User.updateOne(
+                                      { _id: users[1]._id },
+                                      {
+                                        $set: {
+                                          [`messages.0.readed`]: false,
+                                        },
+                                      }
+                                    );
+                                  })
+                                  .then((response) => {
+                                    console.log(
+                                      "Response after second update !",
+                                      response
+                                    );
+                                  })
+                                  .catch((error) => {
+                                    console.log("ERROR =>", error);
+                                  });
+                              }, 1000);
+                            } else if (users[1].username === data.sender) {
+                              users[0].messages.splice(user1RoomIndex, 1);
+                              users[1].messages.splice(user2RoomIndex, 1);
+                              users[0].messages.unshift(firstMessageRoom);
+                              users[1].messages.unshift(secondMessageRoom);
+                              console.log("Şimdi de bu kısımdayız 2 !!!");
+                              setTimeout(() => {
+                                User.updateOne(
+                                  { _id: users[0]._id },
+                                  {
+                                    $set: {
+                                      [`messages.0.readed`]: false,
+                                    },
+                                  }
+                                )
+                                  .then((response) => {
+                                    console.log(
+                                      "Response after first update !",
+                                      response
+                                    );
+                                    return User.updateOne(
+                                      { _id: users[1]._id },
+                                      {
+                                        $set: {
+                                          [`messages.0.readed`]: true,
+                                        },
+                                      }
+                                    );
+                                  })
+                                  .then((response) => {
+                                    console.log(
+                                      "Response after second update !",
+                                      response
+                                    );
+                                  })
+                                  .catch((error) => {
+                                    console.log("ERROR =>", error);
+                                  });
+                              }, 1000);
+                            }
+                          }
+                        }, 2500);
 
                         console.log(
                           "User 1 username - active user =>",
@@ -296,8 +525,6 @@ module.exports = (app) => {
                           users[1].username
                         );
 
-                        users[0].save();
-                        users[1].save();
                         console.log(
                           "User first, first message room after update =>",
                           users[0].messages[user1RoomIndex].room
@@ -327,12 +554,7 @@ module.exports = (app) => {
 
     socket.on("join_user_room", async (data) => {
       const { activeUser, selectedUser } = data;
-      console.log(
-        "active user =>",
-        activeUser,
-        "selected user =>",
-        selectedUser
-      );
+
       const room = [activeUser.username, selectedUser.username]
         .sort()
         .join("_");
@@ -458,24 +680,111 @@ module.exports = (app) => {
                     resultArrayOfMessages.push(messages[i][s]);
                   }
                 }
-                console.log(
-                  "room messages: resultArrayOfMessages",
-                  room,
-                  resultArrayOfMessages
-                );
 
                 const findedRoom = user[0].messages.find((eachMessage) => {
                   return eachMessage.room === room;
                 });
 
-                console.log(
-                  "Varolan oda bulundu ve id si cliente gonderilmeye hazir =>",
-                  findedRoom
+                socket.emit("getmessageRoomId", findedRoom._id.toString());
+
+                const activeRoomWithUsers = interactedChatRooms.find(
+                  (eachRoom) => {
+                    return eachRoom.room.roomName === room;
+                  }
                 );
 
-                console.log("Varolan oda bulundu oda adı =>", findedRoom.room);
+                console.log("Active room with users =>", activeRoomWithUsers);
+                console.log("Current url =>", currentUrlForSocketId);
+                console.log("Chat room id =>", chatRoomId);
 
-                socket.emit("getmessageRoomId", findedRoom._id.toString());
+                const indexOfThisRoom =
+                  interactedChatRooms.indexOf(activeRoomWithUsers);
+                setTimeout(() => {
+                  if (!activeRoomWithUsers) {
+                    console.log("Now here is working 1 !");
+                    interactedChatRooms.push({
+                      room: {
+                        roomName: room,
+                        activeUsers: [
+                          {
+                            user1: {
+                              username: activeUser.username,
+                              socketId: socket.id,
+                              isActiveInRoom: true,
+                            },
+                            user2: {
+                              username: null,
+                              socketId: null,
+                              isActiveInRoom: false,
+                            },
+                          },
+                        ],
+                      },
+                    });
+                  } else {
+                    if (
+                      interactedChatRooms[indexOfThisRoom].room.activeUsers[0]
+                        .user1.username === null
+                    ) {
+                      console.log("Now here is working 2 !");
+                      interactedChatRooms[indexOfThisRoom].room.roomName = room;
+                      interactedChatRooms[
+                        indexOfThisRoom
+                      ].room.activeUsers[0].user1 = {
+                        username: activeUser.username,
+                        socketId: socket.id,
+                        isActiveInRoom: true,
+                      };
+                    } else if (
+                      interactedChatRooms[indexOfThisRoom].room.activeUsers[0]
+                        .user2.username === null
+                    ) {
+                      console.log("Now here is working 3 !");
+                      interactedChatRooms[indexOfThisRoom].room.roomName = room;
+                      interactedChatRooms[
+                        indexOfThisRoom
+                      ].room.activeUsers[0].user2 = {
+                        username: activeUser.username,
+                        socketId: socket.id,
+                        isActiveInRoom: true,
+                      };
+                    }
+                  }
+                }, 500);
+
+                setTimeout(() => {
+                  if (
+                    interactedChatRooms[indexOfThisRoom]?.room.activeUsers[0]
+                      .user2.username &&
+                    interactedChatRooms[indexOfThisRoom]?.room.activeUsers[0]
+                      .user1.username
+                  ) {
+                    isBothUserOpenedMessageRoom = true;
+                    console.log(
+                      "Burası çalışıyor ve onaylandı ! yani iki userda aynı anda aynı odadalar şu an ..."
+                    );
+                  } else {
+                    console.log(
+                      "Burası çalışıyor ve onaylanamadı ! yani iki userda aynı anda aynı odada değiller şu an ..."
+                    );
+                  }
+                }, 1250);
+
+                setTimeout(() => {
+                  io.to(room).emit("interactedChatRooms", {
+                    interactedChatRooms,
+                    room,
+                  });
+                }, 2500);
+
+                socket.on("typing_indicator", (data) => {
+                  console.log("Data received from client=>", data);
+                  io.to(room).emit("typing_result", {
+                    data,
+                    chatDetailActiveUser,
+                    chatDetailSelectedUser,
+                  });
+                });
               } else {
                 console.error("Error fetching messages for the existing room.");
               }
@@ -484,8 +793,6 @@ module.exports = (app) => {
               console.error("Error fetching users:", error);
             });
         }
-
-        console.log("They are ready to chat their => room created!");
       });
     });
 
@@ -503,10 +810,8 @@ module.exports = (app) => {
         console.log(
           `Kullanıcı adı "${user.username}" zaten kullanılıyor. Bağlantı reddedildi.`
         );
-        socket.disconnect();
-
         console.log("Online users 2 => ", onlineUsers);
-        return;
+        // socket.disconnect();
       } else {
         onlineUsers.push(user);
         console.log(
@@ -525,7 +830,7 @@ module.exports = (app) => {
         text,
         senderInfo,
       }) => {
-        console.log("Burası çalışıyor !!!");
+        console.log("Burası çalışıyor !!! -------------------------------");
         const receiver = onlineUsers.find((eachUser) => {
           return eachUser.username === receiverName;
         });
@@ -534,7 +839,12 @@ module.exports = (app) => {
         console.log("Receiver  =>", receiver);
         console.log("Receiver socket id =>", receiver?.socketId);
 
-        if (receiver && type !== "message") {
+        if (
+          receiver &&
+          type !== "message" &&
+          !currentUrlForSocketId?.startsWith("/notifications")
+        ) {
+          console.log("Notification is ready to send(!message)");
           io.to(receiver.socketId).emit("getNotification", {
             senderName,
             receiverName,
@@ -550,7 +860,12 @@ module.exports = (app) => {
             contactHasBeenMade: contactHasBeenMade ? contactHasBeenMade : null,
             senderInfo,
           });
-        } else if (receiver && type === "message") {
+        } else if (
+          receiver &&
+          type === "message" &&
+          !currentUrlForSocketId?.startsWith("/messages")
+        ) {
+          console.log("Notification is ready to send(message)");
           io.to(receiver.socketId).emit("getNotification", {
             senderName,
             receiverName,
@@ -574,11 +889,17 @@ module.exports = (app) => {
 
     socket.on("disconnect", () => {
       console.log("User disconnected =>", socket.id);
+      console.log(
+        "User disconnected and cleaned from interacted chat rooms =>",
+        interactedChatRooms
+      );
+
       const findedUser = onlineUsers.find((eachUser) => {
         return eachUser.socketId === socket.id;
       });
 
       const findedUserIndex = onlineUsers.indexOf(findedUser);
+
       if (findedUserIndex !== -1) {
         const disconnectedUser = onlineUsers.splice(findedUserIndex, 1)[0];
 

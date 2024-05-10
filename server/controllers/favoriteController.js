@@ -51,14 +51,12 @@ const handleGetFavorites = (req, res) => {
 const handleAddFavorite = (req, res) => {
   const { postId } = req.body;
   const { userId } = req.user;
-  console.log("This line is working 1!", userId);
   User.findById(userId)
     .populate("favorites")
     .then((user) => {
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       }
-      console.log("This line is working 2!");
 
       Post.findById(postId).then((post) => {
         // notification ekleme start to check
@@ -66,7 +64,6 @@ const handleAddFavorite = (req, res) => {
         if (post.userId.toString() !== userId) {
           User.findById(post.userId.toString())
             .then((notifiedUser) => {
-              console.log("Notified user =>", notifiedUser);
               const newNotification = {
                 post: post._id,
                 notificationReceiver: post.userId,
@@ -92,8 +89,8 @@ const handleAddFavorite = (req, res) => {
         if (post.isComment) {
           Comment.find({ postId: post._id.toString() })
             .then((commentFromDataBase) => {
-              commentFromDataBase[0].likes.unshift(userId);
-              commentFromDataBase[0].save();
+              commentFromDataBase[0]?.likes.unshift(userId);
+              commentFromDataBase[0]?.save();
             })
             .catch((error) => {
               console.log("Error =>", error);
@@ -118,7 +115,6 @@ const handleAddFavorite = (req, res) => {
           post.save();
           user.favorites.unshift(post);
 
-          console.log("Now we are creating favorite !!! first");
           Favorite.create({
             userId: userId,
             postId: postId,
@@ -142,14 +138,13 @@ const handleAddFavorite = (req, res) => {
           })
             .then((repostedPost) => {
               console.log("This then block is working!");
-              console.log(repostedPost);
-
+              console.log("Reposted post =>", repostedPost[0].content);
+              console.log("Original post =>", post.content);
               repostedPost[0].likes.unshift(user);
               repostedPost[0].save();
               post.likes.unshift(user);
               post.save();
               user.favorites.unshift(post);
-              console.log("Now we are creating favorite !!! second");
 
               Favorite.create({
                 userId: userId,
@@ -181,7 +176,6 @@ const handleAddFavorite = (req, res) => {
               post.likes.unshift(user);
               post.save();
               user.favorites.unshift(originalPost[0]);
-              console.log("Now we are creating favorite !!! third");
 
               Favorite.create({
                 userId: userId,
@@ -308,14 +302,16 @@ const handleDeleteFavorite = (req, res) => {
             .then((commentFromDataBase) => {
               // splice the user id from comment start to check
 
-              const newLikesArray = commentFromDataBase[0].likes.filter(
+              const newLikesArray = commentFromDataBase[0]?.likes.filter(
                 (eachLiker) => {
                   return eachLiker._id.toString() !== userId;
                 }
               );
 
-              commentFromDataBase[0].likes = newLikesArray;
-              commentFromDataBase[0].save();
+              if (newLikesArray) {
+                commentFromDataBase[0].likes = newLikesArray;
+                commentFromDataBase[0].save();
+              }
 
               // splice the user id from comment finish to check
             })
@@ -520,8 +516,6 @@ const handleDeleteFavorite = (req, res) => {
                 if (foundItem) {
                   const mainId = foundItem._id;
                   Favorite.findByIdAndDelete(mainId).then(() => {
-                    console.log("THIS LINE IS WORKING 2");
-
                     res.status(200).json({
                       message:
                         "Favorite deleted from favorites model,user favorites array and post likes... and from notifications if exist",
@@ -538,8 +532,6 @@ const handleDeleteFavorite = (req, res) => {
         // REVIEWED finish to check
         // REVIEWED 2 start to check ...
         else if (post.isReposted && post.reposted.length) {
-          console.log("This line is working 2nd conditional block");
-
           Post.find({
             _id: post.repostedFromThisOriginalPost[0],
           })
@@ -681,8 +673,6 @@ const handleDeleteFavorite = (req, res) => {
                   if (foundItem) {
                     const mainId = foundItem._id;
                     Favorite.findByIdAndDelete(mainId).then(() => {
-                      console.log("THIS LINE IS WORKING 2");
-
                       res.status(200).json({
                         message:
                           "Favorite deleted from favorites model,user favorites array and post likes... and from notifications if exist",
@@ -702,8 +692,6 @@ const handleDeleteFavorite = (req, res) => {
         // REVIEWED 2 finish to check ...
         // REVIEWED 3 start to check
         else if (!post.isReposted && !post.reposted.length) {
-          console.log("This line is working 3th conditional block");
-
           console.log(post.likes);
           const filterPost = post.likes.filter((eachLike) => {
             return eachLike._id.toString() !== userId;
@@ -715,7 +703,6 @@ const handleDeleteFavorite = (req, res) => {
 
           User.findById(post.userId.toString())
             .then((notifiedUser) => {
-              console.log("We are here !");
               // let's find the index of this post and delete the notification
               const findIndex = notifiedUser.notifications.findIndex(
                 (notification) => {
@@ -723,15 +710,11 @@ const handleDeleteFavorite = (req, res) => {
                 }
               );
 
-              console.log("We are here 2", findIndex);
-
               if (
                 findIndex === 0 ||
                 (findIndex > 0 &&
                   notifiedUser.notifications[findIndex].isFavorite.value)
               ) {
-                console.log("We are here 3");
-
                 if (notifiedUser._id.toString() === user._id.toString()) {
                   console.log(
                     "This line is working because the user who added their post to favorites."
@@ -746,7 +729,6 @@ const handleDeleteFavorite = (req, res) => {
                 } else if (
                   notifiedUser._id.toString() !== user._id.toString()
                 ) {
-                  console.log("We are here 4");
                   // notifiedUser.notifications.splice(findIndex, 1);
                   notifiedUser.save();
                   const filteredFavoritesUserArray = user.favorites.filter(
@@ -764,10 +746,17 @@ const handleDeleteFavorite = (req, res) => {
                 );
 
                 user.favorites = filterFavoritesArray;
-                user.save();
-                console.log("We are here 5");
-
-                return;
+                user
+                  .save()
+                  .then(() => {
+                    res.status(200);
+                  })
+                  .catch(() => {
+                    res.status(404).json({
+                      errorMessage:
+                        "Error occured while processing for deleting favorite and sending notifications",
+                    });
+                  });
               } else {
                 res.status(404).json({
                   errorMessage:
@@ -789,8 +778,6 @@ const handleDeleteFavorite = (req, res) => {
               if (foundItem) {
                 const mainId = foundItem._id;
                 Favorite.findByIdAndDelete(mainId).then(() => {
-                  console.log("THIS LINE IS WORKING 2");
-
                   res.status(200).json({
                     message:
                       "Favorite deleted from favorites model,user favorites array and post likes... and from notifications if exist",
