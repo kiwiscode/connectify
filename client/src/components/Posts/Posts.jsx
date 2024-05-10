@@ -8,7 +8,6 @@ import { UserContext } from "../../context/UserContext";
 import { Link, useNavigate } from "react-router-dom";
 import { CommentModal } from "../ui/Modal";
 import axios from "axios";
-import LoadingSpinner from "../ui/LoadingSpinner";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -136,13 +135,7 @@ function Posts() {
         }
       )
       .then(() => {
-        setTimeout(() => {
-          //   handleNotification(findedPost, userInfo, "repost");
-          //   setLoadingTrue();
-          //   setLoadingFalse();
-          //   setError("");
-          //   handleShowPostsHomePage();
-        }, 500);
+        setTimeout(() => {}, 500);
       })
       .catch((error) => {
         console.log(error);
@@ -166,13 +159,7 @@ function Posts() {
       )
       .then(() => {
         console.log("We are here !!!");
-        setTimeout(() => {
-          //   handleNotification(findedPost, userInfo, "liked");
-          //   setLoadingTrue();
-          //   setLoadingFalse();
-          //   setError("");
-          //   handleShowPostsHomePage();
-        }, 500);
+        setTimeout(() => {}, 500);
       })
       .catch((error) => {
         console.log("Error message =>", error);

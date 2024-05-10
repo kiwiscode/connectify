@@ -49,7 +49,6 @@ const handlePost = (req, res) => {
           })
           .then((post) => {
             user.posts.unshift(post);
-            console.log("THIS LINE IS WORKING 2 ", post);
             return user.save().then(() => {
               res.status(200).json({ createdPost: post });
             });
@@ -67,7 +66,6 @@ const handlePost = (req, res) => {
         })
           .then((post) => {
             user.posts.unshift(post);
-            console.log("THIS LINE IS WORKING 2 ", post);
             return user.save().then(() => {
               res.status(200).json({ createdPost: post });
             });
@@ -84,8 +82,6 @@ const handlePost = (req, res) => {
 const handleShowPosts = (req, res) => {
   const { userId } = req.user;
 
-  console.log("Now we are in home page !!!");
-
   Post.find()
     // IMPORTANT
     // start to check
@@ -98,8 +94,6 @@ const handleShowPosts = (req, res) => {
     .populate("commentedForThisPost")
     .populate("commentedForThisUsersPost")
     .then((postsFromDataBase) => {
-      console.log("ACTIVE USER => ", userId);
-      console.log("HELLO WORLD!");
       res.json(postsFromDataBase);
     })
     .catch((error) => {
@@ -112,7 +106,6 @@ const handleShowPosts = (req, res) => {
 const handleDeletePost = (req, res) => {
   const { userId, postId } = req.body;
 
-  console.log("User id =>", userId);
   console.log("Req body =>", req.body);
   User.findById(userId)
     .populate("posts")
@@ -125,11 +118,10 @@ const handleDeletePost = (req, res) => {
       Post.findById(postId)
         .populate("userId")
         .then((post) => {
-          console.log("User id =>", userId, user.username);
           console.log(
             "Owner post id =>",
-            post.userId.toString(),
-            post.userId.username
+            post?.userId?.toString(),
+            post?.userId?.username
           );
           if (userId !== post.userId.toString()) {
             console.log("Buradayız 1!!!");
@@ -334,11 +326,10 @@ const handleDeletePost = (req, res) => {
                 console.log(
                   "Favorites and posts deleted from all users except the active user."
                 );
+                res.status(200);
               })
               .catch((error) => {
-                console.log(
-                  `Error finding users with the specified favorites and posts: ${error}`
-                );
+                res.status(501);
               });
 
             // this postId should filtered from all the users favorites and posts array ! So then we can delete the post itself after delete from every user's favorites array
@@ -794,11 +785,10 @@ const handleDeletePost = (req, res) => {
                           console.log(
                             "Favorites and posts deleted from all users except the active user."
                           );
+                          res.status(200);
                         })
                         .catch((error) => {
-                          console.log(
-                            `Error finding users with the specified favorites and posts: ${error}`
-                          );
+                          res.status(501);
                         });
 
                       // this postId should filtered from all the users favorites array ! So then we can delete the post itself after delete from every user's favorites array
@@ -1063,11 +1053,10 @@ const handleDeletePost = (req, res) => {
                   console.log(
                     "Favorites and posts deleted from all users except the active user."
                   );
+                  res.status(200);
                 })
                 .catch((error) => {
-                  console.log(
-                    `Error finding users with the specified favorites and posts: ${error}`
-                  );
+                  res.status(501);
                 });
 
               // this postId should filtered from all the users favorites array ! So then we can delete the post itself after delete from every user's favorites array

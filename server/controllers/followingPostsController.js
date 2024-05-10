@@ -3,17 +3,12 @@ const Post = require("../models/Post.model");
 const jwt = require("jsonwebtoken");
 
 const handleShowFollowingPosts = (req, res) => {
-  console.log("Route is working !");
-
   const token = req.headers.authorization.split(" ")[1];
   const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
   const userId = decodedToken.userId;
 
-  console.log("User id =>", userId);
-
   User.findById(userId)
     .then((user) => {
-      console.log("active user username =>", user.username);
       // start to check user following these users
       User.find({ followers: userId })
         .then((response) => {

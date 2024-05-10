@@ -137,8 +137,6 @@ const handleSendForgotPasswordProcessCodeToEmail = (req, res) => {
   );
   console.log("Processed user email =>", forgotPasswordInProcessUser.email);
 
-  console.log("Processed user id =>", forgotPasswordInProcessUser._id);
-
   User.findById(forgotPasswordInProcessUser._id)
     .then((user) => {
       console.log("User found =>", user.username);
@@ -260,8 +258,6 @@ const changePasswordInForgotPasswordProcess = (req, res) => {
 
   User.findOne({ email: user.email })
     .then((findedUser) => {
-      console.log("Finded user =>", findedUser);
-
       bcrypt
         .genSalt(saltRounds)
         .then((salt) => {

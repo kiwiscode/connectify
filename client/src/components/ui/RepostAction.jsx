@@ -43,7 +43,6 @@ function RepostAction({
     darkModeActive,
     cyberpunkModeActive,
   ] = useContext(ThemeContext);
-  // socket io 5 client start to check
   const handleNotification = (post, userInfo, type) => {
     console.log("Post =>", post);
     socket.emit("sendNotification", {
@@ -54,7 +53,6 @@ function RepostAction({
       senderInfo: userInfo,
     });
   };
-  // socket io 5 client finish to check
 
   const handleRepost = (postId, findedPost) => {
     axios
@@ -116,7 +114,8 @@ function RepostAction({
       style={{
         zIndex: 9999,
         margin: "0px",
-        width: "115px",
+        maxWidth: "150px",
+        minWidth: "150px",
         height: "auto",
         overflowY: "auto",
         backgroundColor: themeName === "dark-theme" ? "black" : "white",
@@ -134,7 +133,13 @@ function RepostAction({
     >
       <div>
         {getRepostedIds(post).includes(userInfo._id) ? (
-          <div>
+          <div
+            style={{
+              display: " flex",
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+          >
             <div
               onClick={() =>
                 handleDeleteRepost(detailedPostComment ? post.postId : post._id)
@@ -146,7 +151,6 @@ function RepostAction({
                 setHoveredOption(null);
               }}
               style={{
-                padding: "12px 16px",
                 cursor: "pointer",
                 backgroundColor:
                   hoveredOption === "Repost" && themeName === "dark-theme"
@@ -154,10 +158,8 @@ function RepostAction({
                     : hoveredOption === "Repost" && themeName !== "dark-theme"
                     ? "#f7f7f7"
                     : "",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "10%",
+
+                padding: "12px 16px",
               }}
             >
               <span>
@@ -177,6 +179,9 @@ function RepostAction({
 
               <span
                 style={{
+                  marginLeft: "5px",
+                  position: "relative",
+                  top: "2px",
                   fontSize: "15px",
                   fontWeight: "700",
                   lineHeight: "20px",
@@ -196,17 +201,14 @@ function RepostAction({
               }}
               style={{
                 cursor: "pointer",
-                padding: "12px 16px",
+
                 backgroundColor:
                   hoveredOption === "Quote" && themeName === "dark-theme"
                     ? "#181818 "
                     : hoveredOption === "Quote" && themeName !== "dark-theme"
                     ? "#f7f7f7"
                     : "",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "10%",
+                padding: "12px 16px",
               }}
             >
               <span>
@@ -227,6 +229,9 @@ function RepostAction({
 
               <span
                 style={{
+                  marginLeft: "5px",
+                  position: "relative",
+                  top: "2px",
                   fontSize: "15px",
                   fontWeight: "700",
                   lineHeight: "20px",
@@ -250,7 +255,6 @@ function RepostAction({
                 setHoveredOption(null);
               }}
               style={{
-                padding: "12px 16px",
                 cursor: "pointer",
                 backgroundColor:
                   hoveredOption === "Repost" && themeName === "dark-theme"
@@ -258,10 +262,7 @@ function RepostAction({
                     : hoveredOption === "Repost" && themeName !== "dark-theme"
                     ? "#f7f7f7"
                     : "",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "10%",
+                padding: "12px 16px",
               }}
             >
               <span>
@@ -281,6 +282,9 @@ function RepostAction({
 
               <span
                 style={{
+                  marginLeft: "5px",
+                  position: "relative",
+                  top: "2px",
                   fontSize: "15px",
                   fontWeight: "700",
                   lineHeight: "20px",
@@ -300,17 +304,13 @@ function RepostAction({
               }}
               style={{
                 cursor: "pointer",
-                padding: "12px 16px",
                 backgroundColor:
                   hoveredOption === "Quote" && themeName === "dark-theme"
                     ? "#181818 "
                     : hoveredOption === "Quote" && themeName !== "dark-theme"
                     ? "#f7f7f7"
                     : "",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "10%",
+                padding: "12px 16px",
               }}
             >
               <span>
@@ -331,6 +331,9 @@ function RepostAction({
 
               <span
                 style={{
+                  marginLeft: "5px",
+                  position: "relative",
+                  top: "2px",
                   fontSize: "15px",
                   fontWeight: "700",
                   lineHeight: "20px",

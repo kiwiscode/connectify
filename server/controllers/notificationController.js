@@ -3,25 +3,17 @@ const User = require("../models/User.model");
 const getUnreadNotifications = (req, res) => {
   const { userId } = req.user;
 
-  console.log("Get all notifications from this user id =>", userId);
   User.findById(userId)
     .then((user) => {
-      console.log("Here !!!");
       const filteredUnReadNotifications = user.notifications.filter(
         (eachNotification) => {
           return eachNotification.isReaded === false;
         }
       );
 
-      console.log(
-        "Filtered unread notifications =>",
-        filteredUnReadNotifications
-      );
       const sortedNotifications = filteredUnReadNotifications.sort(
         (a, b) => b.createdAt - a.createdAt
       );
-
-      console.log("We are here now !!!", sortedNotifications);
 
       res.json({ unReadNotifications: filteredUnReadNotifications });
     })
@@ -40,8 +32,6 @@ const readAllNotifications = async (req, res) => {
       { _id: userId },
       { $set: { "notifications.$[].isReaded": true } }
     );
-
-    console.log("Finded user =>", user.username);
   } catch {}
 };
 

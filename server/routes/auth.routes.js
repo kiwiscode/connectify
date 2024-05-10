@@ -190,12 +190,6 @@ router.get(
 
 const handleLoginSuccess = (req, res, next) => {
   if (!isVariantOneResultRouteSuccess) {
-    console.log(
-      "Variant one route akıbeti google success route içerisi=>",
-      isVariantOneResultRouteSuccess
-    );
-
-    console.log("Req user =>", req.user?.username);
     if (req.user) {
       // when working on local version
       // res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
@@ -216,7 +210,6 @@ const handleLoginSuccess = (req, res, next) => {
         token: token,
       });
     } else {
-      console.log("Here is working !");
       res.status(403).json({ error: true, message: "Not Authorized" });
     }
   } else {

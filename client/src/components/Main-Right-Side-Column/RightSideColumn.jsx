@@ -22,7 +22,6 @@ import {
   TextField,
   FormControl,
   InputAdornment,
-  Tooltip,
 } from "@mui/material";
 
 import {
@@ -46,6 +45,9 @@ const API_URL = "http://localhost:3000";
 // when working on deployment version
 // ?
 
+import io from "socket.io-client";
+const socket = io.connect(`${API_URL}`);
+
 function RightSideColumn({
   onModalToggle,
   tabIndexValue,
@@ -62,6 +64,18 @@ function RightSideColumn({
       ? ActiveDarkModeSound
       : null
   );
+
+  const handleFollowingNotification = (selectedUser, userInfo, type) => {
+    console.log("Sending notification to => ", selectedUser.username);
+
+    socket.emit("sendNotification", {
+      senderName: userInfo.username,
+      receiverName: selectedUser.username,
+      type: type,
+      contactHasBeenMade: userInfo,
+      senderInfo: userInfo,
+    });
+  };
 
   const { getToken, userInfo } = useContext(UserContext);
   const [onFocus, setOnFocus] = useState(false);
@@ -113,34 +127,34 @@ function RightSideColumn({
 
   const [first3User, setFirst3User] = useState([]);
 
-  const getUser = async () => {
-    try {
-      const url = `${API_URL}/auth/login-success`;
-      const { data } = await axios.get(url, { withCredentials: true });
-      updateUser(data.user);
+  // const getUser = async () => {
+  //   try {
+  //     const url = `${API_URL}/auth/login-success`;
+  //     const { data } = await axios.get(url, { withCredentials: true });
+  //     updateUser(data.user);
 
-      localStorage.setItem("userInfo", JSON.stringify(data.user));
-      localStorage.setItem("token", data.token);
-      axios
-        .get(`${API_URL}/get-most-followed-3-user`, {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        })
-        .then((response) => {
-          setFirst3User(response.data.first3User);
-        })
-        .catch((error) => {
-          console.log("Error =>", error);
-        });
-    } catch (err) {
-      console.error("Error =>", err);
-    }
-  };
+  //     localStorage.setItem("userInfo", JSON.stringify(data.user));
+  //     localStorage.setItem("token", data.token);
+  //     axios
+  //       .get(`${API_URL}/get-most-followed-3-user`, {
+  //         headers: {
+  //           Authorization: `Bearer ${getToken()}`,
+  //         },
+  //       })
+  //       .then((response) => {
+  //         setFirst3User(response.data.first3User);
+  //       })
+  //       .catch((error) => {
+  //         console.log("Error =>", error);
+  //       });
+  //   } catch (err) {
+  //     console.error("Error =>", err);
+  //   }
+  // };
 
-  useEffect(() => {
-    getUser();
-  }, []);
+  // useEffect(() => {
+  //   getUser();
+  // }, []);
 
   useEffect(() => {
     axios
@@ -245,6 +259,7 @@ function RightSideColumn({
         }
       )
       .then(() => {
+        handleFollowingNotification(selectedUser, userInfo, "followed");
         refreshActiveUser();
       })
       .catch((error) => {
@@ -292,6 +307,16 @@ function RightSideColumn({
   const [tabIndex, setTabIndex] = useState(null);
 
   const handleShowSubscriptionModal = () => {
+    setshowSubscriptionModal(true);
+    setTabIndex(0);
+    setshowVerifyingCodeModal(false);
+    // props from child to parent then parent to another component start to check
+    onModalToggle(true);
+    tabIndexValue(0);
+    // props from child to parent then parent to another component finish to check
+  };
+
+  const showSubscriptionModalSmallerThan700 = () => {
     setshowSubscriptionModal(true);
     setTabIndex(0);
     setshowVerifyingCodeModal(false);
@@ -1290,7 +1315,7 @@ function RightSideColumn({
       {contextHolder}
       {widthSmaller700 && (
         <div
-          onClick={handleShowSubscriptionModal}
+          onClick={showSubscriptionModalSmallerThan700}
           style={{
             paddingBottom: "12px",
             paddingTop: "12px",
@@ -8467,8 +8492,8 @@ function RightSideColumn({
                             onChange={handleSelectChange}
                           >
                             <option value="">{en["ZZ"]}</option>
-                            {sortedCountries.map((country) => (
-                              <option key={country} value={country}>
+                            {sortedCountries.map((country, index) => (
+                              <option key={index} value={country}>
                                 +{getCountryCallingCode(country)} {en[country]}
                               </option>
                             ))}
@@ -16057,8 +16082,8 @@ function RightSideColumn({
                             onChange={handleSelectChange}
                           >
                             <option value="">{en["ZZ"]}</option>
-                            {sortedCountries.map((country) => (
-                              <option key={country} value={country}>
+                            {sortedCountries.map((country, index) => (
+                              <option key={index} value={country}>
                                 +{getCountryCallingCode(country)} {en[country]}
                               </option>
                             ))}
@@ -16874,145 +16899,146 @@ function RightSideColumn({
                   ) : null}
 
                   {filteredSearchResult.map((eachUser, index) => (
-                    <List.Item
-                      onMouseEnter={() => {
-                        setIsHoveredListItem(index);
-                      }}
-                      onMouseLeave={() => {
-                        setIsHoveredListItem("");
-                      }}
-                      key={index}
-                      style={{
-                        backgroundColor:
-                          isHoveredListItem === index &&
-                          themeName !== "dark-theme"
-                            ? "#f7f9f9"
-                            : isHoveredListItem === index &&
-                              themeName === "dark-theme"
-                            ? "#181818"
-                            : "",
-                        border: "none",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => {
-                        navigate(`/profile/${eachUser._doc._id}`);
-                      }}
-                    >
-                      <Stack
-                        style={{
-                          width: "100%",
+                    <div key={index}>
+                      <List.Item
+                        onMouseEnter={() => {
+                          setIsHoveredListItem(index);
                         }}
-                        direction="horizontal"
+                        onMouseLeave={() => {
+                          setIsHoveredListItem("");
+                        }}
+                        style={{
+                          backgroundColor:
+                            isHoveredListItem === index &&
+                            themeName !== "dark-theme"
+                              ? "#f7f9f9"
+                              : isHoveredListItem === index &&
+                                themeName === "dark-theme"
+                              ? "#181818"
+                              : "",
+                          border: "none",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => {
+                          navigate(`/profile/${eachUser._doc._id}`);
+                        }}
                       >
-                        {eachUser._doc?.imageUrl?.slice(0, 3) !== "../" ? (
-                          <Link to={`/profile/${eachUser._doc?._id}`}>
-                            <img
-                              src={eachUser._doc?.imageUrl}
-                              alt={`${eachUser._doc?.fullname}'s profile`}
-                              width={40}
-                              height={40}
-                              className="profile-image"
-                              style={{
-                                borderRadius: "50%",
-                              }}
-                            />
-                          </Link>
-                        ) : (
-                          <div>
+                        <Stack
+                          style={{
+                            width: "100%",
+                          }}
+                          direction="horizontal"
+                        >
+                          {eachUser._doc?.imageUrl?.slice(0, 3) !== "../" ? (
                             <Link to={`/profile/${eachUser._doc?._id}`}>
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="40"
-                                height="40"
-                                fill={
-                                  themeName === "dark-theme"
-                                    ? "#71767A"
-                                    : "rgb(83, 100, 113)"
-                                }
-                                className="bi bi-person-circle"
-                                viewBox="0 0 16 16"
-                              >
-                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                              </svg>
-                            </Link>
-                          </div>
-                        )}
-                        {/* User Info */}
-                        <div className="user-info p-2">
-                          {/* Fullname */}
-                          <div
-                            style={{
-                              fontSize: "15px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
-                            }}
-                            className="fullname"
-                          >
-                            <Link
-                              to={`/profile/${eachUser._doc?._id}`}
-                              className="hover-fullname"
-                              style={{
-                                textDecoration: "none",
-                                color: "black",
-                              }}
-                            >
-                              <div
+                              <img
+                                src={eachUser._doc?.imageUrl}
+                                alt={`${eachUser._doc?.fullname}'s profile`}
+                                width={40}
+                                height={40}
+                                className="profile-image"
                                 style={{
-                                  fontSize: "15px",
-                                  fontWeight: "700",
-                                  lineHeight: "20px",
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  whiteSpace: "nowrap",
-                                  width: "200px",
-                                  color:
-                                    themeName === "dark-theme"
-                                      ? "white"
-                                      : "black",
+                                  borderRadius: "50%",
                                 }}
-                              >
-                                {eachUser._doc?.fullname}
-                              </div>
+                              />
                             </Link>
-                          </div>
-
-                          {/* Username */}
-                          <div
-                            style={{
-                              fontSize: "15px",
-                              fontWeight: "400",
-                              lineHeight: "20px",
-                              color: "rgb(83, 100, 113)",
-                              position: "relative",
-                            }}
-                            className="username"
-                          >
-                            <Link
-                              style={{
-                                textDecoration: "none",
-                              }}
-                              to={`/profile/${eachUser._doc?._id}`}
-                            >
-                              <span
-                                style={{
-                                  fontSize: "15px",
-                                  fontWeight: "400",
-                                  lineHeight: "20px",
-                                  color:
+                          ) : (
+                            <div>
+                              <Link to={`/profile/${eachUser._doc?._id}`}>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="40"
+                                  height="40"
+                                  fill={
                                     themeName === "dark-theme"
                                       ? "#71767A"
-                                      : "rgb(83, 100, 113)",
-                                  position: "relative",
+                                      : "rgb(83, 100, 113)"
+                                  }
+                                  className="bi bi-person-circle"
+                                  viewBox="0 0 16 16"
+                                >
+                                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                  <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                </svg>
+                              </Link>
+                            </div>
+                          )}
+                          {/* User Info */}
+                          <div className="user-info p-2">
+                            {/* Fullname */}
+                            <div
+                              style={{
+                                fontSize: "15px",
+                                fontWeight: "700",
+                                lineHeight: "20px",
+                              }}
+                              className="fullname"
+                            >
+                              <Link
+                                to={`/profile/${eachUser._doc?._id}`}
+                                className="hover-fullname"
+                                style={{
+                                  textDecoration: "none",
+                                  color: "black",
                                 }}
                               >
-                                @{eachUser._doc?.username}
-                              </span>
-                            </Link>
+                                <div
+                                  style={{
+                                    fontSize: "15px",
+                                    fontWeight: "700",
+                                    lineHeight: "20px",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
+                                    width: "200px",
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "white"
+                                        : "black",
+                                  }}
+                                >
+                                  {eachUser._doc?.fullname}
+                                </div>
+                              </Link>
+                            </div>
+
+                            {/* Username */}
+                            <div
+                              style={{
+                                fontSize: "15px",
+                                fontWeight: "400",
+                                lineHeight: "20px",
+                                color: "rgb(83, 100, 113)",
+                                position: "relative",
+                              }}
+                              className="username"
+                            >
+                              <Link
+                                style={{
+                                  textDecoration: "none",
+                                }}
+                                to={`/profile/${eachUser._doc?._id}`}
+                              >
+                                <span
+                                  style={{
+                                    fontSize: "15px",
+                                    fontWeight: "400",
+                                    lineHeight: "20px",
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgb(83, 100, 113)",
+                                    position: "relative",
+                                  }}
+                                >
+                                  @{eachUser._doc?.username}
+                                </span>
+                              </Link>
+                            </div>
                           </div>
-                        </div>
-                      </Stack>
-                    </List.Item>
+                        </Stack>
+                      </List.Item>
+                    </div>
                   ))}
                 </List>
               </>
@@ -17288,7 +17314,7 @@ function RightSideColumn({
                               position: "relative",
                               right: "10px",
                             }}
-                            key={eachUser._id}
+                            key={index}
                           >
                             <div>
                               <Stack

@@ -40,7 +40,6 @@ function LikeAction({
 
   const { userInfo, getToken } = useContext(UserContext);
 
-  // socket io 5 client start to check
   const handleNotification = (post, userInfo, type) => {
     console.log("Post =>", post);
     socket.emit("sendNotification", {
@@ -51,7 +50,6 @@ function LikeAction({
       senderInfo: userInfo,
     });
   };
-  // socket io 5 client finish to check
 
   const getLikerIds = (array) => {
     return array.likes.map((eachLiker) => {

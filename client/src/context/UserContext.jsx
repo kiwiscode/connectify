@@ -33,7 +33,6 @@ const UserProvider = ({ children }) => {
 
   useEffect(() => {
     localStorage.setItem("userInfo", JSON.stringify(userInfo));
-    localStorage.setItem("socketId", userInfo.socketId);
   }, [userInfo]);
 
   const updateUser = (newUserInfo) => {

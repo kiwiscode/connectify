@@ -51,8 +51,6 @@ router.get("/all-messages", authenticateToken, (req, res) => {
       },
     })
     .then((user) => {
-      console.log("Finded user =>", user);
-
       res.status(200).json(user);
     })
     .catch((error) => {

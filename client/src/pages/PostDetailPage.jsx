@@ -4,8 +4,6 @@ import { Container, Row, Col, Stack, Accordion } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { CommentModal } from "../components/ui/Modal";
 import { UserContext } from "../context/UserContext";
-import { Bounce, ToastContainer, toast } from "react-toastify";
-import CustomNotification from "../components/Notifications/CustomNotification";
 import PostEngagements from "../components/ui/PostEngagementsModal";
 import { message } from "antd";
 // when working on local version
@@ -13,8 +11,6 @@ const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-import io from "socket.io-client";
-const socket = io.connect(`${API_URL}`);
 
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
@@ -86,86 +82,7 @@ function PostDetailPage() {
   };
   // finish to check shared post view message
 
-  // socket io 1 client start to check
-  const [notificationTest, setnotificationTest] = useState([]);
-  const [notificationText, setnotificationText] = useState([]);
-  // socket io 1 client finish to check
-
-  // socket io 4 client start to check
-  useEffect(() => {
-    socket.on("socket_id_for_user", (socketId) => {
-      console.log("socket id received from backend =>", socketId);
-
-      localStorage.setItem("socketId", socketId);
-    });
-
-    socket.emit("setUsername", userInfo.username);
-  }, []);
-  // socket io 4 client finish to check
-
-  useEffect(() => {
-    socket.on("getNotification", (data) => {
-      console.log("Data =>", data);
-      if (data.senderName !== userInfo.username) {
-        setnotificationTest((prev) => [...prev, data]);
-      } else {
-        console.log("You cannot send a notification to yourself.");
-      }
-    });
-
-    socket.on("getText", (data) => {
-      console.log("Data get text =>", data);
-      if (data.senderName !== userInfo.username) {
-        setnotificationText(data);
-
-        toast(
-          <CustomNotification
-            senderName={data.senderName}
-            type={data.type}
-            contactHasBeenMade={data.contactHasBeenMade}
-            senderInfo={data.senderInfo}
-            text={data.text ? data.text : null}
-          />,
-          {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            transition: Bounce,
-          }
-        );
-      } else {
-        console.log("You cannot send a notification to yourself.");
-      }
-    });
-  }, [socket]);
-
   const navigate = useNavigate();
-
-  // socket io 5 client start to check
-  const handleNotification = (post, userInfo, type) => {
-    socket.emit("sendNotification", {
-      senderName: userInfo.username,
-      receiverName: post.userId.username || post.username,
-      type: type,
-      contactHasBeenMade: post,
-      senderInfo: userInfo,
-    });
-  };
-  // socket io 5 client finish to check
-
-  const handleFollowingNotification = (selectedUser, userInfo, type) => {
-    socket.emit("sendNotification", {
-      senderName: userInfo.username,
-      receiverName: selectedUser.username,
-      type: type,
-      contactHasBeenMade: selectedUser,
-      senderInfo: userInfo,
-    });
-  };
 
   const handleGoBack = () => {
     navigate(-1);
@@ -208,7 +125,6 @@ function PostDetailPage() {
       .then(() => {
         setTimeout(() => {
           console.log("Detailed post like situation works !");
-          handleNotification(findedPost, userInfo, "liked");
           refreshPostDetailPage();
         }, 500);
       })
@@ -374,12 +290,17 @@ function PostDetailPage() {
     console.log("Child data received from child => ", childData);
     setPostModalOpenedFromLeftSide(childData);
   };
-
+  const [dataFromCommentModal, setDataFromCommentModal] = useState("");
+  function handleDataFromCommentModal(data) {
+    console.log("Data =>", data);
+    setDataFromCommentModal(data);
+  }
   return (
     <>
       {contextHolder}
-      <ToastContainer theme={themeName === "dark-theme" ? "dark" : "light"} />
-      {!postModalOpenedFromLeftSide && <ResponsiveNavigationBarBottom />}
+      {!postModalOpenedFromLeftSide && !dataFromCommentModal && (
+        <ResponsiveNavigationBarBottom />
+      )}
 
       <Container
         style={{
@@ -814,6 +735,7 @@ function PostDetailPage() {
                             width={`${1.25}em`}
                             height={`${1.25}em`}
                             postSharedMessage={postSharedMessage}
+                            sendDataToParent={handleDataFromCommentModal}
                           />
                         </div>
                         <div
@@ -835,111 +757,6 @@ function PostDetailPage() {
                           }}
                           className=""
                         >
-                          {/* {commentedForThisPost.likes &&
-                          commentedForThisPost.likes.length ? (
-                            checkIds(commentedForThisPost.likes).includes(
-                              userInfo._id
-                            ) ? (
-                              <div>
-                                <svg
-                                  onClick={() =>
-                                    handleDeleteLikePostDetailPageCFTUP(
-                                      commentedForThisPost._id
-                                    )
-                                  }
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  fill="rgb(249, 24, 128)"
-                                  className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                >
-                                  <g>
-                                    <path
-                                      stroke="black"
-                                      strokeWidth="0.2"
-                                      d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"
-                                    ></path>
-                                  </g>
-                                </svg>
-                                <span className="post-description">
-                                  {commentedForThisPost.likes.length ? (
-                                    <span
-                                      style={{
-                                        color: "rgb(249, 24, 128)",
-                                      }}
-                                    >
-                                      {commentedForThisPost.likes.length}
-                                    </span>
-                                  ) : null}
-                                </span>
-                              </div>
-                            ) : (
-                              <div>
-                                {" "}
-                                <svg
-                                  onClick={() =>
-                                    handlePostLikesPostDetailPageCFTUP(
-                                      commentedForThisPost._id,
-                                      commentedForThisPost
-                                    )
-                                  }
-                                  width={`${1.25}em`}
-                                  height={`${1.25}em`}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  fill={
-                                    themeName === "dark-theme"
-                                      ? "#71767A"
-                                      : "rgb(83, 100, 113)"
-                                  }
-                                  className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                >
-                                  <g>
-                                    <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
-                                  </g>
-                                </svg>
-                                <span className="post-description">
-                                  {commentedForThisPost.likes.length ? (
-                                    <span
-                                      style={{
-                                        color:
-                                          themeName === "dark-theme"
-                                            ? "#71767A"
-                                            : "rgb(83, 100, 113)",
-                                      }}
-                                    >
-                                      {commentedForThisPost.likes.length}
-                                    </span>
-                                  ) : null}
-                                </span>
-                              </div>
-                            )
-                          ) : (
-                            <div>
-                              {" "}
-                              <svg
-                                onClick={() =>
-                                  handlePostLikesPostDetailPageCFTUP(
-                                    commentedForThisPost._id,
-                                    commentedForThisPost
-                                  )
-                                }
-                                width={`${1.25}em`}
-                                height={`${1.25}em`}
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                                color="rgb(83, 100, 113)"
-                                fill="currentColor"
-                                className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                              >
-                                <g>
-                                  <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
-                                </g>
-                              </svg>
-                              <span className="post-description">{null}</span>
-                            </div>
-                          )} */}
                           <LikeAction
                             refreshPosts={refreshPostDetailPage}
                             post={commentedForThisPost}
@@ -1368,6 +1185,7 @@ function PostDetailPage() {
                       width={`${1.5}em`}
                       height={`${1.5}em`}
                       postSharedMessage={postSharedMessage}
+                      sendDataToParent={handleDataFromCommentModal}
                     />
                   </div>
 
@@ -1390,109 +1208,6 @@ function PostDetailPage() {
                     }}
                     className="p-2"
                   >
-                    {/* {detailedPost.likes && detailedPost.likes.length ? (
-                      checkIds(detailedPost.likes).includes(userInfo._id) ? (
-                        <div>
-                          <svg
-                            onClick={() =>
-                              handleDeleteLikePostDetailPage(detailedPost._id)
-                            }
-                            width={`${1.5}em`}
-                            height={`${1.5}em`}
-                            viewBox="0 0 24 24"
-                            aria-hidden="true"
-                            fill="rgb(249, 24, 128)"
-                            className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                          >
-                            <g>
-                              <path
-                                stroke="black"
-                                strokeWidth="0.2"
-                                d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"
-                              ></path>
-                            </g>
-                          </svg>
-                          <span className="post-description">
-                            {detailedPost.likes.length ? (
-                              <span
-                                style={{
-                                  color: "rgb(249, 24, 128)",
-                                }}
-                              >
-                                {detailedPost.likes.length}
-                              </span>
-                            ) : null}
-                          </span>
-                        </div>
-                      ) : (
-                        <div>
-                          {" "}
-                          <svg
-                            onClick={() =>
-                              handlePostLikesPostDetailPage(
-                                detailedPost._id,
-                                detailedPost
-                              )
-                            }
-                            width={`${1.5}em`}
-                            height={`${1.5}em`}
-                            viewBox="0 0 24 24"
-                            aria-hidden="true"
-                            fill={
-                              themeName === "dark-theme"
-                                ? "#71767A"
-                                : "rgb(83, 100, 113)"
-                            }
-                            className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                          >
-                            <g>
-                              <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
-                            </g>
-                          </svg>
-                          <span className="post-description">
-                            {detailedPost.likes.length ? (
-                              <span
-                                style={{
-                                  color:
-                                    themeName === "dark-theme"
-                                      ? "#71767A"
-                                      : "rgb(83, 100, 113)",
-                                }}
-                              >
-                                {detailedPost.likes.length}
-                              </span>
-                            ) : null}
-                          </span>
-                        </div>
-                      )
-                    ) : (
-                      <div>
-                        {" "}
-                        <svg
-                          onClick={() =>
-                            handlePostLikesPostDetailPage(
-                              detailedPost._id,
-                              detailedPost
-                            )
-                          }
-                          width={`${1.5}em`}
-                          height={`${1.5}em`}
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                          fill={
-                            themeName === "dark-theme"
-                              ? "#71767A"
-                              : "rgb(83, 100, 113)"
-                          }
-                          className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                        >
-                          <g>
-                            <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
-                          </g>
-                        </svg>
-                        <span className="post-description">{null}</span>
-                      </div>
-                    )} */}
                     <LikeAction
                       refreshPosts={refreshPostDetailPage}
                       post={detailedPost}
@@ -1521,7 +1236,6 @@ function PostDetailPage() {
                     <PostEngagements
                       postDetailPage={true}
                       detailedPost={detailedPost}
-                      handleFollowingNotification={handleFollowingNotification}
                     />
                   </div>
                 ) : null}
@@ -1569,6 +1283,7 @@ function PostDetailPage() {
                         fontWeight: "400",
                         lineHeight: "24px",
                         cursor: "pointer",
+                        backgroundColor: "transparent",
                       }}
                     >
                       Show this threads
@@ -1579,8 +1294,8 @@ function PostDetailPage() {
                       <div>
                         {detailedPost?.comments?.map((eachComment, index) => {
                           return (
-                            <>
-                              <>
+                            <div key={index}>
+                              <div>
                                 {eachComment.userId.isDeactivated ? null : (
                                   <>
                                     <div
@@ -1592,7 +1307,7 @@ function PostDetailPage() {
                                       }}
                                       className="all-posts"
                                     >
-                                      <div key={eachComment._id}>
+                                      <div>
                                         <div className="posts-details">
                                           <Stack direction="horizontal" gap={1}>
                                             {/* profile image start to check */}
@@ -1882,6 +1597,9 @@ function PostDetailPage() {
                                                 postSharedMessage={
                                                   postSharedMessage
                                                 }
+                                                sendDataToParent={
+                                                  handleDataFromCommentModal
+                                                }
                                               />
                                             </div>
                                             <div
@@ -1931,8 +1649,8 @@ function PostDetailPage() {
                                     </div>
                                   </>
                                 )}
-                              </>
-                            </>
+                              </div>
+                            </div>
                           );
                         })}
                       </div>
@@ -1980,8 +1698,8 @@ function PostDetailPage() {
                       <div>
                         {detailedPost.comments.map((eachComment, index) => {
                           return (
-                            <>
-                              <>
+                            <div key={index}>
+                              <div>
                                 {eachComment.userId.isDeactivated ? null : (
                                   <>
                                     <div
@@ -1993,7 +1711,7 @@ function PostDetailPage() {
                                       }}
                                       className="all-posts"
                                     >
-                                      <div key={eachComment._id}>
+                                      <div>
                                         <div className="posts-details">
                                           <Stack direction="horizontal" gap={1}>
                                             {/* profile image start to check */}
@@ -2292,6 +2010,9 @@ function PostDetailPage() {
                                                 postSharedMessage={
                                                   postSharedMessage
                                                 }
+                                                sendDataToParent={
+                                                  handleDataFromCommentModal
+                                                }
                                               />
                                             </div>
                                             <div
@@ -2422,8 +2143,8 @@ function PostDetailPage() {
                                     </div>
                                   </>
                                 )}
-                              </>
-                            </>
+                              </div>
+                            </div>
                           );
                         })}
                       </div>

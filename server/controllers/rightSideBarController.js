@@ -2,7 +2,6 @@ const User = require("../models/User.model");
 
 const handleGetAllUsers = (req, res) => {
   const { userId } = req.user;
-  console.log("uSER Id =>", userId);
   User.find()
     .then((allUsersFromDataBase) => {
       const filteredFromUser = allUsersFromDataBase.filter((eachUser) => {
@@ -15,8 +14,6 @@ const handleGetAllUsers = (req, res) => {
         username: user.username.split(" ").join("").toLowerCase(),
       }));
 
-      console.log("Filtered array fullname =>", filteredFromUser[0].fullname);
-      console.log("Updated users array  =>", updatedUsers[0].fullname);
       res.status(201).json({ allUsers: updatedUsers });
     })
     .catch(() => {
@@ -28,8 +25,6 @@ const handleGetAllUsers = (req, res) => {
 };
 
 const getFirst3MostFollowedUser = (req, res) => {
-  console.log("Right side bar controller 2 working !");
-
   User.find()
     .sort({ "followers.length": 1 })
     .limit(3)

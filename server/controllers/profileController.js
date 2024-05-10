@@ -5,7 +5,6 @@ const bcrypt = require("bcryptjs");
 const handleProfile = (req, res) => {
   const userId = req.user.userId;
 
-  console.log("Now we are in profile page !!!");
   User.findById(userId)
     // start to check
 
@@ -73,8 +72,6 @@ const handleProfile = (req, res) => {
     // finish to check
     // .populate("posts")
     .then((user) => {
-      console.log("Profile page active!");
-      console.log(user.posts.length, user.favorites.length);
       res.status(200).json({ posts: user.posts, user });
     })
     .catch((err) => {
@@ -186,16 +183,6 @@ const handleProfilePicture = (req, res) => {
   const { userId } = req.user;
   const { profileImage } = req.body;
 
-  console.log(
-    "PROFILE IMAGE CURRENT RECEIVED FROM REQ.BODY=>",
-    profileImage.slice(0, 21)
-  );
-
-  console.log(
-    "Active user who is trying to change profile picture => ",
-    userId
-  );
-
   User.findById(userId)
     .populate()
     .then((user) => {
@@ -226,8 +213,10 @@ const handleProfilePicture = (req, res) => {
             res.status(200).json({ imageInfo: imageInfo });
           })
           .catch((error) => {
-            console.log(error);
+            res.status(501).json({ errorMessage: "Error occured!" });
           });
+      } else {
+        res.status(501).json({ errorMessage: "Error occured!" });
       }
     })
     .catch(() => {
@@ -236,11 +225,7 @@ const handleProfilePicture = (req, res) => {
 };
 
 const getFollowers = (req, res) => {
-  console.log("Route is working !");
-
   const { userId } = req.params;
-
-  console.log("Clicked user id =>", userId);
 
   User.findById(userId)
     .populate("following")
@@ -254,8 +239,6 @@ const getFollowers = (req, res) => {
 };
 const getFollowing = (req, res) => {
   const { userId } = req.params;
-
-  console.log("Clicked user id =>", userId);
 
   // const { userId } = req.user;
 
@@ -311,7 +294,6 @@ async function handleChangePassword(req, res) {
       return;
     }
     if (!isPasswordMatch) {
-      console.log("We are here !");
       return res.status(401).json({ message: "Incorrect old password." });
     }
 
@@ -338,8 +320,6 @@ async function handleDeactivatePasswordConfirmation(req, res) {
     );
     console.log("is password match =>", isPasswordMatch);
     if (!isPasswordMatch) {
-      console.log("We are here 2 !");
-
       return res.status(401).json({ message: "Incorrect password." });
     }
 

@@ -4,8 +4,6 @@ import { UserContext } from "../context/UserContext";
 import { Container, Row, Col, Stack, Button, Modal } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
-import { Bounce, ToastContainer, toast } from "react-toastify";
-import CustomNotification from "../components/Notifications/CustomNotification";
 import { message } from "antd";
 import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
 // when working on local version
@@ -13,10 +11,8 @@ const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-
 import io from "socket.io-client";
-const socket = io.connect(API_URL);
-
+const socket = io.connect(`${API_URL}`);
 import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
 import { ThemeContext } from "../context/ThemeContext";
 import UnfollowModal from "../components/unfollow-modal/UnfollowModal";
@@ -66,75 +62,6 @@ function FollowerDetailPage() {
   };
   // finish to check shared post view message
 
-  // socket io 1 client start to check
-  const [notificationTest, setnotificationTest] = useState([]);
-  const [notificationText, setnotificationText] = useState([]);
-
-  // socket io 4 client start to check
-  useEffect(() => {
-    socket.on("socket_id_for_user", (socketId) => {
-      console.log("socket id received from backend =>", socketId);
-
-      localStorage.setItem("socketId", socketId);
-    });
-
-    socket.emit("setUsername", userInfo.username);
-  }, []);
-  // socket io 4 client finish to check
-
-  useEffect(() => {
-    socket.on("getNotification", (data) => {
-      console.log("Data =>", data);
-      if (data.senderName !== userInfo.username) {
-        setnotificationTest((prev) => [...prev, data]);
-      } else {
-        console.log("You cannot send a notification to yourself.");
-      }
-    });
-
-    socket.on("getText", (data) => {
-      console.log("Data get text =>", data);
-      if (data.senderName !== userInfo.username) {
-        setnotificationText(data);
-
-        toast(
-          <CustomNotification
-            senderName={data.senderName}
-            type={data.type}
-            contactHasBeenMade={data.contactHasBeenMade}
-            senderInfo={data.senderInfo}
-            text={data.text ? data.text : null}
-          />,
-          {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            transition: Bounce,
-          }
-        );
-      } else {
-        console.log("You cannot send a notification to yourself.");
-      }
-    });
-  }, [socket]);
-
-  // socket io 5 client start to check
-  const handleNotification = (selectedUser, userInfo, type) => {
-    console.log("Sending notification to => ", selectedUser.username);
-
-    socket.emit("sendNotification", {
-      senderName: userInfo.username,
-      receiverName: selectedUser.username,
-      type: type,
-      contactHasBeenMade: userInfo,
-      senderInfo: userInfo,
-    });
-  };
-  // socket io 5 client finish to check
   const [followersofthemonitoreduser, setfollowersofthemonitoreduser] =
     useState([]);
   const getFollowers = () => {
@@ -257,10 +184,22 @@ function FollowerDetailPage() {
     console.log("Child data received from child => ", childData);
     setPostModalOpenedFromLeftSide(childData);
   };
+
+  const handleFollowingNotification = (selectedUser, userInfo, type) => {
+    console.log("Sending notification to => ", selectedUser.username);
+
+    socket.emit("sendNotification", {
+      senderName: userInfo.username,
+      receiverName: selectedUser.username,
+      type: type,
+      contactHasBeenMade: userInfo,
+      senderInfo: userInfo,
+    });
+  };
+
   return (
     <>
       {contextHolder}
-      <ToastContainer theme={themeName === "dark-theme" ? "dark" : "light"} />
       {!postModalOpenedFromLeftSide && <ResponsiveNavigationBarBottom />}
 
       {/* <ResponsiveNavigationBarTop /> */}
@@ -444,7 +383,12 @@ function FollowerDetailPage() {
                       )
                       .then(() => {
                         setClicked(!clicked);
-                        handleNotification(selectedUser, userInfo, "followed");
+
+                        handleFollowingNotification(
+                          selectedUser,
+                          userInfo,
+                          "followed"
+                        );
                         getFollowers();
                       })
                       .catch((error) => {
@@ -527,7 +471,7 @@ function FollowerDetailPage() {
                         : "white",
                   };
                   return (
-                    <div key={user.id} className="following-user">
+                    <div key={index} className="following-user">
                       {user.isDeactivated ? null : (
                         <>
                           <Stack
