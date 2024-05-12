@@ -226,7 +226,7 @@ function PostModal({
       <Modal
         dialogClassName="modal-fullscreen"
         style={{
-          zIndex: "9999",
+          zIndex: 9999,
           margin: "0px !important",
           padding: "0px !important",
         }}
@@ -465,20 +465,23 @@ function PostModal({
             </div>
             {/* INFO */}
             <div>
-              {/* emoji mart start to check */}
               <PopupState variant="popover" popupId="demo-popup-popover">
                 {(popupState) => (
                   <div>
                     <Button
+                      {...bindTrigger(popupState)}
                       style={{
                         border: "none",
-                        backgroundColor: "transparent",
+                        // backgroundColor: "transparent",
+                        padding: "0px",
+                        margin: "0px",
+                        cursor: "pointer",
+                        position: "relative",
                       }}
                       variant="text"
-                      {...bindTrigger(popupState)}
                     >
                       <div
-                        className={`svg-border-parent chat-detail-emoji-svg-border-parent svg-border-parent-${themeName}`}
+                        className={`svg-border-parent svg-border-parent-${themeName}`}
                         style={{
                           cursor: "pointer",
                           borderRadius: "50%",
@@ -503,14 +506,21 @@ function PostModal({
                       </div>
                     </Button>
                     <Popover
+                      style={{
+                        zIndex: 99999,
+                      }}
+                      open={popupState.open}
+                      onClose={popupState.close}
                       {...bindPopover(popupState)}
+                      // anchorReference="anchorPosition"
+                      // anchorPosition={{ top: 0, left: 0 }}
                       anchorOrigin={{
                         vertical: "bottom",
                         horizontal: "center",
                       }}
                       transformOrigin={{
                         vertical: "top",
-                        horizontal: "center",
+                        horizontal: 140,
                       }}
                       className={`${
                         themeName === "dark-theme"
@@ -521,6 +531,7 @@ function PostModal({
                       }`}
                     >
                       <Picker
+                        autoFocus
                         theme={themeName === "dark-theme" ? "dark" : "light"}
                         data={data}
                         onEmojiSelect={onEmojiClick}
@@ -532,7 +543,6 @@ function PostModal({
                   </div>
                 )}
               </PopupState>
-              {/* emoji mart finish to check */}
             </div>
             <div className="p-2 ms-auto">
               {/* <div className="p-2 "> */}{" "}

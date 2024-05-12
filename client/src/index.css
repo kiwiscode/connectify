@@ -3958,3 +3958,11 @@ themeName === "dark-theme"
 /* emoji picker styling for dark theme start to check general  */
 
 /* emoji picker styling for dark theme finish to check general  */
+
+.popover-arrow::after {
+  display: none !important;
+}
+
+.popover-arrow::before {
+  display: none !important;
+}

@@ -13,7 +13,6 @@ const ChatDetailsPage = lazy(() => import("./pages/ChatDetailsPage"));
 const PostDetailPage = lazy(() => import("./pages/PostDetailPage"));
 const FollowingDetailPage = lazy(() => import("./pages/FollowingDetail"));
 const FollowerDetailPage = lazy(() => import("./pages/FollowersDetailPage"));
-const ImagePostDetailPage = lazy(() => import("./pages/ImagePostDetailPage"));
 const DeactivatedPage = lazy(() => import("./pages/DeactivatedPage"));
 const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
 
@@ -147,12 +146,7 @@ function App() {
                 path="/messages/:chatRoomId"
                 element={<ChatDetailsPage />}
               ></Route>
-              {/* new page start to check  INFO => CONTROL STYLING*/}
-              <Route
-                path="/:postOwner/status/:postId/photo/1"
-                element={<ImagePostDetailPage />}
-              ></Route>
-              {/* new page finish to check INFO => CONTROL STYLING */}
+
               <Route
                 path="/profile/:userId/following"
                 element={<FollowingDetailPage />}
