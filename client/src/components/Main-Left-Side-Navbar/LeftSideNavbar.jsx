@@ -12,11 +12,7 @@ import { UserContext } from "../../context/UserContext";
 import { ThemeContext } from "../../context/ThemeContext";
 import useWindowDimensions from "../../hooks/getWindowDimensions";
 import Popover from "@mui/material/Popover";
-import PopupState, {
-  bindTrigger,
-  bindPopover,
-  anchorRef,
-} from "material-ui-popup-state";
+import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -336,6 +332,18 @@ function LeftSideNavBar({
 
     return allUnReadedMessages;
   };
+
+  const [
+    dataFromChildLogoutModalWhichOptionChoosen,
+    setDataFromChildLogoutModalWhichOptionChoosen,
+  ] = useState(null);
+  const handleDataFromChildLogoutModal = (data) => {
+    setDataFromChildLogoutModalWhichOptionChoosen(data);
+  };
+  console.log(
+    "Data from child logout modal =>",
+    dataFromChildLogoutModalWhichOptionChoosen
+  );
 
   return (
     <>
@@ -1046,15 +1054,16 @@ function LeftSideNavBar({
                           {(popupState) => (
                             <div>
                               <Button
+                                {...bindTrigger(popupState)}
                                 style={{
                                   border: "none",
-                                  backgroundColor: "transparent",
+                                  // backgroundColor: "transparent",
                                   padding: "0px",
                                   margin: "0px",
                                   cursor: "pointer",
+                                  position: "relative",
                                 }}
                                 variant="text"
-                                {...bindTrigger(popupState)}
                               >
                                 <div
                                   className={`svg-border-parent svg-border-parent-${themeName}`}
@@ -1085,13 +1094,15 @@ function LeftSideNavBar({
                                 open={popupState.open}
                                 onClose={popupState.close}
                                 {...bindPopover(popupState)}
+                                // anchorReference="anchorPosition"
+                                // anchorPosition={{ top: 0, left: 0 }}
                                 anchorOrigin={{
                                   vertical: "bottom",
                                   horizontal: "center",
                                 }}
                                 transformOrigin={{
                                   vertical: "top",
-                                  horizontal: "center",
+                                  horizontal: 140,
                                 }}
                                 className={`${
                                   themeName === "dark-theme"
@@ -1102,6 +1113,7 @@ function LeftSideNavBar({
                                 }`}
                               >
                                 <Picker
+                                  autoFocus
                                   theme={
                                     themeName === "dark-theme"
                                       ? "dark"
@@ -1152,7 +1164,7 @@ function LeftSideNavBar({
           </div>
           {/* Seventh  */}
           <div className="p-2">
-            <LogoutModal />
+            <LogoutModal sendDataToParent={handleDataFromChildLogoutModal} />
           </div>
         </div>
       </Col>
