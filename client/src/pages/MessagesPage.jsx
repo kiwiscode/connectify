@@ -54,29 +54,6 @@ function MessagesPage() {
   const navigate = useNavigate();
   const [{ theme, themeName }] = useContext(ThemeContext);
 
-  const handleReadMessage = async (roomName) => {
-    console.log("room =>", room);
-    try {
-      const url = await axios.post(
-        `${API_URL}/mark-as-read-message`,
-        {
-          messageRoom: room,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      );
-
-      const response = url.data;
-
-      console.log("Response =>", response);
-    } catch (error) {
-      console.error("Error =>", error);
-    }
-  };
-
   useEffect(() => {
     axios
       .get(`${API_URL}/all-messages`, {
@@ -443,6 +420,29 @@ function MessagesPage() {
     setPostModalOpenedFromLeftSide(childData);
   };
   const { height, width } = useWindowDimensions();
+
+  const handleReadMessage = async (roomId) => {
+    console.log("room =>", roomId);
+    try {
+      const url = await axios.post(
+        `${API_URL}/mark-as-read-message`,
+        {
+          messageRoomId: roomId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      const response = url.data;
+
+      console.log("Response =>", response);
+    } catch (error) {
+      console.error("Error =>", error);
+    }
+  };
   return (
     <>
       {" "}
@@ -676,7 +676,6 @@ function MessagesPage() {
                                 }}
                                 onMouseLeave={() => {
                                   setShowThreeDots(false);
-                                  setshowMessageDeletePopover(false);
                                 }}
                                 style={{
                                   position: "relative",
@@ -684,14 +683,17 @@ function MessagesPage() {
                                   listStyleType: "none",
                                   textDecoration: "none",
                                 }}
-                                // onClick={() => {
-                                //   isHovered !== eachMessageRoom._id &&
-                                //   !showMessageDeletePopover
-                                //     ? redirectToChatDetailPage(
-                                //         eachMessageRoom._id
-                                //       )
-                                //     : null;
-                                // }}
+                                onClick={() => {
+                                  if (
+                                    isHovered !== index &&
+                                    !showMessageDeletePopover
+                                  ) {
+                                    redirectToChatDetailPage(
+                                      eachMessageRoom._id
+                                    );
+                                    handleReadMessage(eachMessageRoom._id);
+                                  }
+                                }}
                               >
                                 <div
                                   className={`each-message-parent-div each-message-parent-div-${themeName}`}
@@ -885,33 +887,13 @@ function MessagesPage() {
                                               </span>
                                             </div>
                                           </div>
-
+                                          {/* modern popover test start to check  */}
                                           <div
                                             style={{
                                               marginTop: "5px",
                                             }}
-                                            onClick={() =>
-                                              grabTheMessageRoom(
-                                                eachMessageRoom
-                                              )
-                                            }
-                                            onMouseEnter={() => {
-                                              console.log(
-                                                "Message room id =>",
-                                                eachMessageRoom._id
-                                              );
-                                              setIsHovered(eachMessageRoom._id);
-                                              // setshowMessageDeletePopover(true);
-                                            }}
-                                            onMouseLeave={() => {
-                                              setIsHovered(false);
-                                              setshowMessageDeletePopover(
-                                                false
-                                              );
-                                            }}
                                             className={`p-2 ms-auto message-icon`}
                                           >
-                                            {/* modern popover test start to check  */}
                                             <PopupState
                                               variant="popover"
                                               popupId="demo-popup-popover"
@@ -924,7 +906,31 @@ function MessagesPage() {
                                                     );
                                                   }}
                                                 >
+                                                  {!eachMessageRoom.readed && (
+                                                    <div
+                                                      style={{
+                                                        position: "absolute",
+                                                        top: "30px",
+                                                        backgroundColor:
+                                                          "#1d9bf0",
+                                                        borderRadius: "50%",
+                                                        width: "10px",
+                                                        height: "10px",
+                                                      }}
+                                                    ></div>
+                                                  )}
                                                   <Button
+                                                    onClick={() => {
+                                                      grabTheMessageRoom(
+                                                        eachMessageRoom
+                                                      );
+                                                    }}
+                                                    onMouseEnter={() => {
+                                                      setIsHovered(index);
+                                                    }}
+                                                    onMouseLeave={() => {
+                                                      setIsHovered(false);
+                                                    }}
                                                     style={{
                                                       border: "none",
                                                       backgroundColor:
@@ -935,8 +941,7 @@ function MessagesPage() {
                                                   >
                                                     <div
                                                       className={
-                                                        isHovered ===
-                                                          eachMessageRoom._id &&
+                                                        isHovered === index &&
                                                         themeName !==
                                                           "dark-theme"
                                                           ? `message-delete-three-dots-parent message-delete-three-dots-parent-hovered`
@@ -947,22 +952,6 @@ function MessagesPage() {
                                                         borderRadius: "50%",
                                                       }}
                                                     >
-                                                      {!eachMessageRoom.readed && (
-                                                        <div
-                                                          style={{
-                                                            position:
-                                                              "absolute",
-                                                            right: "50px",
-                                                            top: "14px",
-                                                            backgroundColor:
-                                                              "#1d9bf0",
-                                                            borderRadius: "50%",
-                                                            width: "10px",
-                                                            height: "10px",
-                                                          }}
-                                                        ></div>
-                                                      )}
-
                                                       <svg
                                                         style={{
                                                           cursor: "pointer",
@@ -970,8 +959,7 @@ function MessagesPage() {
                                                           top: "5px",
                                                         }}
                                                         color={
-                                                          isHovered ===
-                                                          eachMessageRoom._id
+                                                          isHovered === index
                                                             ? "#259ef0"
                                                             : themeName ===
                                                               "dark-theme"
@@ -1005,8 +993,8 @@ function MessagesPage() {
                                                       horizontal: "right",
                                                     }}
                                                     transformOrigin={{
-                                                      vertical: "top",
-                                                      horizontal: "right",
+                                                      vertical: -10,
+                                                      horizontal: 230,
                                                     }}
                                                     className={`${
                                                       showMessageDeletePopover &&
@@ -1254,8 +1242,8 @@ function MessagesPage() {
                                                 </div>
                                               )}
                                             </PopupState>
-                                            {/* modern popover test finish to check  */}
                                           </div>
+                                          {/* modern popover test finish to check  */}
                                         </Stack>
 
                                         {/* message text is here ? start to check  */}

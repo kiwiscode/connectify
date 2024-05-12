@@ -6,8 +6,9 @@ import {
   Row,
   Container,
   Stack,
-  Popover,
-  OverlayTrigger,
+  Button,
+  // Popover,
+  // OverlayTrigger,
 } from "react-bootstrap";
 
 import data from "@emoji-mart/data";
@@ -27,6 +28,8 @@ const API_URL = "http://localhost:3000";
 import io from "socket.io-client";
 import axios from "axios";
 import useWindowDimensions from "../hooks/getWindowDimensions";
+import PopupState, { bindPopover, bindTrigger } from "material-ui-popup-state";
+import { Popover } from "@mui/material";
 const socket = io.connect(API_URL);
 
 function ChatDetailsPage() {
@@ -122,8 +125,6 @@ function ChatDetailsPage() {
   // mesajların render edildiği kısım finish to check
 
   const sendMessage = async () => {
-    setDisabled(currentMessage.length || chosenEmoji ? false : true);
-
     if (currentMessage !== "" && chosenEmoji !== "") {
       const messageData = {
         room: room,
@@ -197,6 +198,10 @@ function ChatDetailsPage() {
   };
 
   useEffect(() => {
+    setDisabled(currentMessage.length || chosenEmoji ? false : true);
+  }, [currentMessage, chosenEmoji]);
+
+  useEffect(() => {
     const closeEmojiContainer = (e) => {
       if (
         e.target.classList.contains("chat-detail-emoji-picker") ||
@@ -217,23 +222,6 @@ function ChatDetailsPage() {
       document.body.removeEventListener("click", closeEmojiContainer);
     };
   }, []);
-
-  const popoverTop = (
-    <Popover
-      className={`${showEmojisBar ? "hideEmojiContainer" : ""}`}
-      id="popover-positioned-top"
-      title="Popover top"
-    >
-      <Picker
-        style={{ padding: "12px" }}
-        data={data}
-        onEmojiSelect={onEmojiClick}
-        maxFrequentRows={0}
-        emojiSize={20}
-        emojiButtonSize={28}
-      />
-    </Popover>
-  );
 
   const navigateMinusOne = () => {
     navigate(-1);
@@ -900,37 +888,87 @@ function ChatDetailsPage() {
               <div className="chat-detail-emoji">
                 {/* emoji mart start to check */}
 
-                <OverlayTrigger
-                  trigger="click"
-                  placement="top"
-                  overlay={popoverTop}
-                >
-                  <div
-                    className={`svg-border-parent chat-detail-emoji-svg-border-parent svg-border-parent-${themeName}`}
-                    style={{
-                      cursor: "pointer",
-                      borderRadius: "50%",
-                    }}
-                  >
-                    <svg
-                      color="rgb(29,155,240)"
-                      fill="currentColor"
-                      width={20}
-                      height={20}
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className="chat-detail-emoji-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                      style={{
-                        cursor: "pointer",
-                      }}
-                    >
-                      <g>
-                        <path d="M8 9.5C8 8.119 8.672 7 9.5 7S11 8.119 11 9.5 10.328 12 9.5 12 8 10.881 8 9.5zm6.5 2.5c.828 0 1.5-1.119 1.5-2.5S15.328 7 14.5 7 13 8.119 13 9.5s.672 2.5 1.5 2.5zM12 16c-2.224 0-3.021-2.227-3.051-2.316l-1.897.633c.05.15 1.271 3.684 4.949 3.684s4.898-3.533 4.949-3.684l-1.896-.638c-.033.095-.83 2.322-3.053 2.322zm10.25-4.001c0 5.652-4.598 10.25-10.25 10.25S1.75 17.652 1.75 12 6.348 1.75 12 1.75 22.25 6.348 22.25 12zm-2 0c0-4.549-3.701-8.25-8.25-8.25S3.75 7.451 3.75 12s3.701 8.25 8.25 8.25 8.25-3.701 8.25-8.25z"></path>
-                      </g>
-                    </svg>
-                  </div>
-                </OverlayTrigger>
-
+                <PopupState variant="popover" popupId="demo-popup-popover">
+                  {(popupState) => (
+                    <div>
+                      <Button
+                        {...bindTrigger(popupState)}
+                        style={{
+                          border: "none",
+                          // backgroundColor: "transparent",
+                          padding: "0px",
+                          margin: "0px",
+                          cursor: "pointer",
+                          position: "relative",
+                        }}
+                        variant="text"
+                      >
+                        <div
+                          className={`svg-border-parent svg-border-parent-${themeName}`}
+                          style={{
+                            cursor: "pointer",
+                            borderRadius: "50%",
+                          }}
+                        >
+                          <svg
+                            color="rgb(29,155,240)"
+                            fill="currentColor"
+                            width={20}
+                            height={20}
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            className="post-modal-emoji-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                            style={{
+                              cursor: "pointer",
+                            }}
+                          >
+                            <g>
+                              <path d="M8 9.5C8 8.119 8.672 7 9.5 7S11 8.119 11 9.5 10.328 12 9.5 12 8 10.881 8 9.5zm6.5 2.5c.828 0 1.5-1.119 1.5-2.5S15.328 7 14.5 7 13 8.119 13 9.5s.672 2.5 1.5 2.5zM12 16c-2.224 0-3.021-2.227-3.051-2.316l-1.897.633c.05.15 1.271 3.684 4.949 3.684s4.898-3.533 4.949-3.684l-1.896-.638c-.033.095-.83 2.322-3.053 2.322zm10.25-4.001c0 5.652-4.598 10.25-10.25 10.25S1.75 17.652 1.75 12 6.348 1.75 12 1.75 22.25 6.348 22.25 12zm-2 0c0-4.549-3.701-8.25-8.25-8.25S3.75 7.451 3.75 12s3.701 8.25 8.25 8.25 8.25-3.701 8.25-8.25z"></path>
+                            </g>
+                          </svg>
+                        </div>
+                      </Button>
+                      <Popover
+                        open={popupState.open}
+                        onClose={popupState.close}
+                        {...bindPopover(popupState)}
+                        // anchorReference="anchorPosition"
+                        // anchorPosition={{ top: 0, left: 0 }}
+                        anchorOrigin={{
+                          vertical: "top",
+                          horizontal: "center",
+                        }}
+                        transformOrigin={{
+                          vertical: "bottom",
+                          horizontal: 140,
+                        }}
+                        // transformOrigin creates problem start to check
+                        // transformOrigin={{
+                        //   vertical: "top",
+                        //   horizontal: "center",
+                        // }}
+                        // transformOrigin creates problem finish to check
+                        className={`${
+                          themeName === "dark-theme"
+                            ? "popover-material-ui-dark-theme"
+                            : themeName !== "dark-theme"
+                            ? "popover-material-ui-light-theme"
+                            : "hideshowMessageDeletePopover "
+                        }`}
+                      >
+                        <Picker
+                          autoFocus
+                          theme={themeName === "dark-theme" ? "dark" : "light"}
+                          data={data}
+                          onEmojiSelect={onEmojiClick}
+                          maxFrequentRows={0}
+                          emojiSize={20}
+                          emojiButtonSize={28}
+                        />
+                      </Popover>
+                    </div>
+                  )}
+                </PopupState>
                 {/* emoji mart finish to check */}
               </div>
               <input

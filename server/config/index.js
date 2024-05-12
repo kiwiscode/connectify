@@ -17,8 +17,6 @@ let socketUserUsername = null;
 let isBothUserOpenedMessageRoom = null;
 // state for deciding what to do if they are in same room ! finish to check
 
-let testThousand;
-
 module.exports = (app) => {
   const server = http.createServer(app);
   app.use(logger("dev"));
@@ -38,10 +36,8 @@ module.exports = (app) => {
   });
 
   io.on("connection", async (socket) => {
-    console.log("Active socket id =>", socket.id);
     socket.emit("socket_id_for_user", socket.id);
     socket.on("socket_userInfo", (data) => {
-      console.log("Data user info =>", data?.username);
       socketUserUsername = data?.username;
     });
 
@@ -75,11 +71,6 @@ module.exports = (app) => {
           "They are not in same room right now one of them left the room ://"
         );
 
-        console.log("Current URL '/messages/' ile başlamıyor.--------------");
-        console.log(
-          "Interacted chat rooms user when chat detail page not active =>",
-          interactedChatRooms[activeUserIndex]?.room.activeUsers
-        );
         const ifUserNameIsInsideOfArray = interactedChatRooms[
           activeUserIndex
         ]?.room.activeUsers.some(
@@ -125,21 +116,11 @@ module.exports = (app) => {
             ].room.activeUsers[0].user2.isActiveInRoom = false;
           }
         }
-
-        console.log(
-          "Interacted chat rooms arrayinin yeni hali =>",
-          interactedChatRooms[0]?.room?.activeUsers
-        );
       }
     }, 1000);
 
-    console.log("User connected =>", socket.id);
-    console.log("Online users =>", onlineUsers);
-
     socket.on("send_spesific_chatRoomId", (chatRoomId) => {
-      console.log("Chat room received =>", chatRoomId);
       socket.on("send_spesific_userId", (userId) => {
-        console.log("User id received =>", userId);
         User.findById(userId)
           .populate({
             path: "messages",
@@ -202,15 +183,11 @@ module.exports = (app) => {
                   return eachRoom.room.roomName === room;
                 }
               );
-              console.log("Active room with users =>", activeRoomWithUsers);
-              console.log("Current url =>", currentUrlForSocketId);
-              console.log("Chat room id =>", chatRoomId);
 
               const indexOfThisRoom =
                 interactedChatRooms.indexOf(activeRoomWithUsers);
               setTimeout(() => {
                 if (!activeRoomWithUsers) {
-                  console.log("Now here is working 1 !");
                   interactedChatRooms.push({
                     room: {
                       roomName: room,
@@ -235,7 +212,6 @@ module.exports = (app) => {
                     interactedChatRooms[indexOfThisRoom].room.activeUsers[0]
                       .user1.username === null
                   ) {
-                    console.log("Now here is working 2 !");
                     interactedChatRooms[indexOfThisRoom].room.roomName = room;
                     interactedChatRooms[
                       indexOfThisRoom
@@ -248,7 +224,6 @@ module.exports = (app) => {
                     interactedChatRooms[indexOfThisRoom].room.activeUsers[0]
                       .user2.username === null
                   ) {
-                    console.log("Now here is working 3 !");
                     interactedChatRooms[indexOfThisRoom].room.roomName = room;
                     interactedChatRooms[
                       indexOfThisRoom
@@ -269,9 +244,6 @@ module.exports = (app) => {
                     .user1.isActiveInRoom
                 ) {
                   isBothUserOpenedMessageRoom = true;
-                  console.log(
-                    "Burası çalışıyor ve onaylandı ! yani iki userda aynı anda aynı odadalar şu an ..."
-                  );
                 } else {
                   console.log(
                     "Burası çalışıyor ve onaylanamadı ! yani iki userda aynı anda aynı odada değiller şu an ..."
@@ -292,7 +264,6 @@ module.exports = (app) => {
               }, 2500);
 
               socket.on("typing_indicator", (data) => {
-                console.log("Data received from client=>", data);
                 io.to(room).emit("typing_result", {
                   data,
                 });
@@ -357,15 +328,53 @@ module.exports = (app) => {
                             newCreatedChatBetween2User._id.toString()
                           )
                         ) {
-                          users[0].messages[user1RoomIndex].chat.push(
-                            newCreatedChatBetween2User._id
-                          );
+                          User.findOneAndUpdate(
+                            { _id: users[0]._id },
+                            {
+                              $push: {
+                                [`messages.${user1RoomIndex}.chat`]:
+                                  newCreatedChatBetween2User._id,
+                              },
+                            },
+                            { new: true }
+                          )
+                            .then((resultFromFirstUpdate) => {
+                              User.findOneAndUpdate(
+                                { _id: users[1]._id },
+                                {
+                                  $push: {
+                                    [`messages.${user2RoomIndex}.chat`]:
+                                      newCreatedChatBetween2User._id,
+                                  },
+                                },
+                                { new: true }
+                              )
+                                .then((resultFromSecondUpdate) => {})
+                                .catch((error) => {
+                                  console.log(
+                                    "Error occured while updating second user !",
+                                    error
+                                  );
+                                });
+                            })
+                            .catch((error) => {
+                              console.log(
+                                "Error occured while updating first user !",
+                                error
+                              );
+                            });
 
-                          users[1].messages[user2RoomIndex].chat.push(
-                            newCreatedChatBetween2User._id
-                          );
-                          users[0].save();
-                          users[1].save();
+                          // creating bug again .save start to check
+                          // users[0].messages[user1RoomIndex].chat.push(
+                          //   newCreatedChatBetween2User._id
+                          // );
+
+                          // users[1].messages[user2RoomIndex].chat.push(
+                          //   newCreatedChatBetween2User._id
+                          // );
+                          // users[0].save();
+                          // users[1].save();
+                          // creating bug again .save finish to check
                         } else {
                           console.log(
                             "This particular chat id exist already in users messages chat array !!!"
@@ -378,8 +387,6 @@ module.exports = (app) => {
                           users[1].messages[user2RoomIndex];
 
                         setTimeout(() => {
-                          console.log("User ids first =>", users[0]._id);
-                          console.log("User ids second =>", users[1]._id);
                           if (isBothUserOpenedMessageRoom) {
                             console.log("Burada çalışıyoruz şu anda !");
 
@@ -398,10 +405,6 @@ module.exports = (app) => {
                                 }
                               )
                                 .then((response) => {
-                                  console.log(
-                                    "Response after first update !",
-                                    response
-                                  );
                                   return User.updateOne(
                                     { _id: users[1]._id },
                                     {
@@ -411,31 +414,13 @@ module.exports = (app) => {
                                     }
                                   );
                                 })
-                                .then((response) => {
-                                  console.log(
-                                    "Response after second update !",
-                                    response
-                                  );
-                                })
+                                .then((response) => {})
                                 .catch((error) => {
                                   console.log("ERROR =>", error);
                                 });
                             }, 1000);
                           } else {
-                            console.log("Burada çalışıyoruz şu anda 2!");
-
-                            console.log(
-                              "users[0].username =>",
-
-                              users[0].username,
-                              "users[1].username =>",
-                              users[1].username,
-                              "message sender username =>",
-                              data.sender
-                            );
-
                             if (users[0].username === data.sender) {
-                              console.log("Şimdi de bu kısımdayız 1 !!!");
                               users[0].messages.splice(user1RoomIndex, 1);
                               users[1].messages.splice(user2RoomIndex, 1);
                               users[0].messages.unshift(firstMessageRoom);
@@ -450,10 +435,6 @@ module.exports = (app) => {
                                   }
                                 )
                                   .then((response) => {
-                                    console.log(
-                                      "Response after first update !",
-                                      response
-                                    );
                                     return User.updateOne(
                                       { _id: users[1]._id },
                                       {
@@ -463,12 +444,7 @@ module.exports = (app) => {
                                       }
                                     );
                                   })
-                                  .then((response) => {
-                                    console.log(
-                                      "Response after second update !",
-                                      response
-                                    );
-                                  })
+                                  .then((response) => {})
                                   .catch((error) => {
                                     console.log("ERROR =>", error);
                                   });
@@ -478,7 +454,6 @@ module.exports = (app) => {
                               users[1].messages.splice(user2RoomIndex, 1);
                               users[0].messages.unshift(firstMessageRoom);
                               users[1].messages.unshift(secondMessageRoom);
-                              console.log("Şimdi de bu kısımdayız 2 !!!");
                               setTimeout(() => {
                                 User.updateOne(
                                   { _id: users[0]._id },
@@ -515,24 +490,6 @@ module.exports = (app) => {
                             }
                           }
                         }, 2500);
-
-                        console.log(
-                          "User 1 username - active user =>",
-                          users[0].username
-                        );
-                        console.log(
-                          "User 2 username - selected user =>",
-                          users[1].username
-                        );
-
-                        console.log(
-                          "User first, first message room after update =>",
-                          users[0].messages[user1RoomIndex].room
-                        );
-                        console.log(
-                          "User second, first message room after update =>",
-                          users[1].messages[user2RoomIndex].room
-                        );
                       })
                       .catch((error) => {
                         console.log(error);
@@ -606,7 +563,6 @@ module.exports = (app) => {
               user2Rooms.includes(room)
             );
 
-            console.log("This is the common room =>", commonRooms);
             if (commonRooms.length > 0) {
               return commonRooms[0];
             }
@@ -616,18 +572,11 @@ module.exports = (app) => {
 
           Promise.all(updatePromises)
             .then((updatedUsers) => {
-              console.log(
-                "bu iki kullanicinin üye olduğu odayi bul =>",
-                updatedUsers
-              );
-
               const roomName = findMessageRoomId(
                 updatedUsers[0],
                 updatedUsers[1]
               );
               if (roomName) {
-                console.log("Mesaj odasi ID'si:", roomName);
-
                 initiatingChatRoomBetweenTwoUsers[0].messages =
                   updatedUsers[0].messages;
                 initiatingChatRoomBetweenTwoUsers[1].messages =
@@ -638,7 +587,6 @@ module.exports = (app) => {
                     return messageRoom.room === roomName;
                   }
                 );
-                console.log("Id of new room =>", newIdOfMessageRoom);
 
                 socket.emit(
                   "getmessageRoomId",
@@ -693,15 +641,10 @@ module.exports = (app) => {
                   }
                 );
 
-                console.log("Active room with users =>", activeRoomWithUsers);
-                console.log("Current url =>", currentUrlForSocketId);
-                console.log("Chat room id =>", chatRoomId);
-
                 const indexOfThisRoom =
                   interactedChatRooms.indexOf(activeRoomWithUsers);
                 setTimeout(() => {
                   if (!activeRoomWithUsers) {
-                    console.log("Now here is working 1 !");
                     interactedChatRooms.push({
                       room: {
                         roomName: room,
@@ -726,7 +669,6 @@ module.exports = (app) => {
                       interactedChatRooms[indexOfThisRoom].room.activeUsers[0]
                         .user1.username === null
                     ) {
-                      console.log("Now here is working 2 !");
                       interactedChatRooms[indexOfThisRoom].room.roomName = room;
                       interactedChatRooms[
                         indexOfThisRoom
@@ -739,7 +681,6 @@ module.exports = (app) => {
                       interactedChatRooms[indexOfThisRoom].room.activeUsers[0]
                         .user2.username === null
                     ) {
-                      console.log("Now here is working 3 !");
                       interactedChatRooms[indexOfThisRoom].room.roomName = room;
                       interactedChatRooms[
                         indexOfThisRoom
@@ -778,7 +719,6 @@ module.exports = (app) => {
                 }, 2500);
 
                 socket.on("typing_indicator", (data) => {
-                  console.log("Data received from client=>", data);
                   io.to(room).emit("typing_result", {
                     data,
                     chatDetailActiveUser,
@@ -830,7 +770,6 @@ module.exports = (app) => {
         text,
         senderInfo,
       }) => {
-        console.log("Burası çalışıyor !!! -------------------------------");
         const receiver = onlineUsers.find((eachUser) => {
           return eachUser.username === receiverName;
         });
@@ -887,16 +826,37 @@ module.exports = (app) => {
       }
     );
 
-    socket.on("disconnect", () => {
-      console.log("User disconnected =>", socket.id);
-      console.log(
-        "User disconnected and cleaned from interacted chat rooms =>",
-        interactedChatRooms
-      );
+    socket.on("logout", (data) => {
+      console.log("Data for disconnection=>", data);
+      const findedUser = onlineUsers.find((eachUser) => {
+        return eachUser.socketId === data;
+      });
 
+      console.log("Current socket id =>", socket.id);
+      console.log("All online users =>", onlineUsers);
+      console.log("Finded user =>", findedUser);
+
+      const findedUserIndex = onlineUsers.indexOf(findedUser);
+
+      if (findedUserIndex !== -1) {
+        const logoutedUser = onlineUsers.splice(findedUserIndex, 1)[0];
+
+        console.log(
+          `User ${logoutedUser.username} socket.id : ${logoutedUser.socketId} logout `
+        );
+      } else {
+        console.log("User not found to logout with username and socket id ");
+      }
+    });
+
+    socket.on("disconnect", () => {
       const findedUser = onlineUsers.find((eachUser) => {
         return eachUser.socketId === socket.id;
       });
+
+      console.log("Current socket id =>", socket.id);
+      console.log("All online users =>", onlineUsers);
+      console.log("Finded user =>", findedUser);
 
       const findedUserIndex = onlineUsers.indexOf(findedUser);
 

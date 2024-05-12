@@ -38,7 +38,17 @@ const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-function LogoutModal() {
+
+import io from "socket.io-client";
+const socket = io.connect(API_URL);
+function LogoutModal({ sendDataToParent }) {
+  const [logoutModalWhichOneOpened, setlogoutModalWhichOneOpened] =
+    useState(null);
+
+  const handleChoosenOption = () => {
+    sendDataToParent(logoutModalWhichOneOpened);
+  };
+
   const [
     { theme, themeName, activeFontSizeOption },
     toggleThemeBetweenLightDarkMode,
@@ -495,6 +505,7 @@ function LogoutModal() {
   const [showLogoutSpinner, setshowLogoutSpinner] = useState(false);
   const handleLogout = () => {
     setshowLogoutSpinner(true);
+    socket.emit("logout", localStorage.getItem("socketId"));
 
     axios
       .post(`${API_URL}/auth/logout`, null, {
@@ -2398,6 +2409,8 @@ function LogoutModal() {
                   onClick={() => {
                     handleShow();
                     popupState.close();
+                    setlogoutModalWhichOneOpened("Settings and privacy");
+                    handleChoosenOption("Settings and privacy");
                   }}
                   className={`settings-and-privacy settings-and-privacy-${themeName}`}
                   style={{
@@ -2446,6 +2459,8 @@ function LogoutModal() {
                   onClick={() => {
                     handleOpenLogoutModal();
                     popupState.close();
+                    setlogoutModalWhichOneOpened("Logout @username");
+                    handleChoosenOption("Logout @username");
                   }}
                   style={{
                     paddingBottom: "12px",
