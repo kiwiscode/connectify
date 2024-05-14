@@ -10,7 +10,7 @@ import {
 import axios from "axios";
 import { UserContext } from "../../context/UserContext";
 import { Link, useNavigate } from "react-router-dom";
-import { List, message } from "antd";
+import { List } from "antd";
 import useWindowDimensions from "../../hooks/getWindowDimensions";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -47,6 +47,7 @@ const API_URL = "http://localhost:3000";
 
 import io from "socket.io-client";
 import PopupState, { bindTrigger } from "material-ui-popup-state";
+import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
 const socket = io.connect(`${API_URL}`);
 
 function RightSideColumn({
@@ -1103,16 +1104,7 @@ function RightSideColumn({
     setverifyPasswordInput(e.target.value);
   };
 
-  const [messageApi, contextHolder] = message.useMessage();
-
-  const catchErrorMessage = (message) => {
-    messageApi.success({
-      type: "success",
-      content: message,
-      duration: 4,
-      className: "custom-message-style",
-    });
-  };
+  const { showCustomMessage, contextHolder } = useAntdMessageHandler();
 
   const generateRandomCode = () => {
     const characters =
@@ -1147,7 +1139,7 @@ function RightSideColumn({
         }, 500);
       })
       .catch(() => {
-        catchErrorMessage("Wrong password!");
+        showCustomMessage("Wrong password!", 4);
       });
   };
 
@@ -17073,7 +17065,7 @@ function RightSideColumn({
                 : null
             }
             style={{
-              zIndex: 9999,
+              // zIndex: 9999,
               border: "none",
               backgroundColor: "transparent",
 

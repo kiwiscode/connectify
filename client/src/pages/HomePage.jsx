@@ -9,7 +9,7 @@ const API_URL = "http://localhost:3000";
 // when working on deployment version
 // ?
 function HomePage() {
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
 
   return (
     <>
@@ -108,7 +108,6 @@ function HomePage() {
             </svg>
           </Col>
           <SignUpPage />
-
           <IndexFooter />
         </Row>
       </Container>

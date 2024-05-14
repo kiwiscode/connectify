@@ -6,18 +6,14 @@ import axios from "axios";
 
 import Popover from "@mui/material/Popover";
 import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
+import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
 function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
-  const [
-    { theme, themeName },
-    lightModeActive,
-    darkModeActive,
-    cyberpunkModeActive,
-  ] = useContext(ThemeContext);
+  const [{ theme, themeName }] = useContext(ThemeContext);
 
   const { userInfo, getToken } = useContext(UserContext);
 
@@ -26,9 +22,20 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
 
   const [hoveredOption, setHoveredOption] = useState(null);
   const [showDeletePostModal, setshowDeletePostModal] = useState(null);
+
+  const [
+    createdAnimationForClosingDeletePostModal,
+    setCreatedAnimationForClosingDeletePostModal,
+  ] = useState(null);
   const handleClose = () => {
     setshowDeletePostModal(false);
+    setCreatedAnimationForClosingDeletePostModal(true);
+
+    setTimeout(() => {
+      setCreatedAnimationForClosingDeletePostModal(false);
+    }, 150);
   };
+
   const handleShow = () => {
     setshowDeletePostModal(true);
   };
@@ -40,7 +47,10 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
   const [threeDotsColor, setThreeDotsColor] = useState(null);
   const [postId, setPostId] = useState(null);
 
+  const { postDeletedMessage, contextHolder } = useAntdMessageHandler();
+
   const handlePostDelete = (postId) => {
+    handleClose();
     setPostId(postId);
     axios
       .post(
@@ -53,19 +63,20 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
         }
       )
       .then(() => {
+        postDeletedMessage();
         postDeletionProcess();
       })
-      .catch(() => {
+      .catch((error) => {
         // tüm popoover kullanılan yerlerde aynı catch mesajı mevcut start to check INFO
-        // const { errorMessage } = error.response.data;
-        // setError(errorMessage);
+        console.error("Error =>", error);
         // tüm popoover kullanılan yerlerde aynı catch mesajı mevcut finish to check INFO
       });
   };
-
   return (
     <>
+      {contextHolder}
       {/* delete post modal start to check  */}
+
       <Modal
         style={{
           padding: "0px",
@@ -237,11 +248,18 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
               }}
               className={`${
                 themeName === "dark-theme"
-                  ? "popover-material-ui-dark-theme"
+                  ? " popover-material-ui-dark-theme"
                   : themeName !== "dark-theme"
                   ? "popover-material-ui-light-theme"
-                  : "hideshowMessageDeletePopover "
+                  : " hideshowMessageDeletePopover "
               }`}
+              // className={`popover-content ${showDeletePostModal ? "open" : ""}`}
+              style={{
+                display: showDeletePostModal ? "none" : "",
+                animation: createdAnimationForClosingDeletePostModal
+                  ? "pageOpenAnimation 1s ease-in-out"
+                  : null,
+              }}
             >
               {post?.userId?._id === userInfo._id ? (
                 <div
@@ -252,10 +270,6 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
                   }
                 >
                   <div
-                    onClick={() => {
-                      setshowPostOptionsThreeDots(false);
-                      handleShow();
-                    }}
                     onMouseEnter={() => {
                       setHoveredOption("Delete");
                     }}
@@ -270,6 +284,11 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
                             themeName !== "dark-theme"
                           ? "#f7f7f7"
                           : "",
+                    }}
+                    onClick={() => {
+                      setshowPostOptionsThreeDots(false);
+                      handleShow();
+                      // popupState.close();
                     }}
                   >
                     <span>

@@ -3,8 +3,6 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import {
   Col,
-  Row,
-  Container,
   Stack,
   Button,
   // Popover,
@@ -14,9 +12,6 @@ import {
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 
-import { message } from "antd";
-import LeftSideNavBar from "../components/Main-Left-Side-Navbar/LeftSideNavbar";
-import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
 import { ThemeContext } from "../context/ThemeContext";
 
 // when working on local version
@@ -26,7 +21,6 @@ const API_URL = "http://localhost:3000";
 // ?
 
 import io from "socket.io-client";
-import axios from "axios";
 import useWindowDimensions from "../hooks/getWindowDimensions";
 import PopupState, { bindPopover, bindTrigger } from "material-ui-popup-state";
 import { Popover } from "@mui/material";
@@ -47,41 +41,6 @@ function ChatDetailsPage() {
 
   const navigate = useNavigate();
 
-  const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
-
-  const handleCallback = (childData) => {
-    // Update the name in the component's state
-    setcurrentCreatedPost(childData);
-    postSharedMessage(childData.authorUserName, childData._id);
-  };
-
-  const [messageApi, contextHolder] = message.useMessage();
-
-  const postSharedMessage = (postOwner, postId) => {
-    messageApi.success({
-      type: "success",
-      content: (
-        <div>
-          <span>Your post was sent.</span>
-          <>
-            <Link
-              to={`/${postOwner}/status/${postId}`}
-              style={{
-                color: "white",
-                marginLeft: "5px",
-                fontWeight: "700",
-                fontSize: "15px",
-              }}
-            >
-              View
-            </Link>
-          </>
-        </div>
-      ),
-      duration: 6,
-      className: "custom-message-style",
-    });
-  };
   // finish to check shared post view message
 
   useEffect(() => {
@@ -243,13 +202,7 @@ function ChatDetailsPage() {
 
   const [{ theme, themeName }] = useContext(ThemeContext);
 
-  const [postModalOpenedFromLeftSide, setPostModalOpenedFromLeftSide] =
-    useState(false);
-
-  const handleCallBackForModalOpenedStateFromChild = (childData) => {
-    setPostModalOpenedFromLeftSide(childData);
-  };
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
 
   // socket test real time typing indicator room in start to check
   const [sameTimeSameRoom, setSameTimeSameRoom] = useState(null);
@@ -345,693 +298,662 @@ function ChatDetailsPage() {
     setShowTypingIndicator(null);
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [spesificRoom]);
+
   return (
     <>
-      {contextHolder}
-      <Container
+      <Col
+        xs={12} // 0px - 576px aralığı
+        sm={12} // 576px - 768px aralığı
+        md={11} // 768px - 992px aralığı
+        lg={
+          windowWidth <= 1201 && windowWidth >= 992
+            ? 7
+            : windowWidth > 1201
+            ? 5
+            : ""
+        } // 992px - 1400px aralığı
+        xxl={5} // 1400px ve sonrası aralığı
+        className={`main-column `}
         style={{
-          overflowX: "hidden",
-          overflowY: "hidden",
+          borderLeft:
+            themeName !== "dark-theme"
+              ? "1px solid rgba(0, 0, 0, 0.1)"
+              : // : "0.1px solid rgb(70, 70, 70)",
+                "1px solid rgb(70, 70, 70)",
+
+          borderRight:
+            themeName !== "dark-theme"
+              ? "1px solid rgba(0, 0, 0, 0.1)"
+              : // : "0.1px solid rgb(70, 70, 70)",
+                "1px solid rgb(70, 70, 70)",
+          borderTop: "none ",
+          borderBottom: "none",
+          padding: "0px",
+          position: "relative",
         }}
-        fluid
       >
-        <Row
-          style={{
-            borderTop: "none",
-            borderBottom: "none",
-            overflowX: "hidden",
-            overflowY: "hidden",
-          }}
+        <div
+          // className="message-detail-container"
+          className={`message-detail-container message-detail-container-${themeName}`}
         >
-          <LeftSideNavBar
-            parentCallBackSecond={handleCallBackForModalOpenedStateFromChild}
-            parentCallBack={handleCallback}
-          />
+          {selectedUser.length ? (
+            <>
+              <Stack direction="horizontal" gap={3}>
+                <Link
+                  onClick={navigateMinusOne}
+                  to={"/messages"}
+                  // className="p-2 arrow"
+                  className={
+                    themeName === "dark-theme"
+                      ? `p-2 arrow-${themeName}`
+                      : `p-2 arrow`
+                  }
+                  style={{
+                    position: "relative",
+                    width: "30px",
+                    height: " 30px",
 
-          {/* finish to check left bar column */}
-
-          {/* start to check  main column */}
-          <Col
-            xs={12} // 0px - 576px aralığı
-            sm={12} // 576px - 768px aralığı
-            md={11} // 768px - 992px aralığı
-            lg={
-              windowWidth <= 1201 && windowWidth >= 992
-                ? 7
-                : windowWidth > 1201
-                ? 5
-                : ""
-            } // 992px - 1400px aralığı
-            xxl={5} // 1400px ve sonrası aralığı
-            className={`main-column `}
-            style={{
-              borderLeft:
-                themeName !== "dark-theme"
-                  ? "1px solid rgba(0, 0, 0, 0.1)"
-                  : // : "0.1px solid rgb(70, 70, 70)",
-                    "1px solid rgb(70, 70, 70)",
-
-              borderRight:
-                themeName !== "dark-theme"
-                  ? "1px solid rgba(0, 0, 0, 0.1)"
-                  : // : "0.1px solid rgb(70, 70, 70)",
-                    "1px solid rgb(70, 70, 70)",
-              borderTop: "none ",
-              borderBottom: "none",
-              padding: "0px",
-              position: "relative",
-            }}
-          >
-            <div
-              // className="message-detail-container"
-              className={`message-detail-container message-detail-container-${themeName}`}
-            >
-              {selectedUser.length ? (
-                <>
-                  <Stack direction="horizontal" gap={3}>
-                    <Link
-                      onClick={navigateMinusOne}
-                      to={"/messages"}
-                      // className="p-2 arrow"
-                      className={
-                        themeName === "dark-theme"
-                          ? `p-2 arrow-${themeName}`
-                          : `p-2 arrow`
-                      }
-                      style={{
-                        position: "relative",
-                        width: "30px",
-                        height: " 30px",
-
-                        borderRadius: "50%",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <svg
-                        color={themeName === "dark-theme" ? "white" : "black"}
-                        fill="currentColor"
-                        style={{
-                          position: "absolute",
-                          bottom: "5px",
-                          border: "none",
-                          left: "5px",
-                          fontSize: "15px",
-                        }}
-                        width={20}
-                        height={20}
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                        className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                      >
-                        <g>
-                          <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
-                        </g>
-                      </svg>
-                    </Link>
-                    <div className="p-2">
-                      {" "}
-                      <span
-                        style={{
-                          lineHeight: "20px",
-                          fontWeight: "700",
-                          fontSize: "17px",
-                          color: themeName === "dark-theme" ? "white" : "black",
-                        }}
-                      >
-                        {selectedUser[0].fullname}
-                      </span>
-                    </div>
-                    <div
-                      // className="p-2 message-info ms-auto"
-                      className={
-                        themeName === "dark-theme"
-                          ? `p-2 message-info-${themeName} ms-auto`
-                          : `p-2 message-info ms-auto`
-                      }
-                      style={{
-                        position: "relative",
-                        left: "10px",
-                        width: "40px",
-                        height: " 40px",
-                        borderRadius: "50%",
-                        cursor: "pointer",
-                      }}
-                    >
-                      {" "}
-                      <span>
-                        <svg
-                          color={themeName === "dark-theme" ? "white" : "black"}
-                          fill="currentColor"
-                          style={{
-                            position: "absolute",
-                            border: "none",
-                            fontSize: "15px",
-                            bottom: "10px",
-                            left: "10px",
-                          }}
-                          width={20}
-                          height={20}
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                          className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                        >
-                          <g>
-                            <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                          </g>
-                        </svg>
-                      </span>
-                    </div>
-                  </Stack>
-
-                  <Link
-                    style={{ textDecoration: "none", color: "black" }}
-                    to={`/profile/${selectedUser[0]._id}`}
-                  >
-                    <div
-                      // className="message-detail-user-card"
-                      className={
-                        themeName === "dark-theme"
-                          ? `message-detail-user-card-${themeName}`
-                          : "message-detail-user-card"
-                      }
-                    >
-                      {selectedUser[0].imageUrl.slice(0, 3) !== "../" ? (
-                        <>
-                          <img
-                            style={{ borderRadius: "50%" }}
-                            width={64}
-                            height={64}
-                            src={
-                              selectedUser[0].imageUrl.slice(0, 3) !== "../"
-                                ? selectedUser[0].imageUrl
-                                : ""
-                            }
-                            alt=""
-                          />
-                        </>
-                      ) : (
-                        <div>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="64"
-                            height="64"
-                            fill={
-                              themeName === "dark-theme"
-                                ? "#71767A"
-                                : "rgb(83, 100, 113)"
-                            }
-                            className="bi bi-person-circle"
-                            viewBox="0 0 16 16"
-                            style={{
-                              borderRadius: "50%",
-                            }}
-                          >
-                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                            <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                          </svg>
-                        </div>
-                      )}
-                      <div
-                        style={{
-                          lineHeight: "20px",
-                          fontWeight: "700",
-                          fontSize: "15px",
-                          color: themeName === "dark-theme" ? "white" : "black",
-                        }}
-                      >
-                        {selectedUser[0].fullname}
-                      </div>
-                      <div
-                        style={{
-                          lineHeight: "20px",
-                          fontWeight: "400",
-                          fontSize: "15px",
-
-                          color:
-                            themeName === "dark-theme"
-                              ? "#71767A"
-                              : "rgb(83, 100, 113)",
-                        }}
-                      >
-                        @{selectedUser[0].username}
-                      </div>
-                      <div
-                        style={{
-                          lineHeight: "16px",
-                          margin: "15px 0px",
-                          fontWeight: "400",
-                          fontSize: "14px",
-                          color:
-                            themeName === "dark-theme"
-                              ? "#71767A"
-                              : "rgb(83, 100, 113)",
-                        }}
-                      >
-                        Joined{" "}
-                        {getCreatedYearForSpesificUserProfilePage(
-                          selectedUser[0].createdAt
-                        )}
-                        <span>
-                          {selectedUser[0].followers.length ? (
-                            <>
-                              <span
-                                style={{
-                                  color:
-                                    themeName === "dark-theme"
-                                      ? "#71767A"
-                                      : "rgb(83, 100, 113)",
-                                  lineHeight: "16px",
-                                  fontWeight: "400",
-                                  fontSize: "14px",
-                                }}
-                              >
-                                {" "}
-                                ·{" "}
-                              </span>
-                              <span
-                                style={{
-                                  color:
-                                    themeName === "dark-theme"
-                                      ? "#71767A"
-                                      : "rgb(83, 100, 113)",
-                                  lineHeight: "16px",
-                                  fontWeight: "400",
-                                  fontSize: "14px",
-                                }}
-                              >
-                                {selectedUser[0].followers.length} follower
-                              </span>
-                            </>
-                          ) : null}
-                        </span>
-                      </div>
-                      <div
-                        style={{
-                          color:
-                            themeName === "dark-theme"
-                              ? "#71767A"
-                              : "rgb(83, 100, 113)",
-                          fontSize: "13px",
-                          lineHeight: "16px",
-                          fontWeight: "400",
-                        }}
-                      >
-                        Not followed by anyone you&apos;re following =&gt; ??
-                        Check this part
-                      </div>
-                    </div>
-                  </Link>
-                </>
-              ) : null}
-            </div>
-
-            {/* start to check render messages with spesific user  */}
-            <div
-              className={`scrollbar-add scrollbar-add-${themeName} mt-2`}
-              style={{
-                overflowY: "auto",
-                maxHeight: "500px",
-                width: "100%",
-                height: "100vh",
-                // padding: "5px",
-              }}
-            >
-              {spesificRoom.map((eachMessage, index) => (
-                <div
-                  ref={scrollRef}
-                  style={{ padding: "0px 12px 0px 12px" }}
-                  key={index}
+                    borderRadius: "50%",
+                    cursor: "pointer",
+                  }}
                 >
-                  <div>
-                    <div
+                  <svg
+                    color={themeName === "dark-theme" ? "white" : "black"}
+                    fill="currentColor"
+                    style={{
+                      position: "absolute",
+                      bottom: "5px",
+                      border: "none",
+                      left: "5px",
+                      fontSize: "15px",
+                    }}
+                    width={20}
+                    height={20}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                  >
+                    <g>
+                      <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                    </g>
+                  </svg>
+                </Link>
+                <div className="p-2">
+                  {" "}
+                  <span
+                    style={{
+                      lineHeight: "20px",
+                      fontWeight: "700",
+                      fontSize: "17px",
+                      color: themeName === "dark-theme" ? "white" : "black",
+                    }}
+                  >
+                    {selectedUser[0].fullname}
+                  </span>
+                </div>
+                <div
+                  // className="p-2 message-info ms-auto"
+                  className={
+                    themeName === "dark-theme"
+                      ? `p-2 message-info-${themeName} ms-auto`
+                      : `p-2 message-info ms-auto`
+                  }
+                  style={{
+                    position: "relative",
+                    left: "10px",
+                    width: "40px",
+                    height: " 40px",
+                    borderRadius: "50%",
+                    cursor: "pointer",
+                  }}
+                >
+                  {" "}
+                  <span>
+                    <svg
+                      color={themeName === "dark-theme" ? "white" : "black"}
+                      fill="currentColor"
                       style={{
-                        display: "flex",
-                        justifyContent:
-                          userInfo.username === eachMessage.sender
-                            ? "flex-end"
-                            : "flex-start",
+                        position: "absolute",
+                        border: "none",
+                        fontSize: "15px",
+                        bottom: "10px",
+                        left: "10px",
                       }}
-                      className="spesific-room-message-main-container"
+                      width={20}
+                      height={20}
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
                     >
-                      <div
-                        style={{}}
-                        className={
-                          userInfo.username === eachMessage.sender
-                            ? `spesific-room-message-you`
-                            : `spesific-room-message-other spesific-room-message-other-${themeName}`
+                      <g>
+                        <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
+                      </g>
+                    </svg>
+                  </span>
+                </div>
+              </Stack>
+
+              <Link
+                style={{ textDecoration: "none", color: "black" }}
+                to={`/profile/${selectedUser[0]._id}`}
+              >
+                <div
+                  // className="message-detail-user-card"
+                  className={
+                    themeName === "dark-theme"
+                      ? `message-detail-user-card-${themeName}`
+                      : "message-detail-user-card"
+                  }
+                >
+                  {selectedUser[0].imageUrl.slice(0, 3) !== "../" ? (
+                    <>
+                      <img
+                        style={{ borderRadius: "50%" }}
+                        width={64}
+                        height={64}
+                        src={
+                          selectedUser[0].imageUrl.slice(0, 3) !== "../"
+                            ? selectedUser[0].imageUrl
+                            : ""
                         }
+                        alt=""
+                      />
+                    </>
+                  ) : (
+                    <div>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="64"
+                        height="64"
+                        fill={
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)"
+                        }
+                        className="bi bi-person-circle"
+                        viewBox="0 0 16 16"
+                        style={{
+                          borderRadius: "50%",
+                        }}
                       >
-                        <div className="spesific-room-message-container">
-                          <div className="spesific-room-message-content">
-                            <span className="spesific-room-message-text">
-                              {eachMessage.text}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
+                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                        <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                      </svg>
                     </div>
-                    <div
-                      className={
-                        userInfo.username === eachMessage.sender
-                          ? "spesific-room-message-you-time spesific-room-message-message-meta"
-                          : "spesific-room-message-other-time spesific-room-message-meta"
-                      }
-                    >
-                      <p id="time">
-                        {eachMessage.timestamp ? (
-                          <>
-                            <span
-                              className="time-stamp-message-detail"
-                              style={{
-                                // backgroundColor: "yellow",
-                                color:
-                                  themeName === "dark-theme"
-                                    ? "#71767A"
-                                    : "rgb(83, 100, 113)",
-                              }}
-                            >
-                              {new Date(eachMessage.timestamp).toLocaleString(
-                                "en-US",
-                                {
-                                  year: "numeric",
-                                  month: "short",
-                                  day: "2-digit",
-                                  hour: "numeric",
-                                  minute: "numeric",
-                                  // second: "numeric",
-                                  hour12: true,
-                                }
-                              )}
-                            </span>
-                          </>
-                        ) : (
+                  )}
+                  <div
+                    style={{
+                      lineHeight: "20px",
+                      fontWeight: "700",
+                      fontSize: "15px",
+                      color: themeName === "dark-theme" ? "white" : "black",
+                    }}
+                  >
+                    {selectedUser[0].fullname}
+                  </div>
+                  <div
+                    style={{
+                      lineHeight: "20px",
+                      fontWeight: "400",
+                      fontSize: "15px",
+
+                      color:
+                        themeName === "dark-theme"
+                          ? "#71767A"
+                          : "rgb(83, 100, 113)",
+                    }}
+                  >
+                    @{selectedUser[0].username}
+                  </div>
+                  <div
+                    style={{
+                      lineHeight: "16px",
+                      margin: "15px 0px",
+                      fontWeight: "400",
+                      fontSize: "14px",
+                      color:
+                        themeName === "dark-theme"
+                          ? "#71767A"
+                          : "rgb(83, 100, 113)",
+                    }}
+                  >
+                    Joined{" "}
+                    {getCreatedYearForSpesificUserProfilePage(
+                      selectedUser[0].createdAt
+                    )}
+                    <span>
+                      {selectedUser[0].followers.length ? (
+                        <>
                           <span
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "rgb(83, 100, 113)",
+                              lineHeight: "16px",
+                              fontWeight: "400",
+                              fontSize: "14px",
                             }}
                           >
-                            <span className="time-stamp-message-detail">
-                              {eachMessage.time}
-                            </span>
-                            ·
-                            <span className="time-stamp-message-sent-status">
-                              Sent
-                            </span>
+                            {" "}
+                            ·{" "}
                           </span>
-                        )}
-                      </p>
+                          <span
+                            style={{
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#71767A"
+                                  : "rgb(83, 100, 113)",
+                              lineHeight: "16px",
+                              fontWeight: "400",
+                              fontSize: "14px",
+                            }}
+                          >
+                            {selectedUser[0].followers.length} follower
+                          </span>
+                        </>
+                      ) : null}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      color:
+                        themeName === "dark-theme"
+                          ? "#71767A"
+                          : "rgb(83, 100, 113)",
+                      fontSize: "13px",
+                      lineHeight: "16px",
+                      fontWeight: "400",
+                    }}
+                  >
+                    Not followed by anyone you&apos;re following =&gt; ?? Check
+                    this part
+                  </div>
+                </div>
+              </Link>
+            </>
+          ) : null}
+        </div>
+
+        {/* start to check render messages with spesific user  */}
+        <div
+          className={`scrollbar-add scrollbar-add-${themeName} mt-2`}
+          style={{
+            overflowY: "auto",
+            maxHeight: "500px",
+            width: "100%",
+            height: "100vh",
+            // padding: "5px",
+          }}
+        >
+          {spesificRoom.map((eachMessage, index) => (
+            <div
+              ref={scrollRef}
+              style={{ padding: "0px 12px 0px 12px" }}
+              key={index}
+            >
+              <div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent:
+                      userInfo.username === eachMessage.sender
+                        ? "flex-end"
+                        : "flex-start",
+                  }}
+                  className="spesific-room-message-main-container"
+                >
+                  <div
+                    style={{}}
+                    className={
+                      userInfo.username === eachMessage.sender
+                        ? `spesific-room-message-you`
+                        : `spesific-room-message-other spesific-room-message-other-${themeName}`
+                    }
+                  >
+                    <div className="spesific-room-message-container">
+                      <div className="spesific-room-message-content">
+                        <span className="spesific-room-message-text">
+                          {eachMessage.text}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              ))}{" "}
-              {typeIndicatorResult && (
                 <div
-                  className="mb-2"
+                  className={
+                    userInfo.username === eachMessage.sender
+                      ? "spesific-room-message-you-time spesific-room-message-message-meta"
+                      : "spesific-room-message-other-time spesific-room-message-meta"
+                  }
+                >
+                  <p id="time">
+                    {eachMessage.timestamp ? (
+                      <>
+                        <span
+                          className="time-stamp-message-detail"
+                          style={{
+                            // backgroundColor: "yellow",
+                            color:
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)",
+                          }}
+                        >
+                          {new Date(eachMessage.timestamp).toLocaleString(
+                            "en-US",
+                            {
+                              year: "numeric",
+                              month: "short",
+                              day: "2-digit",
+                              hour: "numeric",
+                              minute: "numeric",
+                              // second: "numeric",
+                              hour12: true,
+                            }
+                          )}
+                        </span>
+                      </>
+                    ) : (
+                      <span
+                        style={{
+                          color:
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)",
+                        }}
+                      >
+                        <span className="time-stamp-message-detail">
+                          {eachMessage.time}
+                        </span>
+                        ·
+                        <span className="time-stamp-message-sent-status">
+                          Sent
+                        </span>
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}{" "}
+          {typeIndicatorResult && (
+            <div
+              className="mb-2"
+              style={{
+                padding: "0px 12px 0px 12px",
+              }}
+            >
+              <div
+                style={{
+                  display: "inline-flex",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {typeIndicatorResult.whoIsTypingImage?.slice(0, 3) !== "../" ? (
+                  <img
+                    style={{
+                      borderRadius: "50%",
+                    }}
+                    src={typeIndicatorResult.whoIsTypingImage}
+                    alt=""
+                    width={40}
+                    height={40}
+                  />
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="40"
+                    height="40"
+                    color={
+                      themeName === "dark-theme"
+                        ? "#71767A"
+                        : "rgb(83, 100, 113)"
+                    }
+                    fill="currentColor"
+                    className="bi bi-person-circle"
+                    viewBox="0 0 16 16"
+                    style={{ cursor: "pointer", borderRadius: "50%" }}
+                  >
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                  </svg>
+                )}
+                <div
+                  className={
+                    themeName === "dark-theme"
+                      ? "typing_indicator-dark-theme"
+                      : "typing_indicator-light-theme"
+                  }
                   style={{
-                    padding: "0px 12px 0px 12px",
+                    position: "relative",
+                    padding: "12px 16px",
+                    left: "8px",
+                    width: "90px",
                   }}
                 >
                   <div
                     style={{
-                      display: "inline-flex",
-                      flexDirection: "row",
+                      display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
                     }}
                   >
-                    {typeIndicatorResult.whoIsTypingImage?.slice(0, 3) !==
-                    "../" ? (
-                      <img
-                        style={{
-                          borderRadius: "50%",
-                        }}
-                        src={typeIndicatorResult.whoIsTypingImage}
-                        alt=""
-                        width={40}
-                        height={40}
-                      />
-                    ) : (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="40"
-                        height="40"
-                        color={
-                          themeName === "dark-theme"
-                            ? "#71767A"
-                            : "rgb(83, 100, 113)"
-                        }
-                        fill="currentColor"
-                        className="bi bi-person-circle"
-                        viewBox="0 0 16 16"
-                        style={{ cursor: "pointer", borderRadius: "50%" }}
-                      >
-                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                        <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                      </svg>
-                    )}
                     <div
                       className={
                         themeName === "dark-theme"
-                          ? "typing_indicator-dark-theme"
-                          : "typing_indicator-light-theme"
+                          ? "first-div-dark-theme"
+                          : "first-div-light-theme"
                       }
                       style={{
-                        position: "relative",
-                        padding: "12px 16px",
-                        left: "8px",
-                        width: "90px",
+                        backgroundColor: "#71767a",
+                        borderRadius: "50%",
+                        height: "14px",
+                        width: "14px",
                       }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <div
-                          className={
-                            themeName === "dark-theme"
-                              ? "first-div-dark-theme"
-                              : "first-div-light-theme"
-                          }
-                          style={{
-                            backgroundColor: "#71767a",
-                            borderRadius: "50%",
-                            height: "14px",
-                            width: "14px",
-                          }}
-                        ></div>
-                        <div
-                          className={
-                            themeName === "dark-theme"
-                              ? "second-div-dark-theme"
-                              : "second-div-light-theme"
-                          }
-                          style={{
-                            marginLeft: "5px",
-                            backgroundColor: "#71767a",
-                            borderRadius: "50%",
-                            height: "14px",
-                            width: "14px",
-                          }}
-                        ></div>
-                        <div
-                          className={
-                            themeName === "dark-theme"
-                              ? "third-div-dark-theme"
-                              : "third-div-light-theme"
-                          }
-                          style={{
-                            marginLeft: "5px",
-                            backgroundColor: "#71767a",
-                            borderRadius: "50%",
-                            height: "14px",
-                            width: "14px",
-                          }}
-                        ></div>
-                      </div>
-                    </div>
-                    {/* test */}
+                    ></div>
+                    <div
+                      className={
+                        themeName === "dark-theme"
+                          ? "second-div-dark-theme"
+                          : "second-div-light-theme"
+                      }
+                      style={{
+                        marginLeft: "5px",
+                        backgroundColor: "#71767a",
+                        borderRadius: "50%",
+                        height: "14px",
+                        width: "14px",
+                      }}
+                    ></div>
+                    <div
+                      className={
+                        themeName === "dark-theme"
+                          ? "third-div-dark-theme"
+                          : "third-div-light-theme"
+                      }
+                      style={{
+                        marginLeft: "5px",
+                        backgroundColor: "#71767a",
+                        borderRadius: "50%",
+                        height: "14px",
+                        width: "14px",
+                      }}
+                    ></div>
                   </div>
                 </div>
-              )}
-            </div>
-
-            <div
-              style={{
-                borderBottom:
-                  themeName !== "dark-theme"
-                    ? "1px solid rgba(0, 0, 0, 0.1)"
-                    : // : "0.1px solid rgb(70, 70, 70)",
-                      "1px solid rgb(70, 70, 70)",
-              }}
-            ></div>
-
-            <div
-              style={{
-                position: "relative",
-                transform: width <= 700 ? "" : "translateY(-20%)",
-                display: "flex",
-                alignItems: "center",
-              }}
-              // className="chat-footer-detail"
-              className={
-                width <= 700
-                  ? `chat-footer-detail chat-footer-detail-${themeName}`
-                  : `chat-footer-detail chat-footer-detail-${themeName} mt-3`
-              }
-            >
-              <div className="chat-detail-emoji">
-                {/* emoji mart start to check */}
-
-                <PopupState variant="popover" popupId="demo-popup-popover">
-                  {(popupState) => (
-                    <div>
-                      <Button
-                        {...bindTrigger(popupState)}
-                        style={{
-                          border: "none",
-                          // backgroundColor: "transparent",
-                          padding: "0px",
-                          margin: "0px",
-                          cursor: "pointer",
-                          position: "relative",
-                        }}
-                        variant="text"
-                      >
-                        <div
-                          className={`svg-border-parent svg-border-parent-${themeName}`}
-                          style={{
-                            cursor: "pointer",
-                            borderRadius: "50%",
-                          }}
-                        >
-                          <svg
-                            color="rgb(29,155,240)"
-                            fill="currentColor"
-                            width={20}
-                            height={20}
-                            viewBox="0 0 24 24"
-                            aria-hidden="true"
-                            className="post-modal-emoji-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                            style={{
-                              cursor: "pointer",
-                            }}
-                          >
-                            <g>
-                              <path d="M8 9.5C8 8.119 8.672 7 9.5 7S11 8.119 11 9.5 10.328 12 9.5 12 8 10.881 8 9.5zm6.5 2.5c.828 0 1.5-1.119 1.5-2.5S15.328 7 14.5 7 13 8.119 13 9.5s.672 2.5 1.5 2.5zM12 16c-2.224 0-3.021-2.227-3.051-2.316l-1.897.633c.05.15 1.271 3.684 4.949 3.684s4.898-3.533 4.949-3.684l-1.896-.638c-.033.095-.83 2.322-3.053 2.322zm10.25-4.001c0 5.652-4.598 10.25-10.25 10.25S1.75 17.652 1.75 12 6.348 1.75 12 1.75 22.25 6.348 22.25 12zm-2 0c0-4.549-3.701-8.25-8.25-8.25S3.75 7.451 3.75 12s3.701 8.25 8.25 8.25 8.25-3.701 8.25-8.25z"></path>
-                            </g>
-                          </svg>
-                        </div>
-                      </Button>
-                      <Popover
-                        open={popupState.open}
-                        onClose={popupState.close}
-                        {...bindPopover(popupState)}
-                        // anchorReference="anchorPosition"
-                        // anchorPosition={{ top: 0, left: 0 }}
-                        anchorOrigin={{
-                          vertical: "top",
-                          horizontal: "center",
-                        }}
-                        transformOrigin={{
-                          vertical: "bottom",
-                          horizontal: 140,
-                        }}
-                        // transformOrigin creates problem start to check
-                        // transformOrigin={{
-                        //   vertical: "top",
-                        //   horizontal: "center",
-                        // }}
-                        // transformOrigin creates problem finish to check
-                        className={`${
-                          themeName === "dark-theme"
-                            ? "popover-material-ui-dark-theme"
-                            : themeName !== "dark-theme"
-                            ? "popover-material-ui-light-theme"
-                            : "hideshowMessageDeletePopover "
-                        }`}
-                      >
-                        <Picker
-                          autoFocus
-                          theme={themeName === "dark-theme" ? "dark" : "light"}
-                          data={data}
-                          onEmojiSelect={onEmojiClick}
-                          maxFrequentRows={0}
-                          emojiSize={20}
-                          emojiButtonSize={28}
-                        />
-                      </Popover>
-                    </div>
-                  )}
-                </PopupState>
-                {/* emoji mart finish to check */}
+                {/* test */}
               </div>
-              <input
-                autoFocus
-                // className="message-input"
-                style={{
-                  color: themeName === "dark-theme" ? "white" : "black",
-                }}
-                className={`message-input message-input-${themeName}`}
-                type="text"
-                value={currentMessage}
-                placeholder="Start a new message"
-                onChange={(event) => {
-                  handleChangeCurrentMessage(event);
-                }}
-                onKeyPress={(event) => {
-                  if (event.key === "Enter") {
-                    sendMessage();
-                  }
-                }}
-              />
+            </div>
+          )}
+        </div>
 
-              <button
+        <div
+          style={{
+            borderBottom:
+              themeName !== "dark-theme"
+                ? "1px solid rgba(0, 0, 0, 0.1)"
+                : // : "0.1px solid rgb(70, 70, 70)",
+                  "1px solid rgb(70, 70, 70)",
+          }}
+        ></div>
+
+        <div
+          style={{
+            position: "relative",
+            transform: width <= 700 ? "" : "translateY(-20%)",
+            display: "flex",
+            alignItems: "center",
+          }}
+          // className="chat-footer-detail"
+          className={
+            width <= 700
+              ? `chat-footer-detail chat-footer-detail-${themeName}`
+              : `chat-footer-detail chat-footer-detail-${themeName} mt-3`
+          }
+        >
+          <div className="chat-detail-emoji">
+            {/* emoji mart start to check */}
+
+            <PopupState variant="popover" popupId="demo-popup-popover">
+              {(popupState) => (
+                <div>
+                  <Button
+                    {...bindTrigger(popupState)}
+                    style={{
+                      border: "none",
+                      // backgroundColor: "transparent",
+                      padding: "0px",
+                      margin: "0px",
+                      cursor: "pointer",
+                      position: "relative",
+                    }}
+                    variant="text"
+                  >
+                    <div
+                      className={`svg-border-parent svg-border-parent-${themeName}`}
+                      style={{
+                        cursor: "pointer",
+                        borderRadius: "50%",
+                      }}
+                    >
+                      <svg
+                        color="rgb(29,155,240)"
+                        fill="currentColor"
+                        width={20}
+                        height={20}
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className="post-modal-emoji-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                        style={{
+                          cursor: "pointer",
+                        }}
+                      >
+                        <g>
+                          <path d="M8 9.5C8 8.119 8.672 7 9.5 7S11 8.119 11 9.5 10.328 12 9.5 12 8 10.881 8 9.5zm6.5 2.5c.828 0 1.5-1.119 1.5-2.5S15.328 7 14.5 7 13 8.119 13 9.5s.672 2.5 1.5 2.5zM12 16c-2.224 0-3.021-2.227-3.051-2.316l-1.897.633c.05.15 1.271 3.684 4.949 3.684s4.898-3.533 4.949-3.684l-1.896-.638c-.033.095-.83 2.322-3.053 2.322zm10.25-4.001c0 5.652-4.598 10.25-10.25 10.25S1.75 17.652 1.75 12 6.348 1.75 12 1.75 22.25 6.348 22.25 12zm-2 0c0-4.549-3.701-8.25-8.25-8.25S3.75 7.451 3.75 12s3.701 8.25 8.25 8.25 8.25-3.701 8.25-8.25z"></path>
+                        </g>
+                      </svg>
+                    </div>
+                  </Button>
+                  <Popover
+                    open={popupState.open}
+                    onClose={popupState.close}
+                    {...bindPopover(popupState)}
+                    // anchorReference="anchorPosition"
+                    // anchorPosition={{ top: 0, left: 0 }}
+                    anchorOrigin={{
+                      vertical: "top",
+                      horizontal: "center",
+                    }}
+                    transformOrigin={{
+                      vertical: "bottom",
+                      horizontal: 140,
+                    }}
+                    // transformOrigin creates problem start to check
+                    // transformOrigin={{
+                    //   vertical: "top",
+                    //   horizontal: "center",
+                    // }}
+                    // transformOrigin creates problem finish to check
+                    className={`${
+                      themeName === "dark-theme"
+                        ? "popover-material-ui-dark-theme"
+                        : themeName !== "dark-theme"
+                        ? "popover-material-ui-light-theme"
+                        : "hideshowMessageDeletePopover "
+                    }`}
+                  >
+                    <Picker
+                      autoFocus
+                      theme={themeName === "dark-theme" ? "dark" : "light"}
+                      data={data}
+                      onEmojiSelect={onEmojiClick}
+                      maxFrequentRows={0}
+                      emojiSize={20}
+                      emojiButtonSize={28}
+                    />
+                  </Popover>
+                </div>
+              )}
+            </PopupState>
+            {/* emoji mart finish to check */}
+          </div>
+          <input
+            autoFocus
+            // className="message-input"
+            style={{
+              color: themeName === "dark-theme" ? "white" : "black",
+            }}
+            className={`message-input message-input-${themeName}`}
+            type="text"
+            value={currentMessage}
+            placeholder="Start a new message"
+            onChange={(event) => {
+              handleChangeCurrentMessage(event);
+            }}
+            onKeyPress={(event) => {
+              if (event.key === "Enter") {
+                sendMessage();
+              }
+            }}
+          />
+
+          <button
+            className={`${
+              disabled
+                ? `disabled-button disabled-button-${themeName}`
+                : `send-button send-button-${themeName}`
+            }`}
+            onClick={() => {
+              sendMessage();
+            }}
+          >
+            <div>
+              <svg
+                color="rgb(29,155,204)"
+                fill="currentColor"
+                width={20}
+                height={20}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
                 className={`${
                   disabled
-                    ? `disabled-button disabled-button-${themeName}`
-                    : `send-button send-button-${themeName}`
-                }`}
-                onClick={() => {
-                  sendMessage();
-                }}
+                    ? "disabled disabled-send-button-svg"
+                    : "send-button-svg"
+                } r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03`}
               >
-                <div>
-                  <svg
-                    color="rgb(29,155,204)"
-                    fill="currentColor"
-                    width={20}
-                    height={20}
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    className={`${
-                      disabled
-                        ? "disabled disabled-send-button-svg"
-                        : "send-button-svg"
-                    } r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03`}
-                  >
-                    <g>
-                      <path d="M2.504 21.866l.526-2.108C3.04 19.719 4 15.823 4 12s-.96-7.719-.97-7.757l-.527-2.109L22.236 12 2.504 21.866zM5.981 13c-.072 1.962-.34 3.833-.583 5.183L17.764 12 5.398 5.818c.242 1.349.51 3.221.583 5.183H10v2H5.981z"></path>
-                    </g>
-                  </svg>
-                </div>
-              </button>
+                <g>
+                  <path d="M2.504 21.866l.526-2.108C3.04 19.719 4 15.823 4 12s-.96-7.719-.97-7.757l-.527-2.109L22.236 12 2.504 21.866zM5.981 13c-.072 1.962-.34 3.833-.583 5.183L17.764 12 5.398 5.818c.242 1.349.51 3.221.583 5.183H10v2H5.981z"></path>
+                </g>
+              </svg>
             </div>
+          </button>
+        </div>
 
-            {/* finish to check render messages with spesific user  */}
-          </Col>
-          {/* finish to check main column  */}
-
-          {/* 3.column burası olucak */}
-
-          <RightSideColumn />
-        </Row>
-      </Container>
+        {/* finish to check render messages with spesific user  */}
+      </Col>
     </>
   );
 }

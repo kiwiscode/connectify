@@ -9,7 +9,7 @@ import axios from "axios";
 import "../../index.css";
 import Popover from "@mui/material/Popover";
 import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
-import { message, Steps } from "antd";
+import { Steps } from "antd";
 import { Divider, List } from "antd";
 import LoadingSpinner from "../ui/LoadingSpinner";
 import { ThemeContext } from "../../context/ThemeContext";
@@ -40,6 +40,7 @@ const API_URL = "http://localhost:3000";
 // ?
 
 import io from "socket.io-client";
+import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
 const socket = io.connect(API_URL);
 function LogoutModal({ sendDataToParent }) {
   const [logoutModalWhichOneOpened, setlogoutModalWhichOneOpened] =
@@ -54,24 +55,6 @@ function LogoutModal({ sendDataToParent }) {
     toggleThemeBetweenLightDarkMode,
     toggleChangeFontSize,
   ] = useContext(ThemeContext);
-  const [messageApi, contextHolder] = message.useMessage();
-  const successMessage = () => {
-    messageApi.success({
-      type: "success",
-      content: "Your password has been successfully updated.",
-      duration: 4,
-      className: "custom-message-style",
-    });
-  };
-
-  const wrongPasswordMessage = () => {
-    messageApi.success({
-      type: "success",
-      content: "The password you entered was incorrect.",
-      duration: 4,
-      className: "custom-message-style",
-    });
-  };
 
   const data = [
     "See your account information like your phone number and email address.",
@@ -144,7 +127,7 @@ function LogoutModal({ sendDataToParent }) {
     }
   }, [deactivatePassword]);
 
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
 
   const [initialOptionClicked, setInitialOptionClicked] = useState(false);
   const steps = [
@@ -516,8 +499,8 @@ function LogoutModal({ sendDataToParent }) {
       .then(() => {
         setTimeout(() => {
           logout();
-          navigate("/");
           setshowLogoutSpinner(false);
+          navigate("/");
         }, 1000);
       })
       .catch((err) => {
@@ -685,7 +668,7 @@ function LogoutModal({ sendDataToParent }) {
           seterrorInput3("");
           seterrorInput4("");
 
-          successMessage();
+          showCustomMessage("Your password has been successfully updated.", 4);
         })
         .catch((error) => {
           if (error.response.status === 402) {
@@ -880,14 +863,7 @@ function LogoutModal({ sendDataToParent }) {
   };
   const [verificationCodeInput, setVerificationCodeInput] = useState("");
 
-  const catchErrorMessage = (message) => {
-    messageApi.success({
-      type: "success",
-      content: message,
-      duration: 4,
-      className: "custom-message-style",
-    });
-  };
+  const { showCustomMessage, contextHolder } = useAntdMessageHandler();
 
   const [
     verificationCodeSuccessChangePasswordScreen,
@@ -983,10 +959,12 @@ function LogoutModal({ sendDataToParent }) {
       {width <= 700 && (
         <Modal
           style={{
-            height: "100%",
+            height: "100vh",
             margin: "0px",
             padding: "0px",
             backgroundColor: themeName === "dark-theme" ? "black" : "white",
+            zIndex: 9999,
+            width: "100%",
           }}
           show={showDisplayOptionsModal}
           onHide={handleCloseDisplayOptionsModal}
@@ -1614,6 +1592,7 @@ function LogoutModal({ sendDataToParent }) {
               style={{
                 display: "flex",
                 justifyContent: "space-around",
+                alignItems: "center",
               }}
             >
               <div
@@ -1654,9 +1633,7 @@ function LogoutModal({ sendDataToParent }) {
                     borderRadius: "50%",
                     border: "none",
                   }}
-                >
-                  {/* <div>B</div> */}
-                </div>
+                ></div>
               </Tooltip>
 
               <Tooltip title="This feature is not yet active. ">
@@ -1670,9 +1647,7 @@ function LogoutModal({ sendDataToParent }) {
                     alignItems: "center",
                     borderRadius: "50%",
                   }}
-                >
-                  {/* <div>C</div> */}
-                </div>
+                ></div>
               </Tooltip>
 
               <Tooltip title="This feature is not yet active. ">
@@ -1686,9 +1661,7 @@ function LogoutModal({ sendDataToParent }) {
                     alignItems: "center",
                     borderRadius: "50%",
                   }}
-                >
-                  {/* <div>D</div> */}
-                </div>
+                ></div>
               </Tooltip>
 
               <Tooltip title="This feature is not yet active. ">
@@ -1702,9 +1675,7 @@ function LogoutModal({ sendDataToParent }) {
                     alignItems: "center",
                     borderRadius: "50%",
                   }}
-                >
-                  {/* <div>E</div> */}
-                </div>
+                ></div>
               </Tooltip>
 
               <Tooltip title="This feature is not yet active. ">
@@ -1718,9 +1689,7 @@ function LogoutModal({ sendDataToParent }) {
                     alignItems: "center",
                     borderRadius: "50%",
                   }}
-                >
-                  {/* <div>F</div> */}
-                </div>
+                ></div>
               </Tooltip>
             </div>
           </div>
@@ -1821,7 +1790,7 @@ function LogoutModal({ sendDataToParent }) {
                           width: "20px",
                           height: "20px",
                           position: "relative",
-                          left: "10px",
+                          // left: "10px",
                           top: "10px",
                           borderRadius: "50%",
                         }}
@@ -1910,7 +1879,7 @@ function LogoutModal({ sendDataToParent }) {
                             width: "20px",
                             height: "20px",
                             position: "relative",
-                            left: "10px",
+                            // left: "10px",
                             top: "10px",
                             borderRadius: "50%",
                           }}
@@ -2069,6 +2038,7 @@ function LogoutModal({ sendDataToParent }) {
                   : showLogoutSpinner && themeName === "dark-theme"
                   ? "black"
                   : "",
+              zIndex: 99999,
             }}
             size="sm"
             centered={true}
@@ -2118,6 +2088,7 @@ function LogoutModal({ sendDataToParent }) {
               : showLogoutModal && themeName === "dark-theme"
               ? "#232E36"
               : "",
+          zIndex: 9999,
         }}
         size="sm"
         centered={true}
@@ -3768,7 +3739,12 @@ function LogoutModal({ sendDataToParent }) {
                     className="deactivate-next-btn deactivate-tab-next-btn"
                     variant="info"
                     onClick={() =>
-                      confirmed ? next() : wrongPasswordMessage()
+                      confirmed
+                        ? next()
+                        : showCustomMessage(
+                            "The password you entered was incorrect.",
+                            4
+                          )
                     }
                   >
                     Next
@@ -4153,7 +4129,7 @@ function LogoutModal({ sendDataToParent }) {
                     verificationCodeInput ===
                     receivedVerificationCodeForPasswordChange
                       ? handleTabChangeAfterSuccessVerificationCode()
-                      : catchErrorMessage("Invalid verification code.");
+                      : showCustomMessage("Invalid verification code.", 4);
                   }}
                   className={"change-password-btn"}
                 >
