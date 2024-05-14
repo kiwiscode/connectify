@@ -190,14 +190,9 @@ function PostEngagements({
   console.log("All following ids => ", allFollowingIds());
   console.log("Detailed post id =>", detailedPost._id);
 
-  const [
-    { theme, themeName },
-    lightModeActive,
-    darkModeActive,
-    cyberpunkModeActive,
-  ] = useContext(ThemeContext);
+  const [{ theme, themeName }] = useContext(ThemeContext);
 
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
 
   return (
     <>

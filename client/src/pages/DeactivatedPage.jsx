@@ -93,7 +93,7 @@ function DeactivatedPage() {
     navigate("/");
   };
 
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   return (
     <>
       {/* start to check signup modal  */}

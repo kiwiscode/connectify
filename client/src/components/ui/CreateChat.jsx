@@ -143,7 +143,7 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
   console.log("Active users =>", activeUsers);
   console.log("Filtered users =>", filteredUsers);
 
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   return (
     <>
       {messagesPageWriteAmESSAGEoPTION ? (

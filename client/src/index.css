@@ -3363,7 +3363,7 @@ select {
 
 .comment-modal {
   width: 600px !important;
-  height: auto !important;
+  min-height: 315px !important;
 }
 
 .ss {
@@ -3824,7 +3824,7 @@ input[data-autocompleted] {
 
 .animate-length-slideUp {
   position: absolute;
-  bottom: 0px;
+  bottom: 5px;
   animation: slideUp 0.5s ease forwards;
 }
 
@@ -3955,10 +3955,7 @@ themeName === "dark-theme"
 }
 /* material ui popover style classnames general finish to check  */
 
-/* emoji picker styling for dark theme start to check general  */
-
-/* emoji picker styling for dark theme finish to check general  */
-
+/* organization type styling start to check  */
 .popover-arrow::after {
   display: none !important;
 }
@@ -3966,3 +3963,107 @@ themeName === "dark-theme"
 .popover-arrow::before {
   display: none !important;
 }
+/* organization type styling finish to check  */
+
+/*scrollbar general styling for website parent app.jsx start to check */
+
+/* scrollbar styling general start to check  */
+.light-theme::-webkit-scrollbar {
+  width: 1em;
+}
+
+.light-theme::-webkit-scrollbar-track {
+  background: #f7f9f9;
+  border-top-right-radius: 100vw;
+  border-bottom-right-radius: 100vw;
+  margin-block: 0.5em;
+  padding: 0;
+  margin: 0;
+}
+
+.light-theme::-webkit-scrollbar-thumb {
+  background: #b9cad3;
+  border-radius: 100vw;
+  width: 5px;
+  border: 0.25em solid #f7f9f9;
+}
+
+.dark-theme::-webkit-scrollbar {
+  width: 1em;
+}
+
+.dark-theme::-webkit-scrollbar-track {
+  background: #3e4144;
+  margin-block: 0.5em;
+  padding: 0;
+  margin: 0;
+}
+
+.dark-theme::-webkit-scrollbar-thumb {
+  background: #3e4144;
+  border-radius: 100vw;
+  width: 5px;
+  border: 0.25em solid #16181c;
+}
+/* scrollbar- dark theme styling finish to check  */
+
+/* scrollbar styling general finish to check  */
+/*scrollbar general styling for website parent app.jsx start to check */
+
+/*scrollbar general styling for website parent app.jsx finish to check */
+
+@keyframes postSharingLineAnimation {
+  0% {
+    width: 0px;
+  }
+
+  100% {
+    width: 550px;
+  }
+}
+
+.post_sharing_line_animation {
+  animation: postSharingLineAnimation 1s ease 0s 1 normal forwards;
+  animation-fill-mode: both;
+}
+
+.paused {
+  width: 550px !important;
+  animation-play-state: paused;
+  animation-fill-mode: both;
+}
+
+.running {
+  animation-play-state: running;
+}
+
+@keyframes pageOpenAnimation {
+  0% {
+    opacity: 0;
+    height: 0px;
+  }
+  20% {
+    opacity: 0.4;
+    height: 100px;
+  }
+
+  50% {
+    opacity: 0.8;
+    height: 200px;
+  }
+
+  80% {
+    opacity: 1;
+    height: 300px;
+  }
+  100% {
+    opacity: 1;
+    height: 359px;
+  }
+}
+
+/* .popover-material-ui-light-theme .MuiPaper-root {
+  animation: pageOpenAnimation 0.2s linear forwards; */
+/* height: 359px; */
+/* height: auto; */
+/* } */

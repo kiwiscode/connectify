@@ -12,7 +12,7 @@ import "../../index.css";
 import dataEmojiMartPicker from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 
-import { Divider, message } from "antd";
+import { Divider } from "antd";
 import LoadingSpinner from "./LoadingSpinner";
 import useWindowDimensions from "../../hooks/getWindowDimensions";
 import {
@@ -33,14 +33,10 @@ const API_URL = "http://localhost:3000";
 // ?
 import io from "socket.io-client";
 import PopupState, { bindPopover, bindTrigger } from "material-ui-popup-state";
+import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
 const socket = io.connect(`${API_URL}`);
 function SigninModal({ deactivatedScreen, widthSmaller700 }) {
-  const [
-    { theme, themeName },
-    lightModeActive,
-    darkModeActive,
-    cyberpunkModeActive,
-  ] = useContext(ThemeContext);
+  const [{ theme, themeName }] = useContext(ThemeContext);
 
   const googleAuth = () => {
     window.open(`${API_URL}/auth/google/callback`, "_self");
@@ -51,16 +47,8 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
   const [error, setError] = useState("");
   const { updateUser } = useContext(UserContext);
   const [show, setShow] = useState(false);
-  const [messageApi, contextHolder] = message.useMessage();
 
-  const catchErrorMessage = (message) => {
-    messageApi.success({
-      type: "success",
-      content: message,
-      duration: 4,
-      className: "custom-message-style",
-    });
-  };
+  const { showCustomMessage, contextHolder } = useAntdMessageHandler();
 
   const handleClose = () => {
     setTabIndex(0);
@@ -103,7 +91,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
 
   const [userdeletiondate, setUserdeletiondate] = useState(null);
 
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
 
   const [loginInput, setLoginInput] = useState({
     usernameOrEmail: "",
@@ -131,7 +119,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
         console.log("Error is running right now !", err);
         if (err) {
           if (err.response.status === 400) {
-            catchErrorMessage("Sorry, we could not find your account.");
+            showCustomMessage("Sorry, we could not find your account.", 4);
           }
         }
       });
@@ -161,7 +149,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
       .catch((error) => {
         console.log("Error =>", error);
         if (error.response.status === 501) {
-          catchErrorMessage("Wrong password!");
+          showCustomMessage("Wrong password!", 4);
         } else if (error.response.status === 400) {
           setTabLoading(true);
           setTimeout(() => {
@@ -313,7 +301,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
       })
       .catch((error) => {
         console.log("Error =>", error);
-        catchErrorMessage("Sorry, we could not find your account.");
+        showCustomMessage("Sorry, we could not find your account.", 4);
       });
   };
 
@@ -538,7 +526,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
       .catch((error) => {
         const errorStatu = error.response.status;
         if (errorStatu === 501) {
-          catchErrorMessage("Incorrect. Please try again.");
+          showCustomMessage("Incorrect. Please try again.", 4);
         }
       });
   };
@@ -1779,8 +1767,9 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   verificationCodeInput ===
                                   receivedVerificationCodeForPasswordChange
                                     ? handleTabChange()
-                                    : catchErrorMessage(
-                                        "Invalid verification code."
+                                    : showCustomMessage(
+                                        "Invalid verification code.",
+                                        4
                                       );
                                 }}
                                 className={`login-button ${themeName}-white-btn`}
@@ -3816,8 +3805,9 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 verificationCodeInput ===
                                 receivedVerificationCodeForPasswordChange
                                   ? handleTabChange()
-                                  : catchErrorMessage(
-                                      "Invalid verification code."
+                                  : showCustomMessage(
+                                      "Invalid verification code.",
+                                      4
                                     );
                               }}
                               className={`login-button ${themeName}-white-btn`}
@@ -5035,8 +5025,6 @@ function CommentModal({
   height,
   refreshPosts,
   isImagePostDetail,
-  setLoadingTrue,
-  setLoadingFalse,
   postSharedMessage,
   sendDataToParent,
 }) {
@@ -5153,6 +5141,8 @@ function CommentModal({
   };
 
   const handleAddComment = (postId) => {
+    startPostSharingAnimationActivate();
+
     axios
       .post(`${API_URL}/comment`, {
         userId: userInfo._id,
@@ -5161,23 +5151,34 @@ function CommentModal({
         modalImage,
       })
       .then((response) => {
-        handleClose();
+        const lineElement = document.querySelector(
+          ".post_sharing_line_animation"
+        );
+        setTimeout(() => {
+          cancelPostSharingAnimationActivate();
+          lineElement.classList.add("paused");
+          lineElement.classList.remove("post_sharing_line_animation");
+        }, 300);
+
+        setTimeout(() => {
+          lineElement.classList.remove("paused");
+        }, 350);
         setModalImage("");
         setContent("");
-        if (setLoadingTrue) {
-          setLoadingTrue();
-        }
+
         setTimeout(() => {
-          handleNotification(post, userInfo, "comment");
-          if (setLoadingFalse) {
-            setLoadingFalse();
-          }
-          refreshPosts();
           postSharedMessage(
             response.data.createdPost.authorUserName,
             response.data.createdPost._id
           );
-        }, 200);
+          if (refreshPosts) {
+            refreshPosts();
+          }
+          handleNotification(post, userInfo, "comment");
+          setModalImage("");
+          setContent("");
+          handleClose();
+        }, 350);
       })
       .catch((error) => {
         console.log("Error message =>", error);
@@ -5224,6 +5225,18 @@ function CommentModal({
   }, []);
 
   const [commentIconHovered, setCommentIconHovered] = useState(null);
+
+  const [
+    postSharingStartedActivateAnimate,
+    setPostSharingStartedActivateAnimate,
+  ] = useState(null);
+  const startPostSharingAnimationActivate = () => {
+    setPostSharingStartedActivateAnimate(true);
+  };
+
+  const cancelPostSharingAnimationActivate = () => {
+    setPostSharingStartedActivateAnimate(null);
+  };
 
   return (
     <>
@@ -5332,6 +5345,23 @@ function CommentModal({
         }
         dialogClassName={windowWidth <= 700 ? "modal-fullscreen" : ""}
       >
+        {" "}
+        <div
+          className={
+            postSharingStartedActivateAnimate
+              ? "post_sharing_line_animation"
+              : ""
+          }
+          style={{
+            display: postSharingStartedActivateAnimate ? "" : "none",
+            position: "absolute",
+            border: "2px solid #1C9BEF",
+            height: "0.2rem",
+            top: "0px",
+            borderTopLeftRadius: "4px",
+            marginLeft: "6px",
+          }}
+        ></div>
         <div
           onClick={handleClose}
           style={{
@@ -5371,7 +5401,6 @@ function CommentModal({
             </svg>{" "}
           </div>
         </div>
-
         {/* start to check twitterdaki gibi post içeriği gelecek body içerisine  */}
         <Modal.Body
           className="mt-3"
@@ -5917,8 +5946,14 @@ function CommentModal({
           </div>
         </Modal.Body>
         {/* finish to check twitterdaki gibi post içeriği gelecek body içerisine  */}
-
-        <Modal.Footer style={{ border: "none" }}>
+        <Modal.Footer
+          style={{
+            paddingBottom: "0px",
+            paddingTop: "0px",
+            margin: "0px",
+            border: "none",
+          }}
+        >
           <Stack direction="horizontal" gap={0}>
             {/* INFO */}
 
