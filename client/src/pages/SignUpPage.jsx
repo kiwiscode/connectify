@@ -17,10 +17,10 @@ import {
 
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import { UserContext } from "../context/UserContext";
-import { message } from "antd";
 import { useNavigate } from "react-router-dom";
 import useWindowDimensions from "../hooks/getWindowDimensions";
 import { ThemeContext } from "../context/ThemeContext";
+import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -29,12 +29,7 @@ const API_URL = "http://localhost:3000";
 // ?
 
 function SignUpPage() {
-  const [
-    { theme, themeName },
-    lightModeActive,
-    darkModeActive,
-    cyberpunkModeActive,
-  ] = useContext(ThemeContext);
+  const [{ theme, themeName }] = useContext(ThemeContext);
 
   const [fullname, setFullname] = useState("");
   const [fullnameFilled, setfullnameFilled] = useState(false);
@@ -44,7 +39,6 @@ function SignUpPage() {
   const [success, setSuccess] = useState("");
   const { getToken, updateUser } = useContext(UserContext);
   const navigate = useNavigate();
-  const [messageApi, contextHolder] = message.useMessage();
 
   const [signedUpWithGoogle, setsignedUpWithGoogle] = useState(false);
   const [signedUpWithVariantOne, setsignedUpWithVariantOne] = useState(false);
@@ -53,14 +47,8 @@ function SignUpPage() {
     window.open(`${API_URL}/auth/google/callback`, "_self");
   };
 
-  const catchErrorMessage = (message) => {
-    messageApi.success({
-      type: "success",
-      content: message,
-      duration: 4,
-      className: "custom-message-style",
-    });
-  };
+  const { showCustomMessage, contextHolder } = useAntdMessageHandler();
+
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (e) => {
@@ -502,7 +490,10 @@ function SignUpPage() {
   const errorMessageAndCleanTextInput = () => {
     setTimeout(() => {
       setconfirmEmailVerificationCode("");
-      catchErrorMessage("The code you entered is incorrect. Please try again.");
+      showCustomMessage(
+        "The code you entered is incorrect. Please try again.",
+        4
+      );
     }, 300);
   };
 

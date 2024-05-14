@@ -1,5 +1,5 @@
-import { useEffect, useState, useContext, useRef } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
+import { NavLink } from "react-router-dom";
 
 import LogoutModal from "./LogoutModal";
 import axios from "axios";
@@ -13,25 +13,16 @@ import { ThemeContext } from "../../context/ThemeContext";
 import useWindowDimensions from "../../hooks/getWindowDimensions";
 import Popover from "@mui/material/Popover";
 import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
+import { ModalVisibilityContext } from "../../context/ModalVisibilityContext";
+import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
+
 // when working on local version
 const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-function LeftSideNavBar({
-  refreshPosts,
-  setLoadingTrue,
-  setLoadingFalse,
-  visible,
-  parentCallBack,
-  parentCallBackSecond,
-}) {
-  const [
-    { theme, themeName },
-    lightModeActive,
-    darkModeActive,
-    cyberpunkModeActive,
-  ] = useContext(ThemeContext);
+function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
+  const [{ theme, themeName }] = useContext(ThemeContext);
 
   const [isHomeRouteActive, setIsHomeRouteActive] = useState(false);
   const [isNotificationsRouteActive, setIsNotificationsRouteActive] =
@@ -39,8 +30,6 @@ function LeftSideNavBar({
 
   const [isMessagesRouteActive, setIsMessagesRouteActive] = useState(false);
   const [isProfileRouteActive, setIsProfileRouteActive] = useState(false);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const getClickLocation = (e) => {
@@ -116,7 +105,6 @@ function LeftSideNavBar({
   const { getToken, userInfo } = useContext(UserContext);
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [showEmojisBar, setshowEmojisBar] = useState("hide");
-  const [showSecondModal, setShowSecondModal] = useState(false);
   const maxCharacters = 140;
 
   const [modalImage, setModalImage] = useState("");
@@ -144,19 +132,24 @@ function LeftSideNavBar({
     }
   };
 
+  const { togglePostModalVisibility } = useContext(ModalVisibilityContext);
+
   const handleClose = () => {
     setShow(false);
-    setShowSecondModal(false);
-    parentCallBackSecond(false);
+    togglePostModalVisibility();
+    // parentCallBackSecond(false);
   };
   const handleShow = () => {
-    parentCallBackSecond(true);
     setShow(true);
+    togglePostModalVisibility();
+    // parentCallBackSecond(true);
   };
+
+  const { postSharedMessage, contextHolder } = useAntdMessageHandler();
 
   const handlePost = () => {
     if (content || chosenEmoji || modalImage) {
-      handleClose();
+      startPostSharingAnimationActivate();
       axios
         .post(
           `${API_URL}/home/post`,
@@ -172,21 +165,32 @@ function LeftSideNavBar({
         )
 
         .then((response) => {
-          if (setLoadingTrue) {
-            setLoadingTrue();
-          }
-
-          setModalImage("");
+          const lineElement = document.querySelector(
+            ".post_sharing_line_animation"
+          );
           setTimeout(() => {
-            parentCallBack(response.data.createdPost);
-            if (setLoadingTrue) {
-              setLoadingFalse();
-            }
+            cancelPostSharingAnimationActivate();
+            lineElement.classList.add("paused");
+            lineElement.classList.remove("post_sharing_line_animation");
+          }, 300);
+
+          setTimeout(() => {
+            lineElement.classList.remove("paused");
+          }, 350);
+
+          setTimeout(() => {
+            postSharedMessage(
+              response.data.createdPost.authorUserName,
+              response.data.createdPost._id
+            );
             if (refreshPosts) {
               refreshPosts();
             }
-          }, 200);
-          setContent("");
+            setIsPostShared(false);
+            setModalImage("");
+            setContent("");
+            handleClose();
+          }, 350);
         })
         .catch((err) => {
           return err;
@@ -230,20 +234,6 @@ function LeftSideNavBar({
 
     return () => {
       document.body.removeEventListener("click", closeEmojiContainer);
-    };
-  }, []);
-
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-
-  const handleResize = () => {
-    setWindowWidth(window.innerWidth);
-  };
-
-  useEffect(() => {
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -298,7 +288,7 @@ function LeftSideNavBar({
     getActiveUserInfo();
   }, []);
 
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
 
   const [userMessageDetails, setUserMessageDetails] = useState([]);
 
@@ -340,13 +330,22 @@ function LeftSideNavBar({
   const handleDataFromChildLogoutModal = (data) => {
     setDataFromChildLogoutModalWhichOptionChoosen(data);
   };
-  console.log(
-    "Data from child logout modal =>",
-    dataFromChildLogoutModalWhichOptionChoosen
-  );
+
+  const [
+    postSharingStartedActivateAnimate,
+    setPostSharingStartedActivateAnimate,
+  ] = useState(null);
+  const startPostSharingAnimationActivate = () => {
+    setPostSharingStartedActivateAnimate(true);
+  };
+
+  const cancelPostSharingAnimationActivate = () => {
+    setPostSharingStartedActivateAnimate(null);
+  };
 
   return (
     <>
+      {contextHolder}
       <Col
         style={{
           padding: "16px",
@@ -730,29 +729,6 @@ function LeftSideNavBar({
               <Button
                 variant="primary"
                 onClick={handleShow}
-                className={`responsive-post-button ${
-                  visible ? "visible" : "hidden"
-                }`}
-                size="sm"
-              >
-                <svg
-                  width={24}
-                  height={24}
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  className=" compose-tweet-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1472mwg r-lrsllp"
-                  fill="currentColor"
-                  style={{ color: "rgb(255, 255, 255)" }}
-                >
-                  <g>
-                    <path d="M23 3c-6.62-.1-10.38 2.421-13.05 6.03C7.29 12.61 6 17.331 6 22h2c0-1.007.07-2.012.19-3H12c4.1 0 7.48-3.082 7.94-7.054C22.79 10.147 23.17 6.359 23 3zm-7 8h-1.5v2H16c.63-.016 1.2-.08 1.72-.188C16.95 15.24 14.68 17 12 17H8.55c.57-2.512 1.57-4.851 3-6.78 2.16-2.912 5.29-4.911 9.45-5.187C20.95 8.079 19.9 11 16 11zM4 9V6H1V4h3V1h2v3h3v2H6v3H4z"></path>
-                  </g>
-                </svg>
-              </Button>
-
-              <Button
-                variant="primary"
-                onClick={handleShow}
                 // className="compose-tweet compose-tweet-2"
                 className={`compose-tweet compose-tweet-2 `}
                 size="sm"
@@ -803,6 +779,21 @@ function LeftSideNavBar({
                 show={show}
                 onHide={handleClose}
               >
+                <div
+                  className={
+                    postSharingStartedActivateAnimate
+                      ? "post_sharing_line_animation"
+                      : ""
+                  }
+                  style={{
+                    display: postSharingStartedActivateAnimate ? "" : "none",
+                    position: "absolute",
+                    border: "2px solid #1C9BEF",
+                    height: "0.2rem",
+                    top: "0px",
+                    borderTopLeftRadius: "4px",
+                  }}
+                ></div>
                 <>
                   <div
                     onClick={handleClose}
@@ -891,6 +882,7 @@ function LeftSideNavBar({
                       </div>
                       <div className="p-0 ">
                         <textarea
+                          autoFocus
                           onChange={handleChange}
                           rows="4"
                           cols="50"
@@ -994,6 +986,8 @@ function LeftSideNavBar({
                           : // : "0.1px solid rgb(70, 70, 70)",
                             "1px solid rgb(70, 70, 70)",
                       padding: "2px",
+                      marginLeft: "10px",
+                      marginRight: "10px",
                     }}
                     className="post-modal-footer"
                   >
@@ -1002,9 +996,7 @@ function LeftSideNavBar({
                       <div
                         style={{
                           position: "relative",
-                          left: "8px",
                         }}
-                        className="image-choose-p-2"
                         onClick={() =>
                           document.getElementById("formuploadModal").click()
                         }
@@ -1045,7 +1037,8 @@ function LeftSideNavBar({
                         />
                       </div>
                       {/* INFO */}
-                      <div className="p-1">
+
+                      <div>
                         {/* emoji mart start to check */}
                         <PopupState
                           variant="popover"
@@ -1139,7 +1132,10 @@ function LeftSideNavBar({
                               border: "none",
                             }}
                             variant="primary"
-                            onClick={() => handlePost()}
+                            onClick={() => {
+                              handlePost();
+                              refreshPosts();
+                            }}
                             className={`post-btn compose-tweet-textArea`}
                           >
                             Post
