@@ -51,6 +51,9 @@ const handleGetFavorites = (req, res) => {
 const handleAddFavorite = (req, res) => {
   const { postId } = req.body;
   const { userId } = req.user;
+
+  console.log("Post id =>", postId);
+  console.log("User id =>", userId);
   User.findById(userId)
     .populate("favorites")
     .then((user) => {
@@ -144,6 +147,7 @@ const handleAddFavorite = (req, res) => {
               repostedPost[0].save();
               post.likes.unshift(user);
               post.save();
+
               user.favorites.unshift(post);
 
               Favorite.create({
@@ -541,10 +545,44 @@ const handleDeleteFavorite = (req, res) => {
                 return eachLike._id.toString() !== userId;
               });
 
-              post.likes = filterPostLikes;
-              post.save();
-              originalPost[0].likes = filterPostLikes;
-              originalPost[0].save();
+              // post.likes = filterPostLikes;
+              // post.save();
+              // originalPost[0].likes = filterPostLikes;
+              // originalPost[0].save();
+
+              Post.findOneAndUpdate(
+                { _id: post._id },
+                { likes: filterPostLikes },
+                { new: true }
+              )
+                .then((updatedPost) => {
+                  if (updatedPost) {
+                    return Post.findOneAndUpdate(
+                      { _id: originalPost[0]._id },
+                      { likes: filterPostLikes },
+                      { new: true }
+                    );
+                  } else {
+                    throw new Error("İlk post güncelleme işlemi başarısız!");
+                  }
+                })
+                .then((secondUpdatedPost) => {
+                  if (secondUpdatedPost) {
+                    console.log(
+                      "İkinci post güncelleme işlemi başarılı:",
+                      secondUpdatedPost
+                    );
+                    res.status(200).json({ message: "Post güncellendi!" });
+                  } else {
+                    throw new Error("İkinci post güncelleme işlemi başarısız!");
+                  }
+                })
+                .catch((error) => {
+                  console.error("Hata oluştu:", error.message);
+                  res
+                    .status(500)
+                    .json({ errorMessage: "Internal server error!" });
+                });
 
               // NOTE start to check delete if favorite notification
 
@@ -672,12 +710,16 @@ const handleDeleteFavorite = (req, res) => {
                 .then((foundItem) => {
                   if (foundItem) {
                     const mainId = foundItem._id;
-                    Favorite.findByIdAndDelete(mainId).then(() => {
-                      res.status(200).json({
-                        message:
-                          "Favorite deleted from favorites model,user favorites array and post likes... and from notifications if exist",
+                    Favorite.findByIdAndDelete(mainId)
+                      .then(() => {
+                        console.log("Belirtilen favori başarıyla silindi.");
+                      })
+                      .catch((error) => {
+                        console.error("Hata oluştu:", error.message);
+                        res
+                          .status(500)
+                          .json({ errorMessage: "Internal server error!" });
                       });
-                    });
                   }
                 })
                 .catch(() => {
