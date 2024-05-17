@@ -1704,7 +1704,7 @@ function MainPage({ isNewPostShared }) {
             : ""
         } // 992px - 1400px aralığı
         xxl={5} // 1400px ve sonrası aralığı
-        className={`main-column `}
+        className={`main-column`}
         style={{
           borderLeft:
             themeName !== "dark-theme"
