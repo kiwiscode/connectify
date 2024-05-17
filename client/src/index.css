@@ -1455,7 +1455,11 @@ span > a:hover {
 
 @media (max-width: 991px) and (min-width: 768px) {
   .main-column {
-    width: 91% !important;
+    width: 89% !important;
+  }
+
+  .main-column-left-side-nav-bar {
+    margin: 0 auto !important;
   }
 
   .nav-bar-home div a div div span,
@@ -1519,7 +1523,11 @@ span > a:hover {
 
 @media (max-width: 767px) and (min-width: 576px) {
   .main-column {
-    width: 90% !important;
+    width: 89% !important;
+  }
+
+  .main-column-left-side-nav-bar {
+    margin: 0 auto !important;
   }
 
   .nav-bar-home div a div div span,
@@ -1572,9 +1580,13 @@ span > a:hover {
   }
 }
 
-@media (max-width: 600px) and (min-width: 500px) {
+@media (max-width: 600px) and (min-width: 501px) {
   .main-column {
-    width: 88% !important;
+    width: 89% !important;
+  }
+
+  .main-column-left-side-nav-bar {
+    margin: 0 auto !important;
   }
 
   .nav-bar-home div a div div span,
@@ -4067,3 +4079,45 @@ themeName === "dark-theme"
 /* height: 359px; */
 /* height: auto; */
 /* } */
+
+.animated-heart-beat {
+  animation: heartbeat 1s linear forwards;
+}
+
+@keyframes heartbeat {
+  0% {
+    transform: scale(0.75);
+  }
+  20% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(0.75);
+  }
+  60% {
+    transform: scale(1);
+  }
+  80% {
+    transform: scale(0.75);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* left side nav bar new effects styles start to check  */
+.hover-home:hover {
+  background-color: #e7e7e8;
+  transition-duration: 0.2s;
+}
+
+.hover-home-dark-theme:hover {
+  background-color: #181818 !important;
+  transition-duration: 0.2s;
+}
+/* left side nav bar new effects styles finish to check  */
+
+.post-btn-left-side-nav-bar:hover {
+  background-color: #198cd8;
+  transition-duration: 0.2s;
+}

@@ -55,6 +55,7 @@ function RightSideColumn({
   tabIndexValue,
   isSubscriptionCompleted,
   widthSmaller700,
+  sendModalClosedStatusToLogoutModal = () => {}, // Default value
 }) {
   const [{ theme, themeName }, toggleThemeBetweenLightDarkMode] =
     useContext(ThemeContext);
@@ -1357,6 +1358,7 @@ function RightSideColumn({
                 overflowY: "hidden",
                 margin: "0px",
                 padding: "0px",
+
                 backgroundColor: themeName === "dark-theme" ? "black" : "white",
               }}
               dialogClassName={"modal-fullscreen"}
@@ -1381,7 +1383,9 @@ function RightSideColumn({
                     }}
                   >
                     <div
-                      onClick={handleCloseSubscriptionModal}
+                      onClick={() => {
+                        handleCloseSubscriptionModal();
+                      }}
                       className={`close-button close-button-${themeName}`}
                       style={{
                         borderRadius: "50%",
@@ -9022,7 +9026,9 @@ function RightSideColumn({
                     }}
                   >
                     <div
-                      onClick={handleCloseSubscriptionModal}
+                      onClick={() => {
+                        handleCloseSubscriptionModal();
+                      }}
                       className={`close-button close-button-${themeName}`}
                       style={{
                         borderRadius: "50%",
@@ -9352,7 +9358,9 @@ function RightSideColumn({
                     >
                       {" "}
                       <div
-                        onClick={handleCloseSubscriptionModal}
+                        onClick={() => {
+                          handleCloseSubscriptionModal();
+                        }}
                         style={{
                           borderRadius: "50%",
                           cursor: "pointer",
@@ -13617,7 +13625,9 @@ function RightSideColumn({
                       {subTabIndexFromOrganizationSelect !== 3 ? (
                         <>
                           <div
-                            onClick={handleCloseSubscriptionModal}
+                            onClick={() => {
+                              handleCloseSubscriptionModal();
+                            }}
                             style={{
                               cursor: "pointer",
                               position: "relative",
@@ -15560,7 +15570,9 @@ function RightSideColumn({
                       className="signin-modal-body-child-non-reactivate sub-modal"
                     >
                       <div
-                        onClick={handleCloseSubscriptionModal}
+                        onClick={() => {
+                          handleCloseSubscriptionModal();
+                        }}
                         style={{
                           borderRadius: "50%",
                           cursor: "pointer",
@@ -16348,7 +16360,9 @@ function RightSideColumn({
                       >
                         {/* start to check close svg  */}
                         <div
-                          onClick={handleCloseSubscriptionModal}
+                          onClick={() => {
+                            handleCloseSubscriptionModal();
+                          }}
                           className={`close-button close-button-${themeName}`}
                           style={{
                             cursor: "pointer",
@@ -16516,7 +16530,10 @@ function RightSideColumn({
                   >
                     {/* start to check close svg  */}
                     <div
-                      onClick={handleCloseSubscriptionModal}
+                      onClick={() => {
+                        handleClose();
+                        handleCloseSubscriptionModal();
+                      }}
                       className={`close-button close-button-${themeName}`}
                       style={{
                         cursor: "pointer",

@@ -10,4 +10,5 @@ router.post(
   authenticateToken,
   favoriteController.handleDeleteFavorite
 );
+
 module.exports = router;
