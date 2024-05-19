@@ -58,7 +58,7 @@ function App() {
     socket.on("socket_id_for_user", (socketId) => {
       localStorage.setItem("socketId", socketId);
     });
-    socket.emit("setUsername", userInfo.username);
+    socket.emit("setUsername", userInfo?.username);
   }, []);
   useEffect(() => {
     console.log("Custom notification test !!!");
@@ -70,7 +70,7 @@ function App() {
       console.log("Data get text =>", data);
       console.log("User info =>", userInfo);
 
-      if (data.senderName !== userInfo.username) {
+      if (data.senderName !== userInfo?.username) {
         console.log("Buradayız ve neden çalışmasın ki toast container ???");
 
         // Path "/messages" veya "/messages/:chatRoomId" ise ve notification type "message" değilse toast göster ???
@@ -143,7 +143,7 @@ function App() {
           <Container
             style={{
               overflowX: "hidden",
-              overflowY: width <= 700 ? "hidden" : "scroll",
+              // overflowY: "hidden",
               height: "100vh",
             }}
             fluid
@@ -153,7 +153,7 @@ function App() {
                 borderTop: "none",
                 borderBottom: "none",
                 overflowX: "hidden",
-                overflowY: width <= 700 ? "scroll" : "hidden",
+                overflowY: "hidden",
               }}
             >
               {path !== "/" && path !== "/settings/deactivated" && (

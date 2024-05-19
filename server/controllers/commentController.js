@@ -1,6 +1,7 @@
 const User = require("../models/User.model");
 const Post = require("../models/Post.model");
 const Comment = require("../models/Comment.model");
+const Activity = require("../models/Activity.model");
 const cloudinary = require("../utils/cloudinary");
 
 let globalImageId;
@@ -14,6 +15,13 @@ const addComment = (req, res) => {
     .then((user) => {
       Post.findById(postId)
         .then((post) => {
+          console.log("Post got comment =>", post);
+          Activity.create({
+            activityHasBeenInitiatedWith: post.userId.toString(),
+            thePersonWhoCarriedOutTheActivity: user._id.toString(),
+            activityType: "comment",
+            relatedPost: post._id.toString(),
+          });
           // notification ekleme start to check
           // user kendisine notification gönderemez !
           setTimeout(() => {

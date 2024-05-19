@@ -1,6 +1,7 @@
 const User = require("../models/User.model");
 const Post = require("../models/Post.model");
 const Comment = require("../models/Comment.model");
+const Activity = require("../models/Activity.model");
 
 const handleRepost = (req, res) => {
   const { postId } = req.body;
@@ -11,6 +12,12 @@ const handleRepost = (req, res) => {
       Post.findById(postId)
         .populate("reposted")
         .then((post) => {
+          Activity.create({
+            activityHasBeenInitiatedWith: post.userId.toString(),
+            thePersonWhoCarriedOutTheActivity: user._id.toString(),
+            activityType: "repost",
+            relatedPost: post._id.toString(),
+          });
           // notification ekleme start to check
           // user kendisine notification gönderemez !
           if (post.userId.toString() !== userId) {

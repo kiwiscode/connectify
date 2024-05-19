@@ -15,6 +15,7 @@ import Popover from "@mui/material/Popover";
 import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
+import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
 // IMPORTANT => refreshPosts as a props !
 function PostModal({
   refreshPosts,
@@ -70,48 +71,6 @@ function PostModal({
   };
   const handleShow = () => setShow(true);
 
-  const handlePost = () => {
-    if (content || chosenEmoji || modalImage) {
-      handleClose();
-      axios
-        .post(
-          `${API_URL}/home/post`,
-          {
-            content,
-            modalImage,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${getToken()}`,
-            },
-          }
-        )
-
-        .then((response) => {
-          if (setLoadingTrue) {
-            setLoadingTrue();
-          }
-
-          setModalImage("");
-          setTimeout(() => {
-            parentCallBack(response.data.createdPost);
-            if (setLoadingTrue) {
-              setLoadingFalse();
-            }
-            if (refreshPosts) {
-              refreshPosts();
-            }
-          }, 200);
-          setContent("");
-        })
-        .catch((err) => {
-          return err;
-        });
-    } else {
-      handleShow();
-    }
-  };
-
   const closeImage = () => {
     setModalImage("");
   };
@@ -164,7 +123,70 @@ function PostModal({
       document.body.removeEventListener("click", closeEmojiContainer);
     };
   }, []);
+  const [
+    postSharingStartedActivateAnimate,
+    setPostSharingStartedActivateAnimate,
+  ] = useState(null);
+  const startPostSharingAnimationActivate = () => {
+    setPostSharingStartedActivateAnimate(true);
+  };
 
+  const cancelPostSharingAnimationActivate = () => {
+    setPostSharingStartedActivateAnimate(null);
+  };
+  const handlePost = () => {
+    if (content || chosenEmoji || modalImage) {
+      startPostSharingAnimationActivate();
+      axios
+        .post(
+          `${API_URL}/home/post`,
+          {
+            content,
+            modalImage,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
+          }
+        )
+
+        .then((response) => {
+          const lineElement = document.querySelector(
+            ".post_sharing_line_animation"
+          );
+          setTimeout(() => {
+            cancelPostSharingAnimationActivate();
+            lineElement.classList.add("paused");
+            lineElement.classList.remove("post_sharing_line_animation");
+          }, 300);
+          setTimeout(() => {
+            lineElement.classList.remove("paused");
+          }, 350);
+          if (setLoadingTrue) {
+            setLoadingTrue();
+          }
+
+          setTimeout(() => {
+            parentCallBack(response.data.createdPost);
+            if (setLoadingTrue) {
+              setLoadingFalse();
+            }
+            if (refreshPosts) {
+              refreshPosts();
+            }
+            setModalImage("");
+            setContent("");
+            handleClose();
+          }, 350);
+        })
+        .catch((err) => {
+          return err;
+        });
+    } else {
+      handleShow();
+    }
+  };
   return (
     <>
       <Button
@@ -234,6 +256,22 @@ function PostModal({
         onHide={handleClose}
         className={`responsive-navigation-bar-bottom-post-modal responsive-navigation-bar-bottom-post-modal-${themeName}`}
       >
+        {" "}
+        <div
+          className={
+            postSharingStartedActivateAnimate
+              ? "post_sharing_line_animation"
+              : ""
+          }
+          style={{
+            display: postSharingStartedActivateAnimate ? "" : "none",
+            position: "absolute",
+            border: "2px solid #1C9BEF",
+            height: "0.2rem",
+            top: "0px",
+            borderTopLeftRadius: "4px",
+          }}
+        ></div>
         <Modal.Header
           style={{
             border: "none",
@@ -401,7 +439,6 @@ function PostModal({
             </div>
           </div>
         </Modal.Body>
-
         <Modal.Footer
           style={{
             margin: "0px",
@@ -424,87 +461,107 @@ function PostModal({
         >
           <Stack direction="horizontal" gap={0}>
             {/* INFO */}
-            <div
-              className="p-2 image-choose-p-2"
-              onClick={() => document.getElementById("formuploadModal").click()}
+            <BootstrapTooltip
+              title="Media"
+              themeName={
+                themeName === "dark-theme" ? "dark-theme" : "light-theme"
+              }
             >
               <div
-                style={{
-                  // border: "1px solid black",
-                  cursor: "pointer",
-                  borderRadius: "50%",
-                }}
-                className={`svg-border-parent svg-border-parent-${themeName}`}
+                className="p-2 image-choose-p-2"
+                onClick={() =>
+                  document.getElementById("formuploadModal").click()
+                }
               >
-                <svg
+                <div
                   style={{
+                    // border: "1px solid black",
                     cursor: "pointer",
+                    borderRadius: "50%",
                   }}
-                  width={20}
-                  height={20}
-                  color="rgb(29,155,240)"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  className="bi bi-image-fill post-modal-image-fill r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                  className={`svg-border-parent svg-border-parent-${themeName}`}
                 >
-                  <g>
-                    <path d="M3 5.5C3 4.119 4.119 3 5.5 3h13C19.881 3 21 4.119 21 5.5v13c0 1.381-1.119 2.5-2.5 2.5h-13C4.119 21 3 19.881 3 18.5v-13zM5.5 5c-.276 0-.5.224-.5.5v9.086l3-3 3 3 5-5 3 3V5.5c0-.276-.224-.5-.5-.5h-13zM19 15.414l-3-3-5 5-3-3-3 3V18.5c0 .276.224.5.5.5h13c.276 0 .5-.224.5-.5v-3.086zM9.75 7C8.784 7 8 7.784 8 8.75s.784 1.75 1.75 1.75 1.75-.784 1.75-1.75S10.716 7 9.75 7z"></path>
-                  </g>
-                </svg>
-              </div>
+                  <svg
+                    style={{
+                      cursor: "pointer",
+                    }}
+                    width={20}
+                    height={20}
+                    color="rgb(29,155,240)"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="bi bi-image-fill post-modal-image-fill r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                  >
+                    <g>
+                      <path d="M3 5.5C3 4.119 4.119 3 5.5 3h13C19.881 3 21 4.119 21 5.5v13c0 1.381-1.119 2.5-2.5 2.5h-13C4.119 21 3 19.881 3 18.5v-13zM5.5 5c-.276 0-.5.224-.5.5v9.086l3-3 3 3 5-5 3 3V5.5c0-.276-.224-.5-.5-.5h-13zM19 15.414l-3-3-5 5-3-3-3 3V18.5c0 .276.224.5.5.5h13c.276 0 .5-.224.5-.5v-3.086zM9.75 7C8.784 7 8 7.784 8 8.75s.784 1.75 1.75 1.75 1.75-.784 1.75-1.75S10.716 7 9.75 7z"></path>
+                    </g>
+                  </svg>
+                </div>
 
-              <input
-                onChange={handleImage}
-                type="file"
-                id="formuploadModal"
-                name="modalImage"
-                className="form-control"
-                style={{ display: "none" }}
-              />
-            </div>
+                <input
+                  onChange={handleImage}
+                  type="file"
+                  id="formuploadModal"
+                  name="modalImage"
+                  className="form-control"
+                  style={{ display: "none" }}
+                />
+              </div>
+            </BootstrapTooltip>
+
             {/* INFO */}
             <div>
               <PopupState variant="popover" popupId="demo-popup-popover">
                 {(popupState) => (
                   <div>
-                    <Button
-                      {...bindTrigger(popupState)}
-                      style={{
-                        border: "none",
-                        // backgroundColor: "transparent",
-                        padding: "0px",
-                        margin: "0px",
-                        cursor: "pointer",
-                        position: "relative",
-                      }}
-                      variant="text"
+                    <BootstrapTooltip
+                      title="Emoji"
+                      themeName={
+                        themeName === "dark-theme"
+                          ? "dark-theme"
+                          : "light-theme"
+                      }
                     >
-                      <div
-                        className={`svg-border-parent svg-border-parent-${themeName}`}
+                      {" "}
+                      <Button
+                        {...bindTrigger(popupState)}
                         style={{
+                          border: "none",
+                          // backgroundColor: "transparent",
+                          padding: "0px",
+                          margin: "0px",
                           cursor: "pointer",
-                          borderRadius: "50%",
+                          position: "relative",
                         }}
+                        variant="text"
                       >
-                        <svg
-                          color="rgb(29,155,240)"
-                          fill="currentColor"
-                          width={20}
-                          height={20}
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                          className="post-modal-emoji-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                        <div
+                          className={`svg-border-parent svg-border-parent-${themeName}`}
                           style={{
                             cursor: "pointer",
+                            borderRadius: "50%",
                           }}
                         >
-                          <g>
-                            <path d="M8 9.5C8 8.119 8.672 7 9.5 7S11 8.119 11 9.5 10.328 12 9.5 12 8 10.881 8 9.5zm6.5 2.5c.828 0 1.5-1.119 1.5-2.5S15.328 7 14.5 7 13 8.119 13 9.5s.672 2.5 1.5 2.5zM12 16c-2.224 0-3.021-2.227-3.051-2.316l-1.897.633c.05.15 1.271 3.684 4.949 3.684s4.898-3.533 4.949-3.684l-1.896-.638c-.033.095-.83 2.322-3.053 2.322zm10.25-4.001c0 5.652-4.598 10.25-10.25 10.25S1.75 17.652 1.75 12 6.348 1.75 12 1.75 22.25 6.348 22.25 12zm-2 0c0-4.549-3.701-8.25-8.25-8.25S3.75 7.451 3.75 12s3.701 8.25 8.25 8.25 8.25-3.701 8.25-8.25z"></path>
-                          </g>
-                        </svg>
-                      </div>
-                    </Button>
+                          <svg
+                            color="rgb(29,155,240)"
+                            fill="currentColor"
+                            width={20}
+                            height={20}
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            className="post-modal-emoji-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                            style={{
+                              cursor: "pointer",
+                            }}
+                          >
+                            <g>
+                              <path d="M8 9.5C8 8.119 8.672 7 9.5 7S11 8.119 11 9.5 10.328 12 9.5 12 8 10.881 8 9.5zm6.5 2.5c.828 0 1.5-1.119 1.5-2.5S15.328 7 14.5 7 13 8.119 13 9.5s.672 2.5 1.5 2.5zM12 16c-2.224 0-3.021-2.227-3.051-2.316l-1.897.633c.05.15 1.271 3.684 4.949 3.684s4.898-3.533 4.949-3.684l-1.896-.638c-.033.095-.83 2.322-3.053 2.322zm10.25-4.001c0 5.652-4.598 10.25-10.25 10.25S1.75 17.652 1.75 12 6.348 1.75 12 1.75 22.25 6.348 22.25 12zm-2 0c0-4.549-3.701-8.25-8.25-8.25S3.75 7.451 3.75 12s3.701 8.25 8.25 8.25 8.25-3.701 8.25-8.25z"></path>
+                            </g>
+                          </svg>
+                        </div>
+                      </Button>
+                    </BootstrapTooltip>
                     <Popover
                       style={{
                         zIndex: 99999,

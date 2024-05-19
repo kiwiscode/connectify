@@ -23,6 +23,7 @@ const API_URL = "http://localhost:3000";
 
 import useWindowDimensions from "../hooks/getWindowDimensions";
 import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
+import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
 function MessagesPage() {
   const { userInfo, getToken } = useContext(UserContext);
 
@@ -509,6 +510,7 @@ function MessagesPage() {
               </g>
             </svg>
           </div>
+
           {/* settings icon finish to check  */}
 
           {/* create message icon start to check  */}
@@ -865,48 +867,58 @@ function MessagesPage() {
                                                 variant="text"
                                                 {...bindTrigger(popupState)}
                                               >
-                                                <div
-                                                  className={
-                                                    isHovered === index &&
-                                                    themeName !== "dark-theme"
-                                                      ? `message-delete-three-dots-parent message-delete-three-dots-parent-hovered`
-                                                      : `message-delete-three-dots-parent-dark-theme message-delete-three-dots-parent-hovered-dark-theme`
+                                                <BootstrapTooltip
+                                                  title="More"
+                                                  themeName={
+                                                    themeName === "dark-theme"
+                                                      ? "dark-theme"
+                                                      : "light-theme"
                                                   }
-                                                  style={{
-                                                    cursor: "pointer",
-                                                    borderRadius: "50%",
-                                                  }}
                                                 >
-                                                  <svg
+                                                  <div
+                                                    className={
+                                                      isHovered === index &&
+                                                      themeName !== "dark-theme"
+                                                        ? `message-delete-three-dots-parent message-delete-three-dots-parent-hovered`
+                                                        : `message-delete-three-dots-parent-dark-theme message-delete-three-dots-parent-hovered-dark-theme`
+                                                    }
                                                     style={{
                                                       cursor: "pointer",
-                                                      position: "relative",
-                                                      top: "5px",
+                                                      borderRadius: "50%",
                                                     }}
-                                                    color={
-                                                      isHovered === index
-                                                        ? "#259ef0"
-                                                        : themeName ===
-                                                          "dark-theme"
-                                                        ? "#71767A"
-                                                        : "rgb(83, 100, 113)"
-                                                    }
-                                                    fill="currentColor"
-                                                    width={`${1.25}em`}
-                                                    height={`${1.25}em`}
-                                                    viewBox="0 0 24 24"
-                                                    aria-hidden="true"
-                                                    className={`${
-                                                      showThreeDots === index
-                                                        ? ""
-                                                        : "hide"
-                                                    } message-delete-three-dots bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi`}
                                                   >
-                                                    <g>
-                                                      <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                                                    </g>
-                                                  </svg>
-                                                </div>
+                                                    {" "}
+                                                    <svg
+                                                      style={{
+                                                        cursor: "pointer",
+                                                        position: "relative",
+                                                        top: "5px",
+                                                      }}
+                                                      color={
+                                                        isHovered === index
+                                                          ? "#259ef0"
+                                                          : themeName ===
+                                                            "dark-theme"
+                                                          ? "#71767A"
+                                                          : "rgb(83, 100, 113)"
+                                                      }
+                                                      fill="currentColor"
+                                                      width={`${1.25}em`}
+                                                      height={`${1.25}em`}
+                                                      viewBox="0 0 24 24"
+                                                      aria-hidden="true"
+                                                      className={`${
+                                                        showThreeDots === index
+                                                          ? ""
+                                                          : "hide"
+                                                      } message-delete-three-dots bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi`}
+                                                    >
+                                                      <g>
+                                                        <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                                                      </g>
+                                                    </svg>{" "}
+                                                  </div>
+                                                </BootstrapTooltip>
                                               </Button>
                                               <Popover
                                                 onClose={popupState.close}

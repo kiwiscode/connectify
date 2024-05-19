@@ -23,6 +23,7 @@ import RepostAction from "../components/ui/RepostAction";
 import LikeAction from "../components/ui/LikeAction";
 import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
 import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
+import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
 
 function SpesificUserProfile({ isNewPostShared }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
@@ -30,6 +31,28 @@ function SpesificUserProfile({ isNewPostShared }) {
     "Is new post shared spesific user profile page =>",
     isNewPostShared
   );
+  const extraDetailedDate = (dateStr) => {
+    const date = new Date(dateStr);
+
+    const optionsTime = {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    };
+    const optionsDate = {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    };
+    const formattedTime = new Intl.DateTimeFormat("en-US", optionsTime).format(
+      date
+    );
+    const formattedDate = new Intl.DateTimeFormat("en-US", optionsDate).format(
+      date
+    );
+
+    return `${formattedTime} \u00B7 ${formattedDate}`;
+  };
 
   const { id } = useParams();
 
@@ -647,20 +670,30 @@ function SpesificUserProfile({ isNewPostShared }) {
                     }}
                     className={`spesific-profile-svg-three-dots spesific-profile-svg-three-dots-${themeName}`}
                   >
-                    <svg
-                      color={themeName === "dark-theme" ? "white" : ""}
-                      fill="currentColor"
-                      width={20}
-                      height={20}
-                      style={{}}
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                    {" "}
+                    <BootstrapTooltip
+                      title="More"
+                      themeName={
+                        themeName === "dark-theme"
+                          ? "dark-theme"
+                          : "light-theme"
+                      }
                     >
-                      <g>
-                        <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                      </g>
-                    </svg>
+                      <svg
+                        color={themeName === "dark-theme" ? "white" : ""}
+                        fill="currentColor"
+                        width={20}
+                        height={20}
+                        style={{}}
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                      >
+                        <g>
+                          <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                        </g>
+                      </svg>{" "}
+                    </BootstrapTooltip>
                   </div>
                   {/* start to check redirect to the messages  */}
                   <div
@@ -680,20 +713,29 @@ function SpesificUserProfile({ isNewPostShared }) {
                     }}
                     className={`spesific-profile-svg-dm spesific-profile-svg-dm-${themeName}`}
                   >
-                    <svg
-                      style={{}}
-                      width={20}
-                      height={20}
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                      color="color: rgb(15, 20, 25)"
-                      fill="currentColor"
+                    <BootstrapTooltip
+                      title="Message"
+                      themeName={
+                        themeName === "dark-theme"
+                          ? "dark-theme"
+                          : "light-theme"
+                      }
                     >
-                      <g>
-                        <path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v2.764l8 3.638 8-3.636V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 5.463l-8 3.636-8-3.638V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-8.037z"></path>
-                      </g>
-                    </svg>
+                      <svg
+                        style={{}}
+                        width={20}
+                        height={20}
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                        color="color: rgb(15, 20, 25)"
+                        fill="currentColor"
+                      >
+                        <g>
+                          <path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v2.764l8 3.638 8-3.636V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 5.463l-8 3.636-8-3.638V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-8.037z"></path>
+                        </g>
+                      </svg>
+                    </BootstrapTooltip>
                   </div>
                   {/* finish to check redirect to the messages  */}
                   <Button
@@ -1397,11 +1439,20 @@ function SpesificUserProfile({ isNewPostShared }) {
                                   >
                                     {" "}
                                     ·{" "}
-                                    <span className="date-post-detail">
-                                      {getCreatedDateForSpesificUserProfilePage(
-                                        post.createdAt
-                                      )}
-                                    </span>
+                                    <BootstrapTooltip
+                                      title={extraDetailedDate(post.createdAt)}
+                                      themeName={
+                                        themeName === "dark-theme"
+                                          ? "dark-theme"
+                                          : "light-theme"
+                                      }
+                                    >
+                                      <span className="date-post-detail">
+                                        {getCreatedDateForSpesificUserProfilePage(
+                                          post.createdAt
+                                        )}
+                                      </span>{" "}
+                                    </BootstrapTooltip>
                                   </span>
                                 </Link>
                                 {/* finish to check  */}
@@ -1556,6 +1607,9 @@ function SpesificUserProfile({ isNewPostShared }) {
                           }}
                         >
                           <div
+                            style={{
+                              width: "100px",
+                            }}
                             onClick={() => setclickedPostBox(post)}
                             className="p-1 next-to-comment"
                           >
@@ -1899,11 +1953,22 @@ function SpesificUserProfile({ isNewPostShared }) {
                                       >
                                         {" "}
                                         ·{" "}
-                                        <span className="date-post-detail">
-                                          {getCreatedDateForSpesificUserProfilePage(
+                                        <BootstrapTooltip
+                                          title={extraDetailedDate(
                                             favorite.createdAt
                                           )}
-                                        </span>
+                                          themeName={
+                                            themeName === "dark-theme"
+                                              ? "dark-theme"
+                                              : "light-theme"
+                                          }
+                                        >
+                                          <span className="date-post-detail">
+                                            {getCreatedDateForSpesificUserProfilePage(
+                                              favorite.createdAt
+                                            )}
+                                          </span>{" "}
+                                        </BootstrapTooltip>
                                       </span>
                                     </Link>
                                     {/* finish to check  */}
@@ -2011,6 +2076,9 @@ function SpesificUserProfile({ isNewPostShared }) {
                             }}
                           >
                             <div
+                              style={{
+                                width: "100px",
+                              }}
                               onClick={() => setclickedPostBox(favorite)}
                               className="p-1 next-to-comment"
                             >

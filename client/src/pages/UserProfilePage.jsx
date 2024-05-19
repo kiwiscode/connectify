@@ -22,9 +22,33 @@ import LikeAction from "../components/ui/LikeAction";
 import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
 import ResponsiveNavigationBarTop from "../components/Navbar/ResponsiveNavigationTop";
 import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
+import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
 
 function UserProfile({ isNewPostShared }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
+
+  const extraDetailedDate = (dateStr) => {
+    const date = new Date(dateStr);
+
+    const optionsTime = {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    };
+    const optionsDate = {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    };
+    const formattedTime = new Intl.DateTimeFormat("en-US", optionsTime).format(
+      date
+    );
+    const formattedDate = new Intl.DateTimeFormat("en-US", optionsDate).format(
+      date
+    );
+
+    return `${formattedTime} \u00B7 ${formattedDate}`;
+  };
 
   const navigate = useNavigate();
 
@@ -1094,9 +1118,18 @@ function UserProfile({ isNewPostShared }) {
                                   >
                                     {" "}
                                     ·{" "}
-                                    <span className="date-post-detail">
-                                      {getCreatedDate(post.createdAt)}
-                                    </span>
+                                    <BootstrapTooltip
+                                      title={extraDetailedDate(post.createdAt)}
+                                      themeName={
+                                        themeName === "dark-theme"
+                                          ? "dark-theme"
+                                          : "light-theme"
+                                      }
+                                    >
+                                      <span className="date-post-detail">
+                                        {getCreatedDate(post.createdAt)}
+                                      </span>
+                                    </BootstrapTooltip>
                                   </span>
                                 </Link>
                                 {/* finish to check  */}
@@ -1247,6 +1280,9 @@ function UserProfile({ isNewPostShared }) {
                           }}
                         >
                           <div
+                            style={{
+                              width: "100px",
+                            }}
                             onClick={() => setclickedPostBox(post)}
                             className="p-1 next-to-comment"
                           >
@@ -1571,9 +1607,20 @@ function UserProfile({ isNewPostShared }) {
                                     >
                                       {" "}
                                       ·{" "}
-                                      <span className="date-post-detail">
-                                        {getCreatedDate(favorite.createdAt)}
-                                      </span>
+                                      <BootstrapTooltip
+                                        title={extraDetailedDate(
+                                          favorite.createdAt
+                                        )}
+                                        themeName={
+                                          themeName === "dark-theme"
+                                            ? "dark-theme"
+                                            : "light-theme"
+                                        }
+                                      >
+                                        <span className="date-post-detail">
+                                          {getCreatedDate(favorite.createdAt)}
+                                        </span>
+                                      </BootstrapTooltip>
                                     </span>
                                   </Link>
                                   {/* finish to check  */}
@@ -1683,6 +1730,9 @@ function UserProfile({ isNewPostShared }) {
                           }}
                         >
                           <div
+                            style={{
+                              width: "100px",
+                            }}
                             onClick={() => setclickedPostBox(favorite)}
                             className="p-1 next-to-comment"
                           >

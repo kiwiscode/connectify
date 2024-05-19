@@ -5,11 +5,13 @@ import {
   Stack,
   Modal,
   OverlayTrigger,
-  Popover,
+  // organization type will make problem
+  // Popover,
+  // organization type will make problem
 } from "react-bootstrap";
 import axios from "axios";
 import { UserContext } from "../../context/UserContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { List } from "antd";
 import useWindowDimensions from "../../hooks/getWindowDimensions";
 import Slider from "react-slick";
@@ -23,7 +25,8 @@ import {
   FormControl,
   InputAdornment,
 } from "@mui/material";
-
+import Popover from "@mui/material/Popover";
+import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 import {
   getCountries,
   getCountryCallingCode,
@@ -32,7 +35,7 @@ import {
 } from "react-phone-number-input/input";
 import en from "react-phone-number-input/locale/en.json";
 import "react-phone-number-input/style.css";
-
+import { CommentModal } from "../ui/Modal";
 import { QRCodeSVG } from "qrcode.react";
 import { ThemeContext } from "../../context/ThemeContext";
 import UnfollowModal from "../unfollow-modal/UnfollowModal";
@@ -46,8 +49,11 @@ const API_URL = "http://localhost:3000";
 // ?
 
 import io from "socket.io-client";
-import PopupState, { bindTrigger } from "material-ui-popup-state";
 import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
+import RepostAction from "../ui/RepostAction";
+import LikeAction from "../ui/LikeAction";
+import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
+import PostPopover from "../three-dots-popover/Popover";
 const socket = io.connect(`${API_URL}`);
 
 function RightSideColumn({
@@ -57,6 +63,26 @@ function RightSideColumn({
   widthSmaller700,
   sendModalClosedStatusToLogoutModal = () => {}, // Default value
 }) {
+  const { getToken, userInfo } = useContext(UserContext);
+  const [activities, setActivities] = useState([]);
+  const getActivities = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/activities`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      });
+      setActivities(response.data.activities);
+      console.log("Response for activities =>", response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getActivities();
+  }, []);
+
   const [{ theme, themeName }, toggleThemeBetweenLightDarkMode] =
     useContext(ThemeContext);
   const [hoveredThemeName, setHoveredThemeName] = useState(null);
@@ -80,7 +106,6 @@ function RightSideColumn({
     });
   };
 
-  const { getToken, userInfo } = useContext(UserContext);
   const [onFocus, setOnFocus] = useState(false);
   const [user, setUser] = useState([]);
   const [isHovered, setIsHovered] = useState("");
@@ -1105,7 +1130,8 @@ function RightSideColumn({
     setverifyPasswordInput(e.target.value);
   };
 
-  const { showCustomMessage, contextHolder } = useAntdMessageHandler();
+  const { showCustomMessage, contextHolder, postSharedMessage } =
+    useAntdMessageHandler();
 
   const generateRandomCode = () => {
     const characters =
@@ -1312,6 +1338,71 @@ function RightSideColumn({
 
   const [boxHoveredIndividual, setBoxHoveredIndividual] = useState(false);
   const [boxHoveredOrganization, setBoxHoveredOrganization] = useState(false);
+
+  // onhover popover start to check for post detail
+
+  const [showPopoverPostDetail, setShowPostPopoverPostDetail] = useState(null);
+
+  const openPopoverPostDetail = () => {
+    setShowPostPopoverPostDetail(true);
+  };
+  const closePopoverPostDetail = () => {
+    setShowPostPopoverPostDetail(false);
+  };
+  // onhover popover finish to check for post detail
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "June",
+    "July",
+    "Aug",
+    "Sept",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const getCreatedDate = (date) => {
+    const createdAt = new Date(date);
+    const getMonth = createdAt.getMonth();
+    return `${months[getMonth]} ${createdAt.getDate()}`;
+  };
+  const extraDetailedDate = (dateStr) => {
+    const date = new Date(dateStr);
+
+    const optionsTime = {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    };
+    const optionsDate = {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    };
+    const formattedTime = new Intl.DateTimeFormat("en-US", optionsTime).format(
+      date
+    );
+    const formattedDate = new Intl.DateTimeFormat("en-US", optionsDate).format(
+      date
+    );
+
+    return `${formattedTime} \u00B7 ${formattedDate}`;
+  };
+  const navigatePostContentCutePopoverRightSide = (post) => {
+    navigate(
+      `/${post?.relatedPost?.userId?.username}/status/${
+        !post?.relatedPost.isReposted
+          ? post?.relatedPost._id
+          : post?.relatedPost.repostedFromThisOriginalPost[0]._id
+      }`
+    );
+  };
+
+  const location = useLocation();
+  const path = location.pathname;
 
   return (
     <>
@@ -16704,11 +16795,7 @@ function RightSideColumn({
         lg={4} // 992px - 1400px aralığı
         xxl={4} // 1400px ve sonrası aralığı
         style={{
-          position: "relative",
-          left: "1.5%",
-          height: "100vh",
-          top: "0px",
-          padding: "0px",
+          padding: "0px 12px",
           margin: "0px",
         }}
       >
@@ -16729,7 +16816,6 @@ function RightSideColumn({
               right: "40px",
               bottom: "20px",
               marginLeft: "15px",
-              display: "flex",
             }}
             className="p-4 mt-2"
           >
@@ -16755,12 +16841,14 @@ function RightSideColumn({
                 </g>
               </svg>
             </div>
+
             <input
               onFocus={onFocusActive}
               onChange={handleSetSearchTerm}
               style={{
-                width: "350px",
+                // width: "350px",
                 height: "44px",
+                width: "90%",
 
                 // backgroundColor: onFocus ? "white" : "#eff3f4",
                 backgroundColor:
@@ -17608,6 +17696,587 @@ function RightSideColumn({
             </div>
 
             {/* finish to check first 3 user  */}
+            {/* start to check hashtags for trends  */}
+            {activities?.length > 0 && (
+              <div
+                style={{
+                  border: "none",
+                  borderWidth: "1px",
+                  borderRadius: "16px",
+                  backgroundColor:
+                    themeName === "dark-theme" ? "#16181c" : "#eff3f4",
+                  maxWidth: "350px",
+                  marginTop: "10px",
+                  display: "flex",
+                  flexDirection: "column",
+                  textAlign: "left",
+                }}
+                className="p-4"
+              >
+                <div
+                  style={{
+                    fontSize: "20px",
+                    fontWeight: "800",
+                    lineHeight: "24px",
+                    position: "relative",
+                    right: "10px",
+                  }}
+                >
+                  Recent Activities{" "}
+                </div>
+                {activities?.map((eachActivity, index) => {
+                  return (
+                    <div key={index}>
+                      {eachActivity.activityHasBeenInitiatedWith._id !==
+                        eachActivity.thePersonWhoCarriedOutTheActivity._id &&
+                        eachActivity.activityHasBeenInitiatedWith._id !==
+                          userInfo._id && (
+                          <div
+                            style={{
+                              display: "flex",
+                              padding: "10px 0px",
+                              alignItems: "center",
+                            }}
+                          >
+                            <div>
+                              {eachActivity.thePersonWhoCarriedOutTheActivity?.imageUrl?.slice(
+                                0,
+                                3
+                              ) !== "../" ? (
+                                <Link
+                                  to={`/profile/${eachActivity.thePersonWhoCarriedOutTheActivity._id}`}
+                                >
+                                  <img
+                                    src={
+                                      eachActivity
+                                        .thePersonWhoCarriedOutTheActivity
+                                        .imageUrl
+                                    }
+                                    alt={`${eachActivity.thePersonWhoCarriedOutTheActivity.fullname}'s profile`}
+                                    width={32}
+                                    height={32}
+                                    className="profile-image"
+                                    style={{
+                                      borderRadius: "50%",
+                                    }}
+                                  />
+                                </Link>
+                              ) : (
+                                <div>
+                                  <Link
+                                    to={`/profile/${eachActivity.thePersonWhoCarriedOutTheActivity._id}`}
+                                  >
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      width={32}
+                                      height={32}
+                                      fill={
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgb(83, 100, 113)"
+                                      }
+                                      className="bi bi-person-circle"
+                                      viewBox="0 0 16 16"
+                                    >
+                                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                      <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                    </svg>
+                                  </Link>
+                                </div>
+                              )}
+                            </div>
+                            <div
+                              style={{
+                                lineHeight: "20px",
+                                fontSize: "15px",
+                                fontWeight: "400",
+                                overflow: "hidden",
+                                marginLeft: "5px",
+                              }}
+                            >
+                              {eachActivity.activityType === "comment" &&
+                                "commented"}
+                              {eachActivity.activityType === "repost" &&
+                                "reposted"}
+                              {eachActivity.activityType === "favorite" &&
+                                "liked"}
+                            </div>
+                            <Link
+                              to={`/profile/${eachActivity.activityHasBeenInitiatedWith._id}`}
+                              style={{
+                                textDecoration: "none",
+                                color: "black",
+                                marginLeft: "5px",
+                              }}
+                            >
+                              <div
+                                className="hover-fullname"
+                                style={{
+                                  cursor: "pointer",
+                                  lineHeight: "20px",
+                                  fontSize: "15px",
+                                  fontWeight: "700",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
+                                }}
+                              >
+                                {`${eachActivity.activityHasBeenInitiatedWith.fullname}'s`}
+                              </div>
+                            </Link>
+
+                            <div>
+                              <PopupState
+                                variant="popover"
+                                popupId="demo-popup-popover"
+                              >
+                                {(popupState) => (
+                                  <div>
+                                    <Button
+                                      {...bindTrigger(popupState)}
+                                      style={{
+                                        border: "none",
+                                        padding: "0px",
+                                        margin: "0px",
+                                        cursor: "pointer",
+                                        position: "relative",
+                                      }}
+                                      variant="text"
+                                    >
+                                      <div
+                                        className="hover-blue-underline"
+                                        style={{
+                                          cursor: "pointer",
+                                          color: "rgb(29, 155, 240)",
+                                          fontSize: "15px",
+                                          lineHeight: "20px",
+                                          fontWeight: "400",
+                                          position: "relative",
+                                          bottom: "3px",
+                                          marginLeft: "5px",
+                                        }}
+                                      >
+                                        post
+                                      </div>
+                                    </Button>
+                                    <Popover
+                                      open={popupState.open}
+                                      onClose={popupState.close}
+                                      {...bindPopover(popupState)}
+                                      anchorOrigin={{
+                                        vertical: "top",
+                                        horizontal: "center",
+                                      }}
+                                      transformOrigin={{
+                                        vertical: "bottom",
+                                        horizontal: "center",
+                                      }}
+                                      className={`${
+                                        themeName === "dark-theme"
+                                          ? "popover-material-ui-dark-theme special-cute-popover"
+                                          : themeName !== "dark-theme"
+                                          ? "popover-material-ui-light-theme special-cute-popover"
+                                          : "hideshowMessageDeletePopover special-cute-popover"
+                                      }`}
+                                    >
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                          flexDirection: "column",
+                                        }}
+                                      >
+                                        <div
+                                          style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                          }}
+                                        >
+                                          <div
+                                            style={{
+                                              float: "left",
+                                              position: "relative",
+                                              top: "13px",
+                                            }}
+                                          >
+                                            {eachActivity.relatedPost?.userId?.imageUrl?.slice(
+                                              0,
+                                              3
+                                            ) !== "../" ? (
+                                              <Link
+                                                to={`/profile/${eachActivity.relatedPost?.userId?._id}`}
+                                              >
+                                                <img
+                                                  src={
+                                                    eachActivity.relatedPost
+                                                      ?.userId?.imageUrl
+                                                  }
+                                                  alt={`${eachActivity.relatedPost?.userId?.fullname}'s profile`}
+                                                  width={32}
+                                                  height={32}
+                                                  className="profile-image"
+                                                  style={{
+                                                    borderRadius: "50%",
+                                                  }}
+                                                />
+                                              </Link>
+                                            ) : (
+                                              <div>
+                                                <Link
+                                                  to={`/profile/${eachActivity.relatedPost?.userId?._id}`}
+                                                >
+                                                  <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    width={32}
+                                                    height={32}
+                                                    fill={
+                                                      themeName === "dark-theme"
+                                                        ? "#71767A"
+                                                        : "rgb(83, 100, 113)"
+                                                    }
+                                                    className="bi bi-person-circle"
+                                                    viewBox="0 0 16 16"
+                                                  >
+                                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                                  </svg>
+                                                </Link>
+                                              </div>
+                                            )}
+                                          </div>
+                                          <div>
+                                            <Link
+                                              className="post-circle-postowner-fullname hover-fullname"
+                                              to={`/profile/${eachActivity.relatedPost?.userId?._id}`}
+                                              style={{
+                                                textDecoration: "none",
+                                                color:
+                                                  themeName === "dark-theme"
+                                                    ? "white"
+                                                    : "black",
+                                                fontWeight: "700",
+                                                fontSize: "13px",
+                                                lineHeight: "20px",
+                                                overflow: "hidden",
+                                                textOverflow: "ellipsis",
+                                                whiteSpace: "nowrap",
+                                                width: "120px",
+                                                marginLeft: "5px",
+                                                position: "relative",
+                                                top: "3px",
+                                              }}
+                                            >
+                                              {
+                                                eachActivity.relatedPost?.userId
+                                                  ?.fullname
+                                              }
+                                            </Link>
+                                          </div>
+                                          <div>
+                                            {" "}
+                                            <svg
+                                              style={{
+                                                margin: "0px 5px",
+                                                position: "relative",
+                                                top: "3px",
+                                              }}
+                                              width={`${1}em`}
+                                              height={`${1}em`}
+                                              viewBox="0 0 22 22"
+                                              aria-label="Verified account"
+                                              role="img"
+                                              className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                                              data-testid="icon-verified"
+                                              color="rgba(29,155,240,1.00)"
+                                              fill="currentColor"
+                                            >
+                                              <g>
+                                                <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                                              </g>
+                                            </svg>
+                                          </div>
+                                          <div>
+                                            {" "}
+                                            <Link
+                                              to={`/profile/${eachActivity.relatedPost?.userId?._id}`}
+                                              style={{
+                                                textDecoration: "none",
+                                                color:
+                                                  themeName === "dark-theme"
+                                                    ? "#71767A"
+                                                    : "rgb(83, 100, 113)",
+                                                lineHeight: "20px",
+                                                fontSize: "13px",
+                                                fontWeight: "400",
+                                                position: "relative",
+                                                top: "3px",
+                                              }}
+                                            >
+                                              {
+                                                eachActivity.relatedPost?.userId
+                                                  ?.username
+                                              }
+                                            </Link>
+                                          </div>
+                                          <div>
+                                            {" "}
+                                            <Link
+                                              to={`/${
+                                                eachActivity.relatedPost?.userId
+                                                  ?.username
+                                              }/status/${
+                                                !eachActivity.relatedPost
+                                                  .isReposted
+                                                  ? eachActivity.relatedPost._id
+                                                  : eachActivity.relatedPost
+                                                      .repostedFromThisOriginalPost[0]
+                                                      ._id
+                                              }`}
+                                              style={{
+                                                textDecoration: "none",
+                                                position: "relative",
+                                                top: "3px",
+                                              }}
+                                            >
+                                              <span
+                                                className="post-circle-date-post-detail"
+                                                style={{
+                                                  color:
+                                                    themeName === "dark-theme"
+                                                      ? "#71767A"
+                                                      : "rgb(83, 100, 113)",
+                                                  lineHeight: "20px",
+                                                  fontSize: "13px",
+                                                  fontWeight: "400",
+                                                  marginLeft: "5px",
+                                                }}
+                                              >
+                                                {" "}
+                                                ·{" "}
+                                                <BootstrapTooltip
+                                                  title={extraDetailedDate(
+                                                    eachActivity.relatedPost
+                                                      .createdAt
+                                                  )}
+                                                  themeName={
+                                                    themeName === "dark-theme"
+                                                      ? "dark-theme"
+                                                      : "light-theme"
+                                                  }
+                                                >
+                                                  <span
+                                                    style={{}}
+                                                    className="date-post-detail"
+                                                  >
+                                                    {getCreatedDate(
+                                                      eachActivity.relatedPost
+                                                        .createdAt
+                                                    )}
+                                                  </span>
+                                                </BootstrapTooltip>
+                                              </span>
+                                            </Link>
+                                          </div>
+                                          <div
+                                            style={{
+                                              marginLeft: "10px",
+                                              position: "relative",
+                                              top: "4px",
+                                            }}
+                                          >
+                                            {" "}
+                                            <PostPopover
+                                              isCutePopoverOnRightSide={true}
+                                              post={eachActivity.relatedPost}
+                                            />
+                                          </div>
+                                        </div>
+                                        <div
+                                          style={{
+                                            width: "75%",
+                                            display: "flex",
+                                            alignSelf: "center",
+                                            position: "relative",
+                                            bottom: "5px",
+                                          }}
+                                        >
+                                          <div>
+                                            <div
+                                              onClick={() => {
+                                                navigatePostContentCutePopoverRightSide(
+                                                  eachActivity
+                                                );
+                                              }}
+                                              style={{
+                                                fontSize: "13px",
+                                                fontWeight: "400",
+                                                lineHeight: "20px",
+                                                overflowWrap: "break-word",
+                                                maxWidth: "100%",
+                                                cursor: "pointer",
+                                                color:
+                                                  themeName === "dark-theme"
+                                                    ? "white"
+                                                    : "",
+                                                textDecoration: "none",
+                                                padding: "0px",
+                                                margin: "0px",
+                                              }}
+                                            >
+                                              {" "}
+                                              {
+                                                eachActivity.relatedPost
+                                                  ?.content
+                                              }
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div
+                                          style={{
+                                            width: "80%",
+                                            display: "flex",
+                                            alignSelf: "center",
+                                          }}
+                                        >
+                                          <div
+                                            style={{
+                                              width: "100px",
+                                            }}
+                                          >
+                                            <CommentModal
+                                              post={
+                                                eachActivity?.relatedPost
+                                                  ? eachActivity.relatedPost
+                                                  : null
+                                              }
+                                              width={`${1.25}em`}
+                                              height={`${1.25}em`}
+                                              isCutePopoverOnRightSide={true}
+                                              // refreshPosts={handleShowPostsHomePage}
+                                              // sendDataToParent={handleDataFromCommentModal}
+                                              // postSharedMessage={postSharedMessage}
+                                            />
+                                          </div>
+                                          <div
+                                            style={{
+                                              width: "100px",
+                                            }}
+                                          >
+                                            {" "}
+                                            <RepostAction
+                                              post={
+                                                eachActivity?.relatedPost
+                                                  ? eachActivity.relatedPost
+                                                  : null
+                                              }
+                                              width={`${1.25}em`}
+                                              height={`${1.25}em`}
+                                              isCutePopoverOnRightSide={true}
+                                              // refreshPosts={handleShowPostsHomePage}
+                                              // setLoadingFalse={setLoadingFalse}
+                                              // setLoadingTrue={setLoadingTrue}
+                                              // postIndex={index}
+                                            />
+                                          </div>
+                                          <div
+                                            style={{
+                                              width: "100px",
+                                            }}
+                                          >
+                                            {" "}
+                                            <LikeAction
+                                              post={
+                                                eachActivity?.relatedPost
+                                                  ? eachActivity.relatedPost
+                                                  : null
+                                              }
+                                              width={`${1.25}em`}
+                                              height={`${1.25}em`}
+                                              isCutePopoverOnRightSide={true}
+                                              // refreshPosts={
+                                              //   handleShowPostsHomePage
+                                              // }
+                                              // setLoadingFalse={setLoadingFalse}
+                                              // setLoadingTrue={setLoadingTrue}
+                                            />
+                                          </div>{" "}
+                                        </div>
+                                      </div>
+                                    </Popover>
+                                  </div>
+                                )}
+                              </PopupState>
+                            </div>
+                            {/* emoji mart finish to check */}
+
+                            {/* <div>
+                            {eachActivity.activityHasBeenInitiatedWith?.imageUrl?.slice(
+                              0,
+                              3
+                            ) !== "../" ? (
+                              <Link
+                                to={`/profile/${eachActivity.activityHasBeenInitiatedWith._id}`}
+                              >
+                                <img
+                                  src={
+                                    eachActivity.activityHasBeenInitiatedWith
+                                      .imageUrl
+                                  }
+                                  alt={`${eachActivity.activityHasBeenInitiatedWith.fullname}'s profile`}
+                                  width={32}
+                                  height={32}
+                                  className="profile-image"
+                                  style={{
+                                    borderRadius: "50%",
+                                  }}
+                                />
+                              </Link>
+                            ) : (
+                              <div>
+                                <Link
+                                  to={`/profile/${eachActivity.activityHasBeenInitiatedWith._id}`}
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width={32}
+                                    height={32}
+                                    fill={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgb(83, 100, 113)"
+                                    }
+                                    className="bi bi-person-circle"
+                                    viewBox="0 0 16 16"
+                                  >
+                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                  </svg>
+                                </Link>
+                              </div>
+                            )}
+                          </div> */}
+                          </div>
+                        )}
+                    </div>
+                  );
+                })}
+                <div
+                  className="hover-blue-underline"
+                  style={{
+                    cursor: "pointer",
+                    color: "rgb(29, 155, 240)",
+                    fontSize: "15px",
+                    lineHeight: "20px",
+                    fontWeight: "400",
+                    position: "relative",
+                    right: "10px",
+                  }}
+                >
+                  Show more
+                </div>
+              </div>
+            )}
+            {/* finish to check hashtags for trends  */}
+
             <div
               style={{
                 width: "375px",

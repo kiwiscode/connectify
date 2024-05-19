@@ -118,6 +118,7 @@ function ResponsiveNavigationBarBottom({
 
     return allUnReadedMessages;
   };
+
   return (
     <>
       <>

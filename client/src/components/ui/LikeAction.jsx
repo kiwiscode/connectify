@@ -1,8 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../../context/UserContext";
 import axios from "axios";
-import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
-import { styled } from "@mui/material/styles";
+
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -11,6 +10,7 @@ const API_URL = "http://localhost:3000";
 
 import io from "socket.io-client";
 import { ThemeContext } from "../../context/ThemeContext";
+import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
 const socket = io.connect(`${API_URL}`);
 
 const LikeAction = ({
@@ -25,18 +25,9 @@ const LikeAction = ({
   allPosts,
   postIndex,
   buttonId,
+  isCutePopoverOnRightSide,
 }) => {
   const [{ theme, themeName }] = useContext(ThemeContext);
-  const BootstrapTooltip = styled(({ className, ...props }) => (
-    <Tooltip {...props} arrow classes={{ popper: className }} />
-  ))(({ theme }) => ({
-    [`& .${tooltipClasses.arrow}`]: {
-      color: "transparent",
-    },
-    [`& .${tooltipClasses.tooltip}`]: {
-      backgroundColor: themeName === "dark-theme" ? "#495a68" : "",
-    },
-  }));
 
   const { userInfo, getToken } = useContext(UserContext);
 
@@ -125,7 +116,12 @@ const LikeAction = ({
     <>
       {getLikerIds(post).includes(userInfo._id) ? (
         <div>
-          <Tooltip title="Unlike">
+          <BootstrapTooltip
+            title="Unlike"
+            themeName={
+              themeName === "dark-theme" ? "dark-theme" : "light-theme"
+            }
+          >
             <span
               onClick={() => handleDeleteLike(post.postId || post._id)}
               style={{
@@ -148,8 +144,8 @@ const LikeAction = ({
               className={shouldAnimate ? `animated-heart-beat` : null}
             >
               <svg
-                width={`${1.25}em`}
-                height={`${1.25}em`}
+                width={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
+                height={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
                 viewBox="0 0 24 24"
                 aria-hidden="true"
                 fill="rgb(249, 24, 128)"
@@ -176,7 +172,8 @@ const LikeAction = ({
                     style={{
                       color: "rgb(249, 24, 128)",
                       position: "relative",
-                      bottom: "5px",
+                      bottom: isCutePopoverOnRightSide ? "4px" : "5px",
+                      fontSize: isCutePopoverOnRightSide ? "12px" : null,
                     }}
                   >
                     {post.likes.length}
@@ -184,11 +181,16 @@ const LikeAction = ({
                 </>
               ) : null}
             </span>
-          </Tooltip>
+          </BootstrapTooltip>
         </div>
       ) : (
         <div>
-          <Tooltip title="Like">
+          <BootstrapTooltip
+            title="Like"
+            themeName={
+              themeName === "dark-theme" ? "dark-theme" : "light-theme"
+            }
+          >
             <span
               onClick={() => handlePostLike(post.postId || post._id, post)}
               style={{
@@ -210,8 +212,8 @@ const LikeAction = ({
               onMouseLeave={() => setLikeIconHovered(false)}
             >
               <svg
-                width={`${1.25}em`}
-                height={`${1.25}em`}
+                width={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
+                height={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
                 viewBox="0 0 24 24"
                 aria-hidden="true"
                 className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -254,7 +256,8 @@ const LikeAction = ({
                           ? "rgb(249, 24, 128)"
                           : null,
                       position: "relative",
-                      bottom: "5px",
+                      bottom: isCutePopoverOnRightSide ? "4px" : "5px",
+                      fontSize: isCutePopoverOnRightSide ? "12px" : null,
                     }}
                   >
                     {post.likes.length}
@@ -262,7 +265,7 @@ const LikeAction = ({
                 </>
               ) : null}
             </span>
-          </Tooltip>
+          </BootstrapTooltip>
         </div>
       )}
     </>
