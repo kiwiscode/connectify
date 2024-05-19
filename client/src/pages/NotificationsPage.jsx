@@ -547,7 +547,12 @@ function NotificationsPage() {
                                 justifyContent: "space-between",
                               }}
                             >
-                              <div className="comment-parent-div">
+                              <div
+                                style={{
+                                  width: "100px",
+                                }}
+                                className="comment-parent-div"
+                              >
                                 <CommentModal
                                   post={
                                     eachNotification.isComment

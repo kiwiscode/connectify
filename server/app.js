@@ -80,4 +80,7 @@ app.use("/", forgotPasswordRoutes);
 const subscriptionRoutes = require("./routes/subscription.routes.js");
 app.use("/", subscriptionRoutes);
 
+const lastActivitiesRoutes = require("./routes/lastActivitiesRoutes.js");
+app.use("/", lastActivitiesRoutes);
+
 module.exports = app;

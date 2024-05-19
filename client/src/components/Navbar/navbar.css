@@ -35,7 +35,7 @@
   }
 
   .responsive-navigation-bar-bottom-dark-theme div:hover {
-    background-color: #061019;
+    background-color: #181818 !important;
     transition-duration: 0.2s;
   }
 }
@@ -46,6 +46,7 @@
   .responsive-navigation-bar-top {
     display: flex !important;
     justify-content: space-between !important;
+    align-items: center !important;
   }
 
   .home-text {

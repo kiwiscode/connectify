@@ -1,8 +1,7 @@
 import axios from "axios";
 import { useContext, useState } from "react";
 import { UserContext } from "../../context/UserContext";
-import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
-import { styled } from "@mui/material/styles";
+
 // import { OverlayTrigger, Popover } from "react-bootstrap";
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -14,6 +13,7 @@ import { ThemeContext } from "../../context/ThemeContext";
 import { Popover } from "@mui/material";
 import PopupState, { bindPopover, bindTrigger } from "material-ui-popup-state";
 import { Button } from "react-bootstrap";
+import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
 
 const socket = io.connect(`${API_URL}`);
 
@@ -27,18 +27,8 @@ function RepostAction({
   setLoadingTrue = false,
   detailedPostComment,
   postIndex,
+  isCutePopoverOnRightSide,
 }) {
-  const BootstrapTooltip = styled(({ className, ...props }) => (
-    <Tooltip {...props} classes={{ popper: className }} />
-  ))(({ theme }) => ({
-    [`& .${tooltipClasses.arrow}`]: {
-      color: "transparent",
-    },
-    [`& .${tooltipClasses.tooltip}`]: {
-      backgroundColor: themeName === "dark-theme" ? "#495a68" : "",
-    },
-  }));
-
   const { userInfo, getToken } = useContext(UserContext);
   const [
     { theme, themeName },
@@ -168,8 +158,8 @@ function RepostAction({
               <span>
                 <svg
                   fill={themeName === "dark-theme" ? "white" : "black"}
-                  width={`${1.25}em`}
-                  height={`${1.25}em`}
+                  width={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
+                  height={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
                   viewBox="0 0 24 24"
                   aria-hidden="true"
                   className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-1q142lx"
@@ -218,8 +208,8 @@ function RepostAction({
                 {" "}
                 <svg
                   fill={themeName === "dark-theme" ? "white" : "black"}
-                  width={`${1.25}em`}
-                  height={`${1.25}em`}
+                  width={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
+                  height={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
                   viewBox="0 0 24 24"
                   aria-hidden="true"
                   className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-1q142lx"
@@ -271,8 +261,8 @@ function RepostAction({
               <span>
                 <svg
                   fill={themeName === "dark-theme" ? "white" : "black"}
-                  width={`${1.25}em`}
-                  height={`${1.25}em`}
+                  width={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
+                  height={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
                   viewBox="0 0 24 24"
                   aria-hidden="true"
                   className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-1q142lx"
@@ -320,8 +310,8 @@ function RepostAction({
                 {" "}
                 <svg
                   fill={themeName === "dark-theme" ? "white" : "black"}
-                  width={`${1.25}em`}
-                  height={`${1.25}em`}
+                  width={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
+                  height={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
                   viewBox="0 0 24 24"
                   aria-hidden="true"
                   className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-1q142lx"
@@ -362,7 +352,13 @@ function RepostAction({
             getRepostedIds(post).includes(userInfo._id) ? (
               <div>
                 {" "}
-                <Tooltip {...bindTrigger(popupState)} title="Undo repost">
+                <BootstrapTooltip
+                  {...bindTrigger(popupState)}
+                  title="Undo repost"
+                  themeName={
+                    themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                  }
+                >
                   <span
                     onMouseEnter={() => setRepostIconHovered(true)}
                     onMouseLeave={() => setRepostIconHovered(false)}
@@ -383,8 +379,8 @@ function RepostAction({
                     }}
                   >
                     <svg
-                      width={`${1.25}em`}
-                      height={`${1.25}em`}
+                      width={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
+                      height={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
                       viewBox="0 0 24 24"
                       aria-hidden="true"
                       className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -404,7 +400,8 @@ function RepostAction({
                       cursor: "pointer",
                       color: "rgb(0, 186, 124)",
                       position: "relative",
-                      bottom: "5px",
+                      bottom: isCutePopoverOnRightSide ? "4px" : "5px",
+                      fontSize: isCutePopoverOnRightSide ? "12px" : null,
                     }}
                     className="post-description"
                   >
@@ -412,7 +409,7 @@ function RepostAction({
                       <span>{post.reposted.length}</span>
                     ) : null}
                   </span>
-                </Tooltip>
+                </BootstrapTooltip>
               </div>
             ) : (
               <div
@@ -420,7 +417,13 @@ function RepostAction({
                   cursor: "pointer",
                 }}
               >
-                <Tooltip {...bindTrigger(popupState)} title="Repost">
+                <BootstrapTooltip
+                  {...bindTrigger(popupState)}
+                  title="Repost"
+                  themeName={
+                    themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                  }
+                >
                   <span
                     className={`hover-test hover-test-${themeName}`}
                     onMouseEnter={() => setRepostIconHovered(true)}
@@ -446,8 +449,8 @@ function RepostAction({
                       style={{
                         cursor: "pointer",
                       }}
-                      width={`${1.25}em`}
-                      height={`${1.25}em`}
+                      width={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
+                      height={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
                       viewBox="0 0 24 24"
                       aria-hidden="true"
                       className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
@@ -486,15 +489,16 @@ function RepostAction({
                           ? "rgb(0, 186, 124)"
                           : null,
                       position: "relative",
-                      bottom: "5px",
                       cursor: "pointer",
+                      bottom: isCutePopoverOnRightSide ? "4px" : "5px",
+                      fontSize: isCutePopoverOnRightSide ? "12px" : null,
                     }}
                   >
                     {post.reposted.length ? (
                       <span>{post.reposted.length}</span>
                     ) : null}
                   </span>
-                </Tooltip>
+                </BootstrapTooltip>
               </div>
             )}
 

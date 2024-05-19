@@ -2598,12 +2598,13 @@ span > a:hover {
 }
 
 /* #ebf5fe */
+
 .hover-forgot-password-send-email-stack-svg-verified-email:hover,
 .hover-customize-your-experience-tab-get-more-out-of-variant:hover,
 .hover-customize-your-experience-tab-connect-with-people-you-know:hover,
 .hover-customize-your-experience-tab-personalized-ads:hover {
-  background-color: #ebf5fe;
-  transition-duration: 0.2s;
+  background-color: #ebf5fe !important;
+  transition-duration: 0.2s !important;
 }
 
 .hover-forgot-password-send-email-stack-svg-verified-email-variant-2:hover,
@@ -2612,6 +2613,14 @@ span > a:hover {
 .hover-customize-your-experience-tab-personalized-ads-variant-2:hover {
   background-color: #eeeff0;
   transition-duration: 0.2s;
+}
+/* backgroundColor: "#f7f7f7", */
+
+.hover-theme-display-modal:hover {
+  background-color: #181818 !important;
+}
+.hover-theme-display-modal-dark-theme:hover {
+  background-color: #061019 !important;
 }
 
 .cs-experience-getMoreOutOf-dark-theme:hover,
@@ -2680,7 +2689,15 @@ span > a:hover {
   background-color: #16181c !important;
   transition-duration: 0.2s !important;
 }
+.default-theme-hover-selected:hover {
+  background-color: #ebf5fe !important;
+  transition-duration: 0.2s !important;
+}
 
+.default-theme-non-selected-hover:hover {
+  background-color: #f1f1f1 !important;
+  transition-duration: 0.2s !important;
+}
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -3957,6 +3974,10 @@ themeName === "dark-theme"
   overflow-y: hidden !important;
 }
 
+.special-cute-popover .MuiPaper-root {
+  padding: 12px;
+}
+
 .MuiPopover-root {
 }
 
@@ -4106,12 +4127,16 @@ themeName === "dark-theme"
 }
 
 /* left side nav bar new effects styles start to check  */
-.hover-home:hover {
+.hover-home:hover,
+.settings_responsive_top_nav_bar:hover {
+  cursor: pointer;
   background-color: #e7e7e8;
   transition-duration: 0.2s;
 }
 
-.hover-home-dark-theme:hover {
+.hover-home-dark-theme:hover,
+.settings_responsive_top_nav_bar_dark-theme:hover {
+  cursor: pointer;
   background-color: #181818 !important;
   transition-duration: 0.2s;
 }

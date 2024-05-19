@@ -7,12 +7,18 @@ import axios from "axios";
 import Popover from "@mui/material/Popover";
 import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
+import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
+function PostPopover({
+  post,
+  postDetailPageActive,
+  postDeletionProcess,
+  isCutePopoverOnRightSide,
+}) {
   const [{ theme, themeName }] = useContext(ThemeContext);
 
   const { userInfo, getToken } = useContext(UserContext);
@@ -72,6 +78,7 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
         // tüm popoover kullanılan yerlerde aynı catch mesajı mevcut finish to check INFO
       });
   };
+
   return (
     <>
       {contextHolder}
@@ -186,54 +193,63 @@ function PostPopover({ post, postDetailPageActive, postDeletionProcess }) {
               variant="text"
               {...bindTrigger(popupState)}
             >
+              {" "}
               <div onClick={handleShowPostOptionsWithThreeDots}>
                 {" "}
-                <div
-                  className={
-                    themeName === "dark-theme"
-                      ? `${themeName}-popover-post-detail-three-dots`
-                      : `popover-post-detail-three-dots`
+                <BootstrapTooltip
+                  title="More"
+                  themeName={
+                    themeName === "dark-theme" ? "dark-theme" : "light-theme"
                   }
-                  onMouseEnter={() => setThreeDotsColor(true)}
-                  onMouseLeave={() => {
-                    setThreeDotsColor(null);
-                  }}
-                  style={{
-                    cursor: "pointer",
-                    position: !postDetailPageActive ? "relative" : "",
-                    right: "16px",
-                    top: "3px",
-                    width: "40px",
-                    height: "40px",
-
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderRadius: "50%",
-                  }}
                 >
-                  <svg
-                    color={
-                      themeName === "dark-theme" && !threeDotsColor
-                        ? "#71767A"
-                        : themeName !== "dark-theme" && !threeDotsColor
-                        ? "rgb(83, 100, 113)"
-                        : "#259ef0"
+                  <div
+                    className={
+                      themeName === "dark-theme"
+                        ? `${themeName}-popover-post-detail-three-dots`
+                        : `popover-post-detail-three-dots`
                     }
-                    fill="currentColor"
-                    width={`${1.25}em`}
-                    height={`${1.25}em`}
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                    onMouseEnter={() => setThreeDotsColor(true)}
+                    onMouseLeave={() => {
+                      setThreeDotsColor(null);
+                    }}
+                    style={{
+                      cursor: "pointer",
+                      position: !postDetailPageActive ? "relative" : "",
+                      right: isCutePopoverOnRightSide ? null : "16px",
+                      top: isCutePopoverOnRightSide ? null : "3px",
+                      width: isCutePopoverOnRightSide ? "34px" : "40px",
+                      height: isCutePopoverOnRightSide ? "34px" : "40px",
+
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderRadius: "50%",
+                    }}
                   >
-                    <g>
-                      <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                    </g>
-                  </svg>
-                </div>
-              </div>
+                    <svg
+                      color={
+                        themeName === "dark-theme" && !threeDotsColor
+                          ? "#71767A"
+                          : themeName !== "dark-theme" && !threeDotsColor
+                          ? "rgb(83, 100, 113)"
+                          : "#259ef0"
+                      }
+                      fill="currentColor"
+                      width={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
+                      height={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      className="bi-three-dots positioning-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                    >
+                      <g>
+                        <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                      </g>
+                    </svg>
+                  </div>
+                </BootstrapTooltip>
+              </div>{" "}
             </Button>
+
             <Popover
               onClose={popupState.close}
               open={popupState.open}
