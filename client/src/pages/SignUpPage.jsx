@@ -12,7 +12,6 @@ import {
   OutlinedInput,
   FormControl,
   TextField,
-  Tooltip,
 } from "@mui/material";
 
 import LoadingSpinner from "../components/ui/LoadingSpinner";
@@ -21,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 import useWindowDimensions from "../hooks/getWindowDimensions";
 import { ThemeContext } from "../context/ThemeContext";
 import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
+import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -805,7 +805,12 @@ function SignUpPage() {
                 >
                   {"Resend email"}
                 </div>
-                <Tooltip title="This feature is not yet active. ">
+                <BootstrapTooltip
+                  title="This feature is not yet active. "
+                  themeName={
+                    themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                  }
+                >
                   <div
                     className={`use-phone-instead use-phone-instead-${themeName}`}
                     style={{
@@ -820,7 +825,7 @@ function SignUpPage() {
                   >
                     {"Use phone instead"}{" "}
                   </div>
-                </Tooltip>
+                </BootstrapTooltip>
               </div>
             </Modal.Header>
             {tabIndex === 0 ? (
@@ -2355,7 +2360,12 @@ function SignUpPage() {
                 >
                   {"Resend email"}
                 </div>
-                <Tooltip title="This feature is not yet active. ">
+                <BootstrapTooltip
+                  title="This feature is not yet active. "
+                  themeName={
+                    themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                  }
+                >
                   <div
                     className={`use-phone-instead use-phone-instead-${themeName}`}
                     style={{
@@ -2372,7 +2382,7 @@ function SignUpPage() {
                   >
                     {"Use phone instead"}{" "}
                   </div>
-                </Tooltip>
+                </BootstrapTooltip>
               </div>
             </Modal.Header>
             {tabIndex === 0 ? (

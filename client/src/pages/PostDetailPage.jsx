@@ -19,7 +19,32 @@ import RepostAction from "../components/ui/RepostAction";
 import LikeAction from "../components/ui/LikeAction";
 import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
 import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
+import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
+
 function PostDetailPage() {
+  const extraDetailedDate = (dateStr) => {
+    const date = new Date(dateStr);
+
+    const optionsTime = {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    };
+    const optionsDate = {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    };
+    const formattedTime = new Intl.DateTimeFormat("en-US", optionsTime).format(
+      date
+    );
+    const formattedDate = new Intl.DateTimeFormat("en-US", optionsDate).format(
+      date
+    );
+
+    return `${formattedTime} \u00B7 ${formattedDate}`;
+  };
+
   const [{ theme, themeName }] = useContext(ThemeContext);
 
   const { postOwner, postId } = useParams();
@@ -565,9 +590,20 @@ function PostDetailPage() {
                           >
                             {" "}
                             ·{" "}
-                            <span className="date-post-detail">
-                              {getCreatedDate(commentedForThisPost.createdAt)}
-                            </span>
+                            <BootstrapTooltip
+                              title={extraDetailedDate(
+                                commentedForThisPost.createdAt
+                              )}
+                              themeName={
+                                themeName === "dark-theme"
+                                  ? "dark-theme"
+                                  : "light-theme"
+                              }
+                            >
+                              <span className="date-post-detail">
+                                {getCreatedDate(commentedForThisPost.createdAt)}
+                              </span>
+                            </BootstrapTooltip>
                           </span>
                         </Link>
 
@@ -639,7 +675,12 @@ function PostDetailPage() {
                       justifyContent: "space-between",
                     }}
                   >
-                    <div className="">
+                    <div
+                      style={{
+                        width: "100px",
+                      }}
+                      className=""
+                    >
                       <CommentModal
                         refreshPosts={refreshPostDetailPage}
                         post={commentedForThisPost}
@@ -1058,7 +1099,14 @@ function PostDetailPage() {
                   }}
                   className="p-0 mt-3 mb-3 post-detail-underline-text-1"
                 >
-                  {formatDateString(detailedPost.createdAt)}
+                  <BootstrapTooltip
+                    title={extraDetailedDate(detailedPost.createdAt)}
+                    themeName={
+                      themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                    }
+                  >
+                    {formatDateString(detailedPost.createdAt)}
+                  </BootstrapTooltip>
                 </div>
               </Link>
               <div
@@ -1080,7 +1128,12 @@ function PostDetailPage() {
                 // borderBottom: "1px solid rgba(0,0,0,0.1)",
               }}
             >
-              <div className="p-2">
+              <div
+                style={{
+                  width: "100px",
+                }}
+                className="p-2"
+              >
                 <CommentModal
                   refreshPosts={refreshPostDetailPage}
                   post={detailedPost}
@@ -1368,11 +1421,22 @@ function PostDetailPage() {
                                                 >
                                                   {" "}
                                                   ·{" "}
-                                                  <span className="date-post-detail">
-                                                    {getCreatedDate(
+                                                  <BootstrapTooltip
+                                                    title={extraDetailedDate(
                                                       eachComment.createdAt
                                                     )}
-                                                  </span>
+                                                    themeName={
+                                                      themeName === "dark-theme"
+                                                        ? "dark-theme"
+                                                        : "light-theme"
+                                                    }
+                                                  >
+                                                    <span className="date-post-detail">
+                                                      {getCreatedDate(
+                                                        eachComment.createdAt
+                                                      )}
+                                                    </span>
+                                                  </BootstrapTooltip>
                                                 </span>
                                               </Link>
                                               {/* finish to check  */}
@@ -1474,7 +1538,12 @@ function PostDetailPage() {
                                           margin: "5px 0px 5px 0px",
                                         }}
                                       >
-                                        <div className="p-1">
+                                        <div
+                                          style={{
+                                            width: "100px",
+                                          }}
+                                          className="p-1"
+                                        >
                                           <CommentModal
                                             refreshPosts={refreshPostDetailPage}
                                             post={
@@ -1752,11 +1821,22 @@ function PostDetailPage() {
                                                 >
                                                   {" "}
                                                   ·{" "}
-                                                  <span className="date-post-detail">
-                                                    {getCreatedDate(
+                                                  <BootstrapTooltip
+                                                    title={extraDetailedDate(
                                                       eachComment.createdAt
                                                     )}
-                                                  </span>
+                                                    themeName={
+                                                      themeName === "dark-theme"
+                                                        ? "dark-theme"
+                                                        : "light-theme"
+                                                    }
+                                                  >
+                                                    <span className="date-post-detail">
+                                                      {getCreatedDate(
+                                                        eachComment.createdAt
+                                                      )}
+                                                    </span>
+                                                  </BootstrapTooltip>
                                                 </span>
                                               </Link>
                                               {/* finish to check  */}
@@ -1863,7 +1943,12 @@ function PostDetailPage() {
                                           margin: "5px 0px 5px 0px",
                                         }}
                                       >
-                                        <div className="p-1">
+                                        <div
+                                          style={{
+                                            width: "100px",
+                                          }}
+                                          className="p-1"
+                                        >
                                           <CommentModal
                                             refreshPosts={refreshPostDetailPage}
                                             post={

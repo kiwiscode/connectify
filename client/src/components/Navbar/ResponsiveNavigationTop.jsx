@@ -1,58 +1,119 @@
 import { useContext } from "react";
-import { Stack } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import LogoutModal from "../Main-Left-Side-Navbar/LogoutModal";
+import { ThemeContext } from "../../context/ThemeContext";
 
 function ResponsiveNavigationBarTop() {
   const { userInfo } = useContext(UserContext);
-
+  const [
+    { theme, themeName, activeFontSizeOption },
+    toggleThemeBetweenLightDarkMode,
+    toggleChangeFontSize,
+  ] = useContext(ThemeContext);
   return (
     <>
-      <Stack
+      <div
         style={{
           height: "50px",
+          width: "100%",
+          padding: "0px 12px",
+          margin: "0px",
         }}
-        className="responsive-navigation-bar-top"
+        className="responsive-navigation-bar-top "
         direction="horizontal"
-        gap={5}
       >
-        <div className="p-2">
+        <div>
           <LogoutModal />
         </div>
-        <div className="p-2">
+        <div>
           {" "}
-          <Link
+          <NavLink
             style={{
-              textDecoration: "none",
               color: "black",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
             }}
             to={"/home"}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="currentColor"
-              className="responsive-chevron-left"
-              viewBox="0 0 20 20"
+            {" "}
+            <span
+              style={{
+                cursor: "pointer",
+              }}
             >
-              <path d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-              <path d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-            </svg>
-          </Link>
+              <div
+                className={
+                  themeName === "dark-theme"
+                    ? "hover-home-dark-theme"
+                    : "hover-home"
+                }
+                style={{
+                  position: "relative",
+                  borderRadius: "50%",
+                  width: "50px",
+                  height: "50px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width={50}
+                  height={30}
+                  viewBox="0 0 100 100"
+                >
+                  {/* İçi dolu bir kare */}
+                  <rect
+                    x="5"
+                    y="5"
+                    width="90"
+                    height="90"
+                    fill="#1C9BEF"
+                    rx="5"
+                    ry="5"
+                    style={{
+                      filter: "drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))",
+                    }}
+                  />
+
+                  <text
+                    x="27.5"
+                    y="70"
+                    fontFamily="Arial"
+                    fontSize="60"
+                    fill="#FFF"
+                    stroke="#FFF"
+                    strokeWidth="2"
+                  >
+                    C
+                  </text>
+                </svg>
+              </div>
+            </span>
+          </NavLink>
         </div>
-        <div className="p-2">
+        <div
+          className={
+            themeName === "dark-theme"
+              ? "settings_responsive_top_nav_bar_dark-theme"
+              : "settings_responsive_top_nav_bar"
+          }
+          style={{
+            width: "50px",
+            height: "50px",
+            borderRadius: "50%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <svg
+            fill={themeName === "dark-theme" ? "white" : "black"}
             width={20}
             height={20}
-            style={{
-              color: "rgb(15, 20, 25)",
-              lineHeight: "0px",
-              fontSize: "15px",
-              fontWeight: "700",
-              cursor: "pointer",
-            }}
             viewBox="0 0 24 24"
             aria-hidden="true"
             className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
@@ -62,7 +123,7 @@ function ResponsiveNavigationBarTop() {
             </g>
           </svg>
         </div>
-      </Stack>
+      </div>
     </>
   );
 }

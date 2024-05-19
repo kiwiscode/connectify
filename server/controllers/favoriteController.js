@@ -2,6 +2,7 @@ const User = require("../models/User.model");
 const Post = require("../models/Post.model");
 const Comment = require("../models/Comment.model");
 const Favorite = require("../models/Favorite.model");
+const Activity = require("../models/Activity.model");
 const ObjectId = require("mongoose").Types.ObjectId;
 
 const handleGetFavorites = (req, res) => {
@@ -62,6 +63,12 @@ const handleAddFavorite = (req, res) => {
       }
 
       Post.findById(postId).then((post) => {
+        Activity.create({
+          activityHasBeenInitiatedWith: post.userId.toString(),
+          thePersonWhoCarriedOutTheActivity: user._id.toString(),
+          activityType: "favorite",
+          relatedPost: post._id.toString(),
+        });
         // notification ekleme start to check
         // user kendisine notification gönderemez !
         if (post.userId.toString() !== userId) {

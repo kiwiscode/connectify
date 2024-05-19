@@ -26,10 +26,7 @@ import {
 } from "@mui/material";
 import RightSideColumn from "../Main-Right-Side-Column/RightSideColumn";
 
-import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
-import { styled } from "@mui/material/styles";
 import useSound from "use-sound";
-
 import ActiveLightModeSound from "../../assets/light-mode-active.mp3";
 import ActiveDarkModeSound from "../../assets/dark-mode-active.mp3";
 
@@ -41,6 +38,7 @@ const API_URL = "http://localhost:3000";
 
 import io from "socket.io-client";
 import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
+import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
 const socket = io.connect(API_URL);
 function LogoutModal() {
   const [
@@ -919,17 +917,6 @@ function LogoutModal() {
     }
   };
 
-  const BootstrapTooltip = styled(({ className, ...props }) => (
-    <Tooltip {...props} classes={{ popper: className }} />
-  ))(({ theme }) => ({
-    [`& .${tooltipClasses.arrow}`]: {
-      color: "white",
-    },
-    [`& .${tooltipClasses.tooltip}`]: {
-      backgroundColor: themeName === "dark-theme" ? "#495a68" : "",
-    },
-  }));
-
   const [hoveredOption, setHoveredOption] = useState(null);
 
   const [play] = useSound(
@@ -939,6 +926,8 @@ function LogoutModal() {
       ? ActiveDarkModeSound
       : null
   );
+
+  const [defaultModeClicked, setdefaultModeClicked] = useState(false);
 
   return (
     <>
@@ -1145,7 +1134,7 @@ function LogoutModal() {
                   color: themeName === "dark-theme" ? "#E6E9EA" : "black",
                 }}
               >
-                At the hart of C are short messages called posts{" "}
+                At the heart of C are short messages called posts{" "}
                 <span className="double-dash">-</span>- just like this one{" "}
                 <span className="double-dash">-</span>- which can include
                 photos, videos, links, text, hashtags, and mentions like{" "}
@@ -1200,7 +1189,6 @@ function LogoutModal() {
                     lineHeight: "14px",
                     fontWeight: "400",
                     color: themeName === "dark-theme" ? "#E6E9EA" : "black",
-
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
@@ -1215,8 +1203,14 @@ function LogoutModal() {
                     alignItems: "center",
                   }}
                 >
-                  <BootstrapTooltip title="Extra small">
+                  <BootstrapTooltip
+                    title="Extra small"
+                    themeName={
+                      themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                    }
+                  >
                     <div
+                      onClick={() => toggleChangeFontSize("Extra Small 12px")}
                       onMouseEnter={() => setHoveredOption("Extra small")}
                       onMouseLeave={() => setHoveredOption(null)}
                       style={{
@@ -1239,7 +1233,6 @@ function LogoutModal() {
                       }}
                     >
                       <div
-                        onClick={() => toggleChangeFontSize("Extra Small 12px")}
                         style={{
                           zIndex: 9999,
                           width:
@@ -1288,8 +1281,14 @@ function LogoutModal() {
                           } `
                     }
                   ></div>
-                  <BootstrapTooltip title="Small">
+                  <BootstrapTooltip
+                    title="Small"
+                    themeName={
+                      themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                    }
+                  >
                     <div
+                      onClick={() => toggleChangeFontSize("Small 14px")}
                       onMouseEnter={() => setHoveredOption("Small")}
                       onMouseLeave={() => setHoveredOption(null)}
                       style={{
@@ -1311,7 +1310,6 @@ function LogoutModal() {
                       }}
                     >
                       <div
-                        onClick={() => toggleChangeFontSize("Small 14px")}
                         style={{
                           zIndex: 9999,
                           width:
@@ -1357,8 +1355,14 @@ function LogoutModal() {
                           } `
                     }
                   ></div>
-                  <BootstrapTooltip title="Default">
+                  <BootstrapTooltip
+                    title="Default"
+                    themeName={
+                      themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                    }
+                  >
                     <div
+                      onClick={() => toggleChangeFontSize("Default 16px")}
                       onMouseEnter={() => setHoveredOption("Default")}
                       onMouseLeave={() => setHoveredOption(null)}
                       style={{
@@ -1380,7 +1384,6 @@ function LogoutModal() {
                       }}
                     >
                       <div
-                        onClick={() => toggleChangeFontSize("Default 16px")}
                         style={{
                           zIndex: 9999,
                           width:
@@ -1423,8 +1426,14 @@ function LogoutModal() {
                           } `
                     }
                   ></div>
-                  <BootstrapTooltip title="Large">
+                  <BootstrapTooltip
+                    title="Large"
+                    themeName={
+                      themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                    }
+                  >
                     <div
+                      onClick={() => toggleChangeFontSize("Large 18px")}
                       onMouseEnter={() => setHoveredOption("Large")}
                       onMouseLeave={() => setHoveredOption(null)}
                       style={{
@@ -1446,7 +1455,6 @@ function LogoutModal() {
                       }}
                     >
                       <div
-                        onClick={() => toggleChangeFontSize("Large 18px")}
                         style={{
                           zIndex: 9999,
 
@@ -1486,8 +1494,14 @@ function LogoutModal() {
                           } `
                     }
                   ></div>
-                  <BootstrapTooltip title="Extra large">
+                  <BootstrapTooltip
+                    title="Extra large"
+                    themeName={
+                      themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                    }
+                  >
                     <div
+                      onClick={() => toggleChangeFontSize("Extra Large 20px")}
                       onMouseEnter={() => setHoveredOption("Extra large")}
                       onMouseLeave={() => setHoveredOption(null)}
                       style={{
@@ -1510,7 +1524,6 @@ function LogoutModal() {
                       }}
                     >
                       <div
-                        onClick={() => toggleChangeFontSize("Extra Large 20px")}
                         style={{
                           zIndex: 9999,
 
@@ -1607,7 +1620,12 @@ function LogoutModal() {
                   </g>
                 </svg>
               </div>
-              <Tooltip title="This feature is not yet active. ">
+              <BootstrapTooltip
+                title="This feature is not yet active."
+                themeName={
+                  themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                }
+              >
                 <div
                   style={{
                     width: "40px",
@@ -1620,9 +1638,14 @@ function LogoutModal() {
                     border: "none",
                   }}
                 ></div>
-              </Tooltip>
+              </BootstrapTooltip>
 
-              <Tooltip title="This feature is not yet active. ">
+              <BootstrapTooltip
+                title="This feature is not yet active."
+                themeName={
+                  themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                }
+              >
                 <div
                   style={{
                     width: "40px",
@@ -1634,9 +1657,14 @@ function LogoutModal() {
                     borderRadius: "50%",
                   }}
                 ></div>
-              </Tooltip>
+              </BootstrapTooltip>
 
-              <Tooltip title="This feature is not yet active. ">
+              <BootstrapTooltip
+                title="This feature is not yet active."
+                themeName={
+                  themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                }
+              >
                 <div
                   style={{
                     width: "40px",
@@ -1648,9 +1676,14 @@ function LogoutModal() {
                     borderRadius: "50%",
                   }}
                 ></div>
-              </Tooltip>
+              </BootstrapTooltip>
 
-              <Tooltip title="This feature is not yet active. ">
+              <BootstrapTooltip
+                title="This feature is not yet active."
+                themeName={
+                  themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                }
+              >
                 <div
                   style={{
                     width: "40px",
@@ -1662,9 +1695,14 @@ function LogoutModal() {
                     borderRadius: "50%",
                   }}
                 ></div>
-              </Tooltip>
+              </BootstrapTooltip>
 
-              <Tooltip title="This feature is not yet active. ">
+              <BootstrapTooltip
+                title="This feature is not yet active."
+                themeName={
+                  themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                }
+              >
                 <div
                   style={{
                     width: "40px",
@@ -1676,7 +1714,7 @@ function LogoutModal() {
                     borderRadius: "50%",
                   }}
                 ></div>
-              </Tooltip>
+              </BootstrapTooltip>
             </div>
           </div>
           <div
@@ -1707,7 +1745,7 @@ function LogoutModal() {
               className="mt-4"
               style={{
                 display: "flex",
-                flexDirection: width <= 600 ? "column" : "",
+                flexDirection: width <= 600 ? "column" : "row",
                 justifyContent: "space-between",
                 gap: "2%",
                 position: "relative",
@@ -1721,6 +1759,7 @@ function LogoutModal() {
                   if (themeName !== "light-theme") {
                     toggleThemeBetweenLightDarkMode();
                     play();
+                    setdefaultModeClicked(true);
                   }
                 }}
               >
@@ -1729,36 +1768,39 @@ function LogoutModal() {
                     width: width <= 600 ? "80vw" : "180px",
                     marginTop: width <= 600 ? "10px" : "",
                     height: "60px",
-                    display: "flex",
-                    justifyContent: "space-evenly",
-                    alignItems: "center",
                     backgroundColor: "white",
                     border:
                       themeName !== "dark-theme" ? "2px solid #1d9bf0" : "",
                     borderRadius: "4px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
                   }}
                 >
+                  {" "}
                   <div
                     style={{
-                      backgroundColor: "transparent",
+                      maxWidth: "150px",
+                      minWidth: "150px",
+                      display: "flex",
+                      backgroundColor: "white",
                     }}
                   >
-                    {" "}
                     <div
                       style={{
                         width: "40px",
                         height: "40px",
                         borderRadius: "50%",
                         cursor: "pointer",
-                        position: "relative",
-                        backgroundColor: "transparent",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "white",
                       }}
                       className={
-                        themeName === "light-theme"
-                          ? `ms-auto hover-forgot-password-send-email-stack-svg-verified-email
-                                 hover-forgot-password-send-email-stack-svg-verified-email-${themeName}`
-                          : `ms-auto 
-                                  hover-forgot-password-send-email-stack-svg-verified-email-variant-2 hover-forgot-password-send-email-stack-svg-verified-email-variant-2-${themeName}`
+                        defaultModeClicked
+                          ? `default-theme-hover-selected`
+                          : `default-theme-non-selected-hover`
                       }
                     >
                       <div
@@ -1772,12 +1814,9 @@ function LogoutModal() {
                               ? "none"
                               : themeName !== "dark-theme"
                               ? "2px solid #71767A"
-                              : "2px solid rgb(70, 70, 70)",
+                              : "2px solid #C0CFD8",
                           width: "20px",
                           height: "20px",
-                          position: "relative",
-                          // left: "10px",
-                          top: "10px",
                           borderRadius: "50%",
                         }}
                       >
@@ -1807,20 +1846,28 @@ function LogoutModal() {
                         </svg>
                       </div>
                     </div>
-                  </div>
-                  <div
-                    style={{
-                      backgroundColor: "transparent",
-                      color: "black",
-                      fontSize: "15px",
-                      fontWeight: "700",
-                    }}
-                  >
-                    Default
+                    <div
+                      style={{
+                        backgroundColor: "white",
+                        color: "black",
+                        fontSize: "15px",
+                        fontWeight: "700",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      Default
+                    </div>
                   </div>
                 </div>
               </div>
-              <BootstrapTooltip title="This feature is not yet active. ">
+              <BootstrapTooltip
+                title="This feature is not yet active. "
+                themeName={
+                  themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                }
+              >
                 <div>
                   <div
                     style={{
@@ -1828,9 +1875,6 @@ function LogoutModal() {
                       marginTop: width <= 600 ? "10px" : "",
                       height: "60px",
                       backgroundColor: "#15202B",
-                      display: "flex",
-                      justifyContent: "space-evenly",
-                      alignItems: "center",
                       border:
                         // themeName === "dark-theme"
                         //   ? "2px solid #1d9bf0"
@@ -1839,23 +1883,31 @@ function LogoutModal() {
                         //   :
                         "1px solid rgb(70,70,70)",
                       borderRadius: "4px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
                     }}
                   >
+                    {" "}
                     <div
                       style={{
-                        backgroundColor: "transparent",
+                        maxWidth: "150px",
+                        minWidth: "150px",
+                        display: "flex",
+                        backgroundColor: "#15202B",
                       }}
                     >
-                      {" "}
                       <div
                         style={{
                           width: "40px",
                           height: "40px",
                           borderRadius: "50%",
                           cursor: "pointer",
-                          position: "relative",
                           backgroundColor: "#15202B",
                           // backgroundColor: "transparent",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
                         }}
                       >
                         <div
@@ -1864,9 +1916,7 @@ function LogoutModal() {
                             border: "2px solid rgb(70, 70, 70)",
                             width: "20px",
                             height: "20px",
-                            position: "relative",
-                            // left: "10px",
-                            top: "10px",
+
                             borderRadius: "50%",
                           }}
                         >
@@ -1891,16 +1941,19 @@ function LogoutModal() {
                           </svg>
                         </div>
                       </div>
-                    </div>
-                    <div
-                      style={{
-                        backgroundColor: "transparent",
-                        color: "#F6F9F9",
-                        fontSize: "15px",
-                        fontWeight: "700",
-                      }}
-                    >
-                      Dim
+                      <div
+                        style={{
+                          backgroundColor: "transparent",
+                          color: "#F6F9F9",
+                          fontSize: "15px",
+                          fontWeight: "700",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        Dim
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1913,6 +1966,7 @@ function LogoutModal() {
                   if (themeName !== "dark-theme") {
                     toggleThemeBetweenLightDarkMode();
                     play();
+                    setdefaultModeClicked(false);
                   }
                 }}
               >
@@ -1922,35 +1976,38 @@ function LogoutModal() {
                     marginTop: width <= 600 ? "10px" : "",
                     height: "60px",
                     backgroundColor: "black",
-                    display: "flex",
-                    justifyContent: "space-evenly",
-                    alignItems: "center",
                     border:
                       themeName === "dark-theme" ? "2px solid #1d9bf0" : "",
                     borderRadius: "4px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
                   }}
                 >
+                  {" "}
                   <div
                     style={{
-                      backgroundColor: "transparent",
+                      maxWidth: "150px",
+                      minWidth: "150px",
+                      display: "flex",
+                      backgroundColor: "black",
                     }}
                   >
-                    {" "}
                     <div
                       style={{
                         width: "40px",
                         height: "40px",
                         borderRadius: "50%",
                         cursor: "pointer",
-                        position: "relative",
-                        backgroundColor: "transparent",
+                        backgroundColor: "black",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
                       }}
                       className={
                         themeName === "dark-theme"
-                          ? `ms-auto hover-forgot-password-send-email-stack-svg-verified-email
-                                 hover-forgot-password-send-email-stack-svg-verified-email-${themeName}`
-                          : `ms-auto 
-                                  hover-forgot-password-send-email-stack-svg-verified-email-variant-2 hover-forgot-password-send-email-stack-svg-verified-email-variant-2-${themeName}`
+                          ? "hover-theme-display-modal-dark-theme"
+                          : "hover-theme-display-modal"
                       }
                     >
                       <div
@@ -1968,8 +2025,6 @@ function LogoutModal() {
                           width: "20px",
                           height: "20px",
                           position: "relative",
-                          left: "10px",
-                          top: "10px",
                           borderRadius: "50%",
                         }}
                       >
@@ -1994,16 +2049,19 @@ function LogoutModal() {
                         </svg>
                       </div>
                     </div>
-                  </div>
-                  <div
-                    style={{
-                      backgroundColor: "transparent",
-                      color: "#E6E9EA",
-                      fontSize: "15px",
-                      fontWeight: "700",
-                    }}
-                  >
-                    Lights out
+                    <div
+                      style={{
+                        backgroundColor: "transparent",
+                        color: "#E6E9EA",
+                        fontSize: "15px",
+                        fontWeight: "700",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      Lights out
+                    </div>
                   </div>
                 </div>
               </div>
@@ -2484,7 +2542,241 @@ function LogoutModal() {
                 <Stack
                   style={{
                     cursor: "pointer",
+                    height: "50px",
+                    width: "50px",
                     display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  direction="horizontal"
+                >
+                  {/* start to check */}
+                  {userInfo?.imageUrl?.slice(0, 3) !== "../" ? (
+                    <img
+                      src={userInfo?.imageUrl}
+                      width={40}
+                      height={40}
+                      alt=""
+                      style={{
+                        borderRadius: "50%",
+                      }}
+                    />
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width={40}
+                      fill={
+                        themeName === "dark-theme"
+                          ? "#71767A"
+                          : "rgb(83, 100, 113)"
+                      }
+                      className="profile-svg-logout-modal bi bi-person-circle"
+                      viewBox="0 0 16 16"
+                      style={{
+                        borderRadius: "50%",
+                      }}
+                    >
+                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                      <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                    </svg>
+                  )}
+
+                  {/* finish to check */}
+                </Stack>
+              </Button>{" "}
+              <Popover
+                open={popupState.open}
+                onClose={popupState.close}
+                {...bindPopover(popupState)}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                className={`${
+                  themeName === "dark-theme"
+                    ? "popover-material-ui-dark-theme"
+                    : themeName !== "dark-theme"
+                    ? "popover-material-ui-light-theme"
+                    : "hideshowMessageDeletePopover "
+                }`}
+              >
+                {" "}
+                <div
+                  style={{
+                    height: width <= 700 ? "12%" : "100px",
+                    width: "250px",
+                  }}
+                  className="logout-body"
+                >
+                  {width <= 700 ? (
+                    <div>
+                      <div
+                        onClick={() => {
+                          showDisplayModal();
+                          popupState.close();
+                        }}
+                        style={{
+                          paddingBottom: "12px",
+                          paddingTop: "12px",
+                          lineHeight: "20px",
+                          fontWeight: "700",
+                          fontSize: "15px",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          width: "100%",
+                          // height: "100%",
+                        }}
+                        className={`logout-p logout-popover logout-popover-${themeName}`}
+                      >
+                        <span
+                          style={{
+                            position: "relative",
+                            left: "10px",
+                            color: themeName === "dark-theme" ? "white" : "",
+                          }}
+                        >
+                          Display
+                        </span>
+                      </div>
+                      <div
+                        onClick={() => {
+                          popupState.close();
+                        }}
+                      >
+                        <RightSideColumn
+                          widthSmaller700={width <= 700 ? true : false}
+                        />
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {/* settings icon start to check  */}
+                  <div
+                    onClick={() => {
+                      handleShow();
+                      popupState.close();
+                    }}
+                    className={`settings-and-privacy settings-and-privacy-${themeName}`}
+                    style={{
+                      paddingBottom: "12px",
+                      paddingTop: "12px",
+                      lineHeight: "20px",
+                      fontWeight: "700",
+                      fontSize: "15px",
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <svg
+                      color={themeName === "dark-theme" ? "white" : ""}
+                      fill="currentColor"
+                      style={{
+                        position: "relative",
+                        left: "10px",
+                      }}
+                      width={20}
+                      height={20}
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                    >
+                      <g>
+                        <path d="M10.54 1.75h2.92l1.57 2.36c.11.17.32.25.53.21l2.53-.59 2.17 2.17-.58 2.54c-.05.2.04.41.21.53l2.36 1.57v2.92l-2.36 1.57c-.17.12-.26.33-.21.53l.58 2.54-2.17 2.17-2.53-.59c-.21-.04-.42.04-.53.21l-1.57 2.36h-2.92l-1.58-2.36c-.11-.17-.32-.25-.52-.21l-2.54.59-2.17-2.17.58-2.54c.05-.2-.03-.41-.21-.53l-2.35-1.57v-2.92L4.1 8.97c.18-.12.26-.33.21-.53L3.73 5.9 5.9 3.73l2.54.59c.2.04.41-.04.52-.21l1.58-2.36zm1.07 2l-.98 1.47C10.05 6.08 9 6.5 7.99 6.27l-1.46-.34-.6.6.33 1.46c.24 1.01-.18 2.07-1.05 2.64l-1.46.98v.78l1.46.98c.87.57 1.29 1.63 1.05 2.64l-.33 1.46.6.6 1.46-.34c1.01-.23 2.06.19 2.64 1.05l.98 1.47h.78l.97-1.47c.58-.86 1.63-1.28 2.65-1.05l1.45.34.61-.6-.34-1.46c-.23-1.01.18-2.07 1.05-2.64l1.47-.98v-.78l-1.47-.98c-.87-.57-1.28-1.63-1.05-2.64l.34-1.46-.61-.6-1.45.34c-1.02.23-2.07-.19-2.65-1.05l-.97-1.47h-.78zM12 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5c.82 0 1.5-.67 1.5-1.5s-.68-1.5-1.5-1.5zM8.5 12c0-1.93 1.56-3.5 3.5-3.5 1.93 0 3.5 1.57 3.5 3.5s-1.57 3.5-3.5 3.5c-1.94 0-3.5-1.57-3.5-3.5z"></path>
+                      </g>
+                    </svg>
+                    <span
+                      style={{
+                        position: "relative",
+                        left: "10px",
+                        color: themeName === "dark-theme" ? "white" : "",
+                      }}
+                      className="logout-p"
+                    >
+                      Settings and privacy
+                    </span>
+                  </div>
+                  {/* settings icon finish to check  */}
+                  <div
+                    className={`logout-p logout-popover logout-popover-${themeName}`}
+                    onClick={() => {
+                      handleOpenLogoutModal();
+                      popupState.close();
+                    }}
+                    style={{
+                      paddingBottom: "12px",
+                      paddingTop: "5px",
+                      lineHeight: "20px",
+                      fontWeight: "700",
+                      fontSize: "15px",
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      cursor: "pointer",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      width: "100%",
+                    }}
+                  >
+                    <span
+                      style={{
+                        position: "relative",
+                        left: "10px",
+                        color: themeName === "dark-theme" ? "white" : "",
+                      }}
+                      className="logout-p"
+                    >
+                      Log out @{localeInfo?.username}
+                    </span>
+                  </div>
+                </div>
+              </Popover>
+            </div>
+          )}
+        </PopupState>
+      )}
+
+      {width <= 500 && (
+        <PopupState variant="popover" popupId="demo-popup-popover">
+          {(popupState) => (
+            <div
+              // className="mt-4"
+              style={{
+                padding: "0px",
+                margin: "0px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Button
+                className={
+                  themeName === "dark-theme"
+                    ? "hover-home-dark-theme"
+                    : "hover-home"
+                }
+                {...bindTrigger(popupState)}
+                style={{
+                  border: "none",
+                  borderRadius: "50%",
+                  height: "60px",
+                  width: "60px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                variant="text"
+              >
+                <Stack
+                  style={{
+                    cursor: "pointer",
                     height: "50px",
                     width: "50px",
                     display: "flex",
@@ -4233,7 +4525,12 @@ function LogoutModal() {
                     left: "15px",
                   }}
                 >
-                  <BootstrapTooltip title="This feature is not yet active. ">
+                  <BootstrapTooltip
+                    title="This feature is not yet active. "
+                    themeName={
+                      themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                    }
+                  >
                     Don’t have access to these?
                   </BootstrapTooltip>
                 </span>
