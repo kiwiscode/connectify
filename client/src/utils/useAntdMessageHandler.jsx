@@ -39,10 +39,31 @@ export const useAntdMessageHandler = () => {
     });
   };
 
-  const showCustomMessage = (customMessage, duration) => {
+  const showCustomMessage = (
+    customMessage,
+    duration,
+    isBookmarkAddedMessage
+  ) => {
+    console.log("Şu an burası çalışıyor !!!");
     messageApi.success({
       type: "success",
-      content: customMessage,
+      content: (
+        <div>
+          <span style={{ fontSize: "15px" }}>{customMessage}</span>
+          {isBookmarkAddedMessage && (
+            <Link
+              style={{
+                color: "white",
+                marginLeft: "15px",
+                fontWeight: "700",
+                fontSize: "15px",
+              }}
+            >
+              Add to folder
+            </Link>
+          )}
+        </div>
+      ),
       duration: duration,
       className: "custom-message-style",
     });

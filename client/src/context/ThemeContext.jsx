@@ -18,47 +18,6 @@ export const ThemeProvider = ({ children }) => {
 
   const [activeFontSizeOption, setactiveFontSizeOption] =
     useState("Default 16px");
-  // const [extraSmallFontSizeActive, setextraSmallFontSizeActive] =
-  //   useState(null);
-  // const [smallFontSizeActive, setsmallFontSizeActive] = useState(null);
-  // const [defaultFontSizeActive, setdefaultFontSizeActive] = useState(null);
-  // const [largeFontSizeActive, setlargeFontSizeActive] = useState(null);
-  // const [extraLargeFontSizeActive, setextraLargeFontSizeActive] =
-  //   useState(null);
-
-  // const toggleFontSize = () => {
-  //   if (activeFontSizeOption === "Default 16px") {
-  //     setextraSmallFontSizeActive(true);
-  //     setsmallFontSizeActive(true);
-  //     setdefaultFontSizeActive(false);
-  //     setlargeFontSizeActive(false);
-  //     setextraLargeFontSizeActive(false);
-  //   } else if (activeFontSizeOption === "Extra Small 12px") {
-  //     setextraSmallFontSizeActive(false);
-  //     setsmallFontSizeActive(false);
-  //     setdefaultFontSizeActive(false);
-  //     setlargeFontSizeActive(false);
-  //     setextraLargeFontSizeActive(false);
-  //   } else if (activeFontSizeOption === "Small 14px") {
-  //     setextraSmallFontSizeActive(true);
-  //     setsmallFontSizeActive(false);
-  //     setdefaultFontSizeActive(false);
-  //     setlargeFontSizeActive(false);
-  //     setextraLargeFontSizeActive(false);
-  //   } else if (activeFontSizeOption === "Large 18px") {
-  //     setextraSmallFontSizeActive(true);
-  //     setsmallFontSizeActive(true);
-  //     setdefaultFontSizeActive(true);
-  //     setlargeFontSizeActive(false);
-  //     setextraLargeFontSizeActive(false);
-  //   } else if (activeFontSizeOption === "Extra Large 20px") {
-  //     setextraSmallFontSizeActive(true);
-  //     setsmallFontSizeActive(true);
-  //     setdefaultFontSizeActive(true);
-  //     setlargeFontSizeActive(true);
-  //     setextraLargeFontSizeActive(false);
-  //   }
-  // };
 
   useEffect(() => {
     const storedFontSize = localStorage.getItem("fontSizeOption");

@@ -26,6 +26,12 @@ const postSchema = new Schema(
         ref: "Comment",
       },
     ],
+    bookmarks: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Bookmark",
+      },
+    ],
     isReposted: {
       type: Boolean,
       default: false,

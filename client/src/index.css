@@ -3941,11 +3941,13 @@ input[data-autocompleted] {
 }
 /* typing indicator animation finish to check  */
 .message-popoover:hover {
-  background-color: #f7f7f7;
+  background-color: #f7f7f7 !important;
+  transition-duration: 0.2s !important;
 }
 
 .message-popoover-dark-theme:hover {
   background-color: #181818 !important;
+  transition-duration: 0.2s !important;
 }
 
 /* filter:
@@ -4128,21 +4130,35 @@ themeName === "dark-theme"
 
 /* left side nav bar new effects styles start to check  */
 .hover-home:hover,
-.settings_responsive_top_nav_bar:hover {
+.settings_responsive_top_nav_bar:hover,
+.icon-hover-light-theme:hover {
   cursor: pointer;
-  background-color: #e7e7e8;
-  transition-duration: 0.2s;
+  background-color: #e7e7e8 !important;
+  transition-duration: 0.2s !important;
 }
 
 .hover-home-dark-theme:hover,
-.settings_responsive_top_nav_bar_dark-theme:hover {
+.settings_responsive_top_nav_bar_dark-theme:hover,
+.icon-hover-dark-theme:hover {
   cursor: pointer;
   background-color: #181818 !important;
-  transition-duration: 0.2s;
+  transition-duration: 0.2s !important;
 }
 /* left side nav bar new effects styles finish to check  */
 
 .post-btn-left-side-nav-bar:hover {
   background-color: #198cd8;
   transition-duration: 0.2s;
+}
+
+.hover-blue-btn:hover {
+  background-color: #198cd8 !important;
+  transition-duration: 0.2s !important;
+}
+
+.hovered-delete-popover-light-theme:hover {
+  transition: 0.2s !important;
+}
+.hovered-delete-popover-dark-theme:hover {
+  transition: 0.2s !important;
 }

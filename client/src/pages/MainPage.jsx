@@ -29,6 +29,7 @@ import PopupState, { bindPopover, bindTrigger } from "material-ui-popup-state";
 import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
 import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
 import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
+import BookmarkAction from "../components/ui/BookmarkAction";
 function MainPage({ isNewPostShared }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
 
@@ -113,7 +114,7 @@ function MainPage({ isNewPostShared }) {
           Authorization: `Bearer ${getToken()}`,
         },
       });
-
+      console.log("Posts main page =>", response.data);
       getOnlyFollowingPosts();
       setPosts(response.data);
     } catch (error) {
@@ -2174,7 +2175,6 @@ function MainPage({ isNewPostShared }) {
                                 ? `each-post-${themeName}`
                                 : "each-post"
                             }
-                            key={post._id}
                           >
                             <div
                               style={{
@@ -2714,6 +2714,32 @@ function MainPage({ isNewPostShared }) {
                                     allPosts={posts}
                                     postIndex={index}
                                   />
+                                </div>{" "}
+                                <div
+                                  style={{
+                                    width: "100px",
+                                  }}
+                                  to={`/${post.userId.username}/status/${
+                                    !post.isReposted
+                                      ? post._id
+                                      : post.repostedFromThisOriginalPost[0]
+                                          ?._id
+                                  }`}
+                                  onClick={() => setclickedPostBox(post)}
+                                  className="p-1 next-to-like"
+                                >
+                                  {" "}
+                                  <div>{post.bookmarks._id}</div>
+                                  <BookmarkAction
+                                    post={post ? post : null}
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    refreshPosts={handleShowPostsHomePage}
+                                    setLoadingFalse={setLoadingFalse}
+                                    setLoadingTrue={setLoadingTrue}
+                                    allPosts={posts}
+                                    postIndex={index}
+                                  />
                                 </div>
                               </Stack>
                               {/* new version favorite repost comment finish to check */}
@@ -2822,7 +2848,7 @@ function MainPage({ isNewPostShared }) {
                   {followingPosts.followingPosts
                     .slice(0, visibleFollowingTweets)
                     .map((post, index) => (
-                      <div key={index}>
+                      <div key={post._id}>
                         <div
                           onClick={() => {
                             console.log("Post box parent class =>", post);
@@ -3352,6 +3378,30 @@ function MainPage({ isNewPostShared }) {
                                   refreshPosts={handleShowPostsHomePage}
                                   setLoadingFalse={setLoadingFalse}
                                   setLoadingTrue={setLoadingTrue}
+                                />
+                              </div>{" "}
+                              <div
+                                style={{
+                                  width: "100px",
+                                }}
+                                to={`/${post.userId.username}/status/${
+                                  !post.isReposted
+                                    ? post._id
+                                    : post.repostedFromThisOriginalPost[0]?._id
+                                }`}
+                                onClick={() => setclickedPostBox(post)}
+                                className="p-1 next-to-like"
+                              >
+                                {" "}
+                                <BookmarkAction
+                                  post={post ? post : null}
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  refreshPosts={handleShowPostsHomePage}
+                                  setLoadingFalse={setLoadingFalse}
+                                  setLoadingTrue={setLoadingTrue}
+                                  allPosts={posts}
+                                  postIndex={index}
                                 />
                               </div>
                             </Stack>
