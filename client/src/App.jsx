@@ -16,6 +16,7 @@ const FollowerDetailPage = lazy(() => import("./pages/FollowersDetailPage"));
 const DeactivatedPage = lazy(() => import("./pages/DeactivatedPage"));
 const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
+const BookmarksPage = lazy(() => import("./pages/BookmarksPage"));
 
 import { ThemeContext } from "./context/ThemeContext";
 import { UserContext, UserProvider } from "./context/UserContext";
@@ -194,6 +195,7 @@ function App() {
                     element={<NotificationsPage />}
                   ></Route>
                   <Route path="/messages" element={<MessagesPage />}></Route>
+                  <Route path="/bookmarks" element={<BookmarksPage />}></Route>
                   <Route
                     path="/profile"
                     element={<UserProfile isNewPostShared={isPostShared} />}

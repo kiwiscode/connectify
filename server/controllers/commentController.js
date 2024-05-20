@@ -21,6 +21,11 @@ const addComment = (req, res) => {
             thePersonWhoCarriedOutTheActivity: user._id.toString(),
             activityType: "comment",
             relatedPost: post._id.toString(),
+            relatedPostOption2: post.isReposted
+              ? post.repostedFromThisOriginalPost[0]._id.toString()
+              : post.isComment
+              ? post.commentedForThisPost._id.toString()
+              : post._id.toString(),
           });
           // notification ekleme start to check
           // user kendisine notification gönderemez !

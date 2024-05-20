@@ -4,6 +4,8 @@ const Favorite = require("../models/Favorite.model");
 const Comment = require("../models/Comment.model");
 const cloudinary = require("../utils/cloudinary");
 const { deleteComment } = require("./commentController");
+const Activity = require("../models/Activity.model");
+const Bookmark = require("../models/Bookmark.model");
 const handlePost = (req, res) => {
   const { content, image, modalImage } = req.body;
   const { userId } = req.user;
@@ -88,6 +90,7 @@ const handleShowPosts = (req, res) => {
     .sort({ createdAt: -1 })
     // finish to check
     .populate("likes")
+    .populate("bookmarks")
     .populate("userId")
     .populate("reposted")
     .populate("repostedFromThisOriginalPost")
@@ -106,7 +109,6 @@ const handleShowPosts = (req, res) => {
 const handleDeletePost = (req, res) => {
   const { userId, postId } = req.body;
 
-  console.log("Req body =>", req.body);
   User.findById(userId)
     .populate("posts")
     .then((user) => {
@@ -118,6 +120,136 @@ const handleDeletePost = (req, res) => {
       Post.findById(postId)
         .populate("userId")
         .then((post) => {
+          // bookmarks var ise bookmarks collectiondan ve userların bookmarkslarından da sil start to check
+          Bookmark.find({
+            bookmarkedPost:
+              !post.isReposted && !post.reposted.length
+                ? postId
+                : post.isReposted
+                ? post.repostedFromThisOriginalPost[0]._id.toString()
+                : !post.isReposted && post.reposted.length
+                ? post._id
+                : null,
+          })
+            .then((bookmarks) => {
+              if (bookmarks.length > 0) {
+                const bookmarkIds = bookmarks.map((bookmark) => bookmark._id);
+
+                Bookmark.deleteMany({ _id: { $in: bookmarkIds } })
+                  .then(() => {
+                    console.log("Deleted from the bookmarks collection.");
+
+                    User.updateMany(
+                      { bookmarks: { $in: bookmarkIds } },
+                      { $pull: { bookmarks: { $in: bookmarkIds } } }
+                    )
+                      .then((result) => {
+                        console.log(
+                          "Removed from users' bookmarks arrays:",
+                          result
+                        );
+                      })
+                      .catch((error) => {
+                        console.error(
+                          "An error occurred while updating users' bookmarks arrays:",
+                          error
+                        );
+                      });
+                  })
+                  .catch((error) => {
+                    console.error(
+                      "An error occurred while finding bookmarks:",
+                      error
+                    );
+                  });
+              } else {
+                console.log("Bookmark to delete not found.");
+              }
+            })
+            .catch((error) => {
+              console.error(
+                "An error occurred while finding bookmarks:",
+                error
+              );
+            });
+
+          // bookmarks var ise bookmarks collectiondan ve userların bookmarkslarından da sil finish to check
+          // activityi sil ! start to check
+          if (post.isComment && post.isReposted) {
+            console.log("Hangi condition çalıştırıcaksın ??");
+          } else if (post.isComment) {
+            console.log("First or second condition works");
+          } else if (post.isReposted) {
+            console.log("Third or fourth condition works");
+          } else {
+            console.log("Fifth or sixth condition works");
+          }
+          const deleteActivityByType = async (activityType) => {
+            return await Activity.findOneAndDelete({
+              $and: [
+                { activityType },
+                {
+                  $or: [
+                    {
+                      relatedPost: post.isComment
+                        ? post.commentedForThisPost?._id.toString()
+                        : null,
+                    },
+                    {
+                      relatedPostOption2: post.isComment
+                        ? post.commentedForThisPost?._id.toString()
+                        : null,
+                    },
+                    {
+                      relatedPost: post.isReposted
+                        ? post.repostedFromThisOriginalPost[0]?._id.toString()
+                        : null,
+                    },
+                    {
+                      relatedPostOption2: post.isReposted
+                        ? post.repostedFromThisOriginalPost[0]?._id.toString()
+                        : null,
+                    },
+                    {
+                      relatedPost: post._id.toString(),
+                    },
+                    {
+                      relatedPostOption2: post._id.toString(),
+                    },
+                  ],
+                },
+              ],
+            });
+          };
+          deleteActivityByType("favorite")
+            .then((result) => {
+              if (result) {
+                console.log("Favorite activity deleted successfully:", result);
+              } else {
+                console.log("No favorite activity found!");
+              }
+              return deleteActivityByType("repost");
+            })
+            .then((result) => {
+              if (result) {
+                console.log("Repost activity deleted successfully:", result);
+              } else {
+                console.log("No repost activity found!");
+              }
+              return deleteActivityByType("comment");
+            })
+            .then((result) => {
+              if (result) {
+                console.log("Comment activity deleted successfully:", result);
+              } else {
+                console.log("No comment activity found!");
+              }
+            })
+            .catch((error) => {
+              console.error("Error occurred while deleting activities:", error);
+            });
+          // activityi sil ! finish to check
+
           console.log(
             "Owner post id =>",
             post?.userId?.toString(),
@@ -254,8 +386,6 @@ const handleDeletePost = (req, res) => {
           // notified olması mümkün olan kullanıcıdan notificationı silme veya bırakma işlemi finish to check
 
           if (post.isReposted) {
-            // this postId should filtered from all the users favorites array ! So then we can delete the post itself after delete from every user's favorites array
-            // check if the active(current user who is deleting the post) exclude him/her from promise.all user.save combination
             User.find({
               $or: [
                 {
@@ -331,9 +461,6 @@ const handleDeletePost = (req, res) => {
               .catch((error) => {
                 res.status(501);
               });
-
-            // this postId should filtered from all the users favorites and posts array ! So then we can delete the post itself after delete from every user's favorites array
-            // check if the active(current user who is deleting the post) exclude him/her from promise.all user.save combination
 
             Post.findByIdAndDelete(post._id)
               .then(() => {
@@ -716,8 +843,6 @@ const handleDeletePost = (req, res) => {
                     .then((referencePost) => {
                       console.log("Here is working 2", referencePost);
 
-                      // this postId should filtered from all the users favorites array ! So then we can delete the post itself after delete from every user's favorites array
-                      // check if the active(current user who is deleting the post) exclude him/her from promise.all user.save combination
                       User.find({
                         $or: [
                           {
@@ -790,9 +915,6 @@ const handleDeletePost = (req, res) => {
                         .catch((error) => {
                           res.status(501);
                         });
-
-                      // this postId should filtered from all the users favorites array ! So then we can delete the post itself after delete from every user's favorites array
-                      // check if the active(current user who is deleting the post) exclude him/her from promise.all user.save combination
 
                       // STARTING WITH FAVORITE DELETING PROCESS IF THE POST ALREADY IN FAVORITE COLLECTION
                       Favorite.deleteMany({
@@ -989,8 +1111,7 @@ const handleDeletePost = (req, res) => {
                     console.log("Error =>", error);
                   });
               }
-              // this postId should filtered from all the users favorites array ! So then we can delete the post itself after delete from every user's favorites array
-              // check if the active(current user who is deleting the post) exclude him/her from promise.all user.save combination
+
               User.find({
                 $or: [
                   {
@@ -1058,9 +1179,6 @@ const handleDeletePost = (req, res) => {
                 .catch((error) => {
                   res.status(501);
                 });
-
-              // this postId should filtered from all the users favorites array ! So then we can delete the post itself after delete from every user's favorites array
-              // check if the active(current user who is deleting the post) exclude him/her from promise.all user.save combination
 
               Post.findByIdAndDelete(post._id)
                 .then(() => {

@@ -358,7 +358,7 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
             </div>
             {filteredUsers.map((user, index) => (
               <div
-                key={index}
+                key={user._id}
                 className={`selected-user-for-dm selected-user-for-dm-${themeName}`}
               >
                 <Link
@@ -588,7 +588,7 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
           </div>
           {filteredUsers.map((user, index) => (
             <div
-              key={index}
+              key={user._id}
               className={`selected-user-for-dm selected-user-for-dm-${themeName}`}
             >
               <Link

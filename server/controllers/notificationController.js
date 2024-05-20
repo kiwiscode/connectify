@@ -27,12 +27,22 @@ const readAllNotifications = async (req, res) => {
     const { userId } = req.body;
 
     const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
     await User.updateOne(
       { _id: userId },
       { $set: { "notifications.$[].isReaded": true } }
     );
-  } catch {}
+
+    return res
+      .status(200)
+      .json({ message: "All notifications marked as read" });
+  } catch (error) {
+    console.error("Error marking notifications as read:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 const getAllNotifications = async (req, res) => {
@@ -68,18 +78,16 @@ const getAllNotifications = async (req, res) => {
       })
       .populate({
         path: "notifications",
-        populate: {
-          path: "isComment.commentPostId",
-        },
-      })
-      .populate({
-        path: "notifications",
-        populate: {
-          path: "isComment.commentPostId",
-          populate: {
-            path: "userId",
+        populate: [
+          {
+            path: "isComment.commentPostId",
+            populate: [
+              { path: "userId" },
+              { path: "reposted" },
+              { path: "likes" },
+            ],
           },
-        },
+        ],
       });
 
     const sortedNotifications = user.notifications.sort(

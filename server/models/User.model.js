@@ -71,6 +71,7 @@ const userSchema = new Schema(
     imageUrl: String,
     posts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
     favorites: [{ type: Schema.Types.ObjectId, ref: "Post" }],
+    bookmarks: [{ type: Schema.Types.ObjectId, ref: "Bookmark" }],
     reposts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
     followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
     following: [{ type: Schema.Types.ObjectId, ref: "User" }],

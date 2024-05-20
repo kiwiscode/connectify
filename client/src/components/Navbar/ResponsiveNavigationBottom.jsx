@@ -60,29 +60,6 @@ function ResponsiveNavigationBarBottom({
 
   const { userInfo } = useContext(UserContext);
 
-  const changeNotificationReadedStatus = async () => {
-    try {
-      const response = await axios.post(
-        `${API_URL}/notifications/mark-as-read`,
-        {
-          userId: userInfo._id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      );
-
-      console.log("Response from db =>", response);
-    } catch (error) {
-      console.error(
-        "An error occurred while changing active user notification readed status:",
-        error
-      );
-    }
-  };
-
   const [{ theme, themeName }] = useContext(ThemeContext);
   const [unReadNotifications, setUnReadNotifications] = useState([]);
   const getActiveUserInfo = async () => {
@@ -111,6 +88,30 @@ function ResponsiveNavigationBarBottom({
     getActiveUserInfo();
   }, []);
 
+  const changeNotificationReadedStatus = async () => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/notifications/mark-as-read`,
+        {
+          userId: userInfo._id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+      if (response) {
+        getActiveUserInfo();
+      }
+      console.log("Response from db =>", response);
+    } catch (error) {
+      console.error(
+        "An error occurred while changing active user notification readed status:",
+        error
+      );
+    }
+  };
   const checkHowManyUnReadMessages = () => {
     const allUnReadedMessages = userInfo?.messages?.filter((allMessages) => {
       return allMessages.readed === false;
@@ -181,7 +182,7 @@ function ResponsiveNavigationBarBottom({
           >
             <NavLink
               to={"/notifications"}
-              //  onClick={locateNotificationsPage}
+              onClick={changeNotificationReadedStatus}
             >
               <>
                 {unReadNotifications?.length === 0 ? null : (

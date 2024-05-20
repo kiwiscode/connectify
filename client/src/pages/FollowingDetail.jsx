@@ -897,7 +897,7 @@ function FollowingDetailPage() {
     console.log("Child data received from child => ", childData);
     setPostModalOpenedFromLeftSide(childData);
   };
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   return (
     <>
       {!postModalOpenedFromLeftSide && <ResponsiveNavigationBarBottom />}
@@ -1141,7 +1141,7 @@ function FollowingDetailPage() {
               };
 
               return (
-                <div key={index} className="following-user">
+                <div key={user._id} className="following-user">
                   {user.isDeactivated ? null : (
                     <>
                       <Stack

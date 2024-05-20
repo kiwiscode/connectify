@@ -130,7 +130,7 @@ function FollowerDetailPage() {
   }, []);
 
   const [{ theme, themeName }] = useContext(ThemeContext);
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
 
   const handleFollowingNotification = (selectedUser, userInfo, type) => {
     console.log("Sending notification to => ", selectedUser.username);
@@ -390,7 +390,7 @@ function FollowerDetailPage() {
                     : "white",
               };
               return (
-                <div key={index} className="following-user">
+                <div key={user._id} className="following-user">
                   {user.isDeactivated ? null : (
                     <>
                       <Stack
