@@ -591,7 +591,7 @@ function ChatDetailsPage() {
             <div
               ref={scrollRef}
               style={{ padding: "0px 12px 0px 12px" }}
-              key={index}
+              key={eachMessage._id}
             >
               <div>
                 <div

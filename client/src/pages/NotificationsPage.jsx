@@ -10,6 +10,8 @@ import ResponsiveNavigationBarTop from "../components/Navbar/ResponsiveNavigatio
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
 import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
+import RepostAction from "../components/ui/RepostAction";
+import LikeAction from "../components/ui/LikeAction";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -289,7 +291,7 @@ function NotificationsPage() {
           <div className="mt-5">
             {allNotifications.map((eachNotification, index) => {
               return (
-                <div key={index}>
+                <div key={eachNotification._id}>
                   <div>
                     {eachNotification.isComment.value ? (
                       <Link
@@ -566,170 +568,41 @@ function NotificationsPage() {
                                   postSharedMessage={postSharedMessage}
                                 />
                               </div>
+
                               <div
                                 style={{
                                   width: "100px",
                                 }}
-                                onClick={() =>
-                                  !eachNotification.isComment.commentPostId.reposted.includes(
-                                    userInfo._id
-                                  )
-                                    ? handleRepost(
-                                        eachNotification.isComment.commentPostId
-                                          ._id,
-                                        eachNotification.isComment.commentPostId
-                                      )
-                                    : handleDeleteRepostNotificationsPage(
-                                        eachNotification.isComment.commentPostId
-                                          ._id,
-                                        eachNotification.isComment.commentPostId
-                                      )
-                                }
+                                className="next-to-repost"
                               >
-                                <svg
-                                  fill={
-                                    themeName === "dark-theme" &&
-                                    !eachNotification.isComment.commentPostId.reposted.includes(
-                                      userInfo._id
-                                    )
-                                      ? "#71767A"
-                                      : themeName !== "dark-theme" &&
-                                        !eachNotification.isComment.commentPostId.reposted.includes(
-                                          userInfo._id
-                                        )
-                                      ? "rgb(83, 100, 113)"
-                                      : "rgb(0, 186, 124)"
+                                <RepostAction
+                                  post={
+                                    eachNotification.isComment
+                                      ? eachNotification.isComment.commentPostId
+                                      : null
                                   }
                                   width={`${1.25}em`}
                                   height={`${1.25}em`}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                >
-                                  <g>
-                                    <path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"></path>
-                                  </g>
-                                </svg>
-                                <span
-                                  style={{
-                                    fontSize: "13px",
-                                    color:
-                                      themeName === "dark-theme" &&
-                                      !eachNotification.isComment.commentPostId.reposted.includes(
-                                        userInfo._id
-                                      )
-                                        ? "#71767A"
-                                        : themeName !== "dark-theme" &&
-                                          !eachNotification.isComment.commentPostId.reposted.includes(
-                                            userInfo._id
-                                          )
-                                        ? "rgb(83, 100, 113)"
-                                        : "rgb(0, 186, 124)",
-
-                                    fontWeight: "400",
-                                    fontFamily:
-                                      "TwitterChirp, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
-                                    lineHeight: "20px",
-                                    cursor: "pointer",
-                                    marginLeft: "10px",
-                                  }}
-                                >
-                                  {eachNotification.isComment.commentPostId
-                                    .reposted.length
-                                    ? eachNotification.isComment.commentPostId
-                                        .reposted.length
-                                    : null}
-                                </span>
+                                  refreshPosts={getAllNotifications}
+                                />
                               </div>
+
                               <div
                                 style={{
                                   width: "100px",
                                 }}
-                                onClick={() =>
-                                  !eachNotification.isComment.commentPostId.likes.includes(
-                                    userInfo._id
-                                  )
-                                    ? handlePostLikesFromNotificationsPage(
-                                        eachNotification.isComment.commentPostId
-                                          ._id,
-                                        eachNotification.isComment.commentPostId
-                                      )
-                                    : handleDeleteLikeFromNotificationsPage(
-                                        eachNotification.isComment.commentPostId
-                                          ._id,
-                                        eachNotification.isComment.commentPostId
-                                      )
-                                }
+                                className="next-to-like"
                               >
-                                <svg
-                                  style={{
-                                    position: "relative",
-                                  }}
-                                  fill={
-                                    themeName === "dark-theme" &&
-                                    !eachNotification.isComment.commentPostId.likes.includes(
-                                      userInfo._id
-                                    )
-                                      ? "#71767A"
-                                      : themeName !== "dark-theme" &&
-                                        !eachNotification.isComment.commentPostId.likes.includes(
-                                          userInfo._id
-                                        )
-                                      ? "rgb(83, 100, 113)"
-                                      : "rgb(249, 24, 128)"
+                                <LikeAction
+                                  post={
+                                    eachNotification.isComment
+                                      ? eachNotification.isComment.commentPostId
+                                      : null
                                   }
                                   width={`${1.25}em`}
                                   height={`${1.25}em`}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                >
-                                  {!eachNotification.isComment.commentPostId.likes.includes(
-                                    userInfo._id
-                                  ) ? (
-                                    <g>
-                                      <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
-                                    </g>
-                                  ) : (
-                                    <g>
-                                      <path
-                                        stroke="black"
-                                        strokeWidth="0.2"
-                                        d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"
-                                      ></path>
-                                    </g>
-                                  )}
-                                </svg>
-                                <span
-                                  style={{
-                                    fontSize: "13px",
-                                    color:
-                                      themeName === "dark-theme" &&
-                                      !eachNotification.isComment.commentPostId.likes.includes(
-                                        userInfo._id
-                                      )
-                                        ? "#71767A"
-                                        : themeName !== "dark-theme" &&
-                                          !eachNotification.isComment.commentPostId.likes.includes(
-                                            userInfo._id
-                                          )
-                                        ? "rgb(83, 100, 113)"
-                                        : "rgb(249, 24, 128)",
-
-                                    fontWeight: "400",
-                                    fontFamily:
-                                      "TwitterChirp, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
-                                    lineHeight: "20px",
-                                    cursor: "pointer",
-                                    marginLeft: "10px",
-                                  }}
-                                >
-                                  {eachNotification.isComment.commentPostId
-                                    .likes.length
-                                    ? eachNotification.isComment.commentPostId
-                                        .likes.length
-                                    : null}
-                                </span>
+                                  refreshPosts={getAllNotifications}
+                                />
                               </div>
                             </div>
                           </div>

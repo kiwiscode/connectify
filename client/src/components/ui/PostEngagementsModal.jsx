@@ -429,7 +429,7 @@ function PostEngagements({
                     return (
                       <>
                         {" "}
-                        <div key={index}>
+                        <div key={eachReposter._id}>
                           <Stack
                             style={{
                               margin: "5px",
@@ -782,7 +782,7 @@ function PostEngagements({
                     return (
                       <>
                         {" "}
-                        <div key={index}>
+                        <div key={eachLiker._id}>
                           <Stack
                             style={{
                               margin: "5px",

@@ -54,6 +54,7 @@ import RepostAction from "../ui/RepostAction";
 import LikeAction from "../ui/LikeAction";
 import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
 import PostPopover from "../three-dots-popover/Popover";
+import BookmarkAction from "../ui/BookmarkAction";
 const socket = io.connect(`${API_URL}`);
 
 function RightSideColumn({
@@ -1393,11 +1394,7 @@ function RightSideColumn({
   };
   const navigatePostContentCutePopoverRightSide = (post) => {
     navigate(
-      `/${post?.relatedPost?.userId?.username}/status/${
-        !post?.relatedPost.isReposted
-          ? post?.relatedPost._id
-          : post?.relatedPost.repostedFromThisOriginalPost[0]._id
-      }`
+      `/${post?.relatedPost?.userId?.username}/status/${post?.relatedPost._id}`
     );
   };
 
@@ -8590,7 +8587,7 @@ function RightSideColumn({
                           >
                             <option value="">{en["ZZ"]}</option>
                             {sortedCountries.map((country, index) => (
-                              <option key={index} value={country}>
+                              <option key={country._id} value={country}>
                                 +{getCountryCallingCode(country)} {en[country]}
                               </option>
                             ))}
@@ -16188,7 +16185,7 @@ function RightSideColumn({
                           >
                             <option value="">{en["ZZ"]}</option>
                             {sortedCountries.map((country, index) => (
-                              <option key={index} value={country}>
+                              <option key={country._id} value={country}>
                                 +{getCountryCallingCode(country)} {en[country]}
                               </option>
                             ))}
@@ -17006,7 +17003,7 @@ function RightSideColumn({
                   ) : null}
 
                   {filteredSearchResult.map((eachUser, index) => (
-                    <div key={index}>
+                    <div key={eachUser._id}>
                       <List.Item
                         onMouseEnter={() => {
                           setIsHoveredListItem(index);
@@ -17421,7 +17418,7 @@ function RightSideColumn({
                               position: "relative",
                               right: "10px",
                             }}
-                            key={index}
+                            key={eachUser._id}
                           >
                             <div>
                               <Stack
@@ -17726,7 +17723,7 @@ function RightSideColumn({
                 </div>
                 {activities?.map((eachActivity, index) => {
                   return (
-                    <div key={index}>
+                    <div key={eachActivity._id}>
                       {eachActivity.activityHasBeenInitiatedWith._id !==
                         eachActivity.thePersonWhoCarriedOutTheActivity._id &&
                         eachActivity.activityHasBeenInitiatedWith._id !==
@@ -17892,6 +17889,7 @@ function RightSideColumn({
                                           }}
                                         >
                                           <div
+                                            onClick={() => popupState.close()}
                                             style={{
                                               float: "left",
                                               position: "relative",
@@ -17943,7 +17941,9 @@ function RightSideColumn({
                                               </div>
                                             )}
                                           </div>
-                                          <div>
+                                          <div
+                                            onClick={() => popupState.close()}
+                                          >
                                             <Link
                                               className="post-circle-postowner-fullname hover-fullname"
                                               to={`/profile/${eachActivity.relatedPost?.userId?._id}`}
@@ -17994,7 +17994,9 @@ function RightSideColumn({
                                               </g>
                                             </svg>
                                           </div>
-                                          <div>
+                                          <div
+                                            onClick={() => popupState.close()}
+                                          >
                                             {" "}
                                             <Link
                                               to={`/profile/${eachActivity.relatedPost?.userId?._id}`}
@@ -18020,17 +18022,7 @@ function RightSideColumn({
                                           <div>
                                             {" "}
                                             <Link
-                                              to={`/${
-                                                eachActivity.relatedPost?.userId
-                                                  ?.username
-                                              }/status/${
-                                                !eachActivity.relatedPost
-                                                  .isReposted
-                                                  ? eachActivity.relatedPost._id
-                                                  : eachActivity.relatedPost
-                                                      .repostedFromThisOriginalPost[0]
-                                                      ._id
-                                              }`}
+                                              to={`/${eachActivity.relatedPost?.userId?.username}/status/${eachActivity.relatedPost._id}`}
                                               style={{
                                                 textDecoration: "none",
                                                 position: "relative",
@@ -18038,6 +18030,9 @@ function RightSideColumn({
                                               }}
                                             >
                                               <span
+                                                onClick={() =>
+                                                  popupState.close()
+                                                }
                                                 className="post-circle-date-post-detail"
                                                 style={{
                                                   color:
@@ -18091,12 +18086,14 @@ function RightSideColumn({
                                           </div>
                                         </div>
                                         <div
+                                          onClick={() => popupState.close()}
                                           style={{
                                             width: "75%",
                                             display: "flex",
                                             alignSelf: "center",
                                             position: "relative",
                                             bottom: "5px",
+                                            left: "0px",
                                           }}
                                         >
                                           <div>
@@ -18206,54 +18203,6 @@ function RightSideColumn({
                                 )}
                               </PopupState>
                             </div>
-                            {/* emoji mart finish to check */}
-
-                            {/* <div>
-                            {eachActivity.activityHasBeenInitiatedWith?.imageUrl?.slice(
-                              0,
-                              3
-                            ) !== "../" ? (
-                              <Link
-                                to={`/profile/${eachActivity.activityHasBeenInitiatedWith._id}`}
-                              >
-                                <img
-                                  src={
-                                    eachActivity.activityHasBeenInitiatedWith
-                                      .imageUrl
-                                  }
-                                  alt={`${eachActivity.activityHasBeenInitiatedWith.fullname}'s profile`}
-                                  width={32}
-                                  height={32}
-                                  className="profile-image"
-                                  style={{
-                                    borderRadius: "50%",
-                                  }}
-                                />
-                              </Link>
-                            ) : (
-                              <div>
-                                <Link
-                                  to={`/profile/${eachActivity.activityHasBeenInitiatedWith._id}`}
-                                >
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width={32}
-                                    height={32}
-                                    fill={
-                                      themeName === "dark-theme"
-                                        ? "#71767A"
-                                        : "rgb(83, 100, 113)"
-                                    }
-                                    className="bi bi-person-circle"
-                                    viewBox="0 0 16 16"
-                                  >
-                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                  </svg>
-                                </Link>
-                              </div>
-                            )}
-                          </div> */}
                           </div>
                         )}
                     </div>

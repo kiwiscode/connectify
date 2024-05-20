@@ -238,29 +238,6 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
     };
   }, []);
 
-  const changeNotificationReadedStatus = async () => {
-    try {
-      const response = await axios.post(
-        `${API_URL}/notifications/mark-as-read`,
-        {
-          userId: userInfo._id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      );
-
-      console.log("Response from db =>", response);
-    } catch (error) {
-      console.error(
-        "An error occurred while changing active user notification readed status:",
-        error
-      );
-    }
-  };
-
   const [unReadNotifications, setUnReadNotifications] = useState([]);
   const getActiveUserInfo = async () => {
     try {
@@ -285,10 +262,33 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
     }
   };
 
+  const changeNotificationReadedStatus = async () => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/notifications/mark-as-read`,
+        {
+          userId: userInfo._id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+      if (response) {
+        getActiveUserInfo();
+      }
+      console.log("Response from db =>", response);
+    } catch (error) {
+      console.error(
+        "An error occurred while changing active user notification readed status:",
+        error
+      );
+    }
+  };
   useEffect(() => {
     getActiveUserInfo();
   }, []);
-
   const { width } = useWindowDimensions();
 
   const [userMessageDetails, setUserMessageDetails] = useState([]);
@@ -958,6 +958,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                   </span>
                 </NavLink>
                 <NavLink
+                  onClick={changeNotificationReadedStatus}
                   style={{
                     color: "black",
                     display: "flex",
@@ -1785,11 +1786,11 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
               </NavLink>{" "}
               {/* Third */}
               <NavLink
+                onClick={changeNotificationReadedStatus}
                 style={{
                   position: "relative",
                 }}
                 to={"/notifications"}
-                // onClick={locateNotificationsPage}
                 className={`notifications-nav-link notifications-nav-link-${themeName}`}
               >
                 <span
@@ -2275,7 +2276,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
               </NavLink>
               <NavLink
                 // onClick={locateProfilePage}
-                className={`profile-nav-link profile-nav-link-${themeName}`}
+                className={`profile-nav-link profile-nav-link-${themeName} mb-1`}
               >
                 <span
                   style={{

@@ -17,6 +17,11 @@ const handleRepost = (req, res) => {
             thePersonWhoCarriedOutTheActivity: user._id.toString(),
             activityType: "repost",
             relatedPost: post._id.toString(),
+            relatedPostOption2: post.isReposted
+              ? post.repostedFromThisOriginalPost[0]._id.toString()
+              : post.isComment
+              ? post.commentedForThisPost._id.toString()
+              : post._id.toString(),
           });
           // notification ekleme start to check
           // user kendisine notification gönderemez !
@@ -90,6 +95,7 @@ const handleRepost = (req, res) => {
               authorFullName: post.authorFullName,
               authorUserName: post.authorUserName,
               content: post.content,
+              bookmarks: post.bookmarks,
               image: {
                 public_id: post.image.public_id,
                 url: post.image.url,
@@ -221,6 +227,62 @@ const handleDeleteReposts = (req, res) => {
 
   Post.findById(postId)
     .then((post) => {
+      // activityi sil ! start to check
+      if (post.isComment && post.isReposted) {
+        console.log("Hangi condition çalıştırıcaksın ??");
+      } else if (post.isComment) {
+        console.log("First or second condition works");
+      } else if (post.isReposted) {
+        console.log("Third or fourth condition works");
+      } else {
+        console.log("Fifth or sixth condition works");
+      }
+      Activity.findOneAndDelete({
+        $and: [
+          { activityType: "repost" },
+          {
+            $or: [
+              {
+                relatedPost: post.isComment
+                  ? post.commentedForThisPost?._id.toString()
+                  : null,
+              },
+              {
+                relatedPostOption2: post.isComment
+                  ? post.commentedForThisPost?._id.toString()
+                  : null,
+              },
+              {
+                relatedPost: post.isReposted
+                  ? post.repostedFromThisOriginalPost[0]?._id.toString()
+                  : null,
+              },
+              {
+                relatedPostOption2: post.isReposted
+                  ? post.repostedFromThisOriginalPost[0]?._id.toString()
+                  : null,
+              },
+              {
+                relatedPost: post._id.toString(),
+              },
+              {
+                relatedPostOption2: post._id.toString(),
+              },
+            ],
+          },
+        ],
+      })
+        .then((result) => {
+          if (result) {
+            console.log("Activity deleted successfully:", result);
+          } else {
+            console.log("Document not found!");
+          }
+        })
+        .catch((error) => {
+          console.error("Error occurred while deleting document:", error);
+        });
+      // activityi sil ! finish to check
       if (userId !== post.userId.toString()) {
         // notified olması mümkün olan kullanıcıdan notificationı silme veya bırakma işlemi start to check
         const isReposted = post.isReposted;

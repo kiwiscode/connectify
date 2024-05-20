@@ -168,7 +168,7 @@ function MessagesPage() {
               lineHeight: "24px",
             }}
           >
-            Leave conversation ?
+            Leave conversation?
           </div>
           <div
             style={{
@@ -603,7 +603,7 @@ function MessagesPage() {
             checkIfAllFilteredRoomsChatEmpty(filteredRooms) !== 0 ? (
               <div className="mt-3">
                 {filteredRooms.map((eachMessageRoom, index) => (
-                  <div key={index}>
+                  <div key={eachMessageRoom._id}>
                     {eachMessageRoom.deactivatedMember ? null : (
                       <div>
                         {eachMessageRoom.chat.length > 0 ? (

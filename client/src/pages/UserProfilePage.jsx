@@ -893,7 +893,7 @@ function UserProfile({ isNewPostShared }) {
                       ? `each-post-${themeName}`
                       : "each-post"
                   }
-                  key={index}
+                  key={post._id}
                 >
                   {post.deactivatedOwner ? null : (
                     <>
@@ -1439,7 +1439,7 @@ function UserProfile({ isNewPostShared }) {
                       ? `each-post-${themeName}`
                       : "each-post"
                   }
-                  key={index}
+                  key={favorite._id}
                 >
                   {favorite.deactivatedOwner ? null : (
                     <>

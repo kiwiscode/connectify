@@ -5155,10 +5155,12 @@ function CommentModal({
         setContent("");
 
         setTimeout(() => {
-          postSharedMessage(
-            response.data.createdPost.authorUserName,
-            response.data.createdPost._id
-          );
+          if (postSharedMessage) {
+            postSharedMessage(
+              response.data.createdPost.authorUserName,
+              response.data.createdPost._id
+            );
+          }
           if (refreshPosts) {
             refreshPosts();
           }

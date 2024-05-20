@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-import { Container, Row, Col, Stack, Accordion } from "react-bootstrap";
+import { Container, Row, Col, Stack, Accordion, Button } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { CommentModal } from "../components/ui/Modal";
 import { UserContext } from "../context/UserContext";
@@ -338,6 +338,7 @@ function PostDetailPage() {
             style={{
               fontWeight: "700",
               fontSize: "20px",
+              visibility: detailedPost.userId ? "" : "hidden",
             }}
             className="p-2"
           >
@@ -1195,18 +1196,67 @@ function PostDetailPage() {
               </div>
             ) : null}
           </>
-        ) : null}
+        ) : (
+          <div
+            style={{
+              color:
+                themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
+              height: "250px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <div
+              style={{
+                padding: "32px",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div>
+                Hmm...this page doesn’t exist. Try searching for something else.
+              </div>
+              <a
+                href="http://localhost:5173/explore"
+                className="mt-3 hover-blue-btn"
+                style={{
+                  textDecoration: "none",
+                  borderRadius: "9999px",
+                  border: "none",
+                  outlineStyle: "none",
+                  padding: "8px",
+                  width: "84px",
+                  height: "36px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "#1C9BEF",
+                  color: "white",
+                  fontWeight: "700",
+                  lineHeight: "20px",
+                  fontSize: "15px",
+                }}
+              >
+                Search
+              </a>
+            </div>
+          </div>
+        )}
         {/* WHAT IS THAT ? IMPORTANT finish to check  */}
 
         {/* BUG post comment olmadığında ve comment.lengthi olduğunda burası görünüyor ! finish to check  */}
 
         <div
           style={{
-            borderBottom:
-              themeName !== "dark-theme"
-                ? "1px solid rgba(0, 0, 0, 0.1)"
-                : // : "0.1px solid rgb(70, 70, 70)",
-                  "1px solid rgb(70, 70, 70)",
+            borderBottom: !detailedPost.userId
+              ? null
+              : themeName !== "dark-theme"
+              ? "1px solid rgba(0, 0, 0, 0.1)"
+              : // : "0.1px solid rgb(70, 70, 70)",
+                "1px solid rgb(70, 70, 70)",
           }}
         ></div>
         {/* accordion implementation for comments when it is more than 0 start to check  */}
@@ -1249,7 +1299,7 @@ function PostDetailPage() {
                   <div>
                     {detailedPost?.comments?.map((eachComment, index) => {
                       return (
-                        <div key={index}>
+                        <div key={eachComment._id}>
                           <div>
                             {eachComment.userId.isDeactivated ? null : (
                               <>
@@ -1647,7 +1697,7 @@ function PostDetailPage() {
                   <div>
                     {detailedPost.comments.map((eachComment, index) => {
                       return (
-                        <div key={index}>
+                        <div key={eachComment._id}>
                           <div>
                             {eachComment.userId.isDeactivated ? null : (
                               <>
@@ -1986,7 +2036,23 @@ function PostDetailPage() {
                                           }}
                                           className="p-1"
                                         >
-                                          {eachComment.likes ? (
+                                          <LikeAction
+                                            refreshPosts={refreshPostDetailPage}
+                                            post={
+                                              eachComment ? eachComment : null
+                                            }
+                                            width={`${1.25}em`}
+                                            height={`${1.25}em`}
+                                            detailedPostComment={true}
+                                          />
+                                        </div>
+                                        {/* <div
+                                          style={{
+                                            width: "100px",
+                                          }}
+                                          className="p-1"
+                                        > */}
+                                        {/* {eachComment.likes ? (
                                             getLikerIds(eachComment).includes(
                                               userInfo._id
                                             ) ? (
@@ -2070,8 +2136,8 @@ function PostDetailPage() {
                                                 </span>
                                               </div>
                                             )
-                                          ) : null}
-                                        </div>
+                                          ) : null} */}
+                                        {/* </div> */}
                                       </Stack>
                                       {/* new version favorite repost comment finish to check */}
                                     </div>

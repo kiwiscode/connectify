@@ -83,4 +83,7 @@ app.use("/", subscriptionRoutes);
 const lastActivitiesRoutes = require("./routes/lastActivitiesRoutes.js");
 app.use("/", lastActivitiesRoutes);
 
+const bookmarkRoutes = require("./routes/bookmark.routes.js");
+app.use("/", bookmarkRoutes);
+
 module.exports = app;

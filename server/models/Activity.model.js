@@ -9,6 +9,7 @@ const activitySchema = new Schema(
     },
     activityType: { type: String, enum: ["comment", "repost", "favorite"] },
     relatedPost: { type: Schema.Types.ObjectId, ref: "Post" },
+    relatedPostOption2: { type: Schema.Types.ObjectId, ref: "Post" },
   },
   {
     timestamps: true,
