@@ -4162,3 +4162,28 @@ themeName === "dark-theme"
 .hovered-delete-popover-dark-theme:hover {
   transition: 0.2s !important;
 }
+
+/* glassmorphism effect test start to check for premium sign up page  */
+.color-light-theme {
+  filter: blur(125px);
+  background: linear-gradient(to bottom, #cde2fb, #fefeff);
+  /* background-color: yellow; */
+  border-radius: 99999px;
+  position: absolute;
+  width: 75%;
+  min-height: 100vh;
+  top: -175px;
+  left: 12%;
+}
+
+.color-dark-theme {
+  filter: blur(125px);
+  background: linear-gradient(to bottom, #212e3e, #010101);
+  border-radius: 99999px;
+  position: absolute;
+  width: 75%;
+  min-height: 100vh;
+  top: -175px;
+  left: 12%;
+}
+/* glassmorphism effect test finish to check for premium sign up page  */
