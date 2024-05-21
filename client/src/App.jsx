@@ -17,6 +17,7 @@ const DeactivatedPage = lazy(() => import("./pages/DeactivatedPage"));
 const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 const BookmarksPage = lazy(() => import("./pages/BookmarksPage"));
+const PremiumSignupPage = lazy(() => import("./pages/PremiumSignupPage"));
 
 import { ThemeContext } from "./context/ThemeContext";
 import { UserContext, UserProvider } from "./context/UserContext";
@@ -157,23 +158,25 @@ function App() {
                 overflowY: "hidden",
               }}
             >
-              {path !== "/" && path !== "/settings/deactivated" && (
-                <LeftSideNavBar
-                  refreshPosts={handleShareNewPost}
-                  setIsPostShared={handlePostSharingIsDone}
-                  // refreshPosts={() =>
-                  //   path === "/home"
-                  //     ? writeTheRouteNameForRefreshPosts("home page active")
-                  //     : path === "/profile"
-                  //     ? writeTheRouteNameForRefreshPosts("profile page active")
-                  //     : path === `/profile/${userInfo._id}`
-                  //     ? writeTheRouteNameForRefreshPosts(
-                  //         "spesific user profile page active"
-                  //       )
-                  //     : writeTheRouteNameForRefreshPosts("null")
-                  // }
-                />
-              )}{" "}
+              {path !== "/" &&
+                path !== "/settings/deactivated" &&
+                path !== "/premium_sign_up" && (
+                  <LeftSideNavBar
+                    refreshPosts={handleShareNewPost}
+                    setIsPostShared={handlePostSharingIsDone}
+                    // refreshPosts={() =>
+                    //   path === "/home"
+                    //     ? writeTheRouteNameForRefreshPosts("home page active")
+                    //     : path === "/profile"
+                    //     ? writeTheRouteNameForRefreshPosts("profile page active")
+                    //     : path === `/profile/${userInfo._id}`
+                    //     ? writeTheRouteNameForRefreshPosts(
+                    //         "spesific user profile page active"
+                    //       )
+                    //     : writeTheRouteNameForRefreshPosts("null")
+                    // }
+                  />
+                )}{" "}
               <Suspense
                 fallback={
                   <LoadingSpinner
@@ -230,12 +233,14 @@ function App() {
                     element={<DeactivatedPage />}
                   ></Route>
 
+                  <Route path="/*" element={<PremiumSignupPage />}></Route>
+
                   <Route path="/*" element={<NotFoundPage />}></Route>
                 </Routes>
               </Suspense>
-              {path !== "/" && path !== "/settings/deactivated" && (
-                <RightSideColumn />
-              )}
+              {path !== "/" &&
+                path !== "/settings/deactivated" &&
+                path !== "/premium_sign_up" && <RightSideColumn />}
             </Row>
           </Container>
           {/* test for one time component leftsidenavbar finish to check  */}
