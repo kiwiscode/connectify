@@ -2729,7 +2729,6 @@ function MainPage({ isNewPostShared }) {
                                   className="p-1 next-to-like"
                                 >
                                   {" "}
-                                  <div>{post.bookmarks._id}</div>
                                   <BookmarkAction
                                     post={post ? post : null}
                                     width={`${1.25}em`}
