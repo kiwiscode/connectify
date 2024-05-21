@@ -1342,7 +1342,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                     justifyContent: "center",
                     alignItems: "center",
                   }}
-                  to={"/premium_sign_up"}
+                  to={"/i/premium_sign_up"}
                 >
                   <span
                     style={{
@@ -2147,7 +2147,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                 </span>
               </NavLink>{" "}
               <NavLink
-                to={"/premium_sign_up"}
+                to={"/i/premium_sign_up"}
                 // onClick={locateProfilePage}
                 className={`profile-nav-link profile-nav-link-${themeName}`}
               >
@@ -2202,7 +2202,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                         marginLeft: "10px",
                         fontWeight:
                           window.location.href ===
-                          "http://localhost:5173/premium_sign_up"
+                          "http://localhost:5173/i/premium_sign_up"
                             ? "700"
                             : "400",
                         fontSize: "20px",

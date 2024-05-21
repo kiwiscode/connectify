@@ -160,7 +160,7 @@ function App() {
             >
               {path !== "/" &&
                 path !== "/settings/deactivated" &&
-                path !== "/premium_sign_up" && (
+                path !== "/i/premium_sign_up" && (
                   <LeftSideNavBar
                     refreshPosts={handleShareNewPost}
                     setIsPostShared={handlePostSharingIsDone}
@@ -233,14 +233,17 @@ function App() {
                     element={<DeactivatedPage />}
                   ></Route>
 
-                  <Route path="/*" element={<PremiumSignupPage />}></Route>
+                  <Route
+                    path="/i/premium_sign_up"
+                    element={<PremiumSignupPage />}
+                  ></Route>
 
                   <Route path="/*" element={<NotFoundPage />}></Route>
                 </Routes>
               </Suspense>
               {path !== "/" &&
                 path !== "/settings/deactivated" &&
-                path !== "/premium_sign_up" && <RightSideColumn />}
+                path !== "/i/premium_sign_up" && <RightSideColumn />}
             </Row>
           </Container>
           {/* test for one time component leftsidenavbar finish to check  */}
