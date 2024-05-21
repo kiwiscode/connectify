@@ -34,7 +34,7 @@ const BookmarkAction = ({
   const { userInfo, getToken } = useContext(UserContext);
 
   const getBookmarkIds = (array) => {
-    return array?.bookmarks.map((eachBookmarker) => {
+    return array?.bookmarks?.map((eachBookmarker) => {
       return eachBookmarker.bookmarker;
     });
   };
@@ -93,7 +93,7 @@ const BookmarkAction = ({
   return (
     <>
       {contextHolder}
-      {getBookmarkIds(post).includes(userInfo._id) ? (
+      {getBookmarkIds(post)?.includes(userInfo._id) ? (
         <div>
           <BootstrapTooltip
             title="Remove from Bookmarks"
@@ -102,7 +102,7 @@ const BookmarkAction = ({
             }
           >
             <span
-              onClick={() => handleDeleteBookMark(post._id)}
+              onClick={() => handleDeleteBookMark(post.postId || post._id)}
               style={{
                 cursor: "pointer",
                 minWidth: "34px",
@@ -215,7 +215,7 @@ const BookmarkAction = ({
                 position: "relative",
               }}
             >
-              {post.bookmarks.length ? (
+              {post.bookmarks?.length ? (
                 <>
                   <span
                     style={{

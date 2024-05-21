@@ -1,5 +1,6 @@
 const User = require("../models/User.model");
 const Post = require("../models/Post.model");
+const Bookmark = require("../models/Bookmark.model");
 
 const getPostDetail = (req, res) => {
   const { postId } = req.params;
@@ -13,6 +14,7 @@ const getPostDetail = (req, res) => {
     .populate("comments")
     .populate("commentedForThisPost")
     .populate("commentedForThisUsersPost")
+    .populate("bookmarks")
     .populate({
       path: "comments",
       populate: {
@@ -21,10 +23,24 @@ const getPostDetail = (req, res) => {
       },
     })
     .populate({
+      path: "commentedForThisPost",
+      populate: {
+        path: "bookmarks",
+        model: "Bookmark",
+      },
+    })
+    .populate({
       path: "comments",
       populate: {
         path: "commentedForThisUsersPost",
         model: "User",
+      },
+    })
+    .populate({
+      path: "comments",
+      populate: {
+        path: "bookmarks",
+        model: "Bookmark",
       },
     })
     .populate({

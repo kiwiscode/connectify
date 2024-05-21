@@ -67,6 +67,13 @@ const handleProfile = (req, res) => {
         model: "User",
       },
     })
+    .populate({
+      path: "posts",
+      populate: {
+        path: "bookmarks",
+        model: "Bookmark",
+      },
+    })
     // .populate("likes")
 
     // finish to check
@@ -124,6 +131,20 @@ const handleShowSpesificProfile = (req, res) => {
       populate: {
         path: "commentedForThisUsersPost",
         model: "User",
+      },
+    })
+    .populate({
+      path: "favorites",
+      populate: {
+        path: "bookmarks",
+        model: "Bookmark",
+      },
+    })
+    .populate({
+      path: "posts",
+      populate: {
+        path: "bookmarks",
+        model: "Bookmark",
       },
     })
     .populate({

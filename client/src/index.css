@@ -3961,19 +3961,29 @@ themeName === "dark-theme"
   : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)", */
 
 /* material ui popover style classnames general start to check  */
-.popover-material-ui-light-theme .MuiPaper-root {
+.popover-material-ui-light-theme .MuiPaper-root,
+.popover-material-ui-light-theme-organization-type .MuiPaper-root {
   background-color: white !important;
   box-shadow: 0 0 15px rgba(101, 119, 134, 0.2),
     0 0 5px 3px rgba(101, 119, 134, 0.15) !important;
   overflow-y: hidden !important;
 }
 
-.popover-material-ui-dark-theme .MuiPaper-root {
+.popover-material-ui-dark-theme .MuiPaper-root,
+.popover-material-ui-dark-theme-organization-type .MuiPaper-root {
   background-color: black !important;
   filter: drop-shadow(rgb(51, 54, 57) 1px -1px 1px) !important;
   box-shadow: rgba(255, 255, 255, 0.2) 0px 0px 15px,
     rgba(255, 255, 255, 0.15) 0px 0px 3px 1px !important;
   overflow-y: hidden !important;
+}
+
+.popover-material-ui-light-theme-organization-type .MuiPaper-root,
+.popover-material-ui-dark-theme-organization-type .MuiPaper-root {
+  padding: 8px;
+  height: auto;
+  width: 175px;
+  border: none;
 }
 
 .special-cute-popover .MuiPaper-root {
@@ -4187,3 +4197,31 @@ themeName === "dark-theme"
   left: 12%;
 }
 /* glassmorphism effect test finish to check for premium sign up page  */
+
+.hover-sub-btn:hover {
+  background-color: #d7dbdc !important;
+  transition-duration: 0.2s !important;
+}
+
+/* premium sign up page subscription modal start to check  */
+.premium_sign_up_page_subscription_modal-dark-theme {
+  background-color: black;
+  min-width: 578px !important;
+  height: auto !important;
+}
+
+.premium_sign_up_page_subscription_modal-light-theme {
+  min-width: 578px !important;
+  height: auto !important;
+}
+
+.premium_sign_up_page_subscribe_and_pay_btn_light-theme:hover {
+  background-color: #272c30 !important;
+  transition-duration: 0.2s !important;
+}
+
+.premium_sign_up_page_subscribe_and_pay_btn_dark-theme:hover {
+  background-color: #d7dbdc !important;
+  transition-duration: 0.2s !important;
+}
+/* premium sign up page subscription modal finish to check  */

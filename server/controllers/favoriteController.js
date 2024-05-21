@@ -34,6 +34,13 @@ const handleGetFavorites = (req, res) => {
         model: "User",
       },
     })
+    .populate({
+      path: "favorites",
+      populate: {
+        path: "bookmarks",
+        model: "Bookmark",
+      },
+    })
     .then((userFromDataBase) => {
       console.log(
         "All the favorites from data base for spesific user =>",

@@ -11,6 +11,11 @@ let createdCommentPostId;
 const addComment = (req, res) => {
   const { userId, postId, commentPost, modalImage } = req.body;
 
+  console.log("User id =>", userId);
+  console.log("Post id =>", postId);
+  console.log("commentPost  =>", commentPost);
+  console.log("modalImage  =>", modalImage);
+
   User.findById(userId)
     .then((user) => {
       Post.findById(postId)

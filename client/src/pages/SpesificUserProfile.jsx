@@ -24,6 +24,7 @@ import LikeAction from "../components/ui/LikeAction";
 import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
 import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
 import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
+import BookmarkAction from "../components/ui/BookmarkAction";
 
 function SpesificUserProfile({ isNewPostShared }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
@@ -307,6 +308,7 @@ function SpesificUserProfile({ isNewPostShared }) {
         },
       })
       .then((response) => {
+        console.log("Spesific user profile page response likes =>", response);
         setFavoriteWindow("");
         setPostWindow("hide");
         setFavorites(response.data.favorites);
@@ -1662,6 +1664,23 @@ function SpesificUserProfile({ isNewPostShared }) {
                               setLoadingTrue={setLoadingTrue}
                             />
                           </div>
+                          <div
+                            style={{
+                              width: "100px",
+                            }}
+                            className="p-1"
+                          >
+                            <BookmarkAction
+                              post={post ? post : null}
+                              width={`${1.25}em`}
+                              height={`${1.25}em`}
+                              refreshPosts={
+                                handleShowSpesificUserProfilePagePosts
+                              }
+                              setLoadingFalse={setLoadingFalse}
+                              setLoadingTrue={setLoadingTrue}
+                            />
+                          </div>
                         </Stack>
                         {/* new version favorite repost comment finish to check */}
                       </div>
@@ -1780,7 +1799,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                         ? `each-post-${themeName}`
                         : "each-post"
                     }
-                    key={post._id}
+                    key={favorite?._id}
                   >
                     {favorite.deactivatedOwner ? null : (
                       <>
@@ -2128,6 +2147,29 @@ function SpesificUserProfile({ isNewPostShared }) {
                               className="p-1 next-to-like"
                             >
                               <LikeAction
+                                post={favorite ? favorite : null}
+                                width={`${1.25}em`}
+                                height={`${1.25}em`}
+                                refreshPosts={
+                                  handleShowSpesificUserProfilePageFavorites
+                                }
+                                setLoadingFalse={setLoadingFalse}
+                                setLoadingTrue={setLoadingTrue}
+                              />
+                            </div>
+                            <div
+                              style={{
+                                width: "100px",
+                              }}
+                              to={`/${favorite.userId.username}/status/${
+                                !favorite.isReposted
+                                  ? favorite._id
+                                  : favorite.repostedFromThisOriginalPost[0]._id
+                              }`}
+                              onClick={() => setclickedPostBox(favorite)}
+                              className="p-1 next-to-like"
+                            >
+                              <BookmarkAction
                                 post={favorite ? favorite : null}
                                 width={`${1.25}em`}
                                 height={`${1.25}em`}

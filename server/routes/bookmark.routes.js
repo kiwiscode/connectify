@@ -4,8 +4,10 @@ const authenticateToken = require("../middleware/jwtMiddleware");
 const User = require("../models/User.model");
 const Bookmark = require("../models/Bookmark.model");
 const Post = require("../models/Post.model");
+const Comment = require("../models/Comment.model");
 
 router.post("/bookmarks/add", authenticateToken, async (req, res) => {
+  // eğer post.isComment ise Comment collectionunda post.commentedForThisPost alanna denk gelen commenti bulup bookmarksın içerisinede bu yeni oluşturulan bookmarkı ekle !
   try {
     const { userId } = req.user;
     const { postId } = req.body;
@@ -31,6 +33,29 @@ router.post("/bookmarks/add", authenticateToken, async (req, res) => {
       bookmarkedFromThisUser: post.userId._id.toString(),
     })
       .then((bookmark) => {
+        // eğer bookmark eklenen post comment ise comment collectionundaki referencinada bookmarksı ekle
+        if (post.isComment) {
+          Comment.find({
+            postId: post.isReposted
+              ? post.repostedFromThisOriginalPost[0]._id.toString()
+              : postId,
+          })
+            .then((commentToAddBookmark) => {
+              console.log(
+                "Response found for this comment =>",
+                commentToAddBookmark
+              );
+              commentToAddBookmark[0].bookmarks.unshift(
+                bookmark._id.toString()
+              );
+              commentToAddBookmark[0].save();
+            })
+            .catch(() => {
+              res.status(404).json("Comment not found!");
+            });
+        }
+        // eğer bookmark eklenen post comment ise comment collectionundaki referencinada bookmarksı ekle
+
         console.log("Bookmark created:", bookmark);
         if (!post.isReposted && !post.reposted.length) {
           console.log("Burası çalışıyor 0!");
@@ -92,6 +117,9 @@ router.delete("/bookmarks/:bookmarkId", authenticateToken, async (req, res) => {
 
     const post = await Post.findById(bookmarkId);
 
+    console.log("Post =>", post);
+    console.log("Bookmark id =>", bookmarkId);
+
     const bookmark = await Bookmark.findOneAndDelete({
       bookmarkedPost: post.isReposted
         ? post.repostedFromThisOriginalPost[0]._id
@@ -99,8 +127,34 @@ router.delete("/bookmarks/:bookmarkId", authenticateToken, async (req, res) => {
       bookmarker: userId,
     });
 
+    console.log("Bookmark found !!", bookmark);
+
     if (!bookmark) {
       return res.status(404).json({ error: "Bookmark not found" });
+    }
+
+    if (post.isComment) {
+      console.log(
+        "Post is comment ! delete this bookmark also from the comment inside comment collection"
+      );
+      Comment.find({
+        postId: post.isReposted
+          ? post.repostedFromThisOriginalPost[0]._id.toString()
+          : post._id.toString(),
+      })
+        .then((commentFoundToCleanBookmarksArray) => {
+          const filteredArray =
+            commentFoundToCleanBookmarksArray[0].bookmarks.filter(
+              (eachBookmark) => {
+                return eachBookmark._id.toString() !== bookmark._id.toString();
+              }
+            );
+          commentFoundToCleanBookmarksArray[0].bookmarks = filteredArray;
+          commentFoundToCleanBookmarksArray[0].save();
+        })
+        .catch(() => {
+          res.status(404).json("Comment not found!");
+        });
     }
 
     // const post = await Post.findById(bookmark.bookmarkedPost);

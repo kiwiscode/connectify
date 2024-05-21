@@ -1,14 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import {
-  Button,
-  Col,
-  Stack,
-  Modal,
-  OverlayTrigger,
-  // organization type will make problem
-  // Popover,
-  // organization type will make problem
-} from "react-bootstrap";
+import { Button, Col, Stack, Modal } from "react-bootstrap";
 import axios from "axios";
 import { UserContext } from "../../context/UserContext";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -924,80 +915,7 @@ function RightSideColumn({
   const handleShowOrganizationTypeClick = () => {
     setshowOrganizationTypeContent(!showOrganizationTypeContent);
   };
-  const popoverOrganizationType = (
-    <Popover
-      className={` ${
-        animatedPopover ? "animate-popover-organization-type" : ""
-      }`}
-      style={{
-        padding: "8px",
-        height: "auto",
-        width: "175px",
-        border: "none",
 
-        backgroundColor: themeName === "dark-theme" ? "black" : "#e2e1e4",
-        filter:
-          themeName === "dark-theme"
-            ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
-            : "",
-
-        boxShadow:
-          themeName === "dark-theme"
-            ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
-            : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
-        animation: showOrganizationTypeContent
-          ? "fadeInOrganizationType 0.3s ease"
-          : "fadeOut 0.3s ease",
-      }}
-      id="organizationTypePopover"
-    >
-      <div
-        onMouseEnter={() => {
-          sethoveredOrganizationType("business");
-        }}
-        onClick={() => {
-          setshowOrganizationTypeContent(false);
-          setTimeout(() => {
-            setanimatedPopover(true);
-            setdisplayedOrganizationType("Business");
-          }, 300);
-        }}
-        style={{
-          padding: "8px",
-          cursor: "pointer",
-          backgroundColor:
-            hoveredOrganizationType === "business" ? "#5aa0ff" : "",
-          borderRadius: "4px",
-          color: themeName === "dark-theme" ? "white" : "black",
-        }}
-      >
-        Business
-      </div>
-      <div
-        onMouseEnter={() => {
-          sethoveredOrganizationType("government");
-        }}
-        onClick={() => {
-          setshowOrganizationTypeContent(false);
-
-          setTimeout(() => {
-            setanimatedPopover(true);
-            setdisplayedOrganizationType("Government");
-          }, 300);
-        }}
-        style={{
-          padding: "8px",
-          cursor: "pointer",
-          backgroundColor:
-            hoveredOrganizationType === "government" ? "#5aa0ff" : "",
-          borderRadius: "4px",
-          color: themeName === "dark-theme" ? "white" : "black",
-        }}
-      >
-        Government
-      </div>
-    </Popover>
-  );
   const [clicked, setClicked] = useState(false);
 
   const [organizationName, setOrganizationName] = useState("");
@@ -7831,116 +7749,203 @@ function RightSideColumn({
                             }}
                           />
                           {/* organization type  start to check  */}
-                          <OverlayTrigger
-                            show={showOrganizationTypeContent}
-                            trigger="click"
-                            placement="top"
-                            overlay={popoverOrganizationType}
+                          <PopupState
+                            variant="popover"
+                            popupId="demo-popup-popover"
                           >
-                            <div
-                              className="mt-3"
-                              onClick={handleShowOrganizationTypeClick}
-                              style={{
-                                borderRadius: "4px",
-                                cursor: "pointer",
-                                color: "#536471",
-                                width: "100%",
-                                minHeight: "58px",
-                                padding: "4px",
-                                border:
-                                  themeName === "dark-theme"
-                                    ? "1px solid #cfd9de"
-                                    : "1px solid rgb(207, 217, 222)",
-                                borderWidth: showOrganizationTypeContent
-                                  ? "2px"
-                                  : "1px",
-                                borderColor:
-                                  organizationDisplayedOrganizationTypeFilled &&
-                                  !displayedOrganizationType
-                                    ? "rgb(244, 33, 46)"
-                                    : showOrganizationTypeContent
-                                    ? "#1d9bf0"
-                                    : themeName === "dark-theme"
-                                    ? "#333639"
-                                    : "#cfd9de",
-                              }}
-                            >
+                            {(popupState) => (
                               <div
                                 style={{
-                                  display: "inline-block",
-                                  float: "left",
+                                  width: "100%",
                                 }}
                               >
                                 <div
-                                  className="main-outline-text-year-picker"
+                                  {...bindTrigger(popupState)}
+                                  className="mt-3"
                                   style={{
-                                    position: "relative",
-                                    left: "10px",
-                                    top: "5px",
-                                    fontSize: "14px",
-                                    lineHeight: "16px",
-                                    fontWeight: "400",
-                                    color: showOrganizationTypeContent
-                                      ? "#1d9bf0"
-                                      : "rgba(83,100,113,1.00)",
+                                    borderRadius: "4px",
+                                    cursor: "pointer",
+                                    color: "#536471",
+                                    width: "100%",
+                                    minHeight: "58px",
+                                    padding: "4px",
+                                    border:
+                                      themeName === "dark-theme"
+                                        ? "1px solid #cfd9de"
+                                        : "1px solid rgb(207, 217, 222)",
+                                    borderWidth: showOrganizationTypeContent
+                                      ? "2px"
+                                      : "1px",
+                                    borderColor:
+                                      organizationDisplayedOrganizationTypeFilled &&
+                                      !displayedOrganizationType
+                                        ? "rgb(244, 33, 46)"
+                                        : showOrganizationTypeContent
+                                        ? "#1d9bf0"
+                                        : themeName === "dark-theme"
+                                        ? "#333639"
+                                        : "#cfd9de",
                                   }}
                                 >
-                                  <span
+                                  <div
                                     style={{
-                                      color:
-                                        organizationDisplayedOrganizationTypeFilled &&
-                                        !displayedOrganizationType
-                                          ? "rgb(244, 33, 46)"
-                                          : "",
+                                      display: "inline-block",
+                                      float: "left",
                                     }}
                                   >
-                                    Organization Type
-                                  </span>
+                                    <div
+                                      className="main-outline-text-year-picker"
+                                      style={{
+                                        position: "relative",
+                                        left: "10px",
+                                        top: "5px",
+                                        fontSize: "14px",
+                                        lineHeight: "16px",
+                                        fontWeight: "400",
+                                        color: showOrganizationTypeContent
+                                          ? "#1d9bf0"
+                                          : "rgba(83,100,113,1.00)",
+                                      }}
+                                    >
+                                      <span
+                                        style={{
+                                          color:
+                                            organizationDisplayedOrganizationTypeFilled &&
+                                            !displayedOrganizationType
+                                              ? "rgb(244, 33, 46)"
+                                              : "",
+                                        }}
+                                      >
+                                        Organization Type
+                                      </span>
+                                    </div>
+                                    <div
+                                      className="mt-2 selected-year-string-parent-div"
+                                      style={{
+                                        position: "relative",
+                                        left: "10px",
+                                        fontSize: "17px",
+                                        lineHeight: "20px",
+                                        color: "black",
+                                      }}
+                                    >
+                                      {displayedOrganizationType}
+                                    </div>
+                                  </div>
+                                  <div
+                                    style={{
+                                      float: "right",
+                                      position: "relative",
+                                      // top: "30%",
+                                      minHeight: "50px",
+                                      display: "flex",
+                                      justifyContent: "center",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    <svg
+                                      width={`${1.5}em`}
+                                      height={`${1.5}em`}
+                                      color={
+                                        showOrganizationTypeContent
+                                          ? "#1d9bf0"
+                                          : "rgba(83,100,113,1.00)"
+                                      }
+                                      fill="currentColor"
+                                      viewBox="0 0 24 24"
+                                      aria-hidden="true"
+                                      className="svg-year-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-1plcrui r-lrvibr r-14j79pv r-1pgswnq r-50lct3 r-fdch1b r-633pao r-u8s1d r-1v2oles"
+                                    >
+                                      <g className="path-parent-g-year-picker">
+                                        <path d="M3.543 8.96l1.414-1.42L12 14.59l7.043-7.05 1.414 1.42L12 17.41 3.543 8.96z"></path>
+                                      </g>
+                                    </svg>
+                                  </div>
                                 </div>
-                                <div
-                                  className="mt-2 selected-year-string-parent-div"
-                                  style={{
-                                    position: "relative",
-                                    left: "10px",
-                                    fontSize: "17px",
-                                    lineHeight: "20px",
-                                    color: "black",
+                                <Popover
+                                  open={popupState.open}
+                                  onClose={popupState.close}
+                                  {...bindPopover(popupState)}
+                                  anchorOrigin={{
+                                    vertical: "top",
+                                    horizontal: "center",
                                   }}
+                                  transformOrigin={{
+                                    vertical: "bottom",
+                                    horizontal: "center",
+                                  }}
+                                  className={`${
+                                    themeName === "dark-theme"
+                                      ? "popover-material-ui-dark-theme-organization-type"
+                                      : themeName !== "dark-theme"
+                                      ? "popover-material-ui-light-theme-organization-type"
+                                      : "hideshowMessageDeletePopover"
+                                  }`}
                                 >
-                                  {displayedOrganizationType}
-                                </div>
+                                  <div
+                                    onMouseEnter={() => {
+                                      sethoveredOrganizationType("business");
+                                    }}
+                                    onClick={() => {
+                                      setshowOrganizationTypeContent(false);
+                                      popupState.close();
+                                      setTimeout(() => {
+                                        setanimatedPopover(true);
+                                        setdisplayedOrganizationType(
+                                          "Business"
+                                        );
+                                      }, 150);
+                                    }}
+                                    style={{
+                                      padding: "8px",
+                                      cursor: "pointer",
+                                      backgroundColor:
+                                        hoveredOrganizationType === "business"
+                                          ? "#5aa0ff"
+                                          : "",
+                                      borderRadius: "4px",
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "white"
+                                          : "black",
+                                    }}
+                                  >
+                                    Business
+                                  </div>
+                                  <div
+                                    onMouseEnter={() => {
+                                      sethoveredOrganizationType("government");
+                                    }}
+                                    onClick={() => {
+                                      setshowOrganizationTypeContent(false);
+                                      popupState.close();
+                                      setTimeout(() => {
+                                        setanimatedPopover(true);
+                                        setdisplayedOrganizationType(
+                                          "Government"
+                                        );
+                                      }, 150);
+                                    }}
+                                    style={{
+                                      padding: "8px",
+                                      cursor: "pointer",
+                                      backgroundColor:
+                                        hoveredOrganizationType === "government"
+                                          ? "#5aa0ff"
+                                          : "",
+                                      borderRadius: "4px",
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "white"
+                                          : "black",
+                                    }}
+                                  >
+                                    Government
+                                  </div>
+                                </Popover>
                               </div>
-                              <div
-                                style={{
-                                  float: "right",
-                                  position: "relative",
-                                  // top: "30%",
-                                  minHeight: "50px",
-                                  display: "flex",
-                                  justifyContent: "center",
-                                  alignItems: "center",
-                                }}
-                              >
-                                <svg
-                                  width={`${1.5}em`}
-                                  height={`${1.5}em`}
-                                  color={
-                                    showOrganizationTypeContent
-                                      ? "#1d9bf0"
-                                      : "rgba(83,100,113,1.00)"
-                                  }
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="svg-year-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-1plcrui r-lrvibr r-14j79pv r-1pgswnq r-50lct3 r-fdch1b r-633pao r-u8s1d r-1v2oles"
-                                >
-                                  <g className="path-parent-g-year-picker">
-                                    <path d="M3.543 8.96l1.414-1.42L12 14.59l7.043-7.05 1.414 1.42L12 17.41 3.543 8.96z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </OverlayTrigger>
+                            )}
+                          </PopupState>
                           {/* organization type  finish to check  */}
                           {/* text fields finish to check  */}
                           <div
@@ -15367,119 +15372,203 @@ function RightSideColumn({
                             }}
                           />
                           {/* organization type  start to check  */}
-                          <OverlayTrigger
-                            show={showOrganizationTypeContent}
-                            trigger="click"
-                            placement="top"
-                            overlay={popoverOrganizationType}
+                          <PopupState
+                            variant="popover"
+                            popupId="demo-popup-popover"
                           >
-                            <div
-                              className="mt-3"
-                              onClick={handleShowOrganizationTypeClick}
-                              style={{
-                                borderRadius: "4px",
-                                cursor: "pointer",
-                                color: "#536471",
-                                width: "81.5%",
-                                minHeight: "58px",
-                                padding: "4px",
-                                border:
-                                  themeName === "dark-theme"
-                                    ? "1px solid #cfd9de"
-                                    : "1px solid rgb(207, 217, 222)",
-                                borderWidth: showOrganizationTypeContent
-                                  ? "2px"
-                                  : "1px",
-                                borderColor:
-                                  organizationDisplayedOrganizationTypeFilled &&
-                                  !displayedOrganizationType
-                                    ? "rgb(244, 33, 46)"
-                                    : showOrganizationTypeContent
-                                    ? "#1d9bf0"
-                                    : themeName === "dark-theme"
-                                    ? "#333639"
-                                    : "#cfd9de",
-                              }}
-                            >
+                            {(popupState) => (
                               <div
                                 style={{
-                                  display: "inline-block",
-                                  float: "left",
+                                  width: "81.5%",
                                 }}
                               >
                                 <div
-                                  className="main-outline-text-year-picker"
+                                  {...bindTrigger(popupState)}
+                                  className="mt-3"
                                   style={{
-                                    position: "relative",
-                                    left: "10px",
-                                    top: "5px",
-                                    fontSize: "14px",
-                                    lineHeight: "16px",
-                                    fontWeight: "400",
-                                    color: showOrganizationTypeContent
-                                      ? "#1d9bf0"
-                                      : "rgba(83,100,113,1.00)",
+                                    borderRadius: "4px",
+                                    cursor: "pointer",
+                                    color: "#536471",
+                                    width: "100%",
+                                    minHeight: "58px",
+                                    padding: "4px",
+                                    border:
+                                      themeName === "dark-theme"
+                                        ? "1px solid #cfd9de"
+                                        : "1px solid rgb(207, 217, 222)",
+                                    borderWidth: showOrganizationTypeContent
+                                      ? "2px"
+                                      : "1px",
+                                    borderColor:
+                                      organizationDisplayedOrganizationTypeFilled &&
+                                      !displayedOrganizationType
+                                        ? "rgb(244, 33, 46)"
+                                        : showOrganizationTypeContent
+                                        ? "#1d9bf0"
+                                        : themeName === "dark-theme"
+                                        ? "#333639"
+                                        : "#cfd9de",
                                   }}
                                 >
-                                  <span
+                                  <div
                                     style={{
-                                      color:
-                                        organizationDisplayedOrganizationTypeFilled &&
-                                        !displayedOrganizationType
-                                          ? "rgb(244, 33, 46)"
-                                          : "",
+                                      display: "inline-block",
+                                      float: "left",
                                     }}
                                   >
-                                    Organization Type
-                                  </span>
+                                    <div
+                                      className="main-outline-text-year-picker"
+                                      style={{
+                                        position: "relative",
+                                        left: "10px",
+                                        top: "5px",
+                                        fontSize: "14px",
+                                        lineHeight: "16px",
+                                        fontWeight: "400",
+                                        color: showOrganizationTypeContent
+                                          ? "#1d9bf0"
+                                          : "rgba(83,100,113,1.00)",
+                                      }}
+                                    >
+                                      <span
+                                        style={{
+                                          color:
+                                            organizationDisplayedOrganizationTypeFilled &&
+                                            !displayedOrganizationType
+                                              ? "rgb(244, 33, 46)"
+                                              : "",
+                                        }}
+                                      >
+                                        Organization Type
+                                      </span>
+                                    </div>
+                                    <div
+                                      className="mt-2 selected-year-string-parent-div"
+                                      style={{
+                                        position: "relative",
+                                        left: "10px",
+                                        fontSize: "17px",
+                                        lineHeight: "20px",
+                                        color: "black",
+                                      }}
+                                    >
+                                      {displayedOrganizationType}
+                                    </div>
+                                  </div>
+                                  <div
+                                    style={{
+                                      float: "right",
+                                      position: "relative",
+                                      // top: "30%",
+                                      minHeight: "50px",
+                                      display: "flex",
+                                      justifyContent: "center",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    <svg
+                                      width={`${1.5}em`}
+                                      height={`${1.5}em`}
+                                      color={
+                                        showOrganizationTypeContent
+                                          ? "#1d9bf0"
+                                          : "rgba(83,100,113,1.00)"
+                                      }
+                                      fill="currentColor"
+                                      viewBox="0 0 24 24"
+                                      aria-hidden="true"
+                                      className="svg-year-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-1plcrui r-lrvibr r-14j79pv r-1pgswnq r-50lct3 r-fdch1b r-633pao r-u8s1d r-1v2oles"
+                                    >
+                                      <g className="path-parent-g-year-picker">
+                                        <path d="M3.543 8.96l1.414-1.42L12 14.59l7.043-7.05 1.414 1.42L12 17.41 3.543 8.96z"></path>
+                                      </g>
+                                    </svg>
+                                  </div>
                                 </div>
-                                <div
-                                  className="mt-2 selected-year-string-parent-div"
-                                  style={{
-                                    position: "relative",
-                                    left: "10px",
-                                    fontSize: "17px",
-                                    lineHeight: "20px",
-                                    color:
-                                      themeName === "dark-theme"
-                                        ? "white"
-                                        : "black",
+                                <Popover
+                                  open={popupState.open}
+                                  onClose={popupState.close}
+                                  {...bindPopover(popupState)}
+                                  anchorOrigin={{
+                                    vertical: "top",
+                                    horizontal: "center",
                                   }}
+                                  transformOrigin={{
+                                    vertical: "bottom",
+                                    horizontal: "center",
+                                  }}
+                                  className={`${
+                                    themeName === "dark-theme"
+                                      ? "popover-material-ui-dark-theme-organization-type"
+                                      : themeName !== "dark-theme"
+                                      ? "popover-material-ui-light-theme-organization-type"
+                                      : "hideshowMessageDeletePopover"
+                                  }`}
                                 >
-                                  {displayedOrganizationType}
-                                </div>
+                                  <div
+                                    onMouseEnter={() => {
+                                      sethoveredOrganizationType("business");
+                                    }}
+                                    onClick={() => {
+                                      setshowOrganizationTypeContent(false);
+                                      popupState.close();
+                                      setTimeout(() => {
+                                        setanimatedPopover(true);
+                                        setdisplayedOrganizationType(
+                                          "Business"
+                                        );
+                                      }, 150);
+                                    }}
+                                    style={{
+                                      padding: "8px",
+                                      cursor: "pointer",
+                                      backgroundColor:
+                                        hoveredOrganizationType === "business"
+                                          ? "#5aa0ff"
+                                          : "",
+                                      borderRadius: "4px",
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "white"
+                                          : "black",
+                                    }}
+                                  >
+                                    Business
+                                  </div>
+                                  <div
+                                    onMouseEnter={() => {
+                                      sethoveredOrganizationType("government");
+                                    }}
+                                    onClick={() => {
+                                      setshowOrganizationTypeContent(false);
+                                      popupState.close();
+                                      setTimeout(() => {
+                                        setanimatedPopover(true);
+                                        setdisplayedOrganizationType(
+                                          "Government"
+                                        );
+                                      }, 150);
+                                    }}
+                                    style={{
+                                      padding: "8px",
+                                      cursor: "pointer",
+                                      backgroundColor:
+                                        hoveredOrganizationType === "government"
+                                          ? "#5aa0ff"
+                                          : "",
+                                      borderRadius: "4px",
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "white"
+                                          : "black",
+                                    }}
+                                  >
+                                    Government
+                                  </div>
+                                </Popover>
                               </div>
-                              <div
-                                style={{
-                                  float: "right",
-                                  position: "relative",
-                                  top: "30%",
-                                  minHeight: "50px",
-                                  display: "flex",
-                                  justifyContent: "center",
-                                  alignItems: "center",
-                                }}
-                              >
-                                <svg
-                                  width={`${1.5}em`}
-                                  height={`${1.5}em`}
-                                  color={
-                                    showOrganizationTypeContent
-                                      ? "#1d9bf0"
-                                      : "rgba(83,100,113,1.00)"
-                                  }
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="svg-year-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-1plcrui r-lrvibr r-14j79pv r-1pgswnq r-50lct3 r-fdch1b r-633pao r-u8s1d r-1v2oles"
-                                >
-                                  <g className="path-parent-g-year-picker">
-                                    <path d="M3.543 8.96l1.414-1.42L12 14.59l7.043-7.05 1.414 1.42L12 17.41 3.543 8.96z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
-                          </OverlayTrigger>
+                            )}
+                          </PopupState>
                           {/* </div> */}
                           {/* organization type  finish to check  */}
                           {/* text fields finish to check  */}

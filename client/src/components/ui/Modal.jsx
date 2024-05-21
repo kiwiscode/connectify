@@ -5024,6 +5024,7 @@ function CommentModal({
   height,
   refreshPosts,
   isImagePostDetail,
+  isPostDetailPage,
   postSharedMessage,
   sendDataToParent,
   isCutePopoverOnRightSide,
@@ -6103,7 +6104,13 @@ function CommentModal({
                     border: "none",
                   }}
                   variant="primary"
-                  onClick={() => handleAddComment(post._id)}
+                  onClick={() =>
+                    handleAddComment(
+                      post.isComment && (isPostDetailPage || isImagePostDetail)
+                        ? post.postId
+                        : post._id
+                    )
+                  }
                   className={`post-btn compose-tweet-textArea`}
                 >
                   <span>

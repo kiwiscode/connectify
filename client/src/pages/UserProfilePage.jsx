@@ -23,6 +23,7 @@ import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
 import ResponsiveNavigationBarTop from "../components/Navbar/ResponsiveNavigationTop";
 import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
 import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
+import BookmarkAction from "../components/ui/BookmarkAction";
 
 function UserProfile({ isNewPostShared }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
@@ -131,6 +132,7 @@ function UserProfile({ isNewPostShared }) {
         },
       })
       .then((response) => {
+        console.log("Response from database for favorites !!!", response);
         setFavorites(response.data.favorites);
       })
       .catch((err) => {
@@ -164,7 +166,7 @@ function UserProfile({ isNewPostShared }) {
       })
       .then((response) => {
         setProfile(response.data.user);
-
+        console.log("Response updated with populate =>", response);
         setUserprofiledata(response.data.posts);
       })
       .catch((err) => {
@@ -1331,6 +1333,21 @@ function UserProfile({ isNewPostShared }) {
                               setLoadingTrue={setLoadingTrue}
                             />
                           </div>
+                          <div
+                            style={{
+                              width: "100px",
+                            }}
+                            className="p-1"
+                          >
+                            <BookmarkAction
+                              post={post ? post : null}
+                              width={`${1.25}em`}
+                              height={`${1.25}em`}
+                              refreshPosts={handleShowPostsProfilePage}
+                              setLoadingFalse={setLoadingFalse}
+                              setLoadingTrue={setLoadingTrue}
+                            />
+                          </div>
                         </Stack>
                         {/* new version favorite repost comment finish to check */}
                       </div>
@@ -1778,6 +1795,27 @@ function UserProfile({ isNewPostShared }) {
                             className="p-1 next-to-like"
                           >
                             <LikeAction
+                              post={favorite ? favorite : null}
+                              width={`${1.25}em`}
+                              height={`${1.25}em`}
+                              refreshPosts={handleGetFavorites}
+                              setLoadingFalse={setLoadingFalse}
+                              setLoadingTrue={setLoadingTrue}
+                            />
+                          </div>
+                          <div
+                            style={{
+                              width: "100px",
+                            }}
+                            to={`/${favorite.userId.username}/status/${
+                              !favorite.isReposted
+                                ? favorite._id
+                                : favorite.repostedFromThisOriginalPost[0]._id
+                            }`}
+                            onClick={() => setclickedPostBox(favorite)}
+                            className="p-1 next-to-like"
+                          >
+                            <BookmarkAction
                               post={favorite ? favorite : null}
                               width={`${1.25}em`}
                               height={`${1.25}em`}
