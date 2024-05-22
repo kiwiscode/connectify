@@ -444,6 +444,7 @@ function MessagesPage() {
           padding: "0px",
           position: "relative",
           minHeight: width <= 700 ? "100vh" : "",
+          minHeight: width <= 700 ? "100dvh" : "",
         }}
       >
         <Stack

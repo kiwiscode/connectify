@@ -88,8 +88,6 @@ const BookmarkAction = ({
       });
   };
 
-  console.log("Detailed post =>", detailedPostComment);
-
   return (
     <>
       {contextHolder}

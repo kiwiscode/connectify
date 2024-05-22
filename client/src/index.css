@@ -3107,6 +3107,21 @@ span > a:hover {
   border-bottom-right-radius: 0px !important; */
   width: 100vw;
 }
+
+.modal-body-sub-modal-premium_sign_up_page {
+  position: fixed !important;
+  /* bottom: -32px; */
+  bottom: -32px;
+}
+
+.modal-body-sub-modal-premium_sign_up_page > div {
+  border-top-right-radius: 32px !important;
+  border-top-left-radius: 32px !important;
+  /* border-bottom-left-radius: 0px !important;
+  border-bottom-right-radius: 0px !important; */
+  width: 100vw;
+}
+
 /* payment screens finish to check */
 
 /* organization popover closing animation start to check  */

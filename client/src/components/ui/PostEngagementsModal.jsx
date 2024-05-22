@@ -186,10 +186,6 @@ function PostEngagements({
       });
   };
 
-  console.log("All follower ids =>", allFollowerIds());
-  console.log("All following ids => ", allFollowingIds());
-  console.log("Detailed post id =>", detailedPost._id);
-
   const [{ theme, themeName }] = useContext(ThemeContext);
 
   const { width } = useWindowDimensions();

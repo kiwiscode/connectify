@@ -144,9 +144,10 @@ function App() {
           {/* test for one time component leftsidenavbar start to check  */}
           <Container
             style={{
-              overflowX: "hidden",
-              // overflowY: "hidden",
               height: "100vh",
+              height: "100dvh",
+              // overflowX: "hidden",
+              // overflowY: "hidden",
             }}
             fluid
           >
