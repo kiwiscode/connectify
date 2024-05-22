@@ -2154,6 +2154,7 @@ function MainPage({ isNewPostShared }) {
         <div
           style={{
             height: width <= 700 ? "100vh" : "",
+            height: width <= 700 ? "100dvh" : "",
           }}
           className="all-posts"
         >

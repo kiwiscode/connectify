@@ -110,8 +110,6 @@ const LikeAction = ({
       });
   };
 
-  console.log("Detailed post =>", detailedPostComment);
-
   return (
     <>
       {getLikerIds(post).includes(userInfo._id) ? (

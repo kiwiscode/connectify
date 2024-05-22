@@ -87,6 +87,7 @@ router.post(
       phoneNumberGlobal,
       resultPhoneNumberGlobal
     );
+    console.log("Şu anda buradayız !!!");
   }
 );
 
@@ -752,7 +753,6 @@ router.post(
           currency: "eur",
           product_data: {
             name: "Subscribe to Verified Organizations Starter",
-
             description:
               organizationSubPlanTypeBasic === "Annual Plan"
                 ? "per year"

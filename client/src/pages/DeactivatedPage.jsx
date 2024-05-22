@@ -248,6 +248,7 @@ function DeactivatedPage() {
         <Row
           style={{
             height: "100vh",
+            height: "100dvh",
             borderTop: "none",
             borderBottom: "none",
           }}

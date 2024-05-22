@@ -11,6 +11,7 @@ const LoadingSpinner = ({ strokeColor, isCheckoutProcess, isSuspense }) => {
           justifyContent: "center",
           padding: isCheckoutProcess ? "" : "16px 0px",
           height: isSuspense ? "100vh" : "",
+          height: isSuspense ? "100dvh" : "",
           width: isSuspense ? "100%" : "",
           alignItems: isSuspense ? "center" : "",
         }}

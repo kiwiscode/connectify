@@ -39,6 +39,7 @@ const API_URL = "http://localhost:3000";
 import io from "socket.io-client";
 import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
 import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
+
 const socket = io.connect(API_URL);
 function LogoutModal() {
   const [
@@ -929,12 +930,25 @@ function LogoutModal() {
 
   const [defaultModeClicked, setdefaultModeClicked] = useState(false);
 
+  const [
+    rightSideColumSubscriptionModalStatus,
+    setRightSideColumSubscriptionModalStatus,
+  ] = useState(null);
+  const grapRightSideColumnSubscriptionModalOpenedOrClosedStatus = (data) => {
+    console.log(
+      "Data received from rightsidecolumn component for subscription modal status =>",
+      data
+    );
+    setRightSideColumSubscriptionModalStatus(data);
+  };
+
   return (
     <>
       {width <= 700 && (
         <Modal
           style={{
             height: "100vh",
+            height: "100dvh",
             margin: "0px",
             padding: "0px",
             backgroundColor: themeName === "dark-theme" ? "black" : "white",
@@ -2350,6 +2364,9 @@ function LogoutModal() {
                 </Stack>
               </Button>{" "}
               <Popover
+                style={{
+                  display: rightSideColumSubscriptionModalStatus ? "none" : "",
+                }}
                 open={popupState.open}
                 onClose={popupState.close}
                 {...bindPopover(popupState)}
@@ -2408,12 +2425,11 @@ function LogoutModal() {
                           Display
                         </span>
                       </div>
-                      <div
-                        onClick={() => {
-                          popupState.close();
-                        }}
-                      >
+                      <div>
                         <RightSideColumn
+                          sendModalClosedStatusToLogoutModal={
+                            grapRightSideColumnSubscriptionModalOpenedOrClosedStatus
+                          }
                           widthSmaller700={width <= 700 ? true : false}
                         />
                       </div>
@@ -2585,6 +2601,9 @@ function LogoutModal() {
                 </Stack>
               </Button>{" "}
               <Popover
+                style={{
+                  display: rightSideColumSubscriptionModalStatus ? "none" : "",
+                }}
                 open={popupState.open}
                 onClose={popupState.close}
                 {...bindPopover(popupState)}
@@ -2643,12 +2662,11 @@ function LogoutModal() {
                           Display
                         </span>
                       </div>
-                      <div
-                        onClick={() => {
-                          popupState.close();
-                        }}
-                      >
+                      <div>
                         <RightSideColumn
+                          sendModalClosedStatusToLogoutModal={
+                            grapRightSideColumnSubscriptionModalOpenedOrClosedStatus
+                          }
                           widthSmaller700={width <= 700 ? true : false}
                         />
                       </div>
@@ -2820,6 +2838,9 @@ function LogoutModal() {
                 </Stack>
               </Button>{" "}
               <Popover
+                style={{
+                  display: rightSideColumSubscriptionModalStatus ? "none" : "",
+                }}
                 open={popupState.open}
                 onClose={popupState.close}
                 {...bindPopover(popupState)}
@@ -2878,12 +2899,11 @@ function LogoutModal() {
                           Display
                         </span>
                       </div>
-                      <div
-                        onClick={() => {
-                          popupState.close();
-                        }}
-                      >
+                      <div>
                         <RightSideColumn
+                          sendModalClosedStatusToLogoutModal={
+                            grapRightSideColumnSubscriptionModalOpenedOrClosedStatus
+                          }
                           widthSmaller700={width <= 700 ? true : false}
                         />
                       </div>

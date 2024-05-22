@@ -44,6 +44,9 @@ function ResponsiveNavigationBarBottom({
 
     setPrevScrollPos(currentScrollPos);
 
+    console.log("Scrolling up =>", scrollingUp);
+    console.log("currentScrollPos =>", currentScrollPos);
+
     if (scrollingUp) {
       setVisible(true);
     } else {
@@ -57,6 +60,8 @@ function ResponsiveNavigationBarBottom({
       window.removeEventListener("scroll", handleScroll);
     };
   }, [prevScrollPos]);
+
+  console.log("This use effect works right now !");
 
   const { userInfo } = useContext(UserContext);
 
@@ -338,7 +343,6 @@ function ResponsiveNavigationBarBottom({
           ></PostModal>
         </div>
       </>
-
       {contextHolder}
     </>
   );
