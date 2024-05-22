@@ -749,7 +749,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
               style={{
                 padding: "0px",
                 margin: "0px",
-                height: "100vh",
+                height: "100dvh",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
@@ -1585,7 +1585,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                 ? "11%"
                 : "",
             position: "relative",
-            height: "100vh",
+            height: "100dvh",
             padding: "0px",
             margin: "0px",
             display: "flex",

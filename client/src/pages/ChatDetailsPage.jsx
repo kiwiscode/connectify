@@ -584,6 +584,7 @@ function ChatDetailsPage() {
             maxHeight: "500px",
             width: "100%",
             height: "100vh",
+            height: "100dvh",
             // padding: "5px",
           }}
         >

@@ -1,8 +1,9 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ThemeContext } from "../context/ThemeContext";
 import { Button, Col, Container, Modal, Row } from "react-bootstrap";
 import useWindowDimensions from "../hooks/getWindowDimensions";
+import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
 
 function PremiumSignupPage() {
   const navigate = useNavigate();
@@ -22,18 +23,70 @@ function PremiumSignupPage() {
     setshowSubscribeModalPremiumSignUpPage,
   ] = useState(null);
 
+  const [subscriptionModalShowed, setSubscriptionModalShowed] = useState(null);
   const handleCloseSubscribeAndPayModal = () => {
     setshowSubscribeModalPremiumSignUpPage(false);
+    setSubscriptionModalShowed(false);
   };
+  const getDataFromRightSideColum = (data) => {
+    console.log("Data from child right side column component", data);
+    setSubscriptionModalShowed(data);
+  };
+
+  const [premiumRole, setpremiumRole] = useState("Individual");
+  const [premiumType, setpremiumType] = useState(null);
+  const [planType, setplanType] = useState(null);
+  const [planPrice, setplanPrice] = useState(null);
+
+  useEffect(() => {
+    setpremiumType(
+      clickedOptionIndex === 0
+        ? "Basic"
+        : clickedOptionIndex === 1
+        ? "Premium"
+        : clickedOptionIndex === 2
+        ? "Premium+"
+        : null
+    );
+    setplanType(
+      selectedPremiumOption === "Annual plan basic-option"
+        ? "Annual Plan"
+        : selectedPremiumOption === "Monthly plan basic-option"
+        ? "Monthly Plan"
+        : null
+    );
+    setplanPrice(
+      clickedOptionIndex === 0 &&
+        selectedPremiumOption === "Annual plan basic-option"
+        ? "€38.08"
+        : clickedOptionIndex === 1 &&
+          selectedPremiumOption === "Annual plan basic-option"
+        ? "€99.96"
+        : clickedOptionIndex === 2 &&
+          selectedPremiumOption === "Annual plan basic-option"
+        ? "€199.92"
+        : clickedOptionIndex === 0 &&
+          selectedPremiumOption === "Monthly plan basic-option"
+        ? "€3.57"
+        : clickedOptionIndex === 1 &&
+          selectedPremiumOption === "Monthly plan basic-option"
+        ? "€9.52"
+        : clickedOptionIndex === 2 &&
+          selectedPremiumOption === "Monthly plan basic-option"
+        ? "€19.04"
+        : null
+    );
+  }, [clickedOptionIndex]);
 
   return (
     <>
-      {width > 600 && (
+      {width > 700 && (
         <Modal
           style={{
             padding: "0px",
             margin: "0px",
             zIndex: 9999,
+            visibility: subscriptionModalShowed ? "hidden" : "",
           }}
           contentClassName={`premium_sign_up_page_subscription_modal-${themeName}`}
           backdropClassName={
@@ -137,19 +190,19 @@ function PremiumSignupPage() {
                   {" "}
                   {selectedPremiumOption === "Annual plan basic-option" &&
                   clickedOptionIndex === 0
-                    ? "€38"
+                    ? "€38.08"
                     : selectedPremiumOption === "Monthly plan basic-option" &&
                       clickedOptionIndex === 0
                     ? "€3.57"
                     : selectedPremiumOption === "Annual plan basic-option" &&
                       clickedOptionIndex === 1
-                    ? "€99"
+                    ? "€99.96"
                     : selectedPremiumOption === "Monthly plan basic-option" &&
                       clickedOptionIndex === 1
                     ? "€8.33"
                     : selectedPremiumOption === "Annual plan basic-option" &&
                       clickedOptionIndex === 2
-                    ? "€199"
+                    ? "€199.92"
                     : selectedPremiumOption === "Monthly plan basic-option" &&
                       clickedOptionIndex === 2
                     ? "€19.04"
@@ -254,24 +307,14 @@ function PremiumSignupPage() {
                 }}
                 className="mt-5"
               >
-                <Button
-                  className={
-                    themeName === "dark-theme"
-                      ? "premium_sign_up_page_subscribe_and_pay_btn_dark-theme"
-                      : "premium_sign_up_page_subscribe_and_pay_btn_light-theme"
-                  }
-                  style={{
-                    width: "100%",
-                    height: "36px",
-                    border: "none",
-                    outlineStyle: "none",
-                    color: themeName === "dark-theme" ? "#0F141A" : "#FFFFFF",
-                    backgroundColor:
-                      themeName === "dark-theme" ? "#EFF3F4" : "#0F141A",
-                  }}
-                >
-                  Subscribe & Pay
-                </Button>
+                <RightSideColumn
+                  premium_sign_up_page_premium_role={premiumRole}
+                  premium_sign_up_page_premium_type={premiumType}
+                  premium_sign_up_plan_page_plan_type={planType}
+                  premium_sign_up_plan_page_plan_price={planPrice}
+                  sendModalStatuForPremiumSignUpPage={getDataFromRightSideColum}
+                  premium_sign_up_page_active={true}
+                />
               </div>
               <div
                 style={{
@@ -323,8 +366,340 @@ function PremiumSignupPage() {
         </Modal>
       )}
 
-      {width <= 600 && (
-        <>{showSubscribeModalPremiumSignUpPage && <div></div>}</>
+      {width <= 700 && (
+        <>
+          {showSubscribeModalPremiumSignUpPage && (
+            <Modal
+              show={showSubscribeModalPremiumSignUpPage}
+              onHide={handleCloseSubscribeAndPayModal}
+              style={{
+                overflowX: "hidden",
+                overflowY: "hidden",
+                padding: "0px",
+                margin: "0px",
+                zIndex: 9999999,
+                visibility: subscriptionModalShowed ? "hidden" : "",
+              }}
+              className="modal-sub-modal-payment-screen-parent"
+              dialogClassName="modal-body-sub-modal-premium_sign_up_page"
+              contentClassName={`${themeName}-sub-basic-modal`}
+            >
+              <div
+                onClick={handleCloseSubscribeAndPayModal}
+                style={{
+                  cursor: "pointer",
+                  padding: "12px",
+                }}
+              >
+                <div
+                  className={
+                    themeName === "dark-theme"
+                      ? `close-button-${themeName}`
+                      : `close-button`
+                  }
+                  style={{
+                    display: "inline-flex",
+                    borderRadius: "50%",
+                  }}
+                >
+                  <svg
+                    style={{
+                      border: "none",
+                      fontSize: "15px",
+                      margin: "5px",
+                    }}
+                    onClick={handleCloseSubscribeAndPayModal}
+                    width={20}
+                    height={20}
+                    color={
+                      themeName === "dark-theme" ? "white" : "rgb(15,20,25)"
+                    }
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                  >
+                    <g>
+                      <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                    </g>
+                  </svg>{" "}
+                </div>
+              </div>
+              <Modal.Body>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "flex-start",
+                    padding: "64px",
+                    position: "relative",
+                    bottom: "15px",
+                  }}
+                >
+                  <div
+                    // className="mb-4"
+                    style={{
+                      fontSize: "26px",
+                      lineHeight: "32px",
+                      fontWeight: "800",
+                      color: themeName === "dark-theme" ? "white" : "black",
+                      position: "relative",
+                      bottom: "30px",
+                    }}
+                  >
+                    {selectedPremiumOption === "Annual plan basic-option" &&
+                    clickedOptionIndex === 0
+                      ? "Basic"
+                      : selectedPremiumOption === "Monthly plan basic-option" &&
+                        clickedOptionIndex === 0
+                      ? "Basic"
+                      : selectedPremiumOption === "Annual plan basic-option" &&
+                        clickedOptionIndex === 1
+                      ? "Premium"
+                      : selectedPremiumOption === "Monthly plan basic-option" &&
+                        clickedOptionIndex === 1
+                      ? "Premium"
+                      : selectedPremiumOption === "Annual plan basic-option" &&
+                        clickedOptionIndex === 2
+                      ? "Premium+"
+                      : selectedPremiumOption === "Monthly plan basic-option" &&
+                        clickedOptionIndex === 2
+                      ? "Premium+"
+                      : null}
+                  </div>
+                  <div
+                    // className="mt-4"
+                    style={{
+                      fontSize: "36px",
+                      lineHeight: "36px",
+                      fontWeight: "700",
+                      color: themeName === "dark-theme" ? "white" : "black",
+                    }}
+                  >
+                    <span>
+                      {" "}
+                      {selectedPremiumOption === "Annual plan basic-option" &&
+                      clickedOptionIndex === 0
+                        ? "€38"
+                        : selectedPremiumOption ===
+                            "Monthly plan basic-option" &&
+                          clickedOptionIndex === 0
+                        ? "€3.57"
+                        : selectedPremiumOption ===
+                            "Annual plan basic-option" &&
+                          clickedOptionIndex === 1
+                        ? "€99"
+                        : selectedPremiumOption ===
+                            "Monthly plan basic-option" &&
+                          clickedOptionIndex === 1
+                        ? "€8.33"
+                        : selectedPremiumOption ===
+                            "Annual plan basic-option" &&
+                          clickedOptionIndex === 2
+                        ? "€199"
+                        : selectedPremiumOption ===
+                            "Monthly plan basic-option" &&
+                          clickedOptionIndex === 2
+                        ? "€19.04"
+                        : null}
+                    </span>{" "}
+                    <span
+                      style={{
+                        color:
+                          themeName === "dark-theme" ? "#E6E9EA" : "#363B3F",
+                        fontSize: "15px",
+                        lineHeight: "20px",
+                        fontWeight: "400",
+                      }}
+                    >
+                      {" "}
+                      {selectedPremiumOption === "Annual plan basic-option" &&
+                      clickedOptionIndex === 0
+                        ? "/ year"
+                        : selectedPremiumOption ===
+                            "Monthly plan basic-option" &&
+                          clickedOptionIndex === 0
+                        ? "/ month"
+                        : selectedPremiumOption ===
+                            "Annual plan basic-option" &&
+                          clickedOptionIndex === 1
+                        ? "/ year"
+                        : selectedPremiumOption ===
+                            "Monthly plan basic-option" &&
+                          clickedOptionIndex === 1
+                        ? "/ month"
+                        : selectedPremiumOption ===
+                            "Annual plan basic-option" &&
+                          clickedOptionIndex === 2
+                        ? "/ year"
+                        : selectedPremiumOption ===
+                            "Monthly plan basic-option" &&
+                          clickedOptionIndex === 2
+                        ? "/ month"
+                        : null}
+                    </span>
+                  </div>
+                  <div className="mt-1">
+                    <span
+                      style={{
+                        color:
+                          themeName === "dark-theme" ? "#E6E9EA" : "#363B3F",
+                        fontSize: "15px",
+                        lineHeight: "20px",
+                        fontWeight: "400",
+                      }}
+                    >
+                      {selectedPremiumOption === "Annual plan basic-option" &&
+                      clickedOptionIndex === 0
+                        ? "Billed annually"
+                        : selectedPremiumOption ===
+                            "Monthly plan basic-option" &&
+                          clickedOptionIndex === 0
+                        ? "Billed monthly"
+                        : selectedPremiumOption ===
+                            "Annual plan basic-option" &&
+                          clickedOptionIndex === 1
+                        ? "Billed annually"
+                        : selectedPremiumOption ===
+                            "Monthly plan basic-option" &&
+                          clickedOptionIndex === 1
+                        ? "Billed monthly"
+                        : selectedPremiumOption ===
+                            "Annual plan basic-option" &&
+                          clickedOptionIndex === 2
+                        ? "Billed annually"
+                        : selectedPremiumOption ===
+                            "Monthly plan basic-option" &&
+                          clickedOptionIndex === 2
+                        ? "Billed monthly"
+                        : null}{" "}
+                    </span>{" "}
+                    <span
+                      style={{
+                        backgroundColor:
+                          themeName === "dark-theme" ? "#00251A" : "#DAF8EB",
+                        color:
+                          themeName === "dark-theme" ? "#C1F1DC" : "#004329",
+                        fontSize: "11px",
+                        fontWeight: "700",
+                        padding: "2px 4px",
+                        borderRadius: "9999px",
+                        position: "relative",
+                        display:
+                          selectedPremiumOption ===
+                            "Monthly plan basic-option" &&
+                          (clickedOptionIndex === 0 ||
+                            clickedOptionIndex === 1 ||
+                            clickedOptionIndex === 2)
+                            ? "none"
+                            : "inline-flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      {selectedPremiumOption === "Annual plan basic-option" &&
+                      clickedOptionIndex === 0
+                        ? "SAVE 11%"
+                        : selectedPremiumOption ===
+                            "Annual plan basic-option" &&
+                          clickedOptionIndex === 1
+                        ? "SAVE 12%"
+                        : selectedPremiumOption ===
+                            "Annual plan basic-option" &&
+                          clickedOptionIndex === 2
+                        ? "SAVE 12%"
+                        : null}
+                    </span>{" "}
+                  </div>
+                  <div
+                    style={{
+                      position: "relative",
+                      bottom: "8px",
+                    }}
+                    className="mt-5"
+                  >
+                    <RightSideColumn
+                      premium_sign_up_page_premium_role={premiumRole}
+                      premium_sign_up_page_premium_type={premiumType}
+                      premium_sign_up_plan_page_plan_type={planType}
+                      premium_sign_up_plan_page_plan_price={planPrice}
+                      sendModalStatuForPremiumSignUpPage={
+                        getDataFromRightSideColum
+                      }
+                      premium_sign_up_page_active={true}
+                    />
+
+                    {/* <Button
+                      className={
+                        themeName === "dark-theme"
+                          ? "premium_sign_up_page_subscribe_and_pay_btn_dark-theme"
+                          : "premium_sign_up_page_subscribe_and_pay_btn_light-theme"
+                      }
+                      style={{
+                        width: "100%",
+                        height: "36px",
+                        border: "none",
+                        outlineStyle: "none",
+                        color:
+                          themeName === "dark-theme" ? "#0F141A" : "#FFFFFF",
+                        backgroundColor:
+                          themeName === "dark-theme" ? "#EFF3F4" : "#0F141A",
+                      }}
+                    >
+                      Subscribe & Pay
+                    </Button> */}
+                  </div>
+                  <div
+                    style={{
+                      border:
+                        themeName !== "dark-theme"
+                          ? "1px solid rgba(0, 0, 0, 0.1)"
+                          : // : "0.1px solid rgb(70, 70, 70)",
+                            "1px solid rgb(70, 70, 70)",
+                      borderRadius: "8px",
+                      position: "relative",
+                      bottom: "10px",
+                    }}
+                    className="mt-3 mb-3"
+                  >
+                    <div
+                      style={{
+                        padding: "8px",
+                        fontSize: "13px",
+                        lineHeight: "16px",
+                        fontWeight: "400",
+                        color:
+                          themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
+                      }}
+                    >
+                      By subscribing, you agree to our{" "}
+                      <span
+                        style={{
+                          color: "#1C9BEF",
+                        }}
+                      >
+                        Purchaser Terms of Service
+                      </span>
+                      . Subscriptions auto-renew until canceled, as described in
+                      the Terms.{" "}
+                      <span
+                        style={{
+                          color: "#1C9BEF",
+                        }}
+                      >
+                        Cancel anytime
+                      </span>
+                      . Cancel at least 24 hours prior to renewal to avoid
+                      additional charges. A verified phone number is required to
+                      subscribe. If you've subscribed on another platform,
+                      manage your subscription through that platform.
+                    </div>
+                  </div>
+                </div>
+              </Modal.Body>
+            </Modal>
+          )}
+        </>
       )}
 
       <Container
@@ -438,7 +813,6 @@ function PremiumSignupPage() {
                     >
                       (For organizations,{" "}
                       <span
-                        onClick={() => navigate("/i/verified-orgs-signup")}
                         style={{
                           fontSize: "18px",
                           fontWeight: "700",
@@ -470,9 +844,9 @@ function PremiumSignupPage() {
                       }}
                     >
                       <span
-                        onClick={() =>
-                          setSelectedPremiumOption("Annual plan basic-option")
-                        }
+                        onClick={() => {
+                          setSelectedPremiumOption("Annual plan basic-option");
+                        }}
                         style={{
                           backgroundColor:
                             themeName === "dark-theme" &&
@@ -527,9 +901,9 @@ function PremiumSignupPage() {
                         </span>
                       </span>
                       <span
-                        onClick={() =>
-                          setSelectedPremiumOption("Monthly plan basic-option")
-                        }
+                        onClick={() => {
+                          setSelectedPremiumOption("Monthly plan basic-option");
+                        }}
                         style={{
                           padding: "8px 8px",
                           borderRadius: "99999px",

@@ -59,7 +59,6 @@ function PostDetailPage() {
   );
 
   console.log("Commented for this post check =>", commentedForThisPost);
-  console.log("Detailed post check =>", detailedPost);
 
   const navigate = useNavigate();
 
@@ -73,7 +72,6 @@ function PostDetailPage() {
     axios
       .get(`${API_URL}/${postOwner}/status/${postId}`)
       .then((response) => {
-        console.log("Response for fetcing detailed post =>", response);
         const { detailedPost } = response.data;
         if (detailedPost.isComment) {
           if (!deactivatedUser) {
@@ -103,7 +101,6 @@ function PostDetailPage() {
       )
       .then(() => {
         setTimeout(() => {
-          console.log("Detailed post like situation works !");
           refreshPostDetailPage();
         }, 500);
       })
@@ -159,7 +156,6 @@ function PostDetailPage() {
       .get(`${API_URL}/${postOwner}/status/${postId}`)
       .then((response) => {
         const { detailedPost } = response.data;
-        console.log("Fetching data for detailed post =>", response);
         if (detailedPost.isComment) {
           if (detailedPost.commentedForThisPost) {
             if (!detailedPost.commentedForThisPost.deactivatedOwner) {
@@ -299,6 +295,7 @@ function PostDetailPage() {
           borderBottom: "none",
           padding: "0px",
           minHeight: width <= 700 ? "100vh" : "",
+          minHeight: width <= 700 ? "100dvh" : "",
         }}
       >
         <Stack direction="horizontal" gap={3}>
