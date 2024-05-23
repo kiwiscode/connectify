@@ -50,6 +50,7 @@ const socket = io.connect(`${API_URL}`);
 
 function RightSideColumn({
   premium_sign_up_page_active,
+  organizationSubscribeOptionClicked,
   sendModalStatuForPremiumSignUpPage,
   sendModalClosedStatusToLogoutModal = () => {},
   widthSmaller700,
@@ -57,7 +58,34 @@ function RightSideColumn({
   premium_sign_up_page_premium_type,
   premium_sign_up_plan_page_plan_type,
   premium_sign_up_plan_page_plan_price,
+  isVerifiedOrgsSignUpRoute,
+  isSubscriptionEligibilityCheckRouteForIndividualSubscription,
+  premiumInfoFromParentAppJsx,
 }) {
+  useEffect(() => {
+    if (
+      premiumInfoFromParentAppJsx ||
+      isSubscriptionEligibilityCheckRouteForIndividualSubscription
+    ) {
+      setpremiumInfo((prevPremiumInfo) => {
+        return {
+          ...prevPremiumInfo,
+          premiumRole: premiumInfoFromParentAppJsx.premiumRole,
+          premiumType: premiumInfoFromParentAppJsx.premiumType,
+          planType: premiumInfoFromParentAppJsx.planType,
+          planPrice: premiumInfoFromParentAppJsx.planPrice,
+        };
+      });
+      console.log(
+        "Data received from my parents child =>",
+        premiumInfoFromParentAppJsx
+      );
+    }
+  }, [
+    premiumInfoFromParentAppJsx,
+    isSubscriptionEligibilityCheckRouteForIndividualSubscription,
+  ]);
+
   const { getToken, userInfo } = useContext(UserContext);
   const [activities, setActivities] = useState([]);
   const getActivities = async () => {
@@ -68,7 +96,6 @@ function RightSideColumn({
         },
       });
       setActivities(response.data.activities);
-      console.log("Response for activities =>", response);
     } catch (error) {
       console.error(error);
     }
@@ -329,10 +356,67 @@ function RightSideColumn({
   const [showSubscriptionModal, setshowSubscriptionModal] = useState(false);
   const [tabIndex, setTabIndex] = useState(null);
 
+  useEffect(() => {
+    if (isVerifiedOrgsSignUpRoute) {
+      setisIndividualSubscriptionClicked(false);
+      setshowSubscriptionModal(true);
+      setTabIndex(1);
+      setisOrganizationSubscriptionClicked(true);
+      setTabStyleOrganizationBasicPlan(false);
+      setTabStyleOrganizationFullAccessPlan(true);
+      setSubTabIndexFromOrganizationSelect(2);
+      setorganizationSubPremiumType("Full Access");
+      setorganizationSubPremiumRole("Organization");
+      setorganizationSubPlanPriceBasic("");
+      setorganizationSubPlanTypeBasic("");
+      if (fullAccessAnnualTabStyle) {
+        setorganizationSubPlanPriceFullAccess("€11,305");
+        setorganizationSubPlanTypeFullAccess("Annual Plan");
+      } else if (fullAccessMonthlyTabStyle) {
+        setorganizationSubPlanPriceFullAccess("€1,130.50");
+        setorganizationSubPlanTypeFullAccess("Monthly Plan");
+      } else {
+        return;
+      }
+
+      // if (fullAccessAnnualTabStyle) {
+      //   setorganizationSubPlanPriceFullAccess("€11,305");
+      //   setorganizationSubPlanTypeFullAccess("Annual Plan");
+      // } else if (fullAccessMonthlyTabStyle) {
+      //   setorganizationSubPlanPriceFullAccess("€1,130.50");
+      //   setorganizationSubPlanTypeFullAccess("Monthly Plan");
+      // }
+      // else if (basicAnnualTabStyle) {
+      //   setorganizationSubPlanPriceBasic("€2,261");
+      //   setorganizationSubPlanTypeBasic("Annual Plan");
+      // } else if (basicMonthlyTabStyle) {
+      //   setorganizationSubPlanPriceBasic("€226.10");
+      //   setorganizationSubPlanTypeBasic("Monthly Plan");
+      // }
+    }
+  }, [isVerifiedOrgsSignUpRoute]);
+
+  useEffect(() => {
+    console.log("Şu anda burası çalışıyor ! ");
+    if (isSubscriptionEligibilityCheckRouteForIndividualSubscription) {
+      setisIndividualSubscriptionClicked(true);
+      setisOrganizationSubscriptionClicked(false);
+      setshowSubscriptionModal(true);
+      console.log("Şu anda burası çalışıyor 2 ! ");
+
+      setTabIndex(2);
+    }
+  }, [isSubscriptionEligibilityCheckRouteForIndividualSubscription]);
+
   const handleShowSubscriptionModal = () => {
-    setshowSubscriptionModal(true);
-    setTabIndex(0);
-    setshowVerifyingCodeModal(false);
+    if (
+      !isVerifiedOrgsSignUpRoute &&
+      !isSubscriptionEligibilityCheckRouteForIndividualSubscription
+    ) {
+      setshowSubscriptionModal(true);
+      setTabIndex(0);
+      setshowVerifyingCodeModal(false);
+    }
   };
 
   const showSubscriptionModalSmallerThan700 = () => {
@@ -514,6 +598,38 @@ function RightSideColumn({
     planType: planType || premium_sign_up_plan_page_plan_type || null,
     planPrice: planPrice || premium_sign_up_plan_page_plan_price || null,
   });
+
+  const handleOutsideClickOfModal = () => {
+    if (isVerifiedOrgsSignUpRoute && tabIndex === 1) {
+      setshowSubscriptionModal(false);
+      navigate("/home");
+    }
+  };
+
+  const handleOutsideClickOfModal2 = () => {
+    if (
+      isSubscriptionEligibilityCheckRouteForIndividualSubscription &&
+      tabIndex === 2
+    ) {
+      setshowSubscriptionModal(false);
+      navigate("/home");
+    }
+  };
+
+  useEffect(() => {
+    if (
+      tabIndex === 0 &&
+      (isVerifiedOrgsSignUpRoute ||
+        isSubscriptionEligibilityCheckRouteForIndividualSubscription)
+    ) {
+      navigate("/i/premium_sign_up");
+    }
+  }, [isVerifiedOrgsSignUpRoute, tabIndex]);
+
+  const handleNavigateClickCloseBtn = () => {
+    navigate("/i/premium_sign_up");
+  };
+
   const handleCloseSubscriptionModal = () => {
     setindividualSubOptionTab(null);
     setindividualSubOptionTab(2);
@@ -522,48 +638,51 @@ function RightSideColumn({
     setpremiumType(null);
     setplanType(null);
     setplanPrice(null);
-
     console.log("Aktif burası !");
-    if (
-      tabIndex === 2 &&
-      showVerifyPhoneNumberPasswordModal &&
-      correctPassword &&
-      showgeneratedQrCodeModal
-    ) {
-      setPhoneVerifiedErrorMessage(null);
-      setshowgeneratedQrCodeModal(false);
-      setshowVerifyPhoneNumberPasswordModal(false);
-      setshowSubscriptionModal(false);
-      setphoneNumber("");
-      setTabIndex(null);
-    } else if (tabIndex >= 1) {
-      setTabIndex(tabIndex - 1);
-    } else if ((tabIndex === 2 && !phoneVerified) || phoneVerified) {
-      setTabIndex(tabIndex - 1);
-      setisOrganizationSubscriptionClicked(false);
-      setactiveOrganizationOptionTabStyle(false);
-      setactiveIndividualOptionTabStyle(true);
-      setisIndividualSubscriptionClicked(true);
-    } else if (tabIndex === 0) {
-      sendModalClosedStatusToLogoutModal(false);
-      setshowSubscriptionModal(false);
-      setisOrganizationSubscriptionClicked(false);
-      setactiveOrganizationOptionTabStyle(false);
-      setactiveIndividualOptionTabStyle(true);
-      setisIndividualSubscriptionClicked(true);
-      setTimeout(() => {
+    if (!premium_sign_up_page_active) {
+      if (
+        tabIndex === 2 &&
+        showVerifyPhoneNumberPasswordModal &&
+        correctPassword &&
+        showgeneratedQrCodeModal
+      ) {
+        setPhoneVerifiedErrorMessage(null);
+        setshowgeneratedQrCodeModal(false);
+        setshowVerifyPhoneNumberPasswordModal(false);
+        setshowSubscriptionModal(false);
+        setphoneNumber("");
         setTabIndex(null);
-      }, 500);
+      } else if (tabIndex >= 1) {
+        setTabIndex(tabIndex - 1);
+      } else if ((tabIndex === 2 && !phoneVerified) || phoneVerified) {
+        setTabIndex(tabIndex - 1);
+        setisOrganizationSubscriptionClicked(false);
+        setactiveOrganizationOptionTabStyle(false);
+        setactiveIndividualOptionTabStyle(true);
+        setisIndividualSubscriptionClicked(true);
+      } else if (tabIndex === 0) {
+        sendModalClosedStatusToLogoutModal(false);
+        setshowSubscriptionModal(false);
+        setisOrganizationSubscriptionClicked(false);
+        setactiveOrganizationOptionTabStyle(false);
+        setactiveIndividualOptionTabStyle(true);
+        setisIndividualSubscriptionClicked(true);
+        setTimeout(() => {
+          setTabIndex(null);
+        }, 500);
+      } else {
+        sendModalClosedStatusToLogoutModal(false);
+        setshowSubscriptionModal(false);
+        setisOrganizationSubscriptionClicked(false);
+        setactiveOrganizationOptionTabStyle(false);
+        setactiveIndividualOptionTabStyle(true);
+        setisIndividualSubscriptionClicked(true);
+        setTimeout(() => {
+          setTabIndex(null);
+        }, 500);
+      }
     } else {
-      sendModalClosedStatusToLogoutModal(false);
       setshowSubscriptionModal(false);
-      setisOrganizationSubscriptionClicked(false);
-      setactiveOrganizationOptionTabStyle(false);
-      setactiveIndividualOptionTabStyle(true);
-      setisIndividualSubscriptionClicked(true);
-      setTimeout(() => {
-        setTabIndex(null);
-      }, 500);
     }
   };
   const [organizationSubPremiumRole, setorganizationSubPremiumRole] =
@@ -619,17 +738,6 @@ function RightSideColumn({
     }
   };
 
-  // console.log("Organization premium role =>", organizationSubPremiumRole);
-  // console.log("Organization premium type =>", organizationSubPremiumType);
-  // console.log(
-  //   "Organization premium plan type =>",
-  //   organizationSubPlanTypeBasic || organizationSubPlanTypeFullAccess
-  // );
-  // console.log(
-  //   "Organization premium plan price =>",
-  //   organizationSubPlanPriceBasic || organizationSubPlanPriceFullAccess
-  // );
-
   const handleChooseActionForSubscriptionModal = (individual, organization) => {
     if (individual) {
       setselectedOption("individual");
@@ -674,15 +782,6 @@ function RightSideColumn({
   };
 
   useEffect(() => {
-    if (premium_sign_up_plan_page_plan_type === "Annual Plan") {
-      console.log("Ödeme planı yıllık !");
-    } else if (premium_sign_up_plan_page_plan_type === "Monthly Plan") {
-      console.log("Ödeme planı monthly !");
-    } else {
-      console.log("Annual veya monthly ödeme planını göremiyoruz !");
-      console.log("Mevcut gelen plan => ", premium_sign_up_plan_page_plan_type);
-    }
-
     if (!premium_sign_up_page_active) {
       if (
         individualSubOptionTab === 0 &&
@@ -880,6 +979,13 @@ function RightSideColumn({
 
   const handleCheckoutStripeApiOrganizationBasic = () => {
     setCheckoutProcessLoadingBar(true);
+
+    console.log(
+      organizationSubPremiumRole,
+      organizationSubPremiumType,
+      organizationSubPlanTypeBasic,
+      organizationSubPlanPriceBasic
+    );
     axios
       .post(
         `${API_URL}/organization-basic-subscribe-create-checkout-session`,
@@ -1072,8 +1178,7 @@ function RightSideColumn({
     setverifyPasswordInput(e.target.value);
   };
 
-  const { showCustomMessage, contextHolder, postSharedMessage } =
-    useAntdMessageHandler();
+  const { showCustomMessage, contextHolder } = useAntdMessageHandler();
 
   const generateRandomCode = () => {
     const characters =
@@ -1198,6 +1303,12 @@ function RightSideColumn({
 
   const handleSubscriptionInfoNonPhoneVerifiedUser = () => {
     openQrCodeModal();
+    // test
+    setTabIndex(2);
+    setshowVerifyPhoneNumberPasswordModal(true);
+    setcorrectPassword(true);
+    setshowgeneratedQrCodeModal(true);
+    setshowVerifyingCodeModal(false);
 
     console.log("inside function verify phone code !", verifyPhoneCode);
 
@@ -1366,37 +1477,29 @@ function RightSideColumn({
     sendModalStatuForPremiumSignUpPage(true);
   }
 
+  const [subLoading, setSubLoading] = useState(null);
+
   return (
     <>
       {contextHolder}
-      {premium_sign_up_page_active && (
+      {premium_sign_up_page_active && !organizationSubscribeOptionClicked && (
         <Button
           onClick={() => {
-            setactiveIndividualOptionTabStyle(true);
-            setisIndividualSubscriptionClicked(true);
-            setactiveOrganizationOptionTabStyle(false);
-            setisOrganizationSubscriptionClicked(false);
-            setshowSubscriptionModal(true);
-            setphoneVerified(false);
-            setshowVerifyPhoneNumberPasswordModal(false);
-            setsubErrorPhoneVerifiedTabLoading(true);
-
-            // informations for from parent premium sign up page start to check
-            handleChooseActionForSubscriptionModal(true, false);
-            sendDataToParentPremiumSignUpPage();
+            console.log("Hello world");
             setTabIndex(2);
-
-            // change premium options from child
-            // premium_sign_up_page_premium_role,
-            // premium_sign_up_page_premium_type,
-            // premium_sign_up_plan_page_plan_type,
-            // premium_sign_up_plan_page_plan_price,
-            // setpremiumRole(premium_sign_up_page_premium_role);
-            // setpremiumType(premium_sign_up_page_premium_type);
-            // setplanType(premium_sign_up_plan_page_plan_type);
-            // setplanPrice(premium_sign_up_plan_page_plan_price);
+            setSubLoading(true);
             setTimeout(() => {
-              setsubErrorPhoneVerifiedTabLoading(false);
+              setSubLoading(false);
+              setactiveIndividualOptionTabStyle(true);
+              setisIndividualSubscriptionClicked(true);
+              setshowVerifyPhoneNumberPasswordModal(false);
+              setactiveOrganizationOptionTabStyle(false);
+              setisOrganizationSubscriptionClicked(false);
+              sendDataToParentPremiumSignUpPage();
+              setphoneVerified(false);
+
+              // burayı açınca problem ortaya çıkıyor, yani modal açıldıktan sonra problem başlıyor
+              setshowSubscriptionModal(true);
             }, 500);
           }}
           className={
@@ -1411,9 +1514,23 @@ function RightSideColumn({
             outlineStyle: "none",
             color: themeName === "dark-theme" ? "#0F141A" : "#FFFFFF",
             backgroundColor: themeName === "dark-theme" ? "#EFF3F4" : "#0F141A",
+            opacity: subLoading ? "0.5" : "1",
           }}
         >
-          Subscribe & Pay
+          {subLoading ? (
+            <div
+              style={{
+                fontSize: "15px",
+              }}
+            >
+              <LoadingSpinner
+                isCheckoutProcess={true}
+                strokeColor={"rgb(29, 155, 240)"}
+              ></LoadingSpinner>
+            </div>
+          ) : (
+            <div>Subscribe & Pay</div>
+          )}
         </Button>
       )}
 
@@ -1462,12 +1579,18 @@ function RightSideColumn({
                 overflowY: "hidden",
                 margin: "0px",
                 padding: "0px",
-                zIndex: 9999,
+                // zIndex: 9999,
                 backgroundColor: themeName === "dark-theme" ? "black" : "white",
               }}
               dialogClassName={"modal-fullscreen"}
               show={showSubscriptionModal}
-              onHide={handleCloseSubscriptionModal}
+              onHide={
+                isVerifiedOrgsSignUpRoute
+                  ? handleOutsideClickOfModal
+                  : isSubscriptionEligibilityCheckRouteForIndividualSubscription
+                  ? handleOutsideClickOfModal2
+                  : handleCloseSubscriptionModal
+              }
               centered={true}
               contentClassName={
                 themeName === "dark-theme" ? "dark-theme-sub-modal" : ""
@@ -1487,9 +1610,11 @@ function RightSideColumn({
                     }}
                   >
                     <div
-                      onClick={() => {
-                        handleCloseSubscriptionModal();
-                      }}
+                      onClick={() =>
+                        isSubscriptionEligibilityCheckRouteForIndividualSubscription
+                          ? navigate("/i/premium_sign_up")
+                          : handleCloseSubscriptionModal()
+                      }
                       className={`close-button close-button-${themeName}`}
                       style={{
                         borderRadius: "50%",
@@ -1637,7 +1762,7 @@ function RightSideColumn({
                   </Modal.Header>
                 </>
               )}
-              {tabIndex === 0 ? (
+              {tabIndex === 0 && !premium_sign_up_page_active ? (
                 <>
                   <Modal.Body
                     // className="mt-5"
@@ -1923,7 +2048,9 @@ function RightSideColumn({
                     </div>
                   </Modal.Body>
                 </>
-              ) : tabIndex === 1 && isIndividualSubscriptionClicked ? (
+              ) : tabIndex === 1 &&
+                isIndividualSubscriptionClicked &&
+                !premium_sign_up_page_active ? (
                 <>
                   <Modal.Body
                     className={`scrollbar-add scrollbar-add-${themeName}`}
@@ -2443,7 +2570,7 @@ function RightSideColumn({
                                       color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
-                                          : "rgb(83, 100, 113)                                  ",
+                                          : "rgb(83, 100, 113)",
                                     }}
                                   >
                                     Get paid to post
@@ -7975,6 +8102,9 @@ function RightSideColumn({
                                     vertical: "bottom",
                                     horizontal: "center",
                                   }}
+                                  style={{
+                                    zIndex: 9999999,
+                                  }}
                                   className={`${
                                     themeName === "dark-theme"
                                       ? "popover-material-ui-dark-theme-organization-type"
@@ -9196,7 +9326,7 @@ function RightSideColumn({
                       showVerifyPhoneNumberPasswordModal
                     ? "#232E36"
                     : "",
-                zIndex: 9999999,
+                // zIndex: 9999999,
               }}
               contentClassName={
                 themeName === "dark-theme" ? "dark-theme-sub-modal" : ""
@@ -9208,7 +9338,13 @@ function RightSideColumn({
                   : "signin-modal-parent-non-reactivate subscribe-modal-abcde"
               }
               show={showSubscriptionModal}
-              onHide={handleCloseSubscriptionModal}
+              onHide={
+                isVerifiedOrgsSignUpRoute
+                  ? handleOutsideClickOfModal
+                  : isSubscriptionEligibilityCheckRouteForIndividualSubscription
+                  ? handleOutsideClickOfModal2
+                  : handleCloseSubscriptionModal
+              }
               centered={true}
             >
               {tabIndex === 0 ? (
@@ -9296,7 +9432,7 @@ function RightSideColumn({
                 </>
               ) : null}
 
-              {tabIndex === 0 ? (
+              {tabIndex === 0 && !premium_sign_up_page_active ? (
                 <>
                   <Modal.Body
                     style={{
@@ -9536,7 +9672,9 @@ function RightSideColumn({
                     </div>
                   </Modal.Body>
                 </>
-              ) : tabIndex === 1 && isIndividualSubscriptionClicked ? (
+              ) : tabIndex === 1 &&
+                isIndividualSubscriptionClicked &&
+                !premium_sign_up_page_active ? (
                 <>
                   <Modal.Body
                     className={`scrollbar-add individual-bigger-than-700-width scrollbar-add-${themeName}`}
@@ -13850,7 +13988,11 @@ function RightSideColumn({
                                   fontSize: "15px",
                                   margin: "5px",
                                 }}
-                                onClick={handleCloseSubscriptionModal}
+                                onClick={() =>
+                                  isVerifiedOrgsSignUpRoute
+                                    ? handleNavigateClickCloseBtn
+                                    : handleCloseSubscriptionModal
+                                }
                                 width={20}
                                 height={20}
                                 color={
@@ -15599,6 +15741,9 @@ function RightSideColumn({
                                     vertical: "bottom",
                                     horizontal: "center",
                                   }}
+                                  style={{
+                                    zIndex: 9999999,
+                                  }}
                                   className={`${
                                     themeName === "dark-theme"
                                       ? "popover-material-ui-dark-theme-organization-type"
@@ -15830,15 +15975,23 @@ function RightSideColumn({
                       style={{
                         margin: "0px",
                         padding: "0px",
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
                       }}
                       className="signin-modal-body-child-non-reactivate sub-modal-loading-spinner"
                     >
-                      <LoadingSpinner
-                        strokeColor={"rgb(29, 155, 240)"}
-                      ></LoadingSpinner>
+                      {" "}
+                      <div
+                        className="mt-5"
+                        style={{
+                          minHeight: "550px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <LoadingSpinner
+                          strokeColor={"rgb(29, 155, 240)"}
+                        ></LoadingSpinner>
+                      </div>
                     </Modal.Body>
                   ) : (
                     <Modal.Body
@@ -15862,6 +16015,11 @@ function RightSideColumn({
                         }}
                       >
                         <div
+                          onClick={() =>
+                            isSubscriptionEligibilityCheckRouteForIndividualSubscription
+                              ? navigate("/i/premium_sign_up")
+                              : handleCloseSubscriptionModal()
+                          }
                           className={`close-button close-button-${themeName}`}
                           style={{
                             display: " flex",
@@ -15880,7 +16038,6 @@ function RightSideColumn({
                               fontSize: "15px",
                               margin: "5px",
                             }}
-                            onClick={handleCloseSubscriptionModal}
                             width={20}
                             height={20}
                             color={
@@ -16624,9 +16781,19 @@ function RightSideColumn({
                       }}
                       className="signin-modal-body-child-non-reactivate sub-modal-loading-spinner"
                     >
-                      <LoadingSpinner
-                        strokeColor={"rgb(29, 155, 240)"}
-                      ></LoadingSpinner>
+                      <div
+                        className="mt-5"
+                        style={{
+                          minHeight: "550px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <LoadingSpinner
+                          strokeColor={"rgb(29, 155, 240)"}
+                        ></LoadingSpinner>
+                      </div>
                     </Modal.Body>
                   ) : (
                     <Modal.Body>

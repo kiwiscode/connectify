@@ -44,7 +44,7 @@ export const useAntdMessageHandler = () => {
     duration,
     isBookmarkAddedMessage
   ) => {
-    console.log("Şu an burası çalışıyor !!!");
+    console.log("Şu an burası çalışıyor custom message için !!!");
     messageApi.success({
       type: "success",
       content: (
