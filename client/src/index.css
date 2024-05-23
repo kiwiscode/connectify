@@ -4188,31 +4188,6 @@ themeName === "dark-theme"
   transition: 0.2s !important;
 }
 
-/* glassmorphism effect test start to check for premium sign up page  */
-.color-light-theme {
-  filter: blur(125px);
-  background: linear-gradient(to bottom, #cde2fb, #fefeff);
-  /* background-color: yellow; */
-  border-radius: 99999px;
-  position: absolute;
-  width: 75%;
-  min-height: 100vh;
-  top: -175px;
-  left: 12%;
-}
-
-.color-dark-theme {
-  filter: blur(125px);
-  background: linear-gradient(to bottom, #212e3e, #010101);
-  border-radius: 99999px;
-  position: absolute;
-  width: 75%;
-  min-height: 100vh;
-  top: -175px;
-  left: 12%;
-}
-/* glassmorphism effect test finish to check for premium sign up page  */
-
 .hover-sub-btn:hover {
   background-color: #d7dbdc !important;
   transition-duration: 0.2s !important;
@@ -4240,3 +4215,68 @@ themeName === "dark-theme"
   transition-duration: 0.2s !important;
 }
 /* premium sign up page subscription modal finish to check  */
+
+/* glassmorphism effect test start to check for premium sign up page  */
+/* .color-light-theme {
+  filter: blur(125px);
+  background: linear-gradient(to bottom, #cde2fb, #fefeff);
+  border-radius: 99999px;
+  position: absolute;
+  width: 75%;
+  min-height: 100vh;
+  top: -175px;
+  left: 12%;
+}
+
+.color-dark-theme {
+  filter: blur(125px);
+  background: linear-gradient(to bottom, #212e3e, #010101);
+  border-radius: 99999px;
+  position: absolute;
+  width: 75%;
+  min-height: 100vh;
+  top: -175px;
+  left: 12%;
+} */
+
+.color-light-theme {
+  position: absolute !important;
+  width: 100%;
+  min-height: 650px !important;
+  top: -300px;
+  background-image: radial-gradient(
+    56.1514% 56.1514% at 49.972% 38.959%,
+    rgba(52, 147, 239, 0.3) 0%,
+    rgb(255, 255, 255) 100%
+  );
+}
+.color-dark-theme {
+  position: absolute !important;
+  width: 100%;
+  min-height: 650px !important;
+  top: -300px;
+  background-image: radial-gradient(
+    56.1514% 56.1514% at 49.972% 38.959%,
+    rgb(39, 54, 73) 0%,
+    rgb(0, 0, 0) 100%
+  );
+}
+
+.close-btn-extra-premium-sign-up-light-theme:hover {
+  background-color: #e7e7e8 !important;
+  transition-duration: 0.2s !important;
+  z-index: 99999 !important;
+}
+
+.close-btn-extra-premium-sign-up-dark-theme:hover {
+  background-color: rgba(25, 26, 26, 255) !important;
+  transition-duration: 0.2s !important;
+  z-index: 99999 !important;
+}
+
+/* glassmorphism effect test finish to check for premium sign up page  */
+
+.hide-me-modal,
+.hide-me-modal-fade {
+  display: none !important;
+}
