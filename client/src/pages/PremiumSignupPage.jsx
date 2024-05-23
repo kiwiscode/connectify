@@ -460,8 +460,8 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
               style={{
                 overflowX: "hidden",
                 overflowY: "hidden",
-                padding: "0px",
-                margin: "0px",
+                padding: "0px !important",
+                margin: "0px !important",
                 zIndex: 9999999,
               }}
               dialogClassName="modal-body-sub-modal-premium_sign_up_page"

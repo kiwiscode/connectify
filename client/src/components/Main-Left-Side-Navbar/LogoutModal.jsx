@@ -41,7 +41,7 @@ import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
 import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
 
 const socket = io.connect(API_URL);
-function LogoutModal() {
+function LogoutModal({ isResponsiveNavigationBarTop }) {
   const [
     { theme, themeName, activeFontSizeOption },
     toggleThemeBetweenLightDarkMode,
@@ -2426,12 +2426,41 @@ function LogoutModal() {
                         </span>
                       </div>
                       <div>
-                        <RightSideColumn
+                        <div
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            navigate("/i/premium_sign_up");
+                          }}
+                          style={{
+                            paddingBottom: "12px",
+                            paddingTop: "12px",
+                            lineHeight: "20px",
+                            fontWeight: "700",
+                            fontSize: "15px",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            width: "100%",
+                            height: "100%",
+                          }}
+                          className={`logout-p logout-popover logout-popover-${themeName}`}
+                        >
+                          <span
+                            style={{
+                              position: "relative",
+                              left: "10px",
+                              color: themeName === "dark-theme" ? "white" : "",
+                            }}
+                          >
+                            Premium
+                          </span>
+                        </div>
+                        {/* <RightSideColumn
                           sendModalClosedStatusToLogoutModal={
                             grapRightSideColumnSubscriptionModalOpenedOrClosedStatus
                           }
                           widthSmaller700={width <= 700 ? true : false}
-                        />
+                        /> */}
                       </div>
                     </div>
                   ) : null}
@@ -2663,12 +2692,41 @@ function LogoutModal() {
                         </span>
                       </div>
                       <div>
-                        <RightSideColumn
+                        <div
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            navigate("/i/premium_sign_up");
+                          }}
+                          style={{
+                            paddingBottom: "12px",
+                            paddingTop: "12px",
+                            lineHeight: "20px",
+                            fontWeight: "700",
+                            fontSize: "15px",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            width: "100%",
+                            height: "100%",
+                          }}
+                          className={`logout-p logout-popover logout-popover-${themeName}`}
+                        >
+                          <span
+                            style={{
+                              position: "relative",
+                              left: "10px",
+                              color: themeName === "dark-theme" ? "white" : "",
+                            }}
+                          >
+                            Premium
+                          </span>
+                        </div>
+                        {/* <RightSideColumn
                           sendModalClosedStatusToLogoutModal={
                             grapRightSideColumnSubscriptionModalOpenedOrClosedStatus
                           }
                           widthSmaller700={width <= 700 ? true : false}
-                        />
+                        /> */}
                       </div>
                     </div>
                   ) : null}
@@ -2807,8 +2865,8 @@ function LogoutModal() {
                   {userInfo?.imageUrl?.slice(0, 3) !== "../" ? (
                     <img
                       src={userInfo?.imageUrl}
-                      width={40}
-                      height={40}
+                      width={isResponsiveNavigationBarTop ? 40 : 40}
+                      height={isResponsiveNavigationBarTop ? 40 : 40}
                       alt=""
                       style={{
                         borderRadius: "50%",
@@ -2817,7 +2875,8 @@ function LogoutModal() {
                   ) : (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width={40}
+                      width={isResponsiveNavigationBarTop ? 40 : 40}
+                      height={isResponsiveNavigationBarTop ? 40 : 40}
                       fill={
                         themeName === "dark-theme"
                           ? "#71767A"
@@ -2900,12 +2959,41 @@ function LogoutModal() {
                         </span>
                       </div>
                       <div>
-                        <RightSideColumn
+                        <div
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            navigate("/i/premium_sign_up");
+                          }}
+                          style={{
+                            paddingBottom: "12px",
+                            paddingTop: "12px",
+                            lineHeight: "20px",
+                            fontWeight: "700",
+                            fontSize: "15px",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            width: "100%",
+                            height: "100%",
+                          }}
+                          className={`logout-p logout-popover logout-popover-${themeName}`}
+                        >
+                          <span
+                            style={{
+                              position: "relative",
+                              left: "10px",
+                              color: themeName === "dark-theme" ? "white" : "",
+                            }}
+                          >
+                            Premium
+                          </span>
+                        </div>
+                        {/* <RightSideColumn
                           sendModalClosedStatusToLogoutModal={
                             grapRightSideColumnSubscriptionModalOpenedOrClosedStatus
                           }
                           widthSmaller700={width <= 700 ? true : false}
-                        />
+                        /> */}
                       </div>
                     </div>
                   ) : null}

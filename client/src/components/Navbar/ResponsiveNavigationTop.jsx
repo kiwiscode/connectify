@@ -17,14 +17,18 @@ function ResponsiveNavigationBarTop() {
         style={{
           height: "50px",
           width: "100%",
-          padding: "0px 12px",
           margin: "0px",
+          position: "relative",
+          top: "10px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
-        className="responsive-navigation-bar-top "
+        className="responsive-navigation-bar-top"
         direction="horizontal"
       >
         <div>
-          <LogoutModal />
+          <LogoutModal isResponsiveNavigationBarTop={true} />
         </div>
         <div>
           {" "}
