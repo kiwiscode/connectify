@@ -358,9 +358,16 @@ function RightSideColumn({
 
   useEffect(() => {
     if (isVerifiedOrgsSignUpRoute) {
+      setselectedOption("organization");
+      sethelperStateSelectedOption("organization");
+      setTabIndex(1);
+      setindividualSubOptionTab(2);
+      setorganizationSubPremiumRole("Organization");
+      console.log("Selected option =>", selectedOption);
+      console.log("Selected helper option =>", helperStateSelectedOption);
+      console.log("Tab index =>", tabIndex);
       setisIndividualSubscriptionClicked(false);
       setshowSubscriptionModal(true);
-      setTabIndex(1);
       setisOrganizationSubscriptionClicked(true);
       setTabStyleOrganizationBasicPlan(false);
       setTabStyleOrganizationFullAccessPlan(true);
@@ -378,21 +385,6 @@ function RightSideColumn({
       } else {
         return;
       }
-
-      // if (fullAccessAnnualTabStyle) {
-      //   setorganizationSubPlanPriceFullAccess("€11,305");
-      //   setorganizationSubPlanTypeFullAccess("Annual Plan");
-      // } else if (fullAccessMonthlyTabStyle) {
-      //   setorganizationSubPlanPriceFullAccess("€1,130.50");
-      //   setorganizationSubPlanTypeFullAccess("Monthly Plan");
-      // }
-      // else if (basicAnnualTabStyle) {
-      //   setorganizationSubPlanPriceBasic("€2,261");
-      //   setorganizationSubPlanTypeBasic("Annual Plan");
-      // } else if (basicMonthlyTabStyle) {
-      //   setorganizationSubPlanPriceBasic("€226.10");
-      //   setorganizationSubPlanTypeBasic("Monthly Plan");
-      // }
     }
   }, [isVerifiedOrgsSignUpRoute]);
 
@@ -1003,6 +995,7 @@ function RightSideColumn({
         }
       )
       .then((response) => {
+        console.log("Res =>", response);
         setTimeout(() => {
           if (response.data.url) {
             window.location.href = response.data.url;
@@ -1010,6 +1003,7 @@ function RightSideColumn({
         }, 1000);
       })
       .catch((err) => {
+        console.log("Error =>", err);
         setCheckoutProcessLoadingBar(false);
       });
   };

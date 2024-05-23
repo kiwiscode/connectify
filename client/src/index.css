@@ -3110,16 +3110,22 @@ span > a:hover {
 
 .modal-body-sub-modal-premium_sign_up_page {
   position: fixed !important;
-  /* bottom: -32px; */
   bottom: -32px;
+  min-width: 101vw;
 }
 
 .modal-body-sub-modal-premium_sign_up_page > div {
   border-top-right-radius: 32px !important;
   border-top-left-radius: 32px !important;
-  /* border-bottom-left-radius: 0px !important;
-  border-bottom-right-radius: 0px !important; */
-  width: 100vw;
+  position: relative;
+  right: 3px;
+}
+
+@media (max-width: 575px) {
+  .modal-body-sub-modal-premium_sign_up_page > div {
+    position: relative;
+    right: 10px !important;
+  }
 }
 
 /* payment screens finish to check */
