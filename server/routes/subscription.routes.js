@@ -730,11 +730,22 @@ router.post(
       organizationSubPlanPriceBasic,
     } = request.body;
 
+    console.log("Burası çalışıyor şu an !");
+
     userInfoGlobal = userInfo;
     organizationSubPremiumRoleGlobal = organizationSubPremiumRole;
     organizationSubPremiumTypeGlobal = organizationSubPremiumType;
     organizationSubPlanTypeBasicGlobal = organizationSubPlanTypeBasic;
     organizationSubPlanPriceBasicGlobal = organizationSubPlanPriceBasic;
+
+    console.log(
+      "organization sub plan type basic global =>",
+      organizationSubPlanTypeBasicGlobal
+    );
+    console.log(
+      "organization sub plan price basic global =>",
+      organizationSubPlanPriceBasicGlobal
+    );
 
     console.log(
       "Global variable values =>",

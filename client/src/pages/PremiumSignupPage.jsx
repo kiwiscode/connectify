@@ -3,9 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { ThemeContext } from "../context/ThemeContext";
 import { Button, Col, Container, Modal, Row } from "react-bootstrap";
 import useWindowDimensions from "../hooks/getWindowDimensions";
-import RightSideColumn from "../components/Main-Right-Side-Column/RightSideColumn";
+import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
+import LoadingSpinner from "../components/ui/LoadingSpinner";
 
-function PremiumSignupPage() {
+function PremiumSignupPage({ sendToAppPlanPrice }) {
   const navigate = useNavigate();
   const [{ theme, themeName, activeFontSizeOption }] = useContext(ThemeContext);
   const { width } = useWindowDimensions();
@@ -78,6 +79,45 @@ function PremiumSignupPage() {
     );
   }, [clickedOptionIndex]);
 
+  const { showCustomMessage, contextHolder, postSharedMessage } =
+    useAntdMessageHandler();
+
+  const [isPasswordCorrect, setIsPasswordCorrect] = useState(null);
+
+  const isPasswordCorrectFromChildComponent = (data) => {
+    console.log("Is password correct data from child =>", data);
+
+    setIsPasswordCorrect(data);
+  };
+  console.log("Is password correct =>", isPasswordCorrect);
+
+  // useEffect(() => {
+  //   showCustomMessage("hehe", 4949);
+  // });
+
+  const [
+    organizationSubscribeOptionClicked,
+    setorganizationSubscribeOptionClicked,
+  ] = useState(null);
+
+  const handleRedirectOrganizationSignUpRoute = () => {
+    navigate("/i/verified-orgs-signup");
+  };
+
+  const handleRedirectIndividualSignUpRoute = () => {
+    navigate("/i/flow/subscription_eligibility_check");
+  };
+  const [subLoading, setSubLoading] = useState(null);
+
+  const handlePremiumInfoDetailToUp = () => {
+    sendToAppPlanPrice({
+      premiumRole: "Individual",
+      premiumType: premiumType || null,
+      planType: planType || null,
+      planPrice: planPrice || null,
+    });
+  };
+
   return (
     <>
       {width > 700 && (
@@ -85,12 +125,16 @@ function PremiumSignupPage() {
           style={{
             padding: "0px",
             margin: "0px",
-            zIndex: 9999,
-            visibility: subscriptionModalShowed ? "hidden" : "",
+            zIndex: 99999,
           }}
-          contentClassName={`premium_sign_up_page_subscription_modal-${themeName}`}
+          contentClassName={`premium_sign_up_page_subscription_modal-${themeName} `}
+          className={subscriptionModalShowed ? "hide-me-modal" : null}
           backdropClassName={
-            themeName === "dark-theme" ? `back-drop-${themeName}` : ""
+            themeName === "dark-theme"
+              ? `back-drop-${themeName}`
+              : subscriptionModalShowed
+              ? "hide-me-modal-fade"
+              : null
           }
           show={showSubscribeModalPremiumSignUpPage}
           onHide={handleCloseSubscribeAndPayModal}
@@ -199,7 +243,7 @@ function PremiumSignupPage() {
                     ? "€99.96"
                     : selectedPremiumOption === "Monthly plan basic-option" &&
                       clickedOptionIndex === 1
-                    ? "€8.33"
+                    ? "€9.52"
                     : selectedPremiumOption === "Annual plan basic-option" &&
                       clickedOptionIndex === 2
                     ? "€199.92"
@@ -307,14 +351,47 @@ function PremiumSignupPage() {
                 }}
                 className="mt-5"
               >
-                <RightSideColumn
-                  premium_sign_up_page_premium_role={premiumRole}
-                  premium_sign_up_page_premium_type={premiumType}
-                  premium_sign_up_plan_page_plan_type={planType}
-                  premium_sign_up_plan_page_plan_price={planPrice}
-                  sendModalStatuForPremiumSignUpPage={getDataFromRightSideColum}
-                  premium_sign_up_page_active={true}
-                />
+                <Button
+                  onClick={() => {
+                    setSubLoading(true);
+
+                    setTimeout(() => {
+                      setSubLoading(false);
+                      handleRedirectIndividualSignUpRoute();
+                      handlePremiumInfoDetailToUp();
+                    }, 500);
+                  }}
+                  className={
+                    themeName === "dark-theme"
+                      ? "premium_sign_up_page_subscribe_and_pay_btn_dark-theme"
+                      : "premium_sign_up_page_subscribe_and_pay_btn_light-theme"
+                  }
+                  style={{
+                    width: "100%",
+                    height: "36px",
+                    border: "none",
+                    outlineStyle: "none",
+                    color: themeName === "dark-theme" ? "#0F141A" : "#FFFFFF",
+                    backgroundColor:
+                      themeName === "dark-theme" ? "#EFF3F4" : "#0F141A",
+                    opacity: subLoading ? "0.5" : "1",
+                  }}
+                >
+                  {subLoading ? (
+                    <div
+                      style={{
+                        fontSize: "15px",
+                      }}
+                    >
+                      <LoadingSpinner
+                        isCheckoutProcess={true}
+                        strokeColor={"rgb(29, 155, 240)"}
+                      ></LoadingSpinner>
+                    </div>
+                  ) : (
+                    <div>Subscribe & Pay</div>
+                  )}
+                </Button>
               </div>
               <div
                 style={{
@@ -370,6 +447,14 @@ function PremiumSignupPage() {
         <>
           {showSubscribeModalPremiumSignUpPage && (
             <Modal
+              className={subscriptionModalShowed ? "hide-me-modal" : null}
+              backdropClassName={
+                themeName === "dark-theme"
+                  ? `back-drop-${themeName}`
+                  : subscriptionModalShowed
+                  ? "hide-me-modal-fade"
+                  : null
+              }
               show={showSubscribeModalPremiumSignUpPage}
               onHide={handleCloseSubscribeAndPayModal}
               style={{
@@ -378,9 +463,7 @@ function PremiumSignupPage() {
                 padding: "0px",
                 margin: "0px",
                 zIndex: 9999999,
-                visibility: subscriptionModalShowed ? "hidden" : "",
               }}
-              className="modal-sub-modal-payment-screen-parent"
               dialogClassName="modal-body-sub-modal-premium_sign_up_page"
               contentClassName={`${themeName}-sub-basic-modal`}
             >
@@ -389,6 +472,7 @@ function PremiumSignupPage() {
                 style={{
                   cursor: "pointer",
                   padding: "12px",
+                  zIndex: -1,
                 }}
               >
                 <div
@@ -480,7 +564,7 @@ function PremiumSignupPage() {
                       {" "}
                       {selectedPremiumOption === "Annual plan basic-option" &&
                       clickedOptionIndex === 0
-                        ? "€38"
+                        ? "€38.08"
                         : selectedPremiumOption ===
                             "Monthly plan basic-option" &&
                           clickedOptionIndex === 0
@@ -488,15 +572,15 @@ function PremiumSignupPage() {
                         : selectedPremiumOption ===
                             "Annual plan basic-option" &&
                           clickedOptionIndex === 1
-                        ? "€99"
+                        ? "€99.96"
                         : selectedPremiumOption ===
                             "Monthly plan basic-option" &&
                           clickedOptionIndex === 1
-                        ? "€8.33"
+                        ? "€9.52"
                         : selectedPremiumOption ===
                             "Annual plan basic-option" &&
                           clickedOptionIndex === 2
-                        ? "€199"
+                        ? "€199.92"
                         : selectedPremiumOption ===
                             "Monthly plan basic-option" &&
                           clickedOptionIndex === 2
@@ -618,18 +702,17 @@ function PremiumSignupPage() {
                     }}
                     className="mt-5"
                   >
-                    <RightSideColumn
-                      premium_sign_up_page_premium_role={premiumRole}
-                      premium_sign_up_page_premium_type={premiumType}
-                      premium_sign_up_plan_page_plan_type={planType}
-                      premium_sign_up_plan_page_plan_price={planPrice}
-                      sendModalStatuForPremiumSignUpPage={
-                        getDataFromRightSideColum
-                      }
-                      premium_sign_up_page_active={true}
-                    />
+                    {" "}
+                    <Button
+                      onClick={() => {
+                        setSubLoading(true);
 
-                    {/* <Button
+                        setTimeout(() => {
+                          setSubLoading(false);
+                          handleRedirectIndividualSignUpRoute();
+                          handlePremiumInfoDetailToUp();
+                        }, 500);
+                      }}
                       className={
                         themeName === "dark-theme"
                           ? "premium_sign_up_page_subscribe_and_pay_btn_dark-theme"
@@ -644,10 +727,24 @@ function PremiumSignupPage() {
                           themeName === "dark-theme" ? "#0F141A" : "#FFFFFF",
                         backgroundColor:
                           themeName === "dark-theme" ? "#EFF3F4" : "#0F141A",
+                        opacity: subLoading ? "0.5" : "1",
                       }}
                     >
-                      Subscribe & Pay
-                    </Button> */}
+                      {subLoading ? (
+                        <div
+                          style={{
+                            fontSize: "15px",
+                          }}
+                        >
+                          <LoadingSpinner
+                            isCheckoutProcess={true}
+                            strokeColor={"rgb(29, 155, 240)"}
+                          ></LoadingSpinner>
+                        </div>
+                      ) : (
+                        <div>Subscribe & Pay</div>
+                      )}
+                    </Button>
                   </div>
                   <div
                     style={{
@@ -707,20 +804,35 @@ function PremiumSignupPage() {
         style={{
           overflowY: "auto",
           overflowX: "hidden",
+          backgroundColor: themeName === "dark-theme" ? "black" : "white",
         }}
       >
         <Row>
-          <Col xl={1}>
+          <Col
+            style={{
+              padding: "0px",
+              margin: "0px",
+            }}
+            xl={1}
+          >
             <div
+              onClick={() => navigate("/home")}
               className={
                 themeName === "dark-theme"
-                  ? `close-button-${themeName} mt-4 ml-2`
-                  : `close-button mt-4 ml-2 `
+                  ? `close-btn-extra-premium-sign-up-dark-theme mt-4 ml-2`
+                  : `close-btn-extra-premium-sign-up-light-theme mt-4 ml-2 `
               }
               style={{
                 display: "inline-flex",
                 borderRadius: "50%",
                 cursor: "pointer",
+                position: "relative",
+                left: "10px",
+                bottom: "5px",
+                width: "36px",
+                height: "36px",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
               <svg
@@ -728,11 +840,11 @@ function PremiumSignupPage() {
                   border: "none",
                   fontSize: "15px",
                   margin: "5px",
+                  zIndex: 9999,
                 }}
-                onClick={() => navigate(-1)}
                 width={20}
                 height={20}
-                color={themeName === "dark-theme" ? "white" : "rgb(15,20,25)"}
+                color={themeName === "dark-theme" ? "#EFF3F4" : "rgb(15,20,25)"}
                 fill="currentColor"
                 viewBox="0 0 24 24"
                 aria-hidden="true"
@@ -787,6 +899,8 @@ function PremiumSignupPage() {
                       lineHeight: width < 600 ? "55px" : "70px",
                       color: themeName === "dark-theme" ? "white" : "black",
                       letterSpacing: "1.2px",
+                      position: "relative",
+                      bottom: "2px",
                     }}
                   >
                     Upgrade to Premium
@@ -813,6 +927,10 @@ function PremiumSignupPage() {
                     >
                       (For organizations,{" "}
                       <span
+                        onClick={() => {
+                          handleRedirectOrganizationSignUpRoute();
+                          setorganizationSubscribeOptionClicked(true);
+                        }}
                         style={{
                           fontSize: "18px",
                           fontWeight: "700",
@@ -839,8 +957,8 @@ function PremiumSignupPage() {
                         backgroundColor:
                           themeName === "dark-theme" ? "#202428" : "#EFF3F4",
                         display: "inline",
-                        padding: "8px 4px",
-                        borderRadius: "99999px",
+                        padding: "6px 4px",
+                        borderRadius: "999px",
                       }}
                     >
                       <span
@@ -865,7 +983,7 @@ function PremiumSignupPage() {
                                   "Annual plan basic-option"
                               ? "#EEF3F4"
                               : null,
-                          padding: "8px 8px",
+                          padding: "6px",
                           borderRadius: "9999px",
                           color: themeName === "dark-theme" ? "white" : "black",
                         }}
@@ -892,7 +1010,7 @@ function PremiumSignupPage() {
                             fontSize: "11px",
                             fontWeight: "700",
                             padding: "2px 4px",
-                            borderRadius: "9999px",
+                            borderRadius: "999px",
                             position: "relative",
                             bottom: "1px",
                           }}
@@ -905,8 +1023,8 @@ function PremiumSignupPage() {
                           setSelectedPremiumOption("Monthly plan basic-option");
                         }}
                         style={{
-                          padding: "8px 8px",
-                          borderRadius: "99999px",
+                          padding: "6px",
+                          borderRadius: "999px",
 
                           backgroundColor:
                             themeName === "dark-theme" &&
@@ -943,7 +1061,7 @@ function PremiumSignupPage() {
                   display: "flex",
                   flexDirection: width < 600 ? "column-reverse" : "row",
                   justifyContent: "center",
-                  gap: "2.5%",
+                  gap: "32px",
                 }}
                 className="options_wrapper mt-4"
               >
@@ -1047,7 +1165,9 @@ function PremiumSignupPage() {
                     <div className="mt-3">
                       <Button
                         onClick={() => {
+                          setorganizationSubscribeOptionClicked(false);
                           setClickedOptionIndex(0);
+                          setSubscriptionModalShowed(false);
                           setshowSubscribeModalPremiumSignUpPage(true);
                         }}
                         className="hover-sub-btn"
@@ -1417,7 +1537,9 @@ function PremiumSignupPage() {
                     <div className="mt-3">
                       <Button
                         onClick={() => {
+                          setorganizationSubscribeOptionClicked(false);
                           setClickedOptionIndex(1);
+                          setSubscriptionModalShowed(false);
                           setshowSubscribeModalPremiumSignUpPage(true);
                         }}
                         className="hover-sub-btn"
@@ -1772,7 +1894,9 @@ function PremiumSignupPage() {
                     <div className="mt-3">
                       <Button
                         onClick={() => {
+                          setorganizationSubscribeOptionClicked(false);
                           setClickedOptionIndex(2);
+                          setSubscriptionModalShowed(false);
                           setshowSubscribeModalPremiumSignUpPage(true);
                         }}
                         className="hover-sub-btn"
@@ -3832,7 +3956,13 @@ function PremiumSignupPage() {
               </div>
             </div>
           </Col>
-          <Col xl={1}></Col>
+          <Col
+            style={{
+              padding: "0px",
+              margin: "0px",
+            }}
+            xl={1}
+          ></Col>
         </Row>
       </Container>
     </>

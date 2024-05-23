@@ -124,6 +124,63 @@ function App() {
     setIsPostShared(false);
   };
 
+  // seperate this info to the rightsidecolumn child as a parent
+  const [
+    openVerifiedOrganizationSubscriptionTypedModal,
+    setOpenVerifiedOrganizationSubscriptionTypedModal,
+  ] = useState(null);
+
+  const [
+    openIndividualEligibilityVerifyNumberScreen,
+    setopenIndividualEligibilityVerifyNumberScreen,
+  ] = useState(null);
+
+  useEffect(() => {
+    if (path == "/i/verified-orgs-signup") {
+      console.log(
+        "Talking from bubbaa parent : You are in the right path to open verified organization sign up !!!"
+      );
+      setOpenVerifiedOrganizationSubscriptionTypedModal(true);
+    } else if (path == "/i/flow/subscription_eligibility_check") {
+      setopenIndividualEligibilityVerifyNumberScreen(true);
+    } else {
+      console.log(
+        "Talking from bubbaa parent : You are not in the right path to open verified organization sign up or individual sign up!!!"
+      );
+      setOpenVerifiedOrganizationSubscriptionTypedModal(false);
+      setopenIndividualEligibilityVerifyNumberScreen(false);
+    }
+  }, [
+    path,
+    openVerifiedOrganizationSubscriptionTypedModal,
+    openIndividualEligibilityVerifyNumberScreen,
+  ]);
+
+  const [planPrice, setPlanPrice] = useState(null);
+  const [planType, setPlanType] = useState(null);
+  const [premiumRole, setPremiumRole] = useState(null);
+  const [premiumType, setPremiumType] = useState(null);
+  const [premiumInfo, setPremiumInfo] = useState({});
+
+  const handleReceiveBasicIndividualPremiumDetailFromChildPremiumSignUpPage = (
+    data
+  ) => {
+    console.log("Data received about individual subscription detail:", data);
+    setPlanPrice(data.planPrice);
+    setPlanType(data.planType);
+    setPremiumRole(data.premiumRole);
+    setPremiumType(data.premiumType);
+
+    setPremiumInfo((prevPremiumInfo) => {
+      return {
+        ...prevPremiumInfo,
+        premiumRole: data.premiumRole,
+        premiumType: data.premiumType,
+        planType: data.planType,
+        planPrice: data.planPrice,
+      };
+    });
+  };
   return (
     <>
       <UserProvider>
@@ -165,17 +222,6 @@ function App() {
                   <LeftSideNavBar
                     refreshPosts={handleShareNewPost}
                     setIsPostShared={handlePostSharingIsDone}
-                    // refreshPosts={() =>
-                    //   path === "/home"
-                    //     ? writeTheRouteNameForRefreshPosts("home page active")
-                    //     : path === "/profile"
-                    //     ? writeTheRouteNameForRefreshPosts("profile page active")
-                    //     : path === `/profile/${userInfo._id}`
-                    //     ? writeTheRouteNameForRefreshPosts(
-                    //         "spesific user profile page active"
-                    //       )
-                    //     : writeTheRouteNameForRefreshPosts("null")
-                    // }
                   />
                 )}{" "}
               <Suspense
@@ -236,7 +282,23 @@ function App() {
 
                   <Route
                     path="/i/premium_sign_up"
-                    element={<PremiumSignupPage />}
+                    element={
+                      <PremiumSignupPage
+                        sendToAppPlanPrice={
+                          handleReceiveBasicIndividualPremiumDetailFromChildPremiumSignUpPage
+                        }
+                      />
+                    }
+                  ></Route>
+
+                  <Route
+                    path="/i/verified-orgs-signup"
+                    element={<MainPage />}
+                  ></Route>
+
+                  <Route
+                    path="/i/flow/subscription_eligibility_check"
+                    element={<MainPage />}
                   ></Route>
 
                   <Route path="/*" element={<NotFoundPage />}></Route>
@@ -244,7 +306,17 @@ function App() {
               </Suspense>
               {path !== "/" &&
                 path !== "/settings/deactivated" &&
-                path !== "/i/premium_sign_up" && <RightSideColumn />}
+                path !== "/i/premium_sign_up" && (
+                  <RightSideColumn
+                    isVerifiedOrgsSignUpRoute={
+                      openVerifiedOrganizationSubscriptionTypedModal
+                    }
+                    isSubscriptionEligibilityCheckRouteForIndividualSubscription={
+                      openIndividualEligibilityVerifyNumberScreen
+                    }
+                    premiumInfoFromParentAppJsx={premiumInfo}
+                  />
+                )}
             </Row>
           </Container>
           {/* test for one time component leftsidenavbar finish to check  */}

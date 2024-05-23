@@ -3,7 +3,7 @@ import { UserContext } from "../context/UserContext";
 import { Col, Stack, Button, Accordion, Modal } from "react-bootstrap";
 import { CommentModal } from "../components/ui/Modal";
 
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
@@ -33,7 +33,10 @@ import BookmarkAction from "../components/ui/BookmarkAction";
 function MainPage({ isNewPostShared }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
 
-  console.log("Is new post shared home page =>", isNewPostShared);
+  const location = useLocation();
+  const path = location.pathname;
+
+  console.log("Path name =>", path);
 
   const [isSubModalOpened, setIsSubModalOpened] = useState(false);
   const [tabIndexValue, settabIndexValue] = useState(null);
@@ -114,7 +117,6 @@ function MainPage({ isNewPostShared }) {
           Authorization: `Bearer ${getToken()}`,
         },
       });
-      console.log("Posts main page =>", response.data);
       getOnlyFollowingPosts();
       setPosts(response.data);
     } catch (error) {
@@ -1706,15 +1708,19 @@ function MainPage({ isNewPostShared }) {
           </Modal>
         </>
       )}
-      {!isPostModalVisible && !dataFromCommentModal && (
-        <ResponsiveNavigationBarBottom
-          refreshPosts={() => handleShowPostsHomePage()}
-          setLoadingTrue={() => setLoadingTrue()}
-          setLoadingFalse={() => setLoadingFalse()}
-          isSubModalOpened={isSubModalOpened}
-          isSubModalTabIndexNull={tabIndexValue}
-        />
-      )}
+      {!isPostModalVisible &&
+        !dataFromCommentModal &&
+        path !== "/i/premium_sign_up" &&
+        path !== "/i/verified-orgs-signup" &&
+        path !== "/i/flow/subscription_eligibility_check" && (
+          <ResponsiveNavigationBarBottom
+            refreshPosts={() => handleShowPostsHomePage()}
+            setLoadingTrue={() => setLoadingTrue()}
+            setLoadingFalse={() => setLoadingFalse()}
+            isSubModalOpened={isSubModalOpened}
+            isSubModalTabIndexNull={tabIndexValue}
+          />
+        )}
       <ResponsiveNavigationBarTop />
 
       <Col

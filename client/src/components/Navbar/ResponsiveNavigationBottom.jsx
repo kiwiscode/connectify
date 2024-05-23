@@ -61,8 +61,6 @@ function ResponsiveNavigationBarBottom({
     };
   }, [prevScrollPos]);
 
-  console.log("This use effect works right now !");
-
   const { userInfo } = useContext(UserContext);
 
   const [{ theme, themeName }] = useContext(ThemeContext);
