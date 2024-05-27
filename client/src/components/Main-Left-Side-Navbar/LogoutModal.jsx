@@ -7,6 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 // import Picker from "emoji-picker-react";
 import axios from "axios";
 import "../../index.css";
+
 import Popover from "@mui/material/Popover";
 import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 import { Steps } from "antd";
@@ -25,10 +26,6 @@ import {
   TextField,
 } from "@mui/material";
 import RightSideColumn from "../Main-Right-Side-Column/RightSideColumn";
-
-import useSound from "use-sound";
-import ActiveLightModeSound from "../../assets/light-mode-active.mp3";
-import ActiveDarkModeSound from "../../assets/dark-mode-active.mp3";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -920,14 +917,6 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
 
   const [hoveredOption, setHoveredOption] = useState(null);
 
-  const [play] = useSound(
-    themeName === "dark-theme"
-      ? ActiveLightModeSound
-      : themeName === "light-theme"
-      ? ActiveDarkModeSound
-      : null
-  );
-
   const [defaultModeClicked, setdefaultModeClicked] = useState(false);
 
   const [
@@ -1772,7 +1761,6 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                 onClick={() => {
                   if (themeName !== "light-theme") {
                     toggleThemeBetweenLightDarkMode();
-                    play();
                     setdefaultModeClicked(true);
                   }
                 }}
@@ -1979,7 +1967,6 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                 onClick={() => {
                   if (themeName !== "dark-theme") {
                     toggleThemeBetweenLightDarkMode();
-                    play();
                     setdefaultModeClicked(false);
                   }
                 }}
@@ -2163,9 +2150,43 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
           }}
           className="logout-modal-variant"
         >
+          <svg
+            style={{}}
+            xmlns="http://www.w3.org/2000/svg"
+            width={50}
+            height={30}
+            viewBox="0 0 100 100"
+          >
+            {/* İçi dolu bir kare */}
+            <rect
+              x="5"
+              y="5"
+              width="90"
+              height="90"
+              fill="#1C9BEF"
+              rx="5"
+              ry="5"
+              style={{
+                filter: "drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))",
+              }}
+            />
+
+            <text
+              x="27.5"
+              y="70"
+              fontFamily="Arial"
+              fontSize="60"
+              fill="#FFF"
+              stroke="#FFF"
+              strokeWidth="2"
+            >
+              C
+            </text>
+          </svg>{" "}
           <div
+            className="mt-2"
             style={{
-              width: "92%",
+              width: "89%",
             }}
           >
             <div
@@ -2193,7 +2214,6 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
               You can always log back in at any time. If you just want to switch
               accounts, you can do that by adding an existing account.
             </div>
-
             <Button
               // className="login-button mt-4 next-btn"
               className={`login-button mt-4 next-btn ${themeName}-white-btn`}
@@ -2204,6 +2224,9 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                 color: themeName === "dark-theme" ? "black" : "white",
                 backgroundColor:
                   themeName === "dark-theme" ? "white" : "#0f141a",
+                fontSize: "15px",
+                lineHeight: "20px",
+                fontWeight: "700",
               }}
               onClick={() =>
                 userInfo.signedUpWithGoogle.isSignedUpWithGoogle
@@ -2215,13 +2238,18 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
             </Button>
             <Button
               onClick={() => setShowLogoutModal(false)}
-              className={`mt-2 forgot-password-btn ${themeName}-black-btn`}
+              className={` forgot-password-btn ${themeName}-black-btn`}
               variant="light"
               style={{
                 width: "256px",
                 height: "44px",
                 color: themeName === "dark-theme" ? "white" : "black",
                 backgroundColor: themeName === "dark-theme" ? "black" : "white",
+                fontSize: "15px",
+                lineHeight: "20px",
+                fontWeight: "700",
+                position: "relative",
+                top: "12px",
               }}
             >
               Cancel
@@ -2390,7 +2418,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                 <div
                   style={{
                     height: width <= 700 ? "12%" : "100px",
-                    width: "250px",
+                    width: "300px",
                   }}
                   className="logout-body"
                 >
@@ -2656,7 +2684,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                 <div
                   style={{
                     height: width <= 700 ? "12%" : "100px",
-                    width: "250px",
+                    width: "300px",
                   }}
                   className="logout-body"
                 >
@@ -2923,7 +2951,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                 <div
                   style={{
                     height: width <= 700 ? "12%" : "100px",
-                    width: "250px",
+                    width: "300px",
                   }}
                   className="logout-body"
                 >

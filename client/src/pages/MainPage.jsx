@@ -1751,6 +1751,7 @@ function MainPage({ isNewPostShared }) {
           borderTop: "none ",
           borderBottom: "none",
           padding: "0px",
+          margin: "0px",
         }}
       >
         <div

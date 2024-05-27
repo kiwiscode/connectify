@@ -194,26 +194,16 @@ function App() {
               : null
           }
           style={{
-            backgroundColor: theme.backgroundColor,
             color: theme.color,
           }}
         >
           {/* test for one time component leftsidenavbar start to check  */}
-          <Container
-            style={{
-              height: "100vh",
-              height: "100dvh",
-              // overflowX: "hidden",
-              // overflowY: "hidden",
-            }}
-            fluid
-          >
+          <Container fluid>
             <Row
               style={{
                 borderTop: "none",
                 borderBottom: "none",
-                overflowX: "hidden",
-                overflowY: "hidden",
+                backgroundColor: theme.backgroundColor,
               }}
             >
               {path !== "/" &&

@@ -103,7 +103,10 @@ function MessagesPage() {
 
   const grabTheMessageRoom = (messageRoom) => {
     console.log("Message room clicked => ", messageRoom);
-    setReceivedMessageRoom(messageRoom);
+
+    if (messageRoom) {
+      setReceivedMessageRoom(messageRoom);
+    }
   };
 
   const deleteConversation = () => {
@@ -849,16 +852,15 @@ function MessagesPage() {
                                                 ></div>
                                               )}
                                               <Button
-                                                onClick={() => {
+                                                onMouseEnter={() => {
                                                   grabTheMessageRoom(
                                                     eachMessageRoom
                                                   );
-                                                }}
-                                                onMouseEnter={() => {
                                                   setIsHovered(index);
                                                 }}
                                                 onMouseLeave={() => {
                                                   setIsHovered(false);
+                                                  grabTheMessageRoom(null);
                                                 }}
                                                 style={{
                                                   border: "none",
