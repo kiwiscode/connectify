@@ -4,10 +4,7 @@ const handleDeleteMessage = (req, res) => {
   const { receivedMessageRoom } = req.body;
   const { userId } = req.user;
 
-  console.log(
-    "Received message room from client request =>",
-    receivedMessageRoom.room
-  );
+  console.log("req.body =>", req.body);
 
   console.log(`User id ${userId} waiting for response ...`);
 

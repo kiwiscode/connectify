@@ -50,13 +50,17 @@
 :root {
   --border-radius: 9999px;
   --font-weight: 500;
-  font-family: "cloneFont";
 }
 
 body {
   margin: 0;
   padding: 0;
-  font-family: "cloneFont" sans-serif;
+
+  /* font weight broken after change font family like twitter font family start to check */
+  /* font-family: var(--font-family), sans-serif; */
+  /* font-family: "cloneFont", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif; */
+  /* font weight broken after change font family like twitter font family finish to check */
 }
 .cyber-punk-theme,
 .light-theme,
@@ -3220,7 +3224,7 @@ select {
 
 .logout-modal-variant-parent .modal-content {
   min-width: 322px;
-  min-height: 358px;
+  min-height: 358px !important;
 }
 
 .logout-modal-variant-parent-dark-theme .modal-content {
@@ -3237,6 +3241,7 @@ select {
 .logout-modal-variant-parent-smaller-than-700 .modal-content {
   background-color: white;
   max-width: 322px;
+  min-height: 358px;
   max-height: 358px;
 }
 
@@ -4247,7 +4252,8 @@ themeName === "dark-theme"
 
 .color-light-theme {
   position: absolute !important;
-  width: 100%;
+  max-width: 99.2vw !important;
+  min-width: 99.2vw !important;
   min-height: 650px !important;
   top: -300px;
   background-image: radial-gradient(
@@ -4258,7 +4264,8 @@ themeName === "dark-theme"
 }
 .color-dark-theme {
   position: absolute !important;
-  width: 100%;
+  max-width: 99.2vw !important;
+  min-width: 99.2vw !important;
   min-height: 650px !important;
   top: -300px;
   background-image: radial-gradient(
