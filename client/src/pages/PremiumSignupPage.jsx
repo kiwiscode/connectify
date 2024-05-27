@@ -804,7 +804,6 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
         style={{
           overflowY: "auto",
           overflowX: "hidden",
-          backgroundColor: themeName === "dark-theme" ? "black" : "white",
         }}
       >
         <Row>
@@ -812,6 +811,7 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
             style={{
               padding: "0px",
               margin: "0px",
+              overflowX: "hidden",
             }}
             xl={1}
           >

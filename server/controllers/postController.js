@@ -255,136 +255,68 @@ const handleDeletePost = (req, res) => {
             post?.userId?.toString(),
             post?.userId?.username
           );
-          if (userId !== post.userId.toString()) {
-            console.log("Buradayız 1!!!");
 
-            // notified olması mümkün olan kullanıcıdan notificationı silme veya bırakma işlemi start to check
-            const isComment = post.isComment;
-            const isReposted = post.isReposted;
-            const doesRepostedLength = post.reposted.length;
+          // sildiğin postla ilgili herhangi bir notification aldıysan notificationu sil bu postla ilişkili olan start to check !
+          if (post.isReposted) {
+            console.log("Burası çalışıyor !!!");
+            const referencePostId = post._id.toString();
+            const originalPostId =
+              post.repostedFromThisOriginalPost[0]._id.toString();
 
-            if (isComment) {
-              console.log("Buradayız 2!!!");
+            console.log("reference", referencePostId);
+            console.log("original", originalPostId);
+            console.log(
+              "Delete notifications according to the reposted post before =>",
+              user.notifications.length
+            );
+            const matchingNotifications = user.notifications.filter(
+              (eachNotification) => {
+                return (
+                  eachNotification.post._id.toString() !== referencePostId &&
+                  eachNotification.post._id.toString() !== originalPostId
+                );
+              }
+            );
+            console.log(
+              "Delete notifications according to the reposted post =>",
+              matchingNotifications.length
+            );
 
-              const commentedForThisPost =
-                post.commentedForThisPost._id.toString();
-              User.findById(post.commentedForThisUsersPost.toString())
-                .then((notifiedUser) => {
-                  if (isReposted) {
-                    Post.findById(
-                      post.repostedFromThisOriginalPost[0].toString()
-                    )
-                      .then((originalPost) => {
-                        console.log("Şimdi de buradayız !!!", originalPost);
-                        const notification = notifiedUser.notifications.find(
-                          (notification) => {
-                            return (
-                              (notification.post.toString() ===
-                                commentedForThisPost ||
-                                notification.post.toString() ===
-                                  originalPost.commentedForThisPost._id.toString()) &&
-                              notification.notificationSender.toString() ===
-                                userId &&
-                              notification.isComment.value
-                            );
-                          }
-                        );
+            user.notifications = matchingNotifications;
+          } else if (post.reposted.length && !post.isReposted) {
+            console.log("Burası çalışıyor 2 !!!");
+            const originalPostId = post._id.toString();
+            // find reference post
+            Post.find({ repostedFromThisOriginalPost: post._id })
+              .then((referencePost) => {
+                console.log(
+                  "Delete notifications according to the reposted post before =>",
+                  user.notifications.length
+                );
 
-                        const notificationIndex =
-                          notifiedUser.notifications.indexOf(notification);
-
-                        console.log("Notification =>", notification);
-                        console.log("Notification index =>", notificationIndex);
-                        notifiedUser.notifications.splice(notificationIndex, 1);
-                        notifiedUser.save();
-                      })
-                      .catch(() => {});
-                  } else if (
-                    (doesRepostedLength || !doesRepostedLength) &&
-                    !isReposted
-                  ) {
-                    console.log("Buradayız 3!!!");
-
-                    // belki doesRepostedLength olabilir check et start to check
-                    Post.find({ repostedFromThisOriginalPost: postId })
-                      .then((referencePost) => {
-                        const notification = notifiedUser.notifications.find(
-                          (notification) => {
-                            return (
-                              (notification.post.toString() ===
-                                commentedForThisPost ||
-                                notification.post.toString() ===
-                                  referencePost[0].commentedForThisPost._id.toString()) &&
-                              notification.notificationSender.toString() ===
-                                userId &&
-                              notification.isComment.value
-                            );
-                          }
-                        );
-
-                        const notificationIndex =
-                          notifiedUser.notifications.indexOf(notification);
-
-                        notifiedUser.notifications.splice(notificationIndex, 1);
-
-                        notifiedUser
-                          .updateOne({
-                            notifications: notifiedUser.notifications,
-                          })
-                          .then(() => {
-                            console.log("Notifications updated successfully.");
-                          })
-                          .catch((error) => {
-                            console.error(
-                              "Error updating notifications:",
-                              error
-                            );
-                          });
-                      })
-                      .catch(() => {
-                        const notification = notifiedUser.notifications.find(
-                          (notification) => {
-                            return (
-                              notification.post.toString() ===
-                                commentedForThisPost &&
-                              notification.notificationSender.toString() ===
-                                userId &&
-                              notification.isComment.value
-                            );
-                          }
-                        );
-
-                        const notificationIndex =
-                          notifiedUser.notifications.indexOf(notification);
-
-                        notifiedUser.notifications.splice(notificationIndex, 1);
-
-                        notifiedUser
-                          .updateOne({
-                            notifications: notifiedUser.notifications,
-                          })
-                          .then(() => {
-                            console.log(
-                              "Notifications updated successfully 2."
-                            );
-                          })
-                          .catch((error) => {
-                            console.error(
-                              "Error updating notifications:",
-                              error
-                            );
-                          });
-                      });
-
-                    // belki doesRepostedLength olabilir check et finish to check
-                  } else {
+                const matchingNotifications = user.notifications.filter(
+                  (eachNotification) => {
+                    return (
+                      eachNotification.post._id.toString() !==
+                        referencePost[0]._id.toString() &&
+                      eachNotification.post._id.toString() !== originalPostId
+                    );
                   }
-                })
-                .catch(() => {});
-            }
-          }
-          // notified olması mümkün olan kullanıcıdan notificationı silme veya bırakma işlemi finish to check
+                );
+                console.log(
+                  "Delete notifications according to the reposted post =>",
+                  matchingNotifications.length
+                );
 
+                user.notifications = matchingNotifications;
+              })
+              .catch((error) => {
+                res
+                  .status(404)
+                  .json({ error, message: "Reference post not found!" });
+              });
+          }
+          // sildiğin postla ilgili herhangi bir notification aldıysan notificationu sil bu postla ilişkili olan start to check !
           if (post.isReposted) {
             User.find({
               $or: [

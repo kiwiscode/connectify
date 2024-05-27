@@ -55,8 +55,7 @@
     "react-transition-group": "^4.4.5",
     "slick-carousel": "^1.8.1",
     "socket.io-client": "^4.7.2",
-    "twitter-api-v2": "^1.16.4",
-    "use-sound": "^4.0.1"
+    "twitter-api-v2": "^1.16.4" 
   },
   "devDependencies": {
     "@types/node": "^20.5.9",
