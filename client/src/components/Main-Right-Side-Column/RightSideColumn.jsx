@@ -17643,15 +17643,17 @@ function RightSideColumn({
               {" "}
               <div>
                 <div
+                  className="chirp-heavy-font"
                   style={{
                     fontSize: "20px",
                     fontWeight: "800",
                     lineHeight: "24px",
                   }}
                 >
-                  Subscribe to Premium
+                  <span>Subscribe to Premium</span>
                 </div>
                 <div
+                  className="chirp-regular-font"
                   style={{
                     fontSize: "15px",
                     fontWeight: "400",
@@ -17670,7 +17672,7 @@ function RightSideColumn({
                     marginTop: "10px",
                     maxWidth: "107px",
                   }}
-                  className={`login-button login-button-${themeName}`}
+                  className={`login-button login-button-${themeName} chirp-bold-font`}
                   variant="dark"
                 >
                   Subscribe
@@ -17705,6 +17707,7 @@ function RightSideColumn({
               }}
             >
               <div
+                className="chirp-heavy-font"
                 style={{
                   fontSize: "20px",
                   fontWeight: "800",
@@ -18489,7 +18492,7 @@ function RightSideColumn({
               }}
             >
               <ul
-                className={`right-side-bar-column-list ${themeName}-right-side-bar-column-list`}
+                className={`right-side-bar-column-list chirp-regular-font ${themeName}-right-side-bar-column-list`}
                 style={{
                   display: "flex",
                   flexWrap: "wrap",

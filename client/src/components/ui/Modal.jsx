@@ -569,18 +569,13 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
           }}
         >
           <div>
-            <p className="have-account">
-              <span
-                className="  responsive-input-group-text
-                "
-              >
-                Already have an account?
-              </span>
+            <p>
+              <span className="chirp-bold-font">Already have an account?</span>
             </p>
             <Button
               variant="light"
               onClick={handleShowLoginModal}
-              className={`sign-in sign-in-${themeName}`}
+              className={`sign-in sign-in-${themeName} chirp-bold-font`}
               style={{
                 color: "rgb(29, 155, 240)",
                 border:
@@ -967,9 +962,8 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                     fontSize: "31px",
                                     fontWeight: "700",
                                     lineHeight: "36px",
-                                    letterSpacing: "0.5px",
                                   }}
-                                  className="sign-in-header mb-4"
+                                  className="sign-in-header mb-4 chirp-bold-font"
                                 >
                                   Sign in to C
                                 </div>
@@ -1122,7 +1116,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   fontWeight: "700",
                                   lineHeight: "20px",
                                 }}
-                                className={`login-button mt-4 next-btn ${themeName}-white-btn`}
+                                className={`login-button mt-4 next-btn chirp-bold-font ${themeName}-white-btn`}
                                 variant="dark"
                                 onClick={handleLoginVariantOneStartProcess}
                               >
@@ -1140,7 +1134,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   fontWeight: "700",
                                   lineHeight: "20px",
                                 }}
-                                className={`mt-4 forgot-password-btn ${themeName}-black-btn`}
+                                className={`mt-4 forgot-password-btn chirp-bold-font ${themeName}-black-btn`}
                                 variant="light"
                                 onClick={() => {
                                   setTabLoading(true);
@@ -1171,12 +1165,12 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                     fontWeight: "400",
                                     marginLeft: "5px",
                                   }}
-                                  className="grid-item mt-5"
+                                  className="grid-item mt-5 chirp-regular-font"
                                 >
                                   <span>
                                     Don&apos;t have an account?{" "}
                                     <span
-                                      className="hover-blue-underline"
+                                      className="hover-blue-underline "
                                       onClick={handleCloseLoginModal}
                                       style={{
                                         cursor: "pointer",
@@ -2655,6 +2649,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 }}
                               >
                                 <div
+                                  className="chirp-bold-font"
                                   style={{
                                     color:
                                       themeName === "dark-theme"
@@ -2885,7 +2880,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   }}
                                 >
                                   <span
-                                    className="forgot-password-login-variant-one-screen"
+                                    className="chirp-regular-font forgot-password-login-variant-one-screen "
                                     style={{
                                       cursor: "pointer",
                                     }}
@@ -2911,6 +2906,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   Log in
                                 </Button>
                                 <div
+                                  className="chirp-regular-font"
                                   style={{
                                     position: "absolute",
                                     bottom: "15px",
@@ -2928,7 +2924,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   <span>
                                     Don&apos;t have an account?{" "}
                                     <span
-                                      className="hover-blue-underline"
+                                      className="hover-blue-underline "
                                       onClick={handleCloseLoginModal}
                                       style={{
                                         cursor: "pointer",
@@ -3052,11 +3048,10 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                     ? "white"
                                     : "black",
                                 fontSize: "31px",
-                                fontWeight: "700",
                                 lineHeight: "36px",
-                                letterSpacing: "0.5px",
+                                fontWeight: "700",
                               }}
-                              className="sign-in-header mt-4 mb-4"
+                              className="sign-in-header mt-4 mb-4 chirp-bold-font"
                             >
                               Sign in to C
                             </div>
@@ -3203,7 +3198,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               fontWeight: "700",
                               lineHeight: "20px",
                             }}
-                            className={`login-button mt-4 next-btn ${themeName}-white-btn`}
+                            className={`login-button mt-4 next-btn chirp-bold-font ${themeName}-white-btn`}
                             variant="dark"
                             // onClick={() => {
                             //   setTabLoading(true);
@@ -3229,7 +3224,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               fontWeight: "700",
                               lineHeight: "20px",
                             }}
-                            className={`mt-4 forgot-password-btn ${themeName}-black-btn`}
+                            className={`mt-4 forgot-password-btn chirp-bold-font ${themeName}-black-btn`}
                             variant="light"
                             onClick={() => {
                               setTabLoading(true);
@@ -3261,7 +3256,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 fontWeight: "400",
                                 marginLeft: "5px",
                               }}
-                              className="grid-item mt-5"
+                              className="grid-item mt-5 chirp-regular-font"
                             >
                               <span>
                                 Don&apos;t have an account?{" "}
@@ -4709,6 +4704,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               }}
                             >
                               <div
+                                className="chirp-bold-font"
                                 style={{
                                   color:
                                     themeName === "dark-theme"
@@ -4932,7 +4928,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 }}
                               >
                                 <span
-                                  className="forgot-password-login-variant-one-screen"
+                                  className="forgot-password-login-variant-one-screen chirp-regular-font "
                                   style={{
                                     cursor: "pointer",
                                   }}
@@ -4958,6 +4954,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 Log in
                               </Button>
                               <div
+                                className="chirp-regular-font"
                                 style={{
                                   position: "absolute",
                                   bottom: "30px",
@@ -5617,7 +5614,7 @@ function CommentModal({
                     {post.userId ? (
                       <>
                         <span
-                          className="hover-fullname"
+                          className="hover-fullname chirp-bold-font"
                           style={{
                             fontWeight: "700",
                             fontSize: "15px",
@@ -5650,6 +5647,7 @@ function CommentModal({
                         </span>
 
                         <span
+                          className="chirp-regular-font"
                           style={{
                             color:
                               themeName === "dark-theme"
@@ -5723,6 +5721,7 @@ function CommentModal({
                               }}
                             >
                               <span
+                                className="chirp-regular-font"
                                 style={{
                                   color:
                                     themeName === "dark-theme"
@@ -5737,6 +5736,7 @@ function CommentModal({
                               </span>
 
                               <span
+                                className="chirp-regular-font"
                                 style={{
                                   color: "rgb(29, 155, 240)",
                                   fontSize: "15px",
@@ -5780,6 +5780,7 @@ function CommentModal({
                                 }}
                               >
                                 <span
+                                  className="chirp-regular-font"
                                   style={{
                                     color:
                                       themeName === "dark-theme"
@@ -5794,6 +5795,7 @@ function CommentModal({
                                 </span>
 
                                 <span
+                                  className="chirp-regular-font"
                                   style={{
                                     color: "rgb(29, 155, 240)",
                                     fontSize: "15px",
