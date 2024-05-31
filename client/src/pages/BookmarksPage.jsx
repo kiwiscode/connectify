@@ -144,6 +144,7 @@ function Bookmarks() {
           }}
         >
           <div
+            className="chirp-bold-font"
             style={{
               color: themeName === "dark-theme" ? "white" : "",
               fontWeight: "700",
@@ -154,6 +155,7 @@ function Bookmarks() {
             Clear all Bookmarks?
           </div>
           <div
+            className="mt-2 chirp-regular-font"
             style={{
               color:
                 themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
@@ -161,7 +163,6 @@ function Bookmarks() {
               fontSize: "15px",
               lineHeight: "20px",
             }}
-            className="mt-2"
           >
             This can’t be undone and you’ll remove all posts you’ve added to
             your Bookmarks.{" "}
@@ -177,7 +178,7 @@ function Bookmarks() {
         >
           <Button
             onClick={() => clearAllBookmarks()}
-            className={`red-btn ${themeName}-red-btn`}
+            className={`red-btn ${themeName}-red-btn chirp-bold-font`}
             style={{
               maxWidth: "256px",
               minHeight: "44px",
@@ -196,7 +197,7 @@ function Bookmarks() {
               maxWidth: "256px",
               minHeight: "44px",
             }}
-            className={`mt-2 forgot-password-btn ${themeName}-black-btn`}
+            className={`mt-2 forgot-password-btn ${themeName}-black-btn chirp-bold-font`}
           >
             Cancel
           </Button>
@@ -267,10 +268,9 @@ function Bookmarks() {
           style={{
             paddingLeft: "12px",
             paddingRight: "12px",
+            padding: "0px",
           }}
           direction="horizontal"
-          gap={3}
-          className="mt-2"
         >
           <Link className="responsive-home-arrow" to={"/home"}>
             <svg
@@ -291,10 +291,11 @@ function Bookmarks() {
               fontWeight: "700",
               fontSize: "20px",
             }}
-            className="p-2"
+            className="p-2 chirp-bold-font"
           >
             <span>Bookmarks</span>
             <div
+              className="chirp-regular-font"
               style={{
                 fontSize: "13px",
                 fontWeight: "400",
@@ -401,6 +402,7 @@ function Bookmarks() {
                         className={`message-popoover message-popoover-${themeName}`}
                       >
                         <span
+                          className="chirp-bold-font"
                           style={{
                             color: "#f2212e",
                             lineHeight: "20px",
@@ -548,7 +550,7 @@ function Bookmarks() {
                               }}
                             >
                               <span
-                                className="hover-fullname"
+                                className="hover-fullname chirp-bold-font"
                                 style={{
                                   color:
                                     themeName === "dark-theme" ? "white" : "",
@@ -598,7 +600,7 @@ function Bookmarks() {
                               }}
                             >
                               <span className="post-circle-postowner-username">
-                                <span>
+                                <span className="chirp-regular-font">
                                   @
                                   {
                                     eachBookMark?.bookmarkedPost?.userId
@@ -621,7 +623,7 @@ function Bookmarks() {
                               }}
                             >
                               <span
-                                className="post-circle-date-post-detail"
+                                className="post-circle-date-post-detail chirp-regular-font"
                                 style={{
                                   color:
                                     themeName === "dark-theme"
@@ -711,7 +713,7 @@ function Bookmarks() {
                             cursor: "pointer",
                             color: themeName === "dark-theme" ? "white" : "",
                           }}
-                          className="p-2"
+                          className="p-2 chirp-regular-font"
                         >
                           {eachBookMark?.bookmarkedPost?.content}
                         </div>
@@ -911,6 +913,7 @@ function Bookmarks() {
               }}
             >
               <div
+                className="chirp-heavy-font"
                 style={{
                   lineHeight: "36px",
                   fontSize: "31px",
@@ -920,7 +923,7 @@ function Bookmarks() {
                 Save posts for later
               </div>
               <div
-                className="mt-2"
+                className="mt-2 chirp-regular-font"
                 style={{
                   color:
                     themeName === "dark-theme"

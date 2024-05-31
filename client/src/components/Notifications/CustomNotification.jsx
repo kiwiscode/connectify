@@ -113,7 +113,7 @@ const CustomNotification = ({
                       {senderInfo.fullname}
                     </span>
                   </Link>{" "}
-                  liked your post!
+                  <span className="chirp-regular-font">liked your post!</span>
                 </span>
               </div>
               <Link
@@ -206,7 +206,9 @@ const CustomNotification = ({
                       {senderInfo.fullname}
                     </span>
                   </Link>{" "}
-                  reposted your post!
+                  <span className="chirp-regular-font">
+                    reposted your post!
+                  </span>
                 </span>
               </div>
               <Link

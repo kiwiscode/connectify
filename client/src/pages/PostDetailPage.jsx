@@ -515,7 +515,7 @@ function PostDetailPage() {
                           to={`/profile/${commentedForThisUsersPost._id}`}
                         >
                           <span
-                            className="hover-fullname"
+                            className="hover-fullname chirp-bold-font"
                             style={{
                               color:
                                 themeName === "dark-theme" ? "white" : "black",
@@ -556,6 +556,7 @@ function PostDetailPage() {
                           to={`/profile/${commentedForThisUsersPost._id}`}
                         >
                           <span
+                            className="chirp-regular-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
@@ -599,7 +600,7 @@ function PostDetailPage() {
                                   : "light-theme"
                               }
                             >
-                              <span className="date-post-detail">
+                              <span className="date-post-detail chirp-regular-font">
                                 {getCreatedDate(commentedForThisPost.createdAt)}
                               </span>
                             </BootstrapTooltip>
@@ -648,6 +649,7 @@ function PostDetailPage() {
                         }}
                       >
                         <span
+                          className="chirp-regular-font"
                           style={{
                             color: themeName === "dark-theme" ? "white" : "",
                           }}
@@ -972,7 +974,7 @@ function PostDetailPage() {
                       }}
                     >
                       <span
-                        className="post-detail-underline-text-2"
+                        className="post-detail-underline-text-2 hover-fullname chirp-bold-font"
                         style={{
                           color: themeName === "dark-theme" ? "white" : "black",
                           lineHeight: "20px",
@@ -1010,6 +1012,7 @@ function PostDetailPage() {
                     }}
                   >
                     <span
+                      className="chirp-regular-font"
                       style={{
                         color:
                           themeName === "dark-theme"
@@ -1045,6 +1048,7 @@ function PostDetailPage() {
                   style={{ textDecoration: "none", color: "black" }}
                 >
                   <span
+                    className="chirp-regular-font"
                     style={{
                       marginLeft: "10px",
                       color: themeName === "dark-theme" ? "white" : "black",
@@ -1415,7 +1419,7 @@ function PostDetailPage() {
                                                 }}
                                               >
                                                 <span
-                                                  className="hover-fullname"
+                                                  className="hover-fullname chirp-bold-font"
                                                   style={{
                                                     fontWeight: "700",
                                                     fontSize: "15px",
@@ -1463,7 +1467,7 @@ function PostDetailPage() {
                                                 }}
                                               >
                                                 <span>
-                                                  <span>
+                                                  <span className="chirp-regular-font">
                                                     @
                                                     {eachComment.authorUserName}
                                                   </span>
@@ -1506,7 +1510,7 @@ function PostDetailPage() {
                                                         : "light-theme"
                                                     }
                                                   >
-                                                    <span className="date-post-detail">
+                                                    <span className="date-post-detail chirp-regular-font">
                                                       {getCreatedDate(
                                                         eachComment.createdAt
                                                       )}
@@ -1551,6 +1555,7 @@ function PostDetailPage() {
                                           }}
                                         >
                                           <div
+                                            className="p-2 chirp-regular-font"
                                             style={{
                                               fontSize: "15px",
                                               fontWeight: "400",
@@ -1562,7 +1567,6 @@ function PostDetailPage() {
                                                   ? "white"
                                                   : "black",
                                             }}
-                                            className="p-2"
                                           >
                                             {eachComment.content}
                                           </div>
@@ -1832,7 +1836,7 @@ function PostDetailPage() {
                                                 }}
                                               >
                                                 <span
-                                                  className="hover-fullname"
+                                                  className="hover-fullname chirp-bold-font"
                                                   style={{
                                                     fontWeight: "700",
                                                     fontSize: "15px",
@@ -1880,7 +1884,7 @@ function PostDetailPage() {
                                                 }}
                                               >
                                                 <span>
-                                                  <span>
+                                                  <span className="chirp-regular-font">
                                                     @
                                                     {eachComment.authorUserName}
                                                   </span>
@@ -1923,7 +1927,7 @@ function PostDetailPage() {
                                                         : "light-theme"
                                                     }
                                                   >
-                                                    <span className="date-post-detail">
+                                                    <span className="date-post-detail chirp-regular-font">
                                                       {getCreatedDate(
                                                         eachComment.createdAt
                                                       )}
@@ -1981,7 +1985,7 @@ function PostDetailPage() {
                                                   ? "white"
                                                   : "black",
                                             }}
-                                            className="p-2"
+                                            className="p-2 chirp-regular-font"
                                           >
                                             {eachComment.content}
                                           </div>

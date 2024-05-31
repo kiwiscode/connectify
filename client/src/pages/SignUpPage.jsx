@@ -3832,16 +3832,63 @@ function SignUpPage() {
             top: "20px",
           }}
         >
-          <div style={{}}>
+          {" "}
+          <div
+            style={{
+              display: "flex",
+              padding: "0px",
+              margin: "0px",
+              display: width <= 1000 ? "" : "none",
+            }}
+            className="mb-5"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width={30}
+              height={30}
+              viewBox="0 0 100 100"
+            >
+              {/* İçi dolu bir kare */}
+              <rect
+                x="5"
+                y="5"
+                width="90"
+                height="90"
+                fill="#1C9BEF"
+                rx="5"
+                ry="5"
+                style={{
+                  filter: "drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))",
+                }}
+              />
+
+              <text
+                x="27.5"
+                y="70"
+                fontFamily="Arial"
+                fontSize="60"
+                fill="#FFF"
+                stroke="#FFF"
+                strokeWidth="2"
+              >
+                C
+              </text>
+            </svg>
+          </div>
+          <div
+            style={{
+              width: "100vw",
+            }}
+          >
             <span
               style={{
-                letterSpacing: width < 501 ? "-0.8px" : "-1.2px",
+                // letterSpacing: width < 501 ? "-0.8px" : "-1.2px",
                 fontSize: width < 501 ? "40px" : "64px",
                 lineHeight: width < 501 ? "52px" : "84px ",
-                fontWeight: "700",
+                // fontWeight: "700",
                 color: themeName === "dark-theme" ? "white" : "",
               }}
-              className="header-first header"
+              className="header-first header chirp-extended-heavy"
             >
               Happening now
             </span>
@@ -3857,15 +3904,14 @@ function SignUpPage() {
                 letterSpacing: width < 501 ? "-0.8px" : "-1.2px",
                 fontSize: width < 501 ? "23px" : "31px",
                 lineHeight: width < 501 ? "28px" : "36px",
-                fontWeight: "700",
+                // fontWeight: "700",
                 color: themeName === "dark-theme" ? "white" : "",
               }}
-              className="header-second header "
+              className="header-second header chirp-extended-heavy"
             >
               Join today.
             </span>
           </div>
-
           <div className="responsive-input-group">
             <div>
               <Button
@@ -3947,7 +3993,7 @@ function SignUpPage() {
 
               <Button
                 onClick={handleShowCreateAccountModal}
-                className="create-btn"
+                className="create-btn chirp-bold-font"
               >
                 Create account
               </Button>
@@ -3955,17 +4001,17 @@ function SignUpPage() {
               <p
                 style={{
                   // backgroundColor: "indianred",
-                  textAlign: "start",
+                  // textAlign: "start",
+                  // fontWeight: "400",
                   lineHeight: "12px",
                   fontSize: "11px",
-                  fontWeight: "400",
                   margin: "10px 0px",
                   color:
                     themeName === "dark-theme"
                       ? "#71767A"
                       : "rgb(83, 100, 113)",
                 }}
-                className="by-signing"
+                className="by-signing chirp-regular-font"
               >
                 By signing up, you agree to the{" "}
                 <a href="">

@@ -466,7 +466,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                   cols="50"
                   value={content}
                   maxLength={maxCharacters}
-                  className="input-post"
+                  className="input-post chirp-regular-font"
                   placeholder="What is happening?!"
                   style={{
                     resize: "none",
@@ -709,7 +709,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                 </PopupState>
                 {/* emoji mart finish to check */}
               </div>
-              <div className="p-2 ms-auto">
+              <div className="p-2 ms-auto chirp-bold-font">
                 {/* <div className="p-2 "> */}{" "}
                 {content !== "" || modalImage ? (
                   <Button
@@ -731,7 +731,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       border: "none",
                     }}
                     variant="primary"
-                    className={`emptyContent post-btn compose-tweet-textArea`}
+                    className={`emptyContent post-btn compose-tweet-textArea chirp-bold-font`}
                   >
                     Post
                   </Button>
@@ -1598,8 +1598,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       color={themeName === "dark-theme" ? "white" : ""}
                       fill="currentColor"
                       style={{}}
-                      width={`${1.75}rem`}
-                      height={`${1.75}rem`}
+                      width={`${1.25}rem`}
+                      height={`${1.25}rem`}
                       viewBox="0 0 24 24"
                       aria-hidden="true"
                       className="home-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
@@ -1614,15 +1614,14 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       </g>
                     </svg>
                     <span
-                      className={`nav-home-text nav-home-text-${themeName}`}
+                      className={
+                        window.location.href === "http://localhost:5173/home"
+                          ? `chirp-bold-font`
+                          : `chirp-regular-font`
+                      }
                       style={{
-                        marginLeft: "10px",
-                        fontWeight:
-                          window.location.href === "http://localhost:5173/home"
-                            ? "700"
-                            : "400",
+                        marginLeft: "20px",
                         fontSize: "20px",
-                        lineHeight: "24px",
                         position: "relative",
                         top: "3px",
                       }}
@@ -1694,8 +1693,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       style={{}}
                       color={themeName === "dark-theme" ? "white" : ""}
                       fill="currentColor"
-                      width={`${1.75}rem`}
-                      height={`${1.75}rem`}
+                      width={`${1.25}rem`}
+                      height={`${1.25}rem`}
                       viewBox="0 0 24 24"
                       aria-hidden="true"
                       className="notifications-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
@@ -1711,14 +1710,14 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                     </svg>
 
                     <span
-                      className="nav-notifications-text"
+                      className={
+                        window.location.href ===
+                        "http://localhost:5173/notifications"
+                          ? `chirp-bold-font`
+                          : `chirp-regular-font`
+                      }
                       style={{
-                        marginLeft: "10px",
-                        fontWeight:
-                          window.location.href ===
-                          "http://localhost:5173/notifications"
-                            ? "700"
-                            : "400",
+                        marginLeft: "20px",
                         fontSize: "20px",
                         lineHeight: "24px",
                         position: "relative",
@@ -1788,8 +1787,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                     <svg
                       color={themeName === "dark-theme" ? "white" : ""}
                       fill="currentColor"
-                      width={`${1.75}rem`}
-                      height={`${1.75}rem`}
+                      width={`${1.25}rem`}
+                      height={`${1.25}rem`}
                       viewBox="0 0 24 24"
                       aria-hidden="true"
                       className="messages-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
@@ -1805,14 +1804,15 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                     </svg>
 
                     <span
-                      className="nav-messages-text"
+                      className={
+                        window.location.href ===
+                        "http://localhost:5173/messages"
+                          ? `chirp-bold-font`
+                          : `chirp-regular-font`
+                      }
                       style={{
-                        marginLeft: "10px",
-                        fontWeight:
-                          window.location.href ===
-                          "http://localhost:5173/messages"
-                            ? "700"
-                            : "400",
+                        marginLeft: "20px",
+
                         fontSize: "20px",
                         lineHeight: "24px",
                         position: "relative",
@@ -1862,14 +1862,15 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                     </svg>
 
                     <span
-                      className="nav-profile-text"
+                      className={
+                        window.location.href ===
+                        "http://localhost:5173/bookmarks"
+                          ? `chirp-bold-font`
+                          : `chirp-regular-font`
+                      }
                       style={{
-                        marginLeft: "10px",
-                        fontWeight:
-                          window.location.href ===
-                          "http://localhost:5173/bookmarks"
-                            ? "700"
-                            : "400",
+                        marginLeft: "20px",
+
                         fontSize: "20px",
                         lineHeight: "24px",
                         position: "relative",
@@ -1932,14 +1933,13 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       </text>
                     </svg>
                     <span
-                      className="nav-profile-text"
+                      className={
+                        window.location.href === "http://localhost:5173/premium"
+                          ? `chirp-bold-font`
+                          : `chirp-regular-font`
+                      }
                       style={{
-                        marginLeft: "10px",
-                        fontWeight:
-                          window.location.href ===
-                          "http://localhost:5173/i/premium_sign_up"
-                            ? "700"
-                            : "400",
+                        marginLeft: "20px",
                         fontSize: "20px",
                         lineHeight: "24px",
                         position: "relative",
@@ -1975,8 +1975,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                     <svg
                       color={themeName === "dark-theme" ? "white" : ""}
                       fill="currentColor"
-                      width={`${1.75}rem`}
-                      height={`${1.75}rem`}
+                      width={`${1.25}rem`}
+                      height={`${1.25}rem`}
                       viewBox="0 0 24 24"
                       aria-hidden="true"
                       className="profile-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
@@ -1992,14 +1992,14 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                     </svg>
 
                     <span
-                      className="nav-profile-text"
+                      className={
+                        window.location.href === "http://localhost:5173/profile"
+                          ? `chirp-bold-font`
+                          : `chirp-regular-font`
+                      }
                       style={{
-                        marginLeft: "10px",
-                        fontWeight:
-                          window.location.href ===
-                          "http://localhost:5173/profile"
-                            ? "700"
-                            : "400",
+                        marginLeft: "20px",
+
                         fontSize: "20px",
                         lineHeight: "24px",
                         position: "relative",
@@ -2050,9 +2050,14 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                             </g>
                           </svg>
                           <span
-                            className="nav-profile-text"
+                            className={
+                              window.location.href ===
+                              "http://localhost:5173/asd.."
+                                ? `chirp-bold-font`
+                                : `chirp-regular-font`
+                            }
                             style={{
-                              marginLeft: "10px",
+                              marginLeft: "20px",
                               fontWeight: "400",
                               fontSize: "20px",
                               lineHeight: "24px",
@@ -2149,7 +2154,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                 }}
               >
                 <Button
-                  className="post-btn-left-side-nav-bar"
+                  className="post-btn-left-side-nav-bar chirp-bold-font"
                   variant="primary"
                   onClick={handleShow}
                   size="sm"

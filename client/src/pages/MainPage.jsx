@@ -1761,6 +1761,7 @@ function MainPage({ isNewPostShared }) {
           }}
         >
           <span
+            className="chirp-medium-font"
             onMouseEnter={() => handleHover("forYou")}
             onMouseLeave={handleLeave}
             onClick={() => handleShowForYou()}
@@ -1769,6 +1770,7 @@ function MainPage({ isNewPostShared }) {
             For you
           </span>
           <span
+            className="chirp-medium-font"
             onMouseEnter={() => handleHover("following")}
             onMouseLeave={handleLeave}
             onClick={() => handleShowFollowing()}
@@ -1875,14 +1877,14 @@ function MainPage({ isNewPostShared }) {
               cols="50"
               value={content}
               maxLength={maxCharacters}
-              className="input-post"
+              className="input-post chirp-regular-font"
               placeholder="What is happening?!"
               style={{
                 resize: "none",
                 padding: "8px",
 
                 lineHeight: "24px",
-                fontWeight: "400",
+
                 fontSize: `${content ? "15px" : "20px"}`,
                 width: "100%",
                 height: "100px",
@@ -2123,7 +2125,7 @@ function MainPage({ isNewPostShared }) {
                 }}
                 variant="primary"
                 onClick={() => handlePost()}
-                className={`post-btn compose-tweet-textArea compose-tweet-2`}
+                className={`post-btn compose-tweet-textArea compose-tweet-2 chirp-bold-font  `}
               >
                 Post
               </Button>
@@ -2133,7 +2135,7 @@ function MainPage({ isNewPostShared }) {
                   border: "none",
                 }}
                 variant="primary"
-                className={`emptyContent post-btn compose-tweet-textArea `}
+                className={`emptyContent post-btn compose-tweet-textArea chirp-bold-font `}
               >
                 Post
               </Button>
@@ -2244,7 +2246,7 @@ function MainPage({ isNewPostShared }) {
                                       </g>
                                     </svg>
                                     <Link
-                                      className={`hover-reposted-text hover-reposted-text-${themeName}`}
+                                      className={`hover-reposted-text hover-reposted-text-${themeName} chirp-bold-font`}
                                       style={{
                                         fontSize: "13px",
                                         lineHeight: "16px",
@@ -2414,7 +2416,7 @@ function MainPage({ isNewPostShared }) {
                                         }}
                                       >
                                         <span
-                                          className="hover-fullname"
+                                          className="hover-fullname chirp-bold-font"
                                           style={{
                                             color:
                                               themeName === "dark-theme"
@@ -2466,7 +2468,9 @@ function MainPage({ isNewPostShared }) {
                                         }}
                                       >
                                         <span className="post-circle-postowner-username">
-                                          <span>@{post.authorUserName}</span>
+                                          <span className="chirp-regular-font">
+                                            @{post.authorUserName}
+                                          </span>
                                         </span>
                                       </Link>
                                       <Link
@@ -2505,7 +2509,7 @@ function MainPage({ isNewPostShared }) {
                                                 : "light-theme"
                                             }
                                           >
-                                            <span className="date-post-detail">
+                                            <span className="date-post-detail chirp-regular-font">
                                               {getCreatedDate(post.createdAt)}
                                             </span>
                                           </BootstrapTooltip>
@@ -2553,6 +2557,7 @@ function MainPage({ isNewPostShared }) {
                                     className="p-2 parent-comment-text"
                                   >
                                     <span
+                                      className="chirp-regular-font"
                                       style={{
                                         color:
                                           themeName === "dark-theme"
@@ -2603,6 +2608,7 @@ function MainPage({ isNewPostShared }) {
                                   }}
                                 >
                                   <div
+                                    className="p-2 chirp-regular-font"
                                     style={{
                                       fontSize: "15px",
                                       fontWeight: "400",
@@ -2615,7 +2621,6 @@ function MainPage({ isNewPostShared }) {
                                           ? "white"
                                           : "",
                                     }}
-                                    className="p-2"
                                   >
                                     {post.content}
                                   </div>
@@ -2823,16 +2828,17 @@ function MainPage({ isNewPostShared }) {
                     }}
                   >
                     <div
+                      className="chirp-heavy-font"
                       style={{
                         lineHeight: "36px",
                         fontSize: "31px",
-                        fontWeight: "800",
                         margin: "10px",
                       }}
                     >
                       Welcome to Connectify!
                     </div>
                     <div
+                      className="chirp-regular-font"
                       style={{
                         color:
                           themeName === "dark-theme"
@@ -2923,7 +2929,7 @@ function MainPage({ isNewPostShared }) {
                                     </g>
                                   </svg>
                                   <Link
-                                    className={`hover-reposted-text hover-reposted-text-${themeName}`}
+                                    className={`hover-reposted-text hover-reposted-text-${themeName} chirp-bold-font`}
                                     style={{
                                       fontSize: "13px",
                                       lineHeight: "16px",
@@ -3095,7 +3101,7 @@ function MainPage({ isNewPostShared }) {
                                       }}
                                     >
                                       <span
-                                        className="hover-fullname"
+                                        className="hover-fullname chirp-bold-font"
                                         style={{
                                           color:
                                             themeName === "dark-theme"
@@ -3147,7 +3153,9 @@ function MainPage({ isNewPostShared }) {
                                       }}
                                     >
                                       <span className="post-circle-postowner-username">
-                                        <span>@{post.authorUserName}</span>
+                                        <span className="chirp-regular-font">
+                                          @{post.authorUserName}
+                                        </span>
                                       </span>
                                     </Link>
                                     <Link
@@ -3185,7 +3193,7 @@ function MainPage({ isNewPostShared }) {
                                               : "light-theme"
                                           }
                                         >
-                                          <span className="date-post-detail">
+                                          <span className="date-post-detail chirp-regular-font">
                                             {getCreatedDate(post.createdAt)}
                                           </span>
                                         </BootstrapTooltip>
@@ -3232,6 +3240,7 @@ function MainPage({ isNewPostShared }) {
                                   className="p-2 parent-comment-text"
                                 >
                                   <span
+                                    className="chirp-regular-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
@@ -3276,6 +3285,7 @@ function MainPage({ isNewPostShared }) {
                                 }}
                               >
                                 <div
+                                  className="p-2 chirp-regular-font"
                                   style={{
                                     fontSize: "15px",
                                     fontWeight: "400",
@@ -3286,7 +3296,6 @@ function MainPage({ isNewPostShared }) {
                                     color:
                                       themeName === "dark-theme" ? "white" : "",
                                   }}
-                                  className="p-2"
                                 >
                                   {post.content}
                                 </div>
@@ -3476,16 +3485,17 @@ function MainPage({ isNewPostShared }) {
                     }}
                   >
                     <div
+                      className="chirp-heavy-font"
                       style={{
                         lineHeight: "36px",
                         fontSize: "31px",
-                        fontWeight: "800",
                         margin: "10px",
                       }}
                     >
                       Welcome to Connectify!
                     </div>
                     <div
+                      className="chirp-regular-font"
                       style={{
                         color:
                           themeName === "dark-theme"

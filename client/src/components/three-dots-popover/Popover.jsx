@@ -327,6 +327,7 @@ function PostPopover({
                     </span>
 
                     <span
+                      className="chirp-bold-font"
                       style={{
                         color:
                           themeName === "dark-theme"
@@ -374,6 +375,7 @@ function PostPopover({
                     </span>
 
                     <span
+                      className="chirp-bold-font"
                       style={{
                         marginLeft: "10px",
                       }}
@@ -415,6 +417,7 @@ function PostPopover({
                     </span>
 
                     <span
+                      className="chirp-bold-font"
                       style={{
                         marginLeft: "10px",
                       }}
@@ -455,6 +458,7 @@ function PostPopover({
                       </svg>
                     </span>
                     <span
+                      className="chirp-bold-font"
                       style={{
                         marginLeft: "10px",
                       }}
@@ -495,6 +499,7 @@ function PostPopover({
                       </svg>
                     </span>
                     <span
+                      className="chirp-bold-font"
                       style={{
                         marginLeft: "10px",
                       }}
@@ -536,6 +541,7 @@ function PostPopover({
                     </span>
 
                     <span
+                      className="chirp-bold-font"
                       style={{
                         marginLeft: "10px",
                       }}
@@ -577,6 +583,7 @@ function PostPopover({
                     </span>
 
                     <span
+                      className="chirp-bold-font"
                       style={{
                         marginLeft: "10px",
                       }}
@@ -618,6 +625,7 @@ function PostPopover({
                     </span>
 
                     <span
+                      className="chirp-bold-font"
                       style={{
                         marginLeft: "10px",
                       }}
@@ -667,13 +675,16 @@ function PostPopover({
                     </span>
                     <span>
                       <span
+                        className="chirp-bold-font"
                         style={{
                           marginLeft: "10px",
                         }}
                       >
                         Follow
                       </span>{" "}
-                      <span>@{post?.userId?.username}</span>
+                      <span className="chirp-bold-font">
+                        @{post?.userId?.username}
+                      </span>
                     </span>
                   </div>
                   <div
@@ -710,13 +721,16 @@ function PostPopover({
                     </span>
                     <span>
                       <span
+                        className="chirp-bold-font"
                         style={{
                           marginLeft: "10px",
                         }}
                       >
                         Subscribe to
                       </span>{" "}
-                      <span>@{post?.userId?.username}</span>
+                      <span className="chirp-bold-font">
+                        @{post?.userId?.username}
+                      </span>
                     </span>
                   </div>
                   <div
@@ -752,13 +766,16 @@ function PostPopover({
                       </svg>
                     </span>
                     <span
+                      className="chirp-bold-font"
                       style={{
                         marginLeft: "10px",
                       }}
                     >
-                      <span>Add/remove</span>{" "}
-                      <span>@{post?.userId?.username}</span>{" "}
-                      <span>from Lists</span>
+                      <span className="chirp-bold-font">Add/remove</span>{" "}
+                      <span className="chirp-bold-font">
+                        @{post?.userId?.username}
+                      </span>{" "}
+                      <span className="chirp-bold-font">from Lists</span>
                     </span>
                   </div>
                   <div
@@ -797,7 +814,10 @@ function PostPopover({
                         marginLeft: "10px",
                       }}
                     >
-                      <span>Mute</span> <span>@{post?.userId?.username}</span>
+                      <span className="chirp-bold-font">Mute</span>{" "}
+                      <span className="chirp-bold-font">
+                        @{post?.userId?.username}
+                      </span>
                     </span>
                   </div>
                   <div
@@ -836,7 +856,10 @@ function PostPopover({
                         marginLeft: "10px",
                       }}
                     >
-                      <span>Block</span> <span>@{post?.userId?.username}</span>
+                      <span className="chirp-bold-font">Block</span>{" "}
+                      <span className="chirp-bold-font">
+                        @{post?.userId?.username}
+                      </span>
                     </span>
                   </div>
 
@@ -873,6 +896,7 @@ function PostPopover({
                       </svg>
                     </span>
                     <span
+                      className="chirp-bold-font"
                       style={{
                         marginLeft: "10px",
                       }}
@@ -913,6 +937,7 @@ function PostPopover({
                       </svg>
                     </span>
                     <span
+                      className="chirp-bold-font"
                       style={{
                         marginLeft: "10px",
                       }}
@@ -953,6 +978,7 @@ function PostPopover({
                       </svg>
                     </span>
                     <span
+                      className="chirp-bold-font"
                       style={{
                         marginLeft: "10px",
                       }}
@@ -994,6 +1020,7 @@ function PostPopover({
                       </svg>
                     </span>
                     <span
+                      className="chirp-bold-font"
                       style={{
                         marginLeft: "10px",
                       }}

@@ -250,7 +250,7 @@ function NotificationsPage() {
               fontWeight: "700",
               fontSize: "20px",
             }}
-            className="p-2"
+            className="p-2 chirp-bold-font"
           >
             Notifications
           </div>
@@ -396,7 +396,7 @@ function NotificationsPage() {
                               >
                                 <Link
                                   to={`/profile/${eachNotification.notificationSender._id}`}
-                                  className="hover-fullname"
+                                  className="hover-fullname chirp-bold-font"
                                   style={{
                                     fontSize: "15px",
                                     lineHeight: "20px",
@@ -411,6 +411,7 @@ function NotificationsPage() {
                                   {eachNotification.notificationSender.fullname}
                                 </Link>
                                 <Link
+                                  className="chirp-regular-font"
                                   to={`/profile/${eachNotification.notificationSender._id}`}
                                   style={{
                                     fontSize: "15px",
@@ -444,7 +445,7 @@ function NotificationsPage() {
                                   </span>
                                   <Link
                                     to={`/${eachNotification?.isComment?.commentPostId?.userId.username}/status/${eachNotification?.isComment?.commentPostId?._id}`}
-                                    className="date-post-detail"
+                                    className="date-post-detail chirp-regular-font"
                                     style={{
                                       textDecoration: "none",
                                       color:
@@ -498,7 +499,9 @@ function NotificationsPage() {
                                   lineHeight: "20px",
                                 }}
                               >
-                                <div>{"Replying to"}</div>
+                                <div className="chirp-regular-font">
+                                  {"Replying to"}
+                                </div>
                                 <Link
                                   to={`/profile/${eachNotification.notificationReceiver._id}`}
                                   className="replying-to-text"
@@ -749,7 +752,7 @@ function NotificationsPage() {
                                   }}
                                 >
                                   <span
-                                    className="hover-fullname"
+                                    className="hover-fullname chirp-bold-font"
                                     style={{
                                       fontSize: "15px",
                                       lineHeight: "20px",
@@ -763,6 +766,7 @@ function NotificationsPage() {
                                   </span>
                                 </Link>
                                 <span
+                                  className="chirp-regular-font"
                                   style={{
                                     fontSize: "15px",
                                     lineHeight: "20px",
@@ -854,6 +858,7 @@ function NotificationsPage() {
                                   </span>
                                 </Link>
                                 <span
+                                  className="chirp-regular-font"
                                   style={{
                                     fontSize: "15px",
                                     lineHeight: "20px",
@@ -1004,7 +1009,7 @@ function NotificationsPage() {
                                   }}
                                 >
                                   <span
-                                    className="hover-fullname"
+                                    className="hover-fullname chirp-bold-font"
                                     style={{
                                       fontSize: "15px",
                                       lineHeight: "20px",
@@ -1018,6 +1023,7 @@ function NotificationsPage() {
                                   </span>
                                 </Link>
                                 <span
+                                  className="chirp-regular-font"
                                   style={{
                                     fontSize: "15px",
                                     lineHeight: "20px",
@@ -1090,7 +1096,7 @@ function NotificationsPage() {
                                   }}
                                 >
                                   <span
-                                    className="hover-fullname"
+                                    className="hover-fullname "
                                     style={{
                                       fontSize: "15px",
                                       lineHeight: "20px",
@@ -1104,6 +1110,7 @@ function NotificationsPage() {
                                   </span>
                                 </Link>
                                 <span
+                                  className="chirp-regular-font"
                                   style={{
                                     fontSize: "15px",
                                     lineHeight: "20px",
@@ -1149,16 +1156,17 @@ function NotificationsPage() {
               }}
             >
               <div
+                className="chirp-heavy-font"
                 style={{
                   lineHeight: "36px",
                   fontSize: "31px",
-                  fontWeight: "800",
                   margin: "10px",
                 }}
               >
                 You don’t have any notifications yet!
               </div>
               <div
+                className="chirp-regular-font"
                 style={{
                   color:
                     themeName === "dark-theme"

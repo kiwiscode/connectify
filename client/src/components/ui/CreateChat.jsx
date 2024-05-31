@@ -149,6 +149,7 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
       {messagesPageWriteAmESSAGEoPTION ? (
         <div style={{ textAlign: "left", padding: "16px" }}>
           <div
+            className="chirp-heavy-font"
             style={{
               lineHeight: "36px",
               fontSize: "31px",
@@ -159,6 +160,7 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
             Welcome to your inbox!
           </div>
           <div
+            className="chirp-regular-font"
             style={{
               color:
                 themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
@@ -172,7 +174,7 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
             you and others on Connectify.
           </div>
           <button
-            className="write-a-message-message-page-btn"
+            className="write-a-message-message-page-btn chirp-bold-font"
             style={{
               color: "white",
               backgroundColor: "rgb(29,155,240)",
