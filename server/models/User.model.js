@@ -123,6 +123,11 @@ const userSchema = new Schema(
     },
     successSubscriptionModalShown: { type: Boolean, default: false },
     subscriptions: [{ type: Schema.Types.ObjectId, ref: "Subscription" }],
+    hasPhoneVerifiedForAccountInformationDetail: {
+      type: Boolean,
+      default: false,
+    },
+    ipAddress: { type: String, required: true },
   },
   {
     timestamps: true,

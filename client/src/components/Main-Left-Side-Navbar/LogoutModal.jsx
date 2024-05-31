@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect } from "react";
 import { UserContext } from "../../context/UserContext";
 import { Button, Modal, Stack } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 // import Picker from "emoji-picker-react";
@@ -1137,10 +1137,9 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                   color: themeName === "dark-theme" ? "#E6E9EA" : "black",
                 }}
               >
-                At the heart of C are short messages called posts{" "}
-                <span className="double-dash">-</span>- just like this one{" "}
-                <span className="double-dash">-</span>- which can include
-                photos, videos, links, text, hashtags, and mentions like{" "}
+                At the heart of C are short messages called posts — just like
+                this one — which can include photos, videos, links, text,
+                hashtags, and mentions like{" "}
                 <span
                   style={{
                     color: "#1C9BEF",
@@ -2279,6 +2278,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                     cursor: "pointer",
                     // padding: "3px",
                     width: "250px",
+
                     position: "relative",
                     right: "12px",
                   }}
@@ -2345,7 +2345,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                           textAlign: "left",
                         }}
                       >
-                        {localeInfo?.username}
+                        {localeInfo?.fullname}
                       </div>
                       <div
                         className="localeInfo-username"
@@ -4741,6 +4741,11 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                   InputProps={{
                     style: {
                       color: themeName === "dark-theme" ? "white" : "black",
+                    },
+                  }}
+                  InputLabelProps={{
+                    style: {
+                      color: themeName === "dark-theme" ? "#66757F" : "black",
                     },
                   }}
                   sx={{

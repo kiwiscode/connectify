@@ -742,15 +742,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                   {/* finish to check redirect to the messages  */}
                   <Button
                     onClick={() => handleFollow(profileInfo)}
-                    onMouseEnter={
-                      profileInfo.followers
-                        ? !getFollowerIds(profileInfo.followers).includes(
-                            userInfo._id
-                          )
-                          ? null
-                          : handleMouseEnter
-                        : null
-                    }
+                    onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
                     style={{
                       transitionDuration: "0.2s",
@@ -771,8 +763,12 @@ function SpesificUserProfile({ isNewPostShared }) {
                           ? "1px solid rgba(0, 0, 0, 0.1)"
                           : "1px solid rgb(70, 70, 70)",
                       backgroundColor:
-                        !isFollowing && themeName === "dark-theme"
+                        !isFollowing && themeName === "dark-theme" && !isHovered
                           ? "white"
+                          : !isFollowing &&
+                            themeName === "dark-theme" &&
+                            isHovered
+                          ? "#d7dbdc"
                           : isHovered &&
                             isFollowing &&
                             themeName !== "dark-theme"
@@ -785,6 +781,10 @@ function SpesificUserProfile({ isNewPostShared }) {
                           ? "black"
                           : isFollowing && themeName !== "dark-theme"
                           ? "white"
+                          : !isFollowing &&
+                            themeName !== "dark-theme" &&
+                            isHovered
+                          ? "#272c30"
                           : "black",
                       color:
                         !isFollowing && themeName === "dark-theme"
@@ -1580,9 +1580,8 @@ function SpesificUserProfile({ isNewPostShared }) {
                               <div
                                 style={{
                                   overflow: "hidden",
-                                  border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
-                                  borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
-                                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                                  borderRadius: "8px",
+                                  padding: "12px",
                                 }}
                               >
                                 <img
@@ -1590,7 +1589,9 @@ function SpesificUserProfile({ isNewPostShared }) {
                                   alt="Description"
                                   style={{
                                     width: "100%",
+                                    maxWidth: "100%",
                                     display: "block",
+                                    borderRadius: "16px",
                                   }}
                                 />
                               </div>
@@ -2066,9 +2067,8 @@ function SpesificUserProfile({ isNewPostShared }) {
                                 <div
                                   style={{
                                     overflow: "hidden",
-                                    border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
-                                    borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
-                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                                    borderRadius: "8px",
+                                    padding: "12px",
                                   }}
                                 >
                                   <img
@@ -2076,7 +2076,9 @@ function SpesificUserProfile({ isNewPostShared }) {
                                     alt="Description"
                                     style={{
                                       width: "100%",
+                                      maxWidth: "100%",
                                       display: "block",
+                                      borderRadius: "16px",
                                     }}
                                   />
                                 </div>

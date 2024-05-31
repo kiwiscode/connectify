@@ -340,14 +340,6 @@ function FollowerDetailPage() {
                   });
               };
 
-              const handleMouseEnter = () => {
-                setIsHovered(buttonId);
-              };
-
-              const handleMouseLeave = () => {
-                setIsHovered(null);
-              };
-
               const buttonStyles = {
                 cursor: "pointer",
                 textAlign: "center",
@@ -366,8 +358,14 @@ function FollowerDetailPage() {
                 borderRadius: "9999px",
                 transitionDuration: "0.2s",
                 backgroundColor:
-                  !isFollowing && themeName === "dark-theme"
+                  !isFollowing &&
+                  themeName === "dark-theme" &&
+                  isHovered !== buttonId
                     ? "white"
+                    : !isFollowing &&
+                      themeName === "dark-theme" &&
+                      isHovered === buttonId
+                    ? "#d7dbdc"
                     : isHovered === buttonId &&
                       isFollowing &&
                       themeName !== "dark-theme"
@@ -380,7 +378,12 @@ function FollowerDetailPage() {
                     ? "black"
                     : isFollowing && themeName !== "dark-theme"
                     ? "white"
+                    : !isFollowing &&
+                      themeName !== "dark-theme" &&
+                      isHovered === buttonId
+                    ? "#272c30"
                     : "black",
+
                 color:
                   !isFollowing && themeName === "dark-theme"
                     ? "black"
@@ -581,8 +584,12 @@ function FollowerDetailPage() {
                               ? buttonStyles
                               : null
                           }
-                          onMouseEnter={isFollowing ? handleMouseEnter : null}
-                          onMouseLeave={handleMouseLeave}
+                          onMouseEnter={
+                            // () =>
+                            // isFollowing ? setIsHovered(buttonId) : null
+                            () => setIsHovered(buttonId)
+                          }
+                          onMouseLeave={() => setIsHovered(null)}
                         >
                           {user._id !== userInfo._id ? (
                             <div

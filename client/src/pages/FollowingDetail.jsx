@@ -380,19 +380,35 @@ function FollowingDetailPage() {
                 borderRadius: "9999px",
                 transitionDuration: "0.2s",
                 backgroundColor:
-                  isHovered === buttonId &&
-                  isFollowing &&
-                  themeName !== "dark-theme"
+                  !isFollowing &&
+                  themeName === "dark-theme" &&
+                  isHovered !== buttonId
+                    ? "white"
+                    : !isFollowing &&
+                      themeName === "dark-theme" &&
+                      isHovered === buttonId
+                    ? "#d7dbdc"
+                    : isHovered === buttonId &&
+                      isFollowing &&
+                      themeName !== "dark-theme"
                     ? "rgba(255,234,235,255)"
                     : isHovered === buttonId &&
                       isFollowing &&
                       themeName === "dark-theme"
                     ? "#230608"
+                    : isFollowing && themeName === "dark-theme"
+                    ? "black"
                     : isFollowing && themeName !== "dark-theme"
                     ? "white"
+                    : !isFollowing &&
+                      themeName !== "dark-theme" &&
+                      isHovered === buttonId
+                    ? "#272c30"
                     : "black",
                 color:
-                  isHovered === buttonId && isFollowing
+                  !isFollowing && themeName === "dark-theme"
+                    ? "black"
+                    : isHovered === buttonId && isFollowing
                     ? "rgba(244,34,45,255)"
                     : isFollowing && themeName !== "dark-theme"
                     ? "black"
