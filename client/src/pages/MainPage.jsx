@@ -1898,58 +1898,64 @@ function MainPage({ isNewPostShared }) {
         {image && (
           <div className="p-2" style={{ position: "relative" }}>
             <div
-              className="close-image-button"
               style={{
-                position: "absolute",
-                top: "20px",
-                right: "20px",
-                width: "36px",
-                height: "36px",
-                backgroundColor: "#4B4F52",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                borderRadius: "50%",
-                cursor: "pointer",
               }}
-              onClick={closeImage}
             >
-              <div>
-                <div>
-                  <svg
-                    style={{
-                      border: "none",
-                      fontSize: "15px",
-                      margin: "5px",
-                    }}
-                    width={20}
-                    height={20}
-                    color={"white"}
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                  >
-                    <g>
-                      <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
-                    </g>
-                  </svg>{" "}
-                </div>
+              <div
+                className="close-image-button"
+                style={{
+                  width: "36px",
+                  height: "36px",
+                  backgroundColor: "#4B4F52",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRadius: "50%",
+                  cursor: "pointer",
+                  position: "absolute",
+                  right: "60px",
+                  top: "25px",
+                }}
+                onClick={closeImage}
+              >
+                <svg
+                  style={{
+                    border: "none",
+                    fontSize: "15px",
+                    margin: "5px",
+                  }}
+                  width={20}
+                  height={20}
+                  color={"white"}
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                >
+                  <g>
+                    <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                  </g>
+                </svg>{" "}
               </div>
+              <img
+                className="img-fluid"
+                style={{
+                  maxWidth: "515px",
+                  width: "100%",
+
+                  display: "block",
+                  overflow: "hidden",
+                  border: "2px solid #ddd",
+                  borderRadius: "8px",
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                }}
+                src={image ? image : ""}
+                alt=""
+              />
             </div>
-            <img
-              className="img-fluid"
-              style={{
-                width: "100%",
-                display: "block",
-                overflow: "hidden",
-                border: "2px solid #ddd",
-                borderRadius: "8px",
-                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-              }}
-              src={image ? image : ""}
-              alt=""
-            />
           </div>
         )}
         {themeName !== "dark-theme" ? (
@@ -2633,10 +2639,8 @@ function MainPage({ isNewPostShared }) {
                                     <div
                                       style={{
                                         overflow: "hidden",
-                                        border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
-                                        borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
-                                        boxShadow:
-                                          "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                                        borderRadius: "8px",
+                                        padding: "12px",
                                       }}
                                     >
                                       <img
@@ -2646,6 +2650,7 @@ function MainPage({ isNewPostShared }) {
                                           width: "100%",
                                           maxWidth: "100%",
                                           display: "block",
+                                          borderRadius: "16px",
                                         }}
                                       />
                                     </div>
@@ -3304,9 +3309,8 @@ function MainPage({ isNewPostShared }) {
                                   <div
                                     style={{
                                       overflow: "hidden",
-                                      border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
-                                      borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
-                                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                                      borderRadius: "8px",
+                                      padding: "12px",
                                     }}
                                   >
                                     <img
@@ -3316,6 +3320,7 @@ function MainPage({ isNewPostShared }) {
                                         width: "100%",
                                         maxWidth: "100%",
                                         display: "block",
+                                        borderRadius: "16px",
                                       }}
                                     />
                                   </div>

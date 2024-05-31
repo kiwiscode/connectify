@@ -2,7 +2,6 @@ const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const axios = require("axios");
 const saltRounds = 10;
-
 const User = require("../models/User.model");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
@@ -88,6 +87,9 @@ const generate5DifferentNumbers = () => {
 const handleSignup = async (req, res, next) => {
   let { signedUserInfo } = req.body;
 
+  const userIp = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+
+  console.log("User IP:", userIp);
   console.log(signedUserInfo);
 
   let fullname = signedUserInfo.fullname;
@@ -137,7 +139,7 @@ const handleSignup = async (req, res, next) => {
             password: hashedPassword,
             verified: true,
             imageUrl: "../assets/resume-pic.png",
-
+            ipAddress: userIp,
             birthDate: {
               month: birthMonth,
               day: birthDay,
@@ -689,21 +691,52 @@ const handleUsernameCheck = async (req, res) => {
 
 const handleUserPasswordCheck = async (req, res) => {
   try {
-    const { premiumInfo, verifyPasswordInput } = req.body;
+    const { premiumInfo, userId, verifyPasswordInput, forAccountInfoDetail } =
+      req.body;
 
-    const userInfo = premiumInfo.user;
-
-    const user = await User.findById(userInfo._id);
+    const user = await User.findById(
+      premiumInfo ? premiumInfo.user._id : userId
+    );
 
     const isPasswordMatch = await bcrypt.compare(
       verifyPasswordInput,
       user.password
     );
 
-    console.log("Premium info =>", premiumInfo);
+    console.log(
+      "Inputs from req.body =>",
+      premiumInfo,
+      userId,
+      verifyPasswordInput,
+      forAccountInfoDetail,
+      isPasswordMatch
+    );
 
     if (isPasswordMatch) {
-      res.status(200).json({ success: true, message: "Compliant password" });
+      if (forAccountInfoDetail) {
+        user.hasPhoneVerifiedForAccountInformationDetail = true;
+        user
+          .save()
+          .then(() => {
+            res
+              .status(200)
+              .json({ success: true, message: "Compliant password" });
+          })
+          .catch(() => {
+            throw new Error();
+          });
+      } else {
+        user
+          .save()
+          .then(() => {
+            res
+              .status(200)
+              .json({ success: true, message: "Compliant password" });
+          })
+          .catch(() => {
+            throw new Error();
+          });
+      }
     } else {
       throw new Error();
     }

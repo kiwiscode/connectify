@@ -55,13 +55,13 @@
 body {
   margin: 0;
   padding: 0;
-
   /* font weight broken after change font family like twitter font family start to check */
   /* font-family: var(--font-family), sans-serif; */
   /* font-family: "cloneFont", -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, Helvetica, Arial, sans-serif; */
   /* font weight broken after change font family like twitter font family finish to check */
 }
+
 .cyber-punk-theme,
 .light-theme,
 .dark-theme {
@@ -105,6 +105,13 @@ body {
 }
 
 .hover-blue-underline:hover {
+  text-decoration: underline;
+}
+.blue-underline {
+  color: #1c9bef;
+  cursor: pointer;
+}
+.blue-underline:hover {
   text-decoration: underline;
 }
 
@@ -189,6 +196,13 @@ body {
 
 .each-post:hover {
   background-color: #f8f8f8 !important;
+}
+
+.make-dark-theme-bej-color-dark-theme {
+  color: #e6e9ea !important;
+}
+.make-light-theme-color-light-theme {
+  color: #0f141a !important;
 }
 
 .each-post-dark-theme:hover {
@@ -2611,10 +2625,7 @@ span > a:hover {
   transition-duration: 0.2s !important;
 }
 
-.hover-forgot-password-send-email-stack-svg-verified-email-variant-2:hover,
-.hover-customize-your-experience-tab-get-more-out-of-variant-2:hover,
-.hover-customize-your-experience-tab-connect-with-people-you-know-variant-2:hover,
-.hover-customize-your-experience-tab-personalized-ads-variant-2:hover {
+.hover-forgot-password-send-email-stack-svg-verified-email-variant-2:hover {
   background-color: #eeeff0;
   transition-duration: 0.2s;
 }
@@ -2639,25 +2650,6 @@ span > a:hover {
 .cs-experience-variant-2-personalizedAds-dark-theme:hover {
   background-color: #0c0c0c;
   transition-duration: 0.2s;
-}
-
-.hover-forgot-password-send-email-stack-svg-verified-email-dark-theme:hover {
-  background-color: #061019;
-  transition-duration: 0.2s;
-}
-.hover-forgot-password-send-email-stack-svg-verified-email-variant-2-dark-theme:hover {
-  background-color: #0c0c0c;
-  transition-duration: 0.2s;
-}
-
-.hover-customize-your-experience-tab-get-more-out-of-variant-dark-theme:hover {
-  background-color: #154772 !important;
-  transition-duration: 0.2s !important;
-}
-
-.hover-customize-your-experience-tab-get-more-out-of-variant-2-dark-theme:hover {
-  background-color: rgba(25, 26, 26, 255) !important;
-  transition-duration: 0.2s !important;
 }
 
 .connectify-support-forgot-password-screen span:hover {
@@ -3034,53 +3026,28 @@ span > a:hover {
 
 /* scrollbar- dark theme styling start to check  */
 .scrollbar-add-dark-theme::-webkit-scrollbar {
-  width: 1em;
-}
-
-.scrollbar-add-dark-theme::-webkit-scrollbar-track {
-  background: #3e4144;
-  border-top-right-radius: 100vw;
-  border-bottom-right-radius: 100vw;
-  margin-block: 0.5em;
-  padding: 0;
-  margin: 0;
+  width: 1em !important;
 }
 
 .scrollbar-add-dark-theme::-webkit-scrollbar-thumb {
-  background: #3e4144;
-  border-radius: 100vw;
-  width: 5px;
-  border: 0.25em solid #16181c;
-}
-
-.scrollbar-add-dark-theme::-webkit-scrollbar {
-  width: 1em;
+  background: #3e4144 !important;
+  border-radius: 100vw !important;
+  border: 0.25em solid #16181c !important;
 }
 
 .scrollbar-add-dark-theme::-webkit-scrollbar-track {
-  background: #16181c;
-  border-top-right-radius: 100vw;
-  border-bottom-right-radius: 100vw;
-  margin-block: 0.5em;
-  padding: 0;
-  margin: 0;
+  background: #16181c !important;
+  border-top-right-radius: 100vw !important;
+  border-bottom-right-radius: 100vw !important;
+  padding: 0 !important;
 }
-
 /* scrollbar- dark theme styling finish to check  */
 
-/* scrollbar styling general finish to check  */
 .modal-content {
   border-radius: 16px;
 }
 
 /* phone verified start to check  */
-/* .signin-modal-parent-non-reactivate div {
-  max-width: 600px !important;
-}
-.signin-modal-parent-non-reactivate div div {
-  max-height: 90vh !important;
-  max-width: 80vw !important;
-} */
 
 .subscription-modal-basic-width-smaller-700 > .modal-dialog {
   max-width: 600px !important;
@@ -4036,53 +4003,6 @@ themeName === "dark-theme"
 }
 /* organization type styling finish to check  */
 
-/*scrollbar general styling for website parent app.jsx start to check */
-
-/* scrollbar styling general start to check  */
-.light-theme::-webkit-scrollbar {
-  width: 1em;
-}
-
-.light-theme::-webkit-scrollbar-track {
-  background: #f7f9f9;
-  border-top-right-radius: 100vw;
-  border-bottom-right-radius: 100vw;
-  margin-block: 0.5em;
-  padding: 0;
-  margin: 0;
-}
-
-.light-theme::-webkit-scrollbar-thumb {
-  background: #b9cad3;
-  border-radius: 100vw;
-  width: 5px;
-  border: 0.25em solid #f7f9f9;
-}
-
-.dark-theme::-webkit-scrollbar {
-  width: 1em;
-}
-
-.dark-theme::-webkit-scrollbar-track {
-  background: #3e4144;
-  margin-block: 0.5em;
-  padding: 0;
-  margin: 0;
-}
-
-.dark-theme::-webkit-scrollbar-thumb {
-  background: #3e4144;
-  border-radius: 100vw;
-  width: 5px;
-  border: 0.25em solid #16181c;
-}
-/* scrollbar- dark theme styling finish to check  */
-
-/* scrollbar styling general finish to check  */
-/*scrollbar general styling for website parent app.jsx start to check */
-
-/*scrollbar general styling for website parent app.jsx finish to check */
-
 @keyframes postSharingLineAnimation {
   0% {
     width: 0px;
@@ -4227,33 +4147,10 @@ themeName === "dark-theme"
 }
 /* premium sign up page subscription modal finish to check  */
 
-/* glassmorphism effect test start to check for premium sign up page  */
-/* .color-light-theme {
-  filter: blur(125px);
-  background: linear-gradient(to bottom, #cde2fb, #fefeff);
-  border-radius: 99999px;
-  position: absolute;
-  width: 75%;
-  min-height: 100vh;
-  top: -175px;
-  left: 12%;
-}
-
-.color-dark-theme {
-  filter: blur(125px);
-  background: linear-gradient(to bottom, #212e3e, #010101);
-  border-radius: 99999px;
-  position: absolute;
-  width: 75%;
-  min-height: 100vh;
-  top: -175px;
-  left: 12%;
-} */
-
 .color-light-theme {
   position: absolute !important;
-  max-width: 99.2vw !important;
-  min-width: 99.2vw !important;
+  max-width: 97vw !important;
+  min-width: 97vw !important;
   min-height: 650px !important;
   top: -300px;
   background-image: radial-gradient(
@@ -4264,8 +4161,8 @@ themeName === "dark-theme"
 }
 .color-dark-theme {
   position: absolute !important;
-  max-width: 99.2vw !important;
-  min-width: 99.2vw !important;
+  max-width: 97vw !important;
+  min-width: 97vw !important;
   min-height: 650px !important;
   top: -300px;
   background-image: radial-gradient(
@@ -4292,4 +4189,169 @@ themeName === "dark-theme"
 .hide-me-modal,
 .hide-me-modal-fade {
   display: none !important;
+}
+
+.dark-theme-settings div {
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 400;
+  color: #e1e3e4 !important;
+  cursor: pointer;
+  padding: 7px 12px;
+}
+
+.dark-theme-settings div svg {
+  fill: #e1e3e4;
+  width: 1.25em;
+  height: 1.25em;
+}
+
+.dark-theme-settings .has-children:hover,
+.has-children-dark-theme:hover,
+.has-children-dark-theme_sub:hover,
+.dark-theme-settings-one-option:hover {
+  background-color: #16181c !important ;
+}
+
+.has-children-dark-theme,
+.has-children-light-theme {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 32px;
+  cursor: pointer;
+}
+
+.light-theme-settings div {
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 400;
+  color: #3f4347 !important;
+  cursor: pointer;
+  padding: 7px 12px;
+}
+
+.light-theme-settings div svg {
+  fill: #3f4347;
+  width: 1.25em;
+  height: 1.25em;
+}
+.light-theme-settings .has-children:hover,
+.has-children-light-theme:hover,
+.has-children-light-theme_sub:hover,
+.light-theme-settings-one-option:hover {
+  background-color: #f7f9f9 !important ;
+}
+
+.settings-icon-dark-theme svg {
+  fill: #71767a;
+  width: 1.25em;
+  height: 1.25em;
+}
+.settings-icon-light-theme svg {
+  fill: #536371;
+  width: 1.25em;
+  height: 1.25em;
+}
+
+.settings-icon-dark-theme,
+.settings-icon-light-theme {
+  padding: 16px;
+}
+
+.settings-text-first-exp-dark-theme {
+  color: #e6e9ea;
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 400;
+}
+
+.settings-text-first-exp-light-theme {
+  color: #0f141a;
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 400;
+}
+
+.settings-text-dark-theme {
+  color: #71767a;
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 400;
+}
+.settings-text-light-theme {
+  color: #536371;
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 400;
+}
+
+.settings-header-with-arrow {
+  display: flex;
+  align-items: center;
+  padding-left: 16px;
+}
+
+.first-head {
+  margin-left: 24px;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 24px;
+}
+
+.hover-blue-btn-light-theme:hover {
+  background-color: rgb(16, 128, 202);
+  outline-style: none;
+  border-style: solid;
+  border-color: rgb(207, 217, 222);
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-top-width: 1px;
+  border-radius: var(--border-radius);
+  transition-duration: 0.2s !important;
+}
+
+/* .. util list for setting section flex box start to check  */
+
+/* .. util list for setting section flex box finish to check  */
+
+.custom-input {
+  border: 2px solid #1d9bf0 !important;
+}
+
+.shrink-color-change {
+  color: #1d9bf0;
+}
+
+/* lightheme => #eaf5fe */
+/* darktheme => #010b19  */
+
+.light-theme-stylish-blue-background-color:hover {
+  background-color: #eaf5fe;
+}
+.dark-theme-stylish-blue-background-color:hover {
+  background-color: #010b19;
+}
+
+.text-dark-theme {
+  color: #71767a;
+}
+
+.text-light-theme {
+  color: rgb(83, 100, 113);
+}
+
+.hover-background-effect-clicked-dark-theme:hover {
+  background-color: #061019;
+}
+.hover-background-effect-clicked-light-theme:hover {
+  background-color: #ebf5fe;
+}
+.hover-background-effect-dark-theme:hover {
+  background-color: #0c0c0c;
+}
+.hover-background-effect-light-theme:hover {
+  background-color: #eeeff0;
 }

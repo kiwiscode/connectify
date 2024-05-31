@@ -16,6 +16,8 @@ import LikeAction from "../components/ui/LikeAction";
 import BookmarkAction from "../components/ui/BookmarkAction";
 import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
+import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
+import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -100,11 +102,6 @@ function Bookmarks() {
     setVisibleTweets((prevVisibleTweets) => prevVisibleTweets + 25);
   };
 
-  const [dataFromCommentModal, setDataFromCommentModal] = useState("");
-  function handleDataFromCommentModal(data) {
-    console.log("Data =>", data);
-    setDataFromCommentModal(data);
-  }
   const {
     postSharedMessage,
     contextHolder,
@@ -226,8 +223,20 @@ function Bookmarks() {
     postDeletedMessage();
     fetchBookmarks();
   };
+
+  const [dataFromCommentModal, setDataFromCommentModal] = useState("");
+  function handleDataFromCommentModal(data) {
+    console.log("Data =>", data);
+    setDataFromCommentModal(data);
+  }
+
+  const { isPostModalVisible } = useContext(ModalVisibilityContext);
+
   return (
     <>
+      {!isPostModalVisible && !dataFromCommentModal && (
+        <ResponsiveNavigationBarBottom />
+      )}
       {clearBookmarksOutput[0]}
       {contextHolder}
       <Col
