@@ -216,7 +216,7 @@ function PostPopover({
                       cursor: "pointer",
                       position: !postDetailPageActive ? "relative" : "",
                       right: isCutePopoverOnRightSide ? null : "16px",
-                      top: isCutePopoverOnRightSide ? null : "3px",
+                      top: isCutePopoverOnRightSide ? "5px" : "3px",
                       width: isCutePopoverOnRightSide ? "34px" : "40px",
                       height: isCutePopoverOnRightSide ? "34px" : "40px",
 

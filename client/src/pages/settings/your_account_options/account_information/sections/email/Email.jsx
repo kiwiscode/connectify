@@ -1,0 +1,184 @@
+import { Col } from "react-bootstrap";
+import SettingsNavigation from "../../../../../../components/SettingsNavigation/SettingsNavigation";
+import { useAntdMessageHandler } from "../../../../../../utils/useAntdMessageHandler";
+import useWindowDimensions from "../../../../../../hooks/getWindowDimensions";
+import { useContext } from "react";
+import { ThemeContext } from "../../../../../../context/ThemeContext";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../../../../../context/UserContext";
+
+function Email() {
+  const { contextHolder } = useAntdMessageHandler();
+  const { width } = useWindowDimensions();
+  const [{ theme, themeName }] = useContext(ThemeContext);
+  const navigate = useNavigate();
+  const { userInfo } = useContext(UserContext);
+  return (
+    <>
+      {" "}
+      {contextHolder}
+      <SettingsNavigation />
+      <Col
+        xs={10}
+        sm={10}
+        md={11}
+        lg={width <= 1201 && width >= 992 ? 7 : width > 1201 ? 4 : ""}
+        xxl={width <= 1201 && width >= 992 ? 7 : width > 1201 ? 4 : ""}
+        className={`right-side-column-settings-account-page`}
+        style={{
+          borderLeft:
+            width < 1000
+              ? themeName !== "dark-theme"
+                ? "1px solid rgba(0, 0, 0, 0.1)"
+                : "1px solid rgb(70, 70, 70)"
+              : null,
+          borderRight:
+            themeName !== "dark-theme"
+              ? "1px solid rgba(0, 0, 0, 0.1)"
+              : "1px solid rgb(70, 70, 70)",
+          borderTop: "none ",
+          borderBottom: "none",
+          padding: "0px",
+          margin: "0px",
+          width: width > 1400 ? "600px" : width <= 500 ? "100%" : null,
+          position: "relative",
+          right: "10px",
+        }}
+      >
+        <div className="settings-header-with-arrow ">
+          <div
+            onClick={() => {
+              navigate(-1);
+            }}
+            className={`arrow arrow-${themeName} mt-2`}
+            style={{
+              position: "relative",
+              width: "36px",
+              height: " 36px",
+              borderRadius: "50%",
+              cursor: "pointer",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginRight: "5px",
+            }}
+          >
+            {" "}
+            <svg
+              color={themeName === "dark-theme" ? "white" : ""}
+              fill="currentColor"
+              style={{
+                position: "absolute",
+                border: "none",
+              }}
+              width={20}
+              height={20}
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+            >
+              <g>
+                <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+              </g>
+            </svg>
+          </div>
+          <div className="mt-2 first-head">Change email</div>
+        </div>{" "}
+        <div
+          style={{
+            padding: "0px 24px",
+            position: "relative",
+          }}
+        >
+          {" "}
+          <div
+            style={{
+              position: "absolute",
+              top: "10%",
+              left: "6%",
+              fontSize: "12px",
+              lineHeight: "18px",
+              fontWeight: "400",
+              minWidth: "fit-content",
+              //   width: "80%",
+              color:
+                themeName === "dark-theme" ? "#383B3D" : "rgb(168,177,184)",
+              zIndex: 9999,
+            }}
+          >
+            Current
+          </div>
+          <div
+            className={"mt-3"}
+            type="text"
+            style={{
+              height: "56px",
+              width: "100%",
+              borderRadius: "4px",
+              backgroundColor:
+                themeName === "dark-theme" ? "#111214" : "rgb(248,249,250)",
+            }}
+          />
+          <input
+            type="text"
+            defaultValue={userInfo.email}
+            style={{
+              height: "50px",
+              position: "absolute",
+              top: "5%",
+              left: "6%",
+              width: "87%",
+              minWidth: "fit-content",
+              border: "none",
+              outline: "none",
+              paddingTop: "15px",
+              textAlign: "left",
+              paddingLeft: "0px",
+              paddingRight: "0px",
+              paddingBottom: "0px",
+              backgroundColor: "transparent",
+              color:
+                themeName === "dark-theme" ? "#383B3D" : "rgb(168,177,184)",
+            }}
+          />
+        </div>{" "}
+        <div
+          className="mt-4"
+          style={{
+            borderBottom:
+              themeName !== "dark-theme"
+                ? "1px solid rgba(0, 0, 0, 0.1)"
+                : // : "0.1px solid rgb(70, 70, 70)",
+                  "1px solid rgb(70, 70, 70)",
+
+            display: "inline-block",
+            width: "100%",
+          }}
+        ></div>
+        <div
+          onClick={() => {
+            navigate("/i/flow/add_email");
+          }}
+          className={
+            themeName === "dark-theme"
+              ? "dark-theme-stylish-blue-background-color"
+              : "light-theme-stylish-blue-background-color"
+          }
+          style={{
+            padding: "16px",
+            textAlign: "center",
+            color: "rgb(29, 155, 240)",
+            lineHeight: "20px",
+            fontSize: "15px",
+            fontWeight: "400",
+            cursor: "pointer",
+          }}
+        >
+          Update email address
+        </div>
+      </Col>
+    </>
+  );
+}
+
+export default Email;

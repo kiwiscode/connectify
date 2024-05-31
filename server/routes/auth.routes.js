@@ -65,6 +65,7 @@ router.post("/login-variant-one-result", (req, res) => {
                 user: user,
               });
             } else {
+              user.active = true;
               user.save().then((user) => {
                 const {
                   _id,
@@ -149,7 +150,10 @@ router.post("/logout", (req, res) => {
     }
 
     const userId = decoded.userId;
-    User.findByIdAndUpdate(userId, { active: false })
+    User.findByIdAndUpdate(userId, {
+      active: false,
+      hasPhoneVerifiedForAccountInformationDetail: false,
+    })
       .then(() => {
         res.sendStatus(200);
       })

@@ -1552,7 +1552,13 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   bottom: "5px",
                                   left: "12%",
                                 }}
-                                className={`hover-forgot-password-send-email-stack-svg-verified-email hover-forgot-password-send-email-stack-svg-verified-email-${themeName}`}
+                                className={
+                                  themeName === "dark-theme"
+                                    ? "hover-background-effect-clicked-dark-theme"
+                                    : themeName !== "dark-theme"
+                                    ? "hover-background-effect-clicked-light-theme"
+                                    : null
+                                }
                               >
                                 <div
                                   style={{
@@ -2236,11 +2242,19 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   position: "relative",
                                 }}
                                 className={
+                                  themeName === "dark-theme" &&
                                   forgotMyPasswordChecked
-                                    ? `ms-auto hover-forgot-password-send-email-stack-svg-verified-email
-                                   hover-forgot-password-send-email-stack-svg-verified-email-${themeName}`
-                                    : `ms-auto 
-                                    hover-forgot-password-send-email-stack-svg-verified-email-variant-2 hover-forgot-password-send-email-stack-svg-verified-email-variant-2-${themeName}`
+                                    ? "hover-background-effect-clicked-dark-theme ms-auto"
+                                    : themeName !== "dark-theme" &&
+                                      forgotMyPasswordChecked
+                                    ? "hover-background-effect-clicked-light-theme ms-auto"
+                                    : themeName === "dark-theme" &&
+                                      !forgotMyPasswordChecked
+                                    ? "hover-background-effect-dark-theme ms-auto"
+                                    : themeName !== "dark-theme" &&
+                                      !forgotMyPasswordChecked
+                                    ? "hover-background-effect-light-theme ms-auto"
+                                    : ""
                                 }
                                 onClick={() => {
                                   setForgotMyPasswordChecked(
@@ -2325,11 +2339,19 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   cursor: "pointer",
                                 }}
                                 className={
+                                  themeName === "dark-theme" &&
                                   suspiciousActivity
-                                    ? `ms-auto hover-forgot-password-send-email-stack-svg-verified-email
-                                   hover-forgot-password-send-email-stack-svg-verified-email-${themeName}`
-                                    : `ms-auto 
-                                    hover-forgot-password-send-email-stack-svg-verified-email-variant-2 hover-forgot-password-send-email-stack-svg-verified-email-variant-2-${themeName}`
+                                    ? "hover-background-effect-clicked-dark-theme ms-auto"
+                                    : themeName !== "dark-theme" &&
+                                      suspiciousActivity
+                                    ? "hover-background-effect-clicked-light-theme ms-auto"
+                                    : themeName === "dark-theme" &&
+                                      !suspiciousActivity
+                                    ? "hover-background-effect-dark-theme ms-auto"
+                                    : themeName !== "dark-theme" &&
+                                      !suspiciousActivity
+                                    ? "hover-background-effect-light-theme ms-auto"
+                                    : ""
                                 }
                                 onClick={() => {
                                   setSuspiciousActivityChecked(
@@ -2414,11 +2436,18 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   cursor: "pointer",
                                 }}
                                 className={
-                                  differentReason
-                                    ? `ms-auto hover-forgot-password-send-email-stack-svg-verified-email
-                                   hover-forgot-password-send-email-stack-svg-verified-email-${themeName}`
-                                    : `ms-auto 
-                                    hover-forgot-password-send-email-stack-svg-verified-email-variant-2 hover-forgot-password-send-email-stack-svg-verified-email-variant-2-${themeName}`
+                                  themeName === "dark-theme" && differentReason
+                                    ? "hover-background-effect-clicked-dark-theme ms-auto"
+                                    : themeName !== "dark-theme" &&
+                                      differentReason
+                                    ? "hover-background-effect-clicked-light-theme ms-auto"
+                                    : themeName === "dark-theme" &&
+                                      !differentReason
+                                    ? "hover-background-effect-dark-theme ms-auto"
+                                    : themeName !== "dark-theme" &&
+                                      !differentReason
+                                    ? "hover-background-effect-light-theme ms-auto"
+                                    : ""
                                 }
                                 onClick={() => {
                                   setDifferentReason(!differentReason);
@@ -3596,7 +3625,13 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 bottom: "5px",
                                 left: "12%",
                               }}
-                              className={`hover-forgot-password-send-email-stack-svg-verified-email hover-forgot-password-send-email-stack-svg-verified-email-${themeName}`}
+                              className={
+                                themeName === "dark-theme"
+                                  ? "hover-background-effect-clicked-dark-theme"
+                                  : themeName !== "dark-theme"
+                                  ? "hover-background-effect-clicked-light-theme"
+                                  : null
+                              }
                             >
                               <div
                                 style={{
@@ -4257,11 +4292,19 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 position: "relative",
                               }}
                               className={
+                                themeName === "dark-theme" &&
                                 forgotMyPasswordChecked
-                                  ? `ms-auto hover-forgot-password-send-email-stack-svg-verified-email
-                                 hover-forgot-password-send-email-stack-svg-verified-email-${themeName}`
-                                  : `ms-auto 
-                                  hover-forgot-password-send-email-stack-svg-verified-email-variant-2 hover-forgot-password-send-email-stack-svg-verified-email-variant-2-${themeName}`
+                                  ? "hover-background-effect-clicked-dark-theme ms-auto"
+                                  : themeName !== "dark-theme" &&
+                                    forgotMyPasswordChecked
+                                  ? "hover-background-effect-clicked-light-theme ms-auto"
+                                  : themeName === "dark-theme" &&
+                                    !forgotMyPasswordChecked
+                                  ? "hover-background-effect-dark-theme ms-auto"
+                                  : themeName !== "dark-theme" &&
+                                    !forgotMyPasswordChecked
+                                  ? "hover-background-effect-light-theme ms-auto"
+                                  : ""
                               }
                               onClick={() => {
                                 setForgotMyPasswordChecked(
@@ -4346,11 +4389,18 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 cursor: "pointer",
                               }}
                               className={
-                                suspiciousActivity
-                                  ? `ms-auto hover-forgot-password-send-email-stack-svg-verified-email
-                                 hover-forgot-password-send-email-stack-svg-verified-email-${themeName}`
-                                  : `ms-auto 
-                                  hover-forgot-password-send-email-stack-svg-verified-email-variant-2 hover-forgot-password-send-email-stack-svg-verified-email-variant-2-${themeName}`
+                                themeName === "dark-theme" && suspiciousActivity
+                                  ? "hover-background-effect-clicked-dark-theme ms-auto"
+                                  : themeName !== "dark-theme" &&
+                                    suspiciousActivity
+                                  ? "hover-background-effect-clicked-light-theme ms-auto"
+                                  : themeName === "dark-theme" &&
+                                    !suspiciousActivity
+                                  ? "hover-background-effect-dark-theme ms-auto"
+                                  : themeName !== "dark-theme" &&
+                                    !suspiciousActivity
+                                  ? "hover-background-effect-light-theme ms-auto"
+                                  : ""
                               }
                               onClick={() => {
                                 setSuspiciousActivityChecked(
@@ -4435,11 +4485,18 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 cursor: "pointer",
                               }}
                               className={
-                                differentReason
-                                  ? `ms-auto hover-forgot-password-send-email-stack-svg-verified-email
-                                 hover-forgot-password-send-email-stack-svg-verified-email-${themeName}`
-                                  : `ms-auto 
-                                  hover-forgot-password-send-email-stack-svg-verified-email-variant-2 hover-forgot-password-send-email-stack-svg-verified-email-variant-2-${themeName}`
+                                themeName === "dark-theme" && differentReason
+                                  ? "hover-background-effect-clicked-dark-theme ms-auto"
+                                  : themeName !== "dark-theme" &&
+                                    differentReason
+                                  ? "hover-background-effect-clicked-light-theme ms-auto"
+                                  : themeName === "dark-theme" &&
+                                    !differentReason
+                                  ? "hover-background-effect-dark-theme ms-auto"
+                                  : themeName !== "dark-theme" &&
+                                    !differentReason
+                                  ? "hover-background-effect-light-theme ms-auto"
+                                  : ""
                               }
                               onClick={() => {
                                 setDifferentReason(!differentReason);

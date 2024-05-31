@@ -1504,9 +1504,15 @@ function SignUpPage() {
                               position: "relative",
                             }}
                             className={
-                              firstClicked
-                                ? `hover-customize-your-experience-tab-get-more-out-of-variant cs-experience-getMoreOutOf-${themeName}`
-                                : `hover-customize-your-experience-tab-get-more-out-of-variant-2 cs-experience-variant-2-getMoreOutOf-${themeName}`
+                              themeName === "dark-theme" && firstClicked
+                                ? "hover-background-effect-clicked-dark-theme"
+                                : themeName !== "dark-theme" && firstClicked
+                                ? "hover-background-effect-clicked-light-theme"
+                                : themeName === "dark-theme" && !firstClicked
+                                ? "hover-background-effect-dark-theme"
+                                : themeName !== "dark-theme" && !firstClicked
+                                ? "hover-background-effect-light-theme"
+                                : ""
                             }
                           >
                             <div
@@ -1597,9 +1603,15 @@ function SignUpPage() {
                               position: "relative",
                             }}
                             className={
-                              secondClicked
-                                ? `hover-customize-your-experience-tab-connect-with-people-you-know cs-experience-connectWithPeopleYouKnow-${themeName}`
-                                : `hover-customize-your-experience-tab-connect-with-people-you-know-variant-2 cs-experience-variant-2-connectWithPeopleYouKnow-${themeName}`
+                              themeName === "dark-theme" && secondClicked
+                                ? "hover-background-effect-clicked-dark-theme"
+                                : themeName !== "dark-theme" && secondClicked
+                                ? "hover-background-effect-clicked-light-theme"
+                                : themeName === "dark-theme" && !secondClicked
+                                ? "hover-background-effect-dark-theme"
+                                : themeName !== "dark-theme" && !secondClicked
+                                ? "hover-background-effect-light-theme"
+                                : ""
                             }
                           >
                             <div
@@ -1694,9 +1706,15 @@ function SignUpPage() {
                               position: "relative",
                             }}
                             className={
-                              thirdClicked
-                                ? `hover-customize-your-experience-tab-personalized-ads cs-experience-personalizedAds-${themeName}`
-                                : `hover-customize-your-experience-tab-personalized-ads-variant-2 cs-experience-variant-2-personalizedAds-${themeName} `
+                              themeName === "dark-theme" && thirdClicked
+                                ? "hover-background-effect-clicked-dark-theme"
+                                : themeName !== "dark-theme" && thirdClicked
+                                ? "hover-background-effect-clicked-light-theme"
+                                : themeName === "dark-theme" && !thirdClicked
+                                ? "hover-background-effect-dark-theme"
+                                : themeName !== "dark-theme" && !thirdClicked
+                                ? "hover-background-effect-light-theme"
+                                : ""
                             }
                           >
                             <div
@@ -1757,8 +1775,10 @@ function SignUpPage() {
                         fontWeight: "400",
                       }}
                     >
-                      By signing up, you agree to our{" "}
-                      <span className="customize-experience-tab">Terms</span>,{" "}
+                      By signing up, you agree to our asd
+                      <span className="customize-experience-tab">
+                        Terms
+                      </span>,{" "}
                       <span className="customize-experience-tab">
                         Privacy Policy
                       </span>
@@ -3064,9 +3084,15 @@ function SignUpPage() {
                                 position: "relative",
                               }}
                               className={
-                                firstClicked
-                                  ? `hover-customize-your-experience-tab-get-more-out-of-variant cs-experience-getMoreOutOf-${themeName}`
-                                  : `hover-customize-your-experience-tab-get-more-out-of-variant-2 cs-experience-variant-2-getMoreOutOf-${themeName}`
+                                themeName === "dark-theme" && firstClicked
+                                  ? "hover-background-effect-clicked-dark-theme"
+                                  : themeName !== "dark-theme" && firstClicked
+                                  ? "hover-background-effect-clicked-light-theme"
+                                  : themeName === "dark-theme" && !firstClicked
+                                  ? "hover-background-effect-dark-theme"
+                                  : themeName !== "dark-theme" && !firstClicked
+                                  ? "hover-background-effect-light-theme"
+                                  : ""
                               }
                             >
                               <div
@@ -3159,9 +3185,15 @@ function SignUpPage() {
                                 position: "relative",
                               }}
                               className={
-                                secondClicked
-                                  ? `hover-customize-your-experience-tab-connect-with-people-you-know cs-experience-connectWithPeopleYouKnow-${themeName}`
-                                  : `hover-customize-your-experience-tab-connect-with-people-you-know-variant-2 cs-experience-variant-2-connectWithPeopleYouKnow-${themeName}`
+                                themeName === "dark-theme" && secondClicked
+                                  ? "hover-background-effect-clicked-dark-theme"
+                                  : themeName !== "dark-theme" && secondClicked
+                                  ? "hover-background-effect-clicked-light-theme"
+                                  : themeName === "dark-theme" && !secondClicked
+                                  ? "hover-background-effect-dark-theme"
+                                  : themeName !== "dark-theme" && !secondClicked
+                                  ? "hover-background-effect-light-theme"
+                                  : ""
                               }
                             >
                               <div
@@ -3259,9 +3291,15 @@ function SignUpPage() {
                                 position: "relative",
                               }}
                               className={
-                                thirdClicked
-                                  ? `hover-customize-your-experience-tab-personalized-ads cs-experience-personalizedAds-${themeName}`
-                                  : `hover-customize-your-experience-tab-personalized-ads-variant-2 cs-experience-variant-2-personalizedAds-${themeName} `
+                                themeName === "dark-theme" && thirdClicked
+                                  ? "hover-background-effect-clicked-dark-theme"
+                                  : themeName !== "dark-theme" && thirdClicked
+                                  ? "hover-background-effect-clicked-light-theme"
+                                  : themeName === "dark-theme" && !thirdClicked
+                                  ? "hover-background-effect-dark-theme"
+                                  : themeName !== "dark-theme" && !thirdClicked
+                                  ? "hover-background-effect-light-theme"
+                                  : ""
                               }
                             >
                               <div

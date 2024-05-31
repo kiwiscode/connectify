@@ -1,10 +1,11 @@
-import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useContext, useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ThemeContext } from "../context/ThemeContext";
 import { Button, Col, Container, Modal, Row } from "react-bootstrap";
 import useWindowDimensions from "../hooks/getWindowDimensions";
 import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
+import { NavigationHistoryContext } from "../context/NavigationHistoryContext";
 
 function PremiumSignupPage({ sendToAppPlanPrice }) {
   const navigate = useNavigate();
@@ -118,6 +119,9 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
     });
   };
 
+  const { navigationHistoryArray } = useContext(NavigationHistoryContext);
+
+  console.log("Navigation history array =>", navigationHistoryArray);
   return (
     <>
       {width > 700 && (
@@ -816,7 +820,17 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
             xl={1}
           >
             <div
-              onClick={() => navigate("/home")}
+              onClick={() => {
+                if (
+                  navigationHistoryArray[1] === "/i/verified-orgs-signup" ||
+                  navigationHistoryArray[1] ===
+                    "/i/flow/subscription_eligibility_check"
+                ) {
+                  navigate("/home");
+                } else {
+                  navigate(-1);
+                }
+              }}
               className={
                 themeName === "dark-theme"
                   ? `close-btn-extra-premium-sign-up-dark-theme mt-4 ml-2`
@@ -873,7 +887,7 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
-                alignItems: "center",
+                // alignItems: "center",
                 marginTop: width < 600 ? "0px" : "75px",
               }}
               className="wrapper_premium_sign_up"
@@ -905,6 +919,7 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   >
                     Upgrade to Premium
                   </div>
+
                   <div
                     style={{
                       fontSize: "18px",

@@ -1068,9 +1068,8 @@ function PostDetailPage() {
                           <div
                             style={{
                               overflow: "hidden",
-                              border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
-                              borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
-                              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                              borderRadius: "8px",
+                              padding: "12px",
                             }}
                           >
                             <img
@@ -1078,7 +1077,9 @@ function PostDetailPage() {
                               alt="Description"
                               style={{
                                 width: "100%",
+                                maxWidth: "100%",
                                 display: "block",
+                                borderRadius: "16px",
                               }}
                             />
                           </div>
@@ -1584,10 +1585,8 @@ function PostDetailPage() {
                                             <div
                                               style={{
                                                 overflow: "hidden",
-                                                border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
-                                                borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
-                                                boxShadow:
-                                                  "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                                                borderRadius: "8px",
+                                                padding: "12px",
                                               }}
                                             >
                                               <img
@@ -1595,7 +1594,9 @@ function PostDetailPage() {
                                                 alt="Description"
                                                 style={{
                                                   width: "100%",
+                                                  maxWidth: "100%",
                                                   display: "block",
+                                                  borderRadius: "16px",
                                                 }}
                                               />
                                             </div>
@@ -2005,10 +2006,8 @@ function PostDetailPage() {
                                               <div
                                                 style={{
                                                   overflow: "hidden",
-                                                  border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
-                                                  borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
-                                                  boxShadow:
-                                                    "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                                                  borderRadius: "8px",
+                                                  padding: "12px",
                                                 }}
                                               >
                                                 <img
@@ -2016,7 +2015,9 @@ function PostDetailPage() {
                                                   alt="Description"
                                                   style={{
                                                     width: "100%",
+                                                    maxWidth: "100%",
                                                     display: "block",
+                                                    borderRadius: "16px",
                                                   }}
                                                 />
                                               </div>
