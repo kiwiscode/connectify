@@ -455,7 +455,7 @@ function UserProfile({ isNewPostShared }) {
               {/* finish to check  */}
 
               <div
-                className="p-2"
+                className="p-2 chirp-bold-font"
                 style={{
                   fontWeight: "700",
                   fontSize: "20px",
@@ -470,7 +470,7 @@ function UserProfile({ isNewPostShared }) {
                         ? "#71767A"
                         : "rgb(83, 100, 113)",
                   }}
-                  className="profile-paragraph"
+                  className="profile-paragraph chirp-regular-font"
                 >
                   {userInfo.posts.length} posts
                 </div>
@@ -578,15 +578,17 @@ function UserProfile({ isNewPostShared }) {
             {/* finish to check */}
             <div style={{ lineHeight: "30px", marginBottom: "20px" }}>
               <div
+                className="chirp-bold-font"
                 style={{
                   fontWeight: "700",
                   fontSize: "20px",
                   marginTop: "50px",
                 }}
               >
-                {userInfo.username}
+                {userInfo.fullname}
               </div>
               <div
+                className="chirp-regular-font"
                 style={{
                   color:
                     themeName === "dark-theme"
@@ -624,6 +626,7 @@ function UserProfile({ isNewPostShared }) {
                     </g>
                   </svg>
                   <span
+                    className="chirp-regular-font"
                     style={{
                       color:
                         themeName === "dark-theme"
@@ -679,6 +682,7 @@ function UserProfile({ isNewPostShared }) {
                     )}
                   </span>{" "}
                   <span
+                    className="chirp-regular-font"
                     style={{
                       cursor: "pointer",
                       color:
@@ -727,6 +731,7 @@ function UserProfile({ isNewPostShared }) {
                     )}
                   </span>{" "}
                   <span
+                    className="chirp-regular-font"
                     style={{
                       cursor: "pointer",
                       color:
@@ -786,6 +791,7 @@ function UserProfile({ isNewPostShared }) {
             >
               {favoriteWindow === "" ? (
                 <span
+                  className="chirp-regular-font"
                   style={{
                     fontWeight: "400",
                     color:
@@ -798,6 +804,7 @@ function UserProfile({ isNewPostShared }) {
                 </span>
               ) : (
                 <span
+                  className="chirp-bold-font"
                   style={{
                     fontWeight: "700",
                     color:
@@ -828,6 +835,7 @@ function UserProfile({ isNewPostShared }) {
             >
               {postsWindow === "" ? (
                 <span
+                  className="chirp-regular-font"
                   style={{
                     fontWeight: "400",
                     color:
@@ -840,6 +848,7 @@ function UserProfile({ isNewPostShared }) {
                 </span>
               ) : (
                 <span
+                  className="chirp-bold-font"
                   style={{
                     fontWeight: "700",
                     color:
@@ -944,7 +953,7 @@ function UserProfile({ isNewPostShared }) {
                                 </g>
                               </svg>
                               <Link
-                                className={`hover-reposted-text hover-reposted-text-${themeName}`}
+                                className={`hover-reposted-text hover-reposted-text-${themeName} chirp-bold-font`}
                                 style={{
                                   fontSize: "13px",
                                   lineHeight: "16px",
@@ -1045,7 +1054,7 @@ function UserProfile({ isNewPostShared }) {
                                   }}
                                 >
                                   <span
-                                    className="hover-fullname"
+                                    className="hover-fullname chirp-bold-font"
                                     style={{
                                       fontWeight: "700",
                                       fontSize: "15px",
@@ -1092,7 +1101,7 @@ function UserProfile({ isNewPostShared }) {
                                     fontWeight: "400",
                                   }}
                                 >
-                                  <span className="post-circle-postowner-username">
+                                  <span className="chirp-regular-font">
                                     <span>@{post.authorUserName}</span>
                                   </span>
                                 </Link>
@@ -1107,7 +1116,7 @@ function UserProfile({ isNewPostShared }) {
                                   }`}
                                 >
                                   <span
-                                    className="post-circle-date-post-detail"
+                                    className="post-circle-date-post-detail chirp-regular-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
@@ -1128,7 +1137,7 @@ function UserProfile({ isNewPostShared }) {
                                           : "light-theme"
                                       }
                                     >
-                                      <span className="date-post-detail">
+                                      <span className="date-post-detail chirp-regular-font">
                                         {getCreatedDate(post.createdAt)}
                                       </span>
                                     </BootstrapTooltip>
@@ -1175,6 +1184,7 @@ function UserProfile({ isNewPostShared }) {
                               className="p-2 parent-comment-text"
                             >
                               <span
+                                className="chirp-regular-font"
                                 style={{
                                   color:
                                     themeName === "dark-theme"
@@ -1221,6 +1231,7 @@ function UserProfile({ isNewPostShared }) {
                             }}
                           >
                             <div
+                              className="p-2 chirp-regular-font"
                               style={{
                                 fontSize: "15px",
                                 fontWeight: "400",
@@ -1231,7 +1242,6 @@ function UserProfile({ isNewPostShared }) {
                                 color:
                                   themeName === "dark-theme" ? "white" : "",
                               }}
-                              className="p-2"
                             >
                               {post.content}
                             </div>
@@ -1409,6 +1419,7 @@ function UserProfile({ isNewPostShared }) {
                 }}
               >
                 <div
+                  className="chirp-heavy-font"
                   style={{
                     lineHeight: "36px",
                     fontSize: "31px",
@@ -1419,6 +1430,7 @@ function UserProfile({ isNewPostShared }) {
                   {"You haven't posted anything yet."}
                 </div>
                 <div
+                  className="chirp-regular-font"
                   style={{
                     color:
                       themeName === "dark-theme"
@@ -1549,7 +1561,7 @@ function UserProfile({ isNewPostShared }) {
                                     }}
                                   >
                                     <span
-                                      className="hover-fullname"
+                                      className="hover-fullname chirp-bold-font"
                                       style={{
                                         fontWeight: "700",
                                         fontSize: "15px",
@@ -1596,7 +1608,7 @@ function UserProfile({ isNewPostShared }) {
                                       fontWeight: "400",
                                     }}
                                   >
-                                    <span className="post-circle-postowner-username">
+                                    <span className="chirp-regular-font">
                                       <span>@{favorite.authorUserName}</span>
                                     </span>
                                   </Link>
@@ -1612,7 +1624,7 @@ function UserProfile({ isNewPostShared }) {
                                     }`}
                                   >
                                     <span
-                                      className="post-circle-date-post-detail"
+                                      className="post-circle-date-post-detail chirp-regular-font"
                                       style={{
                                         color:
                                           themeName === "dark-theme"
@@ -1693,7 +1705,7 @@ function UserProfile({ isNewPostShared }) {
                                 overflowWrap: "break-word",
                                 maxWidth: "100%",
                               }}
-                              className="p-2"
+                              className="p-2 chirp-regular-font"
                             >
                               {favorite.content}
                             </div>
@@ -1887,6 +1899,7 @@ function UserProfile({ isNewPostShared }) {
                 }}
               >
                 <div
+                  className="chirp-heavy-font"
                   style={{
                     lineHeight: "36px",
                     fontSize: "31px",
@@ -1897,6 +1910,7 @@ function UserProfile({ isNewPostShared }) {
                   You don’t have any likes yet
                 </div>
                 <div
+                  className="chirp-regular-font"
                   style={{
                     color:
                       themeName === "dark-theme"

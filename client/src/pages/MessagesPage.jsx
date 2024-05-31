@@ -164,6 +164,7 @@ function MessagesPage() {
           }}
         >
           <div
+            className="chirp-bold-font"
             style={{
               color: themeName === "dark-theme" ? "white" : "",
               fontWeight: "700",
@@ -174,6 +175,7 @@ function MessagesPage() {
             Leave conversation?
           </div>
           <div
+            className="mt-2 chirp-regular-font"
             style={{
               color:
                 themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
@@ -181,7 +183,6 @@ function MessagesPage() {
               fontSize: "15px",
               lineHeight: "20px",
             }}
-            className="mt-2"
           >
             This conversation will be deleted from your inbox. Other people in
             the conversation will still be able to see it.{" "}
@@ -197,7 +198,7 @@ function MessagesPage() {
         >
           <Button
             onClick={() => deleteConversation()}
-            className={`red-btn ${themeName}-red-btn`}
+            className={`red-btn ${themeName}-red-btn chirp-bold-font`}
             style={{
               maxWidth: "256px",
               minHeight: "44px",
@@ -216,7 +217,7 @@ function MessagesPage() {
               maxWidth: "256px",
               minHeight: "44px",
             }}
-            className={`mt-2 forgot-password-btn ${themeName}-black-btn`}
+            className={`mt-2 forgot-password-btn ${themeName}-black-btn chirp-bold-font`}
           >
             Cancel
           </Button>
@@ -478,7 +479,7 @@ function MessagesPage() {
               fontWeight: "700",
               fontSize: "20px",
             }}
-            className="p-2"
+            className="p-2 chirp-bold-font"
           >
             Messages
           </div>
@@ -575,6 +576,7 @@ function MessagesPage() {
                   </svg>
                 </div>
                 <input
+                  className="chirp-regular-font"
                   type="text"
                   placeholder="Search Direct Messages"
                   value={searchTerm}
@@ -723,6 +725,7 @@ function MessagesPage() {
                                         className="p-0"
                                       >
                                         <span
+                                          className="chirp-bold-font"
                                           style={{
                                             color:
                                               themeName === "dark-theme"
@@ -747,6 +750,7 @@ function MessagesPage() {
                                           ) : null}
                                         </span>
                                         <span
+                                          className="chirp-regular-font"
                                           style={{
                                             color:
                                               themeName === "dark-theme"
@@ -805,6 +809,7 @@ function MessagesPage() {
                                           className="p-0"
                                         >
                                           <span
+                                            className="chirp-regular-font"
                                             style={{
                                               color:
                                                 themeName === "dark-theme"
@@ -983,6 +988,7 @@ function MessagesPage() {
                                                           </g>
                                                         </svg>
                                                         <span
+                                                          className="chirp-bold-font"
                                                           style={{
                                                             lineHeight: "20px",
                                                             fontWeight: "700",
@@ -1032,6 +1038,7 @@ function MessagesPage() {
                                                           </g>
                                                         </svg>
                                                         <span
+                                                          className="chirp-bold-font"
                                                           style={{
                                                             lineHeight: "20px",
                                                             fontWeight: "700",
@@ -1082,6 +1089,7 @@ function MessagesPage() {
                                                           </g>
                                                         </svg>
                                                         <span
+                                                          className="chirp-bold-font"
                                                           style={{
                                                             lineHeight: "20px",
                                                             fontWeight: "700",
@@ -1143,6 +1151,7 @@ function MessagesPage() {
                                                           </g>
                                                         </svg>
                                                         <span
+                                                          className="chirp-bold-font"
                                                           style={{
                                                             color: "#f2212e",
                                                             lineHeight: "20px",

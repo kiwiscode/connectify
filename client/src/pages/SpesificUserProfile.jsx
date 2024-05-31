@@ -1208,7 +1208,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                                 </g>
                               </svg>
                               <Link
-                                className={`hover-reposted-text hover-reposted-text-${themeName}`}
+                                className={`hover-reposted-text hover-reposted-text-${themeName} chirp-bold-font`}
                                 style={{
                                   fontSize: "13px",
                                   lineHeight: "16px",
@@ -1367,7 +1367,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                                   }}
                                 >
                                   <span
-                                    className="hover-fullname"
+                                    className="hover-fullname chirp-bold-font"
                                     style={{
                                       fontWeight: "700",
                                       fontSize: "15px",
@@ -1414,7 +1414,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                                     fontWeight: "400",
                                   }}
                                 >
-                                  <span className="post-circle-postowner-username">
+                                  <span className="chirp-regular-font">
                                     <span>@{post.authorUserName}</span>
                                   </span>
                                 </Link>
@@ -1449,7 +1449,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                                           : "light-theme"
                                       }
                                     >
-                                      <span className="date-post-detail">
+                                      <span className="date-post-detail chirp-regular-font">
                                         {getCreatedDateForSpesificUserProfilePage(
                                           post.createdAt
                                         )}
@@ -1500,6 +1500,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                               className="p-2 parent-comment-text"
                             >
                               <span
+                                className="chirp-regular-font"
                                 style={{
                                   color:
                                     themeName === "dark-theme"
@@ -1555,7 +1556,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                                 color:
                                   themeName === "dark-theme" ? "white" : "",
                               }}
-                              className="p-2"
+                              className="p-2 chirp-regular-font"
                             >
                               {post.content}
                             </div>
@@ -1743,6 +1744,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                 }}
               >
                 <div
+                  className="chirp-heavy-font"
                   style={{
                     lineHeight: "36px",
                     fontSize: "31px",
@@ -1758,6 +1760,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                     : "You haven't posted anything yet."}
                 </div>
                 <div
+                  className="chirp-regular-font"
                   style={{
                     color:
                       themeName === "dark-theme"
@@ -1894,7 +1897,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                                       }}
                                     >
                                       <span
-                                        className="hover-fullname"
+                                        className="hover-fullname chirp-bold-font"
                                         style={{
                                           fontWeight: "700",
                                           fontSize: "15px",
@@ -1941,7 +1944,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                                         fontWeight: "400",
                                       }}
                                     >
-                                      <span className="post-circle-postowner-username">
+                                      <span className="chirp-regular-font">
                                         <span>@{favorite.authorUserName}</span>
                                       </span>
                                     </Link>
@@ -1960,7 +1963,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                                       }`}
                                     >
                                       <span
-                                        className="post-circle-date-post-detail"
+                                        className="post-circle-date-post-detail chirp-regular-font"
                                         style={{
                                           color:
                                             themeName === "dark-theme"
@@ -1983,7 +1986,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                                               : "light-theme"
                                           }
                                         >
-                                          <span className="date-post-detail">
+                                          <span className="date-post-detail chirp-regular-font">
                                             {getCreatedDateForSpesificUserProfilePage(
                                               favorite.createdAt
                                             )}
@@ -2043,7 +2046,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                                   color:
                                     themeName === "dark-theme" ? "white" : "",
                                 }}
-                                className="p-2"
+                                className="p-2 chirp-regular-font"
                               >
                                 {favorite.content}
                               </div>
@@ -2244,6 +2247,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                 }}
               >
                 <div
+                  className="chirp-heavy-font"
                   style={{
                     lineHeight: "36px",
                     fontSize: "31px",
@@ -2259,6 +2263,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                     : "You don’t have any likes yet"}
                 </div>
                 <div
+                  className="chirp-regular-font"
                   style={{
                     color:
                       themeName === "dark-theme"

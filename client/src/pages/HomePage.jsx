@@ -77,7 +77,7 @@ function HomePage() {
                 className="text-test"
                 x="27.5"
                 y="70"
-                fontFamily="Arial"
+                fontFamily="sans-serif"
                 fontSize="22"
                 fill="#FFF"
                 stroke="#FFF"

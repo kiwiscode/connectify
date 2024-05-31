@@ -2332,11 +2332,10 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                   >
                     <div>
                       <div
-                        className="localeInfo-username"
+                        className="chirp-bold-font"
                         style={{
                           color: themeName === "dark-theme" ? "white" : "black",
                           lineHeight: "20px",
-                          fontWeight: "700",
                           fontSize: "15px",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
@@ -2348,7 +2347,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                         {localeInfo?.fullname}
                       </div>
                       <div
-                        className="localeInfo-username"
+                        className="chirp-regular-font"
                         style={{
                           color:
                             themeName === "dark-theme"
@@ -2356,7 +2355,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                               : "rgb(83, 100, 113)",
                           fontSize: "15px",
                           lineHeight: "20px",
-                          fontWeight: "400",
+
                           overflow: "hidden",
                           textOverflow: "ellipsis",
                           whiteSpace: "nowrap",

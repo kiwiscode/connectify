@@ -17,7 +17,7 @@ function IndexFooter() {
           minHeight: "72px",
           padding: "12px 16px",
         }}
-        className={`footer-container mt-3 footer-container-${themeName}`}
+        className={`footer-container chirp-regular-font mt-3 footer-container-${themeName}`}
       >
         <a href="">
           <span>About</span>

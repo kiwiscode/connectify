@@ -49,7 +49,7 @@ function SettingsNavigation() {
           right: "10px",
         }}
       >
-        <Stack direction="vertical" gap={3} className="mt-2">
+        <Stack direction="vertical" className="mt-3">
           <div
             style={{
               lineHeight: "24px",
@@ -59,10 +59,10 @@ function SettingsNavigation() {
               paddingRight: "12px",
             }}
           >
-            <span>Settings</span>
+            <span className="chirp-bold-font">Settings</span>
           </div>
           <div
-            className="first-div-input"
+            className="first-div-input mt-3"
             style={{
               height: "54px",
               backgroundColor: themeName === "dark-theme" ? "black" : "white",
@@ -175,6 +175,7 @@ function SettingsNavigation() {
                 </div>
               ) : null}
               <input
+                className="chirp-regular-font"
                 onFocus={() => {
                   onFocusActive();
                   setOnFocusXBtn(true);
@@ -218,6 +219,7 @@ function SettingsNavigation() {
             </div>
           </div>
           <div
+            className="chirp-regular-font"
             style={{
               color:
                 themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
@@ -245,7 +247,7 @@ function SettingsNavigation() {
             }}
           >
             <div
-              className="has-children"
+              className="has-children chirp-regular-font"
               onClick={() => {
                 navigate("/settings/account");
               }}
@@ -283,7 +285,7 @@ function SettingsNavigation() {
               onClick={() => {
                 navigate("/settings/monetization");
               }}
-              className="has-children"
+              className="has-children chirp-regular-font"
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -315,7 +317,7 @@ function SettingsNavigation() {
               </div>
             </div>
             <div
-              className="has-children"
+              className="has-children chirp-regular-font"
               onClick={() => {
                 navigate("/i/premium_sign_up");
               }}
@@ -341,7 +343,7 @@ function SettingsNavigation() {
               onClick={() => {
                 navigate("/settings/manage_subscriptions");
               }}
-              className="has-children"
+              className="has-children chirp-regular-font"
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -378,7 +380,7 @@ function SettingsNavigation() {
               onClick={() => {
                 navigate("/settings/security_and_account_access");
               }}
-              className="has-children"
+              className="has-children chirp-regular-font"
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -416,7 +418,7 @@ function SettingsNavigation() {
               onClick={() => {
                 navigate("/settings/privacy_and_safety");
               }}
-              className="has-children"
+              className="has-children chirp-regular-font"
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -452,7 +454,7 @@ function SettingsNavigation() {
               onClick={() => {
                 navigate("/settings/notifications");
               }}
-              className="has-children"
+              className="has-children chirp-regular-font"
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -487,7 +489,7 @@ function SettingsNavigation() {
               onClick={() => {
                 navigate("/settings/accessibility_display_and_languages");
               }}
-              className="has-children"
+              className="has-children chirp-regular-font"
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -525,7 +527,7 @@ function SettingsNavigation() {
               onClick={() => {
                 navigate("/settings/about");
               }}
-              className="has-children"
+              className="has-children chirp-regular-font"
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -560,7 +562,7 @@ function SettingsNavigation() {
               onClick={() => {
                 navigate("/help_connectify");
               }}
-              className="has-children"
+              className="has-children chirp-regular-font"
               style={{
                 display: "flex",
                 justifyContent: "space-between",
