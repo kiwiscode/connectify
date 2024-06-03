@@ -1388,6 +1388,7 @@ function UserProfile({ isNewPostShared }) {
                       className={`accordion-2 accordion-2-${themeName}`}
                     >
                       <div
+                        className=" chirp-regular-font"
                         onClick={handleShowMorePosts}
                         style={{
                           border: "none",
@@ -1867,6 +1868,7 @@ function UserProfile({ isNewPostShared }) {
                       className={`accordion-2 accordion-2-${themeName}`}
                     >
                       <div
+                        className=" chirp-regular-font"
                         onClick={handleShowMoreLikedTweets}
                         style={{
                           border: "none",

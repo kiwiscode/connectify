@@ -2792,6 +2792,7 @@ function MainPage({ isNewPostShared }) {
                           className={`accordion-2 accordion-2-${themeName}`}
                         >
                           <div
+                            className=" chirp-regular-font"
                             onClick={handleShowMorePosts}
                             style={{
                               border: "none",
@@ -3454,6 +3455,7 @@ function MainPage({ isNewPostShared }) {
                           className={`accordion-2 accordion-2-${themeName}`}
                         >
                           <div
+                            className=" chirp-regular-font"
                             onClick={handleShowMoreFollowingTweets}
                             style={{
                               border: "none",

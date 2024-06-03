@@ -51,7 +51,7 @@ const DeactivateYourAccountMain = lazy(() =>
 );
 const DownloadAnArchiveOfYourDataMain = lazy(() =>
   import(
-    "./pages/settings/your_account_options/download_an_archive_of_your_data/DownloadAnArchiveOfYourDataMain"
+    "./pages/settings/your_account_options/download_an_archive_of_your_data/main/DownloadAnArchiveOfYourDataMain"
   )
 );
 const SendPasswordResetMain = lazy(() =>
@@ -97,6 +97,12 @@ const Email = lazy(() =>
 const AudienceAndTagging = lazy(() =>
   import(
     "./pages/settings/your_account_options/account_information/sections/protected_posts/AudienceAndTagging"
+  )
+);
+
+const DownloadYourDataMain = lazy(() =>
+  import(
+    "./pages/settings/your_account_options/download_an_archive_of_your_data/sections/download_your_data_main/DownloadYourDataMain"
   )
 );
 
@@ -431,6 +437,10 @@ function App() {
                   <Route
                     path="/i/flow/verify_account_ownership"
                     element={<DownloadAnArchiveOfYourDataMain />}
+                  ></Route>
+                  <Route
+                    path="/settings/download-your-data"
+                    element={<DownloadYourDataMain />}
                   ></Route>
                   <Route
                     path="/settings/screen_name"

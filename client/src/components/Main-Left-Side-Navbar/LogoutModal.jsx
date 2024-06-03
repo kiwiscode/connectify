@@ -2101,10 +2101,10 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                 strokeColor={"rgb(29, 155, 240)"}
               ></LoadingSpinner>
               <div
-                className="mt-3"
+                className="mt-3 chirp-bold-font"
                 style={{
                   color: themeName === "dark-theme" ? "#71767A" : "#536471",
-                  letterSpacing: "-1.1px",
+                  letterSpacing: "-.5px",
                   fontSize: "16px",
                   fontWeight: "600",
                   lineHeight: "20px",
@@ -2189,7 +2189,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
             }}
           >
             <div
-              className="mt-2"
+              className="mt-2 chirp-bold-font"
               style={{
                 width: "100%",
 
@@ -2208,14 +2208,14 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                 fontSize: "15px",
                 color: themeName === "dark-theme" ? " #71767A" : "#536471",
               }}
-              className="mt-2"
+              className="mt-2 chirp-regular-font"
             >
               You can always log back in at any time. If you just want to switch
               accounts, you can do that by adding an existing account.
             </div>
             <Button
               // className="login-button mt-4 next-btn"
-              className={`login-button mt-4 next-btn ${themeName}-white-btn`}
+              className={`login-button mt-4 next-btn ${themeName}-white-btn chirp-bold-font`}
               variant="dark"
               style={{
                 width: "256px",
@@ -2237,7 +2237,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
             </Button>
             <Button
               onClick={() => setShowLogoutModal(false)}
-              className={` forgot-password-btn ${themeName}-black-btn`}
+              className={` forgot-password-btn ${themeName}-black-btn chirp-bold-font`}
               variant="light"
               style={{
                 width: "256px",
@@ -2534,7 +2534,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                         left: "10px",
                         color: themeName === "dark-theme" ? "white" : "",
                       }}
-                      className="logout-p"
+                      className="logout-p chirp-bold-font"
                     >
                       Settings and privacy
                     </span>
@@ -2568,7 +2568,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                         left: "10px",
                         color: themeName === "dark-theme" ? "white" : "",
                       }}
-                      className="logout-p"
+                      className="logout-p chirp-bold-font"
                     >
                       Log out @{localeInfo?.username}
                     </span>
@@ -2800,7 +2800,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                         left: "10px",
                         color: themeName === "dark-theme" ? "white" : "",
                       }}
-                      className="logout-p"
+                      className="logout-p chirp-bold-font"
                     >
                       Settings and privacy
                     </span>
@@ -2834,7 +2834,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                         left: "10px",
                         color: themeName === "dark-theme" ? "white" : "",
                       }}
-                      className="logout-p"
+                      className="logout-p chirp-bold-font"
                     >
                       Log out @{localeInfo?.username}
                     </span>
@@ -3067,7 +3067,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                         left: "10px",
                         color: themeName === "dark-theme" ? "white" : "",
                       }}
-                      className="logout-p"
+                      className="logout-p chirp-bold-font"
                     >
                       Settings and privacy
                     </span>
@@ -3101,7 +3101,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                         left: "10px",
                         color: themeName === "dark-theme" ? "white" : "",
                       }}
-                      className="logout-p"
+                      className="logout-p chirp-bold-font"
                     >
                       Log out @{localeInfo?.username}
                     </span>

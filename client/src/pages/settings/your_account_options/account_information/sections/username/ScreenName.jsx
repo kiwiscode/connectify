@@ -219,7 +219,15 @@ function ScreenName() {
               </g>
             </svg>
           </div>
-          <div className="mt-2 first-head">Change username</div>
+          <div
+            className={
+              themeName === "dark-theme"
+                ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
+                : "mt-2 first-head chirp-bold-font very-dark-gray-light-theme-text-variant-1"
+            }
+          >
+            Change username
+          </div>
         </div>{" "}
         {loading ? (
           <div>
