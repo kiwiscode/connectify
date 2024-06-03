@@ -82,7 +82,15 @@ function Email() {
               </g>
             </svg>
           </div>
-          <div className="mt-2 first-head">Change email</div>
+          <div
+            className={
+              themeName === "dark-theme"
+                ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
+                : "mt-2 first-head chirp-bold-font very-dark-gray-light-theme-text-variant-1"
+            }
+          >
+            Change email
+          </div>
         </div>{" "}
         <div
           style={{

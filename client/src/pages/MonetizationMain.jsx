@@ -213,7 +213,7 @@ function MonetizationMain() {
               </svg>
             </span>
           ) : null}
-          <div className="mt-3">Monetization</div>
+          <div className="mt-3">Monetizations</div>
         </div>
 
         <div className="mt-4" style={{}}>
