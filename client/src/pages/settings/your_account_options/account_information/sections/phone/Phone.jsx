@@ -80,7 +80,15 @@ function Phone() {
               </g>
             </svg>
           </div>
-          <div className="mt-2 first-head">Change phone</div>
+          <div
+            className={
+              themeName === "dark-theme"
+                ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
+                : "mt-2 first-head chirp-bold-font very-dark-gray-light-theme-text-variant-1"
+            }
+          >
+            Change phone
+          </div>
         </div>{" "}
         <div
           onClick={() => {
@@ -88,8 +96,8 @@ function Phone() {
           }}
           className={
             themeName === "dark-theme"
-              ? "dark-theme-stylish-blue-background-color"
-              : "light-theme-stylish-blue-background-color"
+              ? "dark-theme-stylish-blue-background-color mt-1"
+              : "light-theme-stylish-blue-background-color mt-1"
           }
           style={{
             padding: "16px",

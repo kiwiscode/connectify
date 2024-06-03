@@ -1,16 +1,14 @@
-import { useContext } from "react";
 import { Col } from "react-bootstrap";
-import { ThemeContext } from "../../../../context/ThemeContext";
-import { useAntdMessageHandler } from "../../../../utils/useAntdMessageHandler";
-import useWindowDimensions from "../../../../hooks/getWindowDimensions";
-import SettingsNavigation from "../../../../components/SettingsNavigation/SettingsNavigation";
-import { useNavigate } from "react-router-dom";
+import SettingsNavigation from "../../../../../../components/SettingsNavigation/SettingsNavigation";
+import { useAntdMessageHandler } from "../../../../../../utils/useAntdMessageHandler";
+import useWindowDimensions from "../../../../../../hooks/getWindowDimensions";
+import { useContext } from "react";
+import { ThemeContext } from "../../../../../../context/ThemeContext";
 
-function DownloadAnArchiveOfYourDataMain() {
+function DownloadYourDataMain() {
+  const { contextHolder } = useAntdMessageHandler();
   const { width } = useWindowDimensions();
   const [{ theme, themeName }] = useContext(ThemeContext);
-  const { contextHolder } = useAntdMessageHandler();
-  const navigate = useNavigate();
 
   return (
     <>
@@ -80,13 +78,67 @@ function DownloadAnArchiveOfYourDataMain() {
               </g>
             </svg>
           </div>
-          <div className="mt-2 first-head">
+          <div
+            className={
+              themeName === "dark-theme"
+                ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
+                : "mt-2 first-head chirp-bold-font very-dark-gray-light-theme-text-variant-1"
+            }
+          >
             Download an archive of your data
           </div>
+        </div>{" "}
+        <div
+          style={{
+            padding: "0px 24px",
+          }}
+        >
+          1
+        </div>{" "}
+        <div
+          style={{
+            borderBottom:
+              themeName !== "dark-theme"
+                ? "1px solid rgba(0, 0, 0, 0.1)"
+                : // : "0.1px solid rgb(70, 70, 70)",
+                  "1px solid rgb(70, 70, 70)",
+
+            display: "inline-block",
+            width: "100%",
+          }}
+        ></div>
+        <div style={{ padding: "0px 24px" }}>2</div>
+        <div style={{ padding: "0px 24px" }}>3</div>{" "}
+        <div
+          style={{
+            borderBottom:
+              themeName !== "dark-theme"
+                ? "1px solid rgba(0, 0, 0, 0.1)"
+                : // : "0.1px solid rgb(70, 70, 70)",
+                  "1px solid rgb(70, 70, 70)",
+
+            display: "inline-block",
+            width: "100%",
+          }}
+        ></div>
+        <div
+          className="mt-1"
+          style={{
+            textAlign: "right",
+            borderTop:
+              themeName !== "dark-theme"
+                ? "1px solid rgba(0, 0, 0, 0.1)"
+                : // : "0.1px solid rgb(70, 70, 70)",
+                  "1px solid rgb(70, 70, 70)",
+
+            width: "100%",
+          }}
+        >
+          4
         </div>
       </Col>
     </>
   );
 }
 
-export default DownloadAnArchiveOfYourDataMain;
+export default DownloadYourDataMain;

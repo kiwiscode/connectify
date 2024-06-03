@@ -1421,7 +1421,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                 fontWeight: "700",
                                 lineHeight: "20px",
                               }}
-                              className="logout-p"
+                              className="logout-p chirp-bold-font"
                             >
                               Settings and privacy
                             </span>
@@ -2135,7 +2135,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                             fontWeight: "700",
                             lineHeight: "20px",
                           }}
-                          className="logout-p"
+                          className="logout-p chirp-bold-font"
                         >
                           Settings and privacy
                         </span>

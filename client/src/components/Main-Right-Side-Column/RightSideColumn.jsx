@@ -17963,7 +17963,7 @@ function RightSideColumn({
                 : null}
 
               <div
-                className="hover-blue-underline"
+                className="hover-blue-underline chirp-regular-font"
                 style={{
                   cursor: "pointer",
                   color: "rgb(29, 155, 240)",
@@ -17987,6 +17987,7 @@ function RightSideColumn({
                 className="p-3 mt-3"
               >
                 <div
+                  className="chirp-heavy-font"
                   style={{
                     fontSize: "20px",
                     fontWeight: "800",
@@ -18471,7 +18472,7 @@ function RightSideColumn({
                   );
                 })}
                 <div
-                  className="hover-blue-underline"
+                  className="hover-blue-underline  chirp-regular-font"
                   style={{
                     cursor: "pointer",
                     color: "rgb(29, 155, 240)",

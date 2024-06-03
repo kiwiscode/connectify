@@ -86,7 +86,15 @@ function AudienceAndTagging() {
               </g>
             </svg>
           </div>
-          <div className="mt-2 first-head">Audience, media and tagging</div>
+          <div
+            className={
+              themeName === "dark-theme"
+                ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
+                : "mt-2 first-head chirp-bold-font very-dark-gray-light-theme-text-variant-1"
+            }
+          >
+            Audience, media and tagging
+          </div>
         </div>{" "}
         <div
           className="mt-3"

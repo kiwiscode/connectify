@@ -174,7 +174,15 @@ function AccountInformationMain() {
                 </g>
               </svg>
             </div>
-            <div className="mt-2 first-head">Account information</div>
+            <div
+              className={
+                themeName === "dark-theme"
+                  ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
+                  : "mt-2 first-head chirp-bold-font very-dark-gray-light-theme-text-variant-1"
+              }
+            >
+              Account information
+            </div>
           </div>
           {loading && !showAccountInformation ? (
             <div>
@@ -301,7 +309,7 @@ function AccountInformationMain() {
                 >
                   <span
                     onClick={() => {
-                      navigate("/account/send_password_reset");
+                      navigate("/i/flow/password_reset");
                     }}
                     className="forgot-password-logout-settings-and-privacy-modal"
                     style={{

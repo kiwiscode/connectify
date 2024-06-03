@@ -136,8 +136,20 @@ body {
   transition-duration: 0.2s !important;
 }
 
+.hover-blue-underline {
+  cursor: pointer;
+  color: #1c9bef;
+}
+
 .hover-blue-underline:hover {
   text-decoration: underline;
+}
+
+.deactivate-btn-light-theme:hover {
+  background-color: #ffeaeb;
+}
+.deactivate-btn-dark-theme:hover {
+  background-color: #1a0506;
 }
 .blue-underline {
   color: #1c9bef;
@@ -2606,6 +2618,7 @@ span > a:hover {
 .signin-modal-header-child-non-reactivate {
   /* background-color: #607d8b !important; */
   height: 53px !important;
+  margin-top: 0.5rem !important;
 }
 
 /* signin modal content body  */
@@ -3330,6 +3343,17 @@ select {
 
 .dark-theme-sub-modal {
   background-color: black;
+}
+
+.settings-modal-type {
+  height: 630px;
+  min-width: 600px !important;
+}
+
+.modal-parent-tag-MODAL div {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .new-message-modal {
@@ -4320,7 +4344,6 @@ themeName === "dark-theme"
 
 .first-head {
   margin-left: 24px;
-  font-weight: 700;
   font-size: 20px;
   line-height: 24px;
 }
@@ -4349,9 +4372,11 @@ themeName === "dark-theme"
 
 .light-theme-stylish-blue-background-color:hover {
   background-color: #eaf5fe;
+  transition-duration: 0.2s !important;
 }
 .dark-theme-stylish-blue-background-color:hover {
   background-color: #010b19;
+  transition-duration: 0.2s !important;
 }
 
 .text-dark-theme {
@@ -4364,13 +4389,75 @@ themeName === "dark-theme"
 
 .hover-background-effect-clicked-dark-theme:hover {
   background-color: #061019;
+  transition-duration: 0.2s !important;
 }
 .hover-background-effect-clicked-light-theme:hover {
   background-color: #ebf5fe;
+  transition-duration: 0.2s !important;
 }
 .hover-background-effect-dark-theme:hover {
   background-color: #0c0c0c;
+  transition-duration: 0.2s !important;
 }
 .hover-background-effect-light-theme:hover {
   background-color: #eeeff0;
+  transition-duration: 0.2s !important;
 }
+
+.soft-grey-dark-theme-text-variant-1 {
+  color: #e6e9ea !important;
+}
+
+.very-dark-gray-light-theme-text-variant-1 {
+  color: #0f141a !important;
+}
+.soft-grey-dark-theme-text-variant-2 {
+  color: #71767a !important;
+}
+
+.very-dark-gray-light-theme-text-variant-2 {
+  color: #536371 !important;
+}
+
+.background-hover-effect-red-btn:hover {
+  background-color: #dc1f29 !important;
+  transition-duration: 0.2s !important;
+}
+
+.background-hover-cancel-btn-dark-theme:hover {
+  background-color: #181919 !important;
+  transition-duration: 0.2s !important;
+}
+.background-hover-next-btn-dark-theme:hover {
+  background-color: #d7dbdc !important;
+  transition-duration: 0.2s !important;
+}
+
+.background-hover-cancel-btn-light-theme:hover {
+  background-color: #e7e7e8 !important;
+  transition-duration: 0.2s !important;
+}
+
+.background-hover-next-btn-light-theme:hover {
+  background-color: #272c30 !important;
+  transition-duration: 0.2s !important;
+}
+
+/* IMPORTANT modal classname ve styling for making modal exactly middle of the window ! start to check  */
+
+.modal-backdrop {
+  /* background-color: yellow !important; */
+}
+
+.modal {
+  /* background-color: green !important; */
+}
+
+.dialog-archive-modal {
+  min-width: fit-content !important;
+}
+
+.modal-content {
+  /* background-color: royalblue !important; */
+}
+/* IMPORTANT modal classname ve styling for making modal exactly middle of the window ! finish to check  */
