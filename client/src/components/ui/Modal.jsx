@@ -207,7 +207,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
         localStorage.setItem("token", token);
         updateUser(user);
         setError("");
-        window.alert("Deactivated user return login !!!");
         setIsLoading(true);
         setTimeout(() => {
           navigate("/home");
@@ -229,7 +228,9 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
   const [checkedValue, setCheckedValue] = useState(false);
 
   const handleCloseLoginModal = () => {
-    setTabIndex(0);
+    setTimeout(() => {
+      setTabIndex(0);
+    }, 300);
     setShowLoginModal(false);
     setLoginInput({
       usernameOrEmail: "",
@@ -480,7 +481,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
       })
       .then((response) => {
         const { token, user } = response.data;
-        window.alert("After forgot password process user return login !!!");
 
         localStorage.setItem("userInfo", JSON.stringify(user));
         localStorage.setItem("token", token);
@@ -898,7 +898,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               fontSize: "15px",
                               margin: "5px",
                             }}
-                            onClick={handleCloseLoginModal}
                             width={20}
                             height={20}
                             color={
@@ -2172,6 +2171,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                           <Modal.Body className="signin-modal-body-child-non-reactivate">
                             {" "}
                             <div
+                              className="chirp-bold-font"
                               style={{
                                 display: "flex",
                                 textAlign: "left",
@@ -2189,7 +2189,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               {"Why'd you change your password"}
                             </div>
                             <div
-                              className="mt-2"
+                              className="chirp-bold-font mt-2"
                               style={{
                                 lineHeight: "20px",
                                 width: "81.5%",
@@ -2214,7 +2214,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               }}
                             >
                               <div
-                                className="mt-2"
+                                className="mt-2 chirp-bold-font"
                                 style={{
                                   fontWeight: "700",
                                   fontSize: "16px",
@@ -2311,7 +2311,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               }}
                             >
                               <div
-                                className="mt-2.5"
+                                className="chirp-bold-font mt-2.5"
                                 style={{
                                   fontWeight: "700",
                                   fontSize: "16px",
@@ -2408,7 +2408,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               }}
                             >
                               <div
-                                className="mt-2.5"
+                                className="chirp-bold-font mt-2.5"
                                 style={{
                                   fontWeight: "700",
                                   fontSize: "16px",
@@ -2509,7 +2509,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                     : null;
                                 }, 500);
                               }}
-                              className={`login-button mt-5 ${themeName}-white-btn`}
+                              className={`login-button mt-5 ${themeName}-white-btn chirp-bold-font`}
                               variant="dark"
                             >
                               Next
@@ -2946,8 +2946,9 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
               ) : (
                 <Modal
                   style={{
-                    padding: 0,
-                    margin: 0,
+                    margin: "0px",
+                    padding: "0px",
+                    overflow: "hidden",
                   }}
                   backdropClassName={
                     themeName === "dark-theme" ? `back-drop-${themeName}` : ""
@@ -2995,7 +2996,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             margin: "5px",
                             display: tabIndex === 7 ? "none" : "",
                           }}
-                          onClick={handleCloseLoginModal}
                           width={20}
                           height={20}
                           color={
@@ -3032,14 +3032,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                           ></LoadingSpinner>
                         </Modal.Body>
                       ) : (
-                        <Modal.Body
-                          className="signin-modal-body-child-non-reactivate"
-                          style={
-                            {
-                              // overflowY: "scroll",
-                            }
-                          }
-                        >
+                        <Modal.Body className="signin-modal-body-child-non-reactivate">
                           <div>
                             <div
                               style={{
@@ -3249,7 +3242,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 cursor: "pointer",
                                 color:
                                   themeName === "dark-theme"
-                                    ? "#71767A"
+                                    ? "rgb(113, 118, 122)"
                                     : "rgb(83, 100, 113)",
                                 fontSize: "15px",
                                 lineHeight: "20px",
@@ -3392,7 +3385,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               className={`login-button mt-5 ${themeName}-white-btn`}
                               variant="dark"
                             >
-                              Next
+                              Nextasd
                             </Button>
                           </Modal.Body>
                         </>
@@ -4228,6 +4221,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                         <Modal.Body className="signin-modal-body-child-non-reactivate">
                           {" "}
                           <div
+                            className="chirp-bold-font"
                             style={{
                               width: "81.5%",
                               lineHeight: "36px",
@@ -4240,7 +4234,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             {"Why'd you change your password"}
                           </div>
                           <div
-                            className="mt-2"
+                            className="chirp-bold-font mt-2"
                             style={{
                               lineHeight: "20px",
                               width: "81.5%",
@@ -4265,7 +4259,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             }}
                           >
                             <div
-                              className="mt-2"
+                              className="mt-2 chirp-bold-font"
                               style={{
                                 fontWeight: "700",
                                 fontSize: "16px",
@@ -4362,7 +4356,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             }}
                           >
                             <div
-                              className="mt-2.5"
+                              className="chirp-bold-font mt-2.5"
                               style={{
                                 fontWeight: "700",
                                 fontSize: "16px",
@@ -4458,7 +4452,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             }}
                           >
                             <div
-                              className="mt-2.5"
+                              className="chirp-bold-font mt-2.5"
                               style={{
                                 fontWeight: "700",
                                 fontSize: "16px",
@@ -4559,7 +4553,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 }, 500);
                               }
                             }}
-                            className={`login-button mt-5 ${themeName}-white-btn`}
+                            className={`login-button mt-5 ${themeName}-white-btn chirp-bold-font`}
                             variant="dark"
                           >
                             Next
@@ -5020,9 +5014,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                   flexDirection: "column",
                   justifyContent: "center",
                   alignItems: "center",
-                  height: "643.5px",
-                  padding: "0px",
-                  margin: "0px",
                 }}
                 className="signin-modal-body-child-non-reactivate"
               >
