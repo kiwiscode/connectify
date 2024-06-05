@@ -852,7 +852,7 @@ function SignUpPage() {
                     className={`scrollbar-add signin-modal-body-child-non-reactivate create-account-first-tab scrollbar-add-${themeName}`}
                   >
                     <div
-                      className="mb-4"
+                      className="mb-4 chirp-bold-font"
                       style={{
                         display: "flex",
                         textAlign: "left",
@@ -875,6 +875,7 @@ function SignUpPage() {
                         }}
                       >
                         <div
+                          className="chirp-regular-font"
                           style={{
                             color:
                               themeName === "dark-theme"
@@ -885,36 +886,15 @@ function SignUpPage() {
                             lineHeight: "16px",
                           }}
                         >
-                          {fullname.length}/{50}
+                          {fullname.length} / {50}
                         </div>
                       </InputLabel>
-                    ) : (
-                      <InputLabel
-                        style={{
-                          width: "81.5%",
-                          textAlign: "right",
-                        }}
-                      >
-                        <div
-                          style={{
-                            color:
-                              themeName === "dark-theme"
-                                ? "#71767A"
-                                : "rgb(83, 100, 113)",
-                            fontSize: "13px",
-                            fontWeight: "400",
-                            lineHeight: "16px",
-                          }}
-                        >
-                          {fullname.length}/{50}
-                        </div>
-                      </InputLabel>
-                    )}
+                    ) : null}
 
                     <TextField
                       autoFocus={true}
-                      onMouseEnter={() => setonFocusedToFullNameField(true)}
-                      onMouseLeave={() => setonFocusedToFullNameField(false)}
+                      onFocus={() => setonFocusedToFullNameField(true)}
+                      onBlur={() => setonFocusedToFullNameField(false)}
                       value={fullname}
                       onChange={(e) => handleChangeFullName(e)}
                       type="text"
@@ -1096,6 +1076,7 @@ function SignUpPage() {
                       }}
                     >
                       <div
+                        className="chirp-bold-font"
                         style={{
                           fontSize: "15px",
                           lineHeight: "20px",
@@ -1106,7 +1087,7 @@ function SignUpPage() {
                         Date of birth
                       </div>
                       <div
-                        className="mt-2"
+                        className="mt-2 chirp-regular-font"
                         style={{
                           color:
                             themeName === "dark-theme"
@@ -1408,7 +1389,7 @@ function SignUpPage() {
                             }
                           : null
                       }
-                      className={`next-btn ${themeName}-white-btn`}
+                      className={`next-btn ${themeName}-white-btn chirp-bold-font`}
                     >
                       Next
                     </Button>
@@ -1846,7 +1827,7 @@ function SignUpPage() {
                 ) : (
                   <Modal.Body
                     style={{ overflowX: "hidden" }}
-                    className="signin-modal-body-child-non-reactivate"
+                    className="signin-modal-body-child-non-reactivate mt-4"
                   >
                     <div
                       style={{
@@ -1869,13 +1850,7 @@ function SignUpPage() {
                         color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
-                      <div
-                        style={{
-                          letterSpacing: "0.5px",
-                        }}
-                      >
-                        We sent you a code
-                      </div>
+                      <div className="chirp-bold-font">We sent you a code</div>
                       <div
                         className="mt-2"
                         style={{
@@ -2430,7 +2405,7 @@ function SignUpPage() {
                     }}
                   >
                     <div
-                      className="mb-4"
+                      className="mb-4 chirp-bold-font"
                       style={{
                         width: "81.5%",
                         lineHeight: "36px",
@@ -2449,6 +2424,7 @@ function SignUpPage() {
                         }}
                       >
                         <div
+                          className="chirp-regular-font"
                           style={{
                             color:
                               themeName === "dark-theme"
@@ -2459,35 +2435,14 @@ function SignUpPage() {
                             lineHeight: "16px",
                           }}
                         >
-                          {fullname.length}/{50}
+                          {fullname.length} / {50}
                         </div>
                       </InputLabel>
-                    ) : (
-                      <InputLabel
-                        style={{
-                          width: "81.5%",
-                          textAlign: "right",
-                        }}
-                      >
-                        <div
-                          style={{
-                            color:
-                              themeName === "dark-theme"
-                                ? "#71767A"
-                                : "rgb(83, 100, 113)",
-                            fontSize: "13px",
-                            fontWeight: "400",
-                            lineHeight: "16px",
-                          }}
-                        >
-                          {fullname.length}/{50}
-                        </div>
-                      </InputLabel>
-                    )}
+                    ) : null}
                     <TextField
                       autoFocus={true}
-                      onMouseEnter={() => setonFocusedToFullNameField(true)}
-                      onMouseLeave={() => setonFocusedToFullNameField(false)}
+                      onFocus={() => setonFocusedToFullNameField(true)}
+                      onBlur={() => setonFocusedToFullNameField(false)}
                       value={fullname}
                       onChange={(e) => handleChangeFullName(e)}
                       type="text"
@@ -2662,12 +2617,13 @@ function SignUpPage() {
                       </div>
                     </div>
                     <div
-                      className="mt-4"
+                      className="mt-4 "
                       style={{
                         width: "81.5%",
                       }}
                     >
                       <div
+                        className="chirp-bold-font"
                         style={{
                           fontSize: "15px",
                           lineHeight: "20px",
@@ -2678,7 +2634,7 @@ function SignUpPage() {
                         Date of birth
                       </div>
                       <div
-                        className="mt-2"
+                        className="mt-2 chirp-regular-font"
                         style={{
                           color:
                             themeName === "dark-theme"
@@ -2979,7 +2935,7 @@ function SignUpPage() {
                             }
                           : null
                       }
-                      className={`next-btn ${themeName}-white-btn`}
+                      className={`next-btn ${themeName}-white-btn chirp-bold-font`}
                     >
                       Next
                     </Button>{" "}
@@ -3383,7 +3339,6 @@ function SignUpPage() {
                     <div
                       className="mt-1"
                       style={{
-                        // backgroundColor: "yellow",
                         width: "100%",
                         height: "100px",
                         display: "flex",
@@ -3395,7 +3350,7 @@ function SignUpPage() {
                             : "",
                         boxShadow:
                           themeName === "dark-theme"
-                            ? "inset 0px 7px 3px -3px rgba(50, 50, 50, 0.75)"
+                            ? "inset 0px 4px 3px -3px rgba(50, 50, 50, 0.75)"
                             : "",
                       }}
                     >

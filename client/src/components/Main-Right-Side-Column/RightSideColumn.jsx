@@ -646,9 +646,9 @@ function RightSideColumn({
     setindividualSubOptionTab(2);
     setShowSubscriptionProcessNotCompletedModal(null);
     setpremiumRole("Individual");
-    setpremiumType(null);
-    setplanType(null);
-    setplanPrice(null);
+    setpremiumType("Premium+");
+    setplanType("Annual Plan");
+    setplanPrice("€199.92");
     console.log("Aktif burası !");
     if (!premium_sign_up_page_active) {
       if (
@@ -1491,6 +1491,14 @@ function RightSideColumn({
   }
 
   const [subLoading, setSubLoading] = useState(null);
+
+  useEffect(() => {
+    if (!showSubscriptionModal) {
+      setpremiumRole("Individual");
+      setindividualSubOptionPremiumPlusAnnualTab(true);
+      setindividualSubOptionPremiumPlusMonthlyTab(false);
+    }
+  }, [showSubscriptionModal]);
 
   return (
     <>
@@ -6297,13 +6305,12 @@ function RightSideColumn({
                         right: "15px",
                         filter:
                           themeName === "dark-theme"
-                            ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                            ? "drop-shadow(rgb(51, 54, 57) 0px -1px 1px)"
                             : "",
-
                         boxShadow:
                           themeName === "dark-theme"
-                            ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
-                            : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
+                            ? "inset 0px 4px 3px -3px rgba(50, 50, 50, 0.75)"
+                            : "inset 0px 4px 3px -3px rgba(101, 119, 134, 0.15)",
                       }}
                     >
                       <div
@@ -6357,13 +6364,12 @@ function RightSideColumn({
                         right: "15px",
                         filter:
                           themeName === "dark-theme"
-                            ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                            ? "drop-shadow(rgb(51, 54, 57) 0px -1px 1px)"
                             : "",
-
                         boxShadow:
                           themeName === "dark-theme"
-                            ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
-                            : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
+                            ? "inset 0px 4px 3px -3px rgba(50, 50, 50, 0.75)"
+                            : "inset 0px 4px 3px -3px rgba(101, 119, 134, 0.15)",
                       }}
                     >
                       <div
@@ -6417,13 +6423,12 @@ function RightSideColumn({
                         right: "15px",
                         filter:
                           themeName === "dark-theme"
-                            ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                            ? "drop-shadow(rgb(51, 54, 57) 0px -1px 1px)"
                             : "",
-
                         boxShadow:
                           themeName === "dark-theme"
-                            ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
-                            : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
+                            ? "inset 0px 4px 3px -3px rgba(50, 50, 50, 0.75)"
+                            : "inset 0px 4px 3px -3px rgba(101, 119, 134, 0.15)",
                       }}
                     >
                       <div
@@ -13100,8 +13105,14 @@ function RightSideColumn({
                       className="mt-3"
                       style={{
                         position: "relative",
+                        filter:
+                          themeName === "dark-theme"
+                            ? "drop-shadow(rgb(51, 54, 57) 0px -1px 1px)"
+                            : "",
                         boxShadow:
-                          "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                          themeName === "dark-theme"
+                            ? "inset 0px 4px 3px -3px rgba(50, 50, 50, 0.75)"
+                            : "inset 0px 4px 3px -3px rgba(101, 119, 134, 0.15)",
                         minHeight: phoneVerifiedErrorMessage
                           ? "305px"
                           : "270px",
@@ -13408,8 +13419,14 @@ function RightSideColumn({
                       className="mt-3"
                       style={{
                         position: "relative",
+                        filter:
+                          themeName === "dark-theme"
+                            ? "drop-shadow(rgb(51, 54, 57) 0px -1px 1px)"
+                            : "",
                         boxShadow:
-                          "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                          themeName === "dark-theme"
+                            ? "inset 0px 4px 3px -3px rgba(50, 50, 50, 0.75)"
+                            : "inset 0px 4px 3px -3px rgba(101, 119, 134, 0.15)",
                         minHeight: phoneVerifiedErrorMessage
                           ? "305px"
                           : "270px",
@@ -13714,8 +13731,14 @@ function RightSideColumn({
                       className="mt-3"
                       style={{
                         position: "relative",
+                        filter:
+                          themeName === "dark-theme"
+                            ? "drop-shadow(rgb(51, 54, 57) 0px -1px 1px)"
+                            : "",
                         boxShadow:
-                          "0 0 15px rgba(101, 119,134,0.2), 0 0 3px 1px rgba(101,119,134,0.15)",
+                          themeName === "dark-theme"
+                            ? "inset 0px 4px 3px -3px rgba(50, 50, 50, 0.75)"
+                            : "inset 0px 4px 3px -3px rgba(101, 119, 134, 0.15)",
                         minHeight: phoneVerifiedErrorMessage
                           ? "305px"
                           : "270px",

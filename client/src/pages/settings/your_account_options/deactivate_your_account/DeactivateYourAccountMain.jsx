@@ -56,7 +56,6 @@ function DeactivateYourAccountMain() {
         userId: userInfo._id,
       })
       .then(() => {
-        window.alert("hello world ");
         handleDeactivateUser();
       })
       .catch(() => {

@@ -213,7 +213,7 @@ function ChangeYourPasswordMain() {
                 : "mt-2 first-head chirp-bold-font very-dark-gray-light-theme-text-variant-1"
             }
           >
-            Change your passwordasd
+            Change your password
           </div>
         </div>{" "}
         <div
@@ -505,7 +505,7 @@ function ChangeYourPasswordMain() {
               onChange={(e) => setConfirmNewPassword(e.target.value)}
               id="outlined-adornment-password"
               type={"password"}
-              label="                      Confirm password                      "
+              label="Confirm password"
             />
           </FormControl>
           {errorInputStyle ? (

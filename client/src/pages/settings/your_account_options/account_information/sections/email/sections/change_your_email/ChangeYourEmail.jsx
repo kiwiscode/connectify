@@ -1,10 +1,11 @@
+import { Col, Modal, Button } from "react-bootstrap";
+import { useAntdMessageHandler } from "../../../../../../../../utils/useAntdMessageHandler";
+import useWindowDimensions from "../../../../../../../../hooks/getWindowDimensions";
+import { ThemeContext } from "../../../../../../../../context/ThemeContext";
+import { UserContext } from "../../../../../../../../context/UserContext";
+import SettingsNavigation from "../../../../../../../../components/SettingsNavigation/SettingsNavigation";
 import { useContext, useEffect, useRef, useState } from "react";
-import { Button, Col, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import useWindowDimensions from "../../../../../hooks/getWindowDimensions";
-import { ThemeContext } from "../../../../../context/ThemeContext";
-import { useAntdMessageHandler } from "../../../../../utils/useAntdMessageHandler";
-import SettingsNavigation from "../../../../../components/SettingsNavigation/SettingsNavigation";
 import {
   FormControl,
   InputAdornment,
@@ -12,44 +13,34 @@ import {
   OutlinedInput,
   TextField,
 } from "@mui/material";
-import { UserContext } from "../../../../../context/UserContext";
 import axios from "axios";
-import LoadingSpinner from "../../../../../components/ui/LoadingSpinner";
-import BootstrapTooltip from "../../../../../components/BootstrapToolTip/BootstrapToolTip";
-
+import LoadingSpinner from "../../../../../../../../components/ui/LoadingSpinner";
+import BootstrapTooltip from "../../../../../../../../components/BootstrapToolTip/BootstrapToolTip";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
 
-function DownloadAnArchiveOfYourDataMain() {
+function ChangeYourEmail() {
+  const { contextHolder, showCustomMessage } = useAntdMessageHandler();
   const { width } = useWindowDimensions();
   const [{ theme, themeName }] = useContext(ThemeContext);
-  const { contextHolder, showCustomMessage } = useAntdMessageHandler();
   const navigate = useNavigate();
   const { userInfo, getToken } = useContext(UserContext);
+
   const [showModal, setShowModal] = useState(true);
-
+  const [loading, setLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(1);
-
   const [passwordInput, setPasswordInput] = useState("");
-
-  useEffect(() => {}, []);
-
   const [showPassword, setShowPassword] = useState(false);
-
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (e) => {
     e.preventDefault();
   };
-
   const handleTabIndexState = () => {
     setTabIndex(tabIndex + 1);
   };
-
-  const [loading, setLoading] = useState(false);
-
   const handlePasswordConfirmation = () => {
     axios
       .post(`${API_URL}/auth/password-check`, {
@@ -68,15 +59,48 @@ function DownloadAnArchiveOfYourDataMain() {
       });
   };
 
-  const [emailVerificationCode, setemailVerificationCode] = useState("");
+  const [allowEmailDiscovery, setAllowEmailDiscovery] = useState(null);
+
+  const [email, setEmail] = useState("");
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+  const [emailTypeError, setemailTypeError] = useState(true);
+  useEffect(() => {
+    const checkEmail = async () => {
+      try {
+        const response = await axios.post(
+          `${API_URL}/auth/email-check`,
+          { email },
+          {
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
+          }
+        );
+
+        if (response.status === 201) {
+          setemailTypeError(null);
+        }
+
+        if (response.status === 200) {
+          setemailTypeError(200);
+        }
+      } catch (error) {
+        if (error.response.status === 304) {
+          setemailTypeError(304);
+        }
+      }
+    };
+
+    checkEmail();
+  }, [email]);
+
   const [emailVerificationCodeStatus, setemailVerificationCodeStatus] =
     useState("");
+  const [emailVerificationCode, setemailVerificationCode] = useState("");
 
   const sendEmailVerificationCode = (recipientEmail) => {
-    if (tabIndex !== 3) {
-      setLoading(true);
-    }
-
     if (tabIndex === 3) {
       setShowOptionsReceivedEmail(false);
     }
@@ -98,12 +122,6 @@ function DownloadAnArchiveOfYourDataMain() {
           setemailVerificationCodeStatus(201);
           setemailVerificationCode(response.data.code);
         }
-        setTimeout(() => {
-          if (tabIndex !== 3) {
-            setLoading(false);
-            handleTabIndexState();
-          }
-        }, 300);
       })
       .catch((error) => {
         console.log("Error =>", error);
@@ -111,25 +129,12 @@ function DownloadAnArchiveOfYourDataMain() {
   };
   const [confirmEmailVerificationCode, setconfirmEmailVerificationCode] =
     useState("");
-
   const handleChangeEmailVerificationCode = (e) => {
     setconfirmEmailVerificationCode(e.target.value);
   };
-
-  const errorMessageAndCleanTextInput = () => {
-    setTimeout(() => {
-      setconfirmEmailVerificationCode("");
-      showCustomMessage(
-        "The code you entered is incorrect. Please try again.",
-        4
-      );
-    }, 300);
-  };
   const [showOptionsReceivedEmail, setShowOptionsReceivedEmail] =
     useState(false);
-
   const showOptionsReceivedEmailRef = useRef(null);
-
   const handleClickOutside = (event) => {
     if (
       showOptionsReceivedEmailRef.current &&
@@ -145,11 +150,44 @@ function DownloadAnArchiveOfYourDataMain() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+  const errorMessageAndCleanTextInput = () => {
+    setTimeout(() => {
+      setconfirmEmailVerificationCode("");
+      showCustomMessage(
+        "The code you entered is incorrect. Please try again.",
+        4
+      );
+    }, 300);
+  };
+
+  const handleUpdateEmail = async () => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/user_update_email`,
+        {
+          newEmail: email,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        console.log("Email updated successfully:", response.data);
+      } else {
+        console.error("Unexpected response:", response);
+      }
+    } catch (error) {
+      console.error("Error updating email:", error);
+    }
+  };
   return (
     <>
+      {" "}
       {contextHolder}
       <SettingsNavigation />
-
       <>
         <Modal
           backdropClassName={
@@ -181,50 +219,7 @@ function DownloadAnArchiveOfYourDataMain() {
               : "settings-modal-type"
           }
         >
-          <Modal.Header
-            onClick={() => navigate("/settings/account")}
-            className="signin-modal-header-child-non-reactivate"
-            style={{
-              border: "none",
-              zIndex: 999,
-              backgroundColor: themeName === "dark-theme" ? "black" : "white",
-              outlineStyle: "none",
-              display: tabIndex === 2 && !loading ? "" : "none",
-            }}
-          >
-            <div
-              className={`close-button close-button-${themeName}`}
-              style={{
-                display: " flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "36px",
-                height: "36px",
-                borderRadius: "50%",
-                cursor: "pointer",
-              }}
-            >
-              <svg
-                width={20}
-                height={20}
-                color={themeName === "dark-theme" ? "white" : `rgb(15,20,25)`}
-                fill="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-z80fyv r-19wmn03"
-              >
-                <g>
-                  <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
-                </g>
-              </svg>
-
-              {/* close signin modal icon finish to check  */}
-            </div>{" "}
-          </Modal.Header>
-
           <Modal.Body
-            className={tabIndex === 2 ? "mt-5" : null}
             style={{
               padding: "0px",
               margin: "0px",
@@ -439,7 +434,7 @@ function DownloadAnArchiveOfYourDataMain() {
                           if (passwordInput.length) {
                             handlePasswordConfirmation();
                           } else {
-                            navigate("/settings/account");
+                            navigate("/settings/email");
                           }
                         }}
                         style={{
@@ -537,7 +532,6 @@ function DownloadAnArchiveOfYourDataMain() {
                         </svg>
                       </div>
                     </div>
-
                     <div
                       style={{
                         paddingLeft: "80px",
@@ -547,16 +541,16 @@ function DownloadAnArchiveOfYourDataMain() {
                     >
                       <div
                         style={{
-                          fontSize: "26px",
+                          fontSize: "31px",
                           lineHeight: "36px",
                         }}
                         className={
                           themeName === "dark-theme"
-                            ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font mt-4"
-                            : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font mt-4"
+                            ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font mt-1"
+                            : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font mt-1"
                         }
                       >
-                        Verify it’s you
+                        Change email
                       </div>
                       <div
                         style={{
@@ -566,24 +560,222 @@ function DownloadAnArchiveOfYourDataMain() {
                         className={
                           themeName === "dark-theme"
                             ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font mt-2"
-                            : "very-dark-gray-light-theme-text-variant-2  chirp-regular-font mt-2"
+                            : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font mt-2"
                         }
                       >
-                        Help us keep your data safe. To verify your identity, we
-                        need to
+                        Your current email is {userInfo.email}. What would you
+                        like to update it to? Your email is not displayed in
+                        your public profile on C.
                       </div>
+                      <div
+                        style={{
+                          fontSize: "15px",
+                          lineHeight: "20px",
+                        }}
+                        className={
+                          themeName === "dark-theme"
+                            ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font mt-4"
+                            : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font mt-4"
+                        }
+                      >
+                        If you change your email address, any existing Google
+                        SSO connections will be removed. Review Connected
+                        accounts{" "}
+                        <span className="hover-blue-underline">here</span>.
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        paddingLeft: "80px",
+                        paddingRight: "80px",
+                        width: "100%",
+                      }}
+                    >
+                      <TextField
+                        autoFocus
+                        id="outlined-basic"
+                        label="Email"
+                        variant="outlined"
+                        value={email}
+                        type="text"
+                        onChange={handleEmailChange}
+                        style={{
+                          width: "100%",
+                          height: "58px",
+                          marginTop: "3rem",
+                        }}
+                        InputLabelProps={{
+                          style: {
+                            color: themeName === "dark-theme" ? "#71767B" : "",
+                          },
+                        }}
+                        InputProps={{
+                          style: {
+                            color: themeName === "dark-theme" ? "white" : "",
+                          },
+                        }}
+                        sx={{
+                          "& .Mui-focused input + fieldset": {
+                            border:
+                              emailTypeError === 304 ||
+                              (emailTypeError === 200 && email.length)
+                                ? "2px solid rgb(244, 33, 46)!important"
+                                : "2px solid #1d9bf0 !important",
+                          },
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            borderColor:
+                              emailTypeError === 304 ||
+                              (emailTypeError === 200 && email.length)
+                                ? "rgb(244, 33, 46)!important"
+                                : themeName === "dark-theme"
+                                ? "rgb(70, 70, 70) !important"
+                                : "#cfd9de !important",
+                          },
+                          "& .MuiInputLabel-shrink": {
+                            color:
+                              emailTypeError === 304 ||
+                              (emailTypeError === 200 && email.length)
+                                ? "rgb(244, 33, 46)!important"
+                                : "#1f9cf0 !important",
+                          },
+                        }}
+                      />
+                    </div>
+
+                    <div
+                      style={{
+                        width: "100%",
+                        padding: "0px 80px",
+                      }}
+                    >
+                      {emailTypeError === 304 && email.length ? (
+                        <div
+                          style={{
+                            width: "81.5%",
+                            color: "rgb(244, 33, 46)",
+                            fontSize: "13px",
+                            lineHeight: "16px",
+                            fontWeight: "400",
+                            position: "relative",
+                            left: "10px",
+                          }}
+                        >
+                          {"Please enter a valid email."}
+                        </div>
+                      ) : emailTypeError === 200 && email.length ? (
+                        <div
+                          style={{
+                            width: "81.5%",
+                            color: "rgb(244, 33, 46)",
+                            fontSize: "13px",
+                            lineHeight: "16px",
+                            fontWeight: "400",
+                            position: "relative",
+                            left: "10px",
+                          }}
+                        >
+                          {"Email has already been taken."}
+                        </div>
+                      ) : null}
+                    </div>
+                    <div
+                      className="mt-4"
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        width: "100%",
+                        padding: "0px 80px",
+                      }}
+                    >
                       <div
                         className={
                           themeName === "dark-theme"
-                            ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
-                            : "very-dark-gray-light-theme-text-variant-2  chirp-regular-font"
+                            ? "soft-grey-dark-theme-text-variant-1 chirp-regular-font"
+                            : "very-dark-gray-light-theme-text-variant-1 chirp-regular-font"
                         }
+                        style={{
+                          fontSize: "15px",
+                          lineHeight: "20px",
+                        }}
                       >
-                        {" "}
-                        send you a verification code to{" "}
-                        <span>{userInfo.email.slice(0, 2)}</span>{" "}
-                        **********@gmail.com.
+                        Let people who have your email address find and connect
+                        with you on C.{" "}
+                        <span className="hover-blue-underline">Learn more</span>
                       </div>
+                      <div>
+                        {" "}
+                        <div
+                          onClick={() =>
+                            setAllowEmailDiscovery(!allowEmailDiscovery)
+                          }
+                          style={{
+                            marginRight: "36px",
+                            width: "36px",
+                            height: "36px",
+                            borderRadius: "50%",
+                            cursor: "pointer",
+                            position: "relative",
+                            left: "30px",
+                          }}
+                          className={
+                            themeName === "dark-theme" && allowEmailDiscovery
+                              ? "hover-background-effect-clicked-dark-theme"
+                              : themeName !== "dark-theme" &&
+                                allowEmailDiscovery
+                              ? "hover-background-effect-clicked-light-theme"
+                              : themeName === "dark-theme" &&
+                                !allowEmailDiscovery
+                              ? "hover-background-effect-dark-theme"
+                              : themeName !== "dark-theme" &&
+                                !allowEmailDiscovery
+                              ? "hover-background-effect-light-theme"
+                              : ""
+                          }
+                        >
+                          <div
+                            style={{
+                              backgroundColor: allowEmailDiscovery
+                                ? "#1d9bf0"
+                                : "transparent",
+                              border: allowEmailDiscovery
+                                ? ""
+                                : themeName === "dark-theme"
+                                ? "2px solid rgb(70,70,70)"
+                                : "2px solid #0f141a",
+
+                              borderWidth: "2px ",
+                              width: "20px",
+                              height: "20px",
+                              position: "relative",
+                              left: "8px",
+                              top: "8px",
+                              borderRadius: "3px",
+                            }}
+                          >
+                            <svg
+                              style={{
+                                position: "relative",
+                                left: "2px",
+                                bottom: "4px",
+                                display: allowEmailDiscovery
+                                  ? "initial"
+                                  : "none",
+                              }}
+                              width={16}
+                              height={16}
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
+                              color="white"
+                              fill="currentColor"
+                            >
+                              <g>
+                                <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                              </g>
+                            </svg>
+                          </div>
+                        </div>
+                      </div>{" "}
                     </div>
                     <div
                       className="mt-5"
@@ -595,54 +787,186 @@ function DownloadAnArchiveOfYourDataMain() {
                         justifyContent: "center",
                       }}
                     >
-                      <Button
-                        className={
-                          themeName === "dark-theme"
-                            ? "background-hover-cancel-btn-dark-theme soft-grey-dark-theme-text-variant-1"
-                            : "background-hover-cancel-btn-light-theme very-dark-gray-light-theme-text-variant-1"
-                        }
-                        onClick={() => {
-                          sendEmailVerificationCode(userInfo.email);
-                        }}
-                        style={{
-                          width: "100%",
-                          minHeight: "52px",
-                          paddingLeft: "80px",
-                          paddingRight: "80px",
-                          color: themeName === "dark-theme" ? "" : "",
-                          backgroundColor: "transparent",
-                          border: "none",
-                        }}
-                      >
-                        <div
+                      {emailTypeError ? (
+                        <Button
+                          className={
+                            themeName === "dark-theme"
+                              ? "background-hover-cancel-btn-dark-theme soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                              : "background-hover-cancel-btn-light-theme very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                          }
+                          onClick={() => {
+                            setLoading(true);
+                            setTimeout(() => {
+                              navigate("/settings/email");
+                            }, 300);
+                            setTimeout(() => {
+                              setLoading(false);
+                            }, 600);
+                          }}
                           style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            padding: "0px",
-                            margin: "0px",
+                            width: "100%",
+                            minHeight: "52px",
+                            paddingLeft: "80px",
+                            paddingRight: "80px",
+                            border: "none",
                           }}
                         >
-                          <span
+                          <div
                             style={{
-                              textOverflow: "unset",
-                              borderBottom:
-                                themeName !== "dark-theme"
-                                  ? "2px solid #0F141A"
-                                  : // : "0.1px solid rgb(70, 70, 70)",
-                                    "2px solid #EFF3F4",
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              padding: "0px",
+                              margin: "0px",
                             }}
                           >
-                            {" "}
-                            <span>Send code</span>
-                          </span>
-                        </div>
-                      </Button>
+                            <span>
+                              {" "}
+                              <span>Cancel</span>
+                            </span>
+                          </div>
+                        </Button>
+                      ) : (
+                        <Button
+                          className={
+                            themeName === "dark-theme"
+                              ? "background-hover-next-btn-dark-theme soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                              : "background-hover-next-btn-light-theme very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                          }
+                          onClick={() => {
+                            setLoading(true);
+                            setTimeout(() => {
+                              sendEmailVerificationCode(email);
+                              setTabIndex(3);
+                            }, 300);
+                            setTimeout(() => {
+                              setLoading(false);
+                            }, 600);
+                          }}
+                          style={{
+                            width: "100%",
+                            minHeight: "52px",
+                            paddingLeft: "80px",
+                            paddingRight: "80px",
+                            border: "none",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              padding: "0px",
+                              margin: "0px",
+                            }}
+                          >
+                            <span>
+                              {" "}
+                              <span>Next</span>
+                            </span>
+                          </div>
+                        </Button>
+                      )}
                     </div>
                   </>
                 ) : tabIndex === 3 ? (
                   <>
+                    {" "}
+                    <div
+                      style={{
+                        position: "absolute",
+                        left: "0px",
+                        top: "10px",
+                      }}
+                    >
+                      <div className="settings-header-with-arrow">
+                        <div
+                          onClick={() => {
+                            setTabIndex(tabIndex - 1);
+                          }}
+                          className={`arrow arrow-${themeName} mt-2`}
+                          style={{
+                            position: "relative",
+                            width: "36px",
+                            height: " 36px",
+                            borderRadius: "50%",
+                            cursor: "pointer",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            marginRight: "5px",
+                          }}
+                        >
+                          {" "}
+                          <svg
+                            color={themeName === "dark-theme" ? "white" : ""}
+                            fill="currentColor"
+                            style={{
+                              position: "absolute",
+                              border: "none",
+                            }}
+                            width={20}
+                            height={20}
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                          >
+                            <g>
+                              <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                            </g>
+                          </svg>
+                        </div>
+                      </div>{" "}
+                    </div>
+                    <div className="icon">
+                      <div
+                        style={{
+                          position: "relative",
+                          borderRadius: "50%",
+                          width: "50px",
+                          height: "50px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={50}
+                          height={30}
+                          viewBox="0 0 100 100"
+                        >
+                          {/* İçi dolu bir kare */}
+                          <rect
+                            x="5"
+                            y="5"
+                            width="90"
+                            height="90"
+                            fill="#1C9BEF"
+                            rx="5"
+                            ry="5"
+                            style={{
+                              filter:
+                                "drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))",
+                            }}
+                          />
+
+                          <text
+                            x="27.5"
+                            y="70"
+                            fontFamily="Arial"
+                            fontSize="60"
+                            fill="#FFF"
+                            stroke="#FFF"
+                            strokeWidth="2"
+                          >
+                            C
+                          </text>
+                        </svg>
+                      </div>
+                    </div>
                     <div
                       ref={showOptionsReceivedEmailRef}
                       style={{
@@ -684,7 +1008,7 @@ function DownloadAnArchiveOfYourDataMain() {
                       </div>
                       <div
                         onClick={() => {
-                          sendEmailVerificationCode(userInfo.email);
+                          sendEmailVerificationCode(email);
                         }}
                         className={`resend-email resend-email-${themeName} chirp-bold-font`}
                         style={{
@@ -728,7 +1052,7 @@ function DownloadAnArchiveOfYourDataMain() {
                     <div
                       style={{
                         width: "81.5%",
-                        marginTop: "6rem",
+                        marginTop: "2rem",
                       }}
                     >
                       <div
@@ -755,8 +1079,8 @@ function DownloadAnArchiveOfYourDataMain() {
                           lineHeight: "20px",
                         }}
                       >
-                        Enter the verification code sent to{" "}
-                        {userInfo.email.slice(0, 2)}**********@gmail.com.
+                        Enter the verification code sent to {email.slice(0, 2)}
+                        **********@gmail.com.
                       </div>
                     </div>
                     <TextField
@@ -846,9 +1170,10 @@ function DownloadAnArchiveOfYourDataMain() {
                         emailVerificationCode === confirmEmailVerificationCode
                           ? () => {
                               setLoading(true);
+                              handleUpdateEmail();
                               setTimeout(() => {
                                 setLoading(false);
-                                navigate("/settings/download-your-data");
+                                navigate("/settings/email");
                               }, 500);
                             }
                           : () => errorMessageAndCleanTextInput()
@@ -882,7 +1207,6 @@ function DownloadAnArchiveOfYourDataMain() {
           </Modal.Body>
         </Modal>
       </>
-
       <Col
         xs={10}
         sm={10}
@@ -954,26 +1278,102 @@ function DownloadAnArchiveOfYourDataMain() {
                 : "mt-2 first-head chirp-bold-font very-dark-gray-light-theme-text-variant-1"
             }
           >
-            Download an archive of your data
+            Change email
           </div>
-        </div>
+        </div>{" "}
         <div
-          className={
-            themeName === "dark-theme"
-              ? "mt-4 chirp-regular-font soft-grey-dark-theme-text-variant-2"
-              : "mt-4 chirp-regular-font very-dark-gray-light-theme-text-variant-2"
-          }
           style={{
-            paddingLeft: "16px",
-            fontSize: "13px",
-            lineHeight: "16px",
+            padding: "0px 24px",
+            position: "relative",
           }}
         >
-          Get insights into the type of information stored for your account.
+          {" "}
+          <div
+            style={{
+              position: "absolute",
+              top: "10%",
+              left: "6%",
+              fontSize: "12px",
+              lineHeight: "18px",
+              fontWeight: "400",
+              minWidth: "fit-content",
+              color:
+                themeName === "dark-theme" ? "#383B3D" : "rgb(168,177,184)",
+            }}
+          >
+            Current
+          </div>
+          <div
+            className={"mt-3"}
+            type="text"
+            style={{
+              height: "56px",
+              width: "100%",
+              borderRadius: "4px",
+              backgroundColor:
+                themeName === "dark-theme" ? "#111214" : "rgb(248,249,250)",
+            }}
+          />
+          <input
+            type="text"
+            defaultValue={userInfo.email}
+            style={{
+              height: "50px",
+              position: "absolute",
+              top: "5%",
+              left: "6%",
+              width: "87%",
+              minWidth: "fit-content",
+              border: "none",
+              outline: "none",
+              paddingTop: "15px",
+              textAlign: "left",
+              paddingLeft: "0px",
+              paddingRight: "0px",
+              paddingBottom: "0px",
+              backgroundColor: "transparent",
+              color:
+                themeName === "dark-theme" ? "#383B3D" : "rgb(168,177,184)",
+            }}
+          />
+        </div>{" "}
+        <div
+          className="mt-4"
+          style={{
+            borderBottom:
+              themeName !== "dark-theme"
+                ? "1px solid rgba(0, 0, 0, 0.1)"
+                : // : "0.1px solid rgb(70, 70, 70)",
+                  "1px solid rgb(70, 70, 70)",
+
+            display: "inline-block",
+            width: "100%",
+          }}
+        ></div>
+        <div
+          onClick={() => {
+            navigate("/i/flow/add_email");
+          }}
+          className={
+            themeName === "dark-theme"
+              ? "dark-theme-stylish-blue-background-color"
+              : "light-theme-stylish-blue-background-color"
+          }
+          style={{
+            padding: "16px",
+            textAlign: "center",
+            color: "rgb(29, 155, 240)",
+            lineHeight: "20px",
+            fontSize: "15px",
+            fontWeight: "400",
+            cursor: "pointer",
+          }}
+        >
+          Update email address
         </div>
       </Col>
     </>
   );
 }
 
-export default DownloadAnArchiveOfYourDataMain;
+export default ChangeYourEmail;
