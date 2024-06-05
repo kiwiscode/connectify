@@ -86,4 +86,7 @@ app.use("/", lastActivitiesRoutes);
 const bookmarkRoutes = require("./routes/bookmark.routes.js");
 app.use("/", bookmarkRoutes);
 
+const settingRoutes = require("./routes/setting.routes");
+app.use("/", settingRoutes);
+
 module.exports = app;

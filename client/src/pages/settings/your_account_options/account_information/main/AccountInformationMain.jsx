@@ -19,6 +19,7 @@ function AccountInformationMain() {
   const { width } = useWindowDimensions();
   const [{ theme, themeName }] = useContext(ThemeContext);
   const { userInfo, getToken } = useContext(UserContext);
+
   const { contextHolder } = useAntdMessageHandler();
   const navigate = useNavigate();
   const [verifyPasswordInput, setverifyPasswordInput] = useState(null);
@@ -29,6 +30,7 @@ function AccountInformationMain() {
   // confirm your password
 
   const [showAccountInformation, setShowAccountInformation] = useState(null);
+  const [user, setUser] = useState([]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -74,6 +76,7 @@ function AccountInformationMain() {
           },
         })
         .then((response) => {
+          setUser(response.data.user);
           if (response.data.user.hasPhoneVerifiedForAccountInformationDetail) {
             setShowAccountInformation(true);
           }
@@ -200,25 +203,28 @@ function AccountInformationMain() {
                 className="mt-4"
               >
                 <div
-                  className="mt-4"
+                  className={
+                    themeName === "dark-theme"
+                      ? "soft-grey-dark-theme-text-variant-1 mt-4 chirp-bold-font"
+                      : "very-dark-gray-light-theme-text-variant-1 mt-4 chirp-bold-font"
+                  }
                   style={{
                     fontSize: "20px",
-                    fontWeight: "800",
+
                     lineHeight: "24px",
                   }}
                 >
                   Confirm your password
                 </div>
                 <div
-                  className="mt-4"
+                  className={
+                    themeName === "dark-theme"
+                      ? "soft-grey-dark-theme-text-variant-2 mt-4 chirp-regular-font"
+                      : "very-dark-gray-light-theme-text-variant-2 mt-4 chirp-regular-font"
+                  }
                   style={{
                     fontSize: "13px",
-                    fontWeight: "400",
                     lineHeight: "16px",
-                    color:
-                      themeName === "dark-theme"
-                        ? "#71767A"
-                        : "rgb(83, 100, 113)",
                   }}
                 >
                   Please enter your password in order to get this.
@@ -295,14 +301,14 @@ function AccountInformationMain() {
                   />
                 </FormControl>{" "}
                 <div
-                  className="mt-1"
+                  className="mt-1 chirp-regular-font"
                   style={{
                     display: "inline-block",
                     color: "rgb(29, 155, 240)",
                     textAlign: "left",
                     fontSize: "13px",
                     lineHeight: "16px",
-                    fontWeight: "400",
+
                     width: "92%",
                     position: "relative",
                   }}
@@ -331,11 +337,11 @@ function AccountInformationMain() {
                             textAlign: "left",
                             fontSize: "13px",
                             lineHeight: "16px",
-                            fontWeight: "400",
                             width: "92%",
                           }}
                         >
                           <span
+                            className="chirp-regular-font"
                             style={{
                               position: "relative",
                               left: "10px",
@@ -411,29 +417,28 @@ function AccountInformationMain() {
                   <div
                     className={
                       themeName === "dark-theme"
-                        ? "make-dark-theme-bej-color-dark-theme"
-                        : "make-light-theme-color-light-theme"
+                        ? "soft-grey-dark-theme-text-variant-1 chirp-regular-font"
+                        : "very-dark-gray-light-theme-text-variant-1 chirp-regular-font"
                     }
                     style={{
                       lineHeight: "20px",
                       fontSize: "15px",
-                      fontWeight: "400",
                     }}
                   >
                     Username
                   </div>
                   <div
+                    className={
+                      themeName === "dark-theme"
+                        ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                        : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                    }
                     style={{
                       lineHeight: "16px",
                       fontSize: "13px",
-                      fontWeight: "400",
-                      color:
-                        themeName === "dark-theme"
-                          ? "#71767A"
-                          : "rgb(83, 100, 113)",
                     }}
                   >
-                    @{userInfo.username}
+                    @{user.username}
                   </div>
                 </div>
                 <div>
@@ -480,13 +485,12 @@ function AccountInformationMain() {
                   <div
                     className={
                       themeName === "dark-theme"
-                        ? "make-dark-theme-bej-color-dark-theme"
-                        : "make-light-theme-color-light-theme"
+                        ? "soft-grey-dark-theme-text-variant-1 chirp-regular-font"
+                        : "very-dark-gray-light-theme-text-variant-1 chirp-regular-font"
                     }
                     style={{
                       lineHeight: "20px",
                       fontSize: "15px",
-                      fontWeight: "400",
                     }}
                   >
                     Phone
@@ -536,29 +540,28 @@ function AccountInformationMain() {
                   <div
                     className={
                       themeName === "dark-theme"
-                        ? "make-dark-theme-bej-color-dark-theme"
-                        : "make-light-theme-color-light-theme"
+                        ? "soft-grey-dark-theme-text-variant-1 chirp-regular-font"
+                        : "very-dark-gray-light-theme-text-variant-1 chirp-regular-font"
                     }
                     style={{
                       lineHeight: "20px",
                       fontSize: "15px",
-                      fontWeight: "400",
                     }}
                   >
                     Email
                   </div>
                   <div
+                    className={
+                      themeName === "dark-theme"
+                        ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                        : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                    }
                     style={{
                       lineHeight: "16px",
                       fontSize: "13px",
-                      fontWeight: "400",
-                      color:
-                        themeName === "dark-theme"
-                          ? "#71767A"
-                          : "rgb(83, 100, 113)",
                     }}
                   >
-                    {userInfo.email}
+                    {user.email}
                   </div>
                 </div>
                 <div>
@@ -599,36 +602,40 @@ function AccountInformationMain() {
                   <div
                     className={
                       themeName === "dark-theme"
-                        ? "make-dark-theme-bej-color-dark-theme"
-                        : "make-light-theme-color-light-theme"
+                        ? "soft-grey-dark-theme-text-variant-1 chirp-regular-font"
+                        : "very-dark-gray-light-theme-text-variant-1 chirp-regular-font"
                     }
                     style={{
                       lineHeight: "20px",
                       fontSize: "15px",
-                      fontWeight: "400",
+
                       display: "flex",
                       flexDirection: "column",
                     }}
                   >
                     <span>Verified</span>
                     <span
+                      className={
+                        themeName === "dark-theme"
+                          ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                          : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                      }
                       style={{
                         lineHeight: "16px",
                         fontSize: "13px",
-                        fontWeight: "400",
-                        color:
-                          themeName === "dark-theme"
-                            ? "#71767A"
-                            : "rgb(83, 100, 113)",
                       }}
                     >
-                      {userInfo.verified ? "Yes." : "No"}{" "}
+                      {user.verified ? "Yes." : "No"}{" "}
                       <span
-                        className="hover-blue-underline"
+                        className={
+                          themeName === "dark-theme"
+                            ? "hover-blue-underline chirp-regular-font"
+                            : "hover-blue-underline chirp-regular-font"
+                        }
                         style={{
                           lineHeight: "16px",
                           fontSize: "13px",
-                          fontWeight: "400",
+
                           color: "rgb(29, 155, 240)",
                         }}
                       >
@@ -670,26 +677,25 @@ function AccountInformationMain() {
                   <div
                     className={
                       themeName === "dark-theme"
-                        ? "make-dark-theme-bej-color-dark-theme"
-                        : "make-light-theme-color-light-theme"
+                        ? "soft-grey-dark-theme-text-variant-1 chirp-regular-font"
+                        : "very-dark-gray-light-theme-text-variant-1 chirp-regular-font"
                     }
                     style={{
                       lineHeight: "20px",
                       fontSize: "15px",
-                      fontWeight: "400",
                     }}
                   >
                     Protected posts
                   </div>
                   <div
+                    className={
+                      themeName === "dark-theme"
+                        ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                        : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                    }
                     style={{
                       lineHeight: "16px",
                       fontSize: "13px",
-                      fontWeight: "400",
-                      color:
-                        themeName === "dark-theme"
-                          ? "#71767A"
-                          : "rgb(83, 100, 113)",
                     }}
                   >
                     No
@@ -733,31 +739,30 @@ function AccountInformationMain() {
                   <div
                     className={
                       themeName === "dark-theme"
-                        ? "make-dark-theme-bej-color-dark-theme"
-                        : "make-light-theme-color-light-theme"
+                        ? "soft-grey-dark-theme-text-variant-1 chirp-regular-font"
+                        : "very-dark-gray-light-theme-text-variant-1 chirp-regular-font"
                     }
                     style={{
                       lineHeight: "20px",
                       fontSize: "15px",
-                      fontWeight: "400",
                     }}
                   >
                     Account creation
                   </div>
                   <div
+                    className={
+                      themeName === "dark-theme"
+                        ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                        : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                    }
                     style={{
                       lineHeight: "16px",
                       fontSize: "13px",
-                      fontWeight: "400",
-                      color:
-                        themeName === "dark-theme"
-                          ? "#71767A"
-                          : "rgb(83, 100, 113)",
                     }}
                   >
-                    <div>{formatDateTime(userInfo.createdAt)}</div>
+                    <div>{formatDateTime(user.createdAt)}</div>
                     <div>
-                      {userInfo.ipAddress === "::1" ? "::1 (Localhost)" : ""}
+                      {user.ipAddress === "::1" ? "::1 (Localhost)" : ""}
                     </div>
                   </div>
                 </div>
@@ -795,7 +800,7 @@ function AccountInformationMain() {
                     style={{
                       lineHeight: "20px",
                       fontSize: "15px",
-                      fontWeight: "400",
+
                       display: "flex",
                       flexDirection: "column",
                     }}
@@ -803,39 +808,26 @@ function AccountInformationMain() {
                     <span
                       className={
                         themeName === "dark-theme"
-                          ? "make-dark-theme-bej-color-dark-theme"
-                          : "make-light-theme-color-light-theme"
+                          ? "soft-grey-dark-theme-text-variant-1 chirp-regular-font"
+                          : "very-dark-gray-light-theme-text-variant-1 chirp-regular-font"
                       }
                     >
                       Country
                     </span>
                     <span
+                      className={
+                        themeName === "dark-theme"
+                          ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                          : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                      }
                       style={{
                         lineHeight: "16px",
                         fontSize: "13px",
-                        fontWeight: "400",
-                        color:
-                          themeName === "dark-theme"
-                            ? "#71767A"
-                            : "rgb(83, 100, 113)",
                       }}
                     >
-                      {userInfo.registeredCountry
-                        ? userInfo.registeredCountry
-                        : "?"}
+                      {user.country ? user.country : null}
                     </span>
                   </div>
-                  <div
-                    style={{
-                      lineHeight: "16px",
-                      fontSize: "13px",
-                      fontWeight: "400",
-                      color:
-                        themeName === "dark-theme"
-                          ? "#71767A"
-                          : "rgb(83, 100, 113)",
-                    }}
-                  ></div>
                 </div>{" "}
                 <div>
                   {" "}
@@ -882,7 +874,7 @@ function AccountInformationMain() {
                     style={{
                       lineHeight: "20px",
                       fontSize: "15px",
-                      fontWeight: "400",
+
                       display: "flex",
                       flexDirection: "column",
                     }}
@@ -890,37 +882,26 @@ function AccountInformationMain() {
                     <span
                       className={
                         themeName === "dark-theme"
-                          ? "make-dark-theme-bej-color-dark-theme"
-                          : "make-light-theme-color-light-theme"
+                          ? "soft-grey-dark-theme-text-variant-1 chirp-regular-font"
+                          : "very-dark-gray-light-theme-text-variant-1 chirp-regular-font"
                       }
                     >
                       Languages
                     </span>
                     <span
+                      className={
+                        themeName === "dark-theme"
+                          ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                          : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                      }
                       style={{
                         lineHeight: "16px",
                         fontSize: "13px",
-                        fontWeight: "400",
-                        color:
-                          themeName === "dark-theme"
-                            ? "#71767A"
-                            : "rgb(83, 100, 113)",
                       }}
                     >
                       English, Turkish, No linguistic content, French
                     </span>
                   </div>
-                  <div
-                    style={{
-                      lineHeight: "16px",
-                      fontSize: "13px",
-                      fontWeight: "400",
-                      color:
-                        themeName === "dark-theme"
-                          ? "#71767A"
-                          : "rgb(83, 100, 113)",
-                    }}
-                  ></div>
                 </div>{" "}
                 <div>
                   {" "}
@@ -967,7 +948,6 @@ function AccountInformationMain() {
                     style={{
                       lineHeight: "20px",
                       fontSize: "15px",
-                      fontWeight: "400",
                       display: "flex",
                       flexDirection: "column",
                     }}
@@ -975,37 +955,26 @@ function AccountInformationMain() {
                     <span
                       className={
                         themeName === "dark-theme"
-                          ? "make-dark-theme-bej-color-dark-theme"
-                          : "make-light-theme-color-light-theme"
+                          ? "soft-grey-dark-theme-text-variant-1 chirp-regular-font"
+                          : "very-dark-gray-light-theme-text-variant-1 chirp-regular-font"
                       }
                     >
                       Gender
                     </span>
                     <span
+                      className={
+                        themeName === "dark-theme"
+                          ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                          : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                      }
                       style={{
                         lineHeight: "16px",
                         fontSize: "13px",
-                        fontWeight: "400",
-                        color:
-                          themeName === "dark-theme"
-                            ? "#71767A"
-                            : "rgb(83, 100, 113)",
                       }}
                     >
-                      ?
+                      {user?.gender ? user.gender : null}
                     </span>
                   </div>
-                  <div
-                    style={{
-                      lineHeight: "16px",
-                      fontSize: "13px",
-                      fontWeight: "400",
-                      color:
-                        themeName === "dark-theme"
-                          ? "#71767A"
-                          : "rgb(83, 100, 113)",
-                    }}
-                  ></div>
                 </div>
                 <div>
                   {" "}
@@ -1046,7 +1015,7 @@ function AccountInformationMain() {
                     style={{
                       lineHeight: "20px",
                       fontSize: "15px",
-                      fontWeight: "400",
+
                       display: "flex",
                       flexDirection: "column",
                     }}
@@ -1054,40 +1023,40 @@ function AccountInformationMain() {
                     <span
                       className={
                         themeName === "dark-theme"
-                          ? "make-dark-theme-bej-color-dark-theme"
-                          : "make-light-theme-color-light-theme"
+                          ? "soft-grey-dark-theme-text-variant-1 chirp-regular-font"
+                          : "very-dark-gray-light-theme-text-variant-1 chirp-regular-font"
                       }
                     >
                       Birth date
                     </span>
                     <span
+                      className={
+                        themeName === "dark-theme"
+                          ? "soft-grey-dark-theme-text-variant-2 mt-1 chirp-regular-font"
+                          : "very-dark-gray-light-theme-text-variant-2 mt-1 chirp-regular-font"
+                      }
                       style={{
                         lineHeight: "16px",
                         fontSize: "13px",
-                        fontWeight: "400",
-                        color:
-                          themeName === "dark-theme"
-                            ? "#71767A"
-                            : "rgb(83, 100, 113)",
                       }}
                     >
-                      {userInfo.birthDate && (
+                      {user.birthDate && (
                         <>
-                          <span>{userInfo.birthDate.month.slice(0, 3)} </span>
-                          <span>{userInfo.birthDate.day}, </span>
-                          <span>{userInfo.birthDate.year}</span>
+                          <span>{user.birthDate.month.slice(0, 3)} </span>
+                          <span>{user.birthDate.day}, </span>
+                          <span>{user.birthDate.year}</span>
                         </>
                       )}
                     </span>
                     <span
+                      className={
+                        themeName === "dark-theme"
+                          ? "soft-grey-dark-theme-text-variant-2 mt-1 chirp-regular-font"
+                          : "very-dark-gray-light-theme-text-variant-2 mt-1 chirp-regular-font"
+                      }
                       style={{
                         lineHeight: "16px",
                         fontSize: "13px",
-                        fontWeight: "400",
-                        color:
-                          themeName === "dark-theme"
-                            ? "#71767A"
-                            : "rgb(83, 100, 113)",
                       }}
                     >
                       Add your date of birth to your{" "}
@@ -1096,27 +1065,16 @@ function AccountInformationMain() {
                         style={{
                           lineHeight: "16px",
                           fontSize: "13px",
-                          fontWeight: "400",
+
                           color: "rgb(29, 155, 240)",
                         }}
-                        className="hover-blue-underline"
+                        className={"hover-blue-underline chirp-regular-font"}
                       >
                         profile
                       </span>
                       .
                     </span>
                   </div>
-                  <div
-                    style={{
-                      lineHeight: "16px",
-                      fontSize: "13px",
-                      fontWeight: "400",
-                      color:
-                        themeName === "dark-theme"
-                          ? "#71767A"
-                          : "rgb(83, 100, 113)",
-                    }}
-                  ></div>
                 </div>{" "}
               </div>{" "}
               <div
@@ -1152,7 +1110,7 @@ function AccountInformationMain() {
                     style={{
                       lineHeight: "20px",
                       fontSize: "15px",
-                      fontWeight: "400",
+
                       display: "flex",
                       flexDirection: "column",
                     }}
@@ -1160,41 +1118,28 @@ function AccountInformationMain() {
                     <span
                       className={
                         themeName === "dark-theme"
-                          ? "make-dark-theme-bej-color-dark-theme"
-                          : "make-light-theme-color-light-theme"
+                          ? "soft-grey-dark-theme-text-variant-1 chirp-regular-font"
+                          : "very-dark-gray-light-theme-text-variant-1 chirp-regular-font"
                       }
                     >
                       Age
                     </span>
                     <span
+                      className={
+                        themeName === "dark-theme"
+                          ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                          : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                      }
                       style={{
                         lineHeight: "16px",
                         fontSize: "13px",
-                        fontWeight: "400",
-                        color:
-                          themeName === "dark-theme"
-                            ? "#71767A"
-                            : "rgb(83, 100, 113)",
                       }}
                     >
-                      {userInfo.birthDate?.year && (
-                        <>
-                          {new Date().getFullYear() - userInfo.birthDate.year}
-                        </>
+                      {user.birthDate?.year && (
+                        <>{new Date().getFullYear() - user.birthDate.year}</>
                       )}
                     </span>
                   </div>
-                  <div
-                    style={{
-                      lineHeight: "16px",
-                      fontSize: "13px",
-                      fontWeight: "400",
-                      color:
-                        themeName === "dark-theme"
-                          ? "#71767A"
-                          : "rgb(83, 100, 113)",
-                    }}
-                  ></div>
                 </div>{" "}
                 <div>
                   {" "}
@@ -1242,7 +1187,7 @@ function AccountInformationMain() {
                     style={{
                       lineHeight: "20px",
                       fontSize: "15px",
-                      fontWeight: "400",
+
                       display: "flex",
                       flexDirection: "column",
                     }}
@@ -1250,40 +1195,28 @@ function AccountInformationMain() {
                     <span
                       className={
                         themeName === "dark-theme"
-                          ? "make-dark-theme-bej-color-dark-theme"
-                          : "make-light-theme-color-light-theme"
+                          ? "soft-grey-dark-theme-text-variant-1 chirp-regular-font"
+                          : "very-dark-gray-light-theme-text-variant-1 chirp-regular-font"
                       }
                     >
                       Automation
                     </span>
                     <span
+                      className={
+                        themeName === "dark-theme"
+                          ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                          : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                      }
                       style={{
                         lineHeight: "16px",
                         fontSize: "13px",
-                        fontWeight: "400",
-                        color:
-                          themeName === "dark-theme"
-                            ? "#71767A"
-                            : "rgb(83, 100, 113)",
                       }}
                     >
                       Manage your automated account.
                     </span>
                   </div>
-                  <div
-                    style={{
-                      lineHeight: "16px",
-                      fontSize: "13px",
-                      fontWeight: "400",
-                      color:
-                        themeName === "dark-theme"
-                          ? "#71767A"
-                          : "rgb(83, 100, 113)",
-                    }}
-                  ></div>
-                </div>{" "}
+                </div>
                 <div>
-                  {" "}
                   <svg
                     fill={themeName === "dark-theme" ? "#71767a" : "#536371"}
                     width={`${1.25}em`}
@@ -1302,7 +1235,7 @@ function AccountInformationMain() {
                     </g>
                   </svg>
                 </div>
-              </div>{" "}
+              </div>
             </div>
           )}
         </>

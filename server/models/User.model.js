@@ -128,6 +128,8 @@ const userSchema = new Schema(
       default: false,
     },
     ipAddress: { type: String, required: true },
+    gender: { type: String },
+    country: { type: String },
   },
   {
     timestamps: true,

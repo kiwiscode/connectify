@@ -1,21 +1,19 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import { Button, Col, Modal } from "react-bootstrap";
+import { Col, Modal, Button } from "react-bootstrap";
+import SettingsNavigation from "../../../../../../../components/SettingsNavigation/SettingsNavigation";
+import { useAntdMessageHandler } from "../../../../../../../utils/useAntdMessageHandler";
+import useWindowDimensions from "../../../../../../../hooks/getWindowDimensions";
+import { ThemeContext } from "../../../../../../../context/ThemeContext";
+import { UserContext } from "../../../../../../../context/UserContext";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useWindowDimensions from "../../../../../hooks/getWindowDimensions";
-import { ThemeContext } from "../../../../../context/ThemeContext";
-import { useAntdMessageHandler } from "../../../../../utils/useAntdMessageHandler";
-import SettingsNavigation from "../../../../../components/SettingsNavigation/SettingsNavigation";
 import {
   FormControl,
   InputAdornment,
   InputLabel,
   OutlinedInput,
-  TextField,
 } from "@mui/material";
-import { UserContext } from "../../../../../context/UserContext";
 import axios from "axios";
-import LoadingSpinner from "../../../../../components/ui/LoadingSpinner";
-import BootstrapTooltip from "../../../../../components/BootstrapToolTip/BootstrapToolTip";
+import { NavigationHistoryContext } from "../../../../../../../context/NavigationHistoryContext";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -23,33 +21,25 @@ const API_URL = "http://localhost:3000";
 // when working on deployment version
 // ?
 
-function DownloadAnArchiveOfYourDataMain() {
+function Email() {
+  const { contextHolder, showCustomMessage } = useAntdMessageHandler();
   const { width } = useWindowDimensions();
   const [{ theme, themeName }] = useContext(ThemeContext);
-  const { contextHolder, showCustomMessage } = useAntdMessageHandler();
   const navigate = useNavigate();
   const { userInfo, getToken } = useContext(UserContext);
-  const [showModal, setShowModal] = useState(true);
 
+  const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(1);
-
   const [passwordInput, setPasswordInput] = useState("");
-
-  useEffect(() => {}, []);
-
   const [showPassword, setShowPassword] = useState(false);
-
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (e) => {
     e.preventDefault();
   };
-
   const handleTabIndexState = () => {
     setTabIndex(tabIndex + 1);
   };
-
-  const [loading, setLoading] = useState(false);
-
   const handlePasswordConfirmation = () => {
     axios
       .post(`${API_URL}/auth/password-check`, {
@@ -68,88 +58,36 @@ function DownloadAnArchiveOfYourDataMain() {
       });
   };
 
-  const [emailVerificationCode, setemailVerificationCode] = useState("");
-  const [emailVerificationCodeStatus, setemailVerificationCodeStatus] =
-    useState("");
+  const [user, setUser] = useState([]);
 
-  const sendEmailVerificationCode = (recipientEmail) => {
-    if (tabIndex !== 3) {
-      setLoading(true);
-    }
-
-    if (tabIndex === 3) {
-      setShowOptionsReceivedEmail(false);
-    }
+  const refreshActiveUser = () => {
     axios
-      .post(
-        `${API_URL}/auth/send-email-verification-code`,
-        {
-          receiverEmail: recipientEmail,
+      .get(`${API_URL}/profile`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
+      })
       .then((response) => {
-        console.log("Response =>", response);
-        if (response.status === 201) {
-          setemailVerificationCodeStatus(201);
-          setemailVerificationCode(response.data.code);
-        }
-        setTimeout(() => {
-          if (tabIndex !== 3) {
-            setLoading(false);
-            handleTabIndexState();
-          }
-        }, 300);
+        setUser(response.data.user);
       })
       .catch((error) => {
         console.log("Error =>", error);
       });
   };
-  const [confirmEmailVerificationCode, setconfirmEmailVerificationCode] =
-    useState("");
 
-  const handleChangeEmailVerificationCode = (e) => {
-    setconfirmEmailVerificationCode(e.target.value);
-  };
-
-  const errorMessageAndCleanTextInput = () => {
-    setTimeout(() => {
-      setconfirmEmailVerificationCode("");
-      showCustomMessage(
-        "The code you entered is incorrect. Please try again.",
-        4
-      );
-    }, 300);
-  };
-  const [showOptionsReceivedEmail, setShowOptionsReceivedEmail] =
-    useState(false);
-
-  const showOptionsReceivedEmailRef = useRef(null);
-
-  const handleClickOutside = (event) => {
-    if (
-      showOptionsReceivedEmailRef.current &&
-      !showOptionsReceivedEmailRef.current.contains(event.target)
-    ) {
-      setShowOptionsReceivedEmail(false);
-    }
-  };
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    refreshActiveUser();
   }, []);
+
+  const { navigationHistoryArray } = useContext(NavigationHistoryContext);
+
+  console.log("Navigation history =>", navigationHistoryArray);
+
   return (
     <>
+      {" "}
       {contextHolder}
       <SettingsNavigation />
-
       <>
         <Modal
           backdropClassName={
@@ -641,223 +579,6 @@ function DownloadAnArchiveOfYourDataMain() {
                       </Button>
                     </div>
                   </>
-                ) : tabIndex === 3 ? (
-                  <>
-                    <div
-                      ref={showOptionsReceivedEmailRef}
-                      style={{
-                        position: "absolute",
-                        right: "0px",
-                        top: "0px",
-                        display: showOptionsReceivedEmail ? "flex" : "none",
-                        flexDirection: "column",
-                        borderRadius: "16px",
-                        filter:
-                          themeName === "dark-theme"
-                            ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
-                            : "",
-                        boxShadow:
-                          themeName === "dark-theme"
-                            ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
-                            : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
-                        zIndex: 9999,
-                        transform: `scale(${
-                          showOptionsReceivedEmail ? "1" : "0.8"
-                        })`,
-                        animation: "fadeIn 0.5s ease",
-                      }}
-                    >
-                      <div
-                        className="chirp-regular-font"
-                        style={{
-                          border: "none",
-                          outlineStyle: "none",
-                          cursor: "pointer",
-                          lineHeight: "20px",
-                          fontSize: "15px",
-                          fontWeight: "400",
-                          padding: "12px",
-                          color: themeName === "dark-theme" ? "white" : "",
-                        }}
-                      >
-                        {"Didn't receive email?"}
-                      </div>
-                      <div
-                        onClick={() => {
-                          sendEmailVerificationCode(userInfo.email);
-                        }}
-                        className={`resend-email resend-email-${themeName} chirp-bold-font`}
-                        style={{
-                          border: "none",
-                          outlineStyle: "none",
-                          cursor: "pointer",
-                          lineHeight: "20px",
-                          fontSize: "15px",
-                          fontWeight: "700",
-                          padding: "12px",
-                          color: themeName === "dark-theme" ? "white" : "",
-                        }}
-                      >
-                        {"Resend email"}
-                      </div>
-                      <BootstrapTooltip
-                        title="This feature is not yet active. "
-                        themeName={
-                          themeName === "dark-theme"
-                            ? "dark-theme"
-                            : "light-theme"
-                        }
-                      >
-                        <div
-                          className={`use-phone-instead use-phone-instead-${themeName} chirp-regular-font`}
-                          style={{
-                            lineHeight: "20px",
-                            fontSize: "15px",
-                            fontWeight: "700",
-                            padding: "12px",
-                            opacity: "0.5",
-                            borderBottomRightRadius: "16px",
-                            borderBottomLeftRadius: "16px",
-                            color: themeName === "dark-theme" ? "white" : "",
-                          }}
-                        >
-                          {"Use phone instead"}{" "}
-                        </div>
-                      </BootstrapTooltip>
-                    </div>{" "}
-                    <div
-                      style={{
-                        width: "81.5%",
-                        marginTop: "6rem",
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontSize: "32px",
-                          lineHeight: "26px",
-                        }}
-                        className={
-                          themeName === "dark-theme"
-                            ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
-                            : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
-                        }
-                      >
-                        We sent you a code
-                      </div>
-                      <div
-                        className={
-                          themeName === "dark-theme"
-                            ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font mt-2"
-                            : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font mt-2"
-                        }
-                        style={{
-                          fontSize: "15px",
-                          lineHeight: "20px",
-                        }}
-                      >
-                        Enter the verification code sent to{" "}
-                        {userInfo.email.slice(0, 2)}**********@gmail.com.
-                      </div>
-                    </div>
-                    <TextField
-                      className="mt-4"
-                      error={
-                        emailVerificationCode.length &&
-                        emailVerificationCodeStatus === 404
-                          ? "true"
-                          : ""
-                      }
-                      autoFocus={true}
-                      value={confirmEmailVerificationCode}
-                      onChange={(e) => handleChangeEmailVerificationCode(e)}
-                      type="text"
-                      id="outlined-basic"
-                      variant={"outlined"}
-                      label={`Verification code`}
-                      style={{
-                        width: "81.5%",
-                        height: "58px",
-                      }}
-                      InputLabelProps={{
-                        style: {
-                          color: themeName === "dark-theme" ? "#71767B" : "",
-                        },
-                      }}
-                      InputProps={{
-                        style: {
-                          color: themeName === "dark-theme" ? "white" : "",
-                        },
-                      }}
-                      sx={{
-                        "& .Mui-focused input + fieldset": {
-                          border: "2px solid #1d9bf0 !important",
-                        },
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor:
-                            themeName === "dark-theme"
-                              ? "rgb(70,70,70) !important"
-                              : "#cfd9de !important",
-                        },
-                        "& .MuiInputLabel-shrink": {
-                          color: "#1f9cf0 !important",
-                        },
-                      }}
-                    />
-                    <div
-                      onClick={() =>
-                        setShowOptionsReceivedEmail(!showOptionsReceivedEmail)
-                      }
-                      style={{
-                        width: "81.5%",
-                      }}
-                    >
-                      <div
-                        className="didn-t-receive-email-text"
-                        style={{
-                          cursor: "pointer",
-                          position: "relative",
-                          left: "10px",
-                          fontSize: "13px",
-                          fontWeight: "400",
-                          lineHeight: "16px",
-                          color: "#1f9cf0",
-                          display: "inline-block",
-                          float: "left",
-                        }}
-                      >
-                        {"Didn't receive email?"}
-                      </div>
-                    </div>
-                    <Button
-                      style={{
-                        position: "absolute",
-                        bottom: "20px",
-                        width: "81.5%",
-                        height: "52px",
-                        backgroundColor:
-                          themeName === "dark-theme" ? "white" : "#0f141a",
-                        opacity: confirmEmailVerificationCode.length
-                          ? "1"
-                          : "0.5",
-                      }}
-                      onClick={
-                        emailVerificationCode.length &&
-                        emailVerificationCodeStatus === 201 &&
-                        emailVerificationCode === confirmEmailVerificationCode
-                          ? () => {
-                              setLoading(true);
-                              setTimeout(() => {
-                                setLoading(false);
-                                navigate("/settings/download-your-data");
-                              }, 500);
-                            }
-                          : () => errorMessageAndCleanTextInput()
-                      }
-                      className={`next-btn ${themeName}-white-btn`}
-                    >
-                      Next
-                    </Button>
-                  </>
                 ) : null}
               </>
             ) : (
@@ -882,7 +603,6 @@ function DownloadAnArchiveOfYourDataMain() {
           </Modal.Body>
         </Modal>
       </>
-
       <Col
         xs={10}
         sm={10}
@@ -913,7 +633,11 @@ function DownloadAnArchiveOfYourDataMain() {
         <div className="settings-header-with-arrow ">
           <div
             onClick={() => {
-              navigate(-1);
+              if (navigationHistoryArray[1] !== "/i/flow/add_email") {
+                navigate(-1);
+              } else {
+                navigate("/settings/account");
+              }
             }}
             className={`arrow arrow-${themeName} mt-2`}
             style={{
@@ -954,26 +678,104 @@ function DownloadAnArchiveOfYourDataMain() {
                 : "mt-2 first-head chirp-bold-font very-dark-gray-light-theme-text-variant-1"
             }
           >
-            Download an archive of your data
+            Change email
           </div>
-        </div>
+        </div>{" "}
         <div
-          className={
-            themeName === "dark-theme"
-              ? "mt-4 chirp-regular-font soft-grey-dark-theme-text-variant-2"
-              : "mt-4 chirp-regular-font very-dark-gray-light-theme-text-variant-2"
-          }
           style={{
-            paddingLeft: "16px",
-            fontSize: "13px",
-            lineHeight: "16px",
+            padding: "0px 24px",
+            position: "relative",
           }}
         >
-          Get insights into the type of information stored for your account.
+          {" "}
+          <div
+            style={{
+              position: "absolute",
+              top: "10%",
+              left: "6%",
+              fontSize: "12px",
+              lineHeight: "18px",
+              fontWeight: "400",
+              minWidth: "fit-content",
+              //   width: "80%",
+              color:
+                themeName === "dark-theme" ? "#383B3D" : "rgb(168,177,184)",
+              zIndex: 9999,
+            }}
+          >
+            Current
+          </div>
+          <div
+            className={"mt-3"}
+            type="text"
+            style={{
+              height: "56px",
+              width: "100%",
+              borderRadius: "4px",
+              backgroundColor:
+                themeName === "dark-theme" ? "#111214" : "rgb(248,249,250)",
+            }}
+          />
+          <input
+            type="text"
+            defaultValue={user.email}
+            style={{
+              height: "50px",
+              position: "absolute",
+              top: "5%",
+              left: "6%",
+              width: "87%",
+              minWidth: "fit-content",
+              border: "none",
+              outline: "none",
+              paddingTop: "15px",
+              textAlign: "left",
+              paddingLeft: "0px",
+              paddingRight: "0px",
+              paddingBottom: "0px",
+              backgroundColor: "transparent",
+              color:
+                themeName === "dark-theme" ? "#383B3D" : "rgb(168,177,184)",
+            }}
+          />
+        </div>{" "}
+        <div
+          className="mt-4"
+          style={{
+            borderBottom:
+              themeName !== "dark-theme"
+                ? "1px solid rgba(0, 0, 0, 0.1)"
+                : // : "0.1px solid rgb(70, 70, 70)",
+                  "1px solid rgb(70, 70, 70)",
+
+            display: "inline-block",
+            width: "100%",
+          }}
+        ></div>
+        <div
+          onClick={() => {
+            navigate("/i/flow/add_email");
+          }}
+          className={
+            themeName === "dark-theme"
+              ? "dark-theme-stylish-blue-background-color"
+              : "light-theme-stylish-blue-background-color"
+          }
+          style={{
+            padding: "16px",
+            textAlign: "center",
+            color: "rgb(29, 155, 240)",
+            lineHeight: "20px",
+            fontSize: "15px",
+            fontWeight: "400",
+            cursor: "pointer",
+          }}
+        >
+          Update email address
         </div>
       </Col>
     </>
   );
 }
 
-export default DownloadAnArchiveOfYourDataMain;
+export default Email;

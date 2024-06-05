@@ -84,14 +84,30 @@ const ScreenName = lazy(() =>
     "./pages/settings/your_account_options/account_information/sections/username/ScreenName"
   )
 );
-const Phone = lazy(() =>
-  import(
-    "./pages/settings/your_account_options/account_information/sections/phone/Phone"
-  )
-);
+
 const Email = lazy(() =>
   import(
-    "./pages/settings/your_account_options/account_information/sections/email/Email"
+    "./pages/settings/your_account_options/account_information/sections/email/main/Email"
+  )
+);
+const ChangeYourEmail = lazy(() =>
+  import(
+    "./pages/settings/your_account_options/account_information/sections/email/sections/change_your_email/ChangeYourEmail"
+  )
+);
+const Age = lazy(() =>
+  import(
+    "./pages/settings/your_account_options/account_information/sections/age/Age"
+  )
+);
+const Gender = lazy(() =>
+  import(
+    "./pages/settings/your_account_options/account_information/sections/gender/Gender"
+  )
+);
+const Country = lazy(() =>
+  import(
+    "./pages/settings/your_account_options/account_information/sections/country/Country"
   )
 );
 const AudienceAndTagging = lazy(() =>
@@ -103,6 +119,21 @@ const AudienceAndTagging = lazy(() =>
 const DownloadYourDataMain = lazy(() =>
   import(
     "./pages/settings/your_account_options/download_an_archive_of_your_data/sections/download_your_data_main/DownloadYourDataMain"
+  )
+);
+const Languages = lazy(() =>
+  import(
+    "./pages/settings/your_account_options/account_information/sections/languages/main/Languages"
+  )
+);
+const Phone = lazy(() =>
+  import(
+    "./pages/settings/your_account_options/account_information/sections/phone/main/Phone"
+  )
+);
+const AddYourPhoneNumber = lazy(() =>
+  import(
+    "./pages/settings/your_account_options/account_information/sections/phone/sections/add_your_phone_number/AddYourPhoneNumber"
   )
 );
 
@@ -447,7 +478,28 @@ function App() {
                     element={<ScreenName />}
                   ></Route>
                   <Route path="/settings/phone" element={<Phone />}></Route>
+                  <Route
+                    path="/i/flow/add_phone"
+                    element={<AddYourPhoneNumber />}
+                  ></Route>
                   <Route path="/settings/email" element={<Email />}></Route>
+                  <Route
+                    path="/settings/languages"
+                    element={<Languages />}
+                  ></Route>
+                  <Route
+                    path="/i/flow/add_email"
+                    element={<ChangeYourEmail />}
+                  ></Route>
+                  <Route
+                    path="/settings/your_twitter_data/age"
+                    element={<Age />}
+                  ></Route>
+                  <Route
+                    path="/settings/your_twitter_data/gender"
+                    element={<Gender />}
+                  ></Route>
+                  <Route path="/settings/country" element={<Country />}></Route>
                   <Route
                     path="/settings/audience_and_tagging"
                     element={<AudienceAndTagging />}
@@ -494,7 +546,8 @@ function App() {
                 !path.startsWith("/settings") &&
                 path !== "/help_connectify" &&
                 path !== "/i/flow/verify_account_ownership" &&
-                !path.startsWith("/account") && (
+                !path.startsWith("/account") &&
+                !path.startsWith("/i/flow") && (
                   <RightSideColumn
                     isVerifiedOrgsSignUpRoute={
                       openVerifiedOrganizationSubscriptionTypedModal

@@ -2082,63 +2082,6 @@ span > a:hover {
 /* ant message success change password message finish to check  */
 
 /* ant message success responsive ! start to check */
-.custom-message-style-responsive {
-  /* display: flex;
-  justify-content: center; */
-  /* align-items: flex-end; */
-  /* position: fixed; */
-  position: relative !important;
-  bottom: 30px;
-  width: 100%;
-}
-
-@media (max-width: 340px) {
-  .custom-message-style-responsive {
-    background-color: blue;
-    position: relative !important;
-    bottom: 30px;
-    width: 100%;
-    right: 15px;
-  }
-}
-@media (max-width: 310px) {
-  .custom-message-style-responsive {
-    background-color: blue;
-    position: relative !important;
-    bottom: 30px;
-    width: 100%;
-    right: 20px;
-  }
-}
-@media (max-width: 300px) {
-  .custom-message-style-responsive {
-    background-color: yellow;
-    position: relative !important;
-    bottom: 30px;
-    width: 100%;
-    right: 25px;
-  }
-}
-
-@media (max-width: 290px) {
-  .custom-message-style-responsive {
-    background-color: yellow;
-    position: relative !important;
-    bottom: 30px;
-    width: 100%;
-    right: 30px;
-  }
-}
-
-@media (max-width: 280px) {
-  .custom-message-style-responsive {
-    background-color: purple;
-    position: relative !important;
-    bottom: 30px;
-    width: 100%;
-    right: 32px;
-  }
-}
 
 /* ant message success responsive ! finish to check */
 
@@ -3025,40 +2968,29 @@ span > a:hover {
 }
 
 /* scrollbar styling general start to check  */
+/* scrollbar light-theme styling start to check  */
 .scrollbar-add::-webkit-scrollbar {
-  width: 1em;
+  width: 1em !important;
 }
 
 .scrollbar-add::-webkit-scrollbar-track {
-  background: #f7f9f9;
-  border-top-right-radius: 100vw;
-  border-bottom-right-radius: 100vw;
-  margin-block: 0.5em;
-  padding: 0;
-  margin: 0;
-}
-
-.scrollbar-add::-webkit-scrollbar {
-  width: 1em;
-}
-
-.scrollbar-add::-webkit-scrollbar-track {
-  background: #f7f9f9;
-  border-top-right-radius: 100vw;
-  border-bottom-right-radius: 100vw;
-  margin-block: 0.5em;
-  padding: 0;
-  margin: 0;
+  background: #f7f9f9 !important;
+  border-top-right-radius: 100vw !important;
+  border-bottom-right-radius: 100vw !important;
+  margin-block: 0.5em !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 .scrollbar-add::-webkit-scrollbar-thumb {
-  background: #b9cad3;
-  border-radius: 100vw;
-  width: 5px;
-  border: 0.25em solid #f7f9f9;
+  background: #b9cad3 !important;
+  border-radius: 100vw !important;
+  width: 5px !important;
+  border: 0.25em solid #f7f9f9 !important;
 }
+/* scrollbar light-theme styling finish to check  */
 
-/* scrollbar- dark theme styling start to check  */
+/* scrollbar dark-theme styling start to check  */
 .scrollbar-add-dark-theme::-webkit-scrollbar {
   width: 1em !important;
 }
@@ -3075,6 +3007,42 @@ span > a:hover {
   border-bottom-right-radius: 100vw !important;
   padding: 0 !important;
 }
+/* scrollbar dark-theme styling finish to check  */
+
+.nested-modal-opened_dark_theme_scroll_bar::-webkit-scrollbar {
+  width: 1em !important;
+}
+
+.nested-modal-opened_dark_theme_scroll_bar::-webkit-scrollbar-thumb {
+  background: #4a545e !important;
+  border-radius: 100vw !important;
+  border: 0.25em solid #313c46 !important;
+}
+
+.nested-modal-opened_dark_theme_scroll_bar::-webkit-scrollbar-track {
+  background: #313c46 !important;
+  border-top-right-radius: 100vw !important;
+  border-bottom-right-radius: 100vw !important;
+  padding: 0 !important;
+}
+
+.nested-modal-opened_light_theme_scroll_bar::-webkit-scrollbar {
+  width: 1em !important;
+}
+
+.nested-modal-opened_light_theme_scroll_bar::-webkit-scrollbar-thumb {
+  background: #6f797e !important;
+  border-radius: 100vw !important;
+  border: 0.25em solid #959595 !important;
+}
+
+.nested-modal-opened_light_theme_scroll_bar::-webkit-scrollbar-track {
+  background: #959595 !important;
+  border-top-right-radius: 100vw !important;
+  border-bottom-right-radius: 100vw !important;
+  padding: 0 !important;
+}
+
 /* scrollbar- dark theme styling finish to check  */
 
 .modal-content {
@@ -3210,8 +3178,25 @@ select {
 }
 
 .back-drop-dark-theme {
-  background-color: rgb(35, 46, 54) !important;
-  filter: brightness(1.7);
+  background-color: #242d35 !important;
+  filter: brightness(2);
+}
+
+.light-theme-back-drop {
+  background-color: #999999 !important;
+  filter: brightness(0.4);
+}
+
+.dark-theme-back-drop-nested-top {
+  background-color: #3a4854 !important;
+  z-index: 9999;
+  filter: brightness(1.25);
+}
+
+.light-theme-back-drop-nested-top {
+  background-color: #5c5c5c !important;
+  z-index: 9999;
+  filter: brightness(1.25);
 }
 
 .settings-and-privacy-second-smaller-than-700-width-dark-theme,
@@ -3344,7 +3329,12 @@ select {
 .dark-theme-sub-modal {
   background-color: black;
 }
-
+.nested-modal-opened_dark_theme {
+  background-color: #242d35 !important;
+}
+.nested-modal-opened_light_theme {
+  background-color: #999999 !important;
+}
 .settings-modal-type {
   height: 630px;
   min-width: 600px !important;
@@ -4424,6 +4414,24 @@ themeName === "dark-theme"
   transition-duration: 0.2s !important;
 }
 
+.background-hover-cancel-btn-dark-theme {
+  background-color: #000000 !important;
+  border: 1px solid rgb(70, 70, 70) !important;
+}
+
+.background-hover-cancel-btn-light-theme {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+.background-hover-cancel-btn-dark-theme span {
+  color: #eff3f4 !important;
+}
+
+.background-hover-cancel-btn-light-theme span {
+  color: #0f141a !important;
+}
+
 .background-hover-cancel-btn-dark-theme:hover {
   background-color: #181919 !important;
   transition-duration: 0.2s !important;
@@ -4431,6 +4439,14 @@ themeName === "dark-theme"
 .background-hover-next-btn-dark-theme:hover {
   background-color: #d7dbdc !important;
   transition-duration: 0.2s !important;
+}
+
+.background-hover-next-btn-dark-theme {
+  background-color: #eff3f4;
+}
+
+.background-hover-next-btn-dark-theme span {
+  color: #0f141a;
 }
 
 .background-hover-cancel-btn-light-theme:hover {
@@ -4443,8 +4459,30 @@ themeName === "dark-theme"
   transition-duration: 0.2s !important;
 }
 
-/* IMPORTANT modal classname ve styling for making modal exactly middle of the window ! start to check  */
+.background-hover-next-btn-light-theme {
+  background-color: #0f141a;
+}
 
+.background-hover-next-btn-light-theme span {
+  color: #ffffff;
+}
+
+.dark-hover-effect:hover {
+  cursor: pointer !important;
+  background-color: #16181c !important;
+  transition-duration: 0.2s !important;
+}
+
+.light-hover-effect:hover {
+  cursor: pointer !important;
+  background-color: #f7f9f9 !important;
+  transition-duration: 0.2s !important;
+}
+
+/* IMPORTANT modal classname ve styling for making modal exactly middle of the window ! start to check  */
+.modal_center_with_width {
+  min-width: 600px;
+}
 .modal-backdrop {
   /* background-color: yellow !important; */
 }
@@ -4453,11 +4491,28 @@ themeName === "dark-theme"
   /* background-color: green !important; */
 }
 
-.dialog-archive-modal {
-  min-width: fit-content !important;
+.modal-dialog {
+  /* background-color: purple; */
 }
 
-.modal-content {
+.modal-content div {
   /* background-color: royalblue !important; */
 }
+
+.nested-modal-first {
+  /* background-color: yellow; */
+}
+
+.nested-modal-first div {
+  /* background-color: purple; */
+}
+
+.nested-modal-first div div {
+}
+
+.light-theme-back-drop {
+  z-index: 9999;
+  background-color: #5c5c5c;
+}
+
 /* IMPORTANT modal classname ve styling for making modal exactly middle of the window ! finish to check  */

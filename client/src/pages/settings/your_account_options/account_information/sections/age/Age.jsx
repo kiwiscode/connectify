@@ -4,16 +4,17 @@ import { useAntdMessageHandler } from "../../../../../../utils/useAntdMessageHan
 import useWindowDimensions from "../../../../../../hooks/getWindowDimensions";
 import { useContext } from "react";
 import { ThemeContext } from "../../../../../../context/ThemeContext";
+import { UserContext } from "../../../../../../context/UserContext";
 import { useNavigate } from "react-router-dom";
 
-function Phone() {
-  const { contextHolder } = useAntdMessageHandler();
+function Age() {
+  const { contextHolder } = useAntdMessageHandler;
   const { width } = useWindowDimensions();
   const [{ theme, themeName }] = useContext(ThemeContext);
+  const { userInfo } = useContext(UserContext);
   const navigate = useNavigate();
   return (
     <>
-      {" "}
       {contextHolder}
       <SettingsNavigation />
       <Col
@@ -43,6 +44,7 @@ function Phone() {
           right: "10px",
         }}
       >
+        {" "}
         <div className="settings-header-with-arrow ">
           <div
             onClick={() => {
@@ -87,33 +89,77 @@ function Phone() {
                 : "mt-2 first-head chirp-bold-font very-dark-gray-light-theme-text-variant-1"
             }
           >
-            Change phone
+            Age
           </div>
         </div>{" "}
         <div
-          onClick={() => {
-            navigate("/i/flow/add_phone");
-          }}
           className={
             themeName === "dark-theme"
-              ? "dark-theme-stylish-blue-background-color mt-1"
-              : "light-theme-stylish-blue-background-color mt-1"
+              ? "soft-grey-dark-theme-text-variant-2 mt-4 chirp-regular-font"
+              : "very-dark-gray-light-theme-text-variant-2 mt-4 chirp-regular-font"
           }
           style={{
-            padding: "16px",
-            textAlign: "center",
-            color: "rgb(29, 155, 240)",
-            lineHeight: "20px",
+            paddingLeft: "16px",
             fontSize: "15px",
-            fontWeight: "400",
-            cursor: "pointer",
+            lineHeight: "20px",
           }}
         >
-          Add phone number
+          These are the age ranges associated with you.
+        </div>
+        <div
+          className="mt-3"
+          style={{
+            borderTop:
+              themeName !== "dark-theme"
+                ? "1px solid rgba(0, 0, 0, 0.1)"
+                : // : "0.1px solid rgb(70, 70, 70)",
+                  "1px solid rgb(70, 70, 70)",
+          }}
+        ></div>
+        <div
+          className={
+            themeName === "dark-theme"
+              ? "soft-grey-dark-theme-text-variant-1 mt-3 chirp-regular-font"
+              : "very-dark-gray-light-theme-text-variant-1 mt-3 chirp-regular-font"
+          }
+          style={{
+            paddingLeft: "16px",
+            fontSize: "15px",
+            lineHeight: "20px",
+          }}
+        >
+          {userInfo.birthDate?.year && (
+            <>{new Date().getFullYear() - userInfo.birthDate.year}</>
+          )}
+        </div>
+        <div
+          className="mt-3"
+          style={{
+            borderTop:
+              themeName !== "dark-theme"
+                ? "1px solid rgba(0, 0, 0, 0.1)"
+                : // : "0.1px solid rgb(70, 70, 70)",
+                  "1px solid rgb(70, 70, 70)",
+          }}
+        ></div>
+        <div
+          className={
+            themeName === "dark-theme"
+              ? "soft-grey-dark-theme-text-variant-2 mt-3 chirp-regular-font"
+              : "very-dark-gray-light-theme-text-variant-2 mt-3 chirp-regular-font"
+          }
+          style={{
+            paddingLeft: "16px",
+            fontSize: "15px",
+            lineHeight: "20px",
+          }}
+        >
+          Not right? You can add your date of birth to your profile without
+          sharing it publicly.
         </div>
       </Col>
     </>
   );
 }
 
-export default Phone;
+export default Age;

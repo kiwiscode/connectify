@@ -12,6 +12,7 @@ export const useAntdMessageHandler = () => {
           <span style={{ fontSize: "15px" }}>Your post was sent.</span>
           <>
             <Link
+              className="chirp-bold-font"
               to={`/${postOwner}/status/${postId}`}
               style={{
                 color: "white",
@@ -35,7 +36,7 @@ export const useAntdMessageHandler = () => {
       type: "success",
       content: <div>Your post was deleted</div>,
       duration: 6,
-      className: "custom-message-style",
+      className: "custom-message-style chirp-regular-font",
     });
   };
 
@@ -52,6 +53,7 @@ export const useAntdMessageHandler = () => {
           <span style={{ fontSize: "15px" }}>{customMessage}</span>
           {isBookmarkAddedMessage && (
             <Link
+              className="chirp-bold-message"
               style={{
                 color: "white",
                 marginLeft: "15px",
@@ -65,7 +67,8 @@ export const useAntdMessageHandler = () => {
         </div>
       ),
       duration: duration,
-      className: "custom-message-style",
+
+      className: "custom-message-style chirp-regular-font",
     });
   };
 
