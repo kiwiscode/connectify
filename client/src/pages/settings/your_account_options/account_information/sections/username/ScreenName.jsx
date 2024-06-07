@@ -150,6 +150,30 @@ function ScreenName() {
     checkUsernameDuplicate();
   }, [username]);
   const [nextButtonDisabled, setnextButtonDisabled] = useState(false);
+  const [user, setUser] = useState([]);
+
+  const refreshActiveUser = () => {
+    axios
+      .get(`${API_URL}/profile`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        console.log("Response data =>", response.data.user);
+        setUser(response.data.user);
+
+        const userInfoRefreshed = response.data.user;
+        localStorage.setItem("userInfo", JSON.stringify(userInfoRefreshed));
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  };
+
+  useEffect(() => {
+    refreshActiveUser();
+  }, []);
 
   return (
     <>

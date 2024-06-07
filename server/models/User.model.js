@@ -130,6 +130,12 @@ const userSchema = new Schema(
     ipAddress: { type: String, required: true },
     gender: { type: String },
     country: { type: String },
+    archive_request: { type: Boolean, default: false },
+    automated_account: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+    automated_account_connected_message_show: { type: Boolean, default: false },
   },
   {
     timestamps: true,

@@ -470,7 +470,25 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
   };
 
   const navigate = useNavigate();
-  const localeInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const [user, setUser] = useState([]);
+  const refreshActiveUser = () => {
+    axios
+      .get(`${API_URL}/profile`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        setUser(response.data.user);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  };
+
+  useEffect(() => {
+    refreshActiveUser();
+  }, []);
   const [show, setShow] = useState(false);
   const { getToken, logout, userInfo } = useContext(UserContext);
 
@@ -746,25 +764,6 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
   }, [showlogoutPopup]);
 
   const { updateUser } = useContext(UserContext);
-  const [user, setUser] = useState([]);
-
-  // const getUser = async () => {
-  //   try {
-  //     const url = `${API_URL}/auth/login-success`;
-  //     const { data } = await axios.get(url, { withCredentials: true });
-  //     updateUser(data.user);
-  //     setUser(data.user);
-  //     console.log("data =>", data);
-  //     localStorage.setItem("userInfo", JSON.stringify(data.user));
-  //     localStorage.setItem("token", data.token);
-  //   } catch (err) {
-  //     console.log("Error =>", err);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getUser();
-  // }, []);
 
   const [isHoveredIndex, setIsHoveredIndex] = useState(null);
 
@@ -2344,7 +2343,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                           textAlign: "left",
                         }}
                       >
-                        {localeInfo?.fullname}
+                        {user?.fullname}
                       </div>
                       <div
                         className="chirp-regular-font"
@@ -2363,7 +2362,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                           textAlign: "left",
                         }}
                       >
-                        @{localeInfo?.username}
+                        @{user?.username}
                       </div>
                     </div>
                   </div>
@@ -2570,7 +2569,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                       }}
                       className="logout-p chirp-bold-font"
                     >
-                      Log out @{localeInfo?.username}
+                      Log out @{user?.username}
                     </span>
                   </div>
                 </div>
@@ -2836,7 +2835,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                       }}
                       className="logout-p chirp-bold-font"
                     >
-                      Log out @{localeInfo?.username}
+                      Log out @{user?.username}
                     </span>
                   </div>
                 </div>
@@ -3103,7 +3102,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                       }}
                       className="logout-p chirp-bold-font"
                     >
-                      Log out @{localeInfo?.username}
+                      Log out @{user?.username}
                     </span>
                   </div>
                 </div>

@@ -1,16 +1,23 @@
 const User = require("../models/User.model");
 const Post = require("../models/Post.model");
 const cloudinary = require("../utils/cloudinary");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const handleProfile = (req, res) => {
-  const userId = req.user.userId;
-
+  const { userId } = req.user;
+  console.log("Here is working !!");
   User.findById(userId)
-    // start to check
-
     .populate({
       path: "posts",
       options: { sort: { createdAt: -1 } },
+      populate: [
+        { path: "userId", model: "User" },
+        { path: "reposted", model: "User" },
+        { path: "repostedFromThisOriginalPost", model: "Post" },
+        { path: "commentedForThisPost", model: "Post" },
+        { path: "commentedForThisUsersPost", model: "User" },
+        { path: "likes", model: "User" },
+        { path: "bookmarks", model: "Bookmark" },
+      ],
     })
     .populate("followers")
     .populate("following")
@@ -19,65 +26,13 @@ const handleProfile = (req, res) => {
       options: { sort: { createdAt: -1 } },
     })
     .populate({
-      path: "posts",
-      populate: {
-        path: "userId",
-        model: "User",
-      },
-    })
-    .populate({
-      path: "posts",
-      populate: {
-        path: "reposted",
-        model: "User",
-      },
-    })
-    .populate({
-      path: "posts",
-      populate: {
-        path: "repostedFromThisOriginalPost",
-        model: "Post",
-      },
-    })
-    .populate({
-      path: "posts",
-      populate: {
-        path: "commentedForThisPost",
-        model: "Post",
-      },
-    })
-    .populate({
-      path: "posts",
-      populate: {
-        path: "commentedForThisUsersPost",
-        model: "User",
-      },
-    })
-    .populate({
       path: "favorites",
       populate: {
         path: "userId",
         model: "User",
       },
     })
-    .populate({
-      path: "posts",
-      populate: {
-        path: "likes",
-        model: "User",
-      },
-    })
-    .populate({
-      path: "posts",
-      populate: {
-        path: "bookmarks",
-        model: "Bookmark",
-      },
-    })
-    // .populate("likes")
-
-    // finish to check
-    // .populate("posts")
+    .populate("automated_account")
     .then((user) => {
       res.status(200).json({ posts: user.posts, user });
     })
@@ -85,7 +40,6 @@ const handleProfile = (req, res) => {
       console.log("Error =>", err);
       res.status(500).json({
         errorMessage: "An error occured while fetching the data",
-        err,
       });
     });
 };

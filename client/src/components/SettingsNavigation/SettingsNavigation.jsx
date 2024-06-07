@@ -162,6 +162,7 @@ function SettingsNavigation() {
                   }}
                 >
                   <svg
+                    fill={themeName === "dark-theme" ? "#E6E9EA" : "#0F141A"}
                     width={22}
                     height={22}
                     viewBox="0 0 24 24"

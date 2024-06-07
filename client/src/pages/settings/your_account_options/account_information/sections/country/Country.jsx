@@ -462,8 +462,8 @@ function Country() {
                       <Button
                         className={
                           themeName === "dark-theme"
-                            ? "background-hover-cancel-btn-dark-theme soft-grey-dark-theme-text-variant-1"
-                            : "background-hover-cancel-btn-light-theme very-dark-gray-light-theme-text-variant-1"
+                            ? "background-hover-cancel-btn-dark-theme-variant-another  soft-grey-dark-theme-text-variant-1"
+                            : "background-hover-cancel-btn-light-theme-variant-another  very-dark-gray-light-theme-text-variant-1"
                         }
                         onClick={() => {
                           setLoading(true);

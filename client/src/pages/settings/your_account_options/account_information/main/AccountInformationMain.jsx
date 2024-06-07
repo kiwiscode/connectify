@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Button, Col } from "react-bootstrap";
+import { Button, Col, Modal } from "react-bootstrap";
 import { useAntdMessageHandler } from "../../../../../utils/useAntdMessageHandler";
 import useWindowDimensions from "../../../../../hooks/getWindowDimensions";
 import SettingsNavigation from "../../../../../components/SettingsNavigation/SettingsNavigation";
@@ -107,11 +107,677 @@ function AccountInformationMain() {
     return output;
   }
 
+  const [openAutomationInformationModal, setOpenAutomationInformationModal] =
+    useState(null);
+
   return (
     <>
       {contextHolder}
       <SettingsNavigation />
+      <>
+        <Modal
+          backdropClassName={
+            themeName === "dark-theme" ? `back-drop-${themeName}` : ""
+          }
+          style={{
+            height: "100%",
+            overflowX: "hidden",
+            overflowY: "hidden",
+            margin: "0px",
+            padding: "0px",
+            backgroundColor:
+              width < 700 && themeName === "dark-theme"
+                ? "black"
+                : width < 700 && themeName !== "dark-theme"
+                ? "white"
+                : "",
+          }}
+          dialogClassName={
+            width < 700
+              ? "modal-fullscreen modal_center_with_width"
+              : "modal_center_with_width"
+          }
+          show={openAutomationInformationModal}
+          centered={true}
+          contentClassName={
+            themeName === "dark-theme"
+              ? "dark-theme-sub-modal settings-modal-type"
+              : "settings-modal-type"
+          }
+        >
+          <Modal.Header
+            onClick={() => navigate("/settings/account")}
+            className="signin-modal-header-child-non-reactivate"
+            style={{
+              border: "none",
+              zIndex: 999,
+              backgroundColor: themeName === "dark-theme" ? "black" : "white",
+              outlineStyle: "none",
+            }}
+          >
+            <div
+              onClick={() => {
+                navigate(-1);
+              }}
+              className={`arrow arrow-${themeName} mt-2`}
+              style={{
+                position: "relative",
+                width: "36px",
+                height: " 36px",
+                borderRadius: "50%",
+                cursor: "pointer",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                marginRight: "5px",
+                zIndex: 999,
+              }}
+            >
+              {" "}
+              <svg
+                color={themeName === "dark-theme" ? "white" : ""}
+                fill="currentColor"
+                style={{
+                  position: "absolute",
+                  border: "none",
+                }}
+                width={20}
+                height={20}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+              >
+                <g>
+                  <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                </g>
+              </svg>
+            </div>
+            <div
+              style={{
+                width: "100%",
+                textAlign: "center",
+                display: "flex",
+                justifyContent: "center",
+                position: "absolute",
+                left: "0px",
+              }}
+            >
+              <div
+                style={{
+                  borderRadius: "50%",
+                  width: "50px",
+                  height: "50px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width={50}
+                  height={30}
+                  viewBox="0 0 100 100"
+                >
+                  {/* İçi dolu bir kare */}
+                  <rect
+                    x="5"
+                    y="5"
+                    width="90"
+                    height="90"
+                    fill="#1C9BEF"
+                    rx="5"
+                    ry="5"
+                    style={{
+                      filter: "drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))",
+                    }}
+                  />
 
+                  <text
+                    x="27.5"
+                    y="70"
+                    fontFamily="Arial"
+                    fontSize="60"
+                    fill="#FFF"
+                    stroke="#FFF"
+                    strokeWidth="2"
+                  >
+                    C
+                  </text>
+                </svg>
+              </div>
+            </div>
+          </Modal.Header>
+
+          <Modal.Body
+            className={`scrollbar-add scrollbar-add-${themeName}`}
+            style={{
+              padding: "0px",
+              margin: "0px",
+            }}
+          >
+            {!loading ? (
+              <div
+                className={`scrollbar-add scrollbar-add-${themeName}`}
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  overflowY: "auto",
+                  height: "500px",
+                }}
+              >
+                <div
+                  style={{
+                    backgroundColor:
+                      themeName === "dark-theme"
+                        ? "rgb(2,201,209)"
+                        : "rgb(0,147,152)",
+                    width: "100%",
+                    minHeight: "86px",
+                    display: "flex",
+                    alignItems: "flex-end",
+                  }}
+                >
+                  <div
+                    className={
+                      themeName === "dark-theme"
+                        ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                        : "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                    }
+                    style={{
+                      fontSize: "31px",
+                      lineHeight: "36px",
+                      width: "100%",
+                      paddingLeft: "32px",
+                      paddingRight: "32px",
+                    }}
+                  >
+                    Automated Account Labels
+                  </div>
+                </div>
+                <div
+                  style={{
+                    backgroundColor:
+                      themeName === "dark-theme"
+                        ? "rgb(2,201,209)"
+                        : "rgb(0,147,152)",
+                    width: "100%",
+                    minHeight: "86px",
+                    clipPath: "ellipse(70% 100% at 38% 0%)",
+                  }}
+                ></div>
+                <div
+                  className="mt-5"
+                  style={{
+                    padding: "0px 32px",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <div
+                    className={
+                      themeName === "dark-theme"
+                        ? "chirp-bold-font soft-grey-dark-theme-text-variant-1"
+                        : "chirp-bold-font very-dark-gray-light-theme-text-variant-1"
+                    }
+                    style={{
+                      fontSize: "23px",
+                      lineHeight: "28px",
+                    }}
+                  >
+                    What’s an automated account?
+                  </div>
+                  <div
+                    className={
+                      themeName === "dark-theme"
+                        ? "mt-2 chirp-regular-font soft-grey-dark-theme-text-variant-2"
+                        : "mt-2 chirp-regular-font very-dark-gray-light-theme-text-variant-2"
+                    }
+                    style={{
+                      fontSize: "15px",
+                      lineHeight: "20px",
+                    }}
+                  >
+                    Automated accounts are programmed to perform certain actions
+                    automatically through the C API. Like posting a region’s
+                    weather conditions, for example. They’re created and managed
+                    by other people on C.
+                  </div>
+                </div>
+                <div
+                  className="mt-4"
+                  style={{
+                    backgroundColor: "yellow",
+                    width: "100%",
+                    textAlign: "center",
+                    backgroundColor:
+                      themeName === "dark-theme" ? "#022022" : "#E9FDFF",
+                  }}
+                >
+                  <img
+                    style={{
+                      maxWidth: "327px",
+                      maxHeight: "249px",
+                    }}
+                    src="https://abs.twimg.com/images/automation-onboard-1_m.png"
+                    alt=""
+                  />
+                </div>
+                <div
+                  className={
+                    themeName === "dark-theme"
+                      ? "mt-5 chirp-regular-font soft-grey-dark-theme-text-variant-2"
+                      : "mt-5 chirp-regular-font very-dark-gray-light-theme-text-variant-2"
+                  }
+                  style={{
+                    fontSize: "15px",
+                    lineHeight: "20px",
+                    padding: "0px 32px",
+                  }}
+                >
+                  Labels let the world know who’s managing the automated
+                  account. Once an automated account owner has connected their
+                  managing account, a label will appear on the automated account
+                  profile and posts.
+                </div>
+                <div
+                  className="mt-4"
+                  style={{
+                    backgroundColor: "yellow",
+                    width: "100%",
+                    textAlign: "center",
+                    backgroundColor:
+                      themeName === "dark-theme" ? "#022022" : "#E9FDFF",
+                  }}
+                >
+                  <img
+                    style={{
+                      maxWidth: "329px",
+                      maxHeight: "175px",
+                    }}
+                    src="https://abs.twimg.com/images/automation-onboard-2_m.png"
+                    alt=""
+                  />
+                </div>
+                <div
+                  className="mt-5"
+                  style={{
+                    padding: "0px 32px",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <div
+                    className={
+                      themeName === "dark-theme"
+                        ? "chirp-bold-font soft-grey-dark-theme-text-variant-1"
+                        : "chirp-bold-font very-dark-gray-light-theme-text-variant-1"
+                    }
+                    style={{
+                      fontSize: "23px",
+                      lineHeight: "28px",
+                    }}
+                  >
+                    Do I need to label my automated accounts?
+                  </div>
+                  <div
+                    className={
+                      themeName === "dark-theme"
+                        ? "mt-2 chirp-regular-font soft-grey-dark-theme-text-variant-2"
+                        : "mt-2 chirp-regular-font very-dark-gray-light-theme-text-variant-2"
+                    }
+                    style={{
+                      fontSize: "15px",
+                      lineHeight: "20px",
+                    }}
+                  >
+                    Yes, all automated accounts need to be labeled. This is
+                    required under our{" "}
+                    <span
+                      className={
+                        themeName === "dark-theme"
+                          ? "chirp-bold-font soft-grey-dark-theme-text-variant-1 hover-fullname"
+                          : "chirp-bold-font very-dark-gray-light-theme-text-variant-1 hover-fullname"
+                      }
+                      style={{
+                        fontSize: "15px",
+                        lineHeight: "20px",
+                        textOverflow: "unset",
+                        borderBottom:
+                          themeName !== "dark-theme"
+                            ? "2px solid #0F141A"
+                            : "2px solid #EFF3F4",
+                        cursor: "pointer",
+                      }}
+                    >
+                      new rules
+                    </span>
+                    .
+                  </div>
+                </div>
+                <div
+                  className="mt-5"
+                  style={{
+                    padding: "0px 32px",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <div
+                    className={
+                      themeName === "dark-theme"
+                        ? "chirp-bold-font soft-grey-dark-theme-text-variant-1"
+                        : "chirp-bold-font very-dark-gray-light-theme-text-variant-1"
+                    }
+                    style={{
+                      fontSize: "23px",
+                      lineHeight: "28px",
+                    }}
+                  >
+                    How do I label my automated account?
+                  </div>
+                  <div
+                    className="mt-4"
+                    style={{
+                      display: "flex",
+                    }}
+                  >
+                    <div style={{}}>
+                      <div
+                        style={{
+                          backgroundColor:
+                            themeName === "dark-theme" ? "#EFF3F4" : "#0F141A",
+                          width: "48px",
+                          height: "48px",
+                          borderRadius: "50%",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <div
+                          className={
+                            themeName === "dark-theme"
+                              ? "chirp-bold-font very-dark-gray-light-theme-text-variant-1 "
+                              : "chirp-bold-font soft-grey-dark-theme-text-variant-1"
+                          }
+                          style={{
+                            fontSize: "20px",
+                            lineHeight: "24px",
+                          }}
+                        >
+                          1
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        marginLeft: "15px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: "17px",
+                          lineHeight: "20px",
+                        }}
+                        className={
+                          themeName === "dark-theme"
+                            ? "chirp-bold-font soft-grey-dark-theme-text-variant-1"
+                            : "chirp-bold-font very-dark-gray-light-theme-text-variant-1"
+                        }
+                      >
+                        Create a managing account
+                      </div>
+                      <div
+                        className={
+                          themeName === "dark-theme"
+                            ? "mt-2 chirp-regular-font soft-grey-dark-theme-text-variant-2"
+                            : "mt-2 chirp-regular-font very-dark-gray-light-theme-text-variant-2"
+                        }
+                        style={{
+                          fontSize: "15px",
+                          lineHeight: "20px",
+                        }}
+                      >
+                        Create a managing account A managing account is the
+                        human-run account responsible for the automated account.
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    className="mt-4"
+                    style={{
+                      display: "flex",
+                    }}
+                  >
+                    <div style={{}}>
+                      <div
+                        style={{
+                          backgroundColor:
+                            themeName === "dark-theme" ? "#EFF3F4" : "#0F141A",
+                          width: "48px",
+                          height: "48px",
+                          borderRadius: "50%",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <div
+                          className={
+                            themeName === "dark-theme"
+                              ? "chirp-bold-font very-dark-gray-light-theme-text-variant-1 "
+                              : "chirp-bold-font soft-grey-dark-theme-text-variant-1"
+                          }
+                          style={{
+                            fontSize: "20px",
+                            lineHeight: "24px",
+                          }}
+                        >
+                          2
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        marginLeft: "15px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: "17px",
+                          lineHeight: "20px",
+                        }}
+                        className={
+                          themeName === "dark-theme"
+                            ? "chirp-bold-font soft-grey-dark-theme-text-variant-1"
+                            : "chirp-bold-font very-dark-gray-light-theme-text-variant-1"
+                        }
+                      >
+                        Connect your managing and automated account
+                      </div>
+                      <div
+                        className={
+                          themeName === "dark-theme"
+                            ? "mt-2 chirp-regular-font soft-grey-dark-theme-text-variant-2"
+                            : "mt-2 chirp-regular-font very-dark-gray-light-theme-text-variant-2"
+                        }
+                        style={{
+                          fontSize: "15px",
+                          lineHeight: "20px",
+                        }}
+                      >
+                        Connect your accounts from the Automation page in your
+                        settings.
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    className="mt-4"
+                    style={{
+                      display: "flex",
+                    }}
+                  >
+                    <div style={{}}>
+                      <div
+                        style={{
+                          backgroundColor:
+                            themeName === "dark-theme" ? "#EFF3F4" : "#0F141A",
+                          width: "48px",
+                          height: "48px",
+                          borderRadius: "50%",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <div
+                          className={
+                            themeName === "dark-theme"
+                              ? "chirp-bold-font very-dark-gray-light-theme-text-variant-1 "
+                              : "chirp-bold-font soft-grey-dark-theme-text-variant-1"
+                          }
+                          style={{
+                            fontSize: "20px",
+                            lineHeight: "24px",
+                          }}
+                        >
+                          3
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        marginLeft: "15px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: "17px",
+                          lineHeight: "20px",
+                        }}
+                        className={
+                          themeName === "dark-theme"
+                            ? "chirp-bold-font soft-grey-dark-theme-text-variant-1"
+                            : "chirp-bold-font very-dark-gray-light-theme-text-variant-1"
+                        }
+                      >
+                        Your account is labeled!
+                      </div>
+                      <div
+                        className={
+                          themeName === "dark-theme"
+                            ? "mt-2 chirp-regular-font soft-grey-dark-theme-text-variant-2"
+                            : "mt-2 chirp-regular-font very-dark-gray-light-theme-text-variant-2"
+                        }
+                        style={{
+                          fontSize: "15px",
+                          lineHeight: "20px",
+                        }}
+                      >
+                        Once the accounts are connected, the automated account
+                        will have a label.
+                      </div>
+                    </div>
+                  </div>
+                </div>{" "}
+                <div
+                  className="mt-3"
+                  style={{
+                    padding: "0px 32px",
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                  }}
+                >
+                  <div
+                    className={
+                      themeName === "dark-theme"
+                        ? "mt-2 chirp-regular-font soft-grey-dark-theme-text-variant-2"
+                        : "mt-2 chirp-regular-font very-dark-gray-light-theme-text-variant-2"
+                    }
+                    style={{
+                      fontSize: "15px",
+                      lineHeight: "20px",
+                    }}
+                  >
+                    Learn more on the{" "}
+                    <span
+                      className={
+                        themeName === "dark-theme"
+                          ? "chirp-bold-font soft-grey-dark-theme-text-variant-1 hover-fullname"
+                          : "chirp-bold-font very-dark-gray-light-theme-text-variant-1 hover-fullname"
+                      }
+                      style={{
+                        fontSize: "15px",
+                        lineHeight: "20px",
+                        textOverflow: "unset",
+                        borderBottom:
+                          themeName !== "dark-theme"
+                            ? "2px solid #0F141A"
+                            : "2px solid #EFF3F4",
+                        cursor: "pointer",
+                      }}
+                    >
+                      automated account label FAQ{" "}
+                    </span>
+                    page.
+                  </div>
+                </div>
+                <div
+                  style={{
+                    width: "100%",
+                    padding: "0px 32px",
+                  }}
+                >
+                  <Button
+                    onClick={() => navigate("/settings/account/automation")}
+                    className={
+                      themeName === "dark-theme"
+                        ? "mt-5 mb-3 chirp-bold-font soft-grey-dark-theme-text-variant-1 color-variant-greenish-hover-dark-theme"
+                        : "mt-5 mb-3 chirp-bold-font soft-grey-dark-theme-text-variant-1 color-variant-greenish-hover-light-theme"
+                    }
+                    style={{
+                      width: "100%",
+                      border: "none",
+                      minHeight: "52px",
+                      backgroundColor:
+                        themeName === "dark-theme" ? "#02C9D1" : "#009398",
+                    }}
+                  >
+                    Got it
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div
+                  style={{
+                    fontSize: "15px",
+                    width: "100%",
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <LoadingSpinner
+                    strokeColor={"rgb(29, 155, 240)"}
+                  ></LoadingSpinner>
+                </div>
+              </>
+            )}
+          </Modal.Body>
+        </Modal>
+      </>
       <Col
         xs={10}
         sm={10}
@@ -494,6 +1160,21 @@ function AccountInformationMain() {
                     }}
                   >
                     Phone
+                    <div
+                      className={
+                        themeName === "dark-theme"
+                          ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                          : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                      }
+                      style={{
+                        lineHeight: "16px",
+                        fontSize: "13px",
+                      }}
+                    >
+                      {user.phoneNumber?.length
+                        ? user.phoneNumber[0].withPlusSign
+                        : null}
+                    </div>
                   </div>
                 </div>
                 <div>
@@ -1163,7 +1844,11 @@ function AccountInformationMain() {
                 </div>
               </div>{" "}
               <div
-                onClick={() => navigate("/settings/your_twitter_data/account")}
+                onClick={() => {
+                  !user?.automated_account
+                    ? setOpenAutomationInformationModal(true)
+                    : navigate("/settings/account/automation");
+                }}
                 className={
                   themeName === "dark-theme"
                     ? "has-children-dark-theme"
