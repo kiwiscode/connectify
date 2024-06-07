@@ -93,7 +93,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
   const { width } = useWindowDimensions();
 
   const [loginInput, setLoginInput] = useState({
-    usernameOrEmail: "",
+    multi_factor_authentication: "",
     password: "",
   });
 
@@ -233,7 +233,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
     }, 300);
     setShowLoginModal(false);
     setLoginInput({
-      usernameOrEmail: "",
+      multi_factor_authentication: "",
       password: "",
     });
   };
@@ -533,13 +533,16 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
   const emailRegex =
     /^[a-zA-Z0-9._%+-]+@(gmail|outlook|hotmail|yahoo|proton|zoho|mail|aol|yandex)\.(com|org|net|gov|edu|mil|co|info|de|co.uk|ca|me|tr|com.tr)$/;
 
+  const phoneRegex =
+    /^(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})$/;
+
   return (
     <>
       {contextHolder}
       {deactivatedScreen ? (
         <>
           <Button
-            className="deactivated-footer-login"
+            className="deactivated-footer-login chirp-bold-font"
             style={{
               cursor: "pointer",
               maxWidth: widthSmaller700 ? "200px" : "76px",
@@ -696,7 +699,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                         backgroundColor:
                           themeName === "dark-theme" ? "white" : "#0f141a",
                       }}
-                      className={`login-button mt-5 next-btn ${themeName}-white-btn`}
+                      className={`login-button mt-5 next-btn ${themeName}-white-btn `}
                       // variant="dark"
                       onClick={handleDeactivatedUserReturnLogin}
                     >
@@ -1053,15 +1056,15 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 autoFocus
                                 className="mt-2"
                                 id="outlined-basic"
-                                label="Email, or username"
+                                label="Phone, email, or username"
                                 variant="outlined"
-                                value={loginInput.usernameOrEmail}
+                                value={loginInput.multi_factor_authentication}
                                 type="text"
                                 onChange={(e) => {
                                   setFindConnectifyAccount(e.target.value);
                                   setLoginInput((prevInfo) => ({
                                     ...prevInfo,
-                                    usernameOrEmail: e.target.value,
+                                    multi_factor_authentication: e.target.value,
                                   }));
                                 }}
                                 style={{
@@ -1252,7 +1255,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 type="text"
                                 id="outlined-basic"
                                 variant={"outlined"}
-                                label={`Email, or username`}
+                                label="Phone, email, or username"
                                 style={{
                                   width: "81.5%",
                                   height: "58px",
@@ -2699,10 +2702,14 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                                 : "",
                                           }}
                                         >
-                                          {loginInput.usernameOrEmail.match(
+                                          {loginInput.multi_factor_authentication.match(
                                             emailRegex
                                           )
                                             ? `Email`
+                                            : loginInput.multi_factor_authentication.match(
+                                                phoneRegex
+                                              )
+                                            ? `Phone`
                                             : `Username`}
                                         </div>
                                         <div
@@ -2715,11 +2722,15 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                                 : "#999A9B",
                                           }}
                                         >
-                                          {loginInput.usernameOrEmail.match(
+                                          {loginInput.multi_factor_authentication.match(
                                             emailRegex
                                           )
-                                            ? `${loginInput.usernameOrEmail}`
-                                            : `@${loginInput.usernameOrEmail}`}
+                                            ? `${loginInput.multi_factor_authentication}`
+                                            : loginInput.multi_factor_authentication.match(
+                                                phoneRegex
+                                              )
+                                            ? `${loginInput.multi_factor_authentication}`
+                                            : `@${loginInput.multi_factor_authentication}`}
                                         </div>
                                       </div>
                                     }
@@ -2900,7 +2911,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                       : "0.5",
                                   }}
                                   onClick={() => handleLoginVariantOneStep2()}
-                                  className={`login-button mt-5 ${themeName}-white-btn`}
+                                  className={`login-button mt-5 ${themeName}-white-btn chirp-bold-font`}
                                   variant="dark"
                                 >
                                   Log in
@@ -3132,15 +3143,15 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             autoFocus
                             className="mt-1"
                             id="outlined-basic"
-                            label="Email, or username"
+                            label="Phone, email, or username"
                             variant="outlined"
-                            value={loginInput.usernameOrEmail}
+                            value={loginInput.multi_factor_authentication}
                             type="text"
                             onChange={(e) => {
                               setFindConnectifyAccount(e.target.value);
                               setLoginInput((prevInfo) => ({
                                 ...prevInfo,
-                                usernameOrEmail: e.target.value,
+                                multi_factor_authentication: e.target.value,
                               }));
                             }}
                             style={{
@@ -3334,7 +3345,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               type="text"
                               id="outlined-basic"
                               variant={"outlined"}
-                              label={`Email, or username`}
+                              label="Phone, email, or username"
                               style={{
                                 width: "81.5%",
                                 height: "58px",
@@ -3385,7 +3396,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               className={`login-button mt-5 ${themeName}-white-btn`}
                               variant="dark"
                             >
-                              Nextasd
+                              Next
                             </Button>
                           </Modal.Body>
                         </>
@@ -4747,10 +4758,14 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                               : "",
                                         }}
                                       >
-                                        {loginInput.usernameOrEmail.match(
+                                        {loginInput.multi_factor_authentication.match(
                                           emailRegex
                                         )
                                           ? `Email`
+                                          : loginInput.multi_factor_authentication.match(
+                                              phoneRegex
+                                            )
+                                          ? `Phone`
                                           : `Username`}
                                       </div>
                                       <div
@@ -4763,11 +4778,15 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                               : "",
                                         }}
                                       >
-                                        {loginInput.usernameOrEmail.match(
+                                        {loginInput.multi_factor_authentication.match(
                                           emailRegex
                                         )
-                                          ? `${loginInput.usernameOrEmail}`
-                                          : `@${loginInput.usernameOrEmail}`}
+                                          ? `${loginInput.multi_factor_authentication}`
+                                          : loginInput.multi_factor_authentication.match(
+                                              phoneRegex
+                                            )
+                                          ? `${loginInput.multi_factor_authentication}`
+                                          : `@${loginInput.multi_factor_authentication}`}
                                       </div>
                                     </div>
                                   }
@@ -4942,7 +4961,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                     : "0.5",
                                 }}
                                 onClick={() => handleLoginVariantOneStep2()}
-                                className={`login-button mt-5 ${themeName}-white-btn`}
+                                className={`login-button mt-5 ${themeName}-white-btn chirp-bold-font`}
                                 variant="dark"
                               >
                                 Log in

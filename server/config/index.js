@@ -48,8 +48,6 @@ module.exports = (app) => {
       }
     );
 
-    console.log(interactedChatRooms, "---------");
-
     setTimeout(() => {
       const activeUser = interactedChatRooms.find((room) =>
         // Oda içindeki activeUsers listesini kontrol et
@@ -67,9 +65,6 @@ module.exports = (app) => {
         console.log("Chat detail page route active.----------------- ");
       } else {
         isBothUserOpenedMessageRoom = false;
-        console.log(
-          "They are not in same room right now one of them left the room ://"
-        );
 
         const ifUserNameIsInsideOfArray = interactedChatRooms[
           activeUserIndex

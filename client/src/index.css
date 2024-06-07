@@ -715,18 +715,28 @@ body {
   height: 45px;
 }
 
-.sign-in:hover {
-  background-color: #ebf5fe;
-  transition-duration: 0.2s !important;
+.sign-in {
+  border: 1px solid rgb(207, 217, 222);
+  outline-style: none !important;
 }
 
 .sign-in-dark-theme {
+  border: 1px solid rgb(83, 100, 113);
   background-color: black;
+}
+
+.sign-in:hover {
+  background-color: #ebf5fe;
+  transition-duration: 0.2s !important;
+  outline-style: none !important;
+  border: 1px solid rgb(207, 217, 222);
 }
 
 .sign-in-dark-theme:hover {
   background-color: #061019;
   transition-duration: 0.2s !important;
+  outline-style: none !important;
+  border: 1px solid rgb(83, 100, 113);
 }
 
 .google-variant-sign-in:hover {
@@ -931,9 +941,15 @@ span > a:hover {
   border: none;
 }
 
-.post-btn:hover {
+.post-btn:hover,
+.blue-btn:hover {
   background-color: #198cd8;
   transition-duration: 0.2s !important;
+}
+
+.blue-btn-disabled:hover {
+  outline-style: none;
+  background-color: #1c9bef;
 }
 
 .input-post {
@@ -2651,12 +2667,14 @@ span > a:hover {
 }
 
 .resend-email:hover,
+.resend-phone-number-code:hover,
 .use-phone-instead:hover {
   background-color: #f7f9f9 !important;
   transition-duration: 0.2s !important;
 }
 
 .resend-email-dark-theme:hover,
+.resend-phone-number-code-dark-theme:hover,
 .use-phone-instead-dark-theme:hover {
   outline-style: none;
   background-color: #16181c !important;
@@ -3326,7 +3344,8 @@ select {
   background-color: #17181c !important;
 }
 
-.dark-theme-sub-modal {
+.dark-theme-sub-modal,
+.showManagingAccountModal-dark-theme {
   background-color: black;
 }
 .nested-modal-opened_dark_theme {
@@ -4236,7 +4255,7 @@ themeName === "dark-theme"
 }
 
 .dark-theme-settings div svg {
-  fill: #e1e3e4;
+  fill: #71767a;
   width: 1.25em;
   height: 1.25em;
 }
@@ -4268,7 +4287,7 @@ themeName === "dark-theme"
 }
 
 .light-theme-settings div svg {
-  fill: #3f4347;
+  fill: rgb(83, 100, 113);
   width: 1.25em;
   height: 1.25em;
 }
@@ -4432,7 +4451,8 @@ themeName === "dark-theme"
   color: #0f141a !important;
 }
 
-.background-hover-cancel-btn-dark-theme:hover {
+.background-hover-cancel-btn-dark-theme:hover,
+.background-hover-cancel-btn-dark-theme-variant-another:hover {
   background-color: #181919 !important;
   transition-duration: 0.2s !important;
 }
@@ -4449,7 +4469,8 @@ themeName === "dark-theme"
   color: #0f141a;
 }
 
-.background-hover-cancel-btn-light-theme:hover {
+.background-hover-cancel-btn-light-theme:hover,
+.background-hover-cancel-btn-light-theme-variant-another:hover {
   background-color: #e7e7e8 !important;
   transition-duration: 0.2s !important;
 }
@@ -4515,4 +4536,72 @@ themeName === "dark-theme"
   background-color: #5c5c5c;
 }
 
+.color-variant-greenish-hover-light-theme:hover {
+  background-color: #26848a !important;
+  transition-duration: 0.2s !important;
+}
+.color-variant-greenish-hover-dark-theme:hover {
+  background-color: #37b4bc !important;
+  transition-duration: 0.2s !important;
+}
+
+/* stylish modal absolute position from bottom start to check */
+
+/* .modal-dialog {
+  position: absolute !important;
+  height: 100dvh !important;
+  width: 100% !important;
+  top: 0px;
+  padding: 0px !important;
+  margin: 0px !important;
+} */
+
+/* .modal-dialog div {
+  border-bottom-left-radius: initial;
+  border-bottom-right-radius: initial;
+  position: absolute;
+  bottom: 0px;
+  min-width: fit-content !important;
+  background-color: purple;
+  max-height: 375px;
+  border-top-right-radius: 32px !important;
+  border-top-left-radius: 32px !important;
+} */
+
+.show_modal_from_absolute_bottom_dialog_class_name {
+  position: absolute !important;
+  height: 100dvh !important;
+  min-width: 100vw !important;
+  padding: 0px !important;
+  margin: 0px !important;
+  bottom: 0px !important;
+  left: 0px !important;
+}
+
+.show_modal_from_absolute_bottom_content_class_name_dark_theme {
+  border-bottom-left-radius: initial;
+  border-bottom-right-radius: initial;
+  position: absolute;
+  bottom: 0px;
+  background-color: black;
+  max-height: 375px;
+  height: 375px;
+  border-top-right-radius: 32px !important;
+  border-top-left-radius: 32px !important;
+  min-width: 100vw !important;
+}
+.show_modal_from_absolute_bottom_content_class_name_light_theme {
+  border-bottom-left-radius: initial;
+  border-bottom-right-radius: initial;
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  background-color: white;
+  max-height: 375px;
+  height: 375px;
+  border-top-right-radius: 32px !important;
+  border-top-left-radius: 32px !important;
+  min-width: 100vw !important;
+}
+/* stylish modal absolute position from bottom finish to check */
 /* IMPORTANT modal classname ve styling for making modal exactly middle of the window ! finish to check  */

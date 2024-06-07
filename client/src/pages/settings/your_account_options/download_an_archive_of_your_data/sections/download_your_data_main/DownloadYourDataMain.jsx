@@ -1,14 +1,66 @@
-import { Col } from "react-bootstrap";
+import { Button, Col } from "react-bootstrap";
 import SettingsNavigation from "../../../../../../components/SettingsNavigation/SettingsNavigation";
 import { useAntdMessageHandler } from "../../../../../../utils/useAntdMessageHandler";
 import useWindowDimensions from "../../../../../../hooks/getWindowDimensions";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ThemeContext } from "../../../../../../context/ThemeContext";
+import axios from "axios";
+import { UserContext } from "../../../../../../context/UserContext";
+import { useNavigate } from "react-router-dom";
+// when working on local version
+const API_URL = "http://localhost:3000";
 
+// when working on deployment version
+// ?
 function DownloadYourDataMain() {
-  const { contextHolder } = useAntdMessageHandler();
+  const { contextHolder, showCustomMessage } = useAntdMessageHandler();
   const { width } = useWindowDimensions();
   const [{ theme, themeName }] = useContext(ThemeContext);
+  const { getToken } = useContext(UserContext);
+  const [user, setUser] = useState([]);
+  const navigate = useNavigate();
+  const refreshActiveUser = () => {
+    axios
+      .get(`${API_URL}/profile`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        setUser(response.data.user);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  };
+
+  const handleArchiveRequest = async () => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/user_archive_request`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      if (response) {
+        refreshActiveUser();
+        showCustomMessage(
+          "We’ll let you know when your data is ready to download",
+          6
+        );
+      }
+    } catch (error) {
+      console.error("Error occured =>", error);
+    }
+  };
+
+  useEffect(() => {
+    refreshActiveUser();
+  }, []);
 
   return (
     <>
@@ -89,40 +141,126 @@ function DownloadYourDataMain() {
           </div>
         </div>{" "}
         <div
+          className={
+            themeName === "dark-theme"
+              ? "mt-4 chirp-regular-font soft-grey-dark-theme-text-variant-2"
+              : "mt-4 chirp-regular-font very-dark-gray-light-theme-text-variant-2"
+          }
           style={{
-            padding: "0px 24px",
+            paddingLeft: "16px",
+            fontSize: "13px",
+            lineHeight: "16px",
           }}
         >
-          1
-        </div>{" "}
+          Get insights into the type of information stored for your account.
+        </div>
         <div
+          className={
+            themeName === "dark-theme"
+              ? "mt-4 chirp-bold-font soft-grey-dark-theme-text-variant-1"
+              : "mt-4 chirp-bold-font very-dark-gray-light-theme-text-variant-1"
+          }
           style={{
-            borderBottom:
-              themeName !== "dark-theme"
-                ? "1px solid rgba(0, 0, 0, 0.1)"
-                : // : "0.1px solid rgb(70, 70, 70)",
-                  "1px solid rgb(70, 70, 70)",
-
-            display: "inline-block",
-            width: "100%",
+            paddingLeft: "16px",
+            fontSize: "20px",
+            lineHeight: "24px",
           }}
-        ></div>
-        <div style={{ padding: "0px 24px" }}>2</div>
-        <div style={{ padding: "0px 24px" }}>3</div>{" "}
+        >
+          C data{" "}
+        </div>
         <div
+          className={
+            themeName === "dark-theme"
+              ? "mt-4 chirp-regular-font soft-grey-dark-theme-text-variant-2"
+              : "mt-4 chirp-regular-font very-dark-gray-light-theme-text-variant-2"
+          }
           style={{
-            borderBottom:
-              themeName !== "dark-theme"
-                ? "1px solid rgba(0, 0, 0, 0.1)"
-                : // : "0.1px solid rgb(70, 70, 70)",
-                  "1px solid rgb(70, 70, 70)",
-
-            display: "inline-block",
-            width: "100%",
+            paddingLeft: "16px",
+            fontSize: "13px",
+            lineHeight: "16px",
           }}
-        ></div>
+        >
+          You can request a ZIP file with an archive of your account
+          information, account history, apps and devices, account activity,
+          interests, and Ads data. You’ll get an in-app notification when the
+          archive of your data is ready to download.{" "}
+          <span className="hover-blue-underline">Learn more</span>
+        </div>
         <div
-          className="mt-1"
+          className="mt-4"
+          style={{
+            paddingLeft: "16px",
+            display: "flex",
+            justifyContent: "space-between",
+            paddingRight: "16px",
+            alignItems: "center",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <div
+              className={
+                themeName === "dark-theme"
+                  ? " chirp-regular-font soft-grey-dark-theme-text-variant-1"
+                  : "chirp-regular-font very-dark-gray-light-theme-text-variant-1"
+              }
+              style={{
+                fontSize: "15px",
+                lineHeight: "20px",
+              }}
+            >
+              C
+            </div>
+            {user.archive_request && (
+              <div>
+                <div
+                  style={{
+                    fontSize: "13px",
+                  }}
+                  className={
+                    themeName === "dark-theme"
+                      ? " chirp-regular-font soft-grey-dark-theme-text-variant-2"
+                      : "chirp-regular-font very-dark-gray-light-theme-text-variant-2"
+                  }
+                >
+                  We received your request. To protect your account, it can take
+                  24 hours or longer for your data to be ready.
+                </div>
+              </div>
+            )}
+          </div>
+          <div>
+            <Button
+              onClick={() => {
+                if (!user.archive_request) {
+                  handleArchiveRequest();
+                }
+              }}
+              style={{
+                outlineStyle: "none",
+                border: "none",
+                maxWidth: "146px",
+                maxHeight: "32px",
+                fontSize: "14px",
+                lineHeight: "16px",
+                opacity: user.archive_request ? "0.5" : "",
+              }}
+              className={
+                user.archive_request
+                  ? "chirp-bold-font blue-btn-disabled"
+                  : "chirp-bold-font blue-btn"
+              }
+            >
+              Request archive
+            </Button>
+          </div>
+        </div>
+        <div
+          className="mt-3"
           style={{
             textAlign: "right",
             borderTop:
@@ -133,9 +271,69 @@ function DownloadYourDataMain() {
 
             width: "100%",
           }}
+        ></div>{" "}
+        <div
+          className={
+            themeName === "dark-theme"
+              ? "mt-3 chirp-bold-font soft-grey-dark-theme-text-variant-1"
+              : "mt-3 chirp-bold-font very-dark-gray-light-theme-text-variant-1"
+          }
+          style={{
+            paddingLeft: "16px",
+            fontSize: "20px",
+            lineHeight: "24px",
+          }}
         >
-          4
+          Periscope data
         </div>
+        <a
+          href="https://www.pscp.tv/account/your-data"
+          className={
+            themeName === "dark-theme"
+              ? "mt-4 has-children-dark-theme_sub"
+              : "mt-4 has-children-light-theme_sub"
+          }
+          style={{
+            cursor: "pointer",
+            display: "flex",
+            padding: "12px 16px",
+            justifyContent: "space-between",
+            textDecoration: "none",
+          }}
+        >
+          <div
+            style={{
+              fontSize: "15px",
+              lineHeight: "20px",
+            }}
+            className={
+              themeName === "dark-theme"
+                ? "chirp-regular-font soft-grey-dark-theme-text-variant-2"
+                : "chirp-regular-font very-dark-gray-light-theme-text-variant-2"
+            }
+          >
+            You can request an archive of your Periscope data on Periscope
+            directly.
+          </div>
+          <div
+            style={{
+              display: "flex",
+            }}
+          >
+            <svg
+              fill={themeName === "dark-theme" ? "#e1e3e4" : "#3f4347"}
+              width={`${1.25}em`}
+              height={`${1.25}em`}
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
+            >
+              <g>
+                <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
+              </g>
+            </svg>
+          </div>
+        </a>
       </Col>
     </>
   );

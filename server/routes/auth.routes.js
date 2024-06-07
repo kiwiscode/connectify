@@ -30,13 +30,34 @@ router.post("/login-variant-one-result", (req, res) => {
 
   req.session.currentUser = "Hello World!";
 
-  const userFirstInfoFromStepOne = authentication.usernameOrEmail;
+  const userFirstInfoFromStepOne = authentication.multi_factor_authentication;
 
   const passwordFromReqBody = authentication.password;
   User.findOne({
     $or: [
       { email: userFirstInfoFromStepOne },
       { username: userFirstInfoFromStepOne },
+      {
+        phoneNumber: {
+          $elemMatch: {
+            phone_number: userFirstInfoFromStepOne,
+          },
+        },
+      },
+      {
+        phoneNumber: {
+          $elemMatch: {
+            withoutPlusSign: userFirstInfoFromStepOne,
+          },
+        },
+      },
+      {
+        phoneNumber: {
+          $elemMatch: {
+            withPlusSign: userFirstInfoFromStepOne,
+          },
+        },
+      },
     ],
   })
     // today changed 13 nov
@@ -169,6 +190,7 @@ router.post(
 );
 
 router.post("/username-check", authController.handleUsernameCheck);
+router.post("/phone-number-check", authController.handlePhoneNumberCheck);
 router.post("/password-check", authController.handleUserPasswordCheck);
 router.post("/change-username", authController.handleUsernameChange);
 

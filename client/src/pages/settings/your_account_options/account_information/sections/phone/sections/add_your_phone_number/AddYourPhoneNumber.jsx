@@ -76,43 +76,6 @@ function AddYourPhoneNumber() {
       });
   };
 
-  const [allowEmailDiscovery, setAllowEmailDiscovery] = useState(null);
-
-  const [email, setEmail] = useState("");
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
-  const [emailTypeError, setemailTypeError] = useState(true);
-  useEffect(() => {
-    const checkEmail = async () => {
-      try {
-        const response = await axios.post(
-          `${API_URL}/auth/email-check`,
-          { email },
-          {
-            headers: {
-              Authorization: `Bearer ${getToken()}`,
-            },
-          }
-        );
-
-        if (response.status === 201) {
-          setemailTypeError(null);
-        }
-
-        if (response.status === 200) {
-          setemailTypeError(200);
-        }
-      } catch (error) {
-        if (error.response.status === 304) {
-          setemailTypeError(304);
-        }
-      }
-    };
-
-    checkEmail();
-  }, [email]);
-
   const [phoneVerificationCodeStatus, setPhoneVerificationCodeStatus] =
     useState("");
   const [phoneVerificationCode, setPhoneVerificationCode] = useState("");
@@ -202,10 +165,13 @@ function AddYourPhoneNumber() {
 
   const [country, setCountry] = useState("");
   const [validPhoneNumber, setvalidPhoneNumber] = useState(false);
+  const [validPhoneNumber2, setvalidPhoneNumber2] = useState(false);
   const [phoneNumber, setphoneNumber] = useState(null);
   const [onFocusedToPhoneNumberField, setonFocusedToPhoneNumberField] =
     useState(false);
   const [errorPhoneInValidMessage, setErrorPhoneInValidMessage] = useState(" ");
+  const [errorPhoneInValidMessage2, setErrorPhoneInValidMessage2] =
+    useState(" ");
 
   const [
     showpopoverCountriesAndTheirPhoneCode,
@@ -226,30 +192,6 @@ function AddYourPhoneNumber() {
     setCountry(event.target.value || undefined);
   };
   const [clicked, setClicked] = useState(false);
-
-  useEffect(() => {
-    if (
-      (isPossiblePhoneNumber(`${phoneNumber}`, country) &&
-        isValidPhoneNumber(`${phoneNumber}`, country)) ||
-      (isPossiblePhoneNumber(`${phoneNumber}`, "DE") &&
-        isValidPhoneNumber(`${phoneNumber}`, "DE"))
-    ) {
-      setTimeout(() => {
-        setvalidPhoneNumber(true);
-        setErrorPhoneInValidMessage("");
-      }, 500);
-    } else if (!phoneNumber) {
-      setTimeout(() => {
-        setErrorPhoneInValidMessage("");
-        setvalidPhoneNumber("unknown");
-      }, 500);
-    } else {
-      setTimeout(() => {
-        setErrorPhoneInValidMessage("Please enter a valid phone number.");
-        setvalidPhoneNumber(false);
-      }, 500);
-    }
-  }, [phoneNumber]);
 
   const [subErrorPhoneVerifiedTabLoading, setsubErrorPhoneVerifiedTabLoading] =
     useState(false);
@@ -290,6 +232,68 @@ function AddYourPhoneNumber() {
       setFirstLoading(false);
     }, 200);
   });
+
+  useEffect(() => {
+    if (
+      (isPossiblePhoneNumber(`${phoneNumber}`, country) &&
+        isValidPhoneNumber(`${phoneNumber}`, country)) ||
+      (isPossiblePhoneNumber(`${phoneNumber}`, "DE") &&
+        isValidPhoneNumber(`${phoneNumber}`, "DE"))
+    ) {
+      setTimeout(() => {
+        setvalidPhoneNumber(true);
+        setErrorPhoneInValidMessage("");
+      }, 500);
+    } else if (!phoneNumber) {
+      setTimeout(() => {
+        setErrorPhoneInValidMessage("");
+        setvalidPhoneNumber("unknown");
+      }, 500);
+    } else {
+      setTimeout(() => {
+        setErrorPhoneInValidMessage("Please enter a valid phone number.");
+        setvalidPhoneNumber(false);
+      }, 500);
+    }
+  }, [phoneNumber]);
+
+  const handlePhoneNumberCheck = async () => {
+    try {
+      console.log("Here is working!");
+      const response = await axios.post(
+        `${API_URL}/auth/phone-number-check`,
+        { phone_number_input: phoneNumber },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+      console.log("Response =>", response);
+      if (response) {
+        setErrorPhoneInValidMessage2("");
+        setvalidPhoneNumber2(true);
+      }
+    } catch (error) {
+      if (error.response.status === 501) {
+        setErrorPhoneInValidMessage2(
+          "Your phone number cannot contain spaces. Please choose a phone number without spaces."
+        );
+        setvalidPhoneNumber2(false);
+      } else if (error.response.status === 409) {
+        setErrorPhoneInValidMessage2(
+          "That phone number has been taken. Please choose another."
+        );
+        setvalidPhoneNumber2(false);
+      }
+      console.error("Error =>", error);
+      console.error("Error status =>", error.response.status);
+    }
+  };
+
+  useEffect(() => {
+    handlePhoneNumberCheck();
+  }, [phoneNumber]);
 
   return (
     <>
@@ -1034,7 +1038,10 @@ function AddYourPhoneNumber() {
                       }}
                     >
                       <TextField
-                        error={validPhoneNumber && phoneNumber?.length}
+                        error={
+                          (validPhoneNumber || validPhoneNumber2) &&
+                          phoneNumber?.length
+                        }
                         autoFocus={true}
                         onFocus={() => setEditClicked(false)}
                         onMouseEnter={() => {
@@ -1067,21 +1074,24 @@ function AddYourPhoneNumber() {
                         }}
                         sx={{
                           "& .Mui-focused input + fieldset": {
-                            border: !validPhoneNumber
-                              ? "2px solid rgb(244, 33, 46)!important"
-                              : "2px solid #1d9bf0 !important",
+                            border:
+                              !validPhoneNumber || !validPhoneNumber2
+                                ? "2px solid rgb(244, 33, 46)!important"
+                                : "2px solid #1d9bf0 !important",
                           },
                           "& .MuiOutlinedInput-notchedOutline": {
-                            borderColor: !validPhoneNumber
-                              ? "rgb(244, 33, 46)!important"
-                              : themeName === "dark-theme"
-                              ? "rgb(70,70,70) !important"
-                              : "#cfd9de !important",
+                            borderColor:
+                              !validPhoneNumber || !validPhoneNumber2
+                                ? "rgb(244, 33, 46)!important"
+                                : themeName === "dark-theme"
+                                ? "rgb(70,70,70) !important"
+                                : "#cfd9de !important",
                           },
                           "& .MuiInputLabel-shrink": {
-                            color: !validPhoneNumber
-                              ? "rgb(244, 33, 46)!important"
-                              : "#1f9cf0 !important",
+                            color:
+                              !validPhoneNumber || !validPhoneNumber2
+                                ? "rgb(244, 33, 46)!important"
+                                : "#1f9cf0 !important",
                           },
                         }}
                       />
@@ -1098,6 +1108,8 @@ function AddYourPhoneNumber() {
                       >
                         {errorPhoneInValidMessage
                           ? errorPhoneInValidMessage
+                          : errorPhoneInValidMessage2
+                          ? errorPhoneInValidMessage2
                           : null}
                       </div>
                     </div>
@@ -1227,7 +1239,9 @@ function AddYourPhoneNumber() {
                         className={`login-button next-btn ${themeName}-white-btn`}
                         variant="dark"
                         onClick={() => {
-                          setShowSendVerificationModal(true);
+                          if (validPhoneNumber && validPhoneNumber2) {
+                            setShowSendVerificationModal(true);
+                          }
                         }}
                       >
                         Next
@@ -1410,7 +1424,7 @@ function AddYourPhoneNumber() {
                           );
                           setShowOptionsReceivedEmail(false);
                         }}
-                        className={`resend-email resend-email-${themeName} chirp-bold-font`}
+                        className={`resend-phone-number-code resend-phone-number-code-${themeName} chirp-bold-font`}
                         style={{
                           borderBottomRightRadius: "16px",
                           borderBottomLeftRadius: "16px",
@@ -1512,7 +1526,7 @@ function AddYourPhoneNumber() {
                         onClick={() =>
                           setShowOptionsReceivedEmail(!showOptionsReceivedEmail)
                         }
-                        className="didn-t-receive-email-text"
+                        className="hover-blue-underline"
                         style={{
                           cursor: "pointer",
                           position: "relative",
@@ -1545,11 +1559,11 @@ function AddYourPhoneNumber() {
                         phoneVerificationCodeStatus === 201 &&
                         phoneVerificationCode === confirmPhoneVerificationCode
                           ? () => {
-                              setLoading(true);
+                              // setLoading(true);
                               checkIfVerificationCodeMatch();
                               setTimeout(() => {
-                                setLoading(false);
-                                navigate("/settings/phone");
+                                // setLoading(false);
+                                // navigate("/settings/phone");
                               }, 500);
                             }
                           : () => errorMessageAndCleanTextInput()
@@ -1666,18 +1680,13 @@ function AddYourPhoneNumber() {
             style={{
               fontSize: "15px",
               width: "100%",
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
             }}
           >
             <LoadingSpinner strokeColor={"rgb(29, 155, 240)"}></LoadingSpinner>
           </div>
         ) : (
           <>
-            {user.phoneNumber ? (
+            {user.phoneNumber?.length ? (
               <>
                 <div
                   style={{
@@ -1700,7 +1709,7 @@ function AddYourPhoneNumber() {
                         themeName === "dark-theme"
                           ? "#383B3D"
                           : "rgb(168,177,184)",
-                      zIndex: 9999,
+                      // zIndex: 9999,
                     }}
                   >
                     Current
