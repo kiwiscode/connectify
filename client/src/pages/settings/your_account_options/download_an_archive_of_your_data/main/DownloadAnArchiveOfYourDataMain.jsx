@@ -145,6 +145,28 @@ function DownloadAnArchiveOfYourDataMain() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const [user, setUser] = useState([]);
+
+  const refreshActiveUser = () => {
+    axios
+      .get(`${API_URL}/profile`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        setUser(response.data.user);
+      })
+      .catch((error) => {
+        console.log("Error =>", error);
+      });
+  };
+
+  useEffect(() => {
+    refreshActiveUser();
+  }, []);
+
   return (
     <>
       {contextHolder}
@@ -581,7 +603,7 @@ function DownloadAnArchiveOfYourDataMain() {
                       >
                         {" "}
                         send you a verification code to{" "}
-                        <span>{userInfo.email.slice(0, 2)}</span>{" "}
+                        <span>{user.email.slice(0, 2)}</span>{" "}
                         **********@gmail.com.
                       </div>
                     </div>
@@ -598,11 +620,11 @@ function DownloadAnArchiveOfYourDataMain() {
                       <Button
                         className={
                           themeName === "dark-theme"
-                            ? "background-hover-cancel-btn-dark-theme soft-grey-dark-theme-text-variant-1"
-                            : "background-hover-cancel-btn-light-theme very-dark-gray-light-theme-text-variant-1"
+                            ? "background-hover-cancel-btn-dark-theme-variant-another soft-grey-dark-theme-text-variant-1"
+                            : "background-hover-cancel-btn-light-theme-variant-another very-dark-gray-light-theme-text-variant-1"
                         }
                         onClick={() => {
-                          sendEmailVerificationCode(userInfo.email);
+                          sendEmailVerificationCode(user.email);
                         }}
                         style={{
                           width: "100%",
@@ -626,6 +648,8 @@ function DownloadAnArchiveOfYourDataMain() {
                         >
                           <span
                             style={{
+                              fontSize: "17px",
+                              lineHeight: "20px",
                               textOverflow: "unset",
                               borderBottom:
                                 themeName !== "dark-theme"
@@ -684,7 +708,7 @@ function DownloadAnArchiveOfYourDataMain() {
                       </div>
                       <div
                         onClick={() => {
-                          sendEmailVerificationCode(userInfo.email);
+                          sendEmailVerificationCode(user.email);
                         }}
                         className={`resend-email resend-email-${themeName} chirp-bold-font`}
                         style={{
@@ -756,7 +780,7 @@ function DownloadAnArchiveOfYourDataMain() {
                         }}
                       >
                         Enter the verification code sent to{" "}
-                        {userInfo.email.slice(0, 2)}**********@gmail.com.
+                        {user.email.slice(0, 2)}**********@gmail.com.
                       </div>
                     </div>
                     <TextField

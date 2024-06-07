@@ -782,9 +782,34 @@ const handleLoginVariantOne = (req, res) => {
   const { authentication } = req.body;
   console.log("Authentication login variant one =>", authentication);
 
-  const userFirstInfo = authentication.usernameOrEmail;
+  const userFirstInfo = authentication.multi_factor_authentication;
+  console.log("User first info =>", userFirstInfo);
   User.findOne({
-    $or: [{ email: userFirstInfo }, { username: userFirstInfo }],
+    $or: [
+      { email: userFirstInfo },
+      { username: userFirstInfo },
+      {
+        phoneNumber: {
+          $elemMatch: {
+            phone_number: userFirstInfo,
+          },
+        },
+      },
+      {
+        phoneNumber: {
+          $elemMatch: {
+            withoutPlusSign: userFirstInfo,
+          },
+        },
+      },
+      {
+        phoneNumber: {
+          $elemMatch: {
+            withPlusSign: userFirstInfo,
+          },
+        },
+      },
+    ],
   })
     // today changed 13 nov
     .populate("posts")
@@ -826,7 +851,68 @@ const handleLoginVariantOne = (req, res) => {
       });
     });
 };
+const handlePhoneNumberCheck = async (req, res) => {
+  try {
+    const { phone_number_input } = req.body;
 
+    const user = await User.findOne({
+      $or: [
+        {
+          phoneNumber: {
+            $elemMatch: {
+              phone_number: phone_number_input,
+            },
+          },
+        },
+        {
+          phoneNumber: {
+            $elemMatch: {
+              withoutPlusSign: phone_number_input,
+            },
+          },
+        },
+        {
+          phoneNumber: {
+            $elemMatch: {
+              withPlusSign: phone_number_input,
+            },
+          },
+        },
+      ],
+    });
+
+    let countSpaces = 0;
+    for (let i = 0; i < phone_number_input.length; i++) {
+      if (phone_number_input[i] === " ") {
+        countSpaces++;
+      }
+    }
+
+    if (user) {
+      res.status(409).json({
+        errorMessage:
+          "That phone number has been taken. Please choose another.",
+      });
+    } else {
+      if (countSpaces < 1) {
+        res.status(200).json({
+          successMessage:
+            "Phone number is available. Phone number ready to update.",
+        });
+      } else {
+        res.status(501).json({
+          errorMessage:
+            "Your phone number cannot contain spaces. Please choose a phone number without spaces.",
+        });
+      }
+    }
+  } catch (error) {
+    console.error("Error during phone number check:", error);
+    res
+      .status(500)
+      .json({ errorMessage: "An error occurred during phone number check." });
+  }
+};
 module.exports = {
   handleSignup,
   handleLogin,
@@ -839,4 +925,5 @@ module.exports = {
   handleChangeModalStatusVariantOne,
   handleChangeModalStatusVariantOneModal2,
   handleLoginVariantOne,
+  handlePhoneNumberCheck,
 };

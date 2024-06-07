@@ -72,6 +72,7 @@ router.post(
     selectedCountryGlobal = selectedCountry;
     phoneNumberGlobal = phoneNumber;
     resultPhoneNumberGlobal = {
+      phone_number: phoneNumberGlobal,
       withoutPlusSign: `${countryPhoneCodeGlobal}${phoneNumberGlobal}`,
       withPlusSign: `+${countryPhoneCodeGlobal}${phoneNumberGlobal}`,
     };

@@ -6,6 +6,7 @@ require("dotenv").config();
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = require("twilio")(accountSid, authToken);
+const bcrypt = require("bcrypt");
 
 router.post("/add_gender_to_user", authenticateToken, async (req, res) => {
   try {
@@ -154,8 +155,11 @@ router.post("/phone_verification_code", authenticateToken, async (req, res) => {
     console.log("User id =>", userId);
     console.log("To number =>", toNumber + countryCode);
 
+    console.log("Random code =>", randomCode);
     const message = await client.messages.create({
-      body: `Your C confirmation code is ${randomCode}`,
+      body: `Your C confirmation code is ${
+        randomCode === undefined ? generateRandomCode() : randomCode
+      }`,
       from: process.env.TWILIO_ACCOUNT_NUMBER,
       to: `+${countryCode + toNumber}`,
     });
@@ -180,8 +184,10 @@ router.post("/verify_code", authenticateToken, async (req, res) => {
       "Is correct verification code =>",
       verificationCodeInput === randomCode ? "Correct code" : "Invalid code!"
     );
+    console.log("Phone number input =>", phoneNumberInput);
     if (verificationCodeInput === randomCode) {
       resultPhoneNumberGlobal = {
+        phone_number: phoneNumberInput,
         withoutPlusSign: `${countryCodeFromUser + phoneNumberInput}`,
         withPlusSign: `+${countryCodeFromUser + phoneNumberInput}`,
       };
@@ -210,4 +216,249 @@ router.post("/verify_code", authenticateToken, async (req, res) => {
   }
 });
 
+router.post("/delete_phone_number", authenticateToken, async (req, res) => {
+  try {
+    const { userId } = req.user;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { phoneNumber: [] },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json({
+      success: true,
+      status: 201,
+      message: "Phone deleted successfully!",
+    });
+  } catch {
+    res.status(500).json("Internal server error");
+  }
+});
+
+router.post("/user_archive_request", authenticateToken, async (req, res) => {
+  try {
+    const { userId } = req.user;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { archive_request: true },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json({
+      success: true,
+      status: 201,
+      message: "User archive requested successfully!",
+    });
+  } catch {
+    res.status(500).json("Internal server error");
+  }
+});
+
+router.post(
+  "/enable_automated_account",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const { multi_factor_authentication_input } = req.body;
+      const { userId } = req.user;
+
+      console.log("Input =>", multi_factor_authentication_input);
+      console.log("Active user =>", userId);
+
+      const user = await User.findOne({
+        $or: [
+          { email: multi_factor_authentication_input },
+          { username: multi_factor_authentication_input },
+          {
+            phoneNumber: {
+              $elemMatch: {
+                phone_number: multi_factor_authentication_input,
+              },
+            },
+          },
+          {
+            phoneNumber: {
+              $elemMatch: {
+                withoutPlusSign: multi_factor_authentication_input,
+              },
+            },
+          },
+          {
+            phoneNumber: {
+              $elemMatch: {
+                withPlusSign: multi_factor_authentication_input,
+              },
+            },
+          },
+        ],
+      });
+
+      if (user._id.toString() === userId) {
+        res.status(403).json({
+          message:
+            "Managing accounts must be different than the automated account. Use a different account.",
+        });
+        return;
+      }
+
+      console.log("Finded user for managing (AKA(Merging)) :", user);
+
+      if (user) {
+        res.status(200).json({
+          message: "User found and authorized for managing account.",
+        });
+      }
+    } catch {
+      res.status(404).json("User not found!");
+    }
+  }
+);
+
+router.post(
+  "/add_automated_account_to_user",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const { automatedAccountAuthentication, password } = req.body;
+      const { userId } = req.user;
+
+      console.log("Automated account =>", automatedAccountAuthentication);
+      console.log("User id =>", userId);
+
+      if (!automatedAccountAuthentication) {
+        return res
+          .status(400)
+          .json({ message: "Automated account information is required" });
+      }
+
+      const automatedAccount = await User.findOne({
+        $or: [
+          { email: automatedAccountAuthentication },
+          { username: automatedAccountAuthentication },
+          {
+            phoneNumber: {
+              $elemMatch: {
+                phone_number: automatedAccountAuthentication,
+              },
+            },
+          },
+          {
+            phoneNumber: {
+              $elemMatch: {
+                withoutPlusSign: automatedAccountAuthentication,
+              },
+            },
+          },
+          {
+            phoneNumber: {
+              $elemMatch: {
+                withPlusSign: automatedAccountAuthentication,
+              },
+            },
+          },
+        ],
+      });
+
+      if (!automatedAccount) {
+        return res.status(404).json({ message: "Automated account not found" });
+      }
+      const isAutomatedAccountPasswordMatch = await bcrypt.compare(
+        password,
+        automatedAccount.password
+      );
+      if (!isAutomatedAccountPasswordMatch) {
+        return res.status(401).json({ errorMessage: "Wrong password!" });
+      }
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        {
+          automated_account: automatedAccount._id,
+          automated_account_connected_message_show: true,
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.status(200).json({
+        message: "Automated account added successfully",
+        user: updatedUser,
+      });
+    } catch (error) {
+      res.status(500).json("Server error!");
+    }
+  }
+);
+
+router.post(
+  "/change_show_managing_account_connected_message_status",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const { userId } = req.user;
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { automated_account_connected_message_show: null },
+        { new: true, runValidators: true }
+      );
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.status(200).json({
+        message:
+          "Automated account connected message status has changed successfully",
+        user: updatedUser,
+      });
+    } catch (error) {
+      console.log("Error =>", error);
+      res.status(500).json("Server error!");
+    }
+  }
+);
+
+router.post(
+  "/remove_automated_account_from_user",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const { userId } = req.user;
+
+      console.log("User id =>", userId);
+
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { automated_account: null },
+        { new: true, runValidators: true }
+      );
+
+      console.log("Updated user =>", updatedUser);
+
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.status(200).json({
+        message: "Automated account removed successfully",
+        user: updatedUser,
+      });
+    } catch (error) {
+      console.log("Error =>", error);
+      res.status(500).json("Server error!");
+    }
+  }
+);
 module.exports = router;

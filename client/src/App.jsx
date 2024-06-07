@@ -136,6 +136,16 @@ const AddYourPhoneNumber = lazy(() =>
     "./pages/settings/your_account_options/account_information/sections/phone/sections/add_your_phone_number/AddYourPhoneNumber"
   )
 );
+const Automation = lazy(() =>
+  import(
+    "./pages/settings/your_account_options/account_information/sections/automation/main/Automation"
+  )
+);
+const Enable_Automated_Account = lazy(() =>
+  import(
+    "./pages/settings/your_account_options/account_information/sections/automation/sections/Enable_Automated_Account"
+  )
+);
 
 // settings page detailed pages,components if exist start to check
 
@@ -494,6 +504,14 @@ function App() {
                   <Route
                     path="/settings/your_twitter_data/age"
                     element={<Age />}
+                  ></Route>
+                  <Route
+                    path="/settings/account/automation"
+                    element={<Automation />}
+                  ></Route>
+                  <Route
+                    path="/i/flow/enable_automated_account"
+                    element={<Enable_Automated_Account />}
                   ></Route>
                   <Route
                     path="/settings/your_twitter_data/gender"

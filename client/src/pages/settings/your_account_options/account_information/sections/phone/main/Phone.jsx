@@ -59,6 +59,26 @@ function Phone() {
     }, 200);
   });
 
+  const handleDeletePhoneNumber = async () => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/delete_phone_number`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      if (response) {
+        refreshActiveUser();
+      }
+    } catch (error) {
+      console.error("Error occured =>", error);
+    }
+  };
+
   return (
     <>
       {" "}
@@ -129,7 +149,10 @@ function Phone() {
               }}
             >
               <Button
-                onClick={() => {}}
+                onClick={() => {
+                  setShowDeletePhoneNumberModal(false);
+                  handleDeletePhoneNumber();
+                }}
                 className={`red-btn ${themeName}-red-btn chirp-bold-font`}
                 style={{
                   maxWidth: "256px",
@@ -240,18 +263,13 @@ function Phone() {
             style={{
               fontSize: "15px",
               width: "100%",
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
             }}
           >
             <LoadingSpinner strokeColor={"rgb(29, 155, 240)"}></LoadingSpinner>
           </div>
         ) : (
           <>
-            {user.phoneNumber ? (
+            {user.phoneNumber?.length ? (
               <>
                 <div
                   style={{
@@ -269,12 +287,11 @@ function Phone() {
                       lineHeight: "18px",
                       fontWeight: "400",
                       minWidth: "fit-content",
-                      //   width: "80%",
                       color:
                         themeName === "dark-theme"
                           ? "#383B3D"
                           : "rgb(168,177,184)",
-                      zIndex: 9999,
+                      // zIndex: 9999,
                     }}
                   >
                     Current
