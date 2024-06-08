@@ -136,6 +136,10 @@ const userSchema = new Schema(
       ref: "User",
     },
     automated_account_connected_message_show: { type: Boolean, default: false },
+    which_languages_do_you_speak: {
+      type: [String],
+      default: [],
+    },
   },
   {
     timestamps: true,
