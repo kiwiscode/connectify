@@ -37,6 +37,7 @@ function Languages() {
   useEffect(() => {
     refreshActiveUser();
   }, []);
+
   return (
     <>
       {contextHolder}
@@ -160,6 +161,9 @@ function Languages() {
           from C.
         </div>
         <div
+          onClick={() => {
+            navigate("/settings/language");
+          }}
           className={
             themeName === "dark-theme"
               ? "dark-hover-effect mt-3"
@@ -255,6 +259,9 @@ function Languages() {
           Select additional languages for the content you want to see on C.
         </div>
         <div
+          onClick={() => {
+            navigate("/i/flow/language_selector");
+          }}
           className={
             themeName === "dark-theme"
               ? "dark-hover-effect mt-3"
@@ -336,6 +343,9 @@ function Languages() {
           accounts you follow and the posts you engage with.
         </div>{" "}
         <div
+          onClick={() => {
+            navigate("/settings/your_twitter_data/language");
+          }}
           className={
             themeName === "dark-theme"
               ? "dark-hover-effect mt-3"
