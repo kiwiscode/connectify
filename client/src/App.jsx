@@ -146,6 +146,11 @@ const Enable_Automated_Account = lazy(() =>
     "./pages/settings/your_account_options/account_information/sections/automation/sections/Enable_Automated_Account"
   )
 );
+const YourTwitterDataLanguage = lazy(() =>
+  import(
+    "./pages/settings/your_account_options/account_information/sections/languages/sections/YourTwitterDataLanguage"
+  )
+);
 
 // settings page detailed pages,components if exist start to check
 
@@ -171,6 +176,7 @@ import LeftSideNavBar from "./components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "./components/Main-Right-Side-Column/RightSideColumn";
 import useWindowDimensions from "./hooks/getWindowDimensions";
 import AccountInformationMain from "./pages/settings/your_account_options/account_information/Main/AccountInformationMain";
+import LanguageSelector from "./pages/settings/your_account_options/account_information/sections/languages/sections/LanguageSelector";
 
 function App() {
   const location = useLocation();
@@ -496,6 +502,14 @@ function App() {
                   <Route
                     path="/settings/languages"
                     element={<Languages />}
+                  ></Route>
+                  <Route
+                    path="/settings/your_twitter_data/language"
+                    element={<YourTwitterDataLanguage />}
+                  ></Route>
+                  <Route
+                    path="/i/flow/language_selector"
+                    element={<LanguageSelector />}
                   ></Route>
                   <Route
                     path="/i/flow/add_email"

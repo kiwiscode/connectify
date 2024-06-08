@@ -461,4 +461,40 @@ router.post(
     }
   }
 );
+
+router.post(
+  "/add_which_languages_do_you_speak_to_user",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const { languages } = req.body;
+      const { userId } = req.user;
+
+      console.log("Languages option =>", languages);
+
+      if (!languages) {
+        return res
+          .status(400)
+          .json({ message: "Languages option is required" });
+      }
+
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { which_languages_do_you_speak: languages },
+        { new: true, runValidators: true }
+      );
+
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.status(200).json({
+        message: "Which languages do you speak field updated successfully",
+        user: updatedUser,
+      });
+    } catch (error) {
+      res.status(500).json("Server error!");
+    }
+  }
+);
 module.exports = router;

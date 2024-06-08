@@ -4380,11 +4380,11 @@ themeName === "dark-theme"
 }
 
 .light-theme-stylish-blue-background-color:hover {
-  background-color: #eaf5fe;
+  background-color: #ebf5fe;
   transition-duration: 0.2s !important;
 }
 .dark-theme-stylish-blue-background-color:hover {
-  background-color: #010b19;
+  background-color: #061019;
   transition-duration: 0.2s !important;
 }
 
