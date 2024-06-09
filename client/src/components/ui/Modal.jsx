@@ -4283,79 +4283,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             >
                               I forgot my password
                             </div>
-                            <div
-                              style={{
-                                width: "40px",
-                                height: "40px",
-                                borderRadius: "50%",
-                                cursor: "pointer",
-                                position: "relative",
-                              }}
-                              className={
-                                themeName === "dark-theme" &&
-                                forgotMyPasswordChecked
-                                  ? "hover-background-effect-clicked-dark-theme ms-auto"
-                                  : themeName !== "dark-theme" &&
-                                    forgotMyPasswordChecked
-                                  ? "hover-background-effect-clicked-light-theme ms-auto"
-                                  : themeName === "dark-theme" &&
-                                    !forgotMyPasswordChecked
-                                  ? "hover-background-effect-dark-theme ms-auto"
-                                  : themeName !== "dark-theme" &&
-                                    !forgotMyPasswordChecked
-                                  ? "hover-background-effect-light-theme ms-auto"
-                                  : ""
-                              }
-                              onClick={() => {
-                                setForgotMyPasswordChecked(
-                                  !forgotMyPasswordChecked
-                                );
-                                setSuspiciousActivityChecked(false);
-                                setDifferentReason(false);
-                                setCheckedValue(!forgotMyPasswordChecked);
-                              }}
-                            >
-                              <div
-                                style={{
-                                  backgroundColor: forgotMyPasswordChecked
-                                    ? "#1d9bf0"
-                                    : "transparent",
-                                  border: forgotMyPasswordChecked
-                                    ? "none"
-                                    : themeName !== "dark-theme"
-                                    ? "2px solid #71767A"
-                                    : "2px solid rgb(70, 70, 70)",
-                                  width: "20px",
-                                  height: "20px",
-                                  position: "relative",
-                                  left: "10px",
-                                  top: "10px",
-                                  borderRadius: "50%",
-                                }}
-                              >
-                                <svg
-                                  style={{
-                                    position: "relative",
-                                    left: "2px",
-                                    bottom: "4px",
-                                    display: forgotMyPasswordChecked
-                                      ? "initial"
-                                      : "none",
-                                  }}
-                                  width={16}
-                                  height={16}
-                                  viewBox="0 0 24 24"
-                                  aria-hidden="true"
-                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
-                                  color="white"
-                                  fill="currentColor"
-                                >
-                                  <g>
-                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </div>
                           </div>
                           <div
                             className={`mt-3 scrollbar-add scrollbar-add-${themeName}`}
@@ -6180,7 +6107,7 @@ function CommentModal({
                         : post._id
                     )
                   }
-                  className={`post-btn compose-tweet-textArea`}
+                  className={`post-btn compose-tweet-textArea chirp-bold-font blue-btn`}
                 >
                   <span>
                     {post.userId._id === userInfo._id ? "Post" : "Reply"}
@@ -6190,9 +6117,10 @@ function CommentModal({
                 <Button
                   style={{
                     border: "none",
+                    cursor: "default",
                   }}
                   variant="primary"
-                  className={`emptyContent post-btn compose-tweet-textArea`}
+                  className={`emptyContent post-btn compose-tweet-textArea chirp-bold-font blue-btn-disabled`}
                 >
                   {post.userId ? (
                     <span>

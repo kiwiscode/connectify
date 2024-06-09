@@ -112,7 +112,7 @@ function UserProfile({ isNewPostShared }) {
   // use effect to grab current mouse click location finish to check
 
   const [userprofiledata, setUserprofiledata] = useState([]);
-  const { getToken, userInfo } = useContext(UserContext);
+  const { getToken, userInfo, updateUser } = useContext(UserContext);
   const [favoriteWindow, setFavoriteWindow] = useState("hide");
   const [postsWindow, setPostWindow] = useState("");
   const [favorites, setFavorites] = useState([]);
@@ -233,16 +233,15 @@ function UserProfile({ isNewPostShared }) {
   const [profileImageChangingLoadingBar, setprofileImageChangingLoadingBar] =
     useState(false);
 
-  const handleImage = (e) => {
+  const handleChangeProfileImage = (e) => {
     const file = e.target.files[0];
-    setFileToBase(file);
+    handleChangeProfileImageSetFileToBase(file);
     setprofileImageChangingLoadingBar(true);
   };
 
-  const setFileToBase = (file) => {
+  const handleChangeProfileImageSetFileToBase = (file) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
-
     reader.onloadend = () => {
       setprofileImageChangingLoadingBar(true);
       setprofileImage(reader.result);
@@ -261,17 +260,9 @@ function UserProfile({ isNewPostShared }) {
         }
       )
       .then((response) => {
-        console.log("Response =>", response);
-        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-
-        userInfo.imageUrl = response.data.imageInfo.url;
-
-        const updatedUserInfo = userInfo;
-        localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
         setcompletedProfileImage(true);
-
+        updateUser({ imageUrl: response.data.imageInfo.url });
         setprofileImageChangingLoadingBar(false);
-        // window.location.href = "http://localhost:5173/profile";
       })
       .catch((error) => {
         console.log(error);
@@ -530,7 +521,7 @@ function UserProfile({ isNewPostShared }) {
                             }
                           />
                           <input
-                            onChange={handleImage}
+                            onChange={handleChangeProfileImage}
                             type="file"
                             id="formuploadModal-profile-image"
                             name="modalImage"
@@ -563,7 +554,7 @@ function UserProfile({ isNewPostShared }) {
                       <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
                     </svg>
                     <input
-                      onChange={handleImage}
+                      onChange={handleChangeProfileImage}
                       type="file"
                       id="formuploadModal"
                       name="modalImage"

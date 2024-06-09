@@ -1,27 +1,175 @@
-import { Col } from "react-bootstrap";
-import SettingsNavigation from "../../../../../../components/SettingsNavigation/SettingsNavigation";
-import { useAntdMessageHandler } from "../../../../../../utils/useAntdMessageHandler";
-import useWindowDimensions from "../../../../../../hooks/getWindowDimensions";
+import { Button, Col, Modal } from "react-bootstrap";
 import { useContext, useState } from "react";
-import { ThemeContext } from "../../../../../../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../../../../../../context/UserContext";
+import axios from "axios";
+import { useAntdMessageHandler } from "../../../../../../../utils/useAntdMessageHandler";
+import useWindowDimensions from "../../../../../../../hooks/getWindowDimensions";
+import { ThemeContext } from "../../../../../../../context/ThemeContext";
+import { UserContext } from "../../../../../../../context/UserContext";
+import SettingsNavigation from "../../../../../../../components/SettingsNavigation/SettingsNavigation";
+
+// when working on local version
+const API_URL = "http://localhost:3000";
+
+// when working on deployment version
+// ?
 
 function AudienceAndTagging() {
   const { contextHolder } = useAntdMessageHandler();
   const { width } = useWindowDimensions();
   const [{ theme, themeName }] = useContext(ThemeContext);
   const navigate = useNavigate();
-  const { userInfo } = useContext(UserContext);
+  const { userInfo, getToken, updateUser } = useContext(UserContext);
 
   const [isTaggingOn, setIsTaggingOn] = useState(null);
-  const [secondClicked, setSecondClicked] = useState(null);
-  const [thirdClicked, setThirdClicked] = useState(null);
+
+  const [show, setShow] = useState(null);
+  const handleClose = () => {
+    setShow(false);
+  };
+  const toggleProfilePrivacy = async () => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/toggle_profile_privacy`,
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+      if (response) {
+        console.log("Response =>", response);
+        setShow(false);
+        updateUser({ isPrivate: response.data.user.isPrivate });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  const toggleVideoPrivacy = async () => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/toggle_protect_videos`,
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+      if (response) {
+        console.log("Response =>", response);
+
+        updateUser({ isVideosProtected: response.data.user.isVideosProtected });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   return (
     <>
       {" "}
       {contextHolder}
       <SettingsNavigation />
+      <>
+        <Modal
+          style={{
+            padding: "0px",
+            margin: "0px",
+          }}
+          centered
+          show={show}
+          onHide={handleClose}
+          backdropClassName={
+            themeName === "dark-theme" ? `back-drop-${themeName}` : ""
+          }
+          className="delete-post"
+          contentClassName={
+            themeName === "dark-theme"
+              ? "delete-post-modal-dark-theme"
+              : "delete-post-modal"
+          }
+        >
+          <Modal.Body style={{}}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                paddingBottom: "16px",
+                paddingTop: "16px",
+                maxWidth: "256px",
+              }}
+            >
+              <div
+                style={{
+                  color: themeName === "dark-theme" ? "white" : "",
+                  fontWeight: "700",
+                  fontSize: "20px",
+                  lineHeight: "24px",
+                }}
+              >
+                Protect your posts?
+              </div>
+              <div
+                style={{
+                  color:
+                    themeName === "dark-theme"
+                      ? "#71767A"
+                      : "rgb(83, 100, 113)",
+                  fontWeight: "400",
+                  fontSize: "15px",
+                  lineHeight: "20px",
+                }}
+                className="mt-2"
+              >
+                This will make them visible only to your C followers.
+              </div>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                padding: "12px",
+              }}
+            >
+              <Button
+                onClick={toggleProfilePrivacy}
+                className={
+                  themeName === "dark-theme"
+                    ? "background-hover-next-btn-dark-theme soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                    : "background-hover-next-btn-light-theme very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                }
+                style={{
+                  maxWidth: "256px",
+                  minHeight: "44px",
+                  border: "none",
+                }}
+              >
+                <span>Protect</span>
+              </Button>
+              <Button
+                variant="light"
+                onClick={handleClose}
+                style={{
+                  color: themeName === "dark-theme" ? "white" : "black",
+                  maxWidth: "256px",
+                  minHeight: "44px",
+                }}
+                className={
+                  themeName === "dark-theme"
+                    ? "mt-2 background-hover-cancel-btn-dark-theme soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                    : "mt-2 background-hover-cancel-btn-light-theme very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                }
+              >
+                <span>Cancel</span>
+              </Button>
+            </div>
+          </Modal.Body>
+        </Modal>
+      </>
       <Col
         xs={10}
         sm={10}
@@ -178,7 +326,13 @@ function AudienceAndTagging() {
                 }}
               >
                 <div
-                  onClick={() => setSecondClicked(!secondClicked)}
+                  onClick={() => {
+                    if (userInfo.isPrivate) {
+                      toggleProfilePrivacy();
+                    } else {
+                      setShow(true);
+                    }
+                  }}
                   style={{
                     width: "36px",
                     height: "36px",
@@ -187,23 +341,23 @@ function AudienceAndTagging() {
                     position: "relative",
                   }}
                   className={
-                    themeName === "dark-theme" && secondClicked
+                    themeName === "dark-theme" && userInfo.isPrivate
                       ? "hover-background-effect-clicked-dark-theme"
-                      : themeName !== "dark-theme" && secondClicked
+                      : themeName !== "dark-theme" && userInfo.isPrivate
                       ? "hover-background-effect-clicked-light-theme"
-                      : themeName === "dark-theme" && !secondClicked
+                      : themeName === "dark-theme" && !userInfo.isPrivate
                       ? "hover-background-effect-dark-theme"
-                      : themeName !== "dark-theme" && !secondClicked
+                      : themeName !== "dark-theme" && !userInfo.isPrivate
                       ? "hover-background-effect-light-theme"
                       : ""
                   }
                 >
                   <div
                     style={{
-                      backgroundColor: secondClicked
+                      backgroundColor: userInfo.isPrivate
                         ? "#1d9bf0"
                         : "transparent",
-                      border: secondClicked
+                      border: userInfo.isPrivate
                         ? ""
                         : themeName === "dark-theme"
                         ? "2px solid rgb(70,70,70)"
@@ -223,7 +377,7 @@ function AudienceAndTagging() {
                   >
                     <svg
                       style={{
-                        display: secondClicked ? "" : "none",
+                        display: userInfo.isPrivate ? "" : "none",
                       }}
                       width={16}
                       height={16}
@@ -295,7 +449,7 @@ function AudienceAndTagging() {
               }}
             >
               <div
-                onClick={() => setThirdClicked(!thirdClicked)}
+                onClick={toggleVideoPrivacy}
                 style={{
                   width: "36px",
                   height: "36px",
@@ -304,21 +458,23 @@ function AudienceAndTagging() {
                   position: "relative",
                 }}
                 className={
-                  themeName === "dark-theme" && thirdClicked
+                  themeName === "dark-theme" && userInfo.isVideosProtected
                     ? "hover-background-effect-clicked-dark-theme"
-                    : themeName !== "dark-theme" && thirdClicked
+                    : themeName !== "dark-theme" && userInfo.isVideosProtected
                     ? "hover-background-effect-clicked-light-theme"
-                    : themeName === "dark-theme" && !thirdClicked
+                    : themeName === "dark-theme" && !userInfo.isVideosProtected
                     ? "hover-background-effect-dark-theme"
-                    : themeName !== "dark-theme" && !thirdClicked
+                    : themeName !== "dark-theme" && !userInfo.isVideosProtected
                     ? "hover-background-effect-light-theme"
                     : ""
                 }
               >
                 <div
                   style={{
-                    backgroundColor: thirdClicked ? "#1d9bf0" : "transparent",
-                    border: thirdClicked
+                    backgroundColor: userInfo.isVideosProtected
+                      ? "#1d9bf0"
+                      : "transparent",
+                    border: userInfo.isVideosProtected
                       ? ""
                       : themeName === "dark-theme"
                       ? "2px solid rgb(70,70,70)"
@@ -338,7 +494,7 @@ function AudienceAndTagging() {
                 >
                   <svg
                     style={{
-                      display: thirdClicked ? "" : "none",
+                      display: userInfo.isVideosProtected ? "" : "none",
                     }}
                     width={16}
                     height={16}
@@ -369,6 +525,9 @@ function AudienceAndTagging() {
               ? "has-children-dark-theme_sub"
               : "has-children-light-theme_sub"
           }
+          onClick={() => {
+            navigate("/settings/tagging");
+          }}
         >
           <div
             className={

@@ -2334,16 +2334,52 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                         className="chirp-bold-font"
                         style={{
                           color: themeName === "dark-theme" ? "white" : "black",
-                          lineHeight: "20px",
+                          // lineHeight: "20px",
                           fontSize: "15px",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
                           whiteSpace: "nowrap",
                           width: "120px",
                           textAlign: "left",
+                          display: "flex",
+                          alignItems: "center",
                         }}
                       >
-                        {user?.fullname}
+                        <span
+                          className={
+                            themeName === "dark-theme"
+                              ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                              : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                          }
+                        >
+                          {userInfo?.fullname}
+                        </span>
+                        {userInfo?.isPrivate && (
+                          <span
+                            style={{
+                              marginLeft: "5px",
+                            }}
+                          >
+                            <svg
+                              fill={
+                                themeName === "dark-theme"
+                                  ? "#E6E9EA"
+                                  : "#0F141A"
+                              }
+                              width={`${1.25}em`}
+                              height={`${1.25}em`}
+                              viewBox="0 0 24 24"
+                              aria-label="Protected account"
+                              role="img"
+                              className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-lrvibr r-m6rgpd r-3t4u6i r-18jsvk2 r-f9ja8p r-og9te1"
+                              data-testid="icon-lock"
+                            >
+                              <g>
+                                <path d="M17.5 7H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.39 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.89 7 17.5 7zM13 14.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2 0 .74-.4 1.39-1 1.73zM15 7H9v-.25c0-1.66 1.35-3 3-3 1.66 0 3 1.34 3 3V7z"></path>
+                              </g>
+                            </svg>
+                          </span>
+                        )}
                       </div>
                       <div
                         className="chirp-regular-font"
@@ -2362,7 +2398,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                           textAlign: "left",
                         }}
                       >
-                        @{user?.username}
+                        @{userInfo?.username}
                       </div>
                     </div>
                   </div>
@@ -2569,7 +2605,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                       }}
                       className="logout-p chirp-bold-font"
                     >
-                      Log out @{user?.username}
+                      Log out @{userInfo?.username}
                     </span>
                   </div>
                 </div>
@@ -2835,7 +2871,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                       }}
                       className="logout-p chirp-bold-font"
                     >
-                      Log out @{user?.username}
+                      Log out @{userInfo?.username}
                     </span>
                   </div>
                 </div>
@@ -3102,7 +3138,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                       }}
                       className="logout-p chirp-bold-font"
                     >
-                      Log out @{user?.username}
+                      Log out @{userInfo?.username}
                     </span>
                   </div>
                 </div>

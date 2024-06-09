@@ -410,15 +410,18 @@ function MainPage({ isNewPostShared }) {
         }
       )
       .then((response) => {
-        console.log("Response =>", response);
-        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-
-        userInfo.imageUrl = response.data.imageInfo.url;
-
-        const updatedUserInfo = userInfo;
-        localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
         setcompletedProfileImage(true);
-        window.location.reload();
+        updateUser({
+          imageUrl: response.data.imageInfo.url,
+          signedUpWithVariantOne: {
+            isSignedUpWithVariantOne: true,
+            isProfileImageCustomizationModalShown: true,
+            isUsernameCustomizationModalShown: false,
+            isUsernameCustomized: false,
+          },
+        });
+
+        setprofileImageChangingLoadingBar(false);
       })
       .catch((error) => {
         console.log(error);
@@ -510,11 +513,18 @@ function MainPage({ isNewPostShared }) {
         console.log("Response from server =>", response);
         setTabLoading(true);
         setTimeout(() => {
-          window.location.reload();
           setshowPickProfilePictureModal(false);
           setshowWhatShouldWeCallYouModal(false);
           setshowModalForProfilePictureOrUsernameOrBoth(false);
-          localStorage.setItem("userInfo", JSON.stringify(response.data.user));
+          updateUser({
+            username: username,
+            signedUpWithVariantOne: {
+              isSignedUpWithVariantOne: true,
+              isProfileImageCustomizationModalShown: true,
+              isUsernameCustomizationModalShown: false,
+              isUsernameCustomized: false,
+            },
+          });
         }, 500);
       })
       .catch((error) => {
@@ -531,7 +541,6 @@ function MainPage({ isNewPostShared }) {
         localStorage.setItem("userInfo", JSON.stringify(response.data.user));
         setTabLoading(true);
         setTimeout(() => {
-          window.location.reload();
           setshowPickProfilePictureModal(false);
           setshowWhatShouldWeCallYouModal(false);
           setshowModalForProfilePictureOrUsernameOrBoth(false);
@@ -547,8 +556,15 @@ function MainPage({ isNewPostShared }) {
       .post(`${API_URL}/auth/change-modal-status`, {
         userId: userInfo._id,
       })
-      .then((response) => {
-        localStorage.setItem("userInfo", JSON.stringify(response.data.user));
+      .then(() => {
+        updateUser({
+          signedUpWithVariantOne: {
+            isSignedUpWithVariantOne: true,
+            isProfileImageCustomizationModalShown: true,
+            isUsernameCustomizationModalShown: false,
+            isUsernameCustomized: false,
+          },
+        });
       })
       .catch((error) => {
         console.log("Error =>", error);
@@ -667,15 +683,18 @@ function MainPage({ isNewPostShared }) {
   // };
 
   useEffect(() => {
+    console.log(userInfo?.signedUpWithVariantOne);
+
     if (
       userInfo?.signedUpWithVariantOne?.isSignedUpWithVariantOne &&
-      (!userInfo?.signedUpWithVariantOne
-        ?.isProfileImageCustomizationModalShown ||
-        !userInfo?.signedUpWithVariantOne?.isUsernameCustomizationModalShown)
+      !userInfo?.signedUpWithVariantOne?.isProfileImageCustomizationModalShown
     ) {
       console.log("We are here right now !");
+      console.log(
+        "User info signed up with variant one =>",
+        userInfo?.isSignedUpWithVariantOne?.isSignedUpWithVariantOne
+      );
       setTabIndex(0);
-      setshowPickProfilePictureModal(true);
       setshowModalForProfilePictureOrUsernameOrBoth(true);
     }
     // getUser();
@@ -2125,7 +2144,7 @@ function MainPage({ isNewPostShared }) {
                 }}
                 variant="primary"
                 onClick={() => handlePost()}
-                className={`post-btn compose-tweet-textArea compose-tweet-2 chirp-bold-font  `}
+                className={`post-btn compose-tweet-textArea compose-tweet-2 chirp-bold-font blue-btn`}
               >
                 Post
               </Button>
@@ -2133,9 +2152,10 @@ function MainPage({ isNewPostShared }) {
               <Button
                 style={{
                   border: "none",
+                  cursor: "default",
                 }}
                 variant="primary"
-                className={`emptyContent post-btn compose-tweet-textArea chirp-bold-font `}
+                className={`emptyContent post-btn compose-tweet-textArea chirp-bold-font blue-btn-disabled `}
               >
                 Post
               </Button>

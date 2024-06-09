@@ -721,7 +721,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       handlePost();
                       refreshPosts();
                     }}
-                    className={`post-btn compose-tweet-textArea`}
+                    className={`post-btn compose-tweet-textArea chirp-bold-font blue-btn`}
                   >
                     Post
                   </Button>
@@ -729,9 +729,10 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                   <Button
                     style={{
                       border: "none",
+                      cursor: "default",
                     }}
                     variant="primary"
-                    className={`emptyContent post-btn compose-tweet-textArea chirp-bold-font`}
+                    className={`emptyContent post-btn compose-tweet-textArea chirp-bold-font blue-btn-disabled`}
                   >
                     Post
                   </Button>

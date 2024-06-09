@@ -110,9 +110,15 @@ const Country = lazy(() =>
     "./pages/settings/your_account_options/account_information/sections/country/Country"
   )
 );
+
 const AudienceAndTagging = lazy(() =>
   import(
-    "./pages/settings/your_account_options/account_information/sections/protected_posts/AudienceAndTagging"
+    "./pages/settings/your_account_options/account_information/sections/protected_posts/main/AudienceAndTagging"
+  )
+);
+const Tagging = lazy(() =>
+  import(
+    "./pages/settings/your_account_options/account_information/sections/protected_posts/sections/Tagging"
   )
 );
 
@@ -151,6 +157,16 @@ const YourTwitterDataLanguage = lazy(() =>
     "./pages/settings/your_account_options/account_information/sections/languages/sections/YourTwitterDataLanguage"
   )
 );
+const LanguageSelector = lazy(() =>
+  import(
+    "./pages/settings/your_account_options/account_information/sections/languages/sections/LanguageSelector"
+  )
+);
+const ChangeDisplayLanguage = lazy(() =>
+  import(
+    "./pages/settings/your_account_options/account_information/sections/languages/sections/ChangeDisplayLanguage"
+  )
+);
 
 // settings page detailed pages,components if exist start to check
 
@@ -176,7 +192,6 @@ import LeftSideNavBar from "./components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "./components/Main-Right-Side-Column/RightSideColumn";
 import useWindowDimensions from "./hooks/getWindowDimensions";
 import AccountInformationMain from "./pages/settings/your_account_options/account_information/Main/AccountInformationMain";
-import LanguageSelector from "./pages/settings/your_account_options/account_information/sections/languages/sections/LanguageSelector";
 
 function App() {
   const location = useLocation();
@@ -512,6 +527,10 @@ function App() {
                     element={<LanguageSelector />}
                   ></Route>
                   <Route
+                    path="/settings/language"
+                    element={<ChangeDisplayLanguage />}
+                  ></Route>
+                  <Route
                     path="/i/flow/add_email"
                     element={<ChangeYourEmail />}
                   ></Route>
@@ -536,6 +555,7 @@ function App() {
                     path="/settings/audience_and_tagging"
                     element={<AudienceAndTagging />}
                   ></Route>
+                  <Route path="/settings/tagging" element={<Tagging />}></Route>
                   <Route
                     path="/settings/monetization"
                     element={<MonetizationMain />}
