@@ -19,7 +19,7 @@ function Gender() {
   const { contextHolder, showCustomMessage } = useAntdMessageHandler();
   const { width } = useWindowDimensions();
   const [{ theme, themeName }] = useContext(ThemeContext);
-  const { userInfo, getToken } = useContext(UserContext);
+  const { userInfo, getToken, updateUser } = useContext(UserContext);
   const navigate = useNavigate();
   const [showGenderInput, setShowGenderInput] = useState(false);
 
@@ -52,6 +52,15 @@ function Gender() {
       );
 
       if (response.status === 200) {
+        updateUser({
+          gender:
+            wasChosen === "Add your gender"
+              ? addYourGenderFieldValue
+              : wasChosen,
+        });
+        if (wasChosen !== "Add your gender") {
+          setAddYourGenderFieldValue(" ");
+        }
         showCustomMessage("Gender updated", 6);
       }
 
@@ -62,7 +71,12 @@ function Gender() {
   useEffect(() => {
     console.log("User info =>", userInfo);
     if (userInfo?.gender) {
-      setWasChosen(userInfo.gender);
+      if (userInfo.gender !== "Male" && userInfo.gender !== "Female") {
+        setAddYourGenderFieldValue(userInfo.gender);
+        setWasChosen("Add your gender");
+      } else {
+        setWasChosen(userInfo.gender);
+      }
     }
   }, []);
 
@@ -537,20 +551,43 @@ function Gender() {
               minHeight: "36px",
               fontSize: "15px",
               cursor:
-                wasChosen && wasChosen !== userInfo?.gender
+                (wasChosen &&
+                  wasChosen !== "Add your gender" &&
+                  wasChosen !== userInfo?.gender) ||
+                (wasChosen &&
+                  wasChosen === "Add your gender" &&
+                  addYourGenderFieldValue !== userInfo.gender)
                   ? "pointer"
                   : "default",
-              opacity: wasChosen && wasChosen !== userInfo?.gender ? "" : "0.5",
+              backgroundColor:
+                (wasChosen &&
+                  wasChosen !== "Add your gender" &&
+                  wasChosen !== userInfo?.gender) ||
+                (wasChosen &&
+                  wasChosen === "Add your gender" &&
+                  addYourGenderFieldValue !== userInfo.gender)
+                  ? ""
+                  : "#99CDF8",
             }}
             onClick={
-              wasChosen && wasChosen !== userInfo?.gender
+              (wasChosen &&
+                wasChosen !== "Add your gender" &&
+                wasChosen !== userInfo?.gender) ||
+              (wasChosen &&
+                wasChosen === "Add your gender" &&
+                addYourGenderFieldValue !== userInfo.gender)
                 ? () => handleAddGender()
                 : null
             }
             className={
-              wasChosen && wasChosen !== userInfo?.gender
-                ? "change-password-btn"
-                : "disabled-change-password-btn"
+              (wasChosen &&
+                wasChosen !== "Add your gender" &&
+                wasChosen !== userInfo?.gender) ||
+              (wasChosen &&
+                wasChosen === "Add your gender" &&
+                addYourGenderFieldValue !== userInfo.gender)
+                ? "change-password-btn chirp-bold-font blue-btn"
+                : "disabled-change-password-btn chirp-bold-font blue-btn"
             }
           >
             Save

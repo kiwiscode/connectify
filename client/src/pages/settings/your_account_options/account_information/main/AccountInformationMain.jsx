@@ -1379,7 +1379,7 @@ function AccountInformationMain() {
                       fontSize: "13px",
                     }}
                   >
-                    No
+                    {userInfo.isPrivate ? "Yes" : "No"}
                   </div>
                 </div>
                 <div>

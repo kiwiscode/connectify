@@ -26,7 +26,7 @@ function ScreenName() {
   const [{ theme, themeName }] = useContext(ThemeContext);
   const { contextHolder, showCustomMessage } = useAntdMessageHandler();
   const navigate = useNavigate();
-  const { userInfo, getToken } = useContext(UserContext);
+  const { userInfo, getToken, updateUser } = useContext(UserContext);
 
   const [usernameDuplicateError, setusernameDuplicateError] = useState("");
   const [username, setUsername] = useState("");
@@ -134,7 +134,7 @@ function ScreenName() {
       )
       .then((response) => {
         console.log("Response from server =>", response);
-        true;
+        updateUser({ username: username });
         setLoading(true);
         setTimeout(() => {
           setLoading(false);
@@ -412,7 +412,7 @@ function ScreenName() {
                     usernameValidated && username.length
                       ? "pointer"
                       : "default",
-                  opacity: username.length < 1 ? "0.5" : "1",
+                  backgroundColor: username.length ? "" : "#99CDF8",
                 }}
                 onClick={username.length < 1 ? null : () => changeUsername()}
                 className={

@@ -2049,7 +2049,6 @@ span > a:hover {
   transition-duration: 0.2s !important;
 }
 .disabled-change-password-btn:hover {
-  background-color: rgb(16, 128, 202);
   outline-style: none;
   border-style: solid;
   border-color: rgb(207, 217, 222);

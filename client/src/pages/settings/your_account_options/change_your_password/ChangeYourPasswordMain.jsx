@@ -576,8 +576,11 @@ function ChangeYourPasswordMain() {
                 oldPassword && newPassword && confirmNewPassword
                   ? "pointer"
                   : "default",
-              opacity:
-                oldPassword && newPassword && confirmNewPassword ? "" : "0.5",
+
+              backgroundColor:
+                oldPassword && newPassword && confirmNewPassword
+                  ? ""
+                  : "#99CDF8",
             }}
             onClick={
               oldPassword && newPassword && confirmNewPassword
