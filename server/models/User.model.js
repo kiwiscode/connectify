@@ -140,6 +140,14 @@ const userSchema = new Schema(
       type: [String],
       default: [],
     },
+    languages_you_may_know: {
+      type: [String],
+      default: [],
+    },
+    preferredLanguage: { type: String, default: "English" },
+    isPrivate: { type: Boolean, default: false },
+    isVideosProtected: { type: Boolean, default: false },
+    photoTaggingPermission: { type: String, default: "Anyone can tag you" },
   },
   {
     timestamps: true,

@@ -248,6 +248,7 @@ function DownloadYourDataMain() {
                 fontSize: "14px",
                 lineHeight: "16px",
                 opacity: user.archive_request ? "0.5" : "",
+                cursor: user.archive_request ? "default" : "pointer",
               }}
               className={
                 user.archive_request

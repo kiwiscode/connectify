@@ -610,7 +610,7 @@ function PostModal({
                   }}
                   variant="primary"
                   onClick={() => handlePost()}
-                  className={`post-btn compose-tweet-textArea`}
+                  className={`post-btn compose-tweet-textArea chirp-bold-font blue-btn`}
                 >
                   Post
                 </Button>
@@ -618,10 +618,11 @@ function PostModal({
                 <Button
                   style={{
                     border: "none",
+                    cursor: "default",
                   }}
                   variant="primary"
                   // onClick={() => handlePost()}
-                  className={`emptyContent post-btn compose-tweet-textArea`}
+                  className={`emptyContent post-btn compose-tweet-textArea chirp-bold-font blue-btn-disabled`}
                 >
                   Post
                 </Button>

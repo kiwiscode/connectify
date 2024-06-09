@@ -497,4 +497,114 @@ router.post(
     }
   }
 );
+
+router.post("/toggle_profile_privacy", authenticateToken, async (req, res) => {
+  try {
+    const { userId } = req.user;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      res.status(404).json("User not found!");
+    }
+    const userPrivate = user.isPrivate;
+
+    console.log("User private =>", userPrivate);
+
+    if (userPrivate) {
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { isPrivate: false },
+        { new: true, runValidators: true }
+      );
+
+      res
+        .status(200)
+        .json({ message: "Privacy updated successfully", user: updatedUser });
+    } else {
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { isPrivate: true },
+        { new: true, runValidators: true }
+      );
+
+      res
+        .status(200)
+        .json({ message: "Privacy updated successfully", user: updatedUser });
+    }
+  } catch (error) {
+    console.log("Error: ", error);
+  }
+});
+
+router.post("/toggle_protect_videos", authenticateToken, async (req, res) => {
+  try {
+    const { userId } = req.user;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      res.status(404).json("User not found!");
+    }
+    const userVidesProtected = user.isVideosProtected;
+
+    console.log("User videos protected =>", userVidesProtected);
+
+    if (userVidesProtected) {
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { isVideosProtected: false },
+        { new: true, runValidators: true }
+      );
+
+      res.status(200).json({
+        message: "Video privacy updated successfully",
+        user: updatedUser,
+      });
+    } else {
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { isVideosProtected: true },
+        { new: true, runValidators: true }
+      );
+
+      res.status(200).json({
+        message: "Video privacy updated successfully",
+        user: updatedUser,
+      });
+    }
+  } catch (error) {
+    console.log("Error: ", error);
+  }
+});
+
+router.post(
+  "/toggle_photo_tagging_permission",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const { userId } = req.user;
+      const { permission_option } = req.body;
+
+      const user = await User.findById(userId);
+
+      if (!user) {
+        res.status(404).json("User not found!");
+      }
+
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { photoTaggingPermission: permission_option },
+        { new: true, runValidators: true }
+      );
+
+      res.status(200).json({
+        message: "Photo tagging permission updated successfully",
+        user: updatedUser,
+      });
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+  }
+);
 module.exports = router;
