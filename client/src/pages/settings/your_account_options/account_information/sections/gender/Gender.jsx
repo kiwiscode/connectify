@@ -559,7 +559,7 @@ function Gender() {
                   addYourGenderFieldValue !== userInfo.gender)
                   ? "pointer"
                   : "default",
-              backgroundColor:
+              opacity:
                 (wasChosen &&
                   wasChosen !== "Add your gender" &&
                   wasChosen !== userInfo?.gender) ||
@@ -567,7 +567,7 @@ function Gender() {
                   wasChosen === "Add your gender" &&
                   addYourGenderFieldValue !== userInfo.gender)
                   ? ""
-                  : "#99CDF8",
+                  : "0.5",
             }}
             onClick={
               (wasChosen &&

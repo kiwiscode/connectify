@@ -132,17 +132,19 @@ function AccountInformationMain() {
                 ? "white"
                 : "",
           }}
-          dialogClassName={
-            width < 700
-              ? "modal-fullscreen modal_center_with_width"
-              : "modal_center_with_width"
-          }
           show={openAutomationInformationModal}
           centered={true}
+          dialogClassName={
+            width <= 700 ? "modal-fullscreen" : "modal_center_with_width"
+          }
           contentClassName={
-            themeName === "dark-theme"
+            width > 700 && themeName === "dark-theme"
               ? "dark-theme-sub-modal settings-modal-type"
-              : "settings-modal-type"
+              : width > 700 && themeName !== "dark-theme"
+              ? "light-theme-sub-modal settings-modal-type"
+              : width <= 700 && themeName === "dark-theme"
+              ? "dark-theme-sub-modal "
+              : null
           }
         >
           <Modal.Header

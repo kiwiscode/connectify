@@ -394,11 +394,15 @@ function ChangeDisplayLanguage() {
                     ? "default"
                     : // "pointer"
                       "default",
-                backgroundColor:
+                // backgroundColor:
+                //   language?.length && language !== userInfo.preferredLanguage
+                //     ? "#99CDF8"
+                //     : // ""
+                //       "#99CDF8",
+                opacity:
                   language?.length && language !== userInfo.preferredLanguage
-                    ? "#99CDF8"
-                    : // ""
-                      "#99CDF8",
+                    ? "0.5"
+                    : null,
               }}
               onClick={
                 language?.length < 1 && language !== userInfo.preferredLanguage

@@ -507,17 +507,19 @@ function AddYourPhoneNumber() {
                 ? null
                 : 9999,
           }}
-          dialogClassName={
-            width < 700
-              ? "modal-fullscreen modal_center_with_width"
-              : "modal_center_with_width"
-          }
           show={showModal}
           centered={true}
+          dialogClassName={
+            width <= 700 ? "modal-fullscreen" : "modal_center_with_width"
+          }
           contentClassName={
-            themeName === "dark-theme"
+            width > 700 && themeName === "dark-theme"
               ? "dark-theme-sub-modal settings-modal-type"
-              : "settings-modal-type"
+              : width > 700 && themeName !== "dark-theme"
+              ? "light-theme-sub-modal settings-modal-type"
+              : width <= 700 && themeName === "dark-theme"
+              ? "dark-theme-sub-modal "
+              : null
           }
         >
           <Modal.Body
@@ -580,8 +582,8 @@ function AddYourPhoneNumber() {
 
                     <div
                       style={{
-                        paddingLeft: "80px",
-                        paddingRight: "80px",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
                         width: "100%",
                       }}
                     >
@@ -712,8 +714,8 @@ function AddYourPhoneNumber() {
                     </div>
                     <div
                       style={{
-                        paddingLeft: "80px",
-                        paddingRight: "80px",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
                         width: "100%",
                         position: "absolute",
                         bottom: "20px",
@@ -838,8 +840,9 @@ function AddYourPhoneNumber() {
                     </div>
                     <div
                       style={{
-                        paddingLeft: "80px",
-                        paddingRight: "80px",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
+
                         width: "100%",
                       }}
                     >
@@ -874,8 +877,8 @@ function AddYourPhoneNumber() {
                     {/* start to check your phone number */}
                     <div
                       style={{
-                        paddingLeft: "80px",
-                        paddingRight: "80px",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
                         width: "100%",
                       }}
                     >
@@ -992,8 +995,8 @@ function AddYourPhoneNumber() {
                     </div>
                     <div
                       style={{
-                        paddingLeft: "80px",
-                        paddingRight: "80px",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
                         width: "100%",
                       }}
                     >
@@ -1032,8 +1035,8 @@ function AddYourPhoneNumber() {
                     </div>
                     <div
                       style={{
-                        paddingLeft: "80px",
-                        paddingRight: "80px",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
                         width: "100%",
                       }}
                     >
@@ -1122,7 +1125,8 @@ function AddYourPhoneNumber() {
                         display: "flex",
                         position: "relative",
                         bottom: "20px",
-                        padding: "0px 80px",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
                       }}
                     >
                       <div
