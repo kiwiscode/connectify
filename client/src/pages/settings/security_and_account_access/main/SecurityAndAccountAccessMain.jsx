@@ -1,31 +1,19 @@
-import axios from "axios";
-import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../context/UserContext";
-import { ThemeContext } from "../context/ThemeContext";
-import useWindowDimensions from "../hooks/getWindowDimensions";
-import { Button, Col, Modal, Stack } from "react-bootstrap";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import Popover from "@mui/material/Popover";
-import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
-import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
-import { List } from "antd";
-import PostPopover from "../components/three-dots-popover/Popover";
-import { CommentModal } from "../components/ui/Modal";
-import RepostAction from "../components/ui/RepostAction";
-import LikeAction from "../components/ui/LikeAction";
-import BookmarkAction from "../components/ui/BookmarkAction";
-import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
-import LoadingSpinner from "../components/ui/LoadingSpinner";
-import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
-import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
-import { NavigationHistoryContext } from "../context/NavigationHistoryContext";
-import SettingsNavigation from "../components/SettingsNavigation/SettingsNavigation";
+import { useContext, useState } from "react";
+import { Col } from "react-bootstrap";
+import { useLocation, useNavigate } from "react-router-dom";
+import SettingsNavigation from "../../../../components/SettingsNavigation/SettingsNavigation";
+import { ModalVisibilityContext } from "../../../../context/ModalVisibilityContext";
+import ResponsiveNavigationBarBottom from "../../../../components/Navbar/ResponsiveNavigationBottom";
+import { useAntdMessageHandler } from "../../../../utils/useAntdMessageHandler";
+import useWindowDimensions from "../../../../hooks/getWindowDimensions";
+import { ThemeContext } from "../../../../context/ThemeContext";
+import { UserContext } from "../../../../context/UserContext";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-function MonetizationMain() {
+function SecurityAndAccountAccessMain() {
   const { getToken, userInfo } = useContext(UserContext);
   const [{ theme, themeName }] = useContext(ThemeContext);
   const { width } = useWindowDimensions();
@@ -113,14 +101,13 @@ function MonetizationMain() {
 
   const [showNotificationMessage, setShowNotificationMessage] = useState(null);
 
-  const { navigationHistoryArray } = useContext(NavigationHistoryContext);
-
   return (
     <>
       {!isPostModalVisible && !dataFromCommentModal && (
         <ResponsiveNavigationBarBottom />
       )}
       {contextHolder}
+
       <SettingsNavigation />
       <Col
         xs={10}
@@ -145,6 +132,7 @@ function MonetizationMain() {
           borderTop: "none ",
           borderBottom: "none",
           padding: "0px",
+          margin: "0px",
           width:
             width > 1400
               ? "580px"
@@ -213,37 +201,21 @@ function MonetizationMain() {
               </svg>
             </span>
           ) : null}
-          <div className="mt-3">Monetizations</div>
+          <div className="mt-3">Security and account access</div>
         </div>
-
-        <div className="mt-4" style={{}}>
-          <span
-            style={{
-              fontSize: "17px",
-              lineHeight: "20px",
-              fontWeight: "700",
-              paddingLeft: width <= 500 ? "32px" : "12px",
-              paddingRight: width <= 500 ? "32px" : "12px",
-            }}
-          >
-            {" "}
-            Available programs
-          </span>
-          <div
-            style={{
-              fontSize: "15px",
-              lineHeight: "20px",
-              fontWeight: "400",
-              paddingLeft: width <= 500 ? "32px" : "12px",
-              paddingRight: width <= 500 ? "32px" : "12px",
-              color:
-                themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
-            }}
-            className="mt-2"
-          >
-            Eligible creators can sign up for monthly subscriptions and ads
-            revenue sharing.
-          </div>
+        <div
+          className="mt-4"
+          style={{
+            color: themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
+            fontSize: "13px",
+            lineHeight: "16px",
+            fontWeight: "400",
+            paddingLeft: width <= 500 ? "32px" : "12px",
+            paddingRight: width <= 500 ? "32px" : "12px",
+          }}
+        >
+          Manage your account’s security and keep track of your account’s usage
+          including apps that you have connected to your account.
         </div>
         <div
           className="mt-4"
@@ -253,6 +225,7 @@ function MonetizationMain() {
           }}
         >
           <div
+            onClick={() => navigate("/settings/security")}
             className={
               themeName === "dark-theme"
                 ? "has-children-dark-theme"
@@ -273,32 +246,15 @@ function MonetizationMain() {
                     : "settings-icon-light-theme"
                 }
               >
-                <div
-                  style={{
-                    backgroundColor: "rgba(0, 131, 235, 0.8)",
-                    width: "48px",
-                    height: "48px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderRadius: "8px",
-                  }}
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv"
                 >
-                  <svg
-                    style={{
-                      fill: "#FFFFFF",
-                      width: "24px",
-                      height: " 24px",
-                    }}
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    class="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-1472mwg r-lrsllp r-jwli3a"
-                  >
-                    <g>
-                      <path d="M16 6c0 2.21-1.79 4-4 4S8 8.21 8 6s1.79-4 4-4 4 1.79 4 4zm-.76 8.57l-3.95.58 2.86 2.78-.68 3.92L17 20l3.53 1.85-.68-3.92 2.86-2.78-3.95-.58L17 11l-1.76 3.57zm-.45-3.09c-.89-.32-1.86-.48-2.89-.48-2.35 0-4.37.85-5.86 2.44-1.48 1.57-2.36 3.8-2.63 6.46l-.11 1.09h8.58l.52-2.49-4.05-4.3 5.59-.99.85-1.73z"></path>
-                    </g>
-                  </svg>
-                </div>
+                  <g>
+                    <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
+                  </g>
+                </svg>
               </div>
               <div
                 style={{
@@ -307,40 +263,13 @@ function MonetizationMain() {
                 }}
               >
                 <div
-                  style={{
-                    backgroundColor: "rgb(249, 24, 128)",
-                    height: "20px",
-                    borderRadius: "4px",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    justifyContent: "flex-start",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "11px",
-                      lineHeight: "16px",
-                      fontWeight: "500",
-                      color: "white",
-                      padding: "6px",
-                    }}
-                  >
-                    Not yet eligible
-                  </span>
-                </div>
-                <div
-                  style={{
-                    fontSize: "15px",
-                    lineHeight: "20px",
-                    fontWeight: "700",
-                  }}
                   className={
                     themeName === "dark-theme"
                       ? "settings-text-first-exp-dark-theme"
                       : "settings-text-first-exp-light-theme "
                   }
                 >
-                  Subscriptions
+                  Security
                 </div>
                 <div
                   className={
@@ -349,8 +278,7 @@ function MonetizationMain() {
                       : "settings-text-light-theme"
                   }
                 >
-                  Earn a living on C by letting anyone subscribe to you for
-                  monthly content.
+                  Manage your account's security.
                 </div>
               </div>
               <div
@@ -374,6 +302,7 @@ function MonetizationMain() {
             </div>
           </div>
           <div
+            onClick={() => navigate("/settings/apps_and_sessions")}
             className={
               themeName === "dark-theme"
                 ? "has-children-dark-theme"
@@ -394,32 +323,15 @@ function MonetizationMain() {
                     : "settings-icon-light-theme"
                 }
               >
-                <div
-                  style={{
-                    backgroundColor: "rgba(216, 96, 0, 0.8)",
-                    width: "48px",
-                    height: "48px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderRadius: "8px",
-                  }}
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv"
                 >
-                  <svg
-                    style={{
-                      fill: "#FFFFFF",
-                      width: "24px",
-                      height: " 24px",
-                    }}
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    class="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-1472mwg r-lrsllp r-jwli3a"
-                  >
-                    <g>
-                      <path d="M14.83 13.82c.14.28.33.67.52 1.12.468 1.013.736 2.106.79 3.22-.073 1.544-.865 2.965-2.14 3.84 3.767-.694 6.513-3.96 6.55-7.79 0-6-4.7-10.25-9.5-13v.09c.143 1.768-.142 3.545-.83 5.18-.473-.722-1.068-1.354-1.76-1.87l-.26-.24c-.541 1.036-1.146 2.038-1.81 3C5 9.5 3.5 11.7 3.5 14.25c-.083 2.252.831 4.426 2.5 5.94 1.038.895 2.282 1.517 3.62 1.81-.11-.097-.211-.204-.3-.32-.465-.645-.704-1.425-.68-2.22.062-1.326.724-2.552 1.8-3.33l.66-.56c.836-.649 1.585-1.402 2.23-2.24l.68-.92.58 1 .24.41z"></path>
-                    </g>
-                  </svg>
-                </div>
+                  <g>
+                    <path d="M19.5 2C20.88 2 22 3.12 22 4.5v11c0 1.21-.86 2.22-2 2.45V4.5c0-.28-.22-.5-.5-.5H6.05c.23-1.14 1.24-2 2.45-2h11zm-4 4C16.88 6 18 7.12 18 8.5v11c0 1.38-1.12 2.5-2.5 2.5h-11C3.12 22 2 20.88 2 19.5v-11C2 7.12 3.12 6 4.5 6h11zM4 19.5c0 .28.22.5.5.5h11c.28 0 .5-.22.5-.5v-11c0-.28-.22-.5-.5-.5h-11c-.28 0-.5.22-.5.5v11z"></path>
+                  </g>
+                </svg>
               </div>
               <div
                 style={{
@@ -428,40 +340,13 @@ function MonetizationMain() {
                 }}
               >
                 <div
-                  style={{
-                    backgroundColor: "rgb(249, 24, 128)",
-                    height: "20px",
-                    borderRadius: "4px",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    justifyContent: "flex-start",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "11px",
-                      lineHeight: "16px",
-                      fontWeight: "500",
-                      color: "white",
-                      padding: "6px",
-                    }}
-                  >
-                    Not yet eligible
-                  </span>
-                </div>
-                <div
-                  style={{
-                    fontSize: "15px",
-                    lineHeight: "20px",
-                    fontWeight: "700",
-                  }}
                   className={
                     themeName === "dark-theme"
                       ? "settings-text-first-exp-dark-theme"
                       : "settings-text-first-exp-light-theme "
                   }
                 >
-                  Ads revenue sharing
+                  Apps and sessions
                 </div>
                 <div
                   className={
@@ -470,7 +355,8 @@ function MonetizationMain() {
                       : "settings-text-light-theme"
                   }
                 >
-                  Earn income from the ads served in the replies to your posts.
+                  See information about when you logged into your account and
+                  the apps you connected to your account.
                 </div>
               </div>
               <div
@@ -494,6 +380,7 @@ function MonetizationMain() {
             </div>
           </div>
           <div
+            onClick={() => navigate("/settings/connected_accounts")}
             className={
               themeName === "dark-theme"
                 ? "has-children-dark-theme"
@@ -514,32 +401,15 @@ function MonetizationMain() {
                     : "settings-icon-light-theme"
                 }
               >
-                <div
-                  style={{
-                    backgroundColor: "rgba(101, 69, 219, 0.8)",
-                    width: "48px",
-                    height: "48px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderRadius: "8px",
-                  }}
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv"
                 >
-                  <svg
-                    style={{
-                      fill: "#FFFFFF",
-                      width: "24px",
-                      height: " 24px",
-                    }}
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    class="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-1472mwg r-lrsllp r-jwli3a"
-                  >
-                    <g>
-                      <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
-                    </g>
-                  </svg>
-                </div>
+                  <g>
+                    <path d="M15.96 1.54L21.41 7l-5.45 5.46-1.42-1.42L17.59 8H3V6h14.59l-3.05-3.04 1.42-1.42zM6.41 18l3.05 3.04-1.42 1.42L2.59 17l5.45-5.46 1.42 1.42L6.41 16H21v2H6.41z"></path>
+                  </g>
+                </svg>
               </div>
               <div
                 style={{
@@ -548,18 +418,13 @@ function MonetizationMain() {
                 }}
               >
                 <div
-                  style={{
-                    fontSize: "15px",
-                    lineHeight: "20px",
-                    fontWeight: "700",
-                  }}
                   className={
                     themeName === "dark-theme"
                       ? "settings-text-first-exp-dark-theme"
                       : "settings-text-first-exp-light-theme "
                   }
                 >
-                  Learn more
+                  Connected accounts
                 </div>
                 <div
                   className={
@@ -568,7 +433,84 @@ function MonetizationMain() {
                       : "settings-text-light-theme"
                   }
                 >
-                  Learn more about our Monetization programs and policies here.
+                  Manage Google or Apple accounts connected to C to log in.
+                </div>
+              </div>
+              <div
+                className={
+                  themeName === "dark-theme"
+                    ? "settings-icon-dark-theme"
+                    : "settings-icon-light-theme"
+                }
+              >
+                {" "}
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
+                >
+                  <g>
+                    <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
+                  </g>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div
+            onClick={() => navigate("/settings/delegate")}
+            className={
+              themeName === "dark-theme"
+                ? "has-children-dark-theme"
+                : "has-children-light-theme"
+            }
+          >
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <div
+                className={
+                  themeName === "dark-theme"
+                    ? "settings-icon-dark-theme"
+                    : "settings-icon-light-theme"
+                }
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv"
+                >
+                  <g>
+                    <path d="M6.866 18H.846l.075-1.069C1.33 11.083 4.335 9 7.011 9c1.457 0 2.734.576 3.743 1.615-.515.378-1.003.826-1.45 1.355-.562-.569-1.305-.97-2.293-.97-2.074 0-3.522 1.847-3.981 5h4.225c-.169.616-.295 1.288-.389 2zM4 5c0-1.654 1.343-3 3-3s3 1.346 3 3-1.343 3-3 3-3-1.346-3-3zm2 0c0 .551.448 1 1 1s1-.449 1-1-.448-1-1-1-1 .449-1 1zm9.5 5c-.778 0-1.49-.263-2.071-.693C12.566 8.669 12 7.653 12 6.5 12 4.57 13.567 3 15.5 3S19 4.57 19 6.5c0 1.111-.53 2.092-1.34 2.733-.596.472-1.341.767-2.16.767zM14 6.5c0 .827.673 1.5 1.5 1.5S17 7.327 17 6.5 16.327 5 15.5 5 14 5.673 14 6.5zm1.5 4.496c3.264 0 6.816 2.358 7 8.977L22.529 21H8.472l.029-1.027c.184-6.618 3.736-8.977 7-8.977zm0 2c-2.767 0-4.57 2.223-4.938 6.004h9.875c-.367-3.781-2.17-6.004-4.938-6.004z"></path>
+                  </g>
+                </svg>
+              </div>
+              <div
+                style={{
+                  paddingLeft: "16px",
+                  width: "100%",
+                }}
+              >
+                <div
+                  className={
+                    themeName === "dark-theme"
+                      ? "settings-text-first-exp-dark-theme"
+                      : "settings-text-first-exp-light-theme "
+                  }
+                >
+                  Delegate
+                </div>
+                <div
+                  className={
+                    themeName === "dark-theme"
+                      ? "settings-text-dark-theme"
+                      : "settings-text-light-theme"
+                  }
+                >
+                  Manage your shared accounts.
                 </div>
               </div>
               <div
@@ -596,4 +538,4 @@ function MonetizationMain() {
     </>
   );
 }
-export default MonetizationMain;
+export default SecurityAndAccountAccessMain;

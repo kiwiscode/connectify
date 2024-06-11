@@ -190,17 +190,19 @@ function DownloadAnArchiveOfYourDataMain() {
                 ? "white"
                 : "",
           }}
-          dialogClassName={
-            width < 700
-              ? "modal-fullscreen modal_center_with_width"
-              : "modal_center_with_width"
-          }
           show={showModal}
           centered={true}
+          dialogClassName={
+            width <= 700 ? "modal-fullscreen" : "modal_center_with_width"
+          }
           contentClassName={
-            themeName === "dark-theme"
+            width > 700 && themeName === "dark-theme"
               ? "dark-theme-sub-modal settings-modal-type"
-              : "settings-modal-type"
+              : width > 700 && themeName !== "dark-theme"
+              ? "light-theme-sub-modal settings-modal-type"
+              : width <= 700 && themeName === "dark-theme"
+              ? "dark-theme-sub-modal "
+              : null
           }
         >
           <Modal.Header
@@ -306,8 +308,8 @@ function DownloadAnArchiveOfYourDataMain() {
 
                     <div
                       style={{
-                        paddingLeft: "80px",
-                        paddingRight: "80px",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
                         width: "100%",
                       }}
                     >
@@ -435,8 +437,8 @@ function DownloadAnArchiveOfYourDataMain() {
                     </div>
                     <div
                       style={{
-                        paddingLeft: "80px",
-                        paddingRight: "80px",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
                         width: "100%",
                         position: "absolute",
                         bottom: "20px",
@@ -562,8 +564,8 @@ function DownloadAnArchiveOfYourDataMain() {
 
                     <div
                       style={{
-                        paddingLeft: "80px",
-                        paddingRight: "80px",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
                         width: "100%",
                       }}
                     >
@@ -610,8 +612,8 @@ function DownloadAnArchiveOfYourDataMain() {
                     <div
                       className="mt-5"
                       style={{
-                        paddingLeft: "80px",
-                        paddingRight: "80px",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
                         width: "100%",
                         display: "flex",
                         justifyContent: "center",
@@ -751,14 +753,14 @@ function DownloadAnArchiveOfYourDataMain() {
                     </div>{" "}
                     <div
                       style={{
-                        width: "81.5%",
                         marginTop: "6rem",
+                        width: "81.5%",
                       }}
                     >
                       <div
                         style={{
-                          fontSize: "32px",
-                          lineHeight: "26px",
+                          fontSize: width < 700 ? "26px" : "32px",
+                          lineHeight: width < 700 ? "32px" : "26px",
                         }}
                         className={
                           themeName === "dark-theme"

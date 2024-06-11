@@ -393,11 +393,11 @@ function ScreenName() {
             <div
               style={{
                 textAlign: "right",
-
                 width: "100%",
               }}
             >
               <Button
+                variant="primary"
                 style={{
                   height: "45px",
                   marginTop: "15px",
@@ -412,7 +412,7 @@ function ScreenName() {
                     usernameValidated && username.length
                       ? "pointer"
                       : "default",
-                  backgroundColor: username.length ? "" : "#99CDF8",
+                  opacity: !username.length ? "0.5" : null,
                 }}
                 onClick={username.length < 1 ? null : () => changeUsername()}
                 className={

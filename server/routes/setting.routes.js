@@ -7,6 +7,7 @@ const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = require("twilio")(accountSid, authToken);
 const bcrypt = require("bcrypt");
+const Subscription = require("../models/Subscription.model");
 
 router.post("/add_gender_to_user", authenticateToken, async (req, res) => {
   try {
@@ -607,4 +608,107 @@ router.post(
     }
   }
 );
+
+router.get("/subscriptions", authenticateToken, async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const subscription = await Subscription.find({
+      owner: userId,
+      isActive: true,
+    });
+    const activeCancelledSubscription = await Subscription.find({
+      owner: userId,
+      isActive: false,
+      remainingTimeSubscription: { $ne: null },
+    });
+
+    const responseData = {
+      activeSubscription: subscription,
+      activeCancelledSubscription: activeCancelledSubscription,
+    };
+
+    console.log("Active subscription =>", subscription);
+
+    res.status(200).json(responseData);
+  } catch (error) {
+    console.log("Error =>", error);
+  }
+});
+
+router.post("/cancel_subscription", authenticateToken, async (req, res) => {
+  try {
+    const { userId } = req.user;
+    console.log("User id =>", userId);
+
+    const activeSubscription = await Subscription.findOne({
+      owner: userId,
+      isActive: true,
+    });
+
+    const billingCycle = activeSubscription.subscriptionDetails.billingCycle;
+
+    const nextBillingDateForAnnualSub = (inputDate) => {
+      let newDate = new Date(inputDate);
+      newDate.setFullYear(newDate.getFullYear() + 1);
+
+      let options = { day: "numeric", month: "long", year: "numeric" };
+      let formattedDate = newDate.toLocaleDateString("en-GB", options);
+
+      return formattedDate;
+    };
+
+    const nextBillingDateForMonthlySub = (inputDate) => {
+      let newDate = new Date(inputDate);
+      newDate.setMonth(newDate.getMonth() + 1);
+
+      let options = { day: "numeric", month: "long", year: "numeric" };
+      let formattedDate = newDate.toLocaleDateString("en-GB", options);
+
+      return formattedDate;
+    };
+
+    const subscription = await Subscription.findOneAndUpdate(
+      { owner: userId, isActive: true },
+      {
+        $set: {
+          isActive: false,
+          cancelledDate: new Date(),
+          remainingTimeSubscription:
+            billingCycle === "Monthly Plan"
+              ? nextBillingDateForMonthlySub(activeSubscription.createdAt)
+              : nextBillingDateForAnnualSub(activeSubscription.createdAt),
+        },
+      },
+      { new: true }
+    );
+
+    await User.findByIdAndUpdate(
+      userId,
+      {
+        hasSubscription: false,
+        successSubscriptionModalShown: false,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+    if (subscription) {
+      console.log("Subscription =>", subscription);
+      res.status(200).json({
+        message: "Subscription cancelled successfully.",
+        subscription: subscription,
+      });
+    } else {
+      res.status(404).json({
+        message: "No active subscription found for the user.",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: "Error cancelling subscription.",
+      error: error.message,
+    });
+  }
+});
 module.exports = router;

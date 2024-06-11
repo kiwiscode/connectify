@@ -358,7 +358,6 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                 <Button
                   onClick={() => {
                     setSubLoading(true);
-
                     setTimeout(() => {
                       setSubLoading(false);
                       handleRedirectIndividualSignUpRoute();

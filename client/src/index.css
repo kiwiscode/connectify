@@ -2040,24 +2040,13 @@ span > a:hover {
   background-color: rgb(16, 128, 202);
   outline-style: none;
   border-style: solid;
-  border-color: rgb(207, 217, 222);
-  border-bottom-width: 1px;
-  border-left-width: 1px;
-  border-right-width: 1px;
-  border-top-width: 1px;
-  border-radius: var(--border-radius);
   transition-duration: 0.2s !important;
 }
 .disabled-change-password-btn:hover {
-  outline-style: none;
-  border-style: solid;
-  border-color: rgb(207, 217, 222);
-  border-bottom-width: 1px;
-  border-left-width: 1px;
-  border-right-width: 1px;
-  border-top-width: 1px;
-  border-radius: var(--border-radius);
-  transition-duration: 0.2s !important;
+  outline-style: none !important;
+  border-style: solid !important;
+  border: none !important;
+  background-color: #1c9bef !important;
 }
 
 /* ant message success change password message start to check  */
@@ -3353,6 +3342,7 @@ select {
 .nested-modal-opened_light_theme {
   background-color: #999999 !important;
 }
+
 .settings-modal-type {
   height: 630px;
   min-width: 600px !important;
@@ -4272,7 +4262,7 @@ themeName === "dark-theme"
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 32px;
+  padding: 6px 0px;
   cursor: pointer;
 }
 
@@ -4604,3 +4594,35 @@ themeName === "dark-theme"
 }
 /* stylish modal absolute position from bottom finish to check */
 /* IMPORTANT modal classname ve styling for making modal exactly middle of the window ! finish to check  */
+
+.input-customize-dark-theme,
+.input-customize-dark-theme-checked,
+.input-customize-light-theme,
+.input-customize-light-theme-checked {
+  background-color: transparent !important;
+  min-width: 64px !important;
+}
+
+/* dark theme && light theme styles for input customize start to check  */
+.input-customize-dark-theme .MuiSwitch-thumb,
+.input-customize-light-theme .MuiSwitch-thumb {
+  background-color: #fafafa !important;
+}
+
+.input-customize-dark-theme-checked .MuiSwitch-thumb,
+.input-customize-light-theme-checked .MuiSwitch-thumb {
+  background-color: #1c9bef !important;
+  transform: translateX(5px) !important;
+}
+
+.input-customize-dark-theme > .MuiSwitch-track,
+.input-customize-light-theme > .MuiSwitch-track {
+  background-color: #939393 !important;
+  opacity: 1 !important;
+}
+
+.input-customize-dark-theme-checked > .MuiSwitch-track,
+.input-customize-light-theme-checked > .MuiSwitch-track {
+  background-color: #6ac9fb !important;
+  opacity: 1 !important;
+}

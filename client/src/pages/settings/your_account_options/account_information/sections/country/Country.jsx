@@ -272,22 +272,44 @@ function Country() {
                 ? "white"
                 : "",
           }}
-          dialogClassName={
-            width < 700
-              ? "modal-fullscreen modal_center_with_width"
-              : "modal_center_with_width"
-          }
           show={show}
           centered={true}
+          dialogClassName={
+            width <= 700 ? "modal-fullscreen" : "modal_center_with_width"
+          }
           contentClassName={
-            themeName === "dark-theme" && !showRemoveContactsModal
+            themeName === "dark-theme" &&
+            !showRemoveContactsModal &&
+            width > 700
               ? "dark-theme-sub-modal settings-modal-type"
-              : themeName !== "dark-theme" && !showRemoveContactsModal
+              : themeName !== "dark-theme" &&
+                !showRemoveContactsModal &&
+                width > 700
               ? "settings-modal-type"
-              : showRemoveContactsModal && themeName === "dark-theme"
+              : showRemoveContactsModal &&
+                themeName === "dark-theme" &&
+                width > 700
               ? "nested-modal-opened_dark_theme settings-modal-type"
-              : showRemoveContactsModal && themeName !== "dark-theme"
+              : showRemoveContactsModal &&
+                themeName !== "dark-theme" &&
+                width > 700
               ? "nested-modal-opened_light_theme settings-modal-type"
+              : themeName === "dark-theme" &&
+                !showRemoveContactsModal &&
+                width <= 700
+              ? "dark-theme-sub-modal"
+              : themeName !== "dark-theme" &&
+                !showRemoveContactsModal &&
+                width <= 700
+              ? ""
+              : showRemoveContactsModal &&
+                themeName === "dark-theme" &&
+                width <= 700
+              ? "nested-modal-opened_dark_theme"
+              : showRemoveContactsModal &&
+                themeName !== "dark-theme" &&
+                width <= 700
+              ? "nested-modal-opened_light_theme"
               : null
           }
         >
@@ -352,8 +374,8 @@ function Country() {
                     </div>
                     <div
                       style={{
-                        paddingLeft: "80px",
-                        paddingRight: "80px",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
                         width: "100%",
                       }}
                     >
@@ -396,8 +418,8 @@ function Country() {
                     <div
                       className="mt-5"
                       style={{
-                        paddingLeft: "80px",
-                        paddingRight: "80px",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
                         width: "100%",
                         display: "flex",
                         justifyContent: "center",
@@ -452,8 +474,8 @@ function Country() {
                     <div
                       className="mt-3"
                       style={{
-                        paddingLeft: "80px",
-                        paddingRight: "80px",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
                         width: "100%",
                         display: "flex",
                         justifyContent: "center",
@@ -604,11 +626,13 @@ function Country() {
                         className="mt-3"
                         style={{
                           // backgroundColor: "purple",
-                          padding: "0px 80px",
+
                           display: "flex",
                           flexDirection: "column",
                           width: "100%",
                           height: "100dvh",
+                          paddingLeft: width <= 700 ? "32px" : "80px",
+                          paddingRight: width <= 700 ? "32px" : "80px",
                         }}
                       >
                         <div
@@ -1553,7 +1577,7 @@ function Country() {
                       }}
                       style={{
                         width: "100%",
-                        padding: "32px 80px",
+                        padding: width <= 700 ? "32px" : "32px 80px",
                         position: "absolute",
                         bottom: "0px",
                         filter:
@@ -1695,7 +1719,8 @@ function Country() {
                         fontSize: "23px",
                         lineHeight: "28px",
                         width: "100%",
-                        padding: "0px 80px",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
                       }}
                       className={
                         themeName === "dark-theme"
@@ -1709,7 +1734,8 @@ function Country() {
                       className="mt-3"
                       style={{
                         width: "100%",
-                        padding: "0px 80px",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
                       }}
                     >
                       <div

@@ -206,17 +206,19 @@ function ChangeYourEmail() {
                 ? "white"
                 : "",
           }}
-          dialogClassName={
-            width < 700
-              ? "modal-fullscreen modal_center_with_width"
-              : "modal_center_with_width"
-          }
           show={showModal}
           centered={true}
+          dialogClassName={
+            width <= 700 ? "modal-fullscreen" : "modal_center_with_width"
+          }
           contentClassName={
-            themeName === "dark-theme"
+            width > 700 && themeName === "dark-theme"
               ? "dark-theme-sub-modal settings-modal-type"
-              : "settings-modal-type"
+              : width > 700 && themeName !== "dark-theme"
+              ? "light-theme-sub-modal settings-modal-type"
+              : width <= 700 && themeName === "dark-theme"
+              ? "dark-theme-sub-modal "
+              : null
           }
         >
           <Modal.Body
@@ -279,8 +281,8 @@ function ChangeYourEmail() {
 
                     <div
                       style={{
-                        paddingLeft: "80px",
-                        paddingRight: "80px",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
                         width: "100%",
                       }}
                     >
@@ -408,8 +410,8 @@ function ChangeYourEmail() {
                     </div>
                     <div
                       style={{
-                        paddingLeft: "80px",
-                        paddingRight: "80px",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
                         width: "100%",
                         position: "absolute",
                         bottom: "20px",
@@ -534,8 +536,8 @@ function ChangeYourEmail() {
                     </div>
                     <div
                       style={{
-                        paddingLeft: "80px",
-                        paddingRight: "80px",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
                         width: "100%",
                       }}
                     >
@@ -586,8 +588,8 @@ function ChangeYourEmail() {
                     </div>
                     <div
                       style={{
-                        paddingLeft: "80px",
-                        paddingRight: "80px",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
                         width: "100%",
                       }}
                     >
@@ -645,7 +647,8 @@ function ChangeYourEmail() {
                     <div
                       style={{
                         width: "100%",
-                        padding: "0px 80px",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
                       }}
                     >
                       {emailTypeError === 304 && email.length ? (
@@ -684,7 +687,8 @@ function ChangeYourEmail() {
                         display: "flex",
                         justifyContent: "space-between",
                         width: "100%",
-                        padding: "0px 80px",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
                       }}
                     >
                       <div
@@ -780,8 +784,8 @@ function ChangeYourEmail() {
                     <div
                       className="mt-5"
                       style={{
-                        paddingLeft: "80px",
-                        paddingRight: "80px",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
                         width: "100%",
                         display: "flex",
                         justifyContent: "center",
