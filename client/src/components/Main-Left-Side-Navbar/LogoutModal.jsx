@@ -1095,7 +1095,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                       aria-label="Verified account"
                       role="img"
                       className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
-                      data-testid="icon-verified"
+                      data-testid="verified-icon"
                       color="rgba(29,155,240,1.00)"
                       fill="currentColor"
                     >

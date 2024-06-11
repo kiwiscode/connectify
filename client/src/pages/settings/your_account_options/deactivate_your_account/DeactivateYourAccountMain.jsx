@@ -284,7 +284,7 @@ function DeactivateYourAccountMain() {
                     : "very-dark-gray-light-theme-text-variant-2 mt-3 chirp-regular-font"
                 }
               >
-                You can restore your X account if it was accidentally or
+                You can restore your C account if it was accidentally or
                 wrongfully deactivated for up to 30 days after deactivation.
               </div>
             </div>

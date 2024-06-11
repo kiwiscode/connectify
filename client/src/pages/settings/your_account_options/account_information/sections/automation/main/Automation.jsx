@@ -159,13 +159,13 @@ function Automation() {
             overflowX: "hidden",
             overflowY: "hidden",
           }}
+          show={showManagingAccountModal}
+          centered={true}
           dialogClassName={
             width < 700
               ? "show_modal_from_absolute_bottom_dialog_class_name"
               : "modal_center_with_width"
           }
-          show={showManagingAccountModal}
-          centered={true}
           contentClassName={
             themeName === "dark-theme" && width > 700
               ? "showManagingAccountModal-dark-theme"

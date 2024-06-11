@@ -27,7 +27,11 @@ function Tagging() {
     setChecked(event.target.checked);
   };
 
-  const [permission_option, setPermission_option] = useState("");
+  const [permission_option, setPermission_option] = useState(
+    userInfo?.photoTaggingPermission
+      ? userInfo?.photoTaggingPermission
+      : "Anyone can tag you"
+  );
 
   const togglePhotoTaggingPermission = async () => {
     try {
@@ -183,6 +187,17 @@ function Tagging() {
               checked={checked}
               onChange={handleChange}
               inputProps={{ "aria-label": "controlled" }}
+              className={
+                themeName === "dark-theme" && checked
+                  ? `input-customize-${themeName}-checked`
+                  : themeName !== "dark-theme" && checked
+                  ? `input-customize-light-theme-checked`
+                  : themeName === "dark-theme" && !checked
+                  ? `input-customize-${themeName}`
+                  : themeName !== "dark-theme" && !checked
+                  ? `input-customize-light-theme`
+                  : null
+              }
             />
           </div>
         </div>

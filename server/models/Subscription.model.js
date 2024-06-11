@@ -25,6 +25,10 @@ const subscriptionSchema = new Schema(
       type: Date,
       default: null,
     },
+    remainingTimeSubscription: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,

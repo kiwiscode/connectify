@@ -289,6 +289,20 @@ router.post("/stripe-webhook", express.json(), async (request, response) => {
       owner: userId,
       isActive: true,
     });
+
+    const pastSubscription = await Subscription.find({
+      owner: userId,
+      isActive: false,
+      remainingTimeSubscription: { $ne: null },
+    });
+
+    if (pastSubscription.length) {
+      pastSubscription[0].remainingTimeSubscription = null;
+      await pastSubscription[0].save();
+    }
+
+    console.log("Has past subscription =>", pastSubscription);
+
     // Handle the event
     switch (event.type) {
       case "payment_intent.succeeded":

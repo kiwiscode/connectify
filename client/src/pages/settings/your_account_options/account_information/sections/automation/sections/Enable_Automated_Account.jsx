@@ -186,17 +186,19 @@ function Enable_Automated_Account() {
                 ? "white"
                 : "",
           }}
-          dialogClassName={
-            width < 700
-              ? "modal-fullscreen modal_center_with_width"
-              : "modal_center_with_width"
-          }
           show={showModal}
           centered={true}
+          dialogClassName={
+            width <= 700 ? "modal-fullscreen" : "modal_center_with_width"
+          }
           contentClassName={
-            themeName === "dark-theme"
+            width > 700 && themeName === "dark-theme"
               ? "dark-theme-sub-modal settings-modal-type"
-              : "settings-modal-type"
+              : width > 700 && themeName !== "dark-theme"
+              ? "light-theme-sub-modal settings-modal-type"
+              : width <= 700 && themeName === "dark-theme"
+              ? "dark-theme-sub-modal "
+              : null
           }
         >
           <Modal.Header
@@ -345,7 +347,8 @@ function Enable_Automated_Account() {
                         style={{
                           fontSize: "31px",
                           lineHeight: "36px",
-                          maxWidth: "440px",
+                          paddingLeft: width <= 700 ? "32px" : "80px",
+                          paddingRight: width <= 700 ? "32px" : "80px",
                         }}
                         className={
                           themeName === "dark-theme"
@@ -356,7 +359,13 @@ function Enable_Automated_Account() {
                         To get started, first enter your managing account phone,
                         email, or @username
                       </div>
-                      <div>
+                      <div
+                        style={{
+                          width: "100%",
+                          paddingLeft: width <= 700 ? "32px" : "80px",
+                          paddingRight: width <= 700 ? "32px" : "80px",
+                        }}
+                      >
                         {" "}
                         <TextField
                           autoFocus
@@ -372,7 +381,7 @@ function Enable_Automated_Account() {
                             );
                           }}
                           style={{
-                            minWidth: "440px",
+                            width: "100%",
                             height: "58px",
                           }}
                           InputProps={{
@@ -413,7 +422,9 @@ function Enable_Automated_Account() {
                       style={{
                         position: "absolute",
                         bottom: "20px",
-                        width: "440px",
+                        width: "100%",
+                        paddingLeft: width <= 700 ? "32px" : "80px",
+                        paddingRight: width <= 700 ? "32px" : "80px",
                       }}
                     >
                       <Button

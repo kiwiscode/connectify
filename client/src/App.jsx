@@ -19,13 +19,32 @@ const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 const BookmarksPage = lazy(() => import("./pages/BookmarksPage"));
 const PremiumSignupPage = lazy(() => import("./pages/PremiumSignupPage"));
 const Settings = lazy(() => import("./pages/Settings"));
-const YourAccountMain = lazy(() => import("./pages/YourAccountMain"));
-const MonetizationMain = lazy(() => import("./pages/MonetizationMain"));
-const CreatorSubscriptionMain = lazy(() =>
-  import("./pages/CreatorSubscriptionsMain")
+const YourAccountMain = lazy(() =>
+  import("./pages/settings/your_account_options/main/YourAccountMain")
 );
+const MonetizationMain = lazy(() =>
+  import("./pages/settings/open_monetization_options/main/MonetizationMain")
+);
+const SuperFollowsApplicationEligibility = lazy(() =>
+  import(
+    "./pages/settings/open_monetization_options/sections/SuperFollowsApplicationEligibility"
+  )
+);
+const AdRevShareEligibility = lazy(() =>
+  import(
+    "./pages/settings/open_monetization_options/sections/AdRevShareEligibility"
+  )
+);
+
 const SecurityAndAccountAccessMain = lazy(() =>
-  import("./pages/SecurityAndAccountAccessMain")
+  import(
+    "./pages/settings/security_and_account_access/main/SecurityAndAccountAccessMain"
+  )
+);
+const SecurityMain = lazy(() =>
+  import(
+    "./pages/settings/security_and_account_access/sections/security/main/SecurityMain"
+  )
 );
 const PrivacyAndSafetyMain = lazy(() => import("./pages/PrivacyAndSafetyMain"));
 const SettingsNotificationsMain = lazy(() =>
@@ -47,6 +66,16 @@ const ChangeYourPasswordMain = lazy(() =>
 const DeactivateYourAccountMain = lazy(() =>
   import(
     "./pages/settings/your_account_options/deactivate_your_account/DeactivateYourAccountMain"
+  )
+);
+const CreatorSubscriptionMain = lazy(() =>
+  import(
+    "./pages/settings/creator_subscriptions_options/main/CreatorSubscriptionMain"
+  )
+);
+const BillingStripeSubscriptionMain = lazy(() =>
+  import(
+    "./pages/settings/creator_subscriptions_options/billing/BillingStripeSubscriptionMain"
   )
 );
 const DownloadAnArchiveOfYourDataMain = lazy(() =>
@@ -192,6 +221,7 @@ import LeftSideNavBar from "./components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "./components/Main-Right-Side-Column/RightSideColumn";
 import useWindowDimensions from "./hooks/getWindowDimensions";
 import AccountInformationMain from "./pages/settings/your_account_options/account_information/Main/AccountInformationMain";
+import VerifiedChooseMain from "./pages/subscription-flow/i-verified-choose/VerifiedChooseMain";
 
 function App() {
   const location = useLocation();
@@ -296,6 +326,7 @@ function App() {
       );
       setOpenVerifiedOrganizationSubscriptionTypedModal(true);
     } else if (path == "/i/flow/subscription_eligibility_check") {
+      console.log("Open individual subscription modal ...!");
       setopenIndividualEligibilityVerifyNumberScreen(true);
     } else {
       console.log(
@@ -375,7 +406,8 @@ function App() {
                 path !== "/settings/deactivated" &&
                 path !== "/i/premium_sign_up" &&
                 path !== "/help_connectify" &&
-                !path.startsWith("/account") && (
+                !path.startsWith("/account") &&
+                path !== "/billing/stripe/subscription" && (
                   <LeftSideNavBar
                     refreshPosts={handleShareNewPost}
                     setIsPostShared={handlePostSharingIsDone}
@@ -561,12 +593,33 @@ function App() {
                     element={<MonetizationMain />}
                   ></Route>
                   <Route
+                    path="/settings/superfollows/application/eligibility"
+                    element={<SuperFollowsApplicationEligibility />}
+                  ></Route>
+                  <Route
+                    path="/settings/ad_rev_share_eligibility"
+                    element={<AdRevShareEligibility />}
+                  ></Route>
+                  <Route
+                    path="/i/verified-choose"
+                    element={<VerifiedChooseMain />}
+                  ></Route>
+
+                  <Route
                     path="/settings/manage_subscriptions"
                     element={<CreatorSubscriptionMain />}
                   ></Route>
                   <Route
+                    path="/billing/stripe/subscription"
+                    element={<BillingStripeSubscriptionMain />}
+                  ></Route>
+                  <Route
                     path="/settings/security_and_account_access"
                     element={<SecurityAndAccountAccessMain />}
+                  ></Route>
+                  <Route
+                    path="/settings/security"
+                    element={<SecurityMain />}
                   ></Route>
                   <Route
                     path="/settings/privacy_and_safety"
@@ -599,7 +652,14 @@ function App() {
                 path !== "/help_connectify" &&
                 path !== "/i/flow/verify_account_ownership" &&
                 !path.startsWith("/account") &&
-                !path.startsWith("/i/flow") && (
+                (path !== "/i/flow" ||
+                  path === "/i/flow/subscription_eligibility_check") &&
+                path !== "/i/verified-choose" &&
+                path !== "/i/flow/add_phone" &&
+                path !== "/i/flow/language_selector" &&
+                path !== "/i/flow/add_email" &&
+                path !== "/i/flow/enable_automated_account" &&
+                path !== "/billing/stripe/subscription" && (
                   <RightSideColumn
                     isVerifiedOrgsSignUpRoute={
                       openVerifiedOrganizationSubscriptionTypedModal
@@ -618,5 +678,6 @@ function App() {
     </>
   );
 }
-
+// &&
+//                 path !== "/i/flow/subscription_eligibility_check"
 export default App;
