@@ -26,7 +26,7 @@ function PostDetailPage() {
   const [subscription, setSubscription] = useState(null);
   const getSubscription = async () => {
     try {
-      const response = await axios.get(`${API_URL}/subscriptions`, {
+      const response = await axios.get(`${API_URL}/subscription`, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
@@ -50,8 +50,39 @@ function PostDetailPage() {
       console.error("Error:", error);
     }
   };
+
+  const [remainingTimeSubscriptions, setRemainingTimeSubscriptions] = useState(
+    []
+  );
+  const [
+    remainingTimeSubscriptionsOwnerIds,
+    setRemainingTimeSubscriptionsOwnerIds,
+  ] = useState([]);
+  const getRemainingTimeSubscriptions = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/remaining_time_subscriptions`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      setRemainingTimeSubscriptions(response.data.remainingTimeSubscriptions);
+
+      setRemainingTimeSubscriptionsOwnerIds(
+        response.data.remainingTimeSubscriptions.map((eachSub) => {
+          return eachSub.owner;
+        })
+      );
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
   useEffect(() => {
     getSubscription();
+    getRemainingTimeSubscriptions();
   }, []);
   const extraDetailedDate = (dateStr) => {
     const date = new Date(dateStr);
@@ -288,7 +319,24 @@ function PostDetailPage() {
   }
 
   const { isPostModalVisible } = useContext(ModalVisibilityContext);
+  const [headerPosition, setHeaderPosition] = useState(0);
 
+  const handleScroll = () => {
+    const scrollPosition = window.pageYOffset;
+
+    if (scrollPosition < 53) {
+      setHeaderPosition(-scrollPosition);
+    } else {
+      setHeaderPosition(-53);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [headerPosition]);
   return (
     <>
       {contextHolder}
@@ -328,47 +376,75 @@ function PostDetailPage() {
           minHeight: width <= 700 ? "100dvh" : "",
         }}
       >
-        <Stack direction="horizontal" gap={3}>
+        <Stack
+          direction="horizontal"
+          gap={3}
+          style={{
+            padding: "0px 16px",
+            minHeight: "53px",
+            transform: width <= 500 && `translateY(${headerPosition}px)`,
+            transition:
+              width <= 500 && "transform 0.3s cubic-bezier(0, 0, 0, 1)",
+            position: width > 500 && "sticky",
+            top: width > 500 && "0px",
+            width: width > 500 && "100%",
+            backgroundColor: width > 500 && "transparent",
+            backdropFilter: width > 500 && "blur(12px)",
+            zIndex: width > 500 && 99999,
+          }}
+        >
           <div
-            onClick={handleGoBack}
-            className={`p-2 arrow arrow-${themeName}`}
             style={{
-              position: "relative",
-              left: "10px",
-              width: "30px",
-              height: " 30px",
-              borderRadius: "50%",
-              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              width: "53px",
+              height: "53px",
+              maxHeight: "53px",
+              justifyContent: "center",
             }}
           >
-            <svg
-              color={themeName === "dark-theme" ? "white" : ""}
-              fill="currentColor"
+            <div
+              onClick={() => navigate(-1)}
+              className={`arrow arrow-${themeName}`}
               style={{
-                position: "absolute",
-                bottom: "5px",
-                border: "none",
-                left: "5px",
-                fontSize: "15px",
+                width: "36px",
+                height: "36px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: "50%",
+                cursor: "pointer",
               }}
-              width={20}
-              height={20}
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
             >
-              <g>
-                <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
-              </g>
-            </svg>
+              <svg
+                fill={
+                  themeName === "dark-theme"
+                    ? "rgb(231,233,234)"
+                    : "rgb(15, 20, 25)"
+                }
+                width={20}
+                height={20}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+              >
+                <g>
+                  <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                </g>
+              </svg>
+            </div>
           </div>
           <div
             style={{
-              fontWeight: "700",
-              fontSize: "20px",
+              lineHeight: width <= 500 ? "20px" : "24px",
+              fontSize: width <= 500 ? "17px" : "20px",
               visibility: detailedPost.userId ? "" : "hidden",
             }}
-            className="p-2"
+            className={
+              themeName === "dark-theme"
+                ? "soft-grey-dark-theme-text-variant-1 p-2 chirp-bold-font"
+                : "very-dark-gray-light-theme-text-variant-1 p-2 chirp-bold-font"
+            }
           >
             Post
           </div>
@@ -557,11 +633,15 @@ function PostDetailPage() {
                             {commentedForThisPost.authorFullName}
                           </span>{" "}
                         </Link>
-
-                        {commentedForThisPost.hasSubscription ||
+                        {commentedForThisPost?.userId.hasSubscription ||
                         (!subscription?.isActive &&
                           subscription?.remainingTimeSubscription &&
-                          subscription?.cancelledDate) ? (
+                          subscription?.cancelledDate &&
+                          subscription?.owner ===
+                            commentedForThisPost?.userId._id) ||
+                        remainingTimeSubscriptionsOwnerIds.includes(
+                          commentedForThisPost?.userId._id
+                        ) ? (
                           <span>
                             {/* start to check  */}{" "}
                             <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
@@ -1019,6 +1099,35 @@ function PostDetailPage() {
                       >
                         {detailedPost.authorFullName}
                       </span>
+                      {detailedPost?.userId.hasSubscription ||
+                      (!subscription?.isActive &&
+                        subscription?.remainingTimeSubscription &&
+                        subscription?.cancelledDate &&
+                        subscription?.owner === detailedPost?.userId._id) ||
+                      remainingTimeSubscriptionsOwnerIds.includes(
+                        detailedPost?.userId._id
+                      ) ? (
+                        <span>
+                          {/* start to check  */}{" "}
+                          <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
+                            <svg
+                              width={`${1.25}em`}
+                              height={`${1.25}em`}
+                              viewBox="0 0 22 22"
+                              aria-label="Verified account"
+                              role="img"
+                              className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                              data-testid="verified-icon"
+                              color="rgba(29,155,240,1.00)"
+                              fill="currentColor"
+                            >
+                              <g>
+                                <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                              </g>
+                            </svg>
+                          </span>{" "}
+                        </span>
+                      ) : null}
                     </Link>
 
                     {/* three dots svg start to check */}
@@ -1468,10 +1577,17 @@ function PostDetailPage() {
                                                   {eachComment.authorFullName}
                                                 </span>{" "}
                                               </Link>
-                                              {eachComment.hasSubscription ||
+
+                                              {eachComment?.userId
+                                                .hasSubscription ||
                                               (!subscription?.isActive &&
                                                 subscription?.remainingTimeSubscription &&
-                                                subscription?.cancelledDate) ? (
+                                                subscription?.cancelledDate &&
+                                                subscription?.owner ===
+                                                  eachComment?.userId._id) ||
+                                              remainingTimeSubscriptionsOwnerIds.includes(
+                                                eachComment?.userId._id
+                                              ) ? (
                                                 <span>
                                                   {/* start to check  */}{" "}
                                                   <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
@@ -1490,7 +1606,7 @@ function PostDetailPage() {
                                                         <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
                                                       </g>
                                                     </svg>
-                                                  </span>
+                                                  </span>{" "}
                                                 </span>
                                               ) : null}
                                               <Link
@@ -1889,11 +2005,17 @@ function PostDetailPage() {
                                                 >
                                                   {eachComment.authorFullName}
                                                 </span>{" "}
-                                              </Link>
-                                              {eachComment.hasSubscription ||
+                                              </Link>{" "}
+                                              {eachComment?.userId
+                                                .hasSubscription ||
                                               (!subscription?.isActive &&
                                                 subscription?.remainingTimeSubscription &&
-                                                subscription?.cancelledDate) ? (
+                                                subscription?.cancelledDate &&
+                                                subscription?.owner ===
+                                                  eachComment?.userId._id) ||
+                                              remainingTimeSubscriptionsOwnerIds.includes(
+                                                eachComment?.userId._id
+                                              ) ? (
                                                 <span>
                                                   {/* start to check  */}{" "}
                                                   <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">

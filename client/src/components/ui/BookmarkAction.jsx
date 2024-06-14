@@ -213,7 +213,7 @@ const BookmarkAction = ({
                 position: "relative",
               }}
             >
-              {post.bookmarks?.length ? (
+              {post?.bookmarks?.length ? (
                 <>
                   <span
                     style={{

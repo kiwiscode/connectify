@@ -535,37 +535,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
 
   const phoneRegex =
     /^(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})$/;
-  const [subscription, setSubscription] = useState(null);
-  const getSubscription = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/subscriptions`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      });
 
-      console.log(
-        "response data detail =>",
-        response.data.activeSubscription[0]
-      );
-      console.log(
-        "response data detail 2 =>",
-        response.data.activeCancelledSubscription[0]
-      );
-
-      setSubscription(
-        response.data.activeSubscription[0]
-          ? response.data.activeSubscription[0]
-          : response.data.activeCancelledSubscription[0]
-      );
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  useEffect(() => {
-    getSubscription();
-  }, []);
   return (
     <>
       {contextHolder}
@@ -5123,23 +5093,15 @@ function CommentModal({
   sendDataToParent,
   isCutePopoverOnRightSide,
 }) {
+  const { getToken, userInfo } = useContext(UserContext);
   const [subscription, setSubscription] = useState(null);
   const getSubscription = async () => {
     try {
-      const response = await axios.get(`${API_URL}/subscriptions`, {
+      const response = await axios.get(`${API_URL}/subscription`, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
       });
-
-      console.log(
-        "response data detail =>",
-        response.data.activeSubscription[0]
-      );
-      console.log(
-        "response data detail 2 =>",
-        response.data.activeCancelledSubscription[0]
-      );
 
       setSubscription(
         response.data.activeSubscription[0]
@@ -5150,9 +5112,38 @@ function CommentModal({
       console.error("Error:", error);
     }
   };
+  const [remainingTimeSubscriptions, setRemainingTimeSubscriptions] = useState(
+    []
+  );
+  const [
+    remainingTimeSubscriptionsOwnerIds,
+    setRemainingTimeSubscriptionsOwnerIds,
+  ] = useState([]);
+  const getRemainingTimeSubscriptions = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/remaining_time_subscriptions`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
 
+      setRemainingTimeSubscriptions(response.data.remainingTimeSubscriptions);
+
+      setRemainingTimeSubscriptionsOwnerIds(
+        response.data.remainingTimeSubscriptions.map((eachSub) => {
+          return eachSub.owner;
+        })
+      );
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
   useEffect(() => {
     getSubscription();
+    getRemainingTimeSubscriptions();
   }, []);
   const [show, setShow] = useState(false);
   const [content, setContent] = useState("");
@@ -5162,7 +5153,6 @@ function CommentModal({
   const [showEmojisBar, setshowEmojisBar] = useState("hide");
   const [showSecondModal, setShowSecondModal] = useState(false);
 
-  const { userInfo } = useContext(UserContext);
   const maxCharacters = 140;
 
   const [modalImage, setModalImage] = useState("");
@@ -5253,9 +5243,15 @@ function CommentModal({
       senderInfo: userInfo,
     });
   };
+  const [
+    postSharingStartedActivateAnimate,
+    setPostSharingStartedActivateAnimate,
+  ] = useState(null);
+  const [postSharingPausedAnimate, setPostSharingPausedAnimate] =
+    useState(null);
 
   const handleAddComment = (postId) => {
-    startPostSharingAnimationActivate();
+    setPostSharingStartedActivateAnimate(true);
 
     axios
       .post(`${API_URL}/comment`, {
@@ -5265,22 +5261,17 @@ function CommentModal({
         modalImage,
       })
       .then((response) => {
-        const lineElement = document.querySelector(
-          ".post_sharing_line_animation"
-        );
         setTimeout(() => {
-          cancelPostSharingAnimationActivate();
-          lineElement.classList.add("paused");
-          lineElement.classList.remove("post_sharing_line_animation");
-        }, 300);
-
-        setTimeout(() => {
-          lineElement.classList.remove("paused");
-        }, 350);
+          if (!modalImage) {
+            setPostSharingPausedAnimate(true);
+          }
+        }, 400);
         setModalImage("");
         setContent("");
 
         setTimeout(() => {
+          setPostSharingPausedAnimate(false);
+          setPostSharingStartedActivateAnimate(false);
           if (postSharedMessage) {
             postSharedMessage(
               response.data.createdPost.authorUserName,
@@ -5294,7 +5285,7 @@ function CommentModal({
           setModalImage("");
           setContent("");
           handleClose();
-        }, 350);
+        }, 500);
       })
       .catch((error) => {
         console.log("Error message =>", error);
@@ -5341,18 +5332,6 @@ function CommentModal({
   }, []);
 
   const [commentIconHovered, setCommentIconHovered] = useState(null);
-
-  const [
-    postSharingStartedActivateAnimate,
-    setPostSharingStartedActivateAnimate,
-  ] = useState(null);
-  const startPostSharingAnimationActivate = () => {
-    setPostSharingStartedActivateAnimate(true);
-  };
-
-  const cancelPostSharingAnimationActivate = () => {
-    setPostSharingStartedActivateAnimate(null);
-  };
 
   return (
     <>
@@ -5438,8 +5417,8 @@ function CommentModal({
               fontSize: isCutePopoverOnRightSide ? "12px" : null,
             }}
           >
-            {post.comments && post.comments.length ? (
-              <span>{post.comments.length}</span>
+            {post?.comments && post?.comments.length ? (
+              <span>{post?.comments.length}</span>
             ) : null}
           </span>
         </BootstrapTooltip>
@@ -5448,6 +5427,7 @@ function CommentModal({
         style={{
           padding: "0px",
           margin: "0px",
+          zIndex: 99999,
         }}
         show={show}
         onHide={handleClose}
@@ -5468,12 +5448,17 @@ function CommentModal({
         {" "}
         <div
           className={
-            postSharingStartedActivateAnimate
+            postSharingStartedActivateAnimate && !postSharingPausedAnimate
               ? "post_sharing_line_animation"
-              : ""
+              : postSharingPausedAnimate
+              ? "paused"
+              : null
           }
           style={{
-            display: postSharingStartedActivateAnimate ? "" : "none",
+            display:
+              postSharingStartedActivateAnimate || postSharingPausedAnimate
+                ? ""
+                : "none",
             position: "absolute",
             border: "2px solid #1C9BEF",
             height: "0.2rem",
@@ -5552,7 +5537,7 @@ function CommentModal({
               >
                 {/* profile image start to check */}
                 <div>
-                  {post.userId ? (
+                  {post?.userId ? (
                     <>
                       {post.userId?.imageUrl?.slice(0, 3) !== "../" ? (
                         <img
@@ -5652,7 +5637,7 @@ function CommentModal({
                             width: "2px",
 
                             height: `${
-                              post.content
+                              post?.content
                                 ? post.content.length < 38
                                   ? "60px"
                                   : post.content.length >= 38 &&
@@ -5682,7 +5667,7 @@ function CommentModal({
                   }}
                 >
                   <div>
-                    {post.userId ? (
+                    {post?.userId ? (
                       <>
                         <span
                           className="hover-fullname chirp-bold-font"
@@ -5694,12 +5679,15 @@ function CommentModal({
                           }}
                         >
                           {post.authorFullName}
-                        </span>
-
-                        {post.userId.hasSubscription ||
+                        </span>{" "}
+                        {post?.userId.hasSubscription ||
                         (!subscription?.isActive &&
                           subscription?.remainingTimeSubscription &&
-                          subscription?.cancelledDate) ? (
+                          subscription?.cancelledDate &&
+                          subscription?.owner === post?.userId._id) ||
+                        remainingTimeSubscriptionsOwnerIds.includes(
+                          post?.userId._id
+                        ) ? (
                           <span>
                             {/* start to check  */}{" "}
                             <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
@@ -5720,10 +5708,7 @@ function CommentModal({
                               </svg>
                             </span>{" "}
                           </span>
-                        ) : (
-                          <span> </span>
-                        )}
-
+                        ) : null}
                         <span
                           className="chirp-regular-font"
                           style={{
@@ -5738,7 +5723,6 @@ function CommentModal({
                         >
                           @{post.authorUserName}
                         </span>
-
                         <span
                           style={{
                             color:
@@ -5756,7 +5740,6 @@ function CommentModal({
                             {getCreatedDate(post.createdAt)}
                           </span>
                         </span>
-
                         {/* finish to check  */}
                       </>
                     ) : null}
@@ -5779,8 +5762,8 @@ function CommentModal({
                         color: themeName === "dark-theme" ? "white" : "black",
                       }}
                     >
-                      <span>{post.content}</span>
-                      {post.image ? (
+                      <span>{post?.content}</span>
+                      {post?.image ? (
                         <>
                           {post.image.url.slice(0, 3) !== "ima" ? (
                             <div>{post.image.url}</div>
@@ -5789,7 +5772,7 @@ function CommentModal({
                       ) : null}
                     </div>
 
-                    {post.userId ? (
+                    {post?.userId ? (
                       <>
                         {post.userId._id !== userInfo._id && post.isReposted ? (
                           <>
@@ -5994,7 +5977,7 @@ function CommentModal({
                   maxLength={400}
                   className="input-post"
                   placeholder={
-                    post.userId
+                    post?.userId
                       ? userInfo._id === post.userId._id
                         ? "Add another post"
                         : "Post your reply"
@@ -6263,7 +6246,7 @@ function CommentModal({
                   variant="primary"
                   className={`emptyContent post-btn compose-tweet-textArea chirp-bold-font blue-btn-disabled`}
                 >
-                  {post.userId ? (
+                  {post?.userId ? (
                     <span>
                       {post.userId._id === userInfo._id ? "Post" : "Reply"}
                     </span>

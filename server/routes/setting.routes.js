@@ -609,7 +609,7 @@ router.post(
   }
 );
 
-router.get("/subscriptions", authenticateToken, async (req, res) => {
+router.get("/subscription", authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
     const subscription = await Subscription.find({
@@ -627,13 +627,32 @@ router.get("/subscriptions", authenticateToken, async (req, res) => {
       activeCancelledSubscription: activeCancelledSubscription,
     };
 
-    console.log("Active subscription =>", subscription);
-
     res.status(200).json(responseData);
   } catch (error) {
     console.log("Error =>", error);
   }
 });
+
+router.get(
+  "/remaining_time_subscriptions",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const remainingTimeSubscriptions = await Subscription.find({
+        isActive: false,
+        remainingTimeSubscription: { $ne: null },
+      });
+
+      const responseData = {
+        remainingTimeSubscriptions: remainingTimeSubscriptions,
+      };
+
+      res.status(200).json(responseData);
+    } catch (error) {
+      console.log("Error =>", error);
+    }
+  }
+);
 
 router.post("/cancel_subscription", authenticateToken, async (req, res) => {
   try {
@@ -711,4 +730,5 @@ router.post("/cancel_subscription", authenticateToken, async (req, res) => {
     });
   }
 });
+
 module.exports = router;

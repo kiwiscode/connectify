@@ -221,6 +221,7 @@ const getFollowing = (req, res) => {
     .populate("following")
     .populate("followers")
     .then((user) => {
+      console.log("User following =>", user.following.length);
       res.status(200).json({ following: user.following, user: user });
     })
     .catch(() => {

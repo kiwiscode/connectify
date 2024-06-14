@@ -337,58 +337,28 @@ body {
 }
 
 .message-detail-container {
-  max-width: 600px;
   margin: auto;
-  padding: 20px;
-  height: 400px;
   width: 100%;
   background-color: #fff;
-  border-bottom-left-radius: 2px;
-  border-bottom-right-radius: 2px;
-  border-top-left-radius: 2px;
-  border-top-right-radius: 2px;
+  border-radius: 2px;
 }
 
 .message-detail-container-dark-theme {
-  max-width: 600px;
   margin: auto;
-  padding: 20px;
-  height: 400px;
   width: 100%;
   background-color: black;
-  border-bottom-left-radius: 2px;
-  border-bottom-right-radius: 2px;
-  border-top-left-radius: 2px;
-  border-top-right-radius: 2px;
+  border-radius: 2px;
 }
 
 /* chat details page user information start to check  */
 
-.message-detail-user-card {
-  text-align: center;
-  margin-top: 15px;
-  height: 330px;
-  padding: 20px 16px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-/* Hover effect */
 .message-detail-user-card:hover {
-  background-color: #f5f8fa; /* Twitter hover rengi */
+  background-color: #f7f9f9; /* Twitter hover rengi */
   transition-duration: 0.2s;
 }
 
-.message-detail-user-card-dark-theme {
-  text-align: center;
-  margin-top: 15px;
-  height: 330px;
-  padding: 20px 16px;
-  border-bottom: 1px solid rgb(70, 70, 70);
-}
-
-/* Hover effect */
 .message-detail-user-card-dark-theme:hover {
-  background-color: #181818 !important; /* Twitter hover rengi */
+  background-color: #16181c !important; /* Twitter hover rengi */
   transition-duration: 0.2s;
 }
 
@@ -1312,26 +1282,6 @@ span > a:hover {
   text-align: right;
 }
 
-/* footer chat details page style start to check  */
-
-/* footer chat details page style finish to check  */
-
-/* chat details page user information start to check  */
-
-.message-detail-user-card {
-  text-align: center;
-  margin-top: 15px;
-  height: 330px;
-  padding: 20px 16px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-/* Hover effect */
-.message-detail-user-card:hover {
-  background-color: #f5f8fa; /* Twitter hover rengi */
-  transition-duration: 0.2s;
-}
-
 /* chat details page user information finish to check  */
 
 .selected-user-for-dm:hover {
@@ -1649,7 +1599,7 @@ span > a:hover {
 
 @media (max-width: 600px) and (min-width: 501px) {
   .main-column {
-    width: 89% !important;
+    width: 87% !important;
   }
 
   .main-column-left-side-nav-bar {
@@ -3011,8 +2961,46 @@ span > a:hover {
   background: #16181c !important;
   border-top-right-radius: 100vw !important;
   border-bottom-right-radius: 100vw !important;
+  margin-block: 0.5em !important;
   padding: 0 !important;
+  margin: 0 !important;
 }
+
+.scrollbar-no-radius-border::-webkit-scrollbar {
+  width: 1em !important;
+}
+
+.scrollbar-no-radius-border::-webkit-scrollbar-track {
+  background: #f7f9f9 !important;
+  margin-block: 0.5em !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.scrollbar-no-radius-border::-webkit-scrollbar-thumb {
+  background: #b9cad3 !important;
+  border-radius: 100vw !important;
+  width: 5px !important;
+  border: 0.25em solid #f7f9f9 !important;
+}
+
+.scrollbar-no-radius-border-dark-theme::-webkit-scrollbar {
+  width: 1em !important;
+}
+
+.scrollbar-no-radius-border-dark-theme::-webkit-scrollbar-thumb {
+  background: #3e4144 !important;
+  border-radius: 100vw !important;
+  border: 0.25em solid #16181c !important;
+}
+
+.scrollbar-no-radius-border-dark-theme::-webkit-scrollbar-track {
+  background: #16181c !important;
+  margin-block: 0.5em !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
 /* scrollbar dark-theme styling finish to check  */
 
 .nested-modal-opened_dark_theme_scroll_bar::-webkit-scrollbar {
@@ -4006,7 +3994,8 @@ themeName === "dark-theme"
 }
 
 .popover-material-ui-dark-theme .MuiPaper-root,
-.popover-material-ui-dark-theme-organization-type .MuiPaper-root {
+.popover-material-ui-dark-theme-organization-type .MuiPaper-root,
+.popover-material-ui-dark-theme-left-side-navigation .MuiPaper-root {
   background-color: black !important;
   filter: drop-shadow(rgb(51, 54, 57) 1px -1px 1px) !important;
   box-shadow: rgba(255, 255, 255, 0.2) 0px 0px 15px,
@@ -4020,6 +4009,11 @@ themeName === "dark-theme"
   height: auto;
   width: 175px;
   border: none;
+}
+
+.popover-material-ui-dark-theme-left-side-navigation .MuiPaper-root,
+.popover-material-ui-light-theme-left-side-navigation .MuiPaper-root {
+  width: 318px !important;
 }
 
 .special-cute-popover .MuiPaper-root {
@@ -4062,9 +4056,9 @@ themeName === "dark-theme"
 }
 
 .paused {
-  width: 550px !important;
-  animation-play-state: paused;
-  animation-fill-mode: both;
+  width: 375px !important;
+  animation-play-state: paused !important;
+  animation-fill-mode: both !important;
 }
 
 .running {
@@ -4625,4 +4619,14 @@ themeName === "dark-theme"
 .input-customize-light-theme-checked > .MuiSwitch-track {
   background-color: #6ac9fb !important;
   opacity: 1 !important;
+}
+.hover-effect-light-theme-pointer-plus:hover {
+  cursor: pointer;
+  transition-duration: 0.2s !important;
+  background-color: #e7e7e8 !important;
+}
+.hover-effect-dark-theme-pointer-plus:hover {
+  cursor: pointer;
+  transition-duration: 0.2s !important;
+  background-color: #181919 !important;
 }

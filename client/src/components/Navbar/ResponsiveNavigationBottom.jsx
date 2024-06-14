@@ -44,9 +44,6 @@ function ResponsiveNavigationBarBottom({
 
     setPrevScrollPos(currentScrollPos);
 
-    console.log("Scrolling up =>", scrollingUp);
-    console.log("currentScrollPos =>", currentScrollPos);
-
     if (scrollingUp) {
       setVisible(true);
     } else {
@@ -134,7 +131,6 @@ function ResponsiveNavigationBarBottom({
               themeName === "dark-theme"
                 ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
                 : "",
-
             boxShadow:
               themeName === "dark-theme"
                 ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"

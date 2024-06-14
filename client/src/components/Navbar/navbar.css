@@ -14,11 +14,11 @@
   .responsive-navigation-bar-bottom {
     border-top: 1px solid rgba(0, 0, 0, 0.1) !important;
     outline-style: none !important;
+    position: fixed !important;
     bottom: 0px !important;
     display: flex !important;
     width: 100% !important;
     justify-content: space-around !important;
-    position: fixed !important;
     z-index: 9999 !important;
   }
 
@@ -107,11 +107,9 @@
 
   .visible {
     opacity: 1;
-    /* İlgili diğer stil ayarları */
   }
 
   .hidden {
     opacity: 0.3;
-    /* İlgili diğer stil ayarları */
   }
 }

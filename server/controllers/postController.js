@@ -131,7 +131,7 @@ const handleDeletePost = (req, res) => {
           if (post.isReposted || post.reposted.length) {
             deleteConditions.push(
               post._id.toString(),
-              post.repostedFromThisOriginalPost[0]._id.toString()
+              post.repostedFromThisOriginalPost[0]?._id.toString()
             );
           } else {
             deleteConditions.push(post._id.toString());

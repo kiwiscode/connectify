@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import { Container, Row, Col, Stack, Button, Accordion } from "react-bootstrap";
@@ -36,7 +36,7 @@ function SpesificUserProfile({ isNewPostShared }) {
 
   const getSubscription = async () => {
     try {
-      const response = await axios.get(`${API_URL}/subscriptions`, {
+      const response = await axios.get(`${API_URL}/subscription`, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
@@ -60,9 +60,38 @@ function SpesificUserProfile({ isNewPostShared }) {
       console.error("Error:", error);
     }
   };
+  const [remainingTimeSubscriptions, setRemainingTimeSubscriptions] = useState(
+    []
+  );
+  const [
+    remainingTimeSubscriptionsOwnerIds,
+    setRemainingTimeSubscriptionsOwnerIds,
+  ] = useState([]);
+  const getRemainingTimeSubscriptions = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/remaining_time_subscriptions`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
 
+      setRemainingTimeSubscriptions(response.data.remainingTimeSubscriptions);
+
+      setRemainingTimeSubscriptionsOwnerIds(
+        response.data.remainingTimeSubscriptions.map((eachSub) => {
+          return eachSub.owner;
+        })
+      );
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
   useEffect(() => {
     getSubscription();
+    getRemainingTimeSubscriptions();
   }, []);
   const extraDetailedDate = (dateStr) => {
     const date = new Date(dateStr);
@@ -522,7 +551,24 @@ function SpesificUserProfile({ isNewPostShared }) {
       }, 200);
     }
   }, [isNewPostShared]);
+  const [headerPosition, setHeaderPosition] = useState(0);
 
+  const handleScroll = () => {
+    const scrollPosition = window.pageYOffset;
+
+    if (scrollPosition < 53) {
+      setHeaderPosition(-scrollPosition);
+    } else {
+      setHeaderPosition(-53);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [headerPosition]);
   return (
     <>
       {contextHolder}
@@ -574,567 +620,572 @@ function SpesificUserProfile({ isNewPostShared }) {
         />
         {/* unfollow modal finish to check  */}
 
-        <Container>
-          <Row>
-            <Stack direction="horizontal" gap={0}>
+        <Stack
+          style={{
+            padding: "0px 16px",
+            minHeight: "53px",
+            transform: width <= 500 && `translateY(${headerPosition}px)`,
+            transition:
+              width <= 500 && "transform 0.3s cubic-bezier(0, 0, 0, 1)",
+            position: width > 500 && "sticky",
+            top: width > 500 && "0px",
+            width: width > 500 && "100%",
+            backgroundColor: width > 500 && "transparent",
+            backdropFilter: width > 500 && "blur(12px)",
+            zIndex: width > 500 && 99999,
+          }}
+          direction="horizontal"
+          gap={0}
+        >
+          <div
+            onClick={handleGoBack}
+            // className="p-2 arrow"
+            className={`arrow arrow-${themeName}`}
+            style={{
+              width: "36px",
+              height: " 36px",
+              borderRadius: "50%",
+              cursor: "pointer",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <svg
+              color={themeName === "dark-theme" ? "white" : ""}
+              fill="currentColor"
+              width={20}
+              height={20}
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+            >
+              <g>
+                <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+              </g>
+            </svg>
+          </div>
+          <div
+            className={
+              themeName === "dark-theme"
+                ? "soft-grey-dark-theme-text-variant-1 p-2 chirp-bold-font"
+                : "very-dark-gray-light-theme-text-variant-1 p-2 chirp-bold-font"
+            }
+            style={{
+              fontSize: "20px",
+              lineHeight: "24px",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                gap: ".2rem",
+                alignItems: "center",
+              }}
+            >
               <div
-                onClick={handleGoBack}
-                // className="p-2 arrow"
-                className={`p-2 arrow arrow-${themeName}`}
+                className="chirp-bold-font"
                 style={{
-                  position: "relative",
-                  bottom: "15px",
-                  width: "36px",
-                  height: " 36px",
-                  borderRadius: "50%",
-                  cursor: "pointer",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
+                  lineHeight: width <= 500 ? "20px" : "24px",
+                  fontSize: width <= 500 ? "17px" : "20px",
                 }}
               >
-                <svg
-                  color={themeName === "dark-theme" ? "white" : ""}
-                  fill="currentColor"
-                  style={
-                    {
-                      // position: "absolute",
-                      // bottom: "5px",
-                      // border: "none",
-                      // left: "5px",
-                      // fontSize: "15px",
-                    }
-                  }
-                  width={20}
-                  height={20}
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                >
-                  <g>
-                    <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
-                  </g>
-                </svg>
+                {profileInfo.fullname}
               </div>
-              <div
-                className={
-                  themeName === "dark-theme"
-                    ? "soft-grey-dark-theme-text-variant-1 p-2 chirp-bold-font"
-                    : "very-dark-gray-light-theme-text-variant-1 p-2 chirp-bold-font"
-                }
-                style={{
-                  fontSize: "20px",
-                  lineHeight: "24px",
-                  height: "100px",
-                  position: "relative",
-                  top: "5px",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    gap: ".2rem",
-                    alignItems: "center",
-                  }}
-                >
-                  <div>{profileInfo.fullname}</div>
 
-                  <div>
-                    {" "}
-                    {profileInfo.hasSubscription ||
-                    (!subscription?.isActive &&
-                      subscription?.remainingTimeSubscription &&
-                      subscription?.cancelledDate) ? (
-                      <span>
-                        {/* start to check  */}{" "}
-                        <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
-                          <svg
-                            width={`${20}px`}
-                            height={`${20}px`}
-                            viewBox="0 0 22 22"
-                            aria-label="Verified account"
-                            role="img"
-                            className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
-                            data-testid="verified-icon"
-                            color="rgba(29,155,240,1.00)"
-                            fill="currentColor"
-                          >
-                            <g>
-                              <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
-                            </g>
-                          </svg>
-                        </span>{" "}
-                      </span>
-                    ) : (
-                      <span> </span>
-                    )}
-                  </div>
-                </div>
-
-                {profileInfo.posts && (
-                  <div
-                    style={{
-                      color:
-                        themeName === "dark-theme"
-                          ? "#71767A"
-                          : "rgb(83, 100, 113)",
-                    }}
-                    className="profile-paragraph"
-                  >
-                    {profileInfo.posts.length} posts
-                  </div>
+              <div>
+                {" "}
+                {profileInfo?.hasSubscription ||
+                (!subscription?.isActive &&
+                  subscription?.remainingTimeSubscription &&
+                  subscription?.cancelledDate &&
+                  subscription?.owner === profileInfo?._id) ||
+                remainingTimeSubscriptionsOwnerIds.includes(
+                  profileInfo?._id
+                ) ? (
+                  <span>
+                    {/* start to check  */}{" "}
+                    <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
+                      <svg
+                        width={`${20}px`}
+                        height={`${20}px`}
+                        viewBox="0 0 22 22"
+                        aria-label="Verified account"
+                        role="img"
+                        className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                        data-testid="verified-icon"
+                        color="rgba(29,155,240,1.00)"
+                        fill="currentColor"
+                      >
+                        <g>
+                          <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                        </g>
+                      </svg>
+                    </span>{" "}
+                  </span>
+                ) : (
+                  <span> </span>
                 )}
               </div>
-            </Stack>
-            {/* start to check stack on the way  */}
-            <Stack direction="horizontal" gap={3} style={{ marginTop: "45px" }}>
-              {profileInfo.imageUrl && (
-                <div className="p-2">
-                  {profileInfo.imageUrl.slice(0, 3) !== "../" ? (
-                    <div>
-                      <img
-                        width={133}
-                        height={133}
-                        src={profileInfo.imageUrl}
-                        alt=""
-                        style={{
-                          borderRadius: "50%",
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <div>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="133"
-                        height="133"
-                        fill={
-                          themeName === "dark-theme"
-                            ? "#71767A"
-                            : "rgb(83, 100, 113)"
-                        }
-                        className="bi bi-person-circle"
-                        viewBox="0 0 16 16"
-                        style={{ cursor: "pointer", borderRadius: "50%" }}
-                        onClick={() =>
-                          document.getElementById("formuploadModal").click()
-                        }
-                      >
-                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                        <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                      </svg>
-                    </div>
-                  )}
-                </div>
-              )}
+            </div>
 
-              {profileInfo._id !== userInfo._id ? (
-                <div
-                  style={{
-                    // backgroundColor: "yellow",
-                    display: "flex",
-                    justifyContent: "center",
-                    width: "100%",
-                    gap: "2%",
-                  }}
-                  className="p-2 ms-auto"
-                >
-                  <div
-                    style={{
-                      width: "40px",
-                      height: "40px",
-                      borderRadius: "50%",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      border:
-                        themeName !== "dark-theme"
-                          ? "1px solid rgb(185, 202, 211)"
-                          : // : "0.1px solid rgb(70, 70, 70)",
-                            "1px solid rgb(70, 70, 70)",
-                    }}
-                    className={`spesific-profile-svg-three-dots spesific-profile-svg-three-dots-${themeName}`}
-                  >
-                    {" "}
-                    <BootstrapTooltip
-                      title="More"
-                      themeName={
-                        themeName === "dark-theme"
-                          ? "dark-theme"
-                          : "light-theme"
-                      }
-                    >
-                      <svg
-                        color={themeName === "dark-theme" ? "white" : ""}
-                        fill="currentColor"
-                        width={20}
-                        height={20}
-                        style={{}}
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                        className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                      >
-                        <g>
-                          <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                        </g>
-                      </svg>{" "}
-                    </BootstrapTooltip>
-                  </div>
-                  {/* start to check redirect to the messages  */}
-                  <div
-                    onClick={() => selectedUser(profileInfo)}
-                    style={{
-                      width: "40px",
-                      height: "40px",
-                      borderRadius: "50%",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      border:
-                        themeName !== "dark-theme"
-                          ? "1px solid rgb(185, 202, 211)"
-                          : // : "0.1px solid rgb(70, 70, 70)",
-                            "1px solid rgb(70, 70, 70)",
-                    }}
-                    className={`spesific-profile-svg-dm spesific-profile-svg-dm-${themeName}`}
-                  >
-                    <BootstrapTooltip
-                      title="Message"
-                      themeName={
-                        themeName === "dark-theme"
-                          ? "dark-theme"
-                          : "light-theme"
-                      }
-                    >
-                      <svg
-                        style={{}}
-                        width={20}
-                        height={20}
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                        className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                        color="color: rgb(15, 20, 25)"
-                        fill="currentColor"
-                      >
-                        <g>
-                          <path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v2.764l8 3.638 8-3.636V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 5.463l-8 3.636-8-3.638V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-8.037z"></path>
-                        </g>
-                      </svg>
-                    </BootstrapTooltip>
-                  </div>
-                  {/* finish to check redirect to the messages  */}
-                  <Button
-                    onClick={() => handleFollow(profileInfo)}
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                    style={{
-                      transitionDuration: "0.2s",
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "700",
-                      display: "inline",
-                      maxWidth: "107px",
-
-                      border:
-                        isHovered && isFollowing && themeName !== "dark-theme"
-                          ? "1px solid rgba(253,201,206,255)"
-                          : isHovered &&
-                            isFollowing &&
-                            themeName === "dark-theme"
-                          ? "1px solid #e71f2c"
-                          : isFollowing && themeName !== "dark-theme"
-                          ? "1px solid rgba(0, 0, 0, 0.1)"
-                          : "1px solid rgb(70, 70, 70)",
-                      backgroundColor:
-                        !isFollowing && themeName === "dark-theme" && !isHovered
-                          ? "white"
-                          : !isFollowing &&
-                            themeName === "dark-theme" &&
-                            isHovered
-                          ? "#d7dbdc"
-                          : isHovered &&
-                            isFollowing &&
-                            themeName !== "dark-theme"
-                          ? "rgba(255,234,235,255)"
-                          : isHovered &&
-                            isFollowing &&
-                            themeName === "dark-theme"
-                          ? "#230608"
-                          : isFollowing && themeName === "dark-theme"
-                          ? "black"
-                          : isFollowing && themeName !== "dark-theme"
-                          ? "white"
-                          : !isFollowing &&
-                            themeName !== "dark-theme" &&
-                            isHovered
-                          ? "#272c30"
-                          : "black",
-                      color:
-                        !isFollowing && themeName === "dark-theme"
-                          ? "black"
-                          : isHovered && isFollowing
-                          ? "rgba(244,34,45,255)"
-                          : isFollowing && themeName !== "dark-theme"
-                          ? "black"
-                          : "white",
-                    }}
-                    variant="dark"
-                  >
-                    {profileInfo.followers
-                      ? getFollowerIds(profileInfo.followers).includes(
-                          userInfo._id
-                        )
-                        ? isHovered
-                          ? "Unfollow"
-                          : "Following"
-                        : "Follow"
-                      : null}
-                  </Button>
-                </div>
-              ) : null}
-            </Stack>
-
-            <div style={{ lineHeight: "30px", marginBottom: "20px" }}>
+            {profileInfo.posts && (
               <div
                 style={{
-                  display: "flex",
-                  gap: ".2rem",
-                  alignItems: "center",
-                  marginTop: "50px",
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: "20px",
-                  }}
-                  className={
+                  color:
                     themeName === "dark-theme"
-                      ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
-                      : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
-                  }
-                >
-                  {profileInfo.fullname}
-                </div>
-
-                <div>
-                  {" "}
-                  {profileInfo.hasSubscription ||
-                  (!subscription?.isActive &&
-                    subscription?.remainingTimeSubscription &&
-                    subscription?.cancelledDate) ? (
-                    <span>
-                      {/* start to check  */}{" "}
-                      <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
-                        <svg
-                          width={`${20}px`}
-                          height={`${20}px`}
-                          viewBox="0 0 22 22"
-                          aria-label="Verified account"
-                          role="img"
-                          className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
-                          data-testid="verified-icon"
-                          color="rgba(29,155,240,1.00)"
-                          fill="currentColor"
-                        >
-                          <g>
-                            <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
-                          </g>
-                        </svg>
-                      </span>{" "}
-                    </span>
-                  ) : (
-                    <span> </span>
-                  )}
-                </div>
-              </div>
-              <div
-                style={{
-                  fontSize: "15px",
-                  lineHeight: "20px",
+                      ? "#71767A"
+                      : "rgb(83, 100, 113)",
                 }}
-                className={
-                  themeName === "dark-theme"
-                    ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
-                    : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
-                }
+                className="profile-paragraph"
               >
-                @{profileInfo.username}
-                {""}
-                {""}
-                {profileInfo._id !== userInfo._id ? (
-                  <>
-                    {getFollowingIds(profileInfo?.following)?.includes(
-                      userInfo._id
-                    ) ? (
-                      <>
-                        <span
-                          style={{
-                            backgroundColor:
-                              themeName === "dark-theme"
-                                ? "#202327"
-                                : "rgba(239,243,244,1.00)",
-
-                            color:
-                              themeName === "dark-theme"
-                                ? "#71767A"
-                                : "rgb(83, 100, 113)",
-
-                            marginLeft: "4px",
-                            fontWeight: "500",
-                            lineHeight: "12px",
-                            fontSize: "11px",
-                            paddingLeft: "4px",
-                            paddingRight: "4px",
-                            paddingBottom: "2px",
-                            paddingTop: "2px",
-                            borderRadius: "3px",
-                          }}
-                        >
-                          {getFollowingIds(profileInfo.following)
-                            ? getFollowingIds(profileInfo.following).includes(
-                                userInfo._id
-                              )
-                              ? "Follows you"
-                              : null
-                            : null}
-                        </span>
-                      </>
-                    ) : null}
-                  </>
-                ) : null}
+                {profileInfo.posts.length} posts
               </div>
-              <div>
-                <div
-                  className="mt-2"
-                  style={{
-                    display: "flex",
-                    justifyContent: "left",
-                    alignItems: "center",
-                    gap: "0.5%",
-                  }}
-                >
+            )}
+          </div>
+        </Stack>
+        {/* start to check stack on the way  */}
+        <Stack
+          direction="horizontal"
+          gap={3}
+          style={{ marginTop: "45px", padding: "0px 16px" }}
+        >
+          {profileInfo.imageUrl && (
+            <div className="p-2">
+              {profileInfo.imageUrl.slice(0, 3) !== "../" ? (
+                <div>
+                  <img
+                    width={133}
+                    height={133}
+                    src={profileInfo.imageUrl}
+                    alt=""
+                    style={{
+                      borderRadius: "50%",
+                    }}
+                  />
+                </div>
+              ) : (
+                <div>
                   <svg
-                    color={
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="133"
+                    height="133"
+                    fill={
                       themeName === "dark-theme"
                         ? "#71767A"
                         : "rgb(83, 100, 113)"
                     }
-                    fill="currentColor"
-                    width={`${1.25}em`}
-                    height={`${1.25}em`}
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1d4mawv"
+                    className="bi bi-person-circle"
+                    viewBox="0 0 16 16"
+                    style={{ cursor: "pointer", borderRadius: "50%" }}
+                    onClick={() =>
+                      document.getElementById("formuploadModal").click()
+                    }
                   >
-                    <g>
-                      <path d="M7 4V3h2v1h6V3h2v1h1.5C19.89 4 21 5.12 21 6.5v12c0 1.38-1.11 2.5-2.5 2.5h-13C4.12 21 3 19.88 3 18.5v-12C3 5.12 4.12 4 5.5 4H7zm0 2H5.5c-.27 0-.5.22-.5.5v12c0 .28.23.5.5.5h13c.28 0 .5-.22.5-.5v-12c0-.28-.22-.5-.5-.5H17v1h-2V6H9v1H7V6zm0 6h2v-2H7v2zm0 4h2v-2H7v2zm4-4h2v-2h-2v2zm0 4h2v-2h-2v2zm4-4h2v-2h-2v2z"></path>
-                    </g>
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
                   </svg>
-                  <span
-                    style={{
-                      color:
-                        themeName === "dark-theme"
-                          ? "#71767A"
-                          : "rgb(83, 100, 113)",
-                      fontSize: "15px",
-                      lineHeight: "12px",
-                      fontWeight: "400",
-                    }}
-                  >
-                    Joined{" "}
-                    {getCreatedYearForSpesificUserProfilePage(
-                      profileInfo.createdAt
-                    )}
-                  </span>
                 </div>
-              </div>
+              )}
+            </div>
+          )}
+
+          {profileInfo._id !== userInfo._id ? (
+            <div
+              style={{
+                // backgroundColor: "yellow",
+                display: "flex",
+                justifyContent: "center",
+                width: "100%",
+                gap: "2%",
+              }}
+              className="p-2 ms-auto"
+            >
               <div
                 style={{
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
                   display: "flex",
-                  gap: "3%",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  border:
+                    themeName !== "dark-theme"
+                      ? "1px solid rgb(185, 202, 211)"
+                      : // : "0.1px solid rgb(70, 70, 70)",
+                        "1px solid rgb(70, 70, 70)",
                 }}
+                className={`spesific-profile-svg-three-dots spesific-profile-svg-three-dots-${themeName}`}
               >
-                <Link
-                  to={`/profile/${userInfo._id}/following`}
-                  style={{
-                    textDecoration: "none",
-                    color: themeName === "dark-theme" ? "white" : "black",
-                  }}
-                  className="following-followers-link"
+                {" "}
+                <BootstrapTooltip
+                  title="More"
+                  themeName={
+                    themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                  }
                 >
-                  <span
-                    style={{
-                      cursor: "pointer",
-                      fontSize: "14px",
-                      lineHeight: "16px",
-                      fontWeight: "700",
-                    }}
+                  <svg
+                    color={themeName === "dark-theme" ? "white" : ""}
+                    fill="currentColor"
+                    width={20}
+                    height={20}
+                    style={{}}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
                   >
-                    {profileInfo.following && (
-                      <span>{profileInfo.following.length}</span>
-                    )}
-                  </span>{" "}
-                  <span
-                    style={{
-                      cursor: "pointer",
-                      color:
-                        themeName === "dark-theme"
-                          ? "#71767A"
-                          : "rgb(83, 100, 113)",
-                      fontSize: "14px",
-                      lineHeight: "16px",
-                      fontWeight: "400",
-                    }}
-                  >
-                    Following
-                  </span>{" "}
-                </Link>
-                <Link
-                  to={`/profile/${userInfo._id}/following`}
-                  style={{
-                    textDecoration: "none",
-                    color: themeName === "dark-theme" ? "white" : "black",
-                  }}
-                  className="following-followers-link"
+                    <g>
+                      <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                    </g>
+                  </svg>{" "}
+                </BootstrapTooltip>
+              </div>
+              {/* start to check redirect to the messages  */}
+              <div
+                onClick={() => selectedUser(profileInfo)}
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  border:
+                    themeName !== "dark-theme"
+                      ? "1px solid rgb(185, 202, 211)"
+                      : // : "0.1px solid rgb(70, 70, 70)",
+                        "1px solid rgb(70, 70, 70)",
+                }}
+                className={`spesific-profile-svg-dm spesific-profile-svg-dm-${themeName}`}
+              >
+                <BootstrapTooltip
+                  title="Message"
+                  themeName={
+                    themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                  }
                 >
-                  <span
-                    style={{
-                      cursor: "pointer",
-                      fontSize: "14px",
-                      lineHeight: "16px",
-                      fontWeight: "700",
-                    }}
+                  <svg
+                    style={{}}
+                    width={20}
+                    height={20}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                    color="color: rgb(15, 20, 25)"
+                    fill="currentColor"
                   >
-                    {profileInfo.followers && (
-                      <span>{profileInfo.followers.length}</span>
-                    )}
+                    <g>
+                      <path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v2.764l8 3.638 8-3.636V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 5.463l-8 3.636-8-3.638V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-8.037z"></path>
+                    </g>
+                  </svg>
+                </BootstrapTooltip>
+              </div>
+              {/* finish to check redirect to the messages  */}
+              <Button
+                onClick={() => handleFollow(profileInfo)}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                style={{
+                  transitionDuration: "0.2s",
+                  fontSize: "15px",
+                  lineHeight: "20px",
+                  fontWeight: "700",
+                  display: "inline",
+                  maxWidth: "107px",
+
+                  border:
+                    isHovered && isFollowing && themeName !== "dark-theme"
+                      ? "1px solid rgba(253,201,206,255)"
+                      : isHovered && isFollowing && themeName === "dark-theme"
+                      ? "1px solid #e71f2c"
+                      : isFollowing && themeName !== "dark-theme"
+                      ? "1px solid rgba(0, 0, 0, 0.1)"
+                      : "1px solid rgb(70, 70, 70)",
+                  backgroundColor:
+                    !isFollowing && themeName === "dark-theme" && !isHovered
+                      ? "white"
+                      : !isFollowing && themeName === "dark-theme" && isHovered
+                      ? "#d7dbdc"
+                      : isHovered && isFollowing && themeName !== "dark-theme"
+                      ? "rgba(255,234,235,255)"
+                      : isHovered && isFollowing && themeName === "dark-theme"
+                      ? "#230608"
+                      : isFollowing && themeName === "dark-theme"
+                      ? "black"
+                      : isFollowing && themeName !== "dark-theme"
+                      ? "white"
+                      : !isFollowing && themeName !== "dark-theme" && isHovered
+                      ? "#272c30"
+                      : "black",
+                  color:
+                    !isFollowing && themeName === "dark-theme"
+                      ? "black"
+                      : isHovered && isFollowing
+                      ? "rgba(244,34,45,255)"
+                      : isFollowing && themeName !== "dark-theme"
+                      ? "black"
+                      : "white",
+                }}
+                variant="dark"
+              >
+                {profileInfo.followers
+                  ? getFollowerIds(profileInfo.followers).includes(userInfo._id)
+                    ? isHovered
+                      ? "Unfollow"
+                      : "Following"
+                    : "Follow"
+                  : null}
+              </Button>
+            </div>
+          ) : null}
+        </Stack>
+
+        <div
+          style={{
+            lineHeight: "30px",
+            marginBottom: "20px",
+            padding: "0px 16px",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              gap: ".2rem",
+              alignItems: "center",
+              marginTop: "50px",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "20px",
+              }}
+              className={
+                themeName === "dark-theme"
+                  ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                  : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+              }
+            >
+              {profileInfo.fullname}
+            </div>
+
+            <div>
+              {" "}
+              {profileInfo?.hasSubscription ||
+              (!subscription?.isActive &&
+                subscription?.remainingTimeSubscription &&
+                subscription?.cancelledDate &&
+                subscription?.owner === profileInfo?._id) ||
+              remainingTimeSubscriptionsOwnerIds.includes(profileInfo?._id) ? (
+                <span>
+                  {/* start to check  */}{" "}
+                  <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
+                    <svg
+                      width={`${20}px`}
+                      height={`${20}px`}
+                      viewBox="0 0 22 22"
+                      aria-label="Verified account"
+                      role="img"
+                      className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                      data-testid="verified-icon"
+                      color="rgba(29,155,240,1.00)"
+                      fill="currentColor"
+                    >
+                      <g>
+                        <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                      </g>
+                    </svg>
                   </span>{" "}
-                  <span
-                    style={{
-                      color:
-                        themeName === "dark-theme"
-                          ? "#71767A"
-                          : "rgb(83, 100, 113)",
-                      fontSize: "14px",
-                      lineHeight: "16px",
-                      fontWeight: "400",
-                    }}
-                  >
-                    <span>
-                      {profileInfo.followers
-                        ? profileInfo.followers.length > 1
-                          ? "Followers"
-                          : profileInfo.followers.length === 0
-                          ? "Followers"
-                          : "Follower"
+                </span>
+              ) : (
+                <span> </span>
+              )}
+            </div>
+          </div>
+          <div
+            style={{
+              fontSize: "15px",
+              lineHeight: "20px",
+            }}
+            className={
+              themeName === "dark-theme"
+                ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+            }
+          >
+            @{profileInfo.username}
+            {""}
+            {""}
+            {profileInfo._id !== userInfo._id ? (
+              <>
+                {getFollowingIds(profileInfo?.following)?.includes(
+                  userInfo._id
+                ) ? (
+                  <>
+                    <span
+                      style={{
+                        backgroundColor:
+                          themeName === "dark-theme"
+                            ? "#202327"
+                            : "rgba(239,243,244,1.00)",
+
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)",
+
+                        marginLeft: "4px",
+                        fontWeight: "500",
+                        lineHeight: "12px",
+                        fontSize: "11px",
+                        paddingLeft: "4px",
+                        paddingRight: "4px",
+                        paddingBottom: "2px",
+                        paddingTop: "2px",
+                        borderRadius: "3px",
+                      }}
+                    >
+                      {getFollowingIds(profileInfo.following)
+                        ? getFollowingIds(profileInfo.following).includes(
+                            userInfo._id
+                          )
+                          ? "Follows you"
+                          : null
                         : null}
                     </span>
-                  </span>
-                </Link>
-              </div>
+                  </>
+                ) : null}
+              </>
+            ) : null}
+          </div>
+          <div>
+            <div
+              className="mt-2"
+              style={{
+                display: "flex",
+                justifyContent: "left",
+                alignItems: "center",
+                gap: "0.5%",
+              }}
+            >
+              <svg
+                color={
+                  themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)"
+                }
+                fill="currentColor"
+                width={`${1.25}em`}
+                height={`${1.25}em`}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1d4mawv"
+              >
+                <g>
+                  <path d="M7 4V3h2v1h6V3h2v1h1.5C19.89 4 21 5.12 21 6.5v12c0 1.38-1.11 2.5-2.5 2.5h-13C4.12 21 3 19.88 3 18.5v-12C3 5.12 4.12 4 5.5 4H7zm0 2H5.5c-.27 0-.5.22-.5.5v12c0 .28.23.5.5.5h13c.28 0 .5-.22.5-.5v-12c0-.28-.22-.5-.5-.5H17v1h-2V6H9v1H7V6zm0 6h2v-2H7v2zm0 4h2v-2H7v2zm4-4h2v-2h-2v2zm0 4h2v-2h-2v2zm4-4h2v-2h-2v2z"></path>
+                </g>
+              </svg>
+              <span
+                style={{
+                  color:
+                    themeName === "dark-theme"
+                      ? "#71767A"
+                      : "rgb(83, 100, 113)",
+                  fontSize: "15px",
+                  lineHeight: "12px",
+                  fontWeight: "400",
+                }}
+              >
+                Joined{" "}
+                {getCreatedYearForSpesificUserProfilePage(
+                  profileInfo.createdAt
+                )}
+              </span>
             </div>
-          </Row>
-        </Container>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              gap: "3%",
+            }}
+          >
+            <Link
+              to={`/profile/${profileInfo._id}/following`}
+              style={{
+                textDecoration: "none",
+                color: themeName === "dark-theme" ? "white" : "black",
+              }}
+              className="following-followers-link"
+            >
+              <span
+                style={{
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  lineHeight: "16px",
+                  fontWeight: "700",
+                }}
+              >
+                {profileInfo.following && (
+                  <span>{profileInfo.following.length}</span>
+                )}
+              </span>{" "}
+              <span
+                style={{
+                  cursor: "pointer",
+                  color:
+                    themeName === "dark-theme"
+                      ? "#71767A"
+                      : "rgb(83, 100, 113)",
+                  fontSize: "14px",
+                  lineHeight: "16px",
+                  fontWeight: "400",
+                }}
+              >
+                Following
+              </span>{" "}
+            </Link>
+            <Link
+              to={`/profile/${profileInfo._id}/followers`}
+              style={{
+                textDecoration: "none",
+                color: themeName === "dark-theme" ? "white" : "black",
+              }}
+              className="following-followers-link"
+            >
+              <span
+                style={{
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  lineHeight: "16px",
+                  fontWeight: "700",
+                }}
+              >
+                {profileInfo.followers && (
+                  <span>{profileInfo.followers.length}</span>
+                )}
+              </span>{" "}
+              <span
+                style={{
+                  color:
+                    themeName === "dark-theme"
+                      ? "#71767A"
+                      : "rgb(83, 100, 113)",
+                  fontSize: "14px",
+                  lineHeight: "16px",
+                  fontWeight: "400",
+                }}
+              >
+                <span>
+                  {profileInfo.followers
+                    ? profileInfo.followers.length > 1
+                      ? "Followers"
+                      : profileInfo.followers.length === 0
+                      ? "Followers"
+                      : "Follower"
+                    : null}
+                </span>
+              </span>
+            </Link>
+          </div>
+        </div>
+
         {/* finish to check responsive error container  */}
         {/* start */}
         <div
@@ -1424,7 +1475,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                           to={`/${post.userId.username}/status/${
                             !post.isReposted
                               ? post._id
-                              : post.repostedFromThisOriginalPost[0]._id
+                              : post.repostedFromThisOriginalPost[0]?._id
                           }`}
                           onClick={() => setclickedPostBox(post)}
                           className="outside-of-inner-circle-post-info-user-info-svg-three-dots"
@@ -1513,7 +1564,11 @@ function SpesificUserProfile({ isNewPostShared }) {
                                 {post?.userId.hasSubscription ||
                                 (!subscription?.isActive &&
                                   subscription?.remainingTimeSubscription &&
-                                  subscription?.cancelledDate) ? (
+                                  subscription?.cancelledDate &&
+                                  subscription?.owner === post?.userId._id) ||
+                                remainingTimeSubscriptionsOwnerIds.includes(
+                                  post?.userId._id
+                                ) ? (
                                   <span>
                                     {/* start to check  */}{" "}
                                     <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
@@ -1561,7 +1616,8 @@ function SpesificUserProfile({ isNewPostShared }) {
                                   to={`/${post.userId.username}/status/${
                                     !post.isReposted
                                       ? post._id
-                                      : post.repostedFromThisOriginalPost[0]._id
+                                      : post.repostedFromThisOriginalPost[0]
+                                          ?._id
                                   }`}
                                 >
                                   <span
@@ -1618,7 +1674,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                           to={`/${post.userId.username}/status/${
                             !post.isReposted
                               ? post._id
-                              : post.repostedFromThisOriginalPost[0]._id
+                              : post.repostedFromThisOriginalPost[0]?._id
                           }`}
                           onClick={() => setclickedPostBox(post)}
                           className="outside-of-inner-circle-action-comment-text"
@@ -1630,7 +1686,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                               to={`/${post.userId.username}/status/${
                                 !post.isReposted
                                   ? post._id
-                                  : post.repostedFromThisOriginalPost[0]._id
+                                  : post.repostedFromThisOriginalPost[0]?._id
                               }`}
                               onClick={() => setclickedPostBox(post)}
                               className="p-2 parent-comment-text"
@@ -1678,7 +1734,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                             to={`/${post.userId.username}/status/${
                               !post.isReposted
                                 ? post._id
-                                : post.repostedFromThisOriginalPost[0]._id
+                                : post.repostedFromThisOriginalPost[0]?._id
                             }`}
                           >
                             <div
@@ -1708,7 +1764,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                               to={`/${post.userId.username}/status/${
                                 !post.isReposted
                                   ? post._id
-                                  : post.repostedFromThisOriginalPost[0]._id
+                                  : post.repostedFromThisOriginalPost[0]?._id
                               }/photo/${1}`}
                               style={{
                                 textDecoration: "none",
@@ -1961,7 +2017,8 @@ function SpesificUserProfile({ isNewPostShared }) {
                               to={`/${favorite.userId.username}/status/${
                                 !favorite.isReposted
                                   ? favorite._id
-                                  : favorite.repostedFromThisOriginalPost[0]._id
+                                  : favorite.repostedFromThisOriginalPost[0]
+                                      ?._id
                               }`}
                               onClick={() => setclickedPostBox(favorite)}
                               className="outside-of-inner-circle-post-info-user-info-svg-three-dots"
@@ -2051,7 +2108,12 @@ function SpesificUserProfile({ isNewPostShared }) {
                                     {favorite?.userId.hasSubscription ||
                                     (!subscription?.isActive &&
                                       subscription?.remainingTimeSubscription &&
-                                      subscription?.cancelledDate) ? (
+                                      subscription?.cancelledDate &&
+                                      subscription?.owner ===
+                                        favorite?.userId._id) ||
+                                    remainingTimeSubscriptionsOwnerIds.includes(
+                                      favorite?.userId._id
+                                    ) ? (
                                       <span>
                                         {/* start to check  */}{" "}
                                         <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
@@ -2103,7 +2165,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                                           ? favorite._id
                                           : favorite
                                               .repostedFromThisOriginalPost[0]
-                                              ._id
+                                              ?._id
                                       }`}
                                     >
                                       <span
@@ -2162,7 +2224,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                             to={`/${favorite.userId.username}/status/${
                               !favorite.isReposted
                                 ? favorite._id
-                                : favorite.repostedFromThisOriginalPost[0]._id
+                                : favorite.repostedFromThisOriginalPost[0]?._id
                             }`}
                             onClick={() => setclickedPostBox(favorite)}
                             className="outside-of-inner-circle-action-comment-text"
@@ -2177,7 +2239,8 @@ function SpesificUserProfile({ isNewPostShared }) {
                               to={`/${favorite.userId.username}/status/${
                                 !favorite.isReposted
                                   ? favorite._id
-                                  : favorite.repostedFromThisOriginalPost[0]._id
+                                  : favorite.repostedFromThisOriginalPost[0]
+                                      ?._id
                               }`}
                             >
                               <div
@@ -2290,7 +2353,8 @@ function SpesificUserProfile({ isNewPostShared }) {
                               to={`/${favorite.userId.username}/status/${
                                 !favorite.isReposted
                                   ? favorite._id
-                                  : favorite.repostedFromThisOriginalPost[0]._id
+                                  : favorite.repostedFromThisOriginalPost[0]
+                                      ?._id
                               }`}
                               onClick={() => setclickedPostBox(favorite)}
                               className="p-1 next-to-like"
@@ -2313,7 +2377,8 @@ function SpesificUserProfile({ isNewPostShared }) {
                               to={`/${favorite.userId.username}/status/${
                                 !favorite.isReposted
                                   ? favorite._id
-                                  : favorite.repostedFromThisOriginalPost[0]._id
+                                  : favorite.repostedFromThisOriginalPost[0]
+                                      ?._id
                               }`}
                               onClick={() => setclickedPostBox(favorite)}
                               className="p-1 next-to-like"

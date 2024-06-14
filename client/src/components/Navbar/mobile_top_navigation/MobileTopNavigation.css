@@ -1,0 +1,75 @@
+/* responsive navigation bar top better one start to check  */
+@keyframes mobile-top-navigation-animation {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+.mobile-top-navigation-column {
+  animation-name: mobile-top-navigation-animation;
+  animation-duration: 250ms;
+  animation-timing-function: ease;
+}
+
+.test::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: transparent;
+  transition: background-color 0.2s ease;
+  z-index: 0;
+}
+
+.test:hover::before {
+  background-color: rgba(26, 26, 26, 0.14);
+}
+
+.hover-effect-light-theme-pointer-plus:hover {
+  cursor: pointer;
+  transition-duration: 0.2s !important;
+  background-color: #e7e7e8 !important;
+}
+.hover-effect-dark-theme-pointer-plus:hover {
+  cursor: pointer;
+  transition-duration: 0.2s !important;
+  background-color: #181919 !important;
+}
+
+/* scrollbar styling start to check  */
+
+.scrollbar-add-mobile-navigation-top::-webkit-scrollbar {
+  width: 11px !important;
+}
+
+.scrollbar-add-mobile-navigation-top::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.scrollbar-add-mobile-navigation-top::-webkit-scrollbar-thumb {
+  background: #b9cad3 !important;
+  border: 0.25em solid white !important;
+  border-radius: 100vw !important;
+}
+
+.scrollbar-add-mobile-navigation-top-dark-theme::-webkit-scrollbar {
+  width: 11px !important;
+}
+
+.scrollbar-add-mobile-navigation-top-dark-theme::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.scrollbar-add-mobile-navigation-top-dark-theme::-webkit-scrollbar-thumb {
+  background: #3e4144 !important;
+  border: 0.25em solid black !important;
+  border-radius: 100vw !important;
+}
+
+/* responsive navigation bar top better one finish to check  */

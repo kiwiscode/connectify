@@ -149,10 +149,16 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
   };
 
   const { postSharedMessage, contextHolder } = useAntdMessageHandler();
-
+  const [
+    postSharingStartedActivateAnimate,
+    setPostSharingStartedActivateAnimate,
+  ] = useState(null);
+  const [postSharingPausedAnimate, setPostSharingPausedAnimate] =
+    useState(null);
   const handlePost = () => {
+    setPostSharingStartedActivateAnimate(true);
+
     if (content || chosenEmoji || modalImage) {
-      startPostSharingAnimationActivate();
       axios
         .post(
           `${API_URL}/home/post`,
@@ -168,20 +174,14 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
         )
 
         .then((response) => {
-          const lineElement = document.querySelector(
-            ".post_sharing_line_animation"
-          );
           setTimeout(() => {
-            cancelPostSharingAnimationActivate();
-            lineElement.classList.add("paused");
-            lineElement.classList.remove("post_sharing_line_animation");
-          }, 300);
-
+            if (!modalImage) {
+              setPostSharingPausedAnimate(true);
+            }
+          }, 400);
           setTimeout(() => {
-            lineElement.classList.remove("paused");
-          }, 350);
-
-          setTimeout(() => {
+            setPostSharingPausedAnimate(false);
+            setPostSharingStartedActivateAnimate(false);
             postSharedMessage(
               response.data.createdPost.authorUserName,
               response.data.createdPost._id
@@ -193,7 +193,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
             setModalImage("");
             setContent("");
             handleClose();
-          }, 350);
+          }, 500);
         })
         .catch((err) => {
           return err;
@@ -326,18 +326,6 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
     return allUnReadedMessages;
   };
 
-  const [
-    postSharingStartedActivateAnimate,
-    setPostSharingStartedActivateAnimate,
-  ] = useState(null);
-  const startPostSharingAnimationActivate = () => {
-    setPostSharingStartedActivateAnimate(true);
-  };
-
-  const cancelPostSharingAnimationActivate = () => {
-    setPostSharingStartedActivateAnimate(null);
-  };
-
   return (
     <>
       <Modal
@@ -347,6 +335,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
         style={{
           margin: "0px",
           padding: "0px",
+          zIndex: 99999,
         }}
         dialogClassName={width <= 700 ? "modal-fullscreen" : ""}
         className={
@@ -361,12 +350,17 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
       >
         <div
           className={
-            postSharingStartedActivateAnimate
+            postSharingStartedActivateAnimate && !postSharingPausedAnimate
               ? "post_sharing_line_animation"
-              : ""
+              : postSharingPausedAnimate
+              ? "paused"
+              : null
           }
           style={{
-            display: postSharingStartedActivateAnimate ? "" : "none",
+            display:
+              postSharingStartedActivateAnimate || postSharingPausedAnimate
+                ? ""
+                : "none",
             position: "absolute",
             border: "2px solid #1C9BEF",
             height: "0.2rem",
@@ -752,6 +746,9 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
               style={{
                 padding: "0px",
                 margin: "0px",
+                display: "flex",
+                justifyContent: "center",
+                minWidth: "fit-content",
               }}
               xs={1} // 0px - 576px aralığı
               sm={1} // 576px - 768px aralığı
@@ -760,8 +757,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
             >
               <div
                 style={{
-                  position: "sticky",
-                  top: "0px",
+                  position: "fixed",
                 }}
               >
                 <Stack
@@ -879,7 +875,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                           }
                         >
                           <svg
-                            color={themeName === "dark-theme" ? "white" : ""}
+                            color={themeName === "dark-theme" ? "#E7E9EA" : ""}
                             fill="currentColor"
                             style={{}}
                             width={`${1.75}rem`}
@@ -897,6 +893,71 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                               )}
                             </g>
                           </svg>{" "}
+                        </BootstrapTooltip>
+                      </div>
+                    </span>
+                  </NavLink>
+                  <NavLink
+                    style={{
+                      color: "black",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    to={"/explore"}
+                  >
+                    {" "}
+                    <span
+                      style={{
+                        cursor: "pointer",
+                      }}
+                    >
+                      <div
+                        className={
+                          themeName === "dark-theme"
+                            ? "hover-home-dark-theme"
+                            : "hover-home"
+                        }
+                        style={{
+                          position: "relative",
+                          borderRadius: "50%",
+                          width: "50px",
+                          height: "50px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        {" "}
+                        <BootstrapTooltip
+                          title="Explore"
+                          themeName={
+                            themeName === "dark-theme"
+                              ? "dark-theme"
+                              : "light-theme"
+                          }
+                        >
+                          <svg
+                            color={
+                              themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"
+                            }
+                            fill="currentColor"
+                            style={{}}
+                            width={`${1.25}rem`}
+                            height={`${1.25}rem`}
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            className="home-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
+                          >
+                            <g className="home-svg-group">
+                              {window.location.href ===
+                              "http://localhost:5173/explore" ? (
+                                <path d="M10.25 4.25c-3.314 0-6 2.686-6 6s2.686 6 6 6c1.657 0 3.155-.67 4.243-1.757 1.087-1.088 1.757-2.586 1.757-4.243 0-3.314-2.686-6-6-6zm-9 6c0-4.971 4.029-9 9-9s9 4.029 9 9c0 1.943-.617 3.744-1.664 5.215l4.475 4.474-2.122 2.122-4.474-4.475c-1.471 1.047-3.272 1.664-5.215 1.664-4.971 0-9-4.029-9-9z"></path>
+                              ) : (
+                                <path d="M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781c-1.447 1.142-3.276 1.824-5.262 1.824-4.694 0-8.5-3.806-8.5-8.5z"></path>
+                              )}
+                            </g>
+                          </svg>
                         </BootstrapTooltip>
                       </div>
                     </span>
@@ -976,7 +1037,9 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                         >
                           <svg
                             style={{}}
-                            color={themeName === "dark-theme" ? "white" : ""}
+                            color={
+                              themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"
+                            }
                             fill="currentColor"
                             width={`${1.75}rem`}
                             height={`${1.75}rem`}
@@ -1070,7 +1133,9 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                           }
                         >
                           <svg
-                            color={themeName === "dark-theme" ? "white" : ""}
+                            color={
+                              themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"
+                            }
                             fill="currentColor"
                             width={`${1.75}rem`}
                             height={`${1.75}rem`}
@@ -1098,7 +1163,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       justifyContent: "center",
                       alignItems: "center",
                     }}
-                    to={"/bookmarks"}
+                    to={"/i/bookmarks"}
                   >
                     {" "}
                     <span
@@ -1132,7 +1197,9 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                           }
                         >
                           <svg
-                            color={themeName === "dark-theme" ? "white" : ""}
+                            color={
+                              themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"
+                            }
                             fill="currentColor"
                             width={`${1.75}rem`}
                             height={`${1.75}rem`}
@@ -1142,13 +1209,77 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                           >
                             <g>
                               {window.location.href ===
-                              "http://localhost:5173/bookmarks" ? (
+                              "http://localhost:5173/i/bookmarks" ? (
                                 <path d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5z"></path>
                               ) : (
                                 <path d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V4.5c0-.28-.224-.5-.5-.5h-11z"></path>
                               )}
                             </g>
                           </svg>{" "}
+                        </BootstrapTooltip>
+                      </div>
+                    </span>
+                  </NavLink>
+                  <NavLink
+                    style={{
+                      color: "black",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    to={`${userInfo.username}/communities/explore`}
+                  >
+                    {" "}
+                    <span
+                      style={{
+                        cursor: "pointer",
+                      }}
+                    >
+                      <div
+                        className={
+                          themeName === "dark-theme"
+                            ? "hover-home-dark-theme"
+                            : "hover-home"
+                        }
+                        style={{
+                          position: "relative",
+                          borderRadius: "50%",
+                          width: "50px",
+                          height: "50px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        {" "}
+                        <BootstrapTooltip
+                          title="Bookmarks"
+                          themeName={
+                            themeName === "dark-theme"
+                              ? "dark-theme"
+                              : "light-theme"
+                          }
+                        >
+                          <svg
+                            color={
+                              themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"
+                            }
+                            fill="currentColor"
+                            width={`${1.75}rem`}
+                            height={`${1.75}rem`}
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18jsvk2 r-lwhw9o r-cnnz9e"
+                          >
+                            <g>
+                              {window.location.href ===
+                              `http://localhost:5173/${userInfo.username}/communities/explore` ? (
+                                <path d="M7.471 21H.472l.029-1.027c.184-6.618 3.736-8.977 7-8.977.963 0 1.95.212 2.87.672-1.608 1.732-2.762 4.389-2.869 8.248l-.03 1.083zM9.616 9.27C10.452 8.63 11 7.632 11 6.5 11 4.57 9.433 3 7.5 3S4 4.57 4 6.5c0 1.132.548 2.13 1.384 2.77.589.451 1.317.73 2.116.73s1.527-.279 2.116-.73zm6.884 1.726c-3.264 0-6.816 2.358-7 8.977L9.471 21h14.057l-.029-1.027c-.184-6.618-3.736-8.977-7-8.977zm2.116-1.726C19.452 8.63 20 7.632 20 6.5 20 4.57 18.433 3 16.5 3S13 4.57 13 6.5c0 1.132.548 2.13 1.384 2.77.589.451 1.317.73 2.116.73s1.527-.279 2.116-.73z"></path>
+                              ) : (
+                                <path d="M7.501 19.917L7.471 21H.472l.029-1.027c.184-6.618 3.736-8.977 7-8.977.963 0 1.95.212 2.87.672-.444.478-.851 1.03-1.212 1.656-.507-.204-1.054-.329-1.658-.329-2.767 0-4.57 2.223-4.938 6.004H7.56c-.023.302-.05.599-.059.917zm15.998.056L23.528 21H9.472l.029-1.027c.184-6.618 3.736-8.977 7-8.977s6.816 2.358 7 8.977zM21.437 19c-.367-3.781-2.17-6.004-4.938-6.004s-4.57 2.223-4.938 6.004h9.875zm-4.938-9c-.799 0-1.527-.279-2.116-.73-.836-.64-1.384-1.638-1.384-2.77 0-1.93 1.567-3.5 3.5-3.5s3.5 1.57 3.5 3.5c0 1.132-.548 2.13-1.384 2.77-.589.451-1.317.73-2.116.73zm-1.5-3.5c0 .827.673 1.5 1.5 1.5s1.5-.673 1.5-1.5-.673-1.5-1.5-1.5-1.5.673-1.5 1.5zM7.5 3C9.433 3 11 4.57 11 6.5S9.433 10 7.5 10 4 8.43 4 6.5 5.567 3 7.5 3zm0 2C6.673 5 6 5.673 6 6.5S6.673 8 7.5 8 9 7.327 9 6.5 8.327 5 7.5 5z"></path>
+                              )}
+                            </g>
+                          </svg>
                         </BootstrapTooltip>
                       </div>
                     </span>
@@ -1366,67 +1497,778 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                           }}
                           className={`${
                             themeName === "dark-theme"
-                              ? "popover-material-ui-dark-theme"
+                              ? "popover-material-ui-dark-theme-left-side-navigation"
                               : themeName !== "dark-theme"
-                              ? "popover-material-ui-light-theme"
+                              ? "popover-material-ui-light-theme-left-side-navigation"
                               : "hideshowMessageDeletePopover "
                           }`}
                         >
+                          {" "}
                           <div
                             onClick={() => {
                               popupState.close();
-                              if (width < 1000) {
-                                navigate("/settings/account");
-                              } else {
-                                navigate("/settings");
-                              }
+                              navigate(`/${userInfo.username}/lists`);
                             }}
-                            className={`settings-and-privacy settings-and-privacy-${themeName}`}
+                            className={
+                              themeName === "dark-theme"
+                                ? "hover-effect-dark-theme-pointer-plus"
+                                : "hover-effect-light-theme-pointer-plus"
+                            }
                             style={{
-                              paddingBottom: "12px",
-                              paddingTop: "12px",
-                              lineHeight: "20px",
-                              fontWeight: "700",
-                              fontSize: "15px",
                               display: "flex",
                               flexDirection: "row",
                               alignItems: "center",
-                              cursor: "pointer",
-                              width: "300px",
+                              flexBasis: "auto",
+                              boxSizing: "border-box",
+                              flexShrink: "0",
+                              margin: "0px",
+                              minHeight: "0px",
+                              minWidth: "0px",
+                              position: "relative",
+                              padding: "16px",
                             }}
                           >
-                            <svg
-                              color={themeName === "dark-theme" ? "white" : ""}
-                              fill="currentColor"
+                            <div
+                              href=""
                               style={{
+                                maxWidth: "100%",
+                                outlineStyle: "none",
+                                cursor: "pointer",
+                                flexGrow: "1",
+                                boxSizing: "border-box",
+                                display: "flex",
+                                flexBasis: "auto",
+                                flexDirection: "column",
+                                flexShrink: "0",
+                                listStyle: "none",
+                                margin: "0px",
+                                padding: "0px",
+                                minWidth: "0px",
+                                minHeight: "0px",
                                 position: "relative",
-                                left: "10px",
+                                textDecoration: "none",
+                                pointerEvents: "auto",
                               }}
-                              width={24}
-                              height={24}
-                              viewBox="0 0 24 24"
-                              aria-hidden="true"
-                              className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
                             >
-                              <g>
-                                <path d="M10.54 1.75h2.92l1.57 2.36c.11.17.32.25.53.21l2.53-.59 2.17 2.17-.58 2.54c-.05.2.04.41.21.53l2.36 1.57v2.92l-2.36 1.57c-.17.12-.26.33-.21.53l.58 2.54-2.17 2.17-2.53-.59c-.21-.04-.42.04-.53.21l-1.57 2.36h-2.92l-1.58-2.36c-.11-.17-.32-.25-.52-.21l-2.54.59-2.17-2.17.58-2.54c.05-.2-.03-.41-.21-.53l-2.35-1.57v-2.92L4.1 8.97c.18-.12.26-.33.21-.53L3.73 5.9 5.9 3.73l2.54.59c.2.04.41-.04.52-.21l1.58-2.36zm1.07 2l-.98 1.47C10.05 6.08 9 6.5 7.99 6.27l-1.46-.34-.6.6.33 1.46c.24 1.01-.18 2.07-1.05 2.64l-1.46.98v.78l1.46.98c.87.57 1.29 1.63 1.05 2.64l-.33 1.46.6.6 1.46-.34c1.01-.23 2.06.19 2.64 1.05l.98 1.47h.78l.97-1.47c.58-.86 1.63-1.28 2.65-1.05l1.45.34.61-.6-.34-1.46c-.23-1.01.18-2.07 1.05-2.64l1.47-.98v-.78l-1.47-.98c-.87-.57-1.28-1.63-1.05-2.64l.34-1.46-.61-.6-1.45.34c-1.02.23-2.07-.19-2.65-1.05l-.97-1.47h-.78zM12 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5c.82 0 1.5-.67 1.5-1.5s-.68-1.5-1.5-1.5zM8.5 12c0-1.93 1.56-3.5 3.5-3.5 1.93 0 3.5 1.57 3.5 3.5s-1.57 3.5-3.5 3.5c-1.94 0-3.5-1.57-3.5-3.5z"></path>
-                              </g>
-                            </svg>
-                            <span
-                              style={{
-                                position: "relative",
-                                left: "10px",
-                                color:
-                                  themeName === "dark-theme" ? "white" : "",
-                                fontSize: "20px",
-                                fontWeight: "700",
-                                lineHeight: "20px",
-                              }}
-                              className="logout-p chirp-bold-font"
-                            >
-                              Settings and privacy
-                            </span>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "row",
+                                  alignItems: "center",
+                                  flexGrow: "1",
+                                  padding: "16px",
+                                  boxSizing: "border-box",
+                                  flexBasis: "auto",
+                                  flexShrink: "0",
+                                  margin: "0px",
+                                  padding: "0px",
+                                  minWidth: "0px",
+                                  minHeight: "0px",
+                                  position: "relative",
+                                  textDecoration: "none",
+                                  pointerEvents: "auto",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <svg
+                                  style={{
+                                    marginRight: "24px",
+                                    userSelect: "none",
+                                    flexShrink: "0",
+                                    maxWidth: "100%",
+                                    position: "relative",
+                                    alignItems: "center",
+                                    display: "inline-block",
+                                    cursor: "pointer",
+                                    pointerEvents: "auto",
+                                  }}
+                                  fill={
+                                    themeName === "dark-theme"
+                                      ? "rgb(231,233,234)"
+                                      : "rgb(15, 20, 25)"
+                                  }
+                                  width={24}
+                                  height={24}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18jsvk2 r-1q142lx r-1kihuf0 r-1472mwg r-di8nfa r-lrsllp"
+                                  data-testid="icon"
+                                >
+                                  <g>
+                                    <path d="M3 4.5C3 3.12 4.12 2 5.5 2h13C19.88 2 21 3.12 21 4.5v15c0 1.38-1.12 2.5-2.5 2.5h-13C4.12 22 3 20.88 3 19.5v-15zM5.5 4c-.28 0-.5.22-.5.5v15c0 .28.22.5.5.5h13c.28 0 .5-.22.5-.5v-15c0-.28-.22-.5-.5-.5h-13zM16 10H8V8h8v2zm-8 2h8v2H8v-2z"></path>
+                                  </g>
+                                </svg>
+                                <div
+                                  className={
+                                    themeName === "dark-theme"
+                                      ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                                      : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                                  }
+                                  style={{
+                                    textOverflow: "unset",
+                                    overflowWrap: "break-word",
+                                    maxWidth: "100%",
+                                    minWidth: "0px",
+                                    fontSize: "20px",
+                                    whiteSpace: "nowrap",
+                                    textAlign: "inherit",
+                                    flexGrow: "1",
+                                    lineHeight: "24px",
+                                    overflow: "hidden",
+                                    boxSizing: "border-box",
+                                    margin: "0px",
+                                    padding: "0px",
+                                    position: "relative",
+                                    listStyle: "none",
+                                    textDecoration: "none",
+                                  }}
+                                >
+                                  Lists
+                                </div>
+                              </div>
+                            </div>
                           </div>
+                          <div
+                            onClick={() => {
+                              popupState.close();
+                              navigate(`/settings/monetization`);
+                            }}
+                            className={
+                              themeName === "dark-theme"
+                                ? "hover-effect-dark-theme-pointer-plus"
+                                : "hover-effect-light-theme-pointer-plus"
+                            }
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                              flexBasis: "auto",
+                              boxSizing: "border-box",
+                              flexShrink: "0",
+                              margin: "0px",
+                              minHeight: "0px",
+                              minWidth: "0px",
+                              position: "relative",
+                              padding: "16px",
+                            }}
+                          >
+                            <div
+                              href=""
+                              style={{
+                                maxWidth: "100%",
+                                outlineStyle: "none",
+                                cursor: "pointer",
+                                flexGrow: "1",
+                                boxSizing: "border-box",
+                                display: "flex",
+                                flexBasis: "auto",
+                                flexDirection: "column",
+                                flexShrink: "0",
+                                listStyle: "none",
+                                margin: "0px",
+                                padding: "0px",
+                                minWidth: "0px",
+                                minHeight: "0px",
+                                position: "relative",
+                                textDecoration: "none",
+                                pointerEvents: "auto",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "row",
+                                  alignItems: "center",
+                                  flexGrow: "1",
+                                  padding: "16px",
+                                  boxSizing: "border-box",
+                                  flexBasis: "auto",
+                                  flexShrink: "0",
+                                  margin: "0px",
+                                  padding: "0px",
+                                  minWidth: "0px",
+                                  minHeight: "0px",
+                                  position: "relative",
+                                  textDecoration: "none",
+                                  pointerEvents: "auto",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <svg
+                                  style={{
+                                    marginRight: "24px",
+                                    userSelect: "none",
+                                    flexShrink: "0",
+                                    maxWidth: "100%",
+                                    position: "relative",
+                                    alignItems: "center",
+                                    display: "inline-block",
+                                    cursor: "pointer",
+                                    pointerEvents: "auto",
+                                  }}
+                                  fill={
+                                    themeName === "dark-theme"
+                                      ? "rgb(231,233,234)"
+                                      : "rgb(15, 20, 25)"
+                                  }
+                                  width={24}
+                                  height={24}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18jsvk2 r-1q142lx r-1kihuf0 r-1472mwg r-di8nfa r-lrsllp"
+                                  data-testid="icon"
+                                >
+                                  <g>
+                                    <path d="M23 3v14h-2V5H5V3h18zM10 17c1.1 0 2-1.34 2-3s-.9-3-2-3-2 1.34-2 3 .9 3 2 3zM1 7h18v14H1V7zm16 10c-1.1 0-2 .9-2 2h2v-2zm-2-8c0 1.1.9 2 2 2V9h-2zM3 11c1.1 0 2-.9 2-2H3v2zm0 4c2.21 0 4 1.79 4 4h6c0-2.21 1.79-4 4-4v-2c-2.21 0-4-1.79-4-4H7c0 2.21-1.79 4-4 4v2zm0 4h2c0-1.1-.9-2-2-2v2z"></path>
+                                  </g>
+                                </svg>
+                                <div
+                                  className={
+                                    themeName === "dark-theme"
+                                      ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                                      : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                                  }
+                                  style={{
+                                    textOverflow: "unset",
+                                    overflowWrap: "break-word",
+                                    maxWidth: "100%",
+                                    minWidth: "0px",
+                                    fontSize: "20px",
+                                    whiteSpace: "nowrap",
+                                    textAlign: "inherit",
+                                    flexGrow: "1",
+                                    lineHeight: "24px",
+                                    overflow: "hidden",
+                                    boxSizing: "border-box",
+                                    margin: "0px",
+                                    padding: "0px",
+                                    position: "relative",
+                                    listStyle: "none",
+                                    textDecoration: "none",
+                                  }}
+                                >
+                                  Monetization
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            onClick={() => {
+                              popupState.close();
+                              navigate(`/help/connectify`);
+                            }}
+                            className={
+                              themeName === "dark-theme"
+                                ? "hover-effect-dark-theme-pointer-plus"
+                                : "hover-effect-light-theme-pointer-plus"
+                            }
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                              flexBasis: "auto",
+                              boxSizing: "border-box",
+                              flexShrink: "0",
+                              margin: "0px",
+                              minHeight: "0px",
+                              minWidth: "0px",
+                              position: "relative",
+                              padding: "16px",
+                            }}
+                          >
+                            <div
+                              href=""
+                              style={{
+                                maxWidth: "100%",
+                                outlineStyle: "none",
+                                cursor: "pointer",
+                                flexGrow: "1",
+                                boxSizing: "border-box",
+                                display: "flex",
+                                flexBasis: "auto",
+                                flexDirection: "column",
+                                flexShrink: "0",
+                                listStyle: "none",
+                                margin: "0px",
+                                padding: "0px",
+                                minWidth: "0px",
+                                minHeight: "0px",
+                                position: "relative",
+                                textDecoration: "none",
+                                pointerEvents: "auto",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "row",
+                                  alignItems: "center",
+                                  flexGrow: "1",
+                                  padding: "16px",
+                                  boxSizing: "border-box",
+                                  flexBasis: "auto",
+                                  flexShrink: "0",
+                                  margin: "0px",
+                                  padding: "0px",
+                                  minWidth: "0px",
+                                  minHeight: "0px",
+                                  position: "relative",
+                                  textDecoration: "none",
+                                  pointerEvents: "auto",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <svg
+                                  style={{
+                                    marginRight: "24px",
+                                    userSelect: "none",
+                                    flexShrink: "0",
+                                    maxWidth: "100%",
+                                    position: "relative",
+                                    alignItems: "center",
+                                    display: "inline-block",
+                                    cursor: "pointer",
+                                    pointerEvents: "auto",
+                                  }}
+                                  fill={
+                                    themeName === "dark-theme"
+                                      ? "rgb(231,233,234)"
+                                      : "rgb(15, 20, 25)"
+                                  }
+                                  width={24}
+                                  height={24}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18jsvk2 r-1q142lx r-1kihuf0 r-1472mwg r-di8nfa r-lrsllp"
+                                  data-testid="icon"
+                                >
+                                  <g>
+                                    <path d="M1.996 5.5c0-1.38 1.119-2.5 2.5-2.5h15c1.38 0 2.5 1.12 2.5 2.5v13c0 1.38-1.12 2.5-2.5 2.5h-15c-1.381 0-2.5-1.12-2.5-2.5v-13zm2.5-.5c-.277 0-.5.22-.5.5v13c0 .28.223.5.5.5h15c.276 0 .5-.22.5-.5v-13c0-.28-.224-.5-.5-.5h-15zm8.085 5H8.996V8h7v7h-2v-3.59l-5.293 5.3-1.415-1.42L12.581 10z"></path>
+                                  </g>
+                                </svg>
+                                <div
+                                  className={
+                                    themeName === "dark-theme"
+                                      ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                                      : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                                  }
+                                  style={{
+                                    textOverflow: "unset",
+                                    overflowWrap: "break-word",
+                                    maxWidth: "100%",
+                                    minWidth: "0px",
+                                    fontSize: "20px",
+                                    whiteSpace: "nowrap",
+                                    textAlign: "inherit",
+                                    flexGrow: "1",
+                                    lineHeight: "24px",
+                                    overflow: "hidden",
+                                    boxSizing: "border-box",
+                                    margin: "0px",
+                                    padding: "0px",
+                                    position: "relative",
+                                    listStyle: "none",
+                                    textDecoration: "none",
+                                  }}
+                                >
+                                  Ads
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            onClick={() => {
+                              popupState.close();
+                              navigate("/jobs");
+                            }}
+                            className={
+                              themeName === "dark-theme"
+                                ? "hover-effect-dark-theme-pointer-plus"
+                                : "hover-effect-light-theme-pointer-plus"
+                            }
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                              flexBasis: "auto",
+                              boxSizing: "border-box",
+                              flexShrink: "0",
+                              margin: "0px",
+                              minHeight: "0px",
+                              minWidth: "0px",
+                              position: "relative",
+                              padding: "16px",
+                            }}
+                          >
+                            <div
+                              href=""
+                              style={{
+                                maxWidth: "100%",
+                                outlineStyle: "none",
+                                cursor: "pointer",
+                                flexGrow: "1",
+                                boxSizing: "border-box",
+                                display: "flex",
+                                flexBasis: "auto",
+                                flexDirection: "column",
+                                flexShrink: "0",
+                                listStyle: "none",
+                                margin: "0px",
+                                padding: "0px",
+                                minWidth: "0px",
+                                minHeight: "0px",
+                                position: "relative",
+                                textDecoration: "none",
+                                pointerEvents: "auto",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "row",
+                                  alignItems: "center",
+                                  flexGrow: "1",
+                                  padding: "16px",
+                                  boxSizing: "border-box",
+                                  flexBasis: "auto",
+                                  flexShrink: "0",
+                                  margin: "0px",
+                                  padding: "0px",
+                                  minWidth: "0px",
+                                  minHeight: "0px",
+                                  position: "relative",
+                                  textDecoration: "none",
+                                  pointerEvents: "auto",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <svg
+                                  style={{
+                                    marginRight: "24px",
+                                    userSelect: "none",
+                                    flexShrink: "0",
+                                    maxWidth: "100%",
+                                    position: "relative",
+                                    alignItems: "center",
+                                    display: "inline-block",
+                                    cursor: "pointer",
+                                    pointerEvents: "auto",
+                                  }}
+                                  fill={
+                                    themeName === "dark-theme"
+                                      ? "rgb(231,233,234)"
+                                      : "rgb(15, 20, 25)"
+                                  }
+                                  width={24}
+                                  height={24}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18jsvk2 r-1q142lx r-1kihuf0 r-1472mwg r-di8nfa r-lrsllp"
+                                  data-testid="icon"
+                                >
+                                  <g>
+                                    <path d="M19.5 6H17V4.5C17 3.12 15.88 2 14.5 2h-5C8.12 2 7 3.12 7 4.5V6H4.5C3.12 6 2 7.12 2 8.5v10C2 19.88 3.12 21 4.5 21h15c1.38 0 2.5-1.12 2.5-2.5v-10C22 7.12 20.88 6 19.5 6zM9 4.5c0-.28.23-.5.5-.5h5c.28 0 .5.22.5.5V6H9V4.5zm11 14c0 .28-.22.5-.5.5h-15c-.27 0-.5-.22-.5-.5v-3.04c.59.35 1.27.54 2 .54h5v1h2v-1h5c.73 0 1.41-.19 2-.54v3.04zm0-6.49c0 1.1-.9 1.99-2 1.99h-5v-1h-2v1H6c-1.1 0-2-.9-2-2V8.5c0-.28.23-.5.5-.5h15c.28 0 .5.22.5.5v3.51z"></path>
+                                  </g>
+                                </svg>
+                                <div
+                                  className={
+                                    themeName === "dark-theme"
+                                      ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                                      : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                                  }
+                                  style={{
+                                    textOverflow: "unset",
+                                    overflowWrap: "break-word",
+                                    maxWidth: "100%",
+                                    minWidth: "0px",
+                                    fontSize: "20px",
+                                    whiteSpace: "nowrap",
+                                    textAlign: "inherit",
+                                    flexGrow: "1",
+                                    lineHeight: "24px",
+                                    overflow: "hidden",
+                                    boxSizing: "border-box",
+                                    margin: "0px",
+                                    padding: "0px",
+                                    position: "relative",
+                                    listStyle: "none",
+                                    textDecoration: "none",
+                                  }}
+                                >
+                                  Jobs
+                                </div>
+                                <div
+                                  className="chirp-bold-font"
+                                  style={{
+                                    fontSize: "15px",
+                                    height: "20px",
+                                    paddingLeft: "4px",
+                                    paddingRight: "4px",
+                                    backgroundColor:
+                                      themeName === "dark-theme"
+                                        ? "rgb(73, 22, 0)"
+                                        : "rgb(255, 237, 219)",
+                                    borderRadius: "4px",
+                                    pointerEvents: "none !important",
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "rgb(255, 224, 194)"
+                                        : "rgb(105, 33, 0)",
+                                  }}
+                                >
+                                  <div>Beta</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            onClick={() => {
+                              popupState.close();
+                              navigate("/i/spaces/start");
+                            }}
+                            className={
+                              themeName === "dark-theme"
+                                ? "hover-effect-dark-theme-pointer-plus"
+                                : "hover-effect-light-theme-pointer-plus"
+                            }
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                              flexBasis: "auto",
+                              boxSizing: "border-box",
+                              flexShrink: "0",
+                              margin: "0px",
+                              minHeight: "0px",
+                              minWidth: "0px",
+                              position: "relative",
+                              padding: "16px",
+                            }}
+                          >
+                            <div
+                              href=""
+                              style={{
+                                maxWidth: "100%",
+                                outlineStyle: "none",
+                                cursor: "pointer",
+                                flexGrow: "1",
+                                boxSizing: "border-box",
+                                display: "flex",
+                                flexBasis: "auto",
+                                flexDirection: "column",
+                                flexShrink: "0",
+                                listStyle: "none",
+                                margin: "0px",
+                                padding: "0px",
+                                minWidth: "0px",
+                                minHeight: "0px",
+                                position: "relative",
+                                textDecoration: "none",
+                                pointerEvents: "auto",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "row",
+                                  alignItems: "center",
+                                  flexGrow: "1",
+                                  padding: "16px",
+                                  boxSizing: "border-box",
+                                  flexBasis: "auto",
+                                  flexShrink: "0",
+                                  margin: "0px",
+                                  padding: "0px",
+                                  minWidth: "0px",
+                                  minHeight: "0px",
+                                  position: "relative",
+                                  textDecoration: "none",
+                                  pointerEvents: "auto",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <svg
+                                  style={{
+                                    marginRight: "24px",
+                                    userSelect: "none",
+                                    flexShrink: "0",
+                                    maxWidth: "100%",
+                                    position: "relative",
+                                    alignItems: "center",
+                                    display: "inline-block",
+                                    cursor: "pointer",
+                                    pointerEvents: "auto",
+                                  }}
+                                  fill={
+                                    themeName === "dark-theme"
+                                      ? "rgb(231,233,234)"
+                                      : "rgb(15, 20, 25)"
+                                  }
+                                  width={24}
+                                  height={24}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18jsvk2 r-1q142lx r-1kihuf0 r-1472mwg r-di8nfa r-lrsllp"
+                                  data-testid="icon"
+                                >
+                                  <g>
+                                    <path d="M12 22.25c-4.99 0-9.18-3.393-10.39-7.994l1.93-.512c.99 3.746 4.4 6.506 8.46 6.506s7.47-2.76 8.46-6.506l1.93.512c-1.21 4.601-5.4 7.994-10.39 7.994zM5 11.5c0 3.866 3.13 7 7 7s7-3.134 7-7V8.75c0-3.866-3.13-7-7-7s-7 3.134-7 7v2.75zm12-2.75v2.75c0 2.761-2.24 5-5 5s-5-2.239-5-5V8.75c0-2.761 2.24-5 5-5s5 2.239 5 5zM11.25 8v4.25c0 .414.34.75.75.75s.75-.336.75-.75V8c0-.414-.34-.75-.75-.75s-.75.336-.75.75zm-3 1v2.25c0 .414.34.75.75.75s.75-.336.75-.75V9c0-.414-.34-.75-.75-.75s-.75.336-.75.75zm7.5 0c0-.414-.34-.75-.75-.75s-.75.336-.75.75v2.25c0 .414.34.75.75.75s.75-.336.75-.75V9z"></path>
+                                  </g>
+                                </svg>
+                                <div
+                                  className={
+                                    themeName === "dark-theme"
+                                      ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                                      : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                                  }
+                                  style={{
+                                    textOverflow: "unset",
+                                    overflowWrap: "break-word",
+                                    maxWidth: "100%",
+                                    minWidth: "0px",
+                                    fontSize: "20px",
+                                    whiteSpace: "nowrap",
+                                    textAlign: "inherit",
+                                    flexGrow: "1",
+                                    lineHeight: "24px",
+                                    overflow: "hidden",
+                                    boxSizing: "border-box",
+                                    margin: "0px",
+                                    padding: "0px",
+                                    position: "relative",
+                                    listStyle: "none",
+                                    textDecoration: "none",
+                                  }}
+                                >
+                                  Create your Space
+                                </div>
+                              </div>
+                            </div>
+                          </div>{" "}
+                          <div
+                            onClick={() => {
+                              popupState.close();
+                              navigate("/settings");
+                            }}
+                            className={
+                              themeName === "dark-theme"
+                                ? "hover-effect-dark-theme-pointer-plus"
+                                : "hover-effect-light-theme-pointer-plus"
+                            }
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                              flexBasis: "auto",
+                              boxSizing: "border-box",
+                              flexShrink: "0",
+                              margin: "0px",
+                              minHeight: "0px",
+                              minWidth: "0px",
+                              position: "relative",
+                              padding: "16px",
+                            }}
+                          >
+                            <div
+                              href=""
+                              style={{
+                                maxWidth: "100%",
+                                outlineStyle: "none",
+                                cursor: "pointer",
+                                flexGrow: "1",
+                                boxSizing: "border-box",
+                                display: "flex",
+                                flexBasis: "auto",
+                                flexDirection: "column",
+                                flexShrink: "0",
+                                listStyle: "none",
+                                margin: "0px",
+                                padding: "0px",
+                                minWidth: "0px",
+                                minHeight: "0px",
+                                position: "relative",
+                                textDecoration: "none",
+                                pointerEvents: "auto",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "row",
+                                  alignItems: "center",
+                                  flexGrow: "1",
+                                  padding: "16px",
+                                  boxSizing: "border-box",
+                                  flexBasis: "auto",
+                                  flexShrink: "0",
+                                  margin: "0px",
+                                  padding: "0px",
+                                  minWidth: "0px",
+                                  minHeight: "0px",
+                                  position: "relative",
+                                  textDecoration: "none",
+                                  pointerEvents: "auto",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <svg
+                                  style={{
+                                    marginRight: "24px",
+                                    userSelect: "none",
+                                    flexShrink: "0",
+                                    maxWidth: "100%",
+                                    position: "relative",
+                                    alignItems: "center",
+                                    display: "inline-block",
+                                    cursor: "pointer",
+                                    pointerEvents: "auto",
+                                  }}
+                                  fill={
+                                    themeName === "dark-theme"
+                                      ? "rgb(231,233,234)"
+                                      : "rgb(15, 20, 25)"
+                                  }
+                                  width={24}
+                                  height={24}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18jsvk2 r-1q142lx r-1kihuf0 r-1472mwg r-di8nfa r-lrsllp"
+                                  data-testid="icon"
+                                >
+                                  <g>
+                                    <path d="M10.54 1.75h2.92l1.57 2.36c.11.17.32.25.53.21l2.53-.59 2.17 2.17-.58 2.54c-.05.2.04.41.21.53l2.36 1.57v2.92l-2.36 1.57c-.17.12-.26.33-.21.53l.58 2.54-2.17 2.17-2.53-.59c-.21-.04-.42.04-.53.21l-1.57 2.36h-2.92l-1.58-2.36c-.11-.17-.32-.25-.52-.21l-2.54.59-2.17-2.17.58-2.54c.05-.2-.03-.41-.21-.53l-2.35-1.57v-2.92L4.1 8.97c.18-.12.26-.33.21-.53L3.73 5.9 5.9 3.73l2.54.59c.2.04.41-.04.52-.21l1.58-2.36zm1.07 2l-.98 1.47C10.05 6.08 9 6.5 7.99 6.27l-1.46-.34-.6.6.33 1.46c.24 1.01-.18 2.07-1.05 2.64l-1.46.98v.78l1.46.98c.87.57 1.29 1.63 1.05 2.64l-.33 1.46.6.6 1.46-.34c1.01-.23 2.06.19 2.64 1.05l.98 1.47h.78l.97-1.47c.58-.86 1.63-1.28 2.65-1.05l1.45.34.61-.6-.34-1.46c-.23-1.01.18-2.07 1.05-2.64l1.47-.98v-.78l-1.47-.98c-.87-.57-1.28-1.63-1.05-2.64l.34-1.46-.61-.6-1.45.34c-1.02.23-2.07-.19-2.65-1.05l-.97-1.47h-.78zM12 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5c.82 0 1.5-.67 1.5-1.5s-.68-1.5-1.5-1.5zM8.5 12c0-1.93 1.56-3.5 3.5-3.5 1.93 0 3.5 1.57 3.5 3.5s-1.57 3.5-3.5 3.5c-1.94 0-3.5-1.57-3.5-3.5z"></path>
+                                  </g>
+                                </svg>
+                                <div
+                                  className={
+                                    themeName === "dark-theme"
+                                      ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                                      : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                                  }
+                                  style={{
+                                    textOverflow: "unset",
+                                    overflowWrap: "break-word",
+                                    maxWidth: "100%",
+                                    minWidth: "0px",
+                                    fontSize: "20px",
+                                    whiteSpace: "nowrap",
+                                    textAlign: "inherit",
+                                    flexGrow: "1",
+                                    lineHeight: "24px",
+                                    overflow: "hidden",
+                                    boxSizing: "border-box",
+                                    margin: "0px",
+                                    padding: "0px",
+                                    position: "relative",
+                                    listStyle: "none",
+                                    textDecoration: "none",
+                                  }}
+                                >
+                                  Settings and privacy
+                                </div>
+                              </div>
+                            </div>
+                          </div>{" "}
                         </Popover>
                       </div>
                     )}
@@ -1505,8 +2347,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
         >
           <div
             style={{
-              position: "sticky",
-              top: "0px",
+              position: "fixed",
             }}
           >
             <Stack
@@ -1596,7 +2437,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                     }}
                   >
                     <svg
-                      color={themeName === "dark-theme" ? "white" : ""}
+                      color={themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"}
                       fill="currentColor"
                       style={{}}
                       width={`${1.25}rem`}
@@ -1628,6 +2469,61 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       }}
                     >
                       Home
+                    </span>
+                  </div>
+                </span>
+              </NavLink>
+              <NavLink
+                to={"/explore"}
+                className={`home-nav-link home-nav-link-${themeName}`}
+              >
+                <span
+                  style={{
+                    cursor: "pointer",
+                  }}
+                  className="home-nav-link-parent-div"
+                >
+                  {" "}
+                  <div
+                    className={`home-parent-of-span-svg home-parent-of-span-svg-${themeName}`}
+                    style={{
+                      display: "inline-block",
+                      padding: "12px",
+                    }}
+                  >
+                    <svg
+                      color={themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"}
+                      fill="currentColor"
+                      style={{}}
+                      width={`${1.25}rem`}
+                      height={`${1.25}rem`}
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      className="home-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
+                    >
+                      <g className="home-svg-group">
+                        {window.location.href ===
+                        "http://localhost:5173/explore" ? (
+                          <path d="M10.25 4.25c-3.314 0-6 2.686-6 6s2.686 6 6 6c1.657 0 3.155-.67 4.243-1.757 1.087-1.088 1.757-2.586 1.757-4.243 0-3.314-2.686-6-6-6zm-9 6c0-4.971 4.029-9 9-9s9 4.029 9 9c0 1.943-.617 3.744-1.664 5.215l4.475 4.474-2.122 2.122-4.474-4.475c-1.471 1.047-3.272 1.664-5.215 1.664-4.971 0-9-4.029-9-9z"></path>
+                        ) : (
+                          <path d="M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781c-1.447 1.142-3.276 1.824-5.262 1.824-4.694 0-8.5-3.806-8.5-8.5z"></path>
+                        )}
+                      </g>
+                    </svg>
+                    <span
+                      className={
+                        window.location.href === "http://localhost:5173/explore"
+                          ? `chirp-bold-font`
+                          : `chirp-regular-font`
+                      }
+                      style={{
+                        marginLeft: "20px",
+                        fontSize: "20px",
+                        position: "relative",
+                        top: "3px",
+                      }}
+                    >
+                      Explore
                     </span>
                   </div>
                 </span>
@@ -1692,7 +2588,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                     )}
                     <svg
                       style={{}}
-                      color={themeName === "dark-theme" ? "white" : ""}
+                      color={themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"}
                       fill="currentColor"
                       width={`${1.25}rem`}
                       height={`${1.25}rem`}
@@ -1786,7 +2682,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       </>
                     )}
                     <svg
-                      color={themeName === "dark-theme" ? "white" : ""}
+                      color={themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"}
                       fill="currentColor"
                       width={`${1.25}rem`}
                       height={`${1.25}rem`}
@@ -1826,7 +2722,69 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                 </span>
               </NavLink>{" "}
               <NavLink
-                to={"/bookmarks"}
+                to={`/${userInfo.username}/lists`}
+                // onClick={locateMessagesPage}
+                className={`messages-nav-link messages-nav-link-${themeName}`}
+                style={{
+                  display: width > 1440 ? "" : "none",
+                }}
+              >
+                <span
+                  style={{
+                    cursor: "pointer",
+                  }}
+                  className="messages-nav-link-parent-div"
+                >
+                  <div
+                    className={`messages-parent-of-span-svg messages-parent-of-span-svg-${themeName}`}
+                    style={{
+                      display: "inline-block",
+                      padding: "12px",
+                      position: "relative",
+                    }}
+                  >
+                    <svg
+                      color={themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"}
+                      fill="currentColor"
+                      width={`${1.25}rem`}
+                      height={`${1.25}rem`}
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      className="messages-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
+                    >
+                      <g className="messages-svg-group">
+                        {window.location.href ===
+                        `http://localhost:5173/${userInfo.username}/lists` ? (
+                          <path d="M18.5 2h-13C4.12 2 3 3.12 3 4.5v15C3 20.88 4.12 22 5.5 22h13c1.38 0 2.5-1.12 2.5-2.5v-15C21 3.12 19.88 2 18.5 2zM16 14H8v-2h8v2zm0-4H8V8h8v2z"></path>
+                        ) : (
+                          <path d="M3 4.5C3 3.12 4.12 2 5.5 2h13C19.88 2 21 3.12 21 4.5v15c0 1.38-1.12 2.5-2.5 2.5h-13C4.12 22 3 20.88 3 19.5v-15zM5.5 4c-.28 0-.5.22-.5.5v15c0 .28.22.5.5.5h13c.28 0 .5-.22.5-.5v-15c0-.28-.22-.5-.5-.5h-13zM16 10H8V8h8v2zm-8 2h8v2H8v-2z"></path>
+                        )}
+                      </g>
+                    </svg>
+
+                    <span
+                      className={
+                        window.location.href ===
+                        `http://localhost:5173/${userInfo.username}/lists`
+                          ? `chirp-bold-font`
+                          : `chirp-regular-font`
+                      }
+                      style={{
+                        marginLeft: "20px",
+
+                        fontSize: "20px",
+                        lineHeight: "24px",
+                        position: "relative",
+                        top: "3px",
+                      }}
+                    >
+                      Lists{" "}
+                    </span>
+                  </div>
+                </span>
+              </NavLink>
+              <NavLink
+                to={"/i/bookmarks"}
                 // onClick={locateProfilePage}
                 className={`profile-nav-link profile-nav-link-${themeName}`}
               >
@@ -1844,7 +2802,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                     }}
                   >
                     <svg
-                      color={themeName === "dark-theme" ? "white" : ""}
+                      color={themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"}
                       fill="currentColor"
                       width={`${1.75}rem`}
                       height={`${1.75}rem`}
@@ -1854,7 +2812,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                     >
                       <g>
                         {window.location.href ===
-                        "http://localhost:5173/bookmarks" ? (
+                        "http://localhost:5173/i/bookmarks" ? (
                           <path d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5z"></path>
                         ) : (
                           <path d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V4.5c0-.28-.224-.5-.5-.5h-11z"></path>
@@ -1865,7 +2823,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                     <span
                       className={
                         window.location.href ===
-                        "http://localhost:5173/bookmarks"
+                        "http://localhost:5173/i/bookmarks"
                           ? `chirp-bold-font`
                           : `chirp-regular-font`
                       }
@@ -1879,6 +2837,64 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       }}
                     >
                       Bookmarks
+                    </span>
+                  </div>
+                </span>
+              </NavLink>{" "}
+              <NavLink
+                to={`${userInfo.username}/communities/explore`}
+                // onClick={locateProfilePage}
+                className={`profile-nav-link profile-nav-link-${themeName}`}
+              >
+                <span
+                  style={{
+                    cursor: "pointer",
+                  }}
+                  className="profile-nav-link-parent-div"
+                >
+                  <div
+                    className={`profile-parent-of-span-svg home-parent-of-span-svg-${themeName}`}
+                    style={{
+                      display: "inline-block",
+                      padding: "12px",
+                    }}
+                  >
+                    <svg
+                      color={themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"}
+                      fill="currentColor"
+                      width={`${1.75}rem`}
+                      height={`${1.75}rem`}
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18jsvk2 r-lwhw9o r-cnnz9e"
+                    >
+                      <g>
+                        {window.location.href ===
+                        `http://localhost:5173/${userInfo.username}/communities/explore` ? (
+                          <path d="M7.471 21H.472l.029-1.027c.184-6.618 3.736-8.977 7-8.977.963 0 1.95.212 2.87.672-1.608 1.732-2.762 4.389-2.869 8.248l-.03 1.083zM9.616 9.27C10.452 8.63 11 7.632 11 6.5 11 4.57 9.433 3 7.5 3S4 4.57 4 6.5c0 1.132.548 2.13 1.384 2.77.589.451 1.317.73 2.116.73s1.527-.279 2.116-.73zm6.884 1.726c-3.264 0-6.816 2.358-7 8.977L9.471 21h14.057l-.029-1.027c-.184-6.618-3.736-8.977-7-8.977zm2.116-1.726C19.452 8.63 20 7.632 20 6.5 20 4.57 18.433 3 16.5 3S13 4.57 13 6.5c0 1.132.548 2.13 1.384 2.77.589.451 1.317.73 2.116.73s1.527-.279 2.116-.73z"></path>
+                        ) : (
+                          <path d="M7.501 19.917L7.471 21H.472l.029-1.027c.184-6.618 3.736-8.977 7-8.977.963 0 1.95.212 2.87.672-.444.478-.851 1.03-1.212 1.656-.507-.204-1.054-.329-1.658-.329-2.767 0-4.57 2.223-4.938 6.004H7.56c-.023.302-.05.599-.059.917zm15.998.056L23.528 21H9.472l.029-1.027c.184-6.618 3.736-8.977 7-8.977s6.816 2.358 7 8.977zM21.437 19c-.367-3.781-2.17-6.004-4.938-6.004s-4.57 2.223-4.938 6.004h9.875zm-4.938-9c-.799 0-1.527-.279-2.116-.73-.836-.64-1.384-1.638-1.384-2.77 0-1.93 1.567-3.5 3.5-3.5s3.5 1.57 3.5 3.5c0 1.132-.548 2.13-1.384 2.77-.589.451-1.317.73-2.116.73zm-1.5-3.5c0 .827.673 1.5 1.5 1.5s1.5-.673 1.5-1.5-.673-1.5-1.5-1.5-1.5.673-1.5 1.5zM7.5 3C9.433 3 11 4.57 11 6.5S9.433 10 7.5 10 4 8.43 4 6.5 5.567 3 7.5 3zm0 2C6.673 5 6 5.673 6 6.5S6.673 8 7.5 8 9 7.327 9 6.5 8.327 5 7.5 5z"></path>
+                        )}
+                      </g>
+                    </svg>
+
+                    <span
+                      className={
+                        window.location.href ===
+                        `http://localhost:5173/${userInfo.username}/communities/explore`
+                          ? `chirp-bold-font`
+                          : `chirp-regular-font`
+                      }
+                      style={{
+                        marginLeft: "20px",
+
+                        fontSize: "20px",
+                        lineHeight: "24px",
+                        position: "relative",
+                        top: "3px",
+                      }}
+                    >
+                      Communities
                     </span>
                   </div>
                 </span>
@@ -2051,12 +3067,6 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                             </g>
                           </svg>
                           <span
-                            className={
-                              window.location.href ===
-                              "http://localhost:5173/asd.."
-                                ? `chirp-bold-font`
-                                : `chirp-regular-font`
-                            }
                             style={{
                               marginLeft: "20px",
                               fontWeight: "400",
@@ -2085,62 +3095,780 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       }}
                       className={`${
                         themeName === "dark-theme"
-                          ? "popover-material-ui-dark-theme"
+                          ? "popover-material-ui-dark-theme-left-side-navigation"
                           : themeName !== "dark-theme"
-                          ? "popover-material-ui-light-theme"
+                          ? "popover-material-ui-light-theme-left-side-navigation"
                           : "hideshowMessageDeletePopover "
                       }`}
                     >
+                      {" "}
+                      {width <= 1440 && (
+                        <div
+                          onClick={() => {
+                            popupState.close();
+                            navigate(`/${userInfo.username}/lists`);
+                          }}
+                          className={
+                            themeName === "dark-theme"
+                              ? "hover-effect-dark-theme-pointer-plus"
+                              : "hover-effect-light-theme-pointer-plus"
+                          }
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            alignItems: "center",
+                            flexBasis: "auto",
+                            boxSizing: "border-box",
+                            flexShrink: "0",
+                            margin: "0px",
+                            minHeight: "0px",
+                            minWidth: "0px",
+                            position: "relative",
+                            padding: "16px",
+                          }}
+                        >
+                          <div
+                            href=""
+                            style={{
+                              maxWidth: "100%",
+                              outlineStyle: "none",
+                              cursor: "pointer",
+                              flexGrow: "1",
+                              boxSizing: "border-box",
+                              display: "flex",
+                              flexBasis: "auto",
+                              flexDirection: "column",
+                              flexShrink: "0",
+                              listStyle: "none",
+                              margin: "0px",
+                              padding: "0px",
+                              minWidth: "0px",
+                              minHeight: "0px",
+                              position: "relative",
+                              textDecoration: "none",
+                              pointerEvents: "auto",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                alignItems: "center",
+                                flexGrow: "1",
+                                padding: "16px",
+                                boxSizing: "border-box",
+                                flexBasis: "auto",
+                                flexShrink: "0",
+                                margin: "0px",
+                                padding: "0px",
+                                minWidth: "0px",
+                                minHeight: "0px",
+                                position: "relative",
+                                textDecoration: "none",
+                                pointerEvents: "auto",
+                                cursor: "pointer",
+                              }}
+                            >
+                              <svg
+                                style={{
+                                  marginRight: "24px",
+                                  userSelect: "none",
+                                  flexShrink: "0",
+                                  maxWidth: "100%",
+                                  position: "relative",
+                                  alignItems: "center",
+                                  display: "inline-block",
+                                  cursor: "pointer",
+                                  pointerEvents: "auto",
+                                }}
+                                fill={
+                                  themeName === "dark-theme"
+                                    ? "rgb(231,233,234)"
+                                    : "rgb(15, 20, 25)"
+                                }
+                                width={24}
+                                height={24}
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18jsvk2 r-1q142lx r-1kihuf0 r-1472mwg r-di8nfa r-lrsllp"
+                                data-testid="icon"
+                              >
+                                <g>
+                                  <path d="M3 4.5C3 3.12 4.12 2 5.5 2h13C19.88 2 21 3.12 21 4.5v15c0 1.38-1.12 2.5-2.5 2.5h-13C4.12 22 3 20.88 3 19.5v-15zM5.5 4c-.28 0-.5.22-.5.5v15c0 .28.22.5.5.5h13c.28 0 .5-.22.5-.5v-15c0-.28-.22-.5-.5-.5h-13zM16 10H8V8h8v2zm-8 2h8v2H8v-2z"></path>
+                                </g>
+                              </svg>
+                              <div
+                                className={
+                                  themeName === "dark-theme"
+                                    ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                                    : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                                }
+                                style={{
+                                  textOverflow: "unset",
+                                  overflowWrap: "break-word",
+                                  maxWidth: "100%",
+                                  minWidth: "0px",
+                                  fontSize: "20px",
+                                  whiteSpace: "nowrap",
+                                  textAlign: "inherit",
+                                  flexGrow: "1",
+                                  lineHeight: "24px",
+                                  overflow: "hidden",
+                                  boxSizing: "border-box",
+                                  margin: "0px",
+                                  padding: "0px",
+                                  position: "relative",
+                                  listStyle: "none",
+                                  textDecoration: "none",
+                                }}
+                              >
+                                Lists
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                       <div
                         onClick={() => {
                           popupState.close();
-                          navigate("/settings/account");
+                          navigate(`/settings/monetization`);
                         }}
-                        className={`settings-and-privacy settings-and-privacy-${themeName}`}
+                        className={
+                          themeName === "dark-theme"
+                            ? "hover-effect-dark-theme-pointer-plus"
+                            : "hover-effect-light-theme-pointer-plus"
+                        }
                         style={{
-                          paddingBottom: "12px",
-                          paddingTop: "12px",
-                          lineHeight: "20px",
-                          fontWeight: "700",
-                          fontSize: "15px",
                           display: "flex",
                           flexDirection: "row",
                           alignItems: "center",
-                          cursor: "pointer",
-                          width: "300px",
+                          flexBasis: "auto",
+                          boxSizing: "border-box",
+                          flexShrink: "0",
+                          margin: "0px",
+                          minHeight: "0px",
+                          minWidth: "0px",
+                          position: "relative",
+                          padding: "16px",
                         }}
                       >
-                        <svg
-                          color={themeName === "dark-theme" ? "white" : ""}
-                          fill="currentColor"
+                        <div
+                          href=""
                           style={{
+                            maxWidth: "100%",
+                            outlineStyle: "none",
+                            cursor: "pointer",
+                            flexGrow: "1",
+                            boxSizing: "border-box",
+                            display: "flex",
+                            flexBasis: "auto",
+                            flexDirection: "column",
+                            flexShrink: "0",
+                            listStyle: "none",
+                            margin: "0px",
+                            padding: "0px",
+                            minWidth: "0px",
+                            minHeight: "0px",
                             position: "relative",
-                            left: "10px",
+                            textDecoration: "none",
+                            pointerEvents: "auto",
                           }}
-                          width={24}
-                          height={24}
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                          className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
                         >
-                          <g>
-                            <path d="M10.54 1.75h2.92l1.57 2.36c.11.17.32.25.53.21l2.53-.59 2.17 2.17-.58 2.54c-.05.2.04.41.21.53l2.36 1.57v2.92l-2.36 1.57c-.17.12-.26.33-.21.53l.58 2.54-2.17 2.17-2.53-.59c-.21-.04-.42.04-.53.21l-1.57 2.36h-2.92l-1.58-2.36c-.11-.17-.32-.25-.52-.21l-2.54.59-2.17-2.17.58-2.54c.05-.2-.03-.41-.21-.53l-2.35-1.57v-2.92L4.1 8.97c.18-.12.26-.33.21-.53L3.73 5.9 5.9 3.73l2.54.59c.2.04.41-.04.52-.21l1.58-2.36zm1.07 2l-.98 1.47C10.05 6.08 9 6.5 7.99 6.27l-1.46-.34-.6.6.33 1.46c.24 1.01-.18 2.07-1.05 2.64l-1.46.98v.78l1.46.98c.87.57 1.29 1.63 1.05 2.64l-.33 1.46.6.6 1.46-.34c1.01-.23 2.06.19 2.64 1.05l.98 1.47h.78l.97-1.47c.58-.86 1.63-1.28 2.65-1.05l1.45.34.61-.6-.34-1.46c-.23-1.01.18-2.07 1.05-2.64l1.47-.98v-.78l-1.47-.98c-.87-.57-1.28-1.63-1.05-2.64l.34-1.46-.61-.6-1.45.34c-1.02.23-2.07-.19-2.65-1.05l-.97-1.47h-.78zM12 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5c.82 0 1.5-.67 1.5-1.5s-.68-1.5-1.5-1.5zM8.5 12c0-1.93 1.56-3.5 3.5-3.5 1.93 0 3.5 1.57 3.5 3.5s-1.57 3.5-3.5 3.5c-1.94 0-3.5-1.57-3.5-3.5z"></path>
-                          </g>
-                        </svg>
-                        <span
-                          style={{
-                            position: "relative",
-                            left: "10px",
-                            color: themeName === "dark-theme" ? "white" : "",
-                            fontSize: "20px",
-                            fontWeight: "700",
-                            lineHeight: "20px",
-                          }}
-                          className="logout-p chirp-bold-font"
-                        >
-                          Settings and privacy
-                        </span>
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                              flexGrow: "1",
+                              padding: "16px",
+                              boxSizing: "border-box",
+                              flexBasis: "auto",
+                              flexShrink: "0",
+                              margin: "0px",
+                              padding: "0px",
+                              minWidth: "0px",
+                              minHeight: "0px",
+                              position: "relative",
+                              textDecoration: "none",
+                              pointerEvents: "auto",
+                              cursor: "pointer",
+                            }}
+                          >
+                            <svg
+                              style={{
+                                marginRight: "24px",
+                                userSelect: "none",
+                                flexShrink: "0",
+                                maxWidth: "100%",
+                                position: "relative",
+                                alignItems: "center",
+                                display: "inline-block",
+                                cursor: "pointer",
+                                pointerEvents: "auto",
+                              }}
+                              fill={
+                                themeName === "dark-theme"
+                                  ? "rgb(231,233,234)"
+                                  : "rgb(15, 20, 25)"
+                              }
+                              width={24}
+                              height={24}
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18jsvk2 r-1q142lx r-1kihuf0 r-1472mwg r-di8nfa r-lrsllp"
+                              data-testid="icon"
+                            >
+                              <g>
+                                <path d="M23 3v14h-2V5H5V3h18zM10 17c1.1 0 2-1.34 2-3s-.9-3-2-3-2 1.34-2 3 .9 3 2 3zM1 7h18v14H1V7zm16 10c-1.1 0-2 .9-2 2h2v-2zm-2-8c0 1.1.9 2 2 2V9h-2zM3 11c1.1 0 2-.9 2-2H3v2zm0 4c2.21 0 4 1.79 4 4h6c0-2.21 1.79-4 4-4v-2c-2.21 0-4-1.79-4-4H7c0 2.21-1.79 4-4 4v2zm0 4h2c0-1.1-.9-2-2-2v2z"></path>
+                              </g>
+                            </svg>
+                            <div
+                              className={
+                                themeName === "dark-theme"
+                                  ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                                  : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                              }
+                              style={{
+                                textOverflow: "unset",
+                                overflowWrap: "break-word",
+                                maxWidth: "100%",
+                                minWidth: "0px",
+                                fontSize: "20px",
+                                whiteSpace: "nowrap",
+                                textAlign: "inherit",
+                                flexGrow: "1",
+                                lineHeight: "24px",
+                                overflow: "hidden",
+                                boxSizing: "border-box",
+                                margin: "0px",
+                                padding: "0px",
+                                position: "relative",
+                                listStyle: "none",
+                                textDecoration: "none",
+                              }}
+                            >
+                              Monetization
+                            </div>
+                          </div>
+                        </div>
                       </div>
+                      <div
+                        onClick={() => {
+                          popupState.close();
+                          navigate(`/help/connectify`);
+                        }}
+                        className={
+                          themeName === "dark-theme"
+                            ? "hover-effect-dark-theme-pointer-plus"
+                            : "hover-effect-light-theme-pointer-plus"
+                        }
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          flexBasis: "auto",
+                          boxSizing: "border-box",
+                          flexShrink: "0",
+                          margin: "0px",
+                          minHeight: "0px",
+                          minWidth: "0px",
+                          position: "relative",
+                          padding: "16px",
+                        }}
+                      >
+                        <div
+                          href=""
+                          style={{
+                            maxWidth: "100%",
+                            outlineStyle: "none",
+                            cursor: "pointer",
+                            flexGrow: "1",
+                            boxSizing: "border-box",
+                            display: "flex",
+                            flexBasis: "auto",
+                            flexDirection: "column",
+                            flexShrink: "0",
+                            listStyle: "none",
+                            margin: "0px",
+                            padding: "0px",
+                            minWidth: "0px",
+                            minHeight: "0px",
+                            position: "relative",
+                            textDecoration: "none",
+                            pointerEvents: "auto",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                              flexGrow: "1",
+                              padding: "16px",
+                              boxSizing: "border-box",
+                              flexBasis: "auto",
+                              flexShrink: "0",
+                              margin: "0px",
+                              padding: "0px",
+                              minWidth: "0px",
+                              minHeight: "0px",
+                              position: "relative",
+                              textDecoration: "none",
+                              pointerEvents: "auto",
+                              cursor: "pointer",
+                            }}
+                          >
+                            <svg
+                              style={{
+                                marginRight: "24px",
+                                userSelect: "none",
+                                flexShrink: "0",
+                                maxWidth: "100%",
+                                position: "relative",
+                                alignItems: "center",
+                                display: "inline-block",
+                                cursor: "pointer",
+                                pointerEvents: "auto",
+                              }}
+                              fill={
+                                themeName === "dark-theme"
+                                  ? "rgb(231,233,234)"
+                                  : "rgb(15, 20, 25)"
+                              }
+                              width={24}
+                              height={24}
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18jsvk2 r-1q142lx r-1kihuf0 r-1472mwg r-di8nfa r-lrsllp"
+                              data-testid="icon"
+                            >
+                              <g>
+                                <path d="M1.996 5.5c0-1.38 1.119-2.5 2.5-2.5h15c1.38 0 2.5 1.12 2.5 2.5v13c0 1.38-1.12 2.5-2.5 2.5h-15c-1.381 0-2.5-1.12-2.5-2.5v-13zm2.5-.5c-.277 0-.5.22-.5.5v13c0 .28.223.5.5.5h15c.276 0 .5-.22.5-.5v-13c0-.28-.224-.5-.5-.5h-15zm8.085 5H8.996V8h7v7h-2v-3.59l-5.293 5.3-1.415-1.42L12.581 10z"></path>
+                              </g>
+                            </svg>
+                            <div
+                              className={
+                                themeName === "dark-theme"
+                                  ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                                  : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                              }
+                              style={{
+                                textOverflow: "unset",
+                                overflowWrap: "break-word",
+                                maxWidth: "100%",
+                                minWidth: "0px",
+                                fontSize: "20px",
+                                whiteSpace: "nowrap",
+                                textAlign: "inherit",
+                                flexGrow: "1",
+                                lineHeight: "24px",
+                                overflow: "hidden",
+                                boxSizing: "border-box",
+                                margin: "0px",
+                                padding: "0px",
+                                position: "relative",
+                                listStyle: "none",
+                                textDecoration: "none",
+                              }}
+                            >
+                              Ads
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        onClick={() => {
+                          popupState.close();
+                          navigate("/jobs");
+                        }}
+                        className={
+                          themeName === "dark-theme"
+                            ? "hover-effect-dark-theme-pointer-plus"
+                            : "hover-effect-light-theme-pointer-plus"
+                        }
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          flexBasis: "auto",
+                          boxSizing: "border-box",
+                          flexShrink: "0",
+                          margin: "0px",
+                          minHeight: "0px",
+                          minWidth: "0px",
+                          position: "relative",
+                          padding: "16px",
+                        }}
+                      >
+                        <div
+                          href=""
+                          style={{
+                            maxWidth: "100%",
+                            outlineStyle: "none",
+                            cursor: "pointer",
+                            flexGrow: "1",
+                            boxSizing: "border-box",
+                            display: "flex",
+                            flexBasis: "auto",
+                            flexDirection: "column",
+                            flexShrink: "0",
+                            listStyle: "none",
+                            margin: "0px",
+                            padding: "0px",
+                            minWidth: "0px",
+                            minHeight: "0px",
+                            position: "relative",
+                            textDecoration: "none",
+                            pointerEvents: "auto",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                              flexGrow: "1",
+                              padding: "16px",
+                              boxSizing: "border-box",
+                              flexBasis: "auto",
+                              flexShrink: "0",
+                              margin: "0px",
+                              padding: "0px",
+                              minWidth: "0px",
+                              minHeight: "0px",
+                              position: "relative",
+                              textDecoration: "none",
+                              pointerEvents: "auto",
+                              cursor: "pointer",
+                            }}
+                          >
+                            <svg
+                              style={{
+                                marginRight: "24px",
+                                userSelect: "none",
+                                flexShrink: "0",
+                                maxWidth: "100%",
+                                position: "relative",
+                                alignItems: "center",
+                                display: "inline-block",
+                                cursor: "pointer",
+                                pointerEvents: "auto",
+                              }}
+                              fill={
+                                themeName === "dark-theme"
+                                  ? "rgb(231,233,234)"
+                                  : "rgb(15, 20, 25)"
+                              }
+                              width={24}
+                              height={24}
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18jsvk2 r-1q142lx r-1kihuf0 r-1472mwg r-di8nfa r-lrsllp"
+                              data-testid="icon"
+                            >
+                              <g>
+                                <path d="M19.5 6H17V4.5C17 3.12 15.88 2 14.5 2h-5C8.12 2 7 3.12 7 4.5V6H4.5C3.12 6 2 7.12 2 8.5v10C2 19.88 3.12 21 4.5 21h15c1.38 0 2.5-1.12 2.5-2.5v-10C22 7.12 20.88 6 19.5 6zM9 4.5c0-.28.23-.5.5-.5h5c.28 0 .5.22.5.5V6H9V4.5zm11 14c0 .28-.22.5-.5.5h-15c-.27 0-.5-.22-.5-.5v-3.04c.59.35 1.27.54 2 .54h5v1h2v-1h5c.73 0 1.41-.19 2-.54v3.04zm0-6.49c0 1.1-.9 1.99-2 1.99h-5v-1h-2v1H6c-1.1 0-2-.9-2-2V8.5c0-.28.23-.5.5-.5h15c.28 0 .5.22.5.5v3.51z"></path>
+                              </g>
+                            </svg>
+                            <div
+                              className={
+                                themeName === "dark-theme"
+                                  ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                                  : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                              }
+                              style={{
+                                textOverflow: "unset",
+                                overflowWrap: "break-word",
+                                maxWidth: "100%",
+                                minWidth: "0px",
+                                fontSize: "20px",
+                                whiteSpace: "nowrap",
+                                textAlign: "inherit",
+                                flexGrow: "1",
+                                lineHeight: "24px",
+                                overflow: "hidden",
+                                boxSizing: "border-box",
+                                margin: "0px",
+                                padding: "0px",
+                                position: "relative",
+                                listStyle: "none",
+                                textDecoration: "none",
+                              }}
+                            >
+                              Jobs
+                            </div>
+                            <div
+                              className="chirp-bold-font"
+                              style={{
+                                fontSize: "15px",
+                                height: "20px",
+                                paddingLeft: "4px",
+                                paddingRight: "4px",
+                                backgroundColor:
+                                  themeName === "dark-theme"
+                                    ? "rgb(73, 22, 0)"
+                                    : "rgb(255, 237, 219)",
+                                borderRadius: "4px",
+                                pointerEvents: "none !important",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "rgb(255, 224, 194)"
+                                    : "rgb(105, 33, 0)",
+                              }}
+                            >
+                              <div>Beta</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        onClick={() => {
+                          popupState.close();
+                          navigate("/i/spaces/start");
+                        }}
+                        className={
+                          themeName === "dark-theme"
+                            ? "hover-effect-dark-theme-pointer-plus"
+                            : "hover-effect-light-theme-pointer-plus"
+                        }
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          flexBasis: "auto",
+                          boxSizing: "border-box",
+                          flexShrink: "0",
+                          margin: "0px",
+                          minHeight: "0px",
+                          minWidth: "0px",
+                          position: "relative",
+                          padding: "16px",
+                        }}
+                      >
+                        <div
+                          href=""
+                          style={{
+                            maxWidth: "100%",
+                            outlineStyle: "none",
+                            cursor: "pointer",
+                            flexGrow: "1",
+                            boxSizing: "border-box",
+                            display: "flex",
+                            flexBasis: "auto",
+                            flexDirection: "column",
+                            flexShrink: "0",
+                            listStyle: "none",
+                            margin: "0px",
+                            padding: "0px",
+                            minWidth: "0px",
+                            minHeight: "0px",
+                            position: "relative",
+                            textDecoration: "none",
+                            pointerEvents: "auto",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                              flexGrow: "1",
+                              padding: "16px",
+                              boxSizing: "border-box",
+                              flexBasis: "auto",
+                              flexShrink: "0",
+                              margin: "0px",
+                              padding: "0px",
+                              minWidth: "0px",
+                              minHeight: "0px",
+                              position: "relative",
+                              textDecoration: "none",
+                              pointerEvents: "auto",
+                              cursor: "pointer",
+                            }}
+                          >
+                            <svg
+                              style={{
+                                marginRight: "24px",
+                                userSelect: "none",
+                                flexShrink: "0",
+                                maxWidth: "100%",
+                                position: "relative",
+                                alignItems: "center",
+                                display: "inline-block",
+                                cursor: "pointer",
+                                pointerEvents: "auto",
+                              }}
+                              fill={
+                                themeName === "dark-theme"
+                                  ? "rgb(231,233,234)"
+                                  : "rgb(15, 20, 25)"
+                              }
+                              width={24}
+                              height={24}
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18jsvk2 r-1q142lx r-1kihuf0 r-1472mwg r-di8nfa r-lrsllp"
+                              data-testid="icon"
+                            >
+                              <g>
+                                <path d="M12 22.25c-4.99 0-9.18-3.393-10.39-7.994l1.93-.512c.99 3.746 4.4 6.506 8.46 6.506s7.47-2.76 8.46-6.506l1.93.512c-1.21 4.601-5.4 7.994-10.39 7.994zM5 11.5c0 3.866 3.13 7 7 7s7-3.134 7-7V8.75c0-3.866-3.13-7-7-7s-7 3.134-7 7v2.75zm12-2.75v2.75c0 2.761-2.24 5-5 5s-5-2.239-5-5V8.75c0-2.761 2.24-5 5-5s5 2.239 5 5zM11.25 8v4.25c0 .414.34.75.75.75s.75-.336.75-.75V8c0-.414-.34-.75-.75-.75s-.75.336-.75.75zm-3 1v2.25c0 .414.34.75.75.75s.75-.336.75-.75V9c0-.414-.34-.75-.75-.75s-.75.336-.75.75zm7.5 0c0-.414-.34-.75-.75-.75s-.75.336-.75.75v2.25c0 .414.34.75.75.75s.75-.336.75-.75V9z"></path>
+                              </g>
+                            </svg>
+                            <div
+                              className={
+                                themeName === "dark-theme"
+                                  ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                                  : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                              }
+                              style={{
+                                textOverflow: "unset",
+                                overflowWrap: "break-word",
+                                maxWidth: "100%",
+                                minWidth: "0px",
+                                fontSize: "20px",
+                                whiteSpace: "nowrap",
+                                textAlign: "inherit",
+                                flexGrow: "1",
+                                lineHeight: "24px",
+                                overflow: "hidden",
+                                boxSizing: "border-box",
+                                margin: "0px",
+                                padding: "0px",
+                                position: "relative",
+                                listStyle: "none",
+                                textDecoration: "none",
+                              }}
+                            >
+                              Create your Space
+                            </div>
+                          </div>
+                        </div>
+                      </div>{" "}
+                      <div
+                        onClick={() => {
+                          popupState.close();
+                          navigate("/settings");
+                        }}
+                        className={
+                          themeName === "dark-theme"
+                            ? "hover-effect-dark-theme-pointer-plus"
+                            : "hover-effect-light-theme-pointer-plus"
+                        }
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          flexBasis: "auto",
+                          boxSizing: "border-box",
+                          flexShrink: "0",
+                          margin: "0px",
+                          minHeight: "0px",
+                          minWidth: "0px",
+                          position: "relative",
+                          padding: "16px",
+                        }}
+                      >
+                        <div
+                          href=""
+                          style={{
+                            maxWidth: "100%",
+                            outlineStyle: "none",
+                            cursor: "pointer",
+                            flexGrow: "1",
+                            boxSizing: "border-box",
+                            display: "flex",
+                            flexBasis: "auto",
+                            flexDirection: "column",
+                            flexShrink: "0",
+                            listStyle: "none",
+                            margin: "0px",
+                            padding: "0px",
+                            minWidth: "0px",
+                            minHeight: "0px",
+                            position: "relative",
+                            textDecoration: "none",
+                            pointerEvents: "auto",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                              flexGrow: "1",
+                              padding: "16px",
+                              boxSizing: "border-box",
+                              flexBasis: "auto",
+                              flexShrink: "0",
+                              margin: "0px",
+                              padding: "0px",
+                              minWidth: "0px",
+                              minHeight: "0px",
+                              position: "relative",
+                              textDecoration: "none",
+                              pointerEvents: "auto",
+                              cursor: "pointer",
+                            }}
+                          >
+                            <svg
+                              style={{
+                                marginRight: "24px",
+                                userSelect: "none",
+                                flexShrink: "0",
+                                maxWidth: "100%",
+                                position: "relative",
+                                alignItems: "center",
+                                display: "inline-block",
+                                cursor: "pointer",
+                                pointerEvents: "auto",
+                              }}
+                              fill={
+                                themeName === "dark-theme"
+                                  ? "rgb(231,233,234)"
+                                  : "rgb(15, 20, 25)"
+                              }
+                              width={24}
+                              height={24}
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18jsvk2 r-1q142lx r-1kihuf0 r-1472mwg r-di8nfa r-lrsllp"
+                              data-testid="icon"
+                            >
+                              <g>
+                                <path d="M10.54 1.75h2.92l1.57 2.36c.11.17.32.25.53.21l2.53-.59 2.17 2.17-.58 2.54c-.05.2.04.41.21.53l2.36 1.57v2.92l-2.36 1.57c-.17.12-.26.33-.21.53l.58 2.54-2.17 2.17-2.53-.59c-.21-.04-.42.04-.53.21l-1.57 2.36h-2.92l-1.58-2.36c-.11-.17-.32-.25-.52-.21l-2.54.59-2.17-2.17.58-2.54c.05-.2-.03-.41-.21-.53l-2.35-1.57v-2.92L4.1 8.97c.18-.12.26-.33.21-.53L3.73 5.9 5.9 3.73l2.54.59c.2.04.41-.04.52-.21l1.58-2.36zm1.07 2l-.98 1.47C10.05 6.08 9 6.5 7.99 6.27l-1.46-.34-.6.6.33 1.46c.24 1.01-.18 2.07-1.05 2.64l-1.46.98v.78l1.46.98c.87.57 1.29 1.63 1.05 2.64l-.33 1.46.6.6 1.46-.34c1.01-.23 2.06.19 2.64 1.05l.98 1.47h.78l.97-1.47c.58-.86 1.63-1.28 2.65-1.05l1.45.34.61-.6-.34-1.46c-.23-1.01.18-2.07 1.05-2.64l1.47-.98v-.78l-1.47-.98c-.87-.57-1.28-1.63-1.05-2.64l.34-1.46-.61-.6-1.45.34c-1.02.23-2.07-.19-2.65-1.05l-.97-1.47h-.78zM12 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5c.82 0 1.5-.67 1.5-1.5s-.68-1.5-1.5-1.5zM8.5 12c0-1.93 1.56-3.5 3.5-3.5 1.93 0 3.5 1.57 3.5 3.5s-1.57 3.5-3.5 3.5c-1.94 0-3.5-1.57-3.5-3.5z"></path>
+                              </g>
+                            </svg>
+                            <div
+                              className={
+                                themeName === "dark-theme"
+                                  ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                                  : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                              }
+                              style={{
+                                textOverflow: "unset",
+                                overflowWrap: "break-word",
+                                maxWidth: "100%",
+                                minWidth: "0px",
+                                fontSize: "20px",
+                                whiteSpace: "nowrap",
+                                textAlign: "inherit",
+                                flexGrow: "1",
+                                lineHeight: "24px",
+                                overflow: "hidden",
+                                boxSizing: "border-box",
+                                margin: "0px",
+                                padding: "0px",
+                                position: "relative",
+                                listStyle: "none",
+                                textDecoration: "none",
+                              }}
+                            >
+                              Settings and privacy
+                            </div>
+                          </div>
+                        </div>
+                      </div>{" "}
                     </Popover>
                   </div>
                 )}

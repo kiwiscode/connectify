@@ -235,7 +235,7 @@ function Bookmarks() {
   const [subscription, setSubscription] = useState(null);
   const getSubscription = async () => {
     try {
-      const response = await axios.get(`${API_URL}/subscriptions`, {
+      const response = await axios.get(`${API_URL}/subscription`, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
@@ -259,9 +259,57 @@ function Bookmarks() {
       console.error("Error:", error);
     }
   };
+  const [remainingTimeSubscriptions, setRemainingTimeSubscriptions] = useState(
+    []
+  );
+  const [
+    remainingTimeSubscriptionsOwnerIds,
+    setRemainingTimeSubscriptionsOwnerIds,
+  ] = useState([]);
+  const getRemainingTimeSubscriptions = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/remaining_time_subscriptions`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      setRemainingTimeSubscriptions(response.data.remainingTimeSubscriptions);
+
+      setRemainingTimeSubscriptionsOwnerIds(
+        response.data.remainingTimeSubscriptions.map((eachSub) => {
+          return eachSub.owner;
+        })
+      );
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
   useEffect(() => {
     getSubscription();
+    getRemainingTimeSubscriptions();
   }, []);
+
+  const [headerPosition, setHeaderPosition] = useState(0);
+  const handleScroll = () => {
+    const scrollPosition = window.pageYOffset;
+    if (scrollPosition < 53) {
+      setHeaderPosition(-scrollPosition);
+    } else {
+      setHeaderPosition(-53);
+    }
+  };
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [headerPosition, window.pageYOffset]);
+
+  const navigate = useNavigate();
   return (
     <>
       {!isPostModalVisible && !dataFromCommentModal && (
@@ -293,162 +341,222 @@ function Bookmarks() {
           padding: "0px",
         }}
       >
-        <Stack
+        <div
           style={{
-            paddingLeft: "12px",
-            paddingRight: "12px",
-            padding: "0px",
+            backgroundColor: "transparent",
+            minHeight: "53px",
+            zIndex: 99999,
+            backdropFilter: "blur(12px)",
+            transform: width <= 500 && `translateY(${headerPosition}px)`,
+            transition:
+              width <= 500 && "transform 0.3s cubic-bezier(0, 0, 0, 1)",
+            position: width > 500 && "sticky",
+            top: width > 500 && "0px",
+            width: width > 500 && "100%",
           }}
-          direction="horizontal"
         >
-          <Link className="responsive-home-arrow" to={"/home"}>
-            <svg
-              width={20}
-              height={20}
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-            >
-              <g>
-                <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
-              </g>
-            </svg>
-          </Link>
           <div
             style={{
-              lineHeight: "24px",
-              fontWeight: "700",
-              fontSize: "20px",
+              width: "100%",
+              display: "flex",
+              justifyContent: "space-between",
+              flexDirection: "row",
+              justifyItems: "center",
+              alignItems: "center",
+              padding: "0px 12px",
             }}
-            className="p-2 chirp-bold-font"
           >
-            <span>Bookmarks</span>
             <div
-              className="chirp-regular-font"
               style={{
-                fontSize: "13px",
-                fontWeight: "400",
-                lineHeight: "16px",
-                color:
-                  themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
+                display: "flex",
+                alignItems: "center",
               }}
             >
-              @{userInfo?.username}
-            </div>
-          </div>
-          {/* settings icon start to check  */}
-          {bookmarks.length > 0 && (
-            <div className="ms-auto p-2 more-button-bookmarks">
-              <PopupState variant="popover" popupId="demo-popup-popover">
-                {(popupState) => (
+              {width <= 500 && (
+                <div>
+                  {" "}
                   <div
-                    onClick={() => {
-                      setShowClearBookmarksPopover(!clearBookMarksPopover);
+                    onClick={() => navigate(-1)}
+                    className={`p-2 arrow arrow-${themeName}`}
+                    style={{
+                      width: "36px",
+                      height: " 36px",
+                      borderRadius: "50%",
+                      cursor: "pointer",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
                     }}
                   >
-                    <Button
-                      style={{
-                        border: "none",
-                        backgroundColor: "transparent",
-                      }}
-                      variant="text"
-                      {...bindTrigger(popupState)}
+                    <svg
+                      color={themeName === "dark-theme" ? "white" : ""}
+                      fill="currentColor"
+                      width={20}
+                      height={20}
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
                     >
-                      <BootstrapTooltip
-                        title="More"
-                        themeName={
+                      <g>
+                        <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                      </g>
+                    </svg>
+                  </div>
+                </div>
+              )}
+              <div
+                style={{
+                  lineHeight: width <= 500 ? "20px" : "24px",
+                  fontSize: width <= 500 ? "17px" : "20px",
+                }}
+                className={
+                  themeName === "dark-theme"
+                    ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font p-2"
+                    : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font p-2"
+                }
+              >
+                <span>Bookmarks</span>
+                <div
+                  className="chirp-regular-font"
+                  style={{
+                    fontSize: "13px",
+                    fontWeight: "400",
+                    lineHeight: "16px",
+                    color:
+                      themeName === "dark-theme"
+                        ? "#71767A"
+                        : "rgb(83, 100, 113)",
+                  }}
+                >
+                  @{userInfo?.username}
+                </div>
+              </div>
+            </div>
+            {/* settings icon start to check  */}
+            {bookmarks.length > 0 && (
+              <div className="more-button-bookmarks">
+                <PopupState variant="popover" popupId="demo-popup-popover">
+                  {(popupState) => (
+                    <div
+                      onClick={() => {
+                        setShowClearBookmarksPopover(!clearBookMarksPopover);
+                      }}
+                    >
+                      <Button
+                        style={{
+                          border: "none",
+                          backgroundColor: "transparent",
+                        }}
+                        variant="text"
+                        {...bindTrigger(popupState)}
+                      >
+                        <BootstrapTooltip
+                          title="More"
+                          themeName={
+                            themeName === "dark-theme"
+                              ? "dark-theme"
+                              : "light-theme"
+                          }
+                        >
+                          <div
+                            className={
+                              themeName === "dark-theme"
+                                ? "icon-hover-dark-theme"
+                                : "icon-hover-light-theme"
+                            }
+                            style={{
+                              width: "40px",
+                              height: "40px",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              cursor: "pointer",
+                              borderRadius: "50%",
+                              backgroundColor: "transparent",
+                            }}
+                          >
+                            <svg
+                              color={
+                                themeName === "dark-theme" ? "white" : "#0F141A"
+                              }
+                              fill="currentColor"
+                              width={`${1.25}em`}
+                              height={`${1.25}em`}
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                            >
+                              <g>
+                                <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                              </g>
+                            </svg>{" "}
+                          </div>
+                        </BootstrapTooltip>
+                      </Button>
+                      <Popover
+                        className={`${
                           themeName === "dark-theme"
-                            ? "dark-theme"
-                            : "light-theme"
-                        }
+                            ? "popover-material-ui-dark-theme"
+                            : themeName !== "dark-theme"
+                            ? "popover-material-ui-light-theme"
+                            : "hideshowMessageDeletePopover "
+                        }`}
+                        onClose={popupState.close}
+                        open={popupState.open}
+                        {...bindPopover(popupState)}
+                        anchorOrigin={{
+                          vertical: "top",
+                          horizontal: "right",
+                        }}
+                        transformOrigin={{
+                          vertical: -23,
+                          horizontal: 188,
+                        }}
                       >
                         <div
-                          className={
-                            themeName === "dark-theme"
-                              ? "icon-hover-dark-theme"
-                              : "icon-hover-light-theme"
-                          }
+                          onClick={() => {
+                            //   clearAllBookmarks();
+                            setshowClearAllBookmarksModal(true);
+                            popupState.close();
+                          }}
                           style={{
-                            width: "40px",
-                            height: "40px",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
+                            padding: "12px 16px",
                             cursor: "pointer",
-                            borderRadius: "50%",
-                            backgroundColor: "transparent",
+                            borderBottomLeftRadius: "6px",
+                            borderBottomRightRadius: "6px",
                           }}
+                          className={`message-popoover message-popoover-${themeName}`}
                         >
-                          <svg
-                            color={
-                              themeName === "dark-theme" ? "white" : "#0F141A"
-                            }
-                            fill="currentColor"
-                            width={`${1.25}em`}
-                            height={`${1.25}em`}
-                            viewBox="0 0 24 24"
-                            aria-hidden="true"
+                          <span
+                            className="chirp-bold-font"
+                            style={{
+                              color: "#f2212e",
+                              lineHeight: "20px",
+                              fontWeight: "700",
+                              fontSize: "15px",
+                            }}
                           >
-                            <g>
-                              <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                            </g>
-                          </svg>{" "}
+                            Clear all Bookmarks
+                          </span>
                         </div>
-                      </BootstrapTooltip>
-                    </Button>
-                    <Popover
-                      className={`${
-                        themeName === "dark-theme"
-                          ? "popover-material-ui-dark-theme"
-                          : themeName !== "dark-theme"
-                          ? "popover-material-ui-light-theme"
-                          : "hideshowMessageDeletePopover "
-                      }`}
-                      onClose={popupState.close}
-                      open={popupState.open}
-                      {...bindPopover(popupState)}
-                      anchorOrigin={{
-                        vertical: "top",
-                        horizontal: "right",
-                      }}
-                      transformOrigin={{
-                        vertical: -23,
-                        horizontal: 188,
-                      }}
-                    >
-                      <div
-                        onClick={() => {
-                          //   clearAllBookmarks();
-                          setshowClearAllBookmarksModal(true);
-                          popupState.close();
-                        }}
-                        style={{
-                          padding: "12px 16px",
-                          cursor: "pointer",
-                          borderBottomLeftRadius: "6px",
-                          borderBottomRightRadius: "6px",
-                        }}
-                        className={`message-popoover message-popoover-${themeName}`}
-                      >
-                        <span
-                          className="chirp-bold-font"
-                          style={{
-                            color: "#f2212e",
-                            lineHeight: "20px",
-                            fontWeight: "700",
-                            fontSize: "15px",
-                          }}
-                        >
-                          Clear all Bookmarks
-                        </span>
-                      </div>
-                    </Popover>
-                  </div>
-                )}
-              </PopupState>
-            </div>
-          )}
-        </Stack>
+                      </Popover>
+                    </div>
+                  )}
+                </PopupState>
+              </div>
+            )}
+          </div>
+        </div>
+        <div
+          className="mb-2"
+          style={{
+            borderBottom:
+              themeName !== "dark-theme"
+                ? "1px solid rgba(0, 0, 0, 0.1)"
+                : // : "0.1px solid rgb(70, 70, 70)",
+                  "1px solid rgb(70, 70, 70)",
+          }}
+        ></div>
+
         {bookmarks.length > 0 ? (
           <>
             {bookmarks.slice(0, visibleTweets).map((eachBookMark) => (
@@ -599,7 +707,12 @@ function Bookmarks() {
                               .hasSubscription ||
                             (!subscription?.isActive &&
                               subscription?.remainingTimeSubscription &&
-                              subscription?.cancelledDate) ? (
+                              subscription?.cancelledDate &&
+                              subscription?.owner ===
+                                eachBookMark?.bookmarkedPost?.userId._id) ||
+                            remainingTimeSubscriptionsOwnerIds.includes(
+                              eachBookMark?.bookmarkedPost?.userId._id
+                            ) ? (
                               <span>
                                 {/* start to check  */}{" "}
                                 <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">

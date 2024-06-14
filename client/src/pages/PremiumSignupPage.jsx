@@ -906,11 +906,14 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className={
+                      themeName === "dark-theme"
+                        ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                        : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                    }
                     style={{
                       fontSize: width < 600 ? "48px" : "64px",
-                      fontWeight: "700",
                       lineHeight: width < 600 ? "55px" : "70px",
-                      color: themeName === "dark-theme" ? "white" : "black",
                       letterSpacing: "1.2px",
                       position: "relative",
                       bottom: "2px",
@@ -920,11 +923,14 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   </div>
 
                   <div
+                    className={
+                      themeName === "dark-theme"
+                        ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                        : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                    }
                     style={{
                       fontSize: "18px",
-                      fontWeight: "400",
                       lineHeight: "24px",
-                      color: themeName === "dark-theme" ? "#B5B9BD" : "#36444F",
                       maxWidth: "723px",
                       textAlign: width < 600 ? "center" : "left",
                       marginTop: "35px",
@@ -945,11 +951,14 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                           handleRedirectOrganizationSignUpRoute();
                           setorganizationSubscribeOptionClicked(true);
                         }}
+                        className={
+                          themeName === "dark-theme"
+                            ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                            : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                        }
                         style={{
                           fontSize: "18px",
-                          fontWeight: "700",
                           lineHeight: "24px",
-                          color: themeName === "dark-theme" ? "white" : "black",
                           textDecoration: "underline",
                           cursor: "pointer",
                         }}
@@ -1003,12 +1012,14 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                         }}
                       >
                         <span
+                          className={
+                            themeName === "dark-theme"
+                              ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                              : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                          }
                           style={{
                             fontSize: "15px",
-                            fontWeight: "700",
                             lineHeight: "24px",
-                            color:
-                              themeName === "dark-theme" ? "white" : "black",
                           }}
                         >
                           Annual
@@ -1036,6 +1047,11 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                         onClick={() => {
                           setSelectedPremiumOption("Monthly plan basic-option");
                         }}
+                        className={
+                          themeName === "dark-theme"
+                            ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                            : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                        }
                         style={{
                           padding: "6px",
                           borderRadius: "999px",
@@ -1061,7 +1077,6 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                           fontSize: "15px",
                           fontWeight: "700",
                           lineHeight: "24px",
-                          color: themeName === "dark-theme" ? "white" : "black",
                         }}
                       >
                         Monthly

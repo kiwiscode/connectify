@@ -25,7 +25,10 @@ const handleGetAllUsers = (req, res) => {
 };
 
 const getFirst3MostFollowedUser = (req, res) => {
-  User.find()
+  const { userId } = req.user;
+  User.find({
+    _id: { $ne: userId },
+  })
     .sort({ "followers.length": 1 })
     .limit(3)
     .then((users) => {

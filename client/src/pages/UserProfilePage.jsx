@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../context/UserContext";
 import { Container, Row, Col, Stack, Accordion } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
@@ -20,7 +20,6 @@ import useWindowDimensions from "../hooks/getWindowDimensions";
 import RepostAction from "../components/ui/RepostAction";
 import LikeAction from "../components/ui/LikeAction";
 import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
-import ResponsiveNavigationBarTop from "../components/Navbar/ResponsiveNavigationTop";
 import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
 import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
 import BookmarkAction from "../components/ui/BookmarkAction";
@@ -30,7 +29,7 @@ function UserProfile({ isNewPostShared }) {
   const [subscription, setSubscription] = useState(null);
   const getSubscription = async () => {
     try {
-      const response = await axios.get(`${API_URL}/subscriptions`, {
+      const response = await axios.get(`${API_URL}/subscription`, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
@@ -55,8 +54,39 @@ function UserProfile({ isNewPostShared }) {
     }
   };
 
+  const [remainingTimeSubscriptions, setRemainingTimeSubscriptions] = useState(
+    []
+  );
+  const [
+    remainingTimeSubscriptionsOwnerIds,
+    setRemainingTimeSubscriptionsOwnerIds,
+  ] = useState([]);
+  const getRemainingTimeSubscriptions = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/remaining_time_subscriptions`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      setRemainingTimeSubscriptions(response.data.remainingTimeSubscriptions);
+
+      setRemainingTimeSubscriptionsOwnerIds(
+        response.data.remainingTimeSubscriptions.map((eachSub) => {
+          return eachSub.owner;
+        })
+      );
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   useEffect(() => {
     getSubscription();
+    getRemainingTimeSubscriptions();
   }, []);
   const extraDetailedDate = (dateStr) => {
     const date = new Date(dateStr);
@@ -385,17 +415,32 @@ function UserProfile({ isNewPostShared }) {
     }
   }, [isNewPostShared]);
 
+  const [headerPosition, setHeaderPosition] = useState(0);
+
+  const handleScroll = () => {
+    const scrollPosition = window.pageYOffset;
+
+    if (scrollPosition < 53) {
+      setHeaderPosition(-scrollPosition);
+    } else {
+      setHeaderPosition(-53);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [headerPosition]);
+
   return (
     <>
       {contextHolder}
       {/* {contextHolder} */}
       {/* start to check  main column */}
       {/* start to check */}
-      <ResponsiveNavigationBarTop
-        refreshPosts={() => handleShowPostsProfilePage()}
-        setLoadingTrue={() => setLoadingTrue()}
-        setLoadingFalse={() => setLoadingFalse()}
-      />{" "}
+
       {!isPostModalVisible && !dataFromCommentModal && (
         <ResponsiveNavigationBarBottom
           refreshPosts={() => handleShowPostsProfilePage()}
@@ -434,441 +479,463 @@ function UserProfile({ isNewPostShared }) {
           position: "relative",
         }}
       >
-        <Container>
-          <Row>
-            <Stack direction="horizontal" gap={0}>
-              {/* start to check  */}
+        <Stack
+          style={{
+            padding: "0px 16px",
+            minHeight: "53px",
+            transform: width <= 500 && `translateY(${headerPosition}px)`,
+            transition:
+              width <= 500 && "transform 0.3s cubic-bezier(0, 0, 0, 1)",
+            position: width > 500 && "sticky",
+            top: width > 500 && "0px",
+            width: width > 500 && "100%",
+            backgroundColor: width > 500 && "transparent",
+            backdropFilter: width > 500 && "blur(12px)",
+            zIndex: width > 500 && 99999,
+          }}
+          direction="horizontal"
+          gap={0}
+        >
+          {/* start to check  */}
+
+          <div
+            onClick={handleGoBack}
+            // className="p-2 arrow"
+            className={`p-2 arrow arrow-${themeName}`}
+            style={{
+              width: "36px",
+              height: " 36px",
+              borderRadius: "50%",
+              cursor: "pointer",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <svg
+              color={themeName === "dark-theme" ? "white" : ""}
+              fill="currentColor"
+              width={20}
+              height={20}
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+            >
+              <g>
+                <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+              </g>
+            </svg>
+          </div>
+
+          <div
+            className={
+              themeName === "dark-theme"
+                ? "soft-grey-dark-theme-text-variant-1 p-2 chirp-bold-font"
+                : "very-dark-gray-light-theme-text-variant-1 p-2 chirp-bold-font"
+            }
+            style={{
+              fontSize: "20px",
+              lineHeight: "24px",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                gap: ".2rem",
+                alignItems: "center",
+              }}
+            >
               <div
-                onClick={handleGoBack}
-                // className="p-2 arrow"
-                className={`p-2 arrow arrow-${themeName}`}
+                className="chirp-bold-font"
                 style={{
-                  position: "relative",
-                  bottom: "15px",
-                  width: "36px",
-                  height: " 36px",
-                  borderRadius: "50%",
-                  cursor: "pointer",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
+                  lineHeight: width <= 500 ? "20px" : "24px",
+                  fontSize: width <= 500 ? "17px" : "20px",
                 }}
               >
-                <svg
-                  color={themeName === "dark-theme" ? "white" : ""}
-                  fill="currentColor"
-                  style={
-                    {
-                      // position: "absolute",
-                      // bottom: "5px",
-                      // border: "none",
-                      // left: "5px",
-                      // fontSize: "15px",
-                    }
-                  }
-                  width={20}
-                  height={20}
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                >
-                  <g>
-                    <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
-                  </g>
-                </svg>
+                {userInfo.fullname}
               </div>
 
-              {/* finish to check  */}
-
-              <div
-                className={
-                  themeName === "dark-theme"
-                    ? "soft-grey-dark-theme-text-variant-1 p-2 chirp-bold-font"
-                    : "very-dark-gray-light-theme-text-variant-1 p-2 chirp-bold-font"
-                }
-                style={{
-                  fontSize: "20px",
-                  lineHeight: "24px",
-                  height: "100px",
-                  position: "relative",
-                  top: "5px",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    gap: ".2rem",
-                    alignItems: "center",
-                  }}
-                >
-                  <div>{userInfo.fullname}</div>
-
-                  <div>
-                    {" "}
-                    {userInfo.hasSubscription ||
-                    (!subscription?.isActive &&
-                      subscription?.remainingTimeSubscription &&
-                      subscription?.cancelledDate) ? (
-                      <span>
-                        {/* start to check  */}{" "}
-                        <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
-                          <svg
-                            width={`${20}px`}
-                            height={`${20}px`}
-                            viewBox="0 0 22 22"
-                            aria-label="Verified account"
-                            role="img"
-                            className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
-                            data-testid="verified-icon"
-                            color="rgba(29,155,240,1.00)"
-                            fill="currentColor"
-                          >
-                            <g>
-                              <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
-                            </g>
-                          </svg>
-                        </span>{" "}
-                      </span>
-                    ) : (
-                      <span> </span>
-                    )}
-                  </div>
-                </div>
-
-                {userInfo.posts && (
-                  <div
-                    style={{
-                      color:
-                        themeName === "dark-theme"
-                          ? "#71767A"
-                          : "rgb(83, 100, 113)",
-                    }}
-                    className="profile-paragraph"
-                  >
-                    {userInfo.posts.length} posts
-                  </div>
-                )}
-              </div>
-            </Stack>
-            {/* start to check */}
-
-            <Stack direction="horizontal" gap={0} style={{ marginTop: "45px" }}>
-              <div className="p-2">
-                {userInfo.imageUrl?.slice(0, 3) !== "../" ? (
-                  <>
-                    {profileImageChangingLoadingBar ? (
-                      <>
-                        <div
-                          style={{
-                            position: "relative",
-                          }}
-                        >
-                          <div
-                            style={{
-                              position: "absolute",
-                              bottom: "0px",
-                              width: "100%",
-                              height: "100%",
-                              display: "flex",
-                              justifyContent: "center",
-                              alignItems: "center",
-                            }}
-                          >
-                            <LoadingSpinner
-                              strokeColor={"rgb(29, 155, 240)"}
-                            ></LoadingSpinner>
-                          </div>
-                          <img
-                            style={{
-                              visibility: "hidden",
-                            }}
-                            src={userInfo.imageUrl}
-                            alt=""
-                          />
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div>
-                          <img
-                            style={{
-                              cursor: "pointer",
-                              borderRadius: "50%",
-                            }}
-                            src={userInfo.imageUrl}
-                            alt=""
-                            onClick={() =>
-                              document
-                                .getElementById("formuploadModal-profile-image")
-                                .click()
-                            }
-                          />
-                          <input
-                            onChange={handleChangeProfileImage}
-                            type="file"
-                            id="formuploadModal-profile-image"
-                            name="modalImage"
-                            className="form-control"
-                            style={{ display: "none" }}
-                          />
-                        </div>
-                      </>
-                    )}
-                  </>
-                ) : (
-                  <div>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="133"
-                      height="133"
-                      fill={
-                        themeName === "dark-theme"
-                          ? "#71767A"
-                          : "rgb(83, 100, 113)"
-                      }
-                      className="bi bi-person-circle"
-                      viewBox="0 0 16 16"
-                      style={{ cursor: "pointer", borderRadius: "50%" }}
-                      onClick={() =>
-                        document.getElementById("formuploadModal").click()
-                      }
-                    >
-                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                      <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                    </svg>
-                    <input
-                      onChange={handleChangeProfileImage}
-                      type="file"
-                      id="formuploadModal"
-                      name="modalImage"
-                      className="form-control"
-                      style={{ display: "none" }}
-                    />
-                  </div>
-                )}
-              </div>
-            </Stack>
-
-            {/* finish to check */}
-            <div style={{ lineHeight: "30px", marginBottom: "20px" }}>
-              <div
-                style={{
-                  display: "flex",
-                  gap: ".2rem",
-                  alignItems: "center",
-                  marginTop: "50px",
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: "20px",
-                  }}
-                  className={
-                    themeName === "dark-theme"
-                      ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
-                      : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
-                  }
-                >
-                  {userInfo.fullname}
-                </div>
-
-                <div>
-                  {" "}
-                  {userInfo.hasSubscription ||
-                  (!subscription?.isActive &&
-                    subscription?.remainingTimeSubscription &&
-                    subscription?.cancelledDate) ? (
-                    <span>
-                      {/* start to check  */}{" "}
-                      <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
-                        <svg
-                          width={`${20}px`}
-                          height={`${20}px`}
-                          viewBox="0 0 22 22"
-                          aria-label="Verified account"
-                          role="img"
-                          className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
-                          data-testid="verified-icon"
-                          color="rgba(29,155,240,1.00)"
-                          fill="currentColor"
-                        >
-                          <g>
-                            <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
-                          </g>
-                        </svg>
-                      </span>{" "}
-                    </span>
-                  ) : (
-                    <span> </span>
-                  )}
-                </div>
-              </div>
-              <div
-                style={{
-                  fontSize: "15px",
-                  lineHeight: "20px",
-                }}
-                className={
-                  themeName === "dark-theme"
-                    ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
-                    : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
-                }
-              >
-                @{userInfo.username}
-              </div>
               <div>
-                <div
-                  className="mt-2"
-                  style={{
-                    display: "flex",
-                    justifyContent: "left",
-                    alignItems: "center",
-                    gap: "0.5%",
-                  }}
-                >
-                  <svg
-                    color={
-                      themeName === "dark-theme"
-                        ? "#71767A"
-                        : "rgb(83, 100, 113)"
-                    }
-                    fill="currentColor"
-                    width={`${1.25}em`}
-                    height={`${1.25}em`}
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1d4mawv"
-                  >
-                    <g>
-                      <path d="M7 4V3h2v1h6V3h2v1h1.5C19.89 4 21 5.12 21 6.5v12c0 1.38-1.11 2.5-2.5 2.5h-13C4.12 21 3 19.88 3 18.5v-12C3 5.12 4.12 4 5.5 4H7zm0 2H5.5c-.27 0-.5.22-.5.5v12c0 .28.23.5.5.5h13c.28 0 .5-.22.5-.5v-12c0-.28-.22-.5-.5-.5H17v1h-2V6H9v1H7V6zm0 6h2v-2H7v2zm0 4h2v-2H7v2zm4-4h2v-2h-2v2zm0 4h2v-2h-2v2zm4-4h2v-2h-2v2z"></path>
-                    </g>
-                  </svg>
-                  <span
-                    className="chirp-regular-font"
-                    style={{
-                      color:
-                        themeName === "dark-theme"
-                          ? "#71767A"
-                          : "rgb(83, 100, 113)",
-                      fontSize: "15px",
-                      lineHeight: "12px",
-                      fontWeight: "400",
-                    }}
-                  >
-                    Joined {getCreatedDateForProfile(userInfo.createdAt)}
-                  </span>
-                </div>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  gap: "3%",
-                }}
-              >
-                {/* following and followers details start to check  */}
-                <Link
-                  to={`/profile/${userInfo._id}/following`}
-                  style={{
-                    textDecoration: "none",
-                    color: themeName === "dark-theme" ? "white" : "black",
-                  }}
-                  className="following-followers-link"
-                >
+                {" "}
+                {userInfo.hasSubscription ||
+                (!subscription?.isActive &&
+                  subscription?.remainingTimeSubscription &&
+                  subscription?.cancelledDate) ? (
                   <span>
-                    {activeUserFollowing.length ? (
-                      <span
-                        style={{
-                          cursor: "pointer",
-                          fontSize: "14px",
-                          lineHeight: "16px",
-                          fontWeight: "700",
-                        }}
+                    {/* start to check  */}{" "}
+                    <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
+                      <svg
+                        width={`${20}px`}
+                        height={`${20}px`}
+                        viewBox="0 0 22 22"
+                        aria-label="Verified account"
+                        role="img"
+                        className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                        data-testid="verified-icon"
+                        color="rgba(29,155,240,1.00)"
+                        fill="currentColor"
                       >
-                        {activeUserFollowing.length}
-                      </span>
-                    ) : (
-                      <span
-                        style={{
-                          cursor: "pointer",
-                          fontSize: "14px",
-                          lineHeight: "16px",
-                          fontWeight: "700",
-                        }}
-                      >
-                        0
-                      </span>
-                    )}
-                  </span>{" "}
-                  <span
-                    className="chirp-regular-font"
-                    style={{
-                      cursor: "pointer",
-                      color:
-                        themeName === "dark-theme"
-                          ? "#71767A"
-                          : "rgb(83, 100, 113)",
-                      fontSize: "14px",
-                      lineHeight: "16px",
-                      fontWeight: "400",
-                    }}
-                  >
-                    Following
-                  </span>{" "}
-                </Link>
-                <Link
-                  to={`/profile/${userInfo._id}/followers`}
-                  className="following-followers-link"
-                  style={{
-                    textDecoration: "none",
-                    color: themeName === "dark-theme" ? "white" : "black",
-                  }}
-                >
-                  <span>
-                    {activeUserFollowers.length ? (
-                      <span
-                        style={{
-                          cursor: "pointer",
-                          fontSize: "14px",
-                          lineHeight: "16px",
-                          fontWeight: "700",
-                        }}
-                      >
-                        {activeUserFollowers.length}
-                      </span>
-                    ) : (
-                      <span
-                        style={{
-                          cursor: "pointer",
-                          fontSize: "14px",
-                          lineHeight: "16px",
-                          fontWeight: "700",
-                        }}
-                      >
-                        0
-                      </span>
-                    )}
-                  </span>{" "}
-                  <span
-                    className="chirp-regular-font"
-                    style={{
-                      cursor: "pointer",
-                      color:
-                        themeName === "dark-theme"
-                          ? "#71767A"
-                          : "rgb(83, 100, 113)",
-                      fontSize: "14px",
-                      lineHeight: "16px",
-                      fontWeight: "400",
-                    }}
-                  >
-                    Followers
+                        <g>
+                          <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                        </g>
+                      </svg>
+                    </span>{" "}
                   </span>
-                </Link>
-                {/* following and followers details finish to check  */}
+                ) : (
+                  <span> </span>
+                )}
               </div>
             </div>
-          </Row>
-        </Container>
+
+            {userInfo.posts && (
+              <div
+                style={{
+                  color:
+                    themeName === "dark-theme"
+                      ? "#71767A"
+                      : "rgb(83, 100, 113)",
+                }}
+                className="profile-paragraph"
+              >
+                {userInfo.posts.length} posts
+              </div>
+            )}
+          </div>
+          {/* finish to check  */}
+        </Stack>
+
+        {/* start to check */}
+
+        <Stack
+          direction="horizontal"
+          gap={0}
+          style={{ marginTop: "45px", padding: "0px 16px" }}
+        >
+          <div className="p-2">
+            {userInfo.imageUrl?.slice(0, 3) !== "../" ? (
+              <>
+                {profileImageChangingLoadingBar ? (
+                  <>
+                    <div
+                      style={{
+                        position: "relative",
+                      }}
+                    >
+                      <div
+                        style={{
+                          position: "absolute",
+                          bottom: "0px",
+                          width: "100%",
+                          height: "100%",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <LoadingSpinner
+                          strokeColor={"rgb(29, 155, 240)"}
+                        ></LoadingSpinner>
+                      </div>
+                      <img
+                        style={{
+                          visibility: "hidden",
+                        }}
+                        src={userInfo.imageUrl}
+                        alt=""
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div>
+                      <img
+                        style={{
+                          cursor: "pointer",
+                          borderRadius: "50%",
+                        }}
+                        src={userInfo.imageUrl}
+                        alt=""
+                        onClick={() =>
+                          document
+                            .getElementById("formuploadModal-profile-image")
+                            .click()
+                        }
+                      />
+                      <input
+                        onChange={handleChangeProfileImage}
+                        type="file"
+                        id="formuploadModal-profile-image"
+                        name="modalImage"
+                        className="form-control"
+                        style={{ display: "none" }}
+                      />
+                    </div>
+                  </>
+                )}
+              </>
+            ) : (
+              <div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="133"
+                  height="133"
+                  fill={
+                    themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)"
+                  }
+                  className="bi bi-person-circle"
+                  viewBox="0 0 16 16"
+                  style={{ cursor: "pointer", borderRadius: "50%" }}
+                  onClick={() =>
+                    document.getElementById("formuploadModal").click()
+                  }
+                >
+                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                  <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                </svg>
+                <input
+                  onChange={handleChangeProfileImage}
+                  type="file"
+                  id="formuploadModal"
+                  name="modalImage"
+                  className="form-control"
+                  style={{ display: "none" }}
+                />
+              </div>
+            )}
+          </div>
+        </Stack>
+
+        {/* finish to check */}
+        <div
+          style={{
+            lineHeight: "30px",
+            marginBottom: "20px",
+            padding: "0px 16px",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              gap: ".2rem",
+              alignItems: "center",
+              marginTop: "50px",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "20px",
+              }}
+              className={
+                themeName === "dark-theme"
+                  ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                  : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+              }
+            >
+              {userInfo.fullname}
+            </div>
+
+            <div>
+              {" "}
+              {userInfo.hasSubscription ||
+              (!subscription?.isActive &&
+                subscription?.remainingTimeSubscription &&
+                subscription?.cancelledDate) ? (
+                <span>
+                  {/* start to check  */}{" "}
+                  <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
+                    <svg
+                      width={`${20}px`}
+                      height={`${20}px`}
+                      viewBox="0 0 22 22"
+                      aria-label="Verified account"
+                      role="img"
+                      className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                      data-testid="verified-icon"
+                      color="rgba(29,155,240,1.00)"
+                      fill="currentColor"
+                    >
+                      <g>
+                        <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                      </g>
+                    </svg>
+                  </span>{" "}
+                </span>
+              ) : (
+                <span> </span>
+              )}
+            </div>
+          </div>
+          <div
+            style={{
+              fontSize: "15px",
+              lineHeight: "20px",
+            }}
+            className={
+              themeName === "dark-theme"
+                ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+            }
+          >
+            @{userInfo.username}
+          </div>
+          <div>
+            <div
+              className="mt-2"
+              style={{
+                display: "flex",
+                justifyContent: "left",
+                alignItems: "center",
+                gap: "0.5%",
+              }}
+            >
+              <svg
+                color={
+                  themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)"
+                }
+                fill="currentColor"
+                width={`${1.25}em`}
+                height={`${1.25}em`}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1d4mawv"
+              >
+                <g>
+                  <path d="M7 4V3h2v1h6V3h2v1h1.5C19.89 4 21 5.12 21 6.5v12c0 1.38-1.11 2.5-2.5 2.5h-13C4.12 21 3 19.88 3 18.5v-12C3 5.12 4.12 4 5.5 4H7zm0 2H5.5c-.27 0-.5.22-.5.5v12c0 .28.23.5.5.5h13c.28 0 .5-.22.5-.5v-12c0-.28-.22-.5-.5-.5H17v1h-2V6H9v1H7V6zm0 6h2v-2H7v2zm0 4h2v-2H7v2zm4-4h2v-2h-2v2zm0 4h2v-2h-2v2zm4-4h2v-2h-2v2z"></path>
+                </g>
+              </svg>
+              <span
+                className="chirp-regular-font"
+                style={{
+                  color:
+                    themeName === "dark-theme"
+                      ? "#71767A"
+                      : "rgb(83, 100, 113)",
+                  fontSize: "15px",
+                  lineHeight: "12px",
+                  fontWeight: "400",
+                }}
+              >
+                Joined {getCreatedDateForProfile(userInfo.createdAt)}
+              </span>
+            </div>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              gap: "3%",
+            }}
+          >
+            {/* following and followers details start to check  */}
+            <Link
+              to={`/profile/${userInfo._id}/following`}
+              style={{
+                textDecoration: "none",
+                color: themeName === "dark-theme" ? "white" : "black",
+              }}
+              className="following-followers-link"
+            >
+              <span>
+                {activeUserFollowing.length ? (
+                  <span
+                    style={{
+                      cursor: "pointer",
+                      fontSize: "14px",
+                      lineHeight: "16px",
+                      fontWeight: "700",
+                    }}
+                  >
+                    {activeUserFollowing.length}
+                  </span>
+                ) : (
+                  <span
+                    style={{
+                      cursor: "pointer",
+                      fontSize: "14px",
+                      lineHeight: "16px",
+                      fontWeight: "700",
+                    }}
+                  >
+                    0
+                  </span>
+                )}
+              </span>{" "}
+              <span
+                className="chirp-regular-font"
+                style={{
+                  cursor: "pointer",
+                  color:
+                    themeName === "dark-theme"
+                      ? "#71767A"
+                      : "rgb(83, 100, 113)",
+                  fontSize: "14px",
+                  lineHeight: "16px",
+                  fontWeight: "400",
+                }}
+              >
+                Following
+              </span>{" "}
+            </Link>
+            <Link
+              to={`/profile/${userInfo._id}/followers`}
+              className="following-followers-link"
+              style={{
+                textDecoration: "none",
+                color: themeName === "dark-theme" ? "white" : "black",
+              }}
+            >
+              <span>
+                {activeUserFollowers.length ? (
+                  <span
+                    style={{
+                      cursor: "pointer",
+                      fontSize: "14px",
+                      lineHeight: "16px",
+                      fontWeight: "700",
+                    }}
+                  >
+                    {activeUserFollowers.length}
+                  </span>
+                ) : (
+                  <span
+                    style={{
+                      cursor: "pointer",
+                      fontSize: "14px",
+                      lineHeight: "16px",
+                      fontWeight: "700",
+                    }}
+                  >
+                    0
+                  </span>
+                )}
+              </span>{" "}
+              <span
+                className="chirp-regular-font"
+                style={{
+                  cursor: "pointer",
+                  color:
+                    themeName === "dark-theme"
+                      ? "#71767A"
+                      : "rgb(83, 100, 113)",
+                  fontSize: "14px",
+                  lineHeight: "16px",
+                  fontWeight: "400",
+                }}
+              >
+                <span>
+                  {userInfo.followers
+                    ? userInfo.followers.length > 1
+                      ? "Followers"
+                      : userInfo.followers.length === 0
+                      ? "Followers"
+                      : "Follower"
+                    : null}
+                </span>
+              </span>
+            </Link>
+            {/* following and followers details finish to check  */}
+          </div>
+        </div>
+
         <div
           style={{
             borderBottom:
@@ -1189,7 +1256,11 @@ function UserProfile({ isNewPostShared }) {
                                 {post?.userId.hasSubscription ||
                                 (!subscription?.isActive &&
                                   subscription?.remainingTimeSubscription &&
-                                  subscription?.cancelledDate) ? (
+                                  subscription?.cancelledDate &&
+                                  subscription?.owner === post?.userId._id) ||
+                                remainingTimeSubscriptionsOwnerIds.includes(
+                                  post?.userId._id
+                                ) ? (
                                   <span>
                                     {/* start to check  */}{" "}
                                     <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
@@ -1704,7 +1775,12 @@ function UserProfile({ isNewPostShared }) {
                                   {favorite?.userId.hasSubscription ||
                                   (!subscription?.isActive &&
                                     subscription?.remainingTimeSubscription &&
-                                    subscription?.cancelledDate) ? (
+                                    subscription?.cancelledDate &&
+                                    subscription?.owner ===
+                                      favorite?.userId._id) ||
+                                  remainingTimeSubscriptionsOwnerIds.includes(
+                                    favorite?.userId._id
+                                  ) ? (
                                     <span>
                                       {/* start to check  */}{" "}
                                       <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">

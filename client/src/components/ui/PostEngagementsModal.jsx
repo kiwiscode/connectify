@@ -24,7 +24,7 @@ function PostEngagements({
   const [subscription, setSubscription] = useState(null);
   const getSubscription = async () => {
     try {
-      const response = await axios.get(`${API_URL}/subscriptions`, {
+      const response = await axios.get(`${API_URL}/subscription`, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
@@ -48,8 +48,38 @@ function PostEngagements({
       console.error("Error:", error);
     }
   };
+  const [remainingTimeSubscriptions, setRemainingTimeSubscriptions] = useState(
+    []
+  );
+  const [
+    remainingTimeSubscriptionsOwnerIds,
+    setRemainingTimeSubscriptionsOwnerIds,
+  ] = useState([]);
+  const getRemainingTimeSubscriptions = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/remaining_time_subscriptions`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      setRemainingTimeSubscriptions(response.data.remainingTimeSubscriptions);
+
+      setRemainingTimeSubscriptionsOwnerIds(
+        response.data.remainingTimeSubscriptions.map((eachSub) => {
+          return eachSub.owner;
+        })
+      );
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
   useEffect(() => {
     getSubscription();
+    getRemainingTimeSubscriptions();
   }, []);
   const [show, setShow] = useState(false);
 
@@ -545,14 +575,15 @@ function PostEngagements({
                                 {eachReposter.hasSubscription ||
                                 (!subscription?.isActive &&
                                   subscription?.remainingTimeSubscription &&
-                                  subscription?.cancelledDate) ? (
+                                  subscription?.cancelledDate &&
+                                  subscription?.owner === eachReposter._id) ||
+                                remainingTimeSubscriptionsOwnerIds.includes(
+                                  eachReposter._id
+                                ) ? (
                                   <span>
                                     {/* start to check  */}{" "}
                                     <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
                                       <svg
-                                        style={{
-                                          position: "relative",
-                                        }}
                                         width={`${1.25}em`}
                                         height={`${1.25}em`}
                                         viewBox="0 0 22 22"
@@ -907,14 +938,15 @@ function PostEngagements({
                               {eachLiker.hasSubscription ||
                               (!subscription?.isActive &&
                                 subscription?.remainingTimeSubscription &&
-                                subscription?.cancelledDate) ? (
+                                subscription?.cancelledDate &&
+                                subscription?.owner === eachLiker._id) ||
+                              remainingTimeSubscriptionsOwnerIds.includes(
+                                eachLiker._id
+                              ) ? (
                                 <span>
                                   {/* start to check  */}{" "}
                                   <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
                                     <svg
-                                      style={{
-                                        position: "relative",
-                                      }}
                                       width={`${1.25}em`}
                                       height={`${1.25}em`}
                                       viewBox="0 0 22 22"

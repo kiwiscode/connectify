@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../context/UserContext";
 import axios from "axios";
 
@@ -54,7 +54,7 @@ const LikeAction = ({
   const [shouldAnimate, setShouldAnimate] = useState(false);
 
   useEffect(() => {
-    if (getLikerIds(post).includes(userInfo._id)) {
+    if (getLikerIds(post)?.includes(userInfo._id)) {
       setShouldAnimate(false);
     }
   }, []);
@@ -112,7 +112,7 @@ const LikeAction = ({
 
   return (
     <>
-      {getLikerIds(post).includes(userInfo._id) ? (
+      {getLikerIds(post)?.includes(userInfo._id) ? (
         <div>
           <BootstrapTooltip
             title="Unlike"
@@ -239,7 +239,7 @@ const LikeAction = ({
                 position: "relative",
               }}
             >
-              {post.likes.length ? (
+              {post?.likes.length ? (
                 <>
                   <span
                     style={{
