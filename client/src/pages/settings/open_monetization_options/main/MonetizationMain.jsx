@@ -165,7 +165,7 @@ function MonetizationMain() {
           {width <= 991 ? (
             <span
               onClick={() => {
-                navigate("/settings");
+                navigate(-1);
               }}
               className={`arrow arrow-${themeName} mt-3`}
               style={{

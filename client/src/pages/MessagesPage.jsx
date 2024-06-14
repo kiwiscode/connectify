@@ -24,6 +24,7 @@ const API_URL = "http://localhost:3000";
 import useWindowDimensions from "../hooks/getWindowDimensions";
 import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
 import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
+import MobileTopNavigation from "../components/Navbar/mobile_top_navigation/MobileTopNavigation";
 function MessagesPage() {
   const { userInfo, getToken } = useContext(UserContext);
 
@@ -409,7 +410,18 @@ function MessagesPage() {
   };
 
   const { isPostModalVisible } = useContext(ModalVisibilityContext);
+  const [dataFromTopNavigationComponent, setDataFromTopNavigationComponent] =
+    useState(null);
 
+  function handleDataFromTopNavigationComponentOpenedStatus(data) {
+    console.log("Data =>", data);
+    setDataFromTopNavigationComponent(data);
+  }
+
+  function handleDataFromTopNavigationComponentClosedStatus(data) {
+    console.log("Data =>", data);
+    setDataFromTopNavigationComponent(data);
+  }
   return (
     <>
       {" "}
@@ -455,31 +467,49 @@ function MessagesPage() {
           style={{
             paddingLeft: "12px",
             paddingRight: "12px",
+            transform:
+              dataFromTopNavigationComponent ===
+                "mobile top navigation was closed" &&
+              `translateY(${headerPosition}px)`,
+            backgroundColor:
+              dataFromTopNavigationComponent ===
+                "mobile top navigation was closed" && "transparent",
+            minHeight:
+              dataFromTopNavigationComponent ===
+                "mobile top navigation was closed" && "53px",
+            transition:
+              dataFromTopNavigationComponent ===
+                "mobile top navigation was closed" &&
+              "transform 0.3s cubic-bezier(0, 0, 0, 1)",
+            backdropFilter:
+              dataFromTopNavigationComponent ===
+                "mobile top navigation was closed" && "blur(12px)",
           }}
           direction="horizontal"
           gap={3}
-          className="mt-2"
+          className={width <= 500 ? "" : "mt-2"}
         >
-          <Link className="responsive-home-arrow" to={"/home"}>
-            <svg
-              width={20}
-              height={20}
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-            >
-              <g>
-                <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
-              </g>
-            </svg>
-          </Link>
+          {width <= 500 && (
+            <div>
+              <MobileTopNavigation
+                navigationBarOpenedStatus={
+                  handleDataFromTopNavigationComponentOpenedStatus
+                }
+                noIcon={true}
+              />
+            </div>
+          )}
+
           <div
             style={{
-              lineHeight: "24px",
-              fontWeight: "700",
-              fontSize: "20px",
+              lineHeight: width <= 500 ? "20px" : "24px",
+              fontSize: width <= 500 ? "17px" : "20px",
             }}
-            className="p-2 chirp-bold-font"
+            className={
+              themeName === "dark-theme"
+                ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font p-2"
+                : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font p-2"
+            }
           >
             Messages
           </div>
@@ -502,8 +532,6 @@ function MessagesPage() {
                 fontWeight: "700",
                 cursor: "pointer",
               }}
-              color={themeName === "dark-theme" ? "white" : ""}
-              fill="currentColor"
               width={20}
               height={20}
               viewBox="0 0 24 24"
@@ -519,7 +547,6 @@ function MessagesPage() {
           {/* settings icon finish to check  */}
 
           {/* create message icon start to check  */}
-
           <CreateChat />
 
           {/* create message icon finish to check  */}

@@ -18,6 +18,7 @@ function PostPopover({
   postDetailPageActive,
   postDeletionProcess,
   isCutePopoverOnRightSide,
+  notificationPageComment,
 }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
 
@@ -33,23 +34,22 @@ function PostPopover({
     createdAnimationForClosingDeletePostModal,
     setCreatedAnimationForClosingDeletePostModal,
   ] = useState(null);
+
+  const handleShowPostOptionsWithThreeDots = () => {
+    setshowPostOptionsThreeDots(!showPostOptionsThreeDots);
+  };
   const handleClose = () => {
     setshowDeletePostModal(false);
     setCreatedAnimationForClosingDeletePostModal(true);
 
     setTimeout(() => {
       setCreatedAnimationForClosingDeletePostModal(false);
-    }, 150);
+    }, 250);
   };
 
   const handleShow = () => {
     setshowDeletePostModal(true);
   };
-
-  const handleShowPostOptionsWithThreeDots = () => {
-    setshowPostOptionsThreeDots(!showPostOptionsThreeDots);
-  };
-
   const [threeDotsColor, setThreeDotsColor] = useState(null);
   const [postId, setPostId] = useState(null);
 
@@ -57,6 +57,7 @@ function PostPopover({
 
   const handlePostDelete = (postId) => {
     handleClose();
+
     setPostId(postId);
     axios
       .post(
@@ -260,7 +261,7 @@ function PostPopover({
               }}
               transformOrigin={{
                 vertical: -20,
-                horizontal: 315,
+                horizontal: isCutePopoverOnRightSide ? 275 : 315,
               }}
               className={`${
                 themeName === "dark-theme"
@@ -641,6 +642,16 @@ function PostPopover({
                       ? "dark-theme-post-popover-detail"
                       : "post-popover-detail"
                   }
+                  style={{
+                    maxHeight: isCutePopoverOnRightSide ? "250px" : "",
+                    overflowY: isCutePopoverOnRightSide ? "auto" : "",
+                    colorScheme:
+                      isCutePopoverOnRightSide && themeName === "dark-theme"
+                        ? "dark"
+                        : isCutePopoverOnRightSide && themeName !== "dark-theme"
+                        ? "light"
+                        : null,
+                  }}
                 >
                   <div
                     onMouseEnter={() => {
@@ -662,8 +673,8 @@ function PostPopover({
                     <span>
                       <svg
                         fill={themeName === "dark-theme" ? "white" : "black"}
-                        width={`${1.25}em`}
-                        height={`${1.25}em`}
+                        width={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
+                        height={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
                         viewBox="0 0 24 24"
                         aria-hidden="true"
                         className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1nao33i r-1q142lx"
@@ -675,14 +686,30 @@ function PostPopover({
                     </span>
                     <span>
                       <span
-                        className="chirp-bold-font"
+                        className={
+                          themeName === "dark-theme"
+                            ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                            : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                        }
                         style={{
                           marginLeft: "10px",
+                          fontSize: isCutePopoverOnRightSide && "13px",
+                          lineHeight: isCutePopoverOnRightSide && "20px",
                         }}
                       >
                         Follow
                       </span>{" "}
-                      <span className="chirp-bold-font">
+                      <span
+                        className={
+                          themeName === "dark-theme"
+                            ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                            : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                        }
+                        style={{
+                          fontSize: isCutePopoverOnRightSide && "13px",
+                          lineHeight: isCutePopoverOnRightSide && "20px",
+                        }}
+                      >
                         @{post?.userId?.username}
                       </span>
                     </span>
@@ -708,8 +735,8 @@ function PostPopover({
                     <span>
                       <svg
                         fill={themeName === "dark-theme" ? "white" : "black"}
-                        width={`${1.25}em`}
-                        height={`${1.25}em`}
+                        width={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
+                        height={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
                         viewBox="0 0 24 24"
                         aria-hidden="true"
                         className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1nao33i r-1q142lx"
@@ -721,14 +748,30 @@ function PostPopover({
                     </span>
                     <span>
                       <span
-                        className="chirp-bold-font"
+                        className={
+                          themeName === "dark-theme"
+                            ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                            : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                        }
                         style={{
                           marginLeft: "10px",
+                          fontSize: isCutePopoverOnRightSide && "13px",
+                          lineHeight: isCutePopoverOnRightSide && "20px",
                         }}
                       >
                         Subscribe to
                       </span>{" "}
-                      <span className="chirp-bold-font">
+                      <span
+                        className={
+                          themeName === "dark-theme"
+                            ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                            : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                        }
+                        style={{
+                          fontSize: isCutePopoverOnRightSide && "13px",
+                          lineHeight: isCutePopoverOnRightSide && "20px",
+                        }}
+                      >
                         @{post?.userId?.username}
                       </span>
                     </span>
@@ -754,8 +797,8 @@ function PostPopover({
                     <span>
                       <svg
                         fill={themeName === "dark-theme" ? "white" : "black"}
-                        width={`${1.25}em`}
-                        height={`${1.25}em`}
+                        width={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
+                        height={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
                         viewBox="0 0 24 24"
                         aria-hidden="true"
                         className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1nao33i r-1q142lx"
@@ -766,9 +809,15 @@ function PostPopover({
                       </svg>
                     </span>
                     <span
-                      className="chirp-bold-font"
+                      className={
+                        themeName === "dark-theme"
+                          ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                          : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                      }
                       style={{
                         marginLeft: "10px",
+                        fontSize: isCutePopoverOnRightSide && "13px",
+                        lineHeight: isCutePopoverOnRightSide && "20px",
                       }}
                     >
                       <span className="chirp-bold-font">Add/remove</span>{" "}
@@ -798,8 +847,8 @@ function PostPopover({
                     <span>
                       <svg
                         fill={themeName === "dark-theme" ? "white" : "black"}
-                        width={`${1.25}em`}
-                        height={`${1.25}em`}
+                        width={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
+                        height={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
                         viewBox="0 0 24 24"
                         aria-hidden="true"
                         className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1nao33i r-1q142lx"
@@ -814,8 +863,30 @@ function PostPopover({
                         marginLeft: "10px",
                       }}
                     >
-                      <span className="chirp-bold-font">Mute</span>{" "}
-                      <span className="chirp-bold-font">
+                      <span
+                        className={
+                          themeName === "dark-theme"
+                            ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                            : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                        }
+                        style={{
+                          fontSize: isCutePopoverOnRightSide && "13px",
+                          lineHeight: isCutePopoverOnRightSide && "20px",
+                        }}
+                      >
+                        Mute
+                      </span>{" "}
+                      <span
+                        className={
+                          themeName === "dark-theme"
+                            ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                            : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                        }
+                        style={{
+                          fontSize: isCutePopoverOnRightSide && "13px",
+                          lineHeight: isCutePopoverOnRightSide && "20px",
+                        }}
+                      >
                         @{post?.userId?.username}
                       </span>
                     </span>
@@ -840,8 +911,8 @@ function PostPopover({
                     <span>
                       <svg
                         fill={themeName === "dark-theme" ? "white" : "black"}
-                        width={`${1.25}em`}
-                        height={`${1.25}em`}
+                        width={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
+                        height={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
                         viewBox="0 0 24 24"
                         aria-hidden="true"
                         className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1nao33i r-1q142lx"
@@ -856,8 +927,30 @@ function PostPopover({
                         marginLeft: "10px",
                       }}
                     >
-                      <span className="chirp-bold-font">Block</span>{" "}
-                      <span className="chirp-bold-font">
+                      <span
+                        className={
+                          themeName === "dark-theme"
+                            ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                            : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                        }
+                        style={{
+                          fontSize: isCutePopoverOnRightSide && "13px",
+                          lineHeight: isCutePopoverOnRightSide && "20px",
+                        }}
+                      >
+                        Block
+                      </span>{" "}
+                      <span
+                        className={
+                          themeName === "dark-theme"
+                            ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                            : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                        }
+                        style={{
+                          fontSize: isCutePopoverOnRightSide && "13px",
+                          lineHeight: isCutePopoverOnRightSide && "20px",
+                        }}
+                      >
                         @{post?.userId?.username}
                       </span>
                     </span>
@@ -884,8 +977,8 @@ function PostPopover({
                     <span>
                       <svg
                         fill={themeName === "dark-theme" ? "white" : "black"}
-                        width={`${1.25}em`}
-                        height={`${1.25}em`}
+                        width={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
+                        height={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
                         viewBox="0 0 24 24"
                         aria-hidden="true"
                         className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1nao33i r-1q142lx"
@@ -896,9 +989,15 @@ function PostPopover({
                       </svg>
                     </span>
                     <span
-                      className="chirp-bold-font"
+                      className={
+                        themeName === "dark-theme"
+                          ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                          : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                      }
                       style={{
                         marginLeft: "10px",
+                        fontSize: isCutePopoverOnRightSide && "13px",
+                        lineHeight: isCutePopoverOnRightSide && "20px",
                       }}
                     >
                       View post engagements
@@ -925,8 +1024,8 @@ function PostPopover({
                     <span>
                       <svg
                         fill={themeName === "dark-theme" ? "white" : "black"}
-                        width={`${1.25}em`}
-                        height={`${1.25}em`}
+                        width={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
+                        height={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
                         viewBox="0 0 24 24"
                         aria-hidden="true"
                         className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1nao33i r-1q142lx"
@@ -937,9 +1036,15 @@ function PostPopover({
                       </svg>
                     </span>
                     <span
-                      className="chirp-bold-font"
+                      className={
+                        themeName === "dark-theme"
+                          ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                          : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                      }
                       style={{
                         marginLeft: "10px",
+                        fontSize: isCutePopoverOnRightSide && "13px",
+                        lineHeight: isCutePopoverOnRightSide && "20px",
                       }}
                     >
                       Embed post
@@ -966,8 +1071,8 @@ function PostPopover({
                     <span>
                       <svg
                         fill={themeName === "dark-theme" ? "white" : "black"}
-                        width={`${1.25}em`}
-                        height={`${1.25}em`}
+                        width={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
+                        height={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
                         viewBox="0 0 24 24"
                         aria-hidden="true"
                         className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1nao33i r-1q142lx"
@@ -978,9 +1083,15 @@ function PostPopover({
                       </svg>
                     </span>
                     <span
-                      className="chirp-bold-font"
+                      className={
+                        themeName === "dark-theme"
+                          ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                          : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                      }
                       style={{
                         marginLeft: "10px",
+                        fontSize: isCutePopoverOnRightSide && "13px",
+                        lineHeight: isCutePopoverOnRightSide && "20px",
                       }}
                     >
                       Report post
@@ -1008,8 +1119,8 @@ function PostPopover({
                     <span>
                       <svg
                         fill={themeName === "dark-theme" ? "white" : "black"}
-                        width={`${1.25}em`}
-                        height={`${1.25}em`}
+                        width={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
+                        height={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
                         viewBox="0 0 24 24"
                         aria-hidden="true"
                         className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1nao33i r-1q142lx"
@@ -1020,9 +1131,15 @@ function PostPopover({
                       </svg>
                     </span>
                     <span
-                      className="chirp-bold-font"
+                      className={
+                        themeName === "dark-theme"
+                          ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                          : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                      }
                       style={{
                         marginLeft: "10px",
+                        fontSize: isCutePopoverOnRightSide && "13px",
+                        lineHeight: isCutePopoverOnRightSide && "20px",
                       }}
                     >
                       Report EU illegal content

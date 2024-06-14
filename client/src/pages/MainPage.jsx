@@ -7,7 +7,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
-import ResponsiveNavigationBarTop from "../components/Navbar/ResponsiveNavigationTop";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -30,12 +29,15 @@ import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
 import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
 import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
 import BookmarkAction from "../components/ui/BookmarkAction";
+import MobileTopNavigation from "../components/Navbar/mobile_top_navigation/MobileTopNavigation";
 function MainPage({ isNewPostShared }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
   const [subscription, setSubscription] = useState(null);
+  const { userInfo, getToken, updateUser } = useContext(UserContext);
+
   const getSubscription = async () => {
     try {
-      const response = await axios.get(`${API_URL}/subscriptions`, {
+      const response = await axios.get(`${API_URL}/subscription`, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
@@ -60,6 +62,41 @@ function MainPage({ isNewPostShared }) {
     }
   };
 
+  const [remainingTimeSubscriptions, setRemainingTimeSubscriptions] = useState(
+    []
+  );
+  const [
+    remainingTimeSubscriptionsOwnerIds,
+    setRemainingTimeSubscriptionsOwnerIds,
+  ] = useState([]);
+  const getRemainingTimeSubscriptions = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/remaining_time_subscriptions`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      setRemainingTimeSubscriptions(response.data.remainingTimeSubscriptions);
+
+      setRemainingTimeSubscriptionsOwnerIds(
+        response.data.remainingTimeSubscriptions.map((eachSub) => {
+          return eachSub.owner;
+        })
+      );
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    refreshActiveUser();
+    getSubscription();
+    getRemainingTimeSubscriptions();
+  }, []);
   const location = useLocation();
   const path = location.pathname;
 
@@ -119,7 +156,6 @@ function MainPage({ isNewPostShared }) {
   // use effect to grab current mouse click location finish to check
 
   // create account variant 1 flow start to check
-  const { userInfo, getToken, updateUser } = useContext(UserContext);
   const [signedUpWithVariantOne, setsignedUpWithVariantOne] = useState(false);
   const [signedUpWithGoogle, setsignedUpWithGoogle] = useState(false);
   const [
@@ -172,10 +208,7 @@ function MainPage({ isNewPostShared }) {
         console.log("Error =>", error);
       });
   };
-  useEffect(() => {
-    refreshActiveUser();
-    getSubscription();
-  }, []);
+
   // create account variant 1 flow finish to check
 
   const [posts, setPosts] = useState([]);
@@ -285,8 +318,8 @@ function MainPage({ isNewPostShared }) {
   };
 
   const handlePost = () => {
+    setPostSharingStartedActivateAnimate(true);
     if (content || chosenEmoji || image) {
-      startPostSharingAnimationActivate();
       axios
         .post(
           `${API_URL}/home/post`,
@@ -301,21 +334,16 @@ function MainPage({ isNewPostShared }) {
           }
         )
         .then((response) => {
-          const lineElement = document.querySelector(
-            ".post_sharing_line_animation"
-          );
+          setTimeout(() => {
+            if (!image) {
+              setPostSharingPausedAnimate(true);
+            }
+          }, 400);
 
           setTimeout(() => {
-            cancelPostSharingAnimationActivate();
-            lineElement.classList.add("paused");
-            lineElement.classList.remove("post_sharing_line_animation");
-          }, 300);
+            setPostSharingPausedAnimate(false);
+            setPostSharingStartedActivateAnimate(false);
 
-          setTimeout(() => {
-            lineElement.classList.remove("paused");
-          }, 350);
-
-          setTimeout(() => {
             axios
               .get(`${API_URL}/home`, {
                 headers: {
@@ -329,14 +357,13 @@ function MainPage({ isNewPostShared }) {
               .catch((err) => {
                 return err;
               });
-            cancelPostSharingAnimationActivate();
             postSharedMessage(
               response.data.createdPost.authorUserName,
               response.data.createdPost._id
             );
             setImage("");
             setContent("");
-          }, 350);
+          }, 500);
         })
         .catch((err) => {
           return err;
@@ -377,24 +404,6 @@ function MainPage({ isNewPostShared }) {
   };
 
   const [hoveredTab, setHoveredTab] = useState(null);
-
-  const getTabStyle = (tab) => {
-    return {
-      color:
-        activeTab === tab && themeName !== "dark-theme"
-          ? "rgb(29, 155, 240"
-          : activeTab === tab && themeName === "dark-theme"
-          ? "white"
-          : "#71767A",
-      fontWeight: activeTab === tab ? "700" : "400",
-      lineHeight: "20px",
-      fontSize: "15px",
-      cursor: "pointer",
-      flex: 1,
-      textAlign: "center",
-      transition: "background 0.3s",
-    };
-  };
 
   const onEmojiClick = (emojiObject) => {
     const sym = emojiObject.unified.split("_");
@@ -790,13 +799,33 @@ function MainPage({ isNewPostShared }) {
     postSharingStartedActivateAnimate,
     setPostSharingStartedActivateAnimate,
   ] = useState(null);
-  const startPostSharingAnimationActivate = () => {
-    setPostSharingStartedActivateAnimate(true);
+  const [postSharingPausedAnimate, setPostSharingPausedAnimate] =
+    useState(null);
+  const [headerPosition, setHeaderPosition] = useState(0);
+  const handleScroll = () => {
+    const scrollPosition = window.pageYOffset;
+
+    if (scrollPosition < 53) {
+      setHeaderPosition(-scrollPosition);
+    } else {
+      setHeaderPosition(-53);
+    }
   };
 
-  const cancelPostSharingAnimationActivate = () => {
-    setPostSharingStartedActivateAnimate(null);
-  };
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [headerPosition]);
+  const [dataFromTopNavigationComponent, setDataFromTopNavigationComponent] =
+    useState(null);
+
+  function handleDataFromTopNavigationComponentOpenedStatus(data) {
+    console.log("Data =>", data);
+    setDataFromTopNavigationComponent(data);
+  }
+
   return (
     <>
       {contextHolder}
@@ -1770,8 +1799,7 @@ function MainPage({ isNewPostShared }) {
             isSubModalTabIndexNull={tabIndexValue}
           />
         )}
-      <ResponsiveNavigationBarTop />
-
+      {/* <ResponsiveNavigationBarTop /> */}
       <Col
         xs={12} // 0px - 576px aralığı
         sm={12} // 576px - 768px aralığı
@@ -1805,28 +1833,181 @@ function MainPage({ isNewPostShared }) {
       >
         <div
           style={{
-            display: "flex",
-            padding: "16px 0px 16px 0px",
+            transform:
+              dataFromTopNavigationComponent ===
+                "mobile top navigation was closed" &&
+              `translateY(${headerPosition}px)`,
+            backgroundColor:
+              dataFromTopNavigationComponent ===
+                "mobile top navigation was closed" && "transparent",
+            minHeight:
+              dataFromTopNavigationComponent ===
+                "mobile top navigation was closed" && "53px",
+            transition:
+              dataFromTopNavigationComponent ===
+                "mobile top navigation was closed" &&
+              "transform 0.3s cubic-bezier(0, 0, 0, 1)",
+            backdropFilter:
+              dataFromTopNavigationComponent ===
+                "mobile top navigation was closed" && "blur(12px)",
+            position: width > 500 && "sticky",
+            top: width > 500 && "0px",
+            width: width > 500 && "100%",
+            backgroundColor: width > 500 && "transparent",
+            backdropFilter: width > 500 && "blur(12px)",
+            zIndex: width > 500 && 99999,
           }}
         >
-          <span
-            className="chirp-medium-font"
-            onMouseEnter={() => handleHover("forYou")}
-            onMouseLeave={handleLeave}
-            onClick={() => handleShowForYou()}
-            style={getTabStyle("forYou")}
+          {width <= 500 && (
+            <MobileTopNavigation
+              navigationBarOpenedStatus={
+                handleDataFromTopNavigationComponentOpenedStatus
+              }
+            />
+          )}
+          <div
+            style={{
+              display: "flex",
+            }}
           >
-            For you
-          </span>
-          <span
-            className="chirp-medium-font"
-            onMouseEnter={() => handleHover("following")}
-            onMouseLeave={handleLeave}
-            onClick={() => handleShowFollowing()}
-            style={getTabStyle("following")}
-          >
-            Following
-          </span>
+            <span
+              className={
+                themeName === "dark-theme"
+                  ? "hover-effect-dark-theme-pointer-plus chirp-bold-font"
+                  : themeName !== "dark-theme"
+                  ? "hover-effect-light-theme-pointer-plus"
+                  : null
+              }
+              onMouseEnter={() => handleHover("forYou")}
+              onMouseLeave={handleLeave}
+              onClick={() => handleShowForYou()}
+              style={{
+                color:
+                  activeTab === "forYou" && themeName !== "dark-theme"
+                    ? "#0f141a"
+                    : activeTab === "forYou" && themeName === "dark-theme"
+                    ? "#e6e9ea"
+                    : themeName === "dark-theme"
+                    ? "#71767A"
+                    : "#526371",
+                fontWeight: activeTab === "forYou" ? "700" : "500",
+                lineHeight: "20px",
+                fontSize: "15px",
+                cursor: "pointer",
+                flex: 1,
+                textAlign: "center",
+                transition: "background 0.3s",
+                maxHeight: "inherit",
+              }}
+            >
+              {/* { color: #e6e9ea !important; }  { color: #0f141a !important; } */}
+              <div
+                style={{
+                  display: "inline-flex",
+                  padding: "16px 0px 16px 0px",
+                  flexDirection: "column",
+                  position: "relative",
+                }}
+              >
+                <span
+                  className={
+                    themeName === "dark-theme" && activeTab === "forYou"
+                      ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                      : themeName !== "dark-theme" && activeTab === "forYou"
+                      ? "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                      : themeName === "dark-theme" && activeTab !== "forYou"
+                      ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                      : themeName !== "dark-theme" && activeTab !== "forYou"
+                      ? "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                      : null
+                  }
+                >
+                  For you
+                </span>
+                {activeTab === "forYou" && (
+                  <div
+                    style={{
+                      backgroundColor: "rgb(29, 155, 240)",
+                      height: "4px",
+                      width: "100%",
+                      minWidth: "52px",
+                      position: "absolute",
+                      bottom: "0px",
+                      borderRadius: "9999px",
+                    }}
+                  ></div>
+                )}
+              </div>
+            </span>
+
+            <span
+              className={
+                themeName === "dark-theme"
+                  ? "hover-effect-dark-theme-pointer-plus "
+                  : themeName !== "dark-theme"
+                  ? "hover-effect-light-theme-pointer-plus "
+                  : null
+              }
+              onMouseEnter={() => handleHover("following")}
+              onMouseLeave={handleLeave}
+              onClick={() => handleShowFollowing()}
+              style={{
+                color:
+                  activeTab === "following" && themeName !== "dark-theme"
+                    ? "#0f141a"
+                    : activeTab === "following" && themeName === "dark-theme"
+                    ? "#e6e9ea"
+                    : themeName === "dark-theme"
+                    ? "#71767A"
+                    : "#526371",
+                fontWeight: activeTab === "following" ? "700" : "500",
+                lineHeight: "20px",
+                fontSize: "15px",
+                cursor: "pointer",
+                flex: 1,
+                textAlign: "center",
+                transition: "background 0.3s",
+              }}
+            >
+              <div
+                style={{
+                  display: "inline-flex",
+                  padding: "16px 0px 16px 0px",
+                  flexDirection: "column",
+                  position: "relative",
+                }}
+              >
+                <span
+                  className={
+                    themeName === "dark-theme" && activeTab === "following"
+                      ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                      : themeName !== "dark-theme" && activeTab === "following"
+                      ? "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                      : themeName === "dark-theme" && activeTab !== "following"
+                      ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                      : themeName !== "dark-theme" && activeTab !== "following"
+                      ? "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                      : null
+                  }
+                >
+                  Following
+                </span>{" "}
+                {activeTab === "following" && (
+                  <div
+                    style={{
+                      backgroundColor: "rgb(29, 155, 240)",
+                      height: "4px",
+                      width: "100%",
+                      minWidth: "52px",
+                      position: "absolute",
+                      bottom: "0px",
+                      borderRadius: "9999px",
+                    }}
+                  ></div>
+                )}
+              </div>
+            </span>
+          </div>
         </div>
 
         {themeName === "dark-theme" ? (
@@ -1857,12 +2038,17 @@ function MainPage({ isNewPostShared }) {
         >
           <div
             className={
-              postSharingStartedActivateAnimate
+              postSharingStartedActivateAnimate && !postSharingPausedAnimate
                 ? "post_sharing_line_animation"
-                : ""
+                : postSharingPausedAnimate
+                ? "paused"
+                : null
             }
             style={{
-              display: postSharingStartedActivateAnimate ? "" : "none",
+              display:
+                postSharingStartedActivateAnimate || postSharingPausedAnimate
+                  ? ""
+                  : "none",
               position: "absolute",
               border: "2px solid #1C9BEF",
               height: "0.2rem",
@@ -2487,7 +2673,12 @@ function MainPage({ isNewPostShared }) {
                                       {post?.userId.hasSubscription ||
                                       (!subscription?.isActive &&
                                         subscription?.remainingTimeSubscription &&
-                                        subscription?.cancelledDate) ? (
+                                        subscription?.cancelledDate &&
+                                        subscription?.owner ===
+                                          post?.userId._id) ||
+                                      remainingTimeSubscriptionsOwnerIds.includes(
+                                        post?.userId._id
+                                      ) ? (
                                         <span>
                                           {/* start to check  */}{" "}
                                           <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
@@ -3077,10 +3268,10 @@ function MainPage({ isNewPostShared }) {
                               style={{
                                 cursor: "pointer",
                               }}
-                              to={`/${post.userId.username}/status/${
+                              to={`/${post?.userId?.username}/status/${
                                 !post.isReposted
                                   ? post._id
-                                  : post.repostedFromThisOriginalPost[0]._id
+                                  : post?.repostedFromThisOriginalPost[0]?._id
                               }`}
                               onClick={() => setclickedPostBox(post)}
                               className="outside-of-inner-circle-post-info-user-info-svg-three-dots"
@@ -3178,7 +3369,12 @@ function MainPage({ isNewPostShared }) {
                                     {post?.userId.hasSubscription ||
                                     (!subscription?.isActive &&
                                       subscription?.remainingTimeSubscription &&
-                                      subscription?.cancelledDate) ? (
+                                      subscription?.cancelledDate &&
+                                      subscription?.owner ===
+                                        post?.userId._id) ||
+                                    remainingTimeSubscriptionsOwnerIds.includes(
+                                      post?.userId._id
+                                    ) ? (
                                       <span>
                                         {/* start to check  */}{" "}
                                         <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
@@ -3226,7 +3422,7 @@ function MainPage({ isNewPostShared }) {
                                         !post.isReposted
                                           ? post._id
                                           : post.repostedFromThisOriginalPost[0]
-                                              ._id
+                                              ?._id
                                       }`}
                                       style={{
                                         textDecoration: "none",
@@ -3285,7 +3481,7 @@ function MainPage({ isNewPostShared }) {
                               to={`/${post.userId.username}/status/${
                                 !post.isReposted
                                   ? post._id
-                                  : post.repostedFromThisOriginalPost[0]._id
+                                  : post.repostedFromThisOriginalPost[0]?._id
                               }`}
                               onClick={() => setclickedPostBox(post)}
                               className="outside-of-inner-circle-action-comment-text"
@@ -3297,7 +3493,8 @@ function MainPage({ isNewPostShared }) {
                                   to={`/${post.userId.username}/status/${
                                     !post.isReposted
                                       ? post._id
-                                      : post.repostedFromThisOriginalPost[0]._id
+                                      : post.repostedFromThisOriginalPost[0]
+                                          ?._id
                                   }`}
                                   onClick={() => setclickedPostBox(post)}
                                   className="p-2 parent-comment-text"
@@ -3340,7 +3537,7 @@ function MainPage({ isNewPostShared }) {
                                 to={`/${post.userId.username}/status/${
                                   !post.isReposted
                                     ? post._id
-                                    : post.repostedFromThisOriginalPost[0]._id
+                                    : post.repostedFromThisOriginalPost[0]?._id
                                 }`}
                                 style={{
                                   textDecoration: "none",
@@ -3372,7 +3569,8 @@ function MainPage({ isNewPostShared }) {
                                   to={`/${post.userId.username}/status/${
                                     !post.isReposted
                                       ? post._id
-                                      : post.repostedFromThisOriginalPost[0]._id
+                                      : post.repostedFromThisOriginalPost[0]
+                                          ?._id
                                   }/photo/${1}`}
                                   style={{
                                     textDecoration: "none",
@@ -3450,7 +3648,7 @@ function MainPage({ isNewPostShared }) {
                                 to={`/${post.userId.username}/status/${
                                   !post.isReposted
                                     ? post._id
-                                    : post.repostedFromThisOriginalPost[0]._id
+                                    : post.repostedFromThisOriginalPost[0]?._id
                                 }`}
                                 onClick={() => setclickedPostBox(post)}
                                 className="p-1 next-to-like"

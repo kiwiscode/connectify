@@ -209,8 +209,7 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
           }}
         >
           <svg
-            color={themeName === "dark-theme" ? "white" : ""}
-            fill="currentColor"
+            fill={themeName === "dark-theme" ? "#71767a" : "#536371"}
             width={20}
             height={20}
             viewBox="0 0 24 24"

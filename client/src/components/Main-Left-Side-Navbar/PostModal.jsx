@@ -127,16 +127,12 @@ function PostModal({
     postSharingStartedActivateAnimate,
     setPostSharingStartedActivateAnimate,
   ] = useState(null);
-  const startPostSharingAnimationActivate = () => {
-    setPostSharingStartedActivateAnimate(true);
-  };
-
-  const cancelPostSharingAnimationActivate = () => {
-    setPostSharingStartedActivateAnimate(null);
-  };
+  const [postSharingPausedAnimate, setPostSharingPausedAnimate] =
+    useState(null);
   const handlePost = () => {
+    setPostSharingStartedActivateAnimate(true);
+
     if (content || chosenEmoji || modalImage) {
-      startPostSharingAnimationActivate();
       axios
         .post(
           `${API_URL}/home/post`,
@@ -152,22 +148,19 @@ function PostModal({
         )
 
         .then((response) => {
-          const lineElement = document.querySelector(
-            ".post_sharing_line_animation"
-          );
           setTimeout(() => {
-            cancelPostSharingAnimationActivate();
-            lineElement.classList.add("paused");
-            lineElement.classList.remove("post_sharing_line_animation");
-          }, 300);
-          setTimeout(() => {
-            lineElement.classList.remove("paused");
-          }, 350);
+            if (!image) {
+              setPostSharingPausedAnimate(true);
+            }
+          }, 400);
+
           if (setLoadingTrue) {
             setLoadingTrue();
           }
 
           setTimeout(() => {
+            setPostSharingPausedAnimate(false);
+            setPostSharingStartedActivateAnimate(false);
             parentCallBack(response.data.createdPost);
             if (setLoadingTrue) {
               setLoadingFalse();
@@ -178,7 +171,7 @@ function PostModal({
             setModalImage("");
             setContent("");
             handleClose();
-          }, 350);
+          }, 500);
         })
         .catch((err) => {
           return err;
@@ -259,12 +252,17 @@ function PostModal({
         {" "}
         <div
           className={
-            postSharingStartedActivateAnimate
+            postSharingStartedActivateAnimate && !postSharingPausedAnimate
               ? "post_sharing_line_animation"
-              : ""
+              : postSharingPausedAnimate
+              ? "paused"
+              : null
           }
           style={{
-            display: postSharingStartedActivateAnimate ? "" : "none",
+            display:
+              postSharingStartedActivateAnimate || postSharingPausedAnimate
+                ? ""
+                : "none",
             position: "absolute",
             border: "2px solid #1C9BEF",
             height: "0.2rem",
