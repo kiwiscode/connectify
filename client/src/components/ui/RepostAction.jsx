@@ -94,7 +94,7 @@ function RepostAction({
   };
 
   const getRepostedIds = (array) => {
-    return array.reposted.map((eachRepost) => {
+    return array?.reposted.map((eachRepost) => {
       return eachRepost._id;
     });
   };
@@ -107,7 +107,7 @@ function RepostAction({
       <PopupState variant="popover" popupId="demo-popup-popover">
         {(popupState) => (
           <div>
-            {post.reposted.length > 0 &&
+            {post?.reposted.length > 0 &&
             getRepostedIds(post).includes(userInfo._id) ? (
               <div>
                 {" "}
@@ -253,7 +253,7 @@ function RepostAction({
                       fontSize: isCutePopoverOnRightSide ? "12px" : null,
                     }}
                   >
-                    {post.reposted.length ? (
+                    {post?.reposted.length ? (
                       <span>{post.reposted.length}</span>
                     ) : null}
                   </span>
@@ -283,7 +283,7 @@ function RepostAction({
             >
               {" "}
               <div style={{}}>
-                {getRepostedIds(post).includes(userInfo._id) ? (
+                {getRepostedIds(post)?.includes(userInfo._id) ? (
                   <div
                     style={{
                       display: " flex",

@@ -162,18 +162,8 @@ function RightSideColumn({
       });
   }, [searchTerm]);
 
-  const [searchBarAnimation, setSearchBarAnimation] = useState(null);
-
-  useEffect(() => {
-    setSearchBarAnimation(false);
-    console.log("Filtered search result =>", filteredSearchResult);
-  });
-
-  useEffect(() => {
-    if (searchTerm.length > 0) {
-      setSearchBarAnimation(true);
-    }
-  }, [searchTerm]);
+  const [searchBarAnimation, setSearchBarAnimation] = useState(false);
+  const [stopAnimation, setStopAnimation] = useState(false);
   // finish to check search implementation for main component right side column
 
   const { updateUser } = useContext(UserContext);
@@ -184,7 +174,6 @@ function RightSideColumn({
   const [scrollPosition, setScrollPosition] = useState(0);
   useEffect(() => {
     window.addEventListener("scroll", handleScroll, { passive: true });
-    console.log("Scroll position y =>", scrollPosition);
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
@@ -232,6 +221,7 @@ function RightSideColumn({
         },
       })
       .then((response) => {
+        console.log("Response for first 3 user =>", response.data);
         setFirst3User(response.data.first3User);
       })
       .catch((error) => {
@@ -1273,7 +1263,7 @@ function RightSideColumn({
   const [subscription, setSubscription] = useState(null);
   const getSubscription = async () => {
     try {
-      const response = await axios.get(`${API_URL}/subscriptions`, {
+      const response = await axios.get(`${API_URL}/subscription`, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
@@ -1297,8 +1287,38 @@ function RightSideColumn({
       console.error("Error:", error);
     }
   };
+  const [remainingTimeSubscriptions, setRemainingTimeSubscriptions] = useState(
+    []
+  );
+  const [
+    remainingTimeSubscriptionsOwnerIds,
+    setRemainingTimeSubscriptionsOwnerIds,
+  ] = useState([]);
+  const getRemainingTimeSubscriptions = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/remaining_time_subscriptions`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      setRemainingTimeSubscriptions(response.data.remainingTimeSubscriptions);
+
+      setRemainingTimeSubscriptionsOwnerIds(
+        response.data.remainingTimeSubscriptions.map((eachSub) => {
+          return eachSub.owner;
+        })
+      );
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
   useEffect(() => {
     getSubscription();
+    getRemainingTimeSubscriptions();
   }, []);
   useEffect(() => {
     if (
@@ -1528,6 +1548,15 @@ function RightSideColumn({
       setindividualSubOptionPremiumPlusMonthlyTab(false);
     }
   }, [showSubscriptionModal]);
+
+  const searchBoxRef = useRef(null);
+
+  const [searchBoxClicked, setSearchBoxClicked] = useState(null);
+  const handleClick = (event) => {
+    if (searchBoxRef.current && searchBoxRef.current.contains(event.target)) {
+      setSearchBoxClicked(true);
+    }
+  };
 
   return (
     <>
@@ -17417,8 +17446,12 @@ function RightSideColumn({
                   setOnFocusXBtn(true);
                 }}
                 onBlur={() => {
-                  setOnFocus(false);
-                  setOnFocusXBtn(false);
+                  if (!searchBoxClicked) {
+                    setTimeout(() => {
+                      setOnFocus(false);
+                      setOnFocusXBtn(false);
+                    }, 1000);
+                  }
                 }}
                 onChange={handleSetSearchTerm}
                 value={searchTerm}
@@ -17449,6 +17482,8 @@ function RightSideColumn({
               />
             </div>
             <div
+              ref={searchBoxRef}
+              onClick={handleClick}
               className={`scrollbar-add scrollbar-add-${themeName}`}
               style={{
                 overflowY: "auto",
@@ -17481,20 +17516,20 @@ function RightSideColumn({
             >
               <div
                 className={
-                  searchBarAnimation && !filteredSearchResult.length
+                  searchBarAnimation
                     ? "post_sharing_line_animation"
-                    : ""
+                    : stopAnimation
+                    ? "paused"
+                    : null
                 }
                 style={{
-                  display:
-                    searchBarAnimation && !filteredSearchResult.length
-                      ? ""
-                      : "none",
                   position: "absolute",
                   border: "2px solid #1C9BEF",
                   height: "0.2rem",
                   top: "0px",
+                  left: "0px",
                   borderTopLeftRadius: "4px",
+                  display: searchBarAnimation || stopAnimation ? "" : "none",
                 }}
               ></div>
               <div
@@ -17557,7 +17592,20 @@ function RightSideColumn({
                         cursor: "pointer",
                       }}
                       onClick={() => {
-                        navigate(`/profile/${eachUser._doc._id}`);
+                        setTimeout(() => {
+                          setSearchTerm("");
+                          setSearchBarAnimation(true);
+                        }, 0);
+                        setTimeout(() => {
+                          setStopAnimation(true);
+                        }, 600);
+                        setTimeout(() => {
+                          setSearchBarAnimation(false);
+                          setStopAnimation(false);
+                          setOnFocusXBtn(false);
+                          setOnFocus(false);
+                          navigate(`/profile/${eachUser._doc._id}`);
+                        }, 700);
                       }}
                     >
                       <Stack
@@ -17567,7 +17615,7 @@ function RightSideColumn({
                         direction="horizontal"
                       >
                         {eachUser._doc?.imageUrl?.slice(0, 3) !== "../" ? (
-                          <Link to={`/profile/${eachUser._doc?._id}`}>
+                          <Link>
                             <img
                               src={eachUser._doc?.imageUrl}
                               alt={`${eachUser._doc?.fullname}'s profile`}
@@ -17581,7 +17629,7 @@ function RightSideColumn({
                           </Link>
                         ) : (
                           <div>
-                            <Link to={`/profile/${eachUser._doc?._id}`}>
+                            <Link>
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="40"
@@ -17611,7 +17659,6 @@ function RightSideColumn({
                             className="fullname"
                           >
                             <Link
-                              to={`/profile/${eachUser._doc?._id}`}
                               className="hover-fullname"
                               style={{
                                 textDecoration: "none",
@@ -17652,7 +17699,6 @@ function RightSideColumn({
                               style={{
                                 textDecoration: "none",
                               }}
-                              to={`/profile/${eachUser._doc?._id}`}
                             >
                               <span
                                 style={{
@@ -17868,7 +17914,11 @@ function RightSideColumn({
                                       {eachUser.hasSubscription ||
                                       (!subscription?.isActive &&
                                         subscription?.remainingTimeSubscription &&
-                                        subscription?.cancelledDate) ? (
+                                        subscription?.cancelledDate &&
+                                        subscription?.owner === eachUser._id) ||
+                                      remainingTimeSubscriptionsOwnerIds.includes(
+                                        eachUser._id
+                                      ) ? (
                                         <span>
                                           {/* start to check  */}{" "}
                                           <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
@@ -18118,10 +18168,10 @@ function RightSideColumn({
                               )}
                             </div>
                             <div
+                              className="chirp-regular-font"
                               style={{
                                 lineHeight: "20px",
                                 fontSize: "15px",
-                                fontWeight: "400",
                                 overflow: "hidden",
                                 marginLeft: "5px",
                               }}
@@ -18144,8 +18194,8 @@ function RightSideColumn({
                               <div
                                 className={
                                   themeName === "dark-theme"
-                                    ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font hover-fullname"
-                                    : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font hover-fullname"
+                                    ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font hover-fullname"
+                                    : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font hover-fullname"
                                 }
                                 style={{
                                   cursor: "pointer",
@@ -18155,6 +18205,10 @@ function RightSideColumn({
                                   overflow: "hidden",
                                   textOverflow: "ellipsis",
                                   whiteSpace: "nowrap",
+                                  color:
+                                    themeName === "dark-theme"
+                                      ? "#71767A"
+                                      : "rgb(83, 100, 113)",
                                 }}
                               >
                                 {`${eachActivity.activityHasBeenInitiatedWith.fullname}'s`}
@@ -18180,15 +18234,14 @@ function RightSideColumn({
                                       variant="text"
                                     >
                                       <div
-                                        className="hover-blue-underline"
+                                        className="hover-blue-underline chirp-regular-font"
                                         style={{
                                           cursor: "pointer",
                                           color: "rgb(29, 155, 240)",
                                           fontSize: "15px",
                                           lineHeight: "20px",
-                                          fontWeight: "400",
                                           position: "relative",
-                                          bottom: "3px",
+                                          bottom: "2.5px",
                                           marginLeft: "5px",
                                         }}
                                       >
@@ -18299,41 +18352,45 @@ function RightSideColumn({
                                                 textOverflow: "ellipsis",
                                                 whiteSpace: "nowrap",
                                                 width: "120px",
-                                                marginLeft: "5px",
+                                                marginLeft: "8px",
                                                 position: "relative",
                                                 top: "3px",
                                               }}
                                             >
-                                              {
-                                                eachActivity.relatedPost?.userId
-                                                  ?.fullname
-                                              }
+                                              <span>
+                                                {
+                                                  eachActivity.relatedPost
+                                                    ?.userId?.fullname
+                                                }
+                                              </span>
                                             </Link>
                                           </div>
-                                          <span
+                                          <div
                                             style={{
-                                              visibility: "hidden",
+                                              margin: "0px 5px",
+
+                                              position: "relative",
+                                              top: "2px",
                                             }}
                                           >
-                                            {"a"}
-                                          </span>
-                                          <div>
                                             {eachActivity.relatedPost?.userId
-                                              ?.hasSubscription ||
+                                              .hasSubscription ||
                                             (!subscription?.isActive &&
                                               subscription?.remainingTimeSubscription &&
-                                              subscription?.cancelledDate) ? (
+                                              subscription?.cancelledDate &&
+                                              subscription?.owner ===
+                                                eachActivity.relatedPost?.userId
+                                                  ._id) ||
+                                            remainingTimeSubscriptionsOwnerIds.includes(
+                                              eachActivity.relatedPost?.userId
+                                                ._id
+                                            ) ? (
                                               <span>
                                                 {/* start to check  */}{" "}
                                                 <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
                                                   <svg
-                                                    style={{
-                                                      margin: "0px 5px",
-                                                      position: "relative",
-                                                      top: "3px",
-                                                    }}
-                                                    width={`${1.25}em`}
-                                                    height={`${1.25}em`}
+                                                    width={`${1}em`}
+                                                    height={`${1}em`}
                                                     viewBox="0 0 22 22"
                                                     aria-label="Verified account"
                                                     role="img"
@@ -18346,7 +18403,7 @@ function RightSideColumn({
                                                       <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
                                                     </g>
                                                   </svg>
-                                                </span>{" "}
+                                                </span>
                                               </span>
                                             ) : (
                                               <span> </span>

@@ -22,7 +22,7 @@ function FollowerDetailPage() {
   const [subscription, setSubscription] = useState(null);
   const getSubscription = async () => {
     try {
-      const response = await axios.get(`${API_URL}/subscriptions`, {
+      const response = await axios.get(`${API_URL}/subscription`, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
@@ -46,9 +46,38 @@ function FollowerDetailPage() {
       console.error("Error:", error);
     }
   };
+  const [remainingTimeSubscriptions, setRemainingTimeSubscriptions] = useState(
+    []
+  );
+  const [
+    remainingTimeSubscriptionsOwnerIds,
+    setRemainingTimeSubscriptionsOwnerIds,
+  ] = useState([]);
+  const getRemainingTimeSubscriptions = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/remaining_time_subscriptions`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
 
+      setRemainingTimeSubscriptions(response.data.remainingTimeSubscriptions);
+
+      setRemainingTimeSubscriptionsOwnerIds(
+        response.data.remainingTimeSubscriptions.map((eachSub) => {
+          return eachSub.owner;
+        })
+      );
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
   useEffect(() => {
     getSubscription();
+    getRemainingTimeSubscriptions();
   }, []);
   const { getToken, userInfo } = useContext(UserContext);
 
@@ -94,16 +123,15 @@ function FollowerDetailPage() {
         console.log("Error =>", error);
       });
   };
-  useEffect(() => {
-    getActiveUser();
-  }, [clicked]);
 
   const checkActiveUserFollowerIds = () => {
     return activeUserFollowing.map((eachFollowerUser) => {
       return eachFollowerUser._id;
     });
   };
-
+  useEffect(() => {
+    getActiveUser();
+  }, [clicked]);
   useEffect(() => {
     getFollowers();
   }, []);
@@ -120,27 +148,6 @@ function FollowerDetailPage() {
     setSelectedUser(selectedUser);
 
     setshowUnfollowModal(true);
-  };
-
-  const getTabStyle = (tab) => {
-    return {
-      color:
-        activeTab === tab && themeName !== "dark-theme"
-          ? "rgb(29, 155, 240"
-          : activeTab === tab && themeName === "dark-theme"
-          ? "white"
-          : themeName === "dark-theme"
-          ? " #71767A"
-          : "rgb(83,100,113)",
-      fontWeight: activeTab === tab ? "700" : "400",
-      lineHeight: "20px",
-      fontSize: "15px",
-      cursor: "pointer",
-      flex: 1,
-      textAlign: "center",
-      transition: "background 0.3s",
-      textDecoration: "none",
-    };
   };
 
   const [activeTab, setActiveTab] = useState("");
@@ -174,6 +181,43 @@ function FollowerDetailPage() {
     });
   };
   const { isPostModalVisible } = useContext(ModalVisibilityContext);
+
+  const [hoveredTab, setHoveredTab] = useState(null);
+
+  const handleHover = (tab) => {
+    setHoveredTab(tab);
+  };
+
+  const handleLeave = () => {
+    setHoveredTab(null);
+  };
+  const handleShowFollowers = () => {
+    setActiveTab("followers");
+    navigate(`/profile/${followersofthemonitoreduser._id}/followers`);
+  };
+
+  const handleShowFollowing = () => {
+    setActiveTab("following");
+    navigate(`/profile/${followersofthemonitoreduser._id}/following`);
+  };
+  const [headerPosition, setHeaderPosition] = useState(0);
+
+  const handleScroll = () => {
+    const scrollPosition = window.pageYOffset;
+
+    if (scrollPosition < 53) {
+      setHeaderPosition(-scrollPosition);
+    } else {
+      setHeaderPosition(-53);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [headerPosition]);
   return (
     <>
       {!isPostModalVisible && <ResponsiveNavigationBarBottom />}
@@ -211,89 +255,497 @@ function FollowerDetailPage() {
           minHeight: width <= 700 ? "100dvh" : "",
         }}
       >
-        <Stack
-          style={{
-            padding: "0px 12px",
-          }}
-          direction="horizontal"
-          gap={0}
-        >
-          {/* start to check  */}
-          <div
-            onClick={handleGoBack}
-            className={`p-2 arrow arrow-${themeName}`}
-            style={{
-              position: "relative",
-              bottom: "15px",
-              width: "30px",
-              height: " 30px",
-              borderRadius: "50%",
-              cursor: "pointer",
-            }}
-          >
-            <svg
-              color={themeName === "dark-theme" ? "white" : ""}
-              fill="currentColor"
-              style={{
-                position: "absolute",
-                bottom: "5px",
-                border: "none",
-                left: "5px",
-                fontSize: "15px",
-              }}
-              width={20}
-              height={20}
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-            >
-              <g>
-                <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
-              </g>
-            </svg>
-          </div>
-
-          {/* finish to check  */}
-
-          <div
-            className="p-2"
-            style={{
-              fontWeight: "700",
-              fontSize: "20px",
-              height: "100px",
-            }}
-          >
-            <div>{followersofthemonitoreduser.username}</div>
-            <div
-              style={{
-                color:
-                  themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
-              }}
-              className="profile-paragraph"
-            >
-              @{followersofthemonitoreduser.username}
-            </div>
-          </div>
-        </Stack>
-
         <div
           style={{
-            display: "flex",
-            padding: "16px 0px 16px 0px",
+            backgroundColor: "transparent",
+            minHeight: "53px",
+            zIndex: 99999,
+            backdropFilter: "blur(12px)",
+            transform: width <= 500 && `translateY(${headerPosition}px)`,
+            transition:
+              width <= 500 && "transform 0.3s cubic-bezier(0, 0, 0, 1)",
+            position: width > 500 && "sticky",
+            top: width > 500 && "0px",
+            width: width > 500 && "100%",
           }}
         >
-          <Link
-            to={`/profile/${followersofthemonitoreduser._id}/followers`}
-            style={getTabStyle("followers")}
-          >
-            Followers
-          </Link>
-          <Link
-            to={`/profile/${followersofthemonitoreduser._id}/following`}
-            style={getTabStyle("following")}
-          >
-            Following
-          </Link>
+          {width <= 500 ? (
+            <>
+              <div
+                style={{
+                  minHeight: "53px",
+                  width: "100%",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      width: "53px",
+                      height: "53px",
+                      maxHeight: "53px",
+                    }}
+                  >
+                    <div
+                      onClick={() => navigate(-1)}
+                      className={`arrow arrow-${themeName}`}
+                      style={{
+                        width: "36px",
+                        height: "36px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <svg
+                        fill={
+                          themeName === "dark-theme"
+                            ? "rgb(231,233,234)"
+                            : "rgb(15, 20, 25)"
+                        }
+                        width={20}
+                        height={20}
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                      >
+                        <g>
+                          <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                        </g>
+                      </svg>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "flex-start",
+                      justifyContent: "center",
+                      height: "53px",
+                      maxHeight: "53px",
+                    }}
+                  >
+                    <div
+                      className={
+                        themeName === "dark-theme"
+                          ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                          : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                      }
+                      style={{
+                        fontSize: "17px",
+                        lineHeight: "20px",
+                      }}
+                    >
+                      {followersofthemonitoreduser.fullname}
+                    </div>
+                    <div
+                      className={
+                        themeName === "dark-theme"
+                          ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                          : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                      }
+                      style={{
+                        fontSize: "13px",
+                        lineHeight: "16px",
+                      }}
+                    >
+                      @{followersofthemonitoreduser.username}
+                    </div>
+                  </div>
+                </div>
+                <div style={{ display: "flex" }}>
+                  <div
+                    className={
+                      themeName === "dark-theme"
+                        ? "hover-effect-dark-theme-pointer-plus chirp-bold-font"
+                        : themeName !== "dark-theme"
+                        ? "hover-effect-light-theme-pointer-plus"
+                        : null
+                    }
+                    onMouseEnter={() => handleHover("followers")}
+                    onMouseLeave={handleLeave}
+                    onClick={handleShowFollowers}
+                    style={{
+                      color:
+                        activeTab === "followers" && themeName !== "dark-theme"
+                          ? "#0f141a"
+                          : activeTab === "followers" &&
+                            themeName === "dark-theme"
+                          ? "#e6e9ea"
+                          : themeName === "dark-theme"
+                          ? "#71767A"
+                          : "#526371",
+                      fontWeight: activeTab === "followers" ? "700" : "500",
+                      lineHeight: "20px",
+                      fontSize: "15px",
+                      cursor: "pointer",
+                      flex: 1,
+                      textAlign: "center",
+                      transition: "background 0.3s",
+                      maxHeight: "inherit",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "inline-flex",
+                        padding: "16px 0px 16px 0px",
+                        flexDirection: "column",
+                        position: "relative",
+                      }}
+                    >
+                      <span
+                        className={
+                          themeName === "dark-theme" &&
+                          activeTab === "followers"
+                            ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                            : themeName !== "dark-theme" &&
+                              activeTab === "followers"
+                            ? "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                            : themeName === "dark-theme" &&
+                              activeTab !== "followers"
+                            ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                            : themeName !== "dark-theme" &&
+                              activeTab !== "followers"
+                            ? "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                            : null
+                        }
+                      >
+                        Followers
+                      </span>
+                      {activeTab === "followers" && (
+                        <div
+                          style={{
+                            backgroundColor: "rgb(29, 155, 240)",
+                            height: "4px",
+                            width: "100%",
+                            minWidth: "52px",
+                            position: "absolute",
+                            bottom: "0px",
+                            borderRadius: "9999px",
+                          }}
+                        ></div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div
+                    className={
+                      themeName === "dark-theme"
+                        ? "hover-effect-dark-theme-pointer-plus "
+                        : themeName !== "dark-theme"
+                        ? "hover-effect-light-theme-pointer-plus "
+                        : null
+                    }
+                    onMouseEnter={() => handleHover("following")}
+                    onMouseLeave={handleLeave}
+                    onClick={handleShowFollowing}
+                    style={{
+                      color:
+                        activeTab === "following" && themeName !== "dark-theme"
+                          ? "#0f141a"
+                          : activeTab === "following" &&
+                            themeName === "dark-theme"
+                          ? "#e6e9ea"
+                          : themeName === "dark-theme"
+                          ? "#71767A"
+                          : "#526371",
+                      fontWeight: activeTab === "following" ? "700" : "500",
+                      lineHeight: "20px",
+                      fontSize: "15px",
+                      cursor: "pointer",
+                      flex: 1,
+                      textAlign: "center",
+                      transition: "background 0.3s",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "inline-flex",
+                        padding: "16px 0px 16px 0px",
+                        flexDirection: "column",
+                        position: "relative",
+                      }}
+                    >
+                      <span
+                        className={
+                          themeName === "dark-theme" &&
+                          activeTab === "following"
+                            ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                            : themeName !== "dark-theme" &&
+                              activeTab === "following"
+                            ? "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                            : themeName === "dark-theme" &&
+                              activeTab !== "following"
+                            ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                            : themeName !== "dark-theme" &&
+                              activeTab !== "following"
+                            ? "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                            : null
+                        }
+                      >
+                        Following
+                      </span>{" "}
+                      {activeTab === "following" && (
+                        <div
+                          style={{
+                            backgroundColor: "rgb(29, 155, 240)",
+                            height: "4px",
+                            width: "100%",
+                            minWidth: "52px",
+                            position: "absolute",
+                            bottom: "0px",
+                            borderRadius: "9999px",
+                          }}
+                        ></div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div
+                style={{
+                  minHeight: "53px",
+                  width: "100%",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    padding: "0px 16px",
+                  }}
+                >
+                  <div
+                    onClick={handleGoBack}
+                    // className="p-2 arrow"
+                    className={`p-2 arrow arrow-${themeName}`}
+                    style={{
+                      width: "36px",
+                      height: " 36px",
+                      borderRadius: "50%",
+                      cursor: "pointer",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <svg
+                      color={themeName === "dark-theme" ? "white" : ""}
+                      fill="currentColor"
+                      width={20}
+                      height={20}
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                    >
+                      <g>
+                        <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                      </g>
+                    </svg>
+                  </div>
+                  <div
+                    className={
+                      themeName === "dark-theme"
+                        ? "soft-grey-dark-theme-text-variant-1 p-2 chirp-bold-font"
+                        : "very-dark-gray-light-theme-text-variant-1 p-2 chirp-bold-font"
+                    }
+                    style={{
+                      fontSize: "20px",
+                      lineHeight: "24px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: ".2rem",
+                        alignItems: "center",
+                      }}
+                    >
+                      <div
+                        className="chirp-bold-font"
+                        style={{
+                          lineHeight: width <= 500 ? "20px" : "24px",
+                          fontSize: width <= 500 ? "17px" : "20px",
+                        }}
+                      >
+                        {followersofthemonitoreduser.fullname}
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)",
+                      }}
+                      className="profile-paragraph"
+                    >
+                      @{followersofthemonitoreduser.username}
+                    </div>
+                  </div>{" "}
+                </div>
+                <div style={{ display: "flex" }}>
+                  <div
+                    className={
+                      themeName === "dark-theme"
+                        ? "hover-effect-dark-theme-pointer-plus chirp-bold-font"
+                        : themeName !== "dark-theme"
+                        ? "hover-effect-light-theme-pointer-plus"
+                        : null
+                    }
+                    onMouseEnter={() => handleHover("followers")}
+                    onMouseLeave={handleLeave}
+                    onClick={handleShowFollowers}
+                    style={{
+                      color:
+                        activeTab === "followers" && themeName !== "dark-theme"
+                          ? "#0f141a"
+                          : activeTab === "followers" &&
+                            themeName === "dark-theme"
+                          ? "#e6e9ea"
+                          : themeName === "dark-theme"
+                          ? "#71767A"
+                          : "#526371",
+                      fontWeight: activeTab === "followers" ? "700" : "500",
+                      lineHeight: "20px",
+                      fontSize: "15px",
+                      cursor: "pointer",
+                      flex: 1,
+                      textAlign: "center",
+                      transition: "background 0.3s",
+                      maxHeight: "inherit",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "inline-flex",
+                        padding: "16px 0px 16px 0px",
+                        flexDirection: "column",
+                        position: "relative",
+                      }}
+                    >
+                      <span
+                        className={
+                          themeName === "dark-theme" &&
+                          activeTab === "followers"
+                            ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                            : themeName !== "dark-theme" &&
+                              activeTab === "followers"
+                            ? "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                            : themeName === "dark-theme" &&
+                              activeTab !== "followers"
+                            ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                            : themeName !== "dark-theme" &&
+                              activeTab !== "followers"
+                            ? "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                            : null
+                        }
+                      >
+                        Followers
+                      </span>
+                      {activeTab === "followers" && (
+                        <div
+                          style={{
+                            backgroundColor: "rgb(29, 155, 240)",
+                            height: "4px",
+                            width: "100%",
+                            minWidth: "52px",
+                            position: "absolute",
+                            bottom: "0px",
+                            borderRadius: "9999px",
+                          }}
+                        ></div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div
+                    className={
+                      themeName === "dark-theme"
+                        ? "hover-effect-dark-theme-pointer-plus "
+                        : themeName !== "dark-theme"
+                        ? "hover-effect-light-theme-pointer-plus "
+                        : null
+                    }
+                    onMouseEnter={() => handleHover("following")}
+                    onMouseLeave={handleLeave}
+                    onClick={handleShowFollowing}
+                    style={{
+                      color:
+                        activeTab === "following" && themeName !== "dark-theme"
+                          ? "#0f141a"
+                          : activeTab === "following" &&
+                            themeName === "dark-theme"
+                          ? "#e6e9ea"
+                          : themeName === "dark-theme"
+                          ? "#71767A"
+                          : "#526371",
+                      fontWeight: activeTab === "following" ? "700" : "500",
+                      lineHeight: "20px",
+                      fontSize: "15px",
+                      cursor: "pointer",
+                      flex: 1,
+                      textAlign: "center",
+                      transition: "background 0.3s",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "inline-flex",
+                        padding: "16px 0px 16px 0px",
+                        flexDirection: "column",
+                        position: "relative",
+                      }}
+                    >
+                      <span
+                        className={
+                          themeName === "dark-theme" &&
+                          activeTab === "following"
+                            ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                            : themeName !== "dark-theme" &&
+                              activeTab === "following"
+                            ? "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                            : themeName === "dark-theme" &&
+                              activeTab !== "following"
+                            ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                            : themeName !== "dark-theme" &&
+                              activeTab !== "following"
+                            ? "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                            : null
+                        }
+                      >
+                        Following
+                      </span>{" "}
+                      {activeTab === "following" && (
+                        <div
+                          style={{
+                            backgroundColor: "rgb(29, 155, 240)",
+                            height: "4px",
+                            width: "100%",
+                            minWidth: "52px",
+                            position: "absolute",
+                            bottom: "0px",
+                            borderRadius: "9999px",
+                          }}
+                        ></div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
         <div
           style={{
@@ -580,10 +1032,14 @@ function FollowerDetailPage() {
                         </div>
                         {/* Verified Account Icon (Assuming 'verified' is a boolean property) */}
 
-                        {user.hasSubscription ||
+                        {user?.hasSubscription ||
                         (!subscription?.isActive &&
                           subscription?.remainingTimeSubscription &&
-                          subscription?.cancelledDate) ? (
+                          subscription?.cancelledDate &&
+                          subscription?.owner === user?._id) ||
+                        remainingTimeSubscriptionsOwnerIds.includes(
+                          user?._id
+                        ) ? (
                           <span>
                             {/* start to check  */}{" "}
                             <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
@@ -609,9 +1065,7 @@ function FollowerDetailPage() {
                               </svg>
                             </span>{" "}
                           </span>
-                        ) : (
-                          <span> </span>
-                        )}
+                        ) : null}
                         {/* Following or unfollow Button start to check */}
                         <div
                           onClick={() =>

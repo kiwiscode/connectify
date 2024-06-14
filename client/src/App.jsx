@@ -19,6 +19,14 @@ const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 const BookmarksPage = lazy(() => import("./pages/BookmarksPage"));
 const PremiumSignupPage = lazy(() => import("./pages/PremiumSignupPage"));
 const Settings = lazy(() => import("./pages/Settings"));
+const AccountInformationMain = lazy(() =>
+  import(
+    "./pages/settings/your_account_options/account_information/Main/AccountInformationMain"
+  )
+);
+const VerifiedChooseMain = lazy(() =>
+  import("./pages/subscription-flow/i-verified-choose/VerifiedChooseMain")
+);
 const YourAccountMain = lazy(() =>
   import("./pages/settings/your_account_options/main/YourAccountMain")
 );
@@ -46,17 +54,21 @@ const SecurityMain = lazy(() =>
     "./pages/settings/security_and_account_access/sections/security/main/SecurityMain"
   )
 );
-const PrivacyAndSafetyMain = lazy(() => import("./pages/PrivacyAndSafetyMain"));
-const SettingsNotificationsMain = lazy(() =>
-  import("./pages/SettingsNotificationsMain")
+const PrivacyAndSafetyMain = lazy(() =>
+  import("./pages/settings/privacy_and_safety/main/PrivacyAndSafetyMain")
+);
+const NotificationMain = lazy(() =>
+  import("./pages/settings/notifications/main/NotificationMain")
 );
 const AccessibilityDisplayAndLanguagesMain = lazy(() =>
-  import("./pages/AccessibilityDisplayAndLanguagesMain")
+  import(
+    "./pages/settings/accessibility_display_and_languages/main/AccessibilityDisplayAndLanguagesMain"
+  )
 );
-const AdditionalResourcesMain = lazy(() =>
-  import("./pages/AdditionalResourcesMain")
+const About = lazy(() => import("./pages/settings/about/main/About"));
+const HelpConnectifyMain = lazy(() =>
+  import("./pages/settings/help_connectify/main/HelpConnectifyMain")
 );
-const HelpConnectifyMain = lazy(() => import("./pages/HelpConnectifyMain"));
 
 const ChangeYourPasswordMain = lazy(() =>
   import(
@@ -220,8 +232,7 @@ import { Container, Row } from "react-bootstrap";
 import LeftSideNavBar from "./components/Main-Left-Side-Navbar/LeftSideNavbar";
 import RightSideColumn from "./components/Main-Right-Side-Column/RightSideColumn";
 import useWindowDimensions from "./hooks/getWindowDimensions";
-import AccountInformationMain from "./pages/settings/your_account_options/account_information/Main/AccountInformationMain";
-import VerifiedChooseMain from "./pages/subscription-flow/i-verified-choose/VerifiedChooseMain";
+import ResponsiveNavigationBarBottom from "./components/Navbar/ResponsiveNavigationBottom";
 
 function App() {
   const location = useLocation();
@@ -384,14 +395,15 @@ function App() {
             height: "100vh",
             height: "100dvh",
             width: "100%",
-            overflow: "auto",
             colorScheme: themeName === "dark-theme" ? "dark" : "light",
+            overflow: path.startsWith("/messages/") ? "hidden" : "auto",
           }}
         >
           {/* test for one time component leftsidenavbar start to check  */}
           <Container
             style={{
-              height: "100%",
+              minHeight: "100vh",
+              minHeight: "100dvh",
             }}
             fluid
           >
@@ -434,7 +446,10 @@ function App() {
                     element={<NotificationsPage />}
                   ></Route>
                   <Route path="/messages" element={<MessagesPage />}></Route>
-                  <Route path="/bookmarks" element={<BookmarksPage />}></Route>
+                  <Route
+                    path="/i/bookmarks"
+                    element={<BookmarksPage />}
+                  ></Route>
                   <Route
                     path="/profile"
                     element={<UserProfile isNewPostShared={isPostShared} />}
@@ -627,16 +642,13 @@ function App() {
                   ></Route>
                   <Route
                     path="/settings/notifications"
-                    element={<SettingsNotificationsMain />}
+                    element={<NotificationMain />}
                   ></Route>
                   <Route
                     path="/settings/accessibility_display_and_languages"
                     element={<AccessibilityDisplayAndLanguagesMain />}
                   ></Route>
-                  <Route
-                    path="/settings/about"
-                    element={<AdditionalResourcesMain />}
-                  ></Route>
+                  <Route path="/settings/about" element={<About />}></Route>
                   <Route
                     path="/help_connectify"
                     element={<HelpConnectifyMain />}

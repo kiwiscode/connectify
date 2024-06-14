@@ -1,21 +1,10 @@
-import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserContext";
 import { ThemeContext } from "../context/ThemeContext";
 import useWindowDimensions from "../hooks/getWindowDimensions";
-import { Button, Col, Modal, Stack } from "react-bootstrap";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import Popover from "@mui/material/Popover";
-import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
-import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
-import { List } from "antd";
-import PostPopover from "../components/three-dots-popover/Popover";
-import { CommentModal } from "../components/ui/Modal";
-import RepostAction from "../components/ui/RepostAction";
-import LikeAction from "../components/ui/LikeAction";
-import BookmarkAction from "../components/ui/BookmarkAction";
+import { Col, Stack } from "react-bootstrap";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
-import LoadingSpinner from "../components/ui/LoadingSpinner";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
 import { NavigationHistoryContext } from "../context/NavigationHistoryContext";
@@ -147,18 +136,128 @@ function Settings() {
           width: width > 1400 ? "440px" : "",
         }}
       >
-        <Stack direction="vertical" gap={3} className="mt-2">
-          <div
-            style={{
-              lineHeight: "24px",
-              fontWeight: "700",
-              fontSize: "20px",
-              paddingLeft: "12px",
-              paddingRight: "12px",
-            }}
-          >
-            <span>Settings</span>
-          </div>
+        <Stack
+          direction="vertical"
+          gap={3}
+          className={width <= 500 ? "" : "mt-2"}
+          style={{
+            height: width <= 500 ? "675px" : "",
+          }}
+        >
+          {width <= 500 ? (
+            <div
+              style={{
+                height: "53px",
+                padding: "0px 16px",
+                boxSizing: "border-box",
+                flexBasis: "auto",
+                flexShrink: "0",
+                margin: "0px",
+                minHeight: "0px",
+                minWidth: "0px",
+                position: "relative",
+                textDecoration: "none",
+                zIndex: 0,
+                pointerEvents: "auto !important",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "53px",
+                    height: "53px",
+                    maxHeight: "53px",
+                  }}
+                >
+                  <div
+                    onClick={() => navigate(-1)}
+                    className={`arrow arrow-${themeName}`}
+                    style={{
+                      width: "36px",
+                      height: "36px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderRadius: "50%",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <svg
+                      fill={
+                        themeName === "dark-theme"
+                          ? "rgb(231,233,234)"
+                          : "rgb(15, 20, 25)"
+                      }
+                      width={20}
+                      height={20}
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                    >
+                      <g>
+                        <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                      </g>
+                    </svg>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                    justifyContent: "center",
+                    height: "53px",
+                    maxHeight: "53px",
+                  }}
+                >
+                  <div
+                    className={
+                      themeName === "dark-theme"
+                        ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                        : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                    }
+                    style={{
+                      fontSize: "17px",
+                      lineHeight: "20px",
+                    }}
+                  >
+                    Settings
+                  </div>
+                  <div
+                    className={
+                      themeName === "dark-theme"
+                        ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                        : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                    }
+                    style={{
+                      fontSize: "13px",
+                      lineHeight: "16px",
+                    }}
+                  >
+                    @{userInfo.username}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div
+              style={{
+                lineHeight: "24px",
+                fontWeight: "700",
+                fontSize: "20px",
+                paddingLeft: "12px",
+                paddingRight: "12px",
+              }}
+            >
+              <span>Settings</span>
+            </div>
+          )}
           <div
             className="first-div-input"
             style={{

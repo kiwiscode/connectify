@@ -1,31 +1,19 @@
-import axios from "axios";
-import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../context/UserContext";
-import { ThemeContext } from "../context/ThemeContext";
-import useWindowDimensions from "../hooks/getWindowDimensions";
-import { Button, Col, Modal, Stack } from "react-bootstrap";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import Popover from "@mui/material/Popover";
-import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
-import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
-import { List } from "antd";
-import PostPopover from "../components/three-dots-popover/Popover";
-import { CommentModal } from "../components/ui/Modal";
-import RepostAction from "../components/ui/RepostAction";
-import LikeAction from "../components/ui/LikeAction";
-import BookmarkAction from "../components/ui/BookmarkAction";
-import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
-import LoadingSpinner from "../components/ui/LoadingSpinner";
-import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
-import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
-import { NavigationHistoryContext } from "../context/NavigationHistoryContext";
-import SettingsNavigation from "../components/SettingsNavigation/SettingsNavigation";
+import { useContext, useState } from "react";
+import { Col } from "react-bootstrap";
+import { useLocation, useNavigate } from "react-router-dom";
+import { UserContext } from "../../../../context/UserContext";
+import { ThemeContext } from "../../../../context/ThemeContext";
+import useWindowDimensions from "../../../../hooks/getWindowDimensions";
+import { useAntdMessageHandler } from "../../../../utils/useAntdMessageHandler";
+import { ModalVisibilityContext } from "../../../../context/ModalVisibilityContext";
+import ResponsiveNavigationBarBottom from "../../../../components/Navbar/ResponsiveNavigationBottom";
+import SettingsNavigation from "../../../../components/SettingsNavigation/SettingsNavigation";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-function SettingsNotificationsMain() {
+function NotificationMain() {
   const { getToken, userInfo } = useContext(UserContext);
   const [{ theme, themeName }] = useContext(ThemeContext);
   const { width } = useWindowDimensions();
@@ -112,8 +100,6 @@ function SettingsNotificationsMain() {
   const [isSearchStart, setSearchStart] = useState(null);
 
   const [showNotificationMessage, setShowNotificationMessage] = useState(null);
-
-  const { navigationHistoryArray } = useContext(NavigationHistoryContext);
 
   return (
     <>
@@ -395,4 +381,4 @@ function SettingsNotificationsMain() {
     </>
   );
 }
-export default SettingsNotificationsMain;
+export default NotificationMain;

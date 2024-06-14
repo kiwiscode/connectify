@@ -38,7 +38,10 @@ import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
 import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
 
 const socket = io.connect(API_URL);
-function LogoutModal({ isResponsiveNavigationBarTop }) {
+function LogoutModal({
+  isResponsiveNavigationBarTop,
+  isMobileNavigationBarTop,
+}) {
   const [
     { theme, themeName, activeFontSizeOption },
     toggleThemeBetweenLightDarkMode,
@@ -932,1141 +935,128 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
 
   return (
     <>
-      {width <= 700 && (
-        <Modal
-          style={{
-            height: "100vh",
-            height: "100dvh",
-            margin: "0px",
-            padding: "0px",
-            backgroundColor: themeName === "dark-theme" ? "black" : "white",
-            zIndex: 9999,
-            width: "100%",
-          }}
-          show={showDisplayOptionsModal}
-          onHide={handleCloseDisplayOptionsModal}
-          dialogClassName="modal-fullscreen"
+      {isMobileNavigationBarTop && (
+        <div
+          onClick={() => setShowLogoutModal(true)}
           className={
             themeName === "dark-theme"
-              ? "dark-theme-display-options-modal"
-              : "display-options-modal"
+              ? "hover-effect-dark-theme-pointer-plus"
+              : "hover-effect-light-theme-pointer-plus"
           }
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            flexBasis: "auto",
+            boxSizing: "border-box",
+            flexShrink: "0",
+            margin: "0px",
+            minHeight: "0px",
+            minWidth: "0px",
+            position: "relative",
+            padding: "16px",
+          }}
         >
           <div
+            href=""
             style={{
-              padding: "16px",
+              maxWidth: "100%",
+              outlineStyle: "none",
+              cursor: "pointer",
+              flexGrow: "1",
+              boxSizing: "border-box",
+              display: "flex",
+              flexBasis: "auto",
+              flexDirection: "column",
+              flexShrink: "0",
+              listStyle: "none",
+              margin: "0px",
+              padding: "0px",
+              minWidth: "0px",
+              minHeight: "0px",
+              position: "relative",
+              textDecoration: "none",
+              pointerEvents: "auto",
             }}
           >
             <div
               style={{
                 display: "flex",
                 flexDirection: "row",
-                gap: "5%",
-              }}
-            >
-              <div
-                onClick={handleCloseDisplayOptionsModal}
-                // className="p-2 arrow"
-                className={`p-2 arrow arrow-${themeName}`}
-                style={{
-                  position: "relative",
-                  bottom: "3px",
-                  width: "30px",
-                  height: " 30px",
-                  borderRadius: "50%",
-                  cursor: "pointer",
-                }}
-              >
-                <svg
-                  color={themeName === "dark-theme" ? "white" : ""}
-                  fill="currentColor"
-                  style={{
-                    position: "absolute",
-                    bottom: "5px",
-                    border: "none",
-                    left: "5px",
-                    fontSize: "15px",
-                  }}
-                  width={20}
-                  height={20}
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                >
-                  <g>
-                    <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
-                  </g>
-                </svg>
-              </div>
-              <h2
-                style={{
-                  fontSize: "20px",
-                  fontWeight: "700",
-                  lineHeight: "24px",
-                  color: themeName === "dark-theme" ? "#E6E9EA" : "black",
-                }}
-              >
-                Display
-              </h2>
-            </div>
-            <div
-              className="mt-4"
-              style={{
-                lineHeight: "15px",
-                fontSize: "12px",
-                fontWeight: "400",
-                color:
-                  themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
-              }}
-            >
-              Manage your font size, color, and background. These settings
-              affect all the C accounts on this browser.
-            </div>
-            <div className="mt-4">
-              <div
-                style={{
-                  float: "left",
-                  height: "65px",
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width={50}
-                  height={30}
-                  viewBox="0 0 100 100"
-                >
-                  {/* İçi dolu bir kare */}
-                  <rect
-                    x="5"
-                    y="5"
-                    width="90"
-                    height="90"
-                    fill="#1C9BEF"
-                    rx="5"
-                    ry="5"
-                    style={{
-                      filter: "drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))",
-                    }}
-                  />
-
-                  <text
-                    x="27.5"
-                    y="70"
-                    fontFamily="Arial"
-                    fontSize="60"
-                    fill="#FFF"
-                    stroke="#FFF"
-                    strokeWidth="2"
-                  >
-                    C
-                  </text>
-                </svg>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                }}
-              >
-                <div
-                  style={{
-                    fontWeight: "700",
-                    color: themeName === "dark-theme" ? "#E6E9EA" : "black",
-                  }}
-                >
-                  C
-                </div>
-                <div
-                  style={{
-                    marginLeft: "5px",
-                  }}
-                >
-                  {" "}
-                  <span
-                    style={{
-                      position: "relative",
-                      bottom: "2px",
-                    }}
-                    className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5"
-                  >
-                    <svg
-                      width={`${1.25}em`}
-                      height={`${1.25}em`}
-                      viewBox="0 0 22 22"
-                      aria-label="Verified account"
-                      role="img"
-                      className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
-                      data-testid="verified-icon"
-                      color="rgba(29,155,240,1.00)"
-                      fill="currentColor"
-                    >
-                      <g>
-                        <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
-                      </g>
-                    </svg>
-                  </span>{" "}
-                </div>
-
-                <div
-                  style={{
-                    color: themeName === "dark-theme" ? "#71767A" : "",
-                    marginLeft: "5px",
-                  }}
-                >
-                  @C
-                </div>
-                <div
-                  style={{
-                    color: themeName === "dark-theme" ? "#71767A" : "",
-                    marginLeft: "5px",
-                  }}
-                >
-                  <span>&middot;</span>
-                  <span
-                    style={{
-                      marginLeft: "5px",
-                    }}
-                  >
-                    1h
-                  </span>
-                </div>
-              </div>
-              <div
-                style={{
-                  fontSize: "15px",
-                  color: themeName === "dark-theme" ? "#E6E9EA" : "black",
-                }}
-              >
-                At the heart of C are short messages called posts — just like
-                this one — which can include photos, videos, links, text,
-                hashtags, and mentions like{" "}
-                <span
-                  style={{
-                    color: "#1C9BEF",
-                  }}
-                >
-                  @C
-                </span>
-                .
-              </div>
-            </div>
-
-            <div
-              className="mt-3"
-              style={{
-                margin: "-16px",
-
-                borderBottom:
-                  themeName !== "dark-theme"
-                    ? "1px solid rgba(0, 0, 0, 0.1)"
-                    : // : "0.1px solid rgb(70, 70, 70)",
-                      "1px solid rgb(70, 70, 70)",
-              }}
-            ></div>
-          </div>
-          <div
-            style={{
-              padding: "16px",
-            }}
-          >
-            <div
-              style={{
-                fontSize: "19px",
-                lineHeight: "23px",
-                fontWeight: "800",
-                color: themeName === "dark-theme" ? "#E6E9EA" : "black",
-              }}
-            >
-              Font size
-            </div>
-            <div className="mt-4">
-              <div
-                style={{
-                  display: "flex",
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: "12px",
-                    lineHeight: "14px",
-                    fontWeight: "400",
-                    color: themeName === "dark-theme" ? "#E6E9EA" : "black",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <span>Aa</span>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <BootstrapTooltip
-                    title="Extra small"
-                    themeName={
-                      themeName === "dark-theme" ? "dark-theme" : "light-theme"
-                    }
-                  >
-                    <div
-                      onClick={() => toggleChangeFontSize("Extra Small 12px")}
-                      onMouseEnter={() => setHoveredOption("Extra small")}
-                      onMouseLeave={() => setHoveredOption(null)}
-                      style={{
-                        backgroundColor:
-                          hoveredOption === "Extra small" &&
-                          themeName !== "dark-theme"
-                            ? "#e8f2fb"
-                            : hoveredOption === "Extra small" &&
-                              themeName === "dark-theme"
-                            ? "#0a141d                            "
-                            : null,
-                        width: "36px",
-                        height: "36px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginLeft: "15px",
-                        borderRadius: "50%",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <div
-                        style={{
-                          zIndex: 9999,
-                          width:
-                            activeFontSizeOption !== "Extra Small 12px"
-                              ? "10px"
-                              : "16px",
-                          height:
-                            activeFontSizeOption !== "Extra Small 12px"
-                              ? "10px"
-                              : "16px",
-                          borderRadius: "50%",
-                          backgroundColor:
-                            activeFontSizeOption === "Extra Small 12px" ||
-                            activeFontSizeOption === "Default 16px" ||
-                            activeFontSizeOption === "Small 14px" ||
-                            activeFontSizeOption === "Large 18px" ||
-                            activeFontSizeOption === "Extra Large 20px"
-                              ? "#1C9BEF"
-                              : "#8ECCF8",
-                        }}
-                      ></div>
-                    </div>
-                  </BootstrapTooltip>
-                  <div
-                    style={{
-                      marginLeft: "-13px",
-                      marginRight: "-13px",
-                    }}
-                    className={
-                      themeName !== "dark-theme"
-                        ? `border-display-font-size-option ${
-                            activeFontSizeOption === "Default 16px" ||
-                            activeFontSizeOption === "Small 14px" ||
-                            activeFontSizeOption === "Large 18px" ||
-                            activeFontSizeOption === "Extra Large 20px"
-                              ? "active"
-                              : "non-active"
-                          } `
-                        : `border-display-font-size-option-dark-theme ${
-                            activeFontSizeOption === "Default 16px" ||
-                            activeFontSizeOption === "Small 14px" ||
-                            activeFontSizeOption === "Large 18px" ||
-                            activeFontSizeOption === "Extra Large 20px"
-                              ? "active"
-                              : "non-active"
-                          } `
-                    }
-                  ></div>
-                  <BootstrapTooltip
-                    title="Small"
-                    themeName={
-                      themeName === "dark-theme" ? "dark-theme" : "light-theme"
-                    }
-                  >
-                    <div
-                      onClick={() => toggleChangeFontSize("Small 14px")}
-                      onMouseEnter={() => setHoveredOption("Small")}
-                      onMouseLeave={() => setHoveredOption(null)}
-                      style={{
-                        backgroundColor:
-                          hoveredOption === "Small" &&
-                          themeName !== "dark-theme"
-                            ? "#e8f2fb"
-                            : hoveredOption === "Small" &&
-                              themeName === "dark-theme"
-                            ? "#0a141d                            "
-                            : null,
-                        width: "36px",
-                        height: "36px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        borderRadius: "50%",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <div
-                        style={{
-                          zIndex: 9999,
-                          width:
-                            activeFontSizeOption !== "Small 14px"
-                              ? "10px"
-                              : "16px",
-                          height:
-                            activeFontSizeOption !== "Small 14px"
-                              ? "10px"
-                              : "16px",
-                          borderRadius: "50%",
-                          backgroundColor:
-                            activeFontSizeOption === "Default 16px" ||
-                            activeFontSizeOption === "Small 14px" ||
-                            activeFontSizeOption === "Large 18px" ||
-                            activeFontSizeOption === "Extra Large 20px"
-                              ? "#1C9BEF"
-                              : "#8ECCF8",
-                        }}
-                      ></div>
-                    </div>
-                  </BootstrapTooltip>
-                  <div
-                    style={{
-                      marginLeft: "-13px",
-                      marginRight: "-13px",
-                    }}
-                    className={
-                      themeName !== "dark-theme"
-                        ? `border-display-font-size-option ${
-                            activeFontSizeOption === "Default 16px" ||
-                            activeFontSizeOption === "Large 18px" ||
-                            activeFontSizeOption === "Extra Large 20px"
-                              ? "active"
-                              : "non-active"
-                          } `
-                        : `border-display-font-size-option-dark-theme ${
-                            activeFontSizeOption === "Default 16px" ||
-                            activeFontSizeOption === "Large 18px" ||
-                            activeFontSizeOption === "Extra Large 20px"
-                              ? "active"
-                              : "non-active"
-                          } `
-                    }
-                  ></div>
-                  <BootstrapTooltip
-                    title="Default"
-                    themeName={
-                      themeName === "dark-theme" ? "dark-theme" : "light-theme"
-                    }
-                  >
-                    <div
-                      onClick={() => toggleChangeFontSize("Default 16px")}
-                      onMouseEnter={() => setHoveredOption("Default")}
-                      onMouseLeave={() => setHoveredOption(null)}
-                      style={{
-                        backgroundColor:
-                          hoveredOption === "Default" &&
-                          themeName !== "dark-theme"
-                            ? "#e8f2fb"
-                            : hoveredOption === "Default" &&
-                              themeName === "dark-theme"
-                            ? "#0a141d                            "
-                            : null,
-                        width: "36px",
-                        height: "36px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        borderRadius: "50%",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <div
-                        style={{
-                          zIndex: 9999,
-                          width:
-                            activeFontSizeOption !== "Default 16px"
-                              ? "10px"
-                              : "16px",
-                          height:
-                            activeFontSizeOption !== "Default 16px"
-                              ? "10px"
-                              : "16px",
-                          borderRadius: "50%",
-                          backgroundColor:
-                            activeFontSizeOption === "Default 16px" ||
-                            activeFontSizeOption === "Large 18px" ||
-                            activeFontSizeOption === "Extra Large 20px"
-                              ? "#1C9BEF"
-                              : "#8ECCF8",
-                        }}
-                      ></div>
-                    </div>
-                  </BootstrapTooltip>
-                  <div
-                    style={{
-                      marginLeft: "-13px",
-                      marginRight: "-13px",
-                    }}
-                    className={
-                      themeName !== "dark-theme"
-                        ? `border-display-font-size-option ${
-                            activeFontSizeOption === "Large 18px" ||
-                            activeFontSizeOption === "Extra Large 20px"
-                              ? "active"
-                              : "non-active"
-                          } `
-                        : `border-display-font-size-option-dark-theme ${
-                            activeFontSizeOption === "Large 18px" ||
-                            activeFontSizeOption === "Extra Large 20px"
-                              ? "active"
-                              : "non-active"
-                          } `
-                    }
-                  ></div>
-                  <BootstrapTooltip
-                    title="Large"
-                    themeName={
-                      themeName === "dark-theme" ? "dark-theme" : "light-theme"
-                    }
-                  >
-                    <div
-                      onClick={() => toggleChangeFontSize("Large 18px")}
-                      onMouseEnter={() => setHoveredOption("Large")}
-                      onMouseLeave={() => setHoveredOption(null)}
-                      style={{
-                        backgroundColor:
-                          hoveredOption === "Large" &&
-                          themeName !== "dark-theme"
-                            ? "#e8f2fb"
-                            : hoveredOption === "Large" &&
-                              themeName === "dark-theme"
-                            ? "#0a141d                            "
-                            : null,
-                        width: "36px",
-                        height: "36px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        borderRadius: "50%",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <div
-                        style={{
-                          zIndex: 9999,
-
-                          width:
-                            activeFontSizeOption !== "Large 18px"
-                              ? "10px"
-                              : "16px",
-                          height:
-                            activeFontSizeOption !== "Large 18px"
-                              ? "10px"
-                              : "16px",
-                          borderRadius: "50%",
-                          backgroundColor:
-                            activeFontSizeOption === "Large 18px" ||
-                            activeFontSizeOption === "Extra Large 20px"
-                              ? "#1C9BEF"
-                              : "#8ECCF8",
-                        }}
-                      ></div>
-                    </div>
-                  </BootstrapTooltip>
-                  <div
-                    style={{
-                      marginLeft: "-13px",
-                    }}
-                    className={
-                      themeName !== "dark-theme"
-                        ? `border-display-font-size-option ${
-                            activeFontSizeOption === "Extra Large 20px"
-                              ? "active"
-                              : "non-active"
-                          } `
-                        : `border-display-font-size-option-dark-theme ${
-                            activeFontSizeOption === "Extra Large 20px"
-                              ? "active"
-                              : "non-active"
-                          } `
-                    }
-                  ></div>
-                  <BootstrapTooltip
-                    title="Extra large"
-                    themeName={
-                      themeName === "dark-theme" ? "dark-theme" : "light-theme"
-                    }
-                  >
-                    <div
-                      onClick={() => toggleChangeFontSize("Extra Large 20px")}
-                      onMouseEnter={() => setHoveredOption("Extra large")}
-                      onMouseLeave={() => setHoveredOption(null)}
-                      style={{
-                        backgroundColor:
-                          hoveredOption === "Extra large" &&
-                          themeName !== "dark-theme"
-                            ? "#e8f2fb"
-                            : hoveredOption === "Extra large" &&
-                              themeName === "dark-theme"
-                            ? "#0a141d"
-                            : null,
-                        width: "36px",
-                        height: "36px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginLeft: "-13px",
-                        borderRadius: "50%",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <div
-                        style={{
-                          zIndex: 9999,
-
-                          width:
-                            activeFontSizeOption === "Extra Large 20px"
-                              ? "16px"
-                              : "10px",
-                          height:
-                            activeFontSizeOption === "Extra Large 20px"
-                              ? "16px"
-                              : "10px",
-                          borderRadius: "50%",
-                          backgroundColor:
-                            activeFontSizeOption === "Extra Large 20px"
-                              ? "#1C9BEF"
-                              : "#8ECCF8",
-                        }}
-                      ></div>
-                    </div>
-                  </BootstrapTooltip>
-                </div>
-                <div
-                  style={{
-                    marginLeft: "20px",
-                    fontSize: "18px",
-                    lineHeight: "22px",
-                    fontWeight: "400",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    color: themeName === "dark-theme" ? "#E6E9EA" : "black",
-                  }}
-                >
-                  Aa
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            style={{
-              borderBottom:
-                themeName !== "dark-theme"
-                  ? "1px solid rgba(0, 0, 0, 0.1)"
-                  : // : "0.1px solid rgb(70, 70, 70)",
-                    "1px solid rgb(70, 70, 70)",
-            }}
-          ></div>
-          <div
-            style={{
-              padding: "16px",
-            }}
-          >
-            <div
-              style={{
-                fontSize: "19px",
-                lineHeight: "23px",
-                fontWeight: "800",
-                color: themeName === "dark-theme" ? "#E6E9EA" : "black",
-              }}
-            >
-              Color
-            </div>
-            <div
-              className="mt-4"
-              style={{
-                display: "flex",
-                justifyContent: "space-around",
                 alignItems: "center",
-              }}
-            >
-              <div
-                style={{
-                  cursor: "pointer",
-                  width: "40px",
-                  height: "40px",
-                  backgroundColor: "#1C9BEF",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  borderRadius: "50%",
-                  border: "none",
-                }}
-              >
-                <svg
-                  width={25}
-                  height={25}
-                  fill="white"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-6zzn7w r-q1j0wu"
-                >
-                  <g>
-                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                  </g>
-                </svg>
-              </div>
-              <BootstrapTooltip
-                title="This feature is not yet active."
-                themeName={
-                  themeName === "dark-theme" ? "dark-theme" : "light-theme"
-                }
-              >
-                <div
-                  style={{
-                    width: "40px",
-                    height: "40px",
-                    backgroundColor: "#FFD400",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderRadius: "50%",
-                    border: "none",
-                  }}
-                ></div>
-              </BootstrapTooltip>
-
-              <BootstrapTooltip
-                title="This feature is not yet active."
-                themeName={
-                  themeName === "dark-theme" ? "dark-theme" : "light-theme"
-                }
-              >
-                <div
-                  style={{
-                    width: "40px",
-                    height: "40px",
-                    backgroundColor: "#F9197F",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderRadius: "50%",
-                  }}
-                ></div>
-              </BootstrapTooltip>
-
-              <BootstrapTooltip
-                title="This feature is not yet active."
-                themeName={
-                  themeName === "dark-theme" ? "dark-theme" : "light-theme"
-                }
-              >
-                <div
-                  style={{
-                    width: "40px",
-                    height: "40px",
-                    backgroundColor: "#7855FF",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderRadius: "50%",
-                  }}
-                ></div>
-              </BootstrapTooltip>
-
-              <BootstrapTooltip
-                title="This feature is not yet active."
-                themeName={
-                  themeName === "dark-theme" ? "dark-theme" : "light-theme"
-                }
-              >
-                <div
-                  style={{
-                    width: "40px",
-                    height: "40px",
-                    backgroundColor: "#FE7900",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderRadius: "50%",
-                  }}
-                ></div>
-              </BootstrapTooltip>
-
-              <BootstrapTooltip
-                title="This feature is not yet active."
-                themeName={
-                  themeName === "dark-theme" ? "dark-theme" : "light-theme"
-                }
-              >
-                <div
-                  style={{
-                    width: "40px",
-                    height: "40px",
-                    backgroundColor: "#00BA7C",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderRadius: "50%",
-                  }}
-                ></div>
-              </BootstrapTooltip>
-            </div>
-          </div>
-          <div
-            style={{
-              borderBottom:
-                themeName !== "dark-theme"
-                  ? "1px solid rgba(0, 0, 0, 0.1)"
-                  : // : "0.1px solid rgb(70, 70, 70)",
-                    "1px solid rgb(70, 70, 70)",
-            }}
-          ></div>{" "}
-          <div
-            style={{
-              padding: "16px",
-            }}
-          >
-            <div
-              style={{
-                fontSize: "19px",
-                lineHeight: "23px",
-                fontWeight: "800",
-                color: themeName === "dark-theme" ? "#E6E9EA" : "black",
-              }}
-            >
-              Background
-            </div>
-            <div
-              className="mt-4"
-              style={{
-                display: "flex",
-                flexDirection: width <= 600 ? "column" : "row",
-                justifyContent: "space-between",
-                gap: "2%",
+                flexGrow: "1",
+                padding: "16px",
+                boxSizing: "border-box",
+                flexBasis: "auto",
+                flexShrink: "0",
+                margin: "0px",
+                padding: "0px",
+                minWidth: "0px",
+                minHeight: "0px",
                 position: "relative",
+                textDecoration: "none",
+                pointerEvents: "auto",
+                cursor: "pointer",
               }}
             >
-              <div
+              <svg
                 style={{
+                  marginRight: "24px",
+                  userSelect: "none",
+                  flexShrink: "0",
+                  maxWidth: "100%",
+                  position: "relative",
+                  alignItems: "center",
+                  display: "inline-block",
                   cursor: "pointer",
+                  pointerEvents: "auto",
                 }}
-                onClick={() => {
-                  if (themeName !== "light-theme") {
-                    toggleThemeBetweenLightDarkMode();
-                    setdefaultModeClicked(true);
-                  }
-                }}
-              >
-                <div
-                  style={{
-                    width: width <= 600 ? "80vw" : "180px",
-                    marginTop: width <= 600 ? "10px" : "",
-                    height: "60px",
-                    backgroundColor: "white",
-                    border:
-                      themeName !== "dark-theme" ? "2px solid #1d9bf0" : "",
-                    borderRadius: "4px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  {" "}
-                  <div
-                    style={{
-                      maxWidth: "150px",
-                      minWidth: "150px",
-                      display: "flex",
-                      backgroundColor: "white",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "40px",
-                        height: "40px",
-                        borderRadius: "50%",
-                        cursor: "pointer",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: "white",
-                      }}
-                      className={
-                        defaultModeClicked
-                          ? `default-theme-hover-selected`
-                          : `default-theme-non-selected-hover`
-                      }
-                    >
-                      <div
-                        style={{
-                          backgroundColor:
-                            themeName === "light-theme"
-                              ? "#1d9bf0"
-                              : "transparent",
-                          border:
-                            themeName === "light-theme"
-                              ? "none"
-                              : themeName !== "dark-theme"
-                              ? "2px solid #71767A"
-                              : "2px solid #C0CFD8",
-                          width: "20px",
-                          height: "20px",
-                          borderRadius: "50%",
-                        }}
-                      >
-                        <svg
-                          style={{
-                            position: "relative",
-                            left: "2px",
-                            bottom: "4px",
-                            display:
-                              themeName === "light-theme" ? "initial" : "none",
-                          }}
-                          width={16}
-                          height={16}
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                          className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
-                          fill={
-                            themeName === "light-theme" &&
-                            themeName === "light-theme"
-                              ? "white"
-                              : ""
-                          }
-                        >
-                          <g>
-                            <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                          </g>
-                        </svg>
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        backgroundColor: "white",
-                        color: "black",
-                        fontSize: "15px",
-                        fontWeight: "700",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      Default
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <BootstrapTooltip
-                title="This feature is not yet active. "
-                themeName={
-                  themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                fill={
+                  themeName === "dark-theme"
+                    ? "rgb(231,233,234)"
+                    : "rgb(15, 20, 25)"
                 }
+                width={24}
+                height={24}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18jsvk2 r-1q142lx r-1kihuf0 r-1472mwg r-di8nfa r-lrsllp"
+                data-testid="icon"
               >
-                <div>
-                  <div
-                    style={{
-                      width: width <= 600 ? "80vw" : "180px",
-                      marginTop: width <= 600 ? "10px" : "",
-                      height: "60px",
-                      backgroundColor: "#15202B",
-                      border:
-                        // themeName === "dark-theme"
-                        //   ? "2px solid #1d9bf0"
-                        //   : themeName === "light-theme"
-                        //   ? "none"
-                        //   :
-                        "1px solid rgb(70,70,70)",
-                      borderRadius: "4px",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    {" "}
-                    <div
-                      style={{
-                        maxWidth: "150px",
-                        minWidth: "150px",
-                        display: "flex",
-                        backgroundColor: "#15202B",
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: "40px",
-                          height: "40px",
-                          borderRadius: "50%",
-                          cursor: "pointer",
-                          backgroundColor: "#15202B",
-                          // backgroundColor: "transparent",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <div
-                          style={{
-                            backgroundColor: "#15202B",
-                            border: "2px solid rgb(70, 70, 70)",
-                            width: "20px",
-                            height: "20px",
-
-                            borderRadius: "50%",
-                          }}
-                        >
-                          <svg
-                            style={{
-                              position: "relative",
-                              left: "0px",
-                              bottom: "6px",
-                              display: "none",
-                            }}
-                            width={16}
-                            height={16}
-                            viewBox="0 0 24 24"
-                            aria-hidden="true"
-                            className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
-                            color="white"
-                            fill="currentColor"
-                          >
-                            <g>
-                              <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                            </g>
-                          </svg>
-                        </div>
-                      </div>
-                      <div
-                        style={{
-                          backgroundColor: "transparent",
-                          color: "#F6F9F9",
-                          fontSize: "15px",
-                          fontWeight: "700",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        Dim
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </BootstrapTooltip>
+                <g>
+                  <path d="M4 4.5C4 3.12 5.12 2 6.5 2h11C18.88 2 20 3.12 20 4.5v15c0 1.38-1.12 2.5-2.5 2.5h-11C5.12 22 4 20.88 4 19.5V16h2v3.5c0 .28.22.5.5.5h11c.28 0 .5-.22.5-.5v-15c0-.28-.22-.5-.5-.5h-11c-.28 0-.5.22-.5.5V8H4V4.5zm6.95 3.04L15.42 12l-4.47 4.46-1.41-1.42L11.58 13H2v-2h9.58L9.54 8.96l1.41-1.42z"></path>
+                </g>
+              </svg>
               <div
+                className={
+                  themeName === "dark-theme"
+                    ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                    : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                }
                 style={{
-                  cursor: "pointer",
-                }}
-                onClick={() => {
-                  if (themeName !== "dark-theme") {
-                    toggleThemeBetweenLightDarkMode();
-                    setdefaultModeClicked(false);
-                  }
+                  textOverflow: "unset",
+                  overflowWrap: "break-word",
+                  maxWidth: "100%",
+                  minWidth: "0px",
+                  fontSize: "20px",
+                  whiteSpace: "nowrap",
+                  textAlign: "inherit",
+                  flexGrow: "1",
+                  lineHeight: "24px",
+                  overflow: "hidden",
+                  boxSizing: "border-box",
+                  margin: "0px",
+                  padding: "0px",
+                  position: "relative",
+                  listStyle: "none",
+                  textDecoration: "none",
                 }}
               >
-                <div
-                  style={{
-                    width: width <= 600 ? "80vw" : "180px",
-                    marginTop: width <= 600 ? "10px" : "",
-                    height: "60px",
-                    backgroundColor: "black",
-                    border:
-                      themeName === "dark-theme" ? "2px solid #1d9bf0" : "",
-                    borderRadius: "4px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  {" "}
-                  <div
-                    style={{
-                      maxWidth: "150px",
-                      minWidth: "150px",
-                      display: "flex",
-                      backgroundColor: "black",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "40px",
-                        height: "40px",
-                        borderRadius: "50%",
-                        cursor: "pointer",
-                        backgroundColor: "black",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                      className={
-                        themeName === "dark-theme"
-                          ? "hover-theme-display-modal-dark-theme"
-                          : "hover-theme-display-modal"
-                      }
-                    >
-                      <div
-                        style={{
-                          backgroundColor:
-                            themeName === "dark-theme"
-                              ? "#1d9bf0"
-                              : "transparent",
-                          border:
-                            themeName === "dark-theme"
-                              ? "none"
-                              : themeName !== "dark-theme"
-                              ? "2px solid #71767A"
-                              : "2px solid rgb(70, 70, 70)",
-                          width: "20px",
-                          height: "20px",
-                          position: "relative",
-                          borderRadius: "50%",
-                        }}
-                      >
-                        <svg
-                          style={{
-                            position: "relative",
-                            left: "2px",
-                            bottom: "4px",
-                            display:
-                              themeName === "dark-theme" ? "initial" : "none",
-                          }}
-                          width={16}
-                          height={16}
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                          className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
-                          fill={themeName === "dark-theme" ? "white" : ""}
-                        >
-                          <g>
-                            <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                          </g>
-                        </svg>
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        backgroundColor: "transparent",
-                        color: "#E6E9EA",
-                        fontSize: "15px",
-                        fontWeight: "700",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      Lights out
-                    </div>
-                  </div>
-                </div>
+                Log out
               </div>
             </div>
           </div>
-        </Modal>
+        </div>
       )}
 
       {contextHolder}
@@ -2131,7 +1121,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
               : showLogoutModal && themeName === "dark-theme"
               ? "#232E36"
               : "",
-          zIndex: 9999,
+          zIndex: 99999,
         }}
         size="sm"
         centered={true}
@@ -2263,6 +1253,7 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
           {(popupState) => (
             <div>
               <Button
+                className={width <= 1440 ? "mt-5" : ""}
                 {...bindTrigger(popupState)}
                 style={{
                   border: "none",
@@ -2456,125 +1447,6 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                   }}
                   className="logout-body"
                 >
-                  {width <= 700 ? (
-                    <div>
-                      <div
-                        onClick={() => {
-                          showDisplayModal();
-                          popupState.close();
-                        }}
-                        style={{
-                          paddingBottom: "12px",
-                          paddingTop: "12px",
-                          lineHeight: "20px",
-                          fontWeight: "700",
-                          fontSize: "15px",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                          width: "100%",
-                          // height: "100%",
-                        }}
-                        className={`logout-p logout-popover logout-popover-${themeName}`}
-                      >
-                        <span
-                          style={{
-                            position: "relative",
-                            left: "10px",
-                            color: themeName === "dark-theme" ? "white" : "",
-                          }}
-                        >
-                          Display
-                        </span>
-                      </div>
-                      <div>
-                        <div
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            navigate("/i/premium_sign_up");
-                          }}
-                          style={{
-                            paddingBottom: "12px",
-                            paddingTop: "12px",
-                            lineHeight: "20px",
-                            fontWeight: "700",
-                            fontSize: "15px",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                            width: "100%",
-                            height: "100%",
-                          }}
-                          className={`logout-p logout-popover logout-popover-${themeName}`}
-                        >
-                          <span
-                            style={{
-                              position: "relative",
-                              left: "10px",
-                              color: themeName === "dark-theme" ? "white" : "",
-                            }}
-                          >
-                            Premium
-                          </span>
-                        </div>
-                        {/* <RightSideColumn
-                          sendModalClosedStatusToLogoutModal={
-                            grapRightSideColumnSubscriptionModalOpenedOrClosedStatus
-                          }
-                          widthSmaller700={width <= 700 ? true : false}
-                        /> */}
-                      </div>
-                    </div>
-                  ) : null}
-
-                  {/* settings icon start to check  */}
-                  <div
-                    onClick={() => {
-                      handleShow();
-                      popupState.close();
-                    }}
-                    className={`settings-and-privacy settings-and-privacy-${themeName}`}
-                    style={{
-                      paddingBottom: "12px",
-                      paddingTop: "12px",
-                      lineHeight: "20px",
-                      fontWeight: "700",
-                      fontSize: "15px",
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <svg
-                      color={themeName === "dark-theme" ? "white" : ""}
-                      fill="currentColor"
-                      style={{
-                        position: "relative",
-                        left: "10px",
-                      }}
-                      width={20}
-                      height={20}
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                    >
-                      <g>
-                        <path d="M10.54 1.75h2.92l1.57 2.36c.11.17.32.25.53.21l2.53-.59 2.17 2.17-.58 2.54c-.05.2.04.41.21.53l2.36 1.57v2.92l-2.36 1.57c-.17.12-.26.33-.21.53l.58 2.54-2.17 2.17-2.53-.59c-.21-.04-.42.04-.53.21l-1.57 2.36h-2.92l-1.58-2.36c-.11-.17-.32-.25-.52-.21l-2.54.59-2.17-2.17.58-2.54c.05-.2-.03-.41-.21-.53l-2.35-1.57v-2.92L4.1 8.97c.18-.12.26-.33.21-.53L3.73 5.9 5.9 3.73l2.54.59c.2.04.41-.04.52-.21l1.58-2.36zm1.07 2l-.98 1.47C10.05 6.08 9 6.5 7.99 6.27l-1.46-.34-.6.6.33 1.46c.24 1.01-.18 2.07-1.05 2.64l-1.46.98v.78l1.46.98c.87.57 1.29 1.63 1.05 2.64l-.33 1.46.6.6 1.46-.34c1.01-.23 2.06.19 2.64 1.05l.98 1.47h.78l.97-1.47c.58-.86 1.63-1.28 2.65-1.05l1.45.34.61-.6-.34-1.46c-.23-1.01.18-2.07 1.05-2.64l1.47-.98v-.78l-1.47-.98c-.87-.57-1.28-1.63-1.05-2.64l.34-1.46-.61-.6-1.45.34c-1.02.23-2.07-.19-2.65-1.05l-.97-1.47h-.78zM12 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5c.82 0 1.5-.67 1.5-1.5s-.68-1.5-1.5-1.5zM8.5 12c0-1.93 1.56-3.5 3.5-3.5 1.93 0 3.5 1.57 3.5 3.5s-1.57 3.5-3.5 3.5c-1.94 0-3.5-1.57-3.5-3.5z"></path>
-                      </g>
-                    </svg>
-                    <span
-                      style={{
-                        position: "relative",
-                        left: "10px",
-                        color: themeName === "dark-theme" ? "white" : "",
-                      }}
-                      className="logout-p chirp-bold-font"
-                    >
-                      Settings and privacy
-                    </span>
-                  </div>
-                  {/* settings icon finish to check  */}
                   <div
                     className={`logout-p logout-popover logout-popover-${themeName}`}
                     onClick={() => {
@@ -2619,13 +1491,13 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
         <PopupState variant="popover" popupId="demo-popup-popover">
           {(popupState) => (
             <div
-              // className="mt-4"
               style={{
                 padding: "0px",
                 margin: "0px",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
+                marginTop: "84px",
               }}
             >
               <Button
@@ -2722,124 +1594,6 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
                   }}
                   className="logout-body"
                 >
-                  {width <= 700 ? (
-                    <div>
-                      <div
-                        onClick={() => {
-                          showDisplayModal();
-                          popupState.close();
-                        }}
-                        style={{
-                          paddingBottom: "12px",
-                          paddingTop: "12px",
-                          lineHeight: "20px",
-                          fontWeight: "700",
-                          fontSize: "15px",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                          width: "100%",
-                          // height: "100%",
-                        }}
-                        className={`logout-p logout-popover logout-popover-${themeName}`}
-                      >
-                        <span
-                          style={{
-                            position: "relative",
-                            left: "10px",
-                            color: themeName === "dark-theme" ? "white" : "",
-                          }}
-                        >
-                          Display
-                        </span>
-                      </div>
-                      <div>
-                        <div
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            navigate("/i/premium_sign_up");
-                          }}
-                          style={{
-                            paddingBottom: "12px",
-                            paddingTop: "12px",
-                            lineHeight: "20px",
-                            fontWeight: "700",
-                            fontSize: "15px",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                            width: "100%",
-                            height: "100%",
-                          }}
-                          className={`logout-p logout-popover logout-popover-${themeName}`}
-                        >
-                          <span
-                            style={{
-                              position: "relative",
-                              left: "10px",
-                              color: themeName === "dark-theme" ? "white" : "",
-                            }}
-                          >
-                            Premium
-                          </span>
-                        </div>
-                        {/* <RightSideColumn
-                          sendModalClosedStatusToLogoutModal={
-                            grapRightSideColumnSubscriptionModalOpenedOrClosedStatus
-                          }
-                          widthSmaller700={width <= 700 ? true : false}
-                        /> */}
-                      </div>
-                    </div>
-                  ) : null}
-
-                  {/* settings icon start to check  */}
-                  <div
-                    onClick={() => {
-                      handleShow();
-                      popupState.close();
-                    }}
-                    className={`settings-and-privacy settings-and-privacy-${themeName}`}
-                    style={{
-                      paddingBottom: "12px",
-                      paddingTop: "12px",
-                      lineHeight: "20px",
-                      fontWeight: "700",
-                      fontSize: "15px",
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <svg
-                      color={themeName === "dark-theme" ? "white" : ""}
-                      fill="currentColor"
-                      style={{
-                        position: "relative",
-                        left: "10px",
-                      }}
-                      width={20}
-                      height={20}
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                    >
-                      <g>
-                        <path d="M10.54 1.75h2.92l1.57 2.36c.11.17.32.25.53.21l2.53-.59 2.17 2.17-.58 2.54c-.05.2.04.41.21.53l2.36 1.57v2.92l-2.36 1.57c-.17.12-.26.33-.21.53l.58 2.54-2.17 2.17-2.53-.59c-.21-.04-.42.04-.53.21l-1.57 2.36h-2.92l-1.58-2.36c-.11-.17-.32-.25-.52-.21l-2.54.59-2.17-2.17.58-2.54c.05-.2-.03-.41-.21-.53l-2.35-1.57v-2.92L4.1 8.97c.18-.12.26-.33.21-.53L3.73 5.9 5.9 3.73l2.54.59c.2.04.41-.04.52-.21l1.58-2.36zm1.07 2l-.98 1.47C10.05 6.08 9 6.5 7.99 6.27l-1.46-.34-.6.6.33 1.46c.24 1.01-.18 2.07-1.05 2.64l-1.46.98v.78l1.46.98c.87.57 1.29 1.63 1.05 2.64l-.33 1.46.6.6 1.46-.34c1.01-.23 2.06.19 2.64 1.05l.98 1.47h.78l.97-1.47c.58-.86 1.63-1.28 2.65-1.05l1.45.34.61-.6-.34-1.46c-.23-1.01.18-2.07 1.05-2.64l1.47-.98v-.78l-1.47-.98c-.87-.57-1.28-1.63-1.05-2.64l.34-1.46-.61-.6-1.45.34c-1.02.23-2.07-.19-2.65-1.05l-.97-1.47h-.78zM12 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5c.82 0 1.5-.67 1.5-1.5s-.68-1.5-1.5-1.5zM8.5 12c0-1.93 1.56-3.5 3.5-3.5 1.93 0 3.5 1.57 3.5 3.5s-1.57 3.5-3.5 3.5c-1.94 0-3.5-1.57-3.5-3.5z"></path>
-                      </g>
-                    </svg>
-                    <span
-                      style={{
-                        position: "relative",
-                        left: "10px",
-                        color: themeName === "dark-theme" ? "white" : "",
-                      }}
-                      className="logout-p chirp-bold-font"
-                    >
-                      Settings and privacy
-                    </span>
-                  </div>
                   {/* settings icon finish to check  */}
                   <div
                     className={`logout-p logout-popover logout-popover-${themeName}`}
@@ -2881,272 +1635,6 @@ function LogoutModal({ isResponsiveNavigationBarTop }) {
         </PopupState>
       )}
 
-      {width <= 500 && (
-        <PopupState variant="popover" popupId="demo-popup-popover">
-          {(popupState) => (
-            <div
-              // className="mt-4"
-              style={{
-                padding: "0px",
-                margin: "0px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Button
-                className={
-                  themeName === "dark-theme"
-                    ? "hover-home-dark-theme"
-                    : "hover-home"
-                }
-                {...bindTrigger(popupState)}
-                style={{
-                  border: "none",
-                  borderRadius: "50%",
-                  height: "60px",
-                  width: "60px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                variant="text"
-              >
-                <Stack
-                  style={{
-                    cursor: "pointer",
-                    height: "50px",
-                    width: "50px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                  direction="horizontal"
-                >
-                  {/* start to check */}
-                  {userInfo?.imageUrl?.slice(0, 3) !== "../" ? (
-                    <img
-                      src={userInfo?.imageUrl}
-                      width={isResponsiveNavigationBarTop ? 40 : 40}
-                      height={isResponsiveNavigationBarTop ? 40 : 40}
-                      alt=""
-                      style={{
-                        borderRadius: "50%",
-                      }}
-                    />
-                  ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={isResponsiveNavigationBarTop ? 40 : 40}
-                      height={isResponsiveNavigationBarTop ? 40 : 40}
-                      fill={
-                        themeName === "dark-theme"
-                          ? "#71767A"
-                          : "rgb(83, 100, 113)"
-                      }
-                      className="profile-svg-logout-modal bi bi-person-circle"
-                      viewBox="0 0 16 16"
-                      style={{
-                        borderRadius: "50%",
-                      }}
-                    >
-                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                      <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                    </svg>
-                  )}
-
-                  {/* finish to check */}
-                </Stack>
-              </Button>{" "}
-              <Popover
-                style={{
-                  display: rightSideColumSubscriptionModalStatus ? "none" : "",
-                }}
-                open={popupState.open}
-                onClose={popupState.close}
-                {...bindPopover(popupState)}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "center",
-                }}
-                transformOrigin={{
-                  vertical: "bottom",
-                  horizontal: "center",
-                }}
-                className={`${
-                  themeName === "dark-theme"
-                    ? "popover-material-ui-dark-theme"
-                    : themeName !== "dark-theme"
-                    ? "popover-material-ui-light-theme"
-                    : "hideshowMessageDeletePopover "
-                }`}
-              >
-                {" "}
-                <div
-                  style={{
-                    height: width <= 700 ? "12%" : "100px",
-                    width: "300px",
-                  }}
-                  className="logout-body"
-                >
-                  {width <= 700 ? (
-                    <div>
-                      <div
-                        onClick={() => {
-                          showDisplayModal();
-                          popupState.close();
-                        }}
-                        style={{
-                          paddingBottom: "12px",
-                          paddingTop: "12px",
-                          lineHeight: "20px",
-                          fontWeight: "700",
-                          fontSize: "15px",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                          width: "100%",
-                          // height: "100%",
-                        }}
-                        className={`logout-p logout-popover logout-popover-${themeName}`}
-                      >
-                        <span
-                          style={{
-                            position: "relative",
-                            left: "10px",
-                            color: themeName === "dark-theme" ? "white" : "",
-                          }}
-                        >
-                          Display
-                        </span>
-                      </div>
-                      <div>
-                        <div
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            navigate("/i/premium_sign_up");
-                          }}
-                          style={{
-                            paddingBottom: "12px",
-                            paddingTop: "12px",
-                            lineHeight: "20px",
-                            fontWeight: "700",
-                            fontSize: "15px",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                            width: "100%",
-                            height: "100%",
-                          }}
-                          className={`logout-p logout-popover logout-popover-${themeName}`}
-                        >
-                          <span
-                            style={{
-                              position: "relative",
-                              left: "10px",
-                              color: themeName === "dark-theme" ? "white" : "",
-                            }}
-                          >
-                            Premium
-                          </span>
-                        </div>
-                        {/* <RightSideColumn
-                          sendModalClosedStatusToLogoutModal={
-                            grapRightSideColumnSubscriptionModalOpenedOrClosedStatus
-                          }
-                          widthSmaller700={width <= 700 ? true : false}
-                        /> */}
-                      </div>
-                    </div>
-                  ) : null}
-
-                  {/* settings icon start to check  */}
-                  <div
-                    onClick={() => {
-                      handleShow();
-                      popupState.close();
-                    }}
-                    className={`settings-and-privacy settings-and-privacy-${themeName}`}
-                    style={{
-                      paddingBottom: "12px",
-                      paddingTop: "12px",
-                      lineHeight: "20px",
-                      fontWeight: "700",
-                      fontSize: "15px",
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <svg
-                      color={themeName === "dark-theme" ? "white" : ""}
-                      fill="currentColor"
-                      style={{
-                        position: "relative",
-                        left: "10px",
-                      }}
-                      width={20}
-                      height={20}
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                    >
-                      <g>
-                        <path d="M10.54 1.75h2.92l1.57 2.36c.11.17.32.25.53.21l2.53-.59 2.17 2.17-.58 2.54c-.05.2.04.41.21.53l2.36 1.57v2.92l-2.36 1.57c-.17.12-.26.33-.21.53l.58 2.54-2.17 2.17-2.53-.59c-.21-.04-.42.04-.53.21l-1.57 2.36h-2.92l-1.58-2.36c-.11-.17-.32-.25-.52-.21l-2.54.59-2.17-2.17.58-2.54c.05-.2-.03-.41-.21-.53l-2.35-1.57v-2.92L4.1 8.97c.18-.12.26-.33.21-.53L3.73 5.9 5.9 3.73l2.54.59c.2.04.41-.04.52-.21l1.58-2.36zm1.07 2l-.98 1.47C10.05 6.08 9 6.5 7.99 6.27l-1.46-.34-.6.6.33 1.46c.24 1.01-.18 2.07-1.05 2.64l-1.46.98v.78l1.46.98c.87.57 1.29 1.63 1.05 2.64l-.33 1.46.6.6 1.46-.34c1.01-.23 2.06.19 2.64 1.05l.98 1.47h.78l.97-1.47c.58-.86 1.63-1.28 2.65-1.05l1.45.34.61-.6-.34-1.46c-.23-1.01.18-2.07 1.05-2.64l1.47-.98v-.78l-1.47-.98c-.87-.57-1.28-1.63-1.05-2.64l.34-1.46-.61-.6-1.45.34c-1.02.23-2.07-.19-2.65-1.05l-.97-1.47h-.78zM12 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5c.82 0 1.5-.67 1.5-1.5s-.68-1.5-1.5-1.5zM8.5 12c0-1.93 1.56-3.5 3.5-3.5 1.93 0 3.5 1.57 3.5 3.5s-1.57 3.5-3.5 3.5c-1.94 0-3.5-1.57-3.5-3.5z"></path>
-                      </g>
-                    </svg>
-                    <span
-                      style={{
-                        position: "relative",
-                        left: "10px",
-                        color: themeName === "dark-theme" ? "white" : "",
-                      }}
-                      className="logout-p chirp-bold-font"
-                    >
-                      Settings and privacy
-                    </span>
-                  </div>
-                  {/* settings icon finish to check  */}
-                  <div
-                    className={`logout-p logout-popover logout-popover-${themeName}`}
-                    onClick={() => {
-                      handleOpenLogoutModal();
-                      popupState.close();
-                    }}
-                    style={{
-                      paddingBottom: "12px",
-                      paddingTop: "5px",
-                      lineHeight: "20px",
-                      fontWeight: "700",
-                      fontSize: "15px",
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      cursor: "pointer",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                      width: "100%",
-                    }}
-                  >
-                    <span
-                      style={{
-                        position: "relative",
-                        left: "10px",
-                        color: themeName === "dark-theme" ? "white" : "",
-                      }}
-                      className="logout-p chirp-bold-font"
-                    >
-                      Log out @{userInfo?.username}
-                    </span>
-                  </div>
-                </div>
-              </Popover>
-            </div>
-          )}
-        </PopupState>
-      )}
       {/* popover basic test finish to check  */}
 
       {/* settings and privacy modal start to check  */}
