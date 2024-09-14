@@ -8,6 +8,7 @@ import { ThemeContext } from "../../../../../../../context/ThemeContext";
 import { UserContext } from "../../../../../../../context/UserContext";
 import SettingsNavigation from "../../../../../../../components/SettingsNavigation/SettingsNavigation";
 import { Switch } from "@mui/material";
+import { useFontSizeHandler } from "../../../../../../../utils/useFontSizeHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -58,7 +59,14 @@ function Tagging() {
   useEffect(() => {
     togglePhotoTaggingPermission();
   }, [permission_option]);
-
+  const {
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
   return (
     <>
       {" "}
@@ -129,6 +137,10 @@ function Tagging() {
             </svg>
           </div>
           <div
+            style={{
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
+            }}
             className={
               themeName === "dark-theme"
                 ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
@@ -155,8 +167,8 @@ function Tagging() {
           >
             <div
               style={{
-                fontSize: "15px",
-                lineHeight: "20px",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
               }}
               className={
                 themeName === "dark-theme"
@@ -169,13 +181,12 @@ function Tagging() {
             <div
               className={
                 themeName === "dark-theme"
-                  ? "text-dark-theme "
-                  : "text-light-theme "
+                  ? "text-dark-theme chirp-regular-font"
+                  : "text-light-theme chirp-regular-font"
               }
               style={{
-                fontSize: "13px",
-                lineHeight: "16px",
-                fontWeight: "400",
+                fontSize: font13.fontSize,
+                lineHeight: font13.lineHeight,
               }}
             >
               Allow people to tag you in their photos and receive notifications
@@ -231,8 +242,8 @@ function Tagging() {
             >
               <div
                 style={{
-                  fontSize: "15px",
-                  lineHeight: "20px",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
               >
                 Anyone can tag you
@@ -322,8 +333,8 @@ function Tagging() {
             >
               <div
                 style={{
-                  fontSize: "15px",
-                  lineHeight: "20px",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
               >
                 Only people you follow can tag you

@@ -1,17 +1,37 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ThemeContext } from "../context/ThemeContext";
 import { Button, Col, Container, Modal, Row } from "react-bootstrap";
 import useWindowDimensions from "../hooks/getWindowDimensions";
 import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import { NavigationHistoryContext } from "../context/NavigationHistoryContext";
+import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 
 function PremiumSignupPage({ sendToAppPlanPrice }) {
   const navigate = useNavigate();
   const [{ theme, themeName, activeFontSizeOption }] = useContext(ThemeContext);
   const { width } = useWindowDimensions();
-
+  const {
+    getFontSizeAndLineHeight36,
+    getFontSizeAndLineHeight34,
+    getFontSizeAndLineHeight26,
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight18,
+    getFontSizeAndLineHeight17,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+    getFontSizeAndLineHeight11,
+  } = useFontSizeHandler();
+  const font36 = getFontSizeAndLineHeight36();
+  const font34 = getFontSizeAndLineHeight34();
+  const font26 = getFontSizeAndLineHeight26();
+  const font20 = getFontSizeAndLineHeight20();
+  const font18 = getFontSizeAndLineHeight18();
+  const font17 = getFontSizeAndLineHeight17();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
+  const font11 = getFontSizeAndLineHeight11();
   console.log("Width =>", width);
 
   const [selectedPremiumOption, setSelectedPremiumOption] = useState(
@@ -165,7 +185,7 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
               <svg
                 style={{
                   border: "none",
-                  fontSize: "15px",
+
                   margin: "5px",
                 }}
                 onClick={handleCloseSubscribeAndPayModal}
@@ -195,11 +215,10 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
               }}
             >
               <div
-                // className="mb-4"
+                className="chirp-heavy-font"
                 style={{
-                  fontSize: "26px",
-                  lineHeight: "32px",
-                  fontWeight: "800",
+                  fontSize: font26.fontSize,
+                  lineHeight: font26.lineHeight,
                   color: themeName === "dark-theme" ? "white" : "black",
                   position: "relative",
                   bottom: "30px",
@@ -226,11 +245,10 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   : null}
               </div>
               <div
-                // className="mt-4"
+                className="chirp-bold-font"
                 style={{
-                  fontSize: "36px",
-                  lineHeight: "36px",
-                  fontWeight: "700",
+                  fontSize: font36.fontSize,
+                  lineHeight: font36.lineHeight,
                   color: themeName === "dark-theme" ? "white" : "black",
                 }}
               >
@@ -257,11 +275,11 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                     : null}
                 </span>{" "}
                 <span
+                  className="chirp-regular-font"
                   style={{
                     color: themeName === "dark-theme" ? "#E6E9EA" : "#363B3F",
-                    fontSize: "15px",
-                    lineHeight: "20px",
-                    fontWeight: "400",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                   }}
                 >
                   {" "}
@@ -288,11 +306,11 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
               </div>
               <div className="mt-1">
                 <span
+                  className="chirp-regular-font"
                   style={{
                     color: themeName === "dark-theme" ? "#E6E9EA" : "#363B3F",
-                    fontSize: "15px",
-                    lineHeight: "20px",
-                    fontWeight: "400",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                   }}
                 >
                   {selectedPremiumOption === "Annual plan basic-option" &&
@@ -316,12 +334,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                     : null}{" "}
                 </span>{" "}
                 <span
+                  className="chirp-bold-font"
                   style={{
                     backgroundColor:
                       themeName === "dark-theme" ? "#00251A" : "#DAF8EB",
                     color: themeName === "dark-theme" ? "#C1F1DC" : "#004329",
-                    fontSize: "11px",
-                    fontWeight: "700",
+                    fontSize: font11.fontSize,
                     padding: "2px 4px",
                     borderRadius: "9999px",
                     position: "relative",
@@ -381,16 +399,11 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   {subLoading ? (
-                    <div
-                      style={{
-                        fontSize: "15px",
-                      }}
-                    >
-                      <LoadingSpinner
-                        isCheckoutProcess={true}
-                        strokeColor={"rgb(29, 155, 240)"}
-                      ></LoadingSpinner>
-                    </div>
+                    <LoadingSpinner
+                      isCheckoutProcess={true}
+                      strokeColor={"rgb(29, 155, 240)"}
+                      fontSize={true}
+                    ></LoadingSpinner>
                   ) : (
                     <div>Subscribe & Pay</div>
                   )}
@@ -410,11 +423,11 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                 className="mt-3 mb-3"
               >
                 <div
+                  className="chirp-regular-font"
                   style={{
                     padding: "8px",
-                    fontSize: "13px",
-                    lineHeight: "16px",
-                    fontWeight: "400",
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
                     color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
                   }}
                 >
@@ -492,7 +505,7 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   <svg
                     style={{
                       border: "none",
-                      fontSize: "15px",
+
                       margin: "5px",
                     }}
                     onClick={handleCloseSubscribeAndPayModal}
@@ -524,11 +537,10 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
-                    // className="mb-4"
+                    className="chirp-heavy-font"
                     style={{
-                      fontSize: "26px",
-                      lineHeight: "32px",
-                      fontWeight: "800",
+                      fontSize: font26.fontSize,
+                      lineHeight: font26.lineHeight,
                       color: themeName === "dark-theme" ? "white" : "black",
                       position: "relative",
                       bottom: "30px",
@@ -555,11 +567,10 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                       : null}
                   </div>
                   <div
-                    // className="mt-4"
+                    className="chirp-bold-font"
                     style={{
-                      fontSize: "36px",
-                      lineHeight: "36px",
-                      fontWeight: "700",
+                      fontSize: font36.fontSize,
+                      lineHeight: font36.lineHeight,
                       color: themeName === "dark-theme" ? "white" : "black",
                     }}
                   >
@@ -591,12 +602,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                         : null}
                     </span>{" "}
                     <span
+                      className="chirp-regular-font"
                       style={{
                         color:
                           themeName === "dark-theme" ? "#E6E9EA" : "#363B3F",
-                        fontSize: "15px",
-                        lineHeight: "20px",
-                        fontWeight: "400",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                       }}
                     >
                       {" "}
@@ -628,12 +639,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   </div>
                   <div className="mt-1">
                     <span
+                      className="chirp-regular-font"
                       style={{
                         color:
                           themeName === "dark-theme" ? "#E6E9EA" : "#363B3F",
-                        fontSize: "15px",
-                        lineHeight: "20px",
-                        fontWeight: "400",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                       }}
                     >
                       {selectedPremiumOption === "Annual plan basic-option" &&
@@ -662,13 +673,13 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                         : null}{" "}
                     </span>{" "}
                     <span
+                      className="chirp-bold-font"
                       style={{
                         backgroundColor:
                           themeName === "dark-theme" ? "#00251A" : "#DAF8EB",
                         color:
                           themeName === "dark-theme" ? "#C1F1DC" : "#004329",
-                        fontSize: "11px",
-                        fontWeight: "700",
+                        fontSize: font11.fontSize,
                         padding: "2px 4px",
                         borderRadius: "9999px",
                         position: "relative",
@@ -734,16 +745,11 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                       }}
                     >
                       {subLoading ? (
-                        <div
-                          style={{
-                            fontSize: "15px",
-                          }}
-                        >
-                          <LoadingSpinner
-                            isCheckoutProcess={true}
-                            strokeColor={"rgb(29, 155, 240)"}
-                          ></LoadingSpinner>
-                        </div>
+                        <LoadingSpinner
+                          isCheckoutProcess={true}
+                          strokeColor={"rgb(29, 155, 240)"}
+                          fontSize={true}
+                        ></LoadingSpinner>
                       ) : (
                         <div>Subscribe & Pay</div>
                       )}
@@ -763,11 +769,11 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                     className="mt-3 mb-3"
                   >
                     <div
+                      className="chirp-regular-font"
                       style={{
                         padding: "8px",
-                        fontSize: "13px",
-                        lineHeight: "16px",
-                        fontWeight: "400",
+                        fontSize: font13.fontSize,
+                        lineHeight: font13.lineHeight,
                         color:
                           themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
                       }}
@@ -851,7 +857,6 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
               <svg
                 style={{
                   border: "none",
-                  fontSize: "15px",
                   margin: "5px",
                   zIndex: 9999,
                 }}
@@ -929,11 +934,11 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                         : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
                     }
                     style={{
-                      fontSize: "18px",
-                      lineHeight: "24px",
-                      maxWidth: "723px",
-                      textAlign: width < 600 ? "center" : "left",
+                      fontSize: font18.fontSize,
+                      lineHeight: font18.lineHeight,
+                      maxWidth: "725px",
                       marginTop: "35px",
+                      textAlign: "center",
                     }}
                   >
                     <span>
@@ -957,8 +962,8 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                             : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
                         }
                         style={{
-                          fontSize: "18px",
-                          lineHeight: "24px",
+                          fontSize: font18.fontSize,
+                          lineHeight: font18.lineHeight,
                           textDecoration: "underline",
                           cursor: "pointer",
                         }}
@@ -1018,13 +1023,14 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                               : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
                           }
                           style={{
-                            fontSize: "15px",
+                            fontSize: font15.fontSize,
                             lineHeight: "24px",
                           }}
                         >
                           Annual
                         </span>{" "}
                         <span
+                          className="chirp-bold-font"
                           style={{
                             backgroundColor:
                               themeName === "dark-theme"
@@ -1032,8 +1038,7 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                                 : "#DAF8EB",
                             color:
                               themeName === "dark-theme" ? "#C1F1DC" : "black",
-                            fontSize: "11px",
-                            fontWeight: "700",
+                            fontSize: font11.fontSize,
                             padding: "2px 4px",
                             borderRadius: "999px",
                             position: "relative",
@@ -1074,8 +1079,8 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                                   "Monthly plan basic-option"
                               ? "#EEF3F4"
                               : null,
-                          fontSize: "15px",
-                          fontWeight: "700",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                           lineHeight: "24px",
                         }}
                       >
@@ -1117,22 +1122,21 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                     }}
                   >
                     <div
+                      className="chirp-regular-font"
                       style={{
                         color: "white",
-                        fontSize: "20px",
-                        fontWeight: "400",
-                        lineHeight: "24px",
+                        fontSize: font20.fontSize,
+                        lineHeight: font20.lineHeight,
                       }}
                     >
                       Basic
                     </div>
                     <div
-                      className="mt-3"
+                      className="mt-3 chirp-bold-font"
                       style={{
                         color: "white",
-                        fontSize: "36px",
-                        fontWeight: "700",
-                        lineHeight: "36px",
+                        fontSize: font36.fontSize,
+                        lineHeight: font36.lineHeight,
                       }}
                     >
                       {selectedPremiumOption === "Monthly plan basic-option"
@@ -1141,11 +1145,11 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                         ? "€3.17"
                         : null}{" "}
                       <span
+                        className="chirp-regular-font"
                         style={{
                           color: "white",
-                          fontSize: "15px",
-                          fontWeight: "400",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         / month
@@ -1153,11 +1157,11 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                     </div>
                     <div className="mt-2" style={{ color: "white" }}>
                       <span
+                        className="chirp-regular-font"
                         style={{
                           color: "white",
-                          fontSize: "15px",
-                          fontWeight: "400",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         {selectedPremiumOption === "Monthly plan basic-option"
@@ -1168,6 +1172,7 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                       </span>
                       {selectedPremiumOption === "Annual plan basic-option" && (
                         <span
+                          className="chirp-bold-font"
                           style={{
                             backgroundColor:
                               themeName === "dark-theme"
@@ -1177,8 +1182,7 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                               themeName === "dark-theme"
                                 ? "#C1F1DC"
                                 : "#004329",
-                            fontSize: "11px",
-                            fontWeight: "700",
+                            fontSize: font11.fontSize,
                             padding: "2px 4px",
                             borderRadius: "9999px",
                             position: "relative",
@@ -1215,12 +1219,11 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                     </div>
 
                     <div
-                      className="mt-3"
+                      className="mt-3 chirp-regular-font"
                       style={{
                         color: "white",
-                        fontSize: "15px",
-                        lineHeight: "20px",
-                        fontWeight: "400",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                       }}
                     >
                       <div
@@ -1488,22 +1491,21 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                     }}
                   >
                     <div
+                      className="chirp-regular-font"
                       style={{
                         color: "white",
-                        fontSize: "20px",
-                        fontWeight: "400",
-                        lineHeight: "24px",
+                        fontSize: font20.fontSize,
+                        lineHeight: font20.lineHeight,
                       }}
                     >
                       Premium
                     </div>
                     <div
-                      className="mt-3"
+                      className="mt-3 chirp-bold-font"
                       style={{
                         color: "white",
-                        fontSize: "36px",
-                        fontWeight: "700",
-                        lineHeight: "36px",
+                        fontSize: font36.fontSize,
+                        lineHeight: font36.lineHeight,
                       }}
                     >
                       {selectedPremiumOption === "Monthly plan basic-option"
@@ -1512,11 +1514,11 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                         ? "€8.33"
                         : null}{" "}
                       <span
+                        className="chirp-regular-font"
                         style={{
                           color: "white",
-                          fontSize: "15px",
-                          fontWeight: "400",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         / month
@@ -1524,11 +1526,11 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                     </div>
                     <div className="mt-2" style={{ color: "white" }}>
                       <span
+                        className="chirp-regular-font"
                         style={{
                           color: "white",
-                          fontSize: "15px",
-                          fontWeight: "400",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         {selectedPremiumOption === "Monthly plan basic-option"
@@ -1539,6 +1541,7 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                       </span>
                       {selectedPremiumOption === "Annual plan basic-option" && (
                         <span
+                          className="chirp-bold-font"
                           style={{
                             backgroundColor:
                               themeName === "dark-theme"
@@ -1549,8 +1552,7 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                                 ? "#C1F1DC"
                                 : "#004329",
 
-                            fontSize: "11px",
-                            fontWeight: "700",
+                            fontSize: font11.fontSize,
                             padding: "2px 4px",
                             borderRadius: "9999px",
                             position: "relative",
@@ -1586,23 +1588,21 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                       </Button>
                     </div>
                     <div
-                      className="mt-3"
+                      className="mt-3 chirp-bold-font"
                       style={{
                         color: "white",
-                        fontWeight: "700",
-                        fontSize: "15px",
-                        lineHeight: " 20px",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                       }}
                     >
                       Everything in Basic, and
                     </div>
                     <div
-                      className="mt-2"
+                      className="mt-2 chirp-regular-font"
                       style={{
                         color: "white",
-                        fontSize: "15px",
-                        lineHeight: "20px",
-                        fontWeight: "400",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                       }}
                     >
                       <div
@@ -1846,22 +1846,21 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                     }}
                   >
                     <div
+                      className="chirp-regular-font"
                       style={{
                         color: "white",
-                        fontSize: "20px",
-                        fontWeight: "400",
-                        lineHeight: "24px",
+                        fontSize: font20.fontSize,
+                        lineHeight: font20.lineHeight,
                       }}
                     >
                       Premium+
                     </div>
                     <div
-                      className="mt-3"
+                      className="mt-3 chirp-bold-font"
                       style={{
                         color: "white",
-                        fontSize: "36px",
-                        fontWeight: "700",
-                        lineHeight: "36px",
+                        fontSize: font36.fontSize,
+                        lineHeight: font36.lineHeight,
                       }}
                     >
                       {selectedPremiumOption === "Monthly plan basic-option"
@@ -1870,11 +1869,11 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                         ? "€16.66"
                         : null}{" "}
                       <span
+                        className="chirp-regular-font"
                         style={{
                           color: "white",
-                          fontSize: "15px",
-                          fontWeight: "400",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         / month
@@ -1882,11 +1881,11 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                     </div>
                     <div className="mt-2" style={{ color: "white" }}>
                       <span
+                        className="chirp-regular-font"
                         style={{
                           color: "white",
-                          fontSize: "15px",
-                          fontWeight: "400",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         {selectedPremiumOption === "Monthly plan basic-option"
@@ -1897,6 +1896,7 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                       </span>
                       {selectedPremiumOption === "Annual plan basic-option" && (
                         <span
+                          className="chirp-bold-font"
                           style={{
                             backgroundColor:
                               themeName === "dark-theme"
@@ -1906,8 +1906,7 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                               themeName === "dark-theme"
                                 ? "#004329 "
                                 : "#004329",
-                            fontSize: "11px",
-                            fontWeight: "700",
+                            fontSize: font11.fontSize,
                             padding: "2px 4px",
                             borderRadius: "9999px",
                             position: "relative",
@@ -1943,23 +1942,21 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                       </Button>
                     </div>
                     <div
-                      className="mt-3"
+                      className="mt-3 chirp-bold-font"
                       style={{
                         color: "white",
-                        fontWeight: "700",
-                        fontSize: "15px",
-                        lineHeight: " 20px",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                       }}
                     >
                       Everything in Premium, and
                     </div>
                     <div
-                      className="mt-2"
+                      className="mt-2 chirp-regular-font"
                       style={{
                         color: "white",
-                        fontSize: "15px",
-                        lineHeight: "20px",
-                        fontWeight: "400",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                       }}
                     >
                       <div
@@ -2074,23 +2071,22 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                 }}
               >
                 <div
+                  className="chirp-bold-font"
                   style={{
-                    fontSize: "34px",
-                    lineHeight: "40px",
-                    fontWeight: "700",
+                    fontSize: font34.fontSize,
+                    lineHeight: font34.lineHeight,
                   }}
                 >
                   Compare tiers & features
                 </div>
                 <div
-                  className="table-divs mt-4"
+                  className="table-divs mt-4 chirp-bold-font"
                   style={{
                     display: "flex",
                     flexDirection: "row",
                     color: themeName === "dark-theme" ? "white" : "#0F141A",
-                    fontSize: "17px",
-                    lineHeight: "20px",
-                    fontWeight: "700",
+                    fontSize: font17.fontSize,
+                    lineHeight: font17.lineHeight,
                   }}
                 >
                   <div style={{ width: "25%" }}>Enhanced Experience</div>
@@ -2116,12 +2112,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     Grok Early Access
@@ -2176,13 +2172,13 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
 
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     <span>Ads in For You and Following</span>
@@ -2247,13 +2243,13 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
 
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     Reply boost
@@ -2301,13 +2297,13 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
 
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     {" "}
@@ -2377,13 +2373,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
-
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     Longer posts
@@ -2452,13 +2447,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
-
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     Undo post
@@ -2527,13 +2521,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
-
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     Top Articles
@@ -2602,13 +2595,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
-
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     Background video playback
@@ -2677,13 +2669,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
-
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     Download videos
@@ -2745,14 +2736,13 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 ></div>
                 <div
-                  className="table-divs mt-4"
+                  className="table-divs mt-4 chirp-bold-font"
                   style={{
                     display: "flex",
                     flexDirection: "row",
                     color: themeName === "dark-theme" ? "white" : "#0F141A",
-                    fontSize: "17px",
-                    lineHeight: "20px",
-                    fontWeight: "700",
+                    fontSize: font17.fontSize,
+                    lineHeight: font17.lineHeight,
                   }}
                 >
                   <div style={{ width: "25%" }}>Creator Hub</div>
@@ -2778,13 +2768,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
-
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     <span>Write Articles</span>
@@ -2842,13 +2831,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
-
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     <span>Get paid to post</span>
@@ -2920,13 +2908,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
-
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     <span>Creator Subscriptions</span>
@@ -2998,13 +2985,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
-
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     <span>C Pro</span>
@@ -3076,13 +3062,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
-
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     <span>Media Studio</span>
@@ -3154,13 +3139,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
-
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     <span>Analytics</span>
@@ -3232,13 +3216,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
-
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     <span>Post longer videos</span>
@@ -3300,14 +3283,13 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 ></div>
                 <div
-                  className="table-divs mt-4"
+                  className="table-divs mt-4 chirp-bold-font"
                   style={{
                     display: "flex",
                     flexDirection: "row",
                     color: themeName === "dark-theme" ? "white" : "#0F141A",
-                    fontSize: "17px",
-                    lineHeight: "20px",
-                    fontWeight: "700",
+                    fontSize: font17.fontSize,
+                    lineHeight: font17.lineHeight,
                   }}
                 >
                   <div style={{ width: "25%" }}>Verification & Security</div>
@@ -3333,13 +3315,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
-
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     <span>Checkmark</span>
@@ -3410,13 +3391,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
-
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     <span>Optional ID verification</span>
@@ -3487,13 +3467,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
-
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     <span>Encrypted direct messages</span>
@@ -3571,14 +3550,13 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 ></div>
                 <div
-                  className="table-divs mt-4"
+                  className="table-divs mt-4 chirp-bold-font"
                   style={{
                     display: "flex",
                     flexDirection: "row",
                     color: themeName === "dark-theme" ? "white" : "#0F141A",
-                    fontSize: "17px",
-                    lineHeight: "20px",
-                    fontWeight: "700",
+                    fontSize: font17.fontSize,
+                    lineHeight: font17.lineHeight,
                   }}
                 >
                   <div style={{ width: "25%" }}>Customization</div>
@@ -3604,13 +3582,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
-
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     <span>Highlights Tab</span>
@@ -3695,13 +3672,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
-
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     <span>Bookmark folders</span>
@@ -3769,13 +3745,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
-
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     <span>App icons</span>
@@ -3843,13 +3818,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
-
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     <span>Customize navigation</span>
@@ -3917,12 +3891,12 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   }}
                 >
                   <div
+                    className="chirp-regular-font"
                     style={{
                       width: "25%",
                       color: themeName === "dark-theme" ? "#B6B9BC" : "#36434D",
-                      fontSize: "15px",
-                      lineHeight: "20px",
-                      fontWeight: "400px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     <span>Hide your likes</span>

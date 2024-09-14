@@ -5,6 +5,8 @@ import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
 import { ModalVisibilityProvider } from "./context/ModalVisibilityContext.jsx";
 import { NavigationHistoryProvider } from "./context/NavigationHistoryContext.jsx";
+import { FontSizeProvider } from "./context/FontSizeContext.jsx";
+import { ColorContextProvider } from "./context/ColorContext.jsx";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -12,9 +14,13 @@ root.render(
   <BrowserRouter>
     <NavigationHistoryProvider>
       <ThemeProvider>
-        <ModalVisibilityProvider>
-          <App />
-        </ModalVisibilityProvider>
+        <FontSizeProvider>
+          <ColorContextProvider>
+            <ModalVisibilityProvider>
+              <App />
+            </ModalVisibilityProvider>
+          </ColorContextProvider>
+        </FontSizeProvider>
       </ThemeProvider>
     </NavigationHistoryProvider>
   </BrowserRouter>

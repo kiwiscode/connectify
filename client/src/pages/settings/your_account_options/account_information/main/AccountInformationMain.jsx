@@ -9,6 +9,7 @@ import { FormControl, InputLabel, OutlinedInput } from "@mui/material";
 import { UserContext } from "../../../../../context/UserContext";
 import LoadingSpinner from "../../../../../components/ui/LoadingSpinner";
 import { ThemeContext } from "../../../../../context/ThemeContext";
+import { useFontSizeHandler } from "../../../../../utils/useFontSizeHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -109,7 +110,20 @@ function AccountInformationMain() {
 
   const [openAutomationInformationModal, setOpenAutomationInformationModal] =
     useState(null);
-
+  const {
+    getFontSizeAndLineHeight31,
+    getFontSizeAndLineHeight23,
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight17,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font31 = getFontSizeAndLineHeight31();
+  const font23 = getFontSizeAndLineHeight23();
+  const font20 = getFontSizeAndLineHeight20();
+  const font17 = getFontSizeAndLineHeight17();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
   return (
     <>
       {contextHolder}
@@ -288,8 +302,8 @@ function AccountInformationMain() {
                         : "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
                     }
                     style={{
-                      fontSize: "31px",
-                      lineHeight: "36px",
+                      fontSize: font31.fontSize,
+                      lineHeight: font31.lineHeight,
                       width: "100%",
                       paddingLeft: "32px",
                       paddingRight: "32px",
@@ -324,8 +338,8 @@ function AccountInformationMain() {
                         : "chirp-bold-font very-dark-gray-light-theme-text-variant-1"
                     }
                     style={{
-                      fontSize: "23px",
-                      lineHeight: "28px",
+                      fontSize: font23.fontSize,
+                      lineHeight: font23.lineHeight,
                     }}
                   >
                     What’s an automated account?
@@ -337,8 +351,8 @@ function AccountInformationMain() {
                         : "mt-2 chirp-regular-font very-dark-gray-light-theme-text-variant-2"
                     }
                     style={{
-                      fontSize: "15px",
-                      lineHeight: "20px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     Automated accounts are programmed to perform certain actions
@@ -373,8 +387,8 @@ function AccountInformationMain() {
                       : "mt-5 chirp-regular-font very-dark-gray-light-theme-text-variant-2"
                   }
                   style={{
-                    fontSize: "15px",
-                    lineHeight: "20px",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                     padding: "0px 32px",
                   }}
                 >
@@ -417,8 +431,8 @@ function AccountInformationMain() {
                         : "chirp-bold-font very-dark-gray-light-theme-text-variant-1"
                     }
                     style={{
-                      fontSize: "23px",
-                      lineHeight: "28px",
+                      fontSize: font23.fontSize,
+                      lineHeight: font23.lineHeight,
                     }}
                   >
                     Do I need to label my automated accounts?
@@ -430,8 +444,8 @@ function AccountInformationMain() {
                         : "mt-2 chirp-regular-font very-dark-gray-light-theme-text-variant-2"
                     }
                     style={{
-                      fontSize: "15px",
-                      lineHeight: "20px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     Yes, all automated accounts need to be labeled. This is
@@ -443,8 +457,8 @@ function AccountInformationMain() {
                           : "chirp-bold-font very-dark-gray-light-theme-text-variant-1 hover-fullname"
                       }
                       style={{
-                        fontSize: "15px",
-                        lineHeight: "20px",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                         textOverflow: "unset",
                         borderBottom:
                           themeName !== "dark-theme"
@@ -473,8 +487,8 @@ function AccountInformationMain() {
                         : "chirp-bold-font very-dark-gray-light-theme-text-variant-1"
                     }
                     style={{
-                      fontSize: "23px",
-                      lineHeight: "28px",
+                      fontSize: font23.fontSize,
+                      lineHeight: font23.lineHeight,
                     }}
                   >
                     How do I label my automated account?
@@ -505,8 +519,8 @@ function AccountInformationMain() {
                               : "chirp-bold-font soft-grey-dark-theme-text-variant-1"
                           }
                           style={{
-                            fontSize: "20px",
-                            lineHeight: "24px",
+                            fontSize: font20.fontSize,
+                            lineHeight: font20.lineHeight,
                           }}
                         >
                           1
@@ -522,8 +536,8 @@ function AccountInformationMain() {
                     >
                       <div
                         style={{
-                          fontSize: "17px",
-                          lineHeight: "20px",
+                          fontSize: font17.fontSize,
+                          lineHeight: font17.lineHeight,
                         }}
                         className={
                           themeName === "dark-theme"
@@ -540,8 +554,8 @@ function AccountInformationMain() {
                             : "mt-2 chirp-regular-font very-dark-gray-light-theme-text-variant-2"
                         }
                         style={{
-                          fontSize: "15px",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         Create a managing account A managing account is the
@@ -575,8 +589,8 @@ function AccountInformationMain() {
                               : "chirp-bold-font soft-grey-dark-theme-text-variant-1"
                           }
                           style={{
-                            fontSize: "20px",
-                            lineHeight: "24px",
+                            fontSize: font20.fontSize,
+                            lineHeight: font20.lineHeight,
                           }}
                         >
                           2
@@ -592,8 +606,8 @@ function AccountInformationMain() {
                     >
                       <div
                         style={{
-                          fontSize: "17px",
-                          lineHeight: "20px",
+                          fontSize: font17.fontSize,
+                          lineHeight: font17.lineHeight,
                         }}
                         className={
                           themeName === "dark-theme"
@@ -610,8 +624,8 @@ function AccountInformationMain() {
                             : "mt-2 chirp-regular-font very-dark-gray-light-theme-text-variant-2"
                         }
                         style={{
-                          fontSize: "15px",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         Connect your accounts from the Automation page in your
@@ -645,8 +659,8 @@ function AccountInformationMain() {
                               : "chirp-bold-font soft-grey-dark-theme-text-variant-1"
                           }
                           style={{
-                            fontSize: "20px",
-                            lineHeight: "24px",
+                            fontSize: font20.fontSize,
+                            lineHeight: font20.lineHeight,
                           }}
                         >
                           3
@@ -662,8 +676,8 @@ function AccountInformationMain() {
                     >
                       <div
                         style={{
-                          fontSize: "17px",
-                          lineHeight: "20px",
+                          fontSize: font17.fontSize,
+                          lineHeight: font17.lineHeight,
                         }}
                         className={
                           themeName === "dark-theme"
@@ -680,8 +694,8 @@ function AccountInformationMain() {
                             : "mt-2 chirp-regular-font very-dark-gray-light-theme-text-variant-2"
                         }
                         style={{
-                          fontSize: "15px",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         Once the accounts are connected, the automated account
@@ -706,8 +720,8 @@ function AccountInformationMain() {
                         : "mt-2 chirp-regular-font very-dark-gray-light-theme-text-variant-2"
                     }
                     style={{
-                      fontSize: "15px",
-                      lineHeight: "20px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     Learn more on the{" "}
@@ -718,8 +732,8 @@ function AccountInformationMain() {
                           : "chirp-bold-font very-dark-gray-light-theme-text-variant-1 hover-fullname"
                       }
                       style={{
-                        fontSize: "15px",
-                        lineHeight: "20px",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                         textOverflow: "unset",
                         borderBottom:
                           themeName !== "dark-theme"
@@ -762,7 +776,6 @@ function AccountInformationMain() {
               <>
                 <div
                   style={{
-                    fontSize: "15px",
                     width: "100%",
                     height: "100%",
                     display: "flex",
@@ -773,6 +786,7 @@ function AccountInformationMain() {
                 >
                   <LoadingSpinner
                     strokeColor={"rgb(29, 155, 240)"}
+                    fontSize={true}
                   ></LoadingSpinner>
                 </div>
               </>
@@ -846,6 +860,10 @@ function AccountInformationMain() {
               </svg>
             </div>
             <div
+              style={{
+                fontSize: font20.fontSize,
+                lineHeight: font20.lineHeight,
+              }}
               className={
                 themeName === "dark-theme"
                   ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
@@ -877,9 +895,8 @@ function AccountInformationMain() {
                       : "very-dark-gray-light-theme-text-variant-1 mt-4 chirp-bold-font"
                   }
                   style={{
-                    fontSize: "20px",
-
-                    lineHeight: "24px",
+                    fontSize: font20.fontSize,
+                    lineHeight: font20.lineHeight,
                   }}
                 >
                   Confirm your password
@@ -891,8 +908,8 @@ function AccountInformationMain() {
                       : "very-dark-gray-light-theme-text-variant-2 mt-4 chirp-regular-font"
                   }
                   style={{
-                    fontSize: "13px",
-                    lineHeight: "16px",
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
                   }}
                 >
                   Please enter your password in order to get this.
@@ -974,8 +991,8 @@ function AccountInformationMain() {
                     display: "inline-block",
                     color: "rgb(29, 155, 240)",
                     textAlign: "left",
-                    fontSize: "13px",
-                    lineHeight: "16px",
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
 
                     width: "92%",
                     position: "relative",
@@ -998,13 +1015,13 @@ function AccountInformationMain() {
                     verifyPasswordInput?.length > 0 && (
                       <>
                         <div
-                          className="mt-1"
+                          className="mt-1 chirp-regular-font"
                           style={{
                             display: "inline-block",
                             color: "rgba(244,39,49,255)",
                             textAlign: "left",
-                            fontSize: "13px",
-                            lineHeight: "16px",
+                            fontSize: font13.fontSize,
+                            lineHeight: font13.lineHeight,
                             width: "92%",
                           }}
                         >
@@ -1039,7 +1056,7 @@ function AccountInformationMain() {
                     maxWidth: "92px",
                     maxHeight: "36px",
                     minHeight: "36px",
-                    fontSize: "15px",
+                    fontSize: font15.fontSize,
                     cursor: "pointer",
                   }}
                   onClick={
@@ -1089,8 +1106,8 @@ function AccountInformationMain() {
                         : "very-dark-gray-light-theme-text-variant-1 chirp-regular-font"
                     }
                     style={{
-                      lineHeight: "20px",
-                      fontSize: "15px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     Username
@@ -1102,8 +1119,8 @@ function AccountInformationMain() {
                         : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
                     }
                     style={{
-                      lineHeight: "16px",
-                      fontSize: "13px",
+                      fontSize: font13.fontSize,
+                      lineHeight: font13.lineHeight,
                     }}
                   >
                     @{user.username}
@@ -1157,8 +1174,8 @@ function AccountInformationMain() {
                         : "very-dark-gray-light-theme-text-variant-1 chirp-regular-font"
                     }
                     style={{
-                      lineHeight: "20px",
-                      fontSize: "15px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     Phone
@@ -1169,8 +1186,8 @@ function AccountInformationMain() {
                           : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
                       }
                       style={{
-                        lineHeight: "16px",
-                        fontSize: "13px",
+                        fontSize: font13.fontSize,
+                        lineHeight: font13.lineHeight,
                       }}
                     >
                       {user.phoneNumber?.length
@@ -1227,8 +1244,8 @@ function AccountInformationMain() {
                         : "very-dark-gray-light-theme-text-variant-1 chirp-regular-font"
                     }
                     style={{
-                      lineHeight: "20px",
-                      fontSize: "15px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     Email
@@ -1240,8 +1257,8 @@ function AccountInformationMain() {
                         : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
                     }
                     style={{
-                      lineHeight: "16px",
-                      fontSize: "13px",
+                      fontSize: font13.fontSize,
+                      lineHeight: font13.lineHeight,
                     }}
                   >
                     {user.email}
@@ -1289,9 +1306,8 @@ function AccountInformationMain() {
                         : "very-dark-gray-light-theme-text-variant-1 chirp-regular-font"
                     }
                     style={{
-                      lineHeight: "20px",
-                      fontSize: "15px",
-
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                       display: "flex",
                       flexDirection: "column",
                     }}
@@ -1304,8 +1320,8 @@ function AccountInformationMain() {
                           : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
                       }
                       style={{
-                        lineHeight: "16px",
-                        fontSize: "13px",
+                        fontSize: font13.fontSize,
+                        lineHeight: font13.lineHeight,
                       }}
                     >
                       {user.verified ? "Yes." : "No"}{" "}
@@ -1316,9 +1332,8 @@ function AccountInformationMain() {
                             : "hover-blue-underline chirp-regular-font"
                         }
                         style={{
-                          lineHeight: "16px",
-                          fontSize: "13px",
-
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
                           color: "rgb(29, 155, 240)",
                         }}
                       >
@@ -1364,8 +1379,8 @@ function AccountInformationMain() {
                         : "very-dark-gray-light-theme-text-variant-1 chirp-regular-font"
                     }
                     style={{
-                      lineHeight: "20px",
-                      fontSize: "15px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     Protected posts
@@ -1377,8 +1392,8 @@ function AccountInformationMain() {
                         : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
                     }
                     style={{
-                      lineHeight: "16px",
-                      fontSize: "13px",
+                      fontSize: font13.fontSize,
+                      lineHeight: font13.lineHeight,
                     }}
                   >
                     {userInfo.isPrivate ? "Yes" : "No"}
@@ -1426,8 +1441,8 @@ function AccountInformationMain() {
                         : "very-dark-gray-light-theme-text-variant-1 chirp-regular-font"
                     }
                     style={{
-                      lineHeight: "20px",
-                      fontSize: "15px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     Account creation
@@ -1439,8 +1454,8 @@ function AccountInformationMain() {
                         : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
                     }
                     style={{
-                      lineHeight: "16px",
-                      fontSize: "13px",
+                      fontSize: font13.fontSize,
+                      lineHeight: font13.lineHeight,
                     }}
                   >
                     <div>{formatDateTime(user.createdAt)}</div>
@@ -1481,9 +1496,8 @@ function AccountInformationMain() {
                 >
                   <div
                     style={{
-                      lineHeight: "20px",
-                      fontSize: "15px",
-
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                       display: "flex",
                       flexDirection: "column",
                     }}
@@ -1504,8 +1518,8 @@ function AccountInformationMain() {
                           : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
                       }
                       style={{
-                        lineHeight: "16px",
-                        fontSize: "13px",
+                        fontSize: font13.fontSize,
+                        lineHeight: font13.lineHeight,
                       }}
                     >
                       {user.country ? user.country : null}
@@ -1555,9 +1569,8 @@ function AccountInformationMain() {
                 >
                   <div
                     style={{
-                      lineHeight: "20px",
-                      fontSize: "15px",
-
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                       display: "flex",
                       flexDirection: "column",
                     }}
@@ -1578,8 +1591,8 @@ function AccountInformationMain() {
                           : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
                       }
                       style={{
-                        lineHeight: "16px",
-                        fontSize: "13px",
+                        fontSize: font13.fontSize,
+                        lineHeight: font13.lineHeight,
                       }}
                     >
                       English, Turkish, No linguistic content, French
@@ -1629,8 +1642,8 @@ function AccountInformationMain() {
                 >
                   <div
                     style={{
-                      lineHeight: "20px",
-                      fontSize: "15px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                       display: "flex",
                       flexDirection: "column",
                     }}
@@ -1651,8 +1664,8 @@ function AccountInformationMain() {
                           : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
                       }
                       style={{
-                        lineHeight: "16px",
-                        fontSize: "13px",
+                        fontSize: font13.fontSize,
+                        lineHeight: font13.lineHeight,
                       }}
                     >
                       {user?.gender ? user.gender : null}
@@ -1696,9 +1709,8 @@ function AccountInformationMain() {
                 >
                   <div
                     style={{
-                      lineHeight: "20px",
-                      fontSize: "15px",
-
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                       display: "flex",
                       flexDirection: "column",
                     }}
@@ -1719,8 +1731,8 @@ function AccountInformationMain() {
                           : "very-dark-gray-light-theme-text-variant-2 mt-1 chirp-regular-font"
                       }
                       style={{
-                        lineHeight: "16px",
-                        fontSize: "13px",
+                        fontSize: font13.fontSize,
+                        lineHeight: font13.lineHeight,
                       }}
                     >
                       {user.birthDate && (
@@ -1738,16 +1750,16 @@ function AccountInformationMain() {
                           : "very-dark-gray-light-theme-text-variant-2 mt-1 chirp-regular-font"
                       }
                       style={{
-                        lineHeight: "16px",
-                        fontSize: "13px",
+                        fontSize: font13.fontSize,
+                        lineHeight: font13.lineHeight,
                       }}
                     >
                       Add your date of birth to your{" "}
                       <span
                         onClick={() => navigate(`/profile`)}
                         style={{
-                          lineHeight: "16px",
-                          fontSize: "13px",
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
 
                           color: "rgb(29, 155, 240)",
                         }}
@@ -1791,9 +1803,8 @@ function AccountInformationMain() {
                 >
                   <div
                     style={{
-                      lineHeight: "20px",
-                      fontSize: "15px",
-
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                       display: "flex",
                       flexDirection: "column",
                     }}
@@ -1814,8 +1825,8 @@ function AccountInformationMain() {
                           : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
                       }
                       style={{
-                        lineHeight: "16px",
-                        fontSize: "13px",
+                        fontSize: font13.fontSize,
+                        lineHeight: font13.lineHeight,
                       }}
                     >
                       {user.birthDate?.year && (
@@ -1872,9 +1883,8 @@ function AccountInformationMain() {
                 >
                   <div
                     style={{
-                      lineHeight: "20px",
-                      fontSize: "15px",
-
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                       display: "flex",
                       flexDirection: "column",
                     }}
@@ -1895,8 +1905,8 @@ function AccountInformationMain() {
                           : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
                       }
                       style={{
-                        lineHeight: "16px",
-                        fontSize: "13px",
+                        fontSize: font13.fontSize,
+                        lineHeight: font13.lineHeight,
                       }}
                     >
                       Manage your automated account.

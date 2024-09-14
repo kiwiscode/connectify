@@ -4,7 +4,6 @@ const cloudinary = require("../utils/cloudinary");
 const bcrypt = require("bcrypt");
 const handleProfile = (req, res) => {
   const { userId } = req.user;
-  console.log("Here is working !!");
   User.findById(userId)
     .populate({
       path: "posts",

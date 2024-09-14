@@ -1,10 +1,19 @@
 import { Stack } from "react-bootstrap";
 import useWindowDimensions from "../../../../../hooks/getWindowDimensions";
 import { useNavigate } from "react-router-dom";
+import { useFontSizeHandler } from "../../../../../utils/useFontSizeHandler";
 
 function PasswordResetCompleteMain() {
   const { width } = useWindowDimensions();
   const navigate = useNavigate();
+  const {
+    getFontSizeAndLineHeight31,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight14,
+  } = useFontSizeHandler();
+  const font31 = getFontSizeAndLineHeight31();
+  const font15 = getFontSizeAndLineHeight15();
+  const font14 = getFontSizeAndLineHeight14();
   return (
     <>
       <div
@@ -62,9 +71,9 @@ function PasswordResetCompleteMain() {
           </div>
           <div
             style={{
-              fontSize: "16px",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
               color: "#66757f",
-              lineHeight: "40px",
             }}
           >
             {" "}
@@ -73,7 +82,7 @@ function PasswordResetCompleteMain() {
           <div
             style={{
               color: "#66757f",
-              fontSize: "14px",
+              fontSize: font14.fontSize,
             }}
             className="ms-auto"
           >
@@ -97,35 +106,33 @@ function PasswordResetCompleteMain() {
           }}
         >
           <span
+            className="chirp-bold-font"
             style={{
-              fontSize: "28px",
-              fontWeight: "700",
-              lineHeight: "24px",
+              fontSize: font31.fontSize,
+              lineHeight: font31.fontSize,
               padding: "16px 0px",
             }}
           >
             {"You’re all set. You've successfully changed your password."}{" "}
           </span>{" "}
           <div
-            className="mt-5"
+            className="mt-5 chirp-regular-font"
             style={{
               cursor: "pointer",
               color: "#55acee",
               width: "100%",
-              fontWeight: "400",
-              fontSize: "15px",
-              lineHeight: "20px",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
               fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
             }}
           >
             <span>Review your applications</span>
           </div>{" "}
           <div
-            className="mt-1"
+            className="mt-1 chirp-regular-font"
             style={{
-              fontWeight: "400",
-              fontSize: "15px",
-              lineHeight: "20px",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
               width: "100%",
 
               fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
@@ -136,26 +143,23 @@ function PasswordResetCompleteMain() {
             }
           </div>{" "}
           <div
-            className="mt-1"
+            className="mt-1 chirp-regular-font"
             style={{
               cursor: "pointer",
               color: "#55acee",
               width: "100%",
-              fontWeight: "400",
-              fontSize: "15px",
-              lineHeight: "20px",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
               fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
             }}
           >
             <span>Add a phone number to your account</span>
           </div>{" "}
           <div
-            className="mt-1"
+            className="mt-1 chirp-regular-font"
             style={{
-              fontWeight: "400",
-              fontSize: "15px",
-              lineHeight: "20px",
-
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
               fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
             }}
           >
@@ -167,14 +171,12 @@ function PasswordResetCompleteMain() {
             onClick={() => {
               navigate("/home");
             }}
-            className="mt-5"
+            className="mt-5 chirp-regular-font"
             style={{
               cursor: "pointer",
               color: "#55acee",
-
-              fontWeight: "400",
-              fontSize: "15px",
-              lineHeight: "20px",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
               fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
             }}
           >

@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { ThemeContext } from "../../context/ThemeContext";
+import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
 
 function UnfollowModal({
   handleUnfollow,
@@ -15,6 +16,10 @@ function UnfollowModal({
     cyberpunkModeActive,
   ] = useContext(ThemeContext);
 
+  const { getFontSizeAndLineHeight20, getFontSizeAndLineHeight15 } =
+    useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
   return (
     <Modal
       centered={true}
@@ -37,10 +42,10 @@ function UnfollowModal({
       <Modal.Body className="" style={{}}>
         <div style={{}} className="">
           <div
+            className="chirp-bold-font"
             style={{
-              fontWeight: "700",
-              fontSize: "20px",
-              lineHeight: "24px",
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
               textAlign: "left",
               color: themeName === "dark-theme" ? "white" : "",
             }}
@@ -48,9 +53,6 @@ function UnfollowModal({
             <span>Unfollow</span>{" "}
             <span
               style={{
-                fontWeight: "700",
-                fontSize: "20px",
-                lineHeight: "24px",
                 textAlign: "left",
                 color: themeName === "dark-theme" ? "white" : "",
               }}
@@ -60,12 +62,12 @@ function UnfollowModal({
           </div>
 
           <div
+            className="chirp-regular-font"
             style={{
               color:
                 themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
-              fontWeight: "400",
-              fontSize: "15px",
-              lineHeight: "20px",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
               textAlign: "left",
               marginTop: "10px",
             }}
@@ -78,11 +80,10 @@ function UnfollowModal({
             style={{
               minHeight: "42px",
               width: "100%",
-              fontSize: "15px",
-              fontWeight: "700",
-              lineHeight: "20px",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
             }}
-            className={`mt-3 login-button next-btn ${themeName}-white-btn`}
+            className={`mt-3 login-button next-btn ${themeName}-white-btn chirp-bold-font`}
             variant="dark"
             onClick={() => handleUnfollow(selectedUser)}
           >
@@ -94,11 +95,10 @@ function UnfollowModal({
               minHeight: "42px",
               width: "100%",
               color: themeName === "dark-theme" ? "white" : "black",
-              fontSize: "15px",
-              fontWeight: "700",
-              lineHeight: "20px",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
             }}
-            className={`mt-2 forgot-password-btn ${themeName}-black-btn`}
+            className={`mt-2 forgot-password-btn ${themeName}-black-btn chirp-bold-font`}
             variant="light"
             onClick={handleClose}
           >

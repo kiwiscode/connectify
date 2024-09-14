@@ -8,6 +8,7 @@ import ResponsiveNavigationBarBottom from "../../../../components/Navbar/Respons
 import { ModalVisibilityContext } from "../../../../context/ModalVisibilityContext";
 import { useAntdMessageHandler } from "../../../../utils/useAntdMessageHandler";
 import useWindowDimensions from "../../../../hooks/getWindowDimensions";
+import { useFontSizeHandler } from "../../../../utils/useFontSizeHandler";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -100,7 +101,18 @@ function MonetizationMain() {
   const [isSearchStart, setSearchStart] = useState(null);
 
   const [showNotificationMessage, setShowNotificationMessage] = useState(null);
-
+  const {
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight17,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+    getFontSizeAndLineHeight11,
+  } = useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font17 = getFontSizeAndLineHeight17();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
+  const font11 = getFontSizeAndLineHeight11();
   return (
     <>
       {!isPostModalVisible && !dataFromCommentModal && (
@@ -151,9 +163,6 @@ function MonetizationMain() {
       >
         <div
           style={{
-            lineHeight: "24px",
-            fontWeight: "700",
-            fontSize: "20px",
             display: "flex",
             justifyContent: "flex-start",
             alignItems: "center",
@@ -199,15 +208,27 @@ function MonetizationMain() {
               </svg>
             </span>
           ) : null}
-          <div className="mt-3">Monetizations</div>
+          <div
+            style={{
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
+            }}
+            className={
+              themeName === "dark-theme"
+                ? "soft-grey-dark-theme-text-variant-1 mt-3 chirp-bold-font"
+                : "very-dark-gray-light-theme-text-variant-1 mt-3 chirp-bold-font"
+            }
+          >
+            Monetization
+          </div>
         </div>
 
         <div className="mt-4" style={{}}>
           <span
+            className="chirp-bold-font"
             style={{
-              fontSize: "17px",
-              lineHeight: "20px",
-              fontWeight: "700",
+              fontSize: font17.fontSize,
+              lineHeight: font17.lineHeight,
               paddingLeft: width <= 500 ? "32px" : "12px",
               paddingRight: width <= 500 ? "32px" : "12px",
             }}
@@ -217,15 +238,14 @@ function MonetizationMain() {
           </span>
           <div
             style={{
-              fontSize: "15px",
-              lineHeight: "20px",
-              fontWeight: "400",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
               paddingLeft: width <= 500 ? "32px" : "12px",
               paddingRight: width <= 500 ? "32px" : "12px",
               color:
                 themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
             }}
-            className="mt-2"
+            className="mt-2 chirp-regular-font"
           >
             Eligible creators can sign up for monthly subscriptions and ads
             revenue sharing.
@@ -307,10 +327,10 @@ function MonetizationMain() {
                   }}
                 >
                   <span
+                    className="chirp-medium-font"
                     style={{
-                      fontSize: "11px",
-                      lineHeight: "16px",
-                      fontWeight: "500",
+                      fontSize: font11.fontSize,
+                      lineHeight: font11.lineHeight,
                       color: "white",
                       padding: "6px",
                     }}
@@ -320,14 +340,13 @@ function MonetizationMain() {
                 </div>
                 <div
                   style={{
-                    fontSize: "15px",
-                    lineHeight: "20px",
-                    fontWeight: "700",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                   }}
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-first-exp-dark-theme"
-                      : "settings-text-first-exp-light-theme "
+                      ? "settings-text-first-exp-dark-theme chirp-bold-font"
+                      : "settings-text-first-exp-light-theme chirp-bold-font"
                   }
                 >
                   Subscriptions
@@ -335,9 +354,13 @@ function MonetizationMain() {
                 <div
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-dark-theme"
-                      : "settings-text-light-theme"
+                      ? "settings-text-dark-theme chirp-regular-font"
+                      : "settings-text-light-theme chirp-regular-font"
                   }
+                  style={{
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                  }}
                 >
                   Earn a living on C by letting anyone subscribe to you for
                   monthly content.
@@ -431,10 +454,10 @@ function MonetizationMain() {
                   }}
                 >
                   <span
+                    className="chirp-medium-font"
                     style={{
-                      fontSize: "11px",
-                      lineHeight: "16px",
-                      fontWeight: "500",
+                      fontSize: font11.fontSize,
+                      lineHeight: font11.lineHeight,
                       color: "white",
                       padding: "6px",
                     }}
@@ -444,14 +467,13 @@ function MonetizationMain() {
                 </div>
                 <div
                   style={{
-                    fontSize: "15px",
-                    lineHeight: "20px",
-                    fontWeight: "700",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                   }}
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-first-exp-dark-theme"
-                      : "settings-text-first-exp-light-theme "
+                      ? "settings-text-first-exp-dark-theme chirp-bold-font"
+                      : "settings-text-first-exp-light-theme chirp-bold-font"
                   }
                 >
                   Ads revenue sharing
@@ -459,9 +481,13 @@ function MonetizationMain() {
                 <div
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-dark-theme"
-                      : "settings-text-light-theme"
+                      ? "settings-text-dark-theme chirp-regular-font"
+                      : "settings-text-light-theme chirp-regular-font"
                   }
+                  style={{
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                  }}
                 >
                   Earn income from the ads served in the replies to your posts.
                 </div>
@@ -545,14 +571,13 @@ function MonetizationMain() {
               >
                 <div
                   style={{
-                    fontSize: "15px",
-                    lineHeight: "20px",
-                    fontWeight: "700",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                   }}
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-first-exp-dark-theme"
-                      : "settings-text-first-exp-light-theme "
+                      ? "settings-text-first-exp-dark-theme chirp-bold-font"
+                      : "settings-text-first-exp-light-theme chirp-bold-font"
                   }
                 >
                   Learn more
@@ -560,9 +585,13 @@ function MonetizationMain() {
                 <div
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-dark-theme"
-                      : "settings-text-light-theme"
+                      ? "settings-text-dark-theme chirp-regular-font"
+                      : "settings-text-light-theme chirp-regular-font"
                   }
+                  style={{
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                  }}
                 >
                   Learn more about our Monetization programs and policies here.
                 </div>

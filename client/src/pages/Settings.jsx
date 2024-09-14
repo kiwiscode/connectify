@@ -8,6 +8,7 @@ import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
 import { NavigationHistoryContext } from "../context/NavigationHistoryContext";
+import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -102,6 +103,18 @@ function Settings() {
   const [showNotificationMessage, setShowNotificationMessage] = useState(null);
 
   const { navigationHistoryArray } = useContext(NavigationHistoryContext);
+  const {
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight17,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight14,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font17 = getFontSizeAndLineHeight17();
+  const font15 = getFontSizeAndLineHeight15();
+  const font14 = getFontSizeAndLineHeight14();
+  const font13 = getFontSizeAndLineHeight13();
   useEffect(() => {
     if (width >= 1000) {
       navigate("/settings/account");
@@ -223,8 +236,8 @@ function Settings() {
                         : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
                     }
                     style={{
-                      fontSize: "17px",
-                      lineHeight: "20px",
+                      fontSize: font17.fontSize,
+                      lineHeight: font17.lineHeight,
                     }}
                   >
                     Settings
@@ -236,8 +249,8 @@ function Settings() {
                         : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
                     }
                     style={{
-                      fontSize: "13px",
-                      lineHeight: "16px",
+                      fontSize: font13.fontSize,
+                      lineHeight: font13.lineHeight,
                     }}
                   >
                     @{userInfo.username}
@@ -247,12 +260,12 @@ function Settings() {
             </div>
           ) : (
             <div
+              className="chirp-bold-font"
               style={{
-                lineHeight: "24px",
-                fontWeight: "700",
-                fontSize: "20px",
                 paddingLeft: "12px",
                 paddingRight: "12px",
+                fontSize: font20.fontSize,
+                lineHeight: font20.lineHeight,
               }}
             >
               <span>Settings</span>
@@ -377,6 +390,7 @@ function Settings() {
                 </div>
               ) : null}
               <input
+                className="chirp-regular-font"
                 onFocus={() => {
                   onFocusActive();
                   setOnFocusXBtn(true);
@@ -403,8 +417,7 @@ function Settings() {
                   outlineStyle: "none",
                   borderRadius: "9999px",
                   borderWidth: "1px",
-                  fontSize: "14px",
-                  fontWeight: "400",
+                  fontSize: font14.fontSize,
                   lineHeight: "20px",
                   wordWrap: "break-word",
                   color: themeName === "dark-theme" ? "white" : "black",
@@ -423,9 +436,8 @@ function Settings() {
             style={{
               color:
                 themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
-              lineHeight: "20px",
-              fontSize: "15px",
-              fontWeight: "400",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
               display:
                 !showNotificationMessage || searchTerm.length > 0 ? "none" : "",
               textAlign: "center",

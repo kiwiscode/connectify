@@ -8,6 +8,7 @@ import Popover from "@mui/material/Popover";
 import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
 import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
+import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -23,7 +24,10 @@ function PostPopover({
   const [{ theme, themeName }] = useContext(ThemeContext);
 
   const { userInfo, getToken } = useContext(UserContext);
-
+  const { getFontSizeAndLineHeight20, getFontSizeAndLineHeight15 } =
+    useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
   const [showPostOptionsThreeDots, setshowPostOptionsThreeDots] =
     useState(false);
 
@@ -115,11 +119,11 @@ function PostPopover({
             }}
           >
             <div
+              className="chirp-bold-font"
               style={{
                 color: themeName === "dark-theme" ? "white" : "",
-                fontWeight: "700",
-                fontSize: "20px",
-                lineHeight: "24px",
+                fontSize: font20.fontSize,
+                lineHeight: font20.lineHeight,
               }}
             >
               Delete post ?
@@ -128,9 +132,8 @@ function PostPopover({
               style={{
                 color:
                   themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
-                fontWeight: "400",
-                fontSize: "15px",
-                lineHeight: "20px",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
               }}
               className="mt-2"
             >
@@ -280,10 +283,14 @@ function PostPopover({
             >
               {post?.userId?._id === userInfo._id ? (
                 <div
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
                   className={
                     themeName === "dark-theme"
-                      ? "dark-theme-post-popover-detail"
-                      : "post-popover-detail"
+                      ? "dark-theme-post-popover-detail soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                      : "post-popover-detail very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
                   }
                 >
                   <div

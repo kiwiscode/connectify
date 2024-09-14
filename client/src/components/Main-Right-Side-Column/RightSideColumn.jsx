@@ -43,6 +43,8 @@ import LikeAction from "../ui/LikeAction";
 import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
 import PostPopover from "../three-dots-popover/Popover";
 import BookmarkAction from "../ui/BookmarkAction";
+import { SubcsriptionStatusContext } from "../../context/SubscriptionStatusContext";
+import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
 const socket = io.connect(`${API_URL}`);
 
 function RightSideColumn({
@@ -59,6 +61,35 @@ function RightSideColumn({
   isSubscriptionEligibilityCheckRouteForIndividualSubscription,
   premiumInfoFromParentAppJsx,
 }) {
+  const {
+    subscription,
+    remainingTimeSubscriptions,
+    remainingTimeSubscriptionsOwnerIds,
+  } = useContext(SubcsriptionStatusContext);
+
+  const {
+    getFontSizeAndLineHeight34,
+    getFontSizeAndLineHeight31,
+    getFontSizeAndLineHeight26,
+    getFontSizeAndLineHeight23,
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight17,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight14,
+    getFontSizeAndLineHeight13,
+    getFontSizeAndLineHeight11,
+  } = useFontSizeHandler();
+  const font34 = getFontSizeAndLineHeight34();
+  const font31 = getFontSizeAndLineHeight31();
+  const font26 = getFontSizeAndLineHeight26();
+  const font23 = getFontSizeAndLineHeight23();
+  const font20 = getFontSizeAndLineHeight20();
+  const font17 = getFontSizeAndLineHeight17();
+  const font15 = getFontSizeAndLineHeight15();
+  const font14 = getFontSizeAndLineHeight14();
+  const font13 = getFontSizeAndLineHeight13();
+  const font11 = getFontSizeAndLineHeight11();
+
   useEffect(() => {
     if (
       premiumInfoFromParentAppJsx ||
@@ -488,12 +519,11 @@ function RightSideColumn({
       tabStyleOrganizationBasicPlan && themeName !== "dark-theme"
         ? "black"
         : "white",
-    fontWeight: "600",
-    fontSize: "18px",
     borderRadius: "9999px",
     border: "none",
-
     height: "32px",
+    fontSize: font15.fontSize,
+    lineHeight: font15.lineHeight,
   };
   const tabStyleOrganizationFullAccessStyle = {
     backgroundColor:
@@ -510,8 +540,8 @@ function RightSideColumn({
       tabStyleOrganizationFullAccessPlan && themeName !== "dark-theme"
         ? "black"
         : "white",
-    fontWeight: "600",
-    fontSize: "18px",
+    fontSize: font15.fontSize,
+    lineHeight: font15.lineHeight,
     borderRadius: "9999px",
     border: "none",
     height: "32px",
@@ -1260,66 +1290,7 @@ function RightSideColumn({
     setpopoverCountriesAndTheirPhoneCode(true);
     setCountry(event.target.value || undefined);
   };
-  const [subscription, setSubscription] = useState(null);
-  const getSubscription = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/subscription`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      });
 
-      console.log(
-        "response data detail =>",
-        response.data.activeSubscription[0]
-      );
-      console.log(
-        "response data detail 2 =>",
-        response.data.activeCancelledSubscription[0]
-      );
-
-      setSubscription(
-        response.data.activeSubscription[0]
-          ? response.data.activeSubscription[0]
-          : response.data.activeCancelledSubscription[0]
-      );
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-  const [remainingTimeSubscriptions, setRemainingTimeSubscriptions] = useState(
-    []
-  );
-  const [
-    remainingTimeSubscriptionsOwnerIds,
-    setRemainingTimeSubscriptionsOwnerIds,
-  ] = useState([]);
-  const getRemainingTimeSubscriptions = async () => {
-    try {
-      const response = await axios.get(
-        `${API_URL}/remaining_time_subscriptions`,
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      );
-
-      setRemainingTimeSubscriptions(response.data.remainingTimeSubscriptions);
-
-      setRemainingTimeSubscriptionsOwnerIds(
-        response.data.remainingTimeSubscriptions.map((eachSub) => {
-          return eachSub.owner;
-        })
-      );
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-  useEffect(() => {
-    getSubscription();
-    getRemainingTimeSubscriptions();
-  }, []);
   useEffect(() => {
     if (
       (isPossiblePhoneNumber(`${phoneNumber}`, country) &&
@@ -1597,16 +1568,10 @@ function RightSideColumn({
           }}
         >
           {subLoading ? (
-            <div
-              style={{
-                fontSize: "15px",
-              }}
-            >
-              <LoadingSpinner
-                isCheckoutProcess={true}
-                strokeColor={"rgb(29, 155, 240)"}
-              ></LoadingSpinner>
-            </div>
+            <LoadingSpinner
+              isCheckoutProcess={true}
+              strokeColor={"rgb(29, 155, 240)"}
+            ></LoadingSpinner>
           ) : (
             <div>Subscribe & Pay</div>
           )}
@@ -1622,16 +1587,15 @@ function RightSideColumn({
           style={{
             paddingBottom: "12px",
             paddingTop: "12px",
-            lineHeight: "20px",
-            fontWeight: "700",
-            fontSize: "15px",
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
             width: "100%",
             height: "100%",
+            fontSize: font15.fontSize,
+            lineHeight: font15.lineHeight,
           }}
-          className={`logout-p logout-popover logout-popover-${themeName}`}
+          className={`logout-popover logout-popover-${themeName} chirp-bold-font`}
         >
           <span
             style={{
@@ -1658,7 +1622,7 @@ function RightSideColumn({
                 overflowY: "hidden",
                 margin: "0px",
                 padding: "0px",
-                // zIndex: 9999,
+                zIndex: 99999,
                 backgroundColor: themeName === "dark-theme" ? "black" : "white",
               }}
               dialogClassName={"modal-fullscreen"}
@@ -1718,7 +1682,6 @@ function RightSideColumn({
                         <svg
                           style={{
                             border: "none",
-                            fontSize: "15px",
                             margin: "5px",
                           }}
                           onClick={handleCloseSubscriptionModal}
@@ -1745,8 +1708,7 @@ function RightSideColumn({
                       style={{
                         color: themeName === "dark-theme" ? "white" : "",
                         fontWeight: "700",
-                        fontSize: "20px",
-                        lineHeight: "24px",
+
                         position: "absolute",
                         left: "15%",
                         display:
@@ -1755,15 +1717,15 @@ function RightSideColumn({
                           tabIndex !== 2
                             ? ""
                             : "none",
+                        fontSize: font20.fontSize,
+                        lineHeight: font20.lineHeight,
                       }}
                     >
                       Subscribe
                     </span>
                     <div
+                      className="chirp-bold-font"
                       style={{
-                        fontWeight: "700",
-                        fontSize: "20px",
-                        lineHeight: "24px",
                         margin: "0 auto",
                         position: "relative",
                         right: "15px",
@@ -1774,6 +1736,8 @@ function RightSideColumn({
                           tabIndex !== 2
                             ? ""
                             : "none",
+                        fontSize: font20.fontSize,
+                        lineHeight: font20.lineHeight,
                       }}
                     >
                       Verified Organizations
@@ -1851,10 +1815,10 @@ function RightSideColumn({
                     }}
                   >
                     <div
+                      className="chirp-heavy-font"
                       style={{
-                        lineHeight: "36px",
-                        fontSize: "31px",
-                        fontWeight: "800",
+                        fontSize: font31.fontSize,
+                        lineHeight: font31.lineHeight,
                         color: themeName === "dark-theme" ? "white" : "black",
                       }}
                     >
@@ -1862,11 +1826,10 @@ function RightSideColumn({
                     </div>
 
                     <div
-                      className="mt-3"
+                      className="mt-3 chirp-regular-font"
                       style={{
-                        lineHeight: "20px",
-                        fontSize: "15px",
-                        fontWeight: "400",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                         color: themeName === "dark-theme" ? "white" : "black",
                       }}
                     >
@@ -1931,13 +1894,13 @@ function RightSideColumn({
                           }}
                         >
                           <div
+                            className="chirp-regular-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "rgb(83, 100, 113)",
-                              fontSize: "15px",
-                              fontWeight: "400",
+                              fontSize: font15.fontSize,
                               backgroundColor:
                                 boxHoveredIndividual &&
                                 themeName === "dark-theme"
@@ -1948,9 +1911,10 @@ function RightSideColumn({
                             Premium
                           </div>
                           <div
+                            className="chirp-bold-font"
                             style={{
-                              fontSize: "18px",
-                              fontWeight: "600",
+                              fontSize: font17.fontSize,
+                              lineHeight: font17.lineHeight,
                               color:
                                 themeName === "dark-theme" ? "white" : "black",
                               backgroundColor:
@@ -1964,12 +1928,13 @@ function RightSideColumn({
                             I am an individual
                           </div>
                           <div
+                            className="chirp-regular-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "rgb(83, 100, 113)",
-                              fontSize: "14px",
+                              fontSize: font14.fontSize,
                               fontWeight: "400",
                               backgroundColor:
                                 boxHoveredIndividual &&
@@ -2034,27 +1999,29 @@ function RightSideColumn({
                           }}
                         >
                           <div
+                            className="chirp-regular-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "rgb(83, 100, 113)",
-                              fontSize: "15px",
-                              fontWeight: "400",
+
                               backgroundColor:
                                 boxHoveredOrganization &&
                                 themeName === "dark-theme"
                                   ? "#17181c"
                                   : "",
+                              fontSize: font15.fontSize,
                             }}
                           >
                             {" "}
                             Verified Organizations
                           </div>{" "}
                           <div
+                            className="chirp-bold-font"
                             style={{
-                              fontSize: "18px",
-                              fontWeight: "600",
+                              fontSize: font17.fontSize,
+                              lineHeight: font17.lineHeight,
                               color:
                                 themeName === "dark-theme"
                                   ? "white"
@@ -2069,12 +2036,13 @@ function RightSideColumn({
                             I am an organization
                           </div>{" "}
                           <div
+                            className="chirp-regular-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "rgb(83, 100, 113)",
-                              fontSize: "14px",
+                              fontSize: font14.fontSize,
                               fontWeight: "400",
                               backgroundColor:
                                 boxHoveredOrganization &&
@@ -2109,12 +2077,11 @@ function RightSideColumn({
                     </Button>
                     <div
                       style={{
-                        fontSize: "15px",
-                        fontWeight: "400",
-                        lineHeight: "20px",
                         color: themeName === "dark-theme" ? "white" : "black",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                       }}
-                      className="mt-4"
+                      className="mt-4 chirp-regular-font"
                     >
                       Learn more about{" "}
                       <span
@@ -2226,11 +2193,11 @@ function RightSideColumn({
                             <div style={{}}>
                               {" "}
                               <span
+                                className="chirp-medium-font"
                                 style={{
                                   color: "white",
-                                  lineHeight: "20px",
-                                  fontWeight: "500",
-                                  fontSize: "17px",
+                                  fontSize: font17.fontSize,
+                                  lineHeight: font17.lineHeight,
                                   position: "relative",
                                   left: "5px",
                                 }}
@@ -2292,7 +2259,13 @@ function RightSideColumn({
                                   : "#eff3f4",
                             }}
                           >
-                            <div className="premium-plus-header">
+                            <div
+                              style={{
+                                fontSize: font17.fontSize,
+                                lineHeight: font17.lineHeight,
+                              }}
+                              className="premium-plus-header chirp-bold-font"
+                            >
                               Enhanced Experience
                             </div>
                             <div>
@@ -2303,7 +2276,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Ads in For You</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Ads in For You
+                                  </span>
                                   <svg
                                     width={16}
                                     height={16}
@@ -2329,7 +2310,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Reply boost</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Reply boost
+                                  </span>
                                 </div>
                                 <div>Largest</div>
                               </div>
@@ -2370,7 +2359,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Longer posts</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Longer posts
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -2398,7 +2395,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Undo post</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Undo post
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -2426,7 +2431,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Post longer videos</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Post longer videos
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -2454,7 +2467,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Top Articles</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Top Articles
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -2483,7 +2504,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Reader</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Reader
+                                  </span>{" "}
                                   <svg
                                     width={20}
                                     height={20}
@@ -2525,7 +2554,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Background video playback</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Background video playback
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -2553,7 +2590,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Download videos</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Download videos
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -2587,7 +2632,13 @@ function RightSideColumn({
                                   : "#eff3f4",
                             }}
                           >
-                            <div className="premium-plus-header">
+                            <div
+                              style={{
+                                fontSize: font17.fontSize,
+                                lineHeight: font17.lineHeight,
+                              }}
+                              className="premium-plus-header chirp-bold-font"
+                            >
                               Creator Hub
                             </div>
                             <div>
@@ -2599,11 +2650,14 @@ function RightSideColumn({
                               >
                                 <div>
                                   <span
+                                    className="chirp-regular-font"
                                     style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                       color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
-                                          : "rgb(83, 100, 113)                                  ",
+                                          : "rgb(83, 100, 113) ",
                                     }}
                                   >
                                     Write Articles
@@ -2657,7 +2711,10 @@ function RightSideColumn({
                               >
                                 <div>
                                   <span
+                                    className="chirp-regular-font"
                                     style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                       color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
@@ -2715,11 +2772,14 @@ function RightSideColumn({
                               >
                                 <div>
                                   <span
+                                    className="chirp-regular-font"
                                     style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                       color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
-                                          : "rgb(83, 100, 113)                                  ",
+                                          : "rgb(83, 100, 113)",
                                     }}
                                   >
                                     Creator Subscriptions
@@ -2773,11 +2833,14 @@ function RightSideColumn({
                               >
                                 <div>
                                   <span
+                                    className="chirp-regular-font"
                                     style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                       color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
-                                          : "rgb(83, 100, 113)                                  ",
+                                          : "rgb(83, 100, 113)",
                                     }}
                                   >
                                     X Pro
@@ -2831,11 +2894,14 @@ function RightSideColumn({
                               >
                                 <div>
                                   <span
+                                    className="chirp-regular-font"
                                     style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                       color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
-                                          : "rgb(83, 100, 113)                                  ",
+                                          : "rgb(83, 100, 113)",
                                     }}
                                   >
                                     Media Studio
@@ -2889,11 +2955,14 @@ function RightSideColumn({
                               >
                                 <div>
                                   <span
+                                    className="chirp-regular-font"
                                     style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                       color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
-                                          : "rgb(83, 100, 113)                                  ",
+                                          : "rgb(83, 100, 113)",
                                     }}
                                   >
                                     Analytics
@@ -2952,7 +3021,13 @@ function RightSideColumn({
                                   : "#eff3f4",
                             }}
                           >
-                            <div className="premium-plus-header">
+                            <div
+                              style={{
+                                fontSize: font17.fontSize,
+                                lineHeight: font17.lineHeight,
+                              }}
+                              className="premium-plus-header chirp-bold-font"
+                            >
                               Verification & Security
                             </div>
                             <div>
@@ -2964,11 +3039,14 @@ function RightSideColumn({
                               >
                                 <div>
                                   <span
+                                    className="chirp-regular-font"
                                     style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                       color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
-                                          : "rgba(83,100,113,1.00)",
+                                          : "rgb(83, 100, 113)",
                                     }}
                                   >
                                     {" "}
@@ -3022,7 +3100,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Encrypted direct messages</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Encrypted direct messages
+                                  </span>
                                   <svg
                                     width={20}
                                     height={20}
@@ -3064,11 +3150,14 @@ function RightSideColumn({
                               >
                                 <div>
                                   <span
+                                    className="chirp-regular-font"
                                     style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                       color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
-                                          : "rgba(83,100,113,1.00)",
+                                          : "rgb(83, 100, 113)",
                                     }}
                                   >
                                     Optional ID verification
@@ -3127,7 +3216,13 @@ function RightSideColumn({
                                   : "#eff3f4",
                             }}
                           >
-                            <div className="premium-plus-header">
+                            <div
+                              style={{
+                                fontSize: font17.fontSize,
+                                lineHeight: font17.lineHeight,
+                              }}
+                              className="premium-plus-header chirp-bold-font"
+                            >
                               Customization
                             </div>
                             <div>
@@ -3138,7 +3233,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>App icons</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    App icons
+                                  </span>
                                 </div>
                                 <div>
                                   {" "}
@@ -3165,7 +3268,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Bookmark folders</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Bookmark folders
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -3193,7 +3304,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Customize navigation</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Customize navigation
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -3221,7 +3340,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Highlights tab</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Highlights tab
+                                  </span>{" "}
                                   <svg
                                     width={20}
                                     height={20}
@@ -3262,7 +3389,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Hide your likes</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Hide your likes
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -3290,7 +3425,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Hide your checkmark</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Hide your checkmark
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -3318,7 +3461,15 @@ function RightSideColumn({
                                   justifyContent: "space-between",
                                 }}
                               >
-                                <div>Hide your subscriptions</div>
+                                <div
+                                  className="chirp-regular-font"
+                                  style={{
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
+                                  }}
+                                >
+                                  Hide your subscriptions
+                                </div>
                                 <div>
                                   {" "}
                                   <svg
@@ -3400,11 +3551,11 @@ function RightSideColumn({
                             <div style={{}}>
                               {" "}
                               <span
+                                className="chirp-medium-font"
                                 style={{
                                   color: "white",
-                                  lineHeight: "20px",
-                                  fontWeight: "500",
-                                  fontSize: "17px",
+                                  fontSize: font17.fontSize,
+                                  lineHeight: font17.lineHeight,
                                   position: "relative",
                                   left: "5px",
                                 }}
@@ -3466,7 +3617,13 @@ function RightSideColumn({
                                   : "#eff3f4",
                             }}
                           >
-                            <div className="premium-plus-header">
+                            <div
+                              style={{
+                                fontSize: font17.fontSize,
+                                lineHeight: font17.lineHeight,
+                              }}
+                              className="premium-plus-header chirp-bold-font"
+                            >
                               Enhanced Experience
                             </div>
                             <div>
@@ -3477,7 +3634,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Ads in For You</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Ads in For You
+                                  </span>
                                   <svg
                                     width={16}
                                     height={16}
@@ -3503,7 +3668,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Reply boost</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Reply boost
+                                  </span>
                                 </div>
                                 <div>Larger</div>
                               </div>
@@ -3516,7 +3689,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Edit post</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Edit post
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -3544,7 +3725,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Longer posts</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Longer posts
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -3572,7 +3761,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Undo post</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Undo post
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -3600,7 +3797,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Post longer videos</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Post longer videos
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -3628,7 +3833,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Top Articles</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Top Articles
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -3657,7 +3870,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Reader</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Reader
+                                  </span>{" "}
                                   <svg
                                     width={20}
                                     height={20}
@@ -3699,7 +3920,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Background video playback</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Background video playback
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -3727,7 +3956,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Download videos</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Download videos
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -3761,7 +3998,13 @@ function RightSideColumn({
                                   : "#eff3f4",
                             }}
                           >
-                            <div className="premium-plus-header">
+                            <div
+                              style={{
+                                fontSize: font17.fontSize,
+                                lineHeight: font17.lineHeight,
+                              }}
+                              className="premium-plus-header chirp-bold-font"
+                            >
                               Creator Hub
                             </div>
                             <div>
@@ -3773,11 +4016,14 @@ function RightSideColumn({
                               >
                                 <div>
                                   <span
+                                    className="chirp-regular-font"
                                     style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                       color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
-                                          : "rgba(83,100,113,1.00)",
+                                          : "rgb(83, 100, 113) ",
                                     }}
                                   >
                                     Write Articles
@@ -3831,7 +4077,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Get paid to post</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Get paid to post
+                                  </span>
                                   <svg
                                     width={20}
                                     height={20}
@@ -3872,7 +4126,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Creator Subscriptions</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Creator Subscriptions
+                                  </span>
                                   <svg
                                     width={20}
                                     height={20}
@@ -3913,7 +4175,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>X Pro</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    X Pro
+                                  </span>
                                   <svg
                                     width={20}
                                     height={20}
@@ -3954,7 +4224,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Media Studio</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Media Studio
+                                  </span>
                                   <svg
                                     width={20}
                                     height={20}
@@ -3995,7 +4273,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Analytics</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Analytics
+                                  </span>
                                   <svg
                                     width={20}
                                     height={20}
@@ -4042,7 +4328,13 @@ function RightSideColumn({
                                   : "#eff3f4",
                             }}
                           >
-                            <div className="premium-plus-header">
+                            <div
+                              style={{
+                                fontSize: font17.fontSize,
+                                lineHeight: font17.lineHeight,
+                              }}
+                              className="premium-plus-header chirp-bold-font"
+                            >
                               Verification & Security
                             </div>
                             <div>
@@ -4053,7 +4345,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Checkmark</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Checkmark
+                                  </span>
                                   <svg
                                     width={20}
                                     height={20}
@@ -4094,7 +4394,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Encrypted direct messages</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Encrypted direct messages
+                                  </span>
                                   <svg
                                     width={20}
                                     height={20}
@@ -4135,7 +4443,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Optional ID verification</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Optional ID verification
+                                  </span>
                                   <svg
                                     width={20}
                                     height={20}
@@ -4182,7 +4498,13 @@ function RightSideColumn({
                                   : "#eff3f4",
                             }}
                           >
-                            <div className="premium-plus-header">
+                            <div
+                              style={{
+                                fontSize: font17.fontSize,
+                                lineHeight: font17.lineHeight,
+                              }}
+                              className="premium-plus-header chirp-bold-font"
+                            >
                               Customization
                             </div>
                             <div>
@@ -4193,7 +4515,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>App icons</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    App icons
+                                  </span>
                                 </div>
                                 <div>
                                   {" "}
@@ -4220,7 +4550,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Bookmark folders</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Bookmark folders
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -4248,7 +4586,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Customize navigation</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Customize navigation
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -4276,7 +4622,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Highlights tab</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Highlights tab
+                                  </span>{" "}
                                   <svg
                                     width={20}
                                     height={20}
@@ -4317,7 +4671,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Hide your likes</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Hide your likes
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -4345,7 +4707,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Hide your checkmark</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Hide your checkmark
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -4373,7 +4743,15 @@ function RightSideColumn({
                                   justifyContent: "space-between",
                                 }}
                               >
-                                <div>Hide your subscriptions</div>
+                                <div
+                                  className="chirp-regular-font"
+                                  style={{
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
+                                  }}
+                                >
+                                  Hide your subscriptions
+                                </div>
                                 <div>
                                   {" "}
                                   <svg
@@ -4455,11 +4833,11 @@ function RightSideColumn({
                             <div style={{}}>
                               {" "}
                               <span
+                                className="chirp-medium-font"
                                 style={{
                                   color: "white",
-                                  lineHeight: "20px",
-                                  fontWeight: "500",
-                                  fontSize: "17px",
+                                  fontSize: font17.fontSize,
+                                  lineHeight: font17.lineHeight,
                                   position: "relative",
                                   left: "5px",
                                 }}
@@ -4514,7 +4892,13 @@ function RightSideColumn({
                                   : "#eff3f4",
                             }}
                           >
-                            <div className="premium-plus-header">
+                            <div
+                              style={{
+                                fontSize: font17.fontSize,
+                                lineHeight: font17.lineHeight,
+                              }}
+                              className="premium-plus-header chirp-bold-font"
+                            >
                               Enhanced Experience
                             </div>
                             <div>
@@ -4525,7 +4909,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Ads in For You</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Ads in For You
+                                  </span>
                                   <svg
                                     width={16}
                                     height={16}
@@ -4551,7 +4943,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Reply boost</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Reply boost
+                                  </span>
                                 </div>
                                 <div>Largest</div>
                               </div>
@@ -4564,7 +4964,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Edit post</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Edit post
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -4592,7 +5000,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Longer posts</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Longer posts
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -4620,7 +5036,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Undo post</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Undo post
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -4648,7 +5072,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Post longer videos</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Post longer videos
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -4676,7 +5108,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Top Articles</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Top Articles
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -4705,7 +5145,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Reader</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Reader
+                                  </span>{" "}
                                   <svg
                                     width={20}
                                     height={20}
@@ -4747,7 +5195,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Background video playback</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Background video playback
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -4775,7 +5231,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Download videos</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Download videos
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -4809,7 +5273,13 @@ function RightSideColumn({
                                   : "#eff3f4",
                             }}
                           >
-                            <div className="premium-plus-header">
+                            <div
+                              style={{
+                                fontSize: font17.fontSize,
+                                lineHeight: font17.lineHeight,
+                              }}
+                              className="premium-plus-header chirp-bold-font"
+                            >
                               Creator Hub
                             </div>
                             <div>
@@ -4820,7 +5290,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Write Articles</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Write Articles
+                                  </span>
                                   <svg
                                     width={20}
                                     height={20}
@@ -4861,7 +5339,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Get paid to post</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Get paid to post
+                                  </span>
                                   <svg
                                     width={20}
                                     height={20}
@@ -4902,7 +5388,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Creator Subscriptions</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Creator Subscriptions
+                                  </span>
                                   <svg
                                     width={20}
                                     height={20}
@@ -4943,7 +5437,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>X Pro</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    X Pro
+                                  </span>
                                   <svg
                                     width={20}
                                     height={20}
@@ -4984,7 +5486,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Media Studio</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Media Studio
+                                  </span>
                                   <svg
                                     width={20}
                                     height={20}
@@ -5025,7 +5535,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Analytics</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Analytics
+                                  </span>
                                   <svg
                                     width={20}
                                     height={20}
@@ -5072,7 +5590,13 @@ function RightSideColumn({
                                   : "#eff3f4",
                             }}
                           >
-                            <div className="premium-plus-header">
+                            <div
+                              style={{
+                                fontSize: font17.fontSize,
+                                lineHeight: font17.lineHeight,
+                              }}
+                              className="premium-plus-header chirp-bold-font"
+                            >
                               Verification & Security
                             </div>
                             <div>
@@ -5083,7 +5607,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Checkmark</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Checkmark
+                                  </span>
                                   <svg
                                     width={20}
                                     height={20}
@@ -5124,7 +5656,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Encrypted direct messages</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Encrypted direct messages
+                                  </span>
                                   <svg
                                     width={20}
                                     height={20}
@@ -5165,7 +5705,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Optional ID verification</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Optional ID verification
+                                  </span>
                                   <svg
                                     width={20}
                                     height={20}
@@ -5212,7 +5760,13 @@ function RightSideColumn({
                                   : "#eff3f4",
                             }}
                           >
-                            <div className="premium-plus-header">
+                            <div
+                              style={{
+                                fontSize: font17.fontSize,
+                                lineHeight: font17.lineHeight,
+                              }}
+                              className="premium-plus-header chirp-bold-font"
+                            >
                               Customization
                             </div>
                             <div>
@@ -5223,7 +5777,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>App icons</span>
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    App icons
+                                  </span>
                                 </div>
                                 <div>
                                   {" "}
@@ -5250,7 +5812,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Bookmark folders</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Bookmark folders
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -5278,7 +5848,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Customize navigation</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Customize navigation
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -5306,7 +5884,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Highlights tab</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Highlights tab
+                                  </span>{" "}
                                   <svg
                                     width={20}
                                     height={20}
@@ -5347,7 +5933,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Hide your likes</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Hide your likes
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -5375,7 +5969,15 @@ function RightSideColumn({
                                 }}
                               >
                                 <div>
-                                  <span>Hide your checkmark</span>{" "}
+                                  <span
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Hide your checkmark
+                                  </span>{" "}
                                 </div>
                                 <div>
                                   {" "}
@@ -5403,7 +6005,15 @@ function RightSideColumn({
                                   justifyContent: "space-between",
                                 }}
                               >
-                                <div>Hide your subscriptions</div>
+                                <div
+                                  className="chirp-regular-font"
+                                  style={{
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
+                                  }}
+                                >
+                                  Hide your subscriptions
+                                </div>
                                 <div>
                                   {" "}
                                   <svg
@@ -5452,11 +6062,11 @@ function RightSideColumn({
                           }}
                         >
                           <div
+                            className="chirp-bold-font"
                             style={{
                               width: "95%",
-                              fontSize: "23px",
-                              fontWeight: "700",
-                              lineHeight: "28px",
+                              fontSize: font23.fontSize,
+                              lineHeight: font23.lineHeight,
                               margin: "0 auto",
                               color: themeName === "dark-theme" ? "white" : "",
                             }}
@@ -5498,25 +6108,25 @@ function RightSideColumn({
                             }}
                           >
                             <span
+                              className="chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A"
                                     : "#697884",
-                                fontSize: "14px",
-                                fontWeight: "400",
-                                lineHeight: "16px",
+                                fontSize: font14.fontSize,
+                                lineHeight: font14.lineHeight,
                               }}
                             >
                               Annual Plan{" "}
                               <span
+                                className="chirp-bold-font"
                                 style={{
-                                  fontSize: "11px",
+                                  fontSize: font11.fontSize,
+                                  lineHeight: font11.lineHeight,
                                   borderRadius: "9999px",
                                   position: "relative",
                                   bottom: "1px",
-                                  fontWeight: "700",
-                                  lineHeight: "12px",
                                   padding: "4px",
                                   height: "20px",
                                   backgroundColor:
@@ -5534,28 +6144,28 @@ function RightSideColumn({
                             </span>
 
                             <span
+                              className="chirp-bold-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
                                     : "rgb(15, 20, 25)",
-                                fontSize: "17px",
-                                fontWeight: "700",
-                                lineHeight: "20px",
+                                fontSize: font17.fontSize,
+                                lineHeight: font17.lineHeight,
                                 display: "block",
                               }}
                             >
                               €199.92 / year
                             </span>
                             <div
+                              className="chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A"
                                     : "#697884",
-                                fontSize: "13px",
-                                fontWeight: "400",
-                                lineHeight: "16px",
+                                fontSize: font13.fontSize,
+                                lineHeight: font13.lineHeight,
                               }}
                             >
                               €199.92 per year billed annually
@@ -5592,40 +6202,40 @@ function RightSideColumn({
                             }}
                           >
                             <span
+                              className="chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A"
                                     : "#697884",
-                                fontSize: "14px",
-                                fontWeight: "400",
-                                lineHeight: "16px",
+                                fontSize: font14.fontSize,
+                                lineHeight: font14.lineHeight,
                               }}
                             >
                               Monthly Plan{" "}
                             </span>
 
                             <div
+                              className="chirp-bold-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
                                     : "rgb(15, 20, 25)",
-                                fontSize: "17px",
-                                fontWeight: "700",
-                                lineHeight: "20px",
+                                fontSize: font17.fontSize,
+                                lineHeight: font17.lineHeight,
                               }}
                             >
                               €19.04 / month
                               <div
+                                className="chirp-regular-font"
                                 style={{
                                   color:
                                     themeName === "dark-theme"
                                       ? "#71767A"
                                       : "#697884",
-                                  fontSize: "13px",
-                                  fontWeight: "400",
-                                  lineHeight: "16px",
+                                  fontSize: font13.fontSize,
+                                  lineHeight: font13.lineHeight,
                                 }}
                               >
                                 €228.48 per year billed monthly
@@ -5634,12 +6244,12 @@ function RightSideColumn({
                           </div>
                           {phoneVerifiedErrorMessage ? (
                             <div
+                              className="chirp-regular-font"
                               style={{
                                 borderRadius: "8px",
                                 color: "rgb(15, 20, 25)",
-                                lineHeight: "16px",
-                                fontSize: "14px",
-                                fontWeight: "400",
+                                fontSize: font14.fontSize,
+                                lineHeight: font14.lineHeight,
                                 backgroundColor: "#fef1f1",
                                 width: "95%",
                                 marginTop: "10px",
@@ -5679,28 +6289,21 @@ function RightSideColumn({
                             }}
                           >
                             {subErrorPhoneVerifiedTabLoading ? (
-                              <div
-                                style={{
-                                  fontSize: "15px",
-                                }}
-                              >
-                                <LoadingSpinner
-                                  isCheckoutProcess={true}
-                                  strokeColor={"rgb(29, 155, 240)"}
-                                ></LoadingSpinner>
-                              </div>
+                              <LoadingSpinner
+                                isCheckoutProcess={true}
+                                strokeColor={"rgb(29, 155, 240)"}
+                              ></LoadingSpinner>
                             ) : (
                               <span>Subscribe & Pay</span>
                             )}
                           </Button>
 
                           <div
-                            className="mt-3"
+                            className="mt-3 chirp-regular-font"
                             style={{
                               width: "95%",
-                              fontSize: "13px",
-                              lineHeight: "16px",
-                              fontWeight: "400",
+                              fontSize: font13.fontSize,
+                              lineHeight: font13.lineHeight,
                               border:
                                 themeName === "dark-theme"
                                   ? "1px solid rgb(70, 70, 70)"
@@ -5758,11 +6361,11 @@ function RightSideColumn({
                           }}
                         >
                           <div
+                            className="chirp-bold-font"
                             style={{
                               width: "95%",
-                              fontSize: "23px",
-                              fontWeight: "700",
-                              lineHeight: "28px",
+                              fontSize: font23.fontSize,
+                              lineHeight: font23.lineHeight,
                               margin: "0 auto",
                               color: themeName === "dark-theme" ? "white" : "",
                             }}
@@ -5804,27 +6407,25 @@ function RightSideColumn({
                             }}
                           >
                             <span
+                              className="chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A"
                                     : "#697884",
-                                fontSize: "14px",
-                                fontWeight: "400",
-                                lineHeight: "16px",
+                                fontSize: font14.fontSize,
+                                lineHeight: font14.lineHeight,
                               }}
                             >
                               Annual Plan{" "}
                               <span
+                                className="chirp-bold-font"
                                 style={{
-                                  fontSize: "11px",
-
+                                  fontSize: font11.fontSize,
+                                  lineHeight: font11.lineHeight,
                                   borderRadius: "9999px",
-
                                   position: "relative",
                                   bottom: "1px",
-                                  fontWeight: "700",
-                                  lineHeight: "12px",
                                   padding: "4px",
                                   height: "20px",
                                   backgroundColor:
@@ -5842,28 +6443,28 @@ function RightSideColumn({
                             </span>
 
                             <span
+                              className="chirp-bold-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
                                     : "rgb(15, 20, 25)",
-                                fontSize: "17px",
-                                fontWeight: "700",
-                                lineHeight: "20px",
+                                fontSize: font17.fontSize,
+                                lineHeight: font17.lineHeight,
                                 display: "block",
                               }}
                             >
                               €99.96 / year
                             </span>
                             <div
+                              className="chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A"
                                     : "#697884",
-                                fontSize: "13px",
-                                fontWeight: "400",
-                                lineHeight: "16px",
+                                fontSize: font13.fontSize,
+                                lineHeight: font13.lineHeight,
                               }}
                             >
                               €99.96 per year billed annually
@@ -5900,40 +6501,40 @@ function RightSideColumn({
                             }}
                           >
                             <span
+                              className="chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A"
                                     : "#697884",
-                                fontSize: "14px",
-                                fontWeight: "400",
-                                lineHeight: "16px",
+                                fontSize: font14.fontSize,
+                                lineHeight: font14.lineHeight,
                               }}
                             >
                               Monthly Plan{" "}
                             </span>
 
                             <div
+                              className="chirp-bold-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
                                     : "rgb(15, 20, 25)",
-                                fontSize: "17px",
-                                fontWeight: "700",
-                                lineHeight: "20px",
+                                fontSize: font17.fontSize,
+                                lineHeight: font17.lineHeight,
                               }}
                             >
                               €9.52 / month
                               <div
+                                className="chirp-regular-font"
                                 style={{
                                   color:
                                     themeName === "dark-theme"
                                       ? "#71767A"
                                       : "#697884",
-                                  fontSize: "13px",
-                                  fontWeight: "400",
-                                  lineHeight: "16px",
+                                  fontSize: font13.fontSize,
+                                  lineHeight: font13.lineHeight,
                                 }}
                               >
                                 €114.24 per year billed monthly
@@ -5942,12 +6543,12 @@ function RightSideColumn({
                           </div>
                           {phoneVerifiedErrorMessage ? (
                             <div
+                              className="chirp-regular-font"
                               style={{
                                 borderRadius: "8px",
                                 color: "rgb(15, 20, 25)",
-                                lineHeight: "16px",
-                                fontSize: "14px",
-                                fontWeight: "400",
+                                fontSize: font14.fontSize,
+                                lineHeight: font14.lineHeight,
                                 backgroundColor: "#fef1f1",
                                 width: "95%",
                                 marginTop: "10px",
@@ -5987,28 +6588,22 @@ function RightSideColumn({
                             }}
                           >
                             {subErrorPhoneVerifiedTabLoading ? (
-                              <div
-                                style={{
-                                  fontSize: "15px",
-                                }}
-                              >
-                                <LoadingSpinner
-                                  isCheckoutProcess={true}
-                                  strokeColor={"rgb(29, 155, 240)"}
-                                ></LoadingSpinner>
-                              </div>
+                              <LoadingSpinner
+                                isCheckoutProcess={true}
+                                strokeColor={"rgb(29, 155, 240)"}
+                                fontSize={true}
+                              ></LoadingSpinner>
                             ) : (
                               <span>Subscribe & Pay</span>
                             )}
                           </Button>
 
                           <div
-                            className="mt-3"
+                            className="mt-3 chirp-regular-font"
                             style={{
                               width: "95%",
-                              fontSize: "13px",
-                              lineHeight: "16px",
-                              fontWeight: "400",
+                              fontSize: font13.fontSize,
+                              lineHeight: font13.lineHeight,
                               border:
                                 themeName === "dark-theme"
                                   ? "1px solid rgb(70, 70, 70)"
@@ -6066,11 +6661,11 @@ function RightSideColumn({
                           }}
                         >
                           <div
+                            className="chirp-bold-font"
                             style={{
                               width: "95%",
-                              fontSize: "23px",
-                              fontWeight: "700",
-                              lineHeight: "28px",
+                              fontSize: font23.fontSize,
+                              lineHeight: font23.lineHeight,
                               margin: "0 auto",
                               color: themeName === "dark-theme" ? "white" : "",
                             }}
@@ -6112,25 +6707,25 @@ function RightSideColumn({
                             }}
                           >
                             <span
+                              className="chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A"
                                     : "#697884",
-                                fontSize: "14px",
-                                fontWeight: "400",
-                                lineHeight: "16px",
+                                fontSize: font14.fontSize,
+                                lineHeight: font14.lineHeight,
                               }}
                             >
                               Annual Plan{" "}
                               <span
+                                className="chirp-bold-font"
                                 style={{
-                                  fontSize: "11px",
+                                  fontSize: font11.fontSize,
+                                  lineHeight: font11.lineHeight,
                                   borderRadius: "9999px",
                                   position: "relative",
                                   bottom: "1px",
-                                  fontWeight: "700",
-                                  lineHeight: "12px",
                                   padding: "4px",
                                   height: "20px",
                                   backgroundColor:
@@ -6148,28 +6743,28 @@ function RightSideColumn({
                             </span>
 
                             <span
+                              className="chirp-bold-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
                                     : "rgb(15, 20, 25)",
-                                fontSize: "17px",
-                                fontWeight: "700",
-                                lineHeight: "20px",
+                                fontSize: font17.fontSize,
+                                lineHeight: font17.lineHeight,
                                 display: "block",
                               }}
                             >
                               €38.08 / year
                             </span>
                             <div
+                              className="chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A"
                                     : "#697884",
-                                fontSize: "13px",
-                                fontWeight: "400",
-                                lineHeight: "16px",
+                                fontSize: font13.fontSize,
+                                lineHeight: font13.lineHeight,
                               }}
                             >
                               €38.08 per year billed annually
@@ -6206,40 +6801,40 @@ function RightSideColumn({
                             }}
                           >
                             <span
+                              className="chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A"
                                     : "#697884",
-                                fontSize: "14px",
-                                fontWeight: "400",
-                                lineHeight: "16px",
+                                fontSize: font14.fontSize,
+                                lineHeight: font14.lineHeight,
                               }}
                             >
                               Monthly Plan{" "}
                             </span>
 
                             <div
+                              className="chirp-bold-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
                                     : "rgb(15, 20, 25)",
-                                fontSize: "17px",
-                                fontWeight: "700",
-                                lineHeight: "20px",
+                                fontSize: font17.fontSize,
+                                lineHeight: font17.lineHeight,
                               }}
                             >
                               €3.57 / month
                               <div
+                                className="chirp-regular-font"
                                 style={{
                                   color:
                                     themeName === "dark-theme"
                                       ? "#71767A"
                                       : "#697884",
-                                  fontSize: "13px",
-                                  fontWeight: "400",
-                                  lineHeight: "16px",
+                                  fontSize: font13.fontSize,
+                                  lineHeight: font13.lineHeight,
                                 }}
                               >
                                 €42.84 per year billed monthly
@@ -6248,12 +6843,12 @@ function RightSideColumn({
                           </div>
                           {phoneVerifiedErrorMessage ? (
                             <div
+                              className="chirp-regular-font"
                               style={{
                                 borderRadius: "8px",
                                 color: "rgb(15, 20, 25)",
-                                lineHeight: "16px",
-                                fontSize: "14px",
-                                fontWeight: "400",
+                                fontSize: font14.fontSize,
+                                lineHeight: font14.lineHeight,
                                 backgroundColor: "#fef1f1",
                                 width: "95%",
                                 marginTop: "10px",
@@ -6294,28 +6889,22 @@ function RightSideColumn({
                             }}
                           >
                             {subErrorPhoneVerifiedTabLoading ? (
-                              <div
-                                style={{
-                                  fontSize: "15px",
-                                }}
-                              >
-                                <LoadingSpinner
-                                  isCheckoutProcess={true}
-                                  strokeColor={"rgb(29, 155, 240)"}
-                                ></LoadingSpinner>
-                              </div>
+                              <LoadingSpinner
+                                isCheckoutProcess={true}
+                                strokeColor={"rgb(29, 155, 240)"}
+                                fontSize={true}
+                              ></LoadingSpinner>
                             ) : (
                               <span>Subscribe & Pay</span>
                             )}
                           </Button>
 
                           <div
-                            className="mt-3"
+                            className="mt-3 chirp-regular-font"
                             style={{
                               width: "95%",
-                              fontSize: "13px",
-                              lineHeight: "16px",
-                              fontWeight: "400",
+                              fontSize: font13.fontSize,
+                              lineHeight: font13.lineHeight,
                               border:
                                 themeName === "dark-theme"
                                   ? "1px solid rgb(70, 70, 70)"
@@ -6564,6 +7153,34 @@ function RightSideColumn({
                                 display: "flex",
                                 justifyContent: "center",
                                 alignItems: "center",
+                                padding: "2px",
+                                width:
+                                  font15.fontSize === "Default"
+                                    ? "164px"
+                                    : font15.fontSize === "Small"
+                                    ? "156px"
+                                    : font15.fontSize === "Extra small"
+                                    ? "152px"
+                                    : font15.fontSize === "Large"
+                                    ? "184px"
+                                    : font15.fontSize === "Extra large"
+                                    ? "196px"
+                                    : null,
+                                height:
+                                  font15.fontSize === "Default"
+                                    ? "36px"
+                                    : font15.fontSize === "Small"
+                                    ? "35px"
+                                    : font15.fontSize === "Extra small"
+                                    ? "34px"
+                                    : font15.fontSize === "Large"
+                                    ? "38px"
+                                    : font15.fontSize === "Extra large"
+                                    ? "42px"
+                                    : null,
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
                               }}
                             >
                               <button
@@ -6576,6 +7193,7 @@ function RightSideColumn({
                                   style={{
                                     padding: "6px",
                                   }}
+                                  className="chirp-bold-font"
                                 >
                                   Basic
                                 </span>
@@ -6586,7 +7204,9 @@ function RightSideColumn({
                                 }}
                                 style={tabStyleOrganizationFullAccessStyle}
                               >
-                                <span style={{}}>Full Access</span>
+                                <span className="chirp-bold-font" style={{}}>
+                                  Full Access
+                                </span>
                               </button>
                             </div>
                           </div>
@@ -6608,23 +7228,23 @@ function RightSideColumn({
                             }}
                           >
                             <div
+                              className="chirp-bold-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A"
                                     : "rgb(83, 100, 113)",
-                                lineHeight: "28px",
-                                fontWeight: "700",
-                                fontSize: "23px",
+                                fontSize: font23.fontSize,
+                                lineHeight: font23.lineHeight,
                               }}
                             >
                               Basic
                             </div>
                             <div
+                              className="chirp-bold-font"
                               style={{
-                                fontSize: "34px",
-                                lineHeight: "40px",
-                                fontWeight: "700",
+                                fontSize: font34.fontSize,
+                                lineHeight: font34.lineHeight,
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
@@ -6634,15 +7254,14 @@ function RightSideColumn({
                               Find your customers and grow your business
                             </div>
                             <div
-                              className="basic-plan-parent-div"
+                              className="basic-plan-parent-div chirp-medium-font"
                               style={{
-                                lineHeight: "20px",
-                                fontWeight: "500",
-                                fontSize: "15px",
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
                                     : "black",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                               }}
                             >
                               <div className="mt-2">
@@ -6797,34 +7416,44 @@ function RightSideColumn({
                             </div>
                             <div
                               style={{
-                                fontSize: "15px",
-                                fontWeight: "400",
-                                lineHeight: "20px",
                                 color:
                                   themeName === "dark-theme" ? "white" : "",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                               }}
-                              className="mt-1"
+                              className="mt-1 chirp-regular-font"
                             >
                               + For a limited time, advertising credit to spend
                               on your organization{" "}
                               <span
                                 style={{
-                                  lineHeight: "20px",
-                                  fontSize: "15px",
-                                  fontWeight: "700",
                                   textDecoration: "underline",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                 }}
+                                className="chirp-bold-font"
                               >
                                 {basicAnnualTabStyle
                                   ? "every year"
                                   : "every month"}
                               </span>{" "}
-                              with dedicated support.{" "}
                               <span
-                                className="learn-more-basic-plan"
+                                className="chirp-regular-font"
+                                style={{
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
+                                }}
+                              >
+                                with dedicated support.{" "}
+                              </span>
+                              <span
+                                className="learn-more-basic-plan chirp-regular-font"
                                 style={{
                                   cursor: "pointer",
                                   color: "rgb(29, 155, 240)",
+
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                 }}
                               >
                                 Learn more
@@ -6890,21 +7519,24 @@ function RightSideColumn({
                               >
                                 <div>
                                   <div
+                                    className="chirp-bold-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
                                           ? "white"
                                           : "rgb(15, 20, 25)",
-                                      fontSize: "18px",
-                                      fontWeight: "600",
+                                      fontSize: font17.fontSize,
+                                      lineHeight: font17.lineHeight,
                                       display: " flex",
                                     }}
                                   >
                                     {" "}
                                     <div>{yearlyFee} / year</div>
                                     <div
+                                      className="chirp-bold-font"
                                       style={{
-                                        fontSize: "12px",
+                                        fontSize: font11.fontSize,
+                                        lineHeight: font11.lineHeight,
                                         borderRadius: "9999px",
                                         height: "20px",
                                         display: "flex",
@@ -6933,13 +7565,13 @@ function RightSideColumn({
                                     </div>
                                   </div>
                                   <div
+                                    className="chirp-regular-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
                                           : "rgb(83, 100, 113)",
-                                      fontSize: "14px",
-                                      fontWeight: "400",
+                                      fontSize: font14.fontSize,
                                     }}
                                   >
                                     {" "}
@@ -6996,25 +7628,26 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div
+                                    className="chirp-bold-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
                                           ? "white"
                                           : "rgb(15, 20, 25)",
-                                      fontSize: "18px",
-                                      fontWeight: "600",
+                                      fontSize: font17.fontSize,
+                                      lineHeight: font17.lineHeight,
                                     }}
                                   >
                                     {monthyleFee} / month
                                   </div>{" "}
                                   <div
+                                    className="chirp-regular-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
                                           : "rgb(83, 100, 113)",
-                                      fontSize: "14px",
-                                      fontWeight: "400",
+                                      fontSize: font14.fontSize,
                                     }}
                                   >
                                     Monthly plan
@@ -7024,15 +7657,14 @@ function RightSideColumn({
                               {/* monthly plan finish to check  */}
                             </div>
                             <div
-                              className="mt-3"
+                              className="mt-3 chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#4A4F51"
                                     : "rgb(83, 100, 113)",
-                                fontSize: "11px",
-                                lineHeight: "12px",
-                                fontWeight: "400",
+                                fontSize: font11.fontSize,
+                                lineHeight: font11.lineHeight,
                                 height: "20px",
                               }}
                             >
@@ -7087,27 +7719,22 @@ function RightSideColumn({
                               variant="info"
                             >
                               {checkoutProcessLoadingBar ? (
-                                <div
-                                  style={{
-                                    fontSize: "15px",
-                                  }}
-                                >
-                                  <LoadingSpinner
-                                    isCheckoutProcess={true}
-                                    strokeColor={"rgb(29, 155, 240)"}
-                                  ></LoadingSpinner>
-                                </div>
+                                <LoadingSpinner
+                                  isCheckoutProcess={true}
+                                  strokeColor={"rgb(29, 155, 240)"}
+                                  fontSize={true}
+                                ></LoadingSpinner>
                               ) : (
                                 <>
                                   <div
+                                    className="chirp-bold-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
                                           ? "black"
                                           : "",
-                                      fontSize: "15px",
-                                      lineHeight: "20px",
-                                      fontWeight: "700",
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                     }}
                                   >
                                     <span>Subscribe</span>
@@ -7129,16 +7756,15 @@ function RightSideColumn({
                               )}
                             </Button>
                             <div
-                              className="mt-4"
+                              className="mt-4 chirp-regular-font"
                               style={{
                                 width: "100%",
                                 color:
                                   themeName === "dark-theme"
                                     ? "#4A4F51"
                                     : "rgb(83, 100, 113)",
-                                fontSize: "11px",
-                                fontWeight: "400",
-                                lineHeight: "12px",
+                                fontSize: font11.fontSize,
+                                lineHeight: font11.lineHeight,
                                 height: "40px",
                               }}
                             >
@@ -7182,23 +7808,23 @@ function RightSideColumn({
                             }}
                           >
                             <div
+                              className="chirp-bold-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A"
                                     : "rgb(83, 100, 113)",
-                                lineHeight: "28px",
-                                fontWeight: "700",
-                                fontSize: "23px",
+                                fontSize: font23.fontSize,
+                                lineHeight: font23.lineHeight,
                               }}
                             >
                               Full Access
                             </div>
                             <div
+                              className="chirp-bold-font"
                               style={{
-                                fontSize: "34px",
-                                lineHeight: "40px",
-                                fontWeight: "700",
+                                fontSize: font34.fontSize,
+                                lineHeight: font34.lineHeight,
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
@@ -7208,11 +7834,10 @@ function RightSideColumn({
                               Find your customers and grow your business
                             </div>
                             <div
-                              className="basic-plan-parent-div"
+                              className="basic-plan-parent-div chirp-medium-font"
                               style={{
-                                lineHeight: "20px",
-                                fontWeight: "500",
-                                fontSize: "15px",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
@@ -7371,21 +7996,20 @@ function RightSideColumn({
                             </div>
                             <div
                               style={{
-                                fontSize: "15px",
-                                fontWeight: "400",
-                                lineHeight: "20px",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                                 color:
                                   themeName === "dark-theme" ? "white" : "",
                               }}
-                              className="mt-1"
+                              className="mt-1 chirp-regular-font"
                             >
                               + For a limited time, advertising credit to spend
                               on your organization any of its affiliates{" "}
                               <span
+                                className="chirp-bold-font"
                                 style={{
-                                  lineHeight: "20px",
-                                  fontSize: "15px",
-                                  fontWeight: "700",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                   textDecoration: "underline",
                                 }}
                               >
@@ -7466,21 +8090,22 @@ function RightSideColumn({
                               >
                                 <div>
                                   <div
+                                    className="chirp-bold-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
                                           ? "white"
                                           : "rgb(15, 20, 25)",
-                                      fontSize: "18px",
-                                      fontWeight: "600",
+                                      fontSize: font17.fontSize,
+                                      lineHeight: font17.lineHeight,
                                       display: " flex",
                                     }}
                                   >
                                     {" "}
                                     <div>{yearlyFeeFullAccess} / year</div>
                                     <div
+                                      className="chirp-bold-font"
                                       style={{
-                                        fontSize: "12px",
                                         borderRadius: "9999px",
                                         height: "20px",
                                         display: "flex",
@@ -7497,6 +8122,8 @@ function RightSideColumn({
                                           themeName === "dark-theme"
                                             ? "#C2F1DC"
                                             : "rgb(0, 67, 41)",
+                                        fontSize: font11.fontSize,
+                                        lineHeight: font11.lineHeight,
                                       }}
                                     >
                                       <span
@@ -7509,13 +8136,13 @@ function RightSideColumn({
                                     </div>
                                   </div>
                                   <div
+                                    className="chirp-regular-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
                                           : "rgb(83, 100, 113)",
-                                      fontSize: "14px",
-                                      fontWeight: "400",
+                                      fontSize: font14.fontSize,
                                     }}
                                   >
                                     {" "}
@@ -7574,25 +8201,26 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div
+                                    className="chirp-bold-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
                                           ? "white"
                                           : "rgb(15, 20, 25)",
-                                      fontSize: "18px",
-                                      fontWeight: "600",
+                                      fontSize: font17.fontSize,
+                                      lineHeight: font17.lineHeight,
                                     }}
                                   >
                                     {monthyleFeeFullAccess} / month
                                   </div>{" "}
                                   <div
+                                    className="chirp-regular-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
                                           : "rgb(83, 100, 113)",
-                                      fontSize: "14px",
-                                      fontWeight: "400",
+                                      fontSize: font14.fontSize,
                                     }}
                                   >
                                     Monthly plan
@@ -7602,15 +8230,14 @@ function RightSideColumn({
                               {/* monthly plan finish to check  */}
                             </div>
                             <div
-                              className="mt-3"
+                              className="mt-3 chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#4A4F51"
                                     : "rgb(83, 100, 113)",
-                                fontSize: "11px",
-                                lineHeight: "12px",
-                                fontWeight: "400",
+                                fontSize: font11.fontSize,
+                                lineHeight: font11.lineHeight,
                                 height: "20px",
                               }}
                             >
@@ -7667,12 +8294,12 @@ function RightSideColumn({
                               variant="info"
                             >
                               <div
+                                className="chirp-bold-font"
                                 style={{
                                   color:
                                     themeName === "dark-theme" ? "black" : "",
-                                  fontSize: "15px",
-                                  lineHeight: "20px",
-                                  fontWeight: "700",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                 }}
                               >
                                 <span>Subscribe</span>
@@ -7692,15 +8319,14 @@ function RightSideColumn({
                               </div>
                             </Button>
                             <div
-                              className="mt-4"
+                              className="mt-4 chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#4A4F51"
                                     : "rgb(83, 100, 113)",
-                                fontSize: "11px",
-                                fontWeight: "400",
-                                lineHeight: "12px",
+                                fontSize: font11.fontSize,
+                                lineHeight: font11.lineHeight,
                                 height: "40px",
                               }}
                             >
@@ -7733,29 +8359,27 @@ function RightSideColumn({
                         <>
                           {" "}
                           <div
-                            className="mt-4"
+                            className="mt-4 chirp-heavy-font"
                             style={{
                               color:
                                 themeName === "dark-theme" ? "white" : "black",
                               width: "100%",
-                              lineHeight: "36px",
-                              fontWeight: "800",
-                              fontSize: "31px",
+                              fontSize: font31.fontSize,
+                              lineHeight: font31.lineHeight,
                             }}
                           >
                             Apply for Full Access
                           </div>
                           <div
-                            className="mt-3"
+                            className="mt-3 chirp-regular-font"
                             style={{
                               width: "100%",
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "rgb(83, 100, 113)",
-                              fontSize: "15px",
-                              lineHeight: "20px",
-                              fontWeight: "400",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                             }}
                           >
                             We’ll use this information to assess your
@@ -7849,7 +8473,7 @@ function RightSideColumn({
                                 >
                                   <div
                                     style={{
-                                      fontSize: "13px",
+                                      fontSize: font13.fontSize,
                                       position: "relative",
                                       bottom: "5px",
                                     }}
@@ -8008,11 +8632,11 @@ function RightSideColumn({
                           />
                           {invalidEmailError && organizationEmailAdress ? (
                             <div
+                              className="chirp-regular-font"
                               style={{
                                 color: "rgb(244, 33, 46)",
-                                fontSize: "13px",
-                                fontWeight: "400",
-                                lineHeight: "16px",
+                                fontSize: font13.fontSize,
+                                lineHeight: font13.lineHeight,
                                 width: "100%",
                                 position: "relative",
                                 left: "10px",
@@ -8125,14 +8749,13 @@ function RightSideColumn({
                                     }}
                                   >
                                     <div
-                                      className="main-outline-text-year-picker"
+                                      className="main-outline-text-year-picker chirp-regular-font"
                                       style={{
                                         position: "relative",
                                         left: "10px",
                                         top: "5px",
-                                        fontSize: "14px",
-                                        lineHeight: "16px",
-                                        fontWeight: "400",
+                                        fontSize: font14.fontSize,
+                                        lineHeight: font14.lineHeight,
                                         color: showOrganizationTypeContent
                                           ? "#1d9bf0"
                                           : "rgba(83,100,113,1.00)",
@@ -8153,12 +8776,12 @@ function RightSideColumn({
                                       </span>
                                     </div>
                                     <div
-                                      className="mt-2 selected-year-string-parent-div"
+                                      className="mt-2 selected-year-string-parent-div chirp-bold-font"
                                       style={{
                                         position: "relative",
                                         left: "10px",
-                                        fontSize: "17px",
-                                        lineHeight: "20px",
+                                        fontSize: font17.fontSize,
+                                        lineHeight: font17.lineHeight,
                                         color: "black",
                                       }}
                                     >
@@ -8361,15 +8984,14 @@ function RightSideColumn({
                               </div>
                             </div>
                             <div
-                              className="mt-2"
+                              className="mt-2 chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A"
                                     : "rgb(83, 100, 113)",
-                                fontSize: "15px",
-                                lineHeight: "20px",
-                                fontWeight: "400",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                                 position: "relative",
                                 bottom: "4px",
                               }}
@@ -8421,16 +9043,11 @@ function RightSideColumn({
                             }}
                           >
                             {checkoutProcessLoadingBar ? (
-                              <div
-                                style={{
-                                  fontSize: "15px",
-                                }}
-                              >
-                                <LoadingSpinner
-                                  isCheckoutProcess={true}
-                                  strokeColor={"rgb(29, 155, 240)"}
-                                ></LoadingSpinner>
-                              </div>
+                              <LoadingSpinner
+                                isCheckoutProcess={true}
+                                strokeColor={"rgb(29, 155, 240)"}
+                                fontSize={true}
+                              ></LoadingSpinner>
                             ) : (
                               <span>Submit</span>
                             )}
@@ -8486,21 +9103,20 @@ function RightSideColumn({
                         }}
                       >
                         <div
+                          className="chirp-heavy-font"
                           style={{
-                            fontSize: "26px",
-                            lineHeight: "32px",
-                            fontWeight: "800",
+                            fontSize: font26.fontSize,
+                            lineHeight: font26.lineHeight,
                             color: themeName === "dark-theme" ? "white" : "",
                           }}
                         >
                           Verify your phone number
                         </div>
                         <div
-                          className="mt-2"
+                          className="mt-2 chirp-regular-font"
                           style={{
-                            fontSize: "15px",
-                            fontWeight: "400",
-                            lineHeight: "20px",
+                            fontSize: font15.fontSize,
+                            lineHeight: font15.lineHeight,
                             color:
                               themeName === "dark-theme"
                                 ? "#71767A"
@@ -8565,10 +9181,10 @@ function RightSideColumn({
                           }}
                         >
                           <div
+                            className="chirp-bold-font"
                             style={{
-                              lineHeight: "32px",
-                              fontWeight: "700",
-                              fontSize: "26px",
+                              fontSize: font26.fontSize,
+                              lineHeight: font26.lineHeight,
                               color: themeName === "dark-theme" ? "white" : "",
                             }}
                           >
@@ -8580,11 +9196,10 @@ function RightSideColumn({
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "rgb(83, 100, 113)",
-                              lineHeight: "20px",
-                              fontWeight: "400",
-                              fontSize: "15px",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                             }}
-                            className="mt-2"
+                            className="mt-2 chirp-regular-font"
                           >
                             Re-enter your C password to continue.
                           </div>
@@ -8701,13 +9316,13 @@ function RightSideColumn({
                               width: "81.5%",
                               height: "52px",
                               color: "white",
-                              fontSize: "17px",
-                              fontWeight: "700",
+                              fontSize: font17.fontSize,
+                              lineHeight: font17.lineHeight,
                               lineHeight: "20px",
                               position: "absolute",
                               bottom: "20px",
                             }}
-                            className={`login-button next-btn ${themeName}-white-btn`}
+                            className={`login-button next-btn ${themeName}-white-btn chirp-bold-font`}
                             variant="dark"
                             onClick={() => {
                               handleCheckIsPasswordInputCorrect();
@@ -8721,13 +9336,12 @@ function RightSideColumn({
                               width: "81.5%",
                               height: "52px",
                               color: "black",
-                              fontSize: "17px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
+                              fontSize: font17.fontSize,
+                              lineHeight: font17.lineHeight,
                               position: "absolute",
                               bottom: "20px",
                             }}
-                            className={`forgot-password-button ${themeName}-black-btn`}
+                            className={`forgot-password-button ${themeName}-black-btn chirp-bold-font`}
                             variant="light"
                             onClick={() => {
                               setsubErrorPhoneVerifiedTabLoading(true);
@@ -8776,13 +9390,11 @@ function RightSideColumn({
                           }}
                         >
                           <div
+                            className="chirp-bold-font"
                             style={{
-                              lineHeight: "32px",
-                              fontWeight: "700",
-                              fontSize: "26px",
-                              letterSpacing: "0.5px",
-                              color:
-                                themeName === "dark-theme" ? "white" : "black",
+                              fontSize: font26.fontSize,
+                              lineHeight: font26.lineHeight,
+                              color: themeName === "dark-theme" ? "white" : "",
                             }}
                           >
                             Add a phone number
@@ -8793,11 +9405,10 @@ function RightSideColumn({
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "rgb(83, 100, 113)",
-                              lineHeight: "20px",
-                              fontWeight: "400",
-                              fontSize: "15px",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                             }}
-                            className="mt-2"
+                            className="mt-2 chirp-regular-font"
                           >
                             Enter the phone number you’d like to associate with
                             your Connectify account.
@@ -8833,12 +9444,11 @@ function RightSideColumn({
                             >
                               <div
                                 onClick={handleShowOptions}
-                                className="main-outline-text-year-picker"
+                                className="main-outline-text-year-picker chirp-regular-font"
                                 style={{
                                   padding: "0px 8px",
-                                  fontSize: "14px",
-                                  lineHeight: "16px",
-                                  fontWeight: "400",
+                                  fontSize: font14.fontSize,
+                                  lineHeight: font14.lineHeight,
                                   color: showpopoverCountriesAndTheirPhoneCode
                                     ? "#1d9bf0"
                                     : "rgba(83,100,113,1.00)",
@@ -8856,10 +9466,10 @@ function RightSideColumn({
                                 </span>
                                 <div
                                   onClick={handleShowOptions}
-                                  className="mt-2 selected-year-string-parent-div"
+                                  className="mt-2 selected-year-string-parent-div chirp-bold-font"
                                   style={{
-                                    fontSize: "17px",
-                                    lineHeight: "20px",
+                                    fontSize: font17.fontSize,
+                                    lineHeight: font17.lineHeight,
                                     color:
                                       themeName === "dark-theme"
                                         ? "white"
@@ -8998,11 +9608,11 @@ function RightSideColumn({
                             }}
                           />
                           <div
+                            className="chirp-regular-font"
                             style={{
                               color: "rgb(244, 33, 46)",
-                              fontSize: "13px",
-                              lineHeight: "16px",
-                              fontWeight: "400",
+                              fontSize: font13.fontSize,
+                              lineHeight: font13.lineHeight,
                               position: "relative",
                               left: "10px",
                               bottom: "45px",
@@ -9024,15 +9634,14 @@ function RightSideColumn({
                             }}
                           >
                             <div
-                              className="mt-2"
+                              className="mt-2 chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
                                     : "rgb(83, 100, 113)",
-                                fontSize: "15px",
-                                lineHeight: "20px",
-                                fontWeight: "400",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                                 position: "relative",
                                 bottom: "4px",
                               }}
@@ -9129,13 +9738,12 @@ function RightSideColumn({
                               width: "90%",
                               height: "52px",
                               color: "white",
-                              fontSize: "17px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
+                              fontSize: font17.fontSize,
+                              lineHeight: font17.lineHeight,
                               position: "absolute",
                               bottom: "20px",
                             }}
-                            className={`login-button next-btn ${themeName}-white-btn`}
+                            className={`login-button next-btn ${themeName}-white-btn chirp-bold-font`}
                             variant="dark"
                             onClick={() => {
                               handleSubscriptionInfoNonPhoneVerifiedUser();
@@ -9150,13 +9758,12 @@ function RightSideColumn({
                               height: "52px",
                               color:
                                 themeName === "dark-theme" ? "white" : "black",
-                              fontSize: "17px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
+                              fontSize: font17.fontSize,
+                              lineHeight: font17.lineHeight,
                               position: "absolute",
                               bottom: "20px",
                             }}
-                            className={`forgot-password ${themeName}-black-btn`}
+                            className={`forgot-password ${themeName}-black-btn chirp-bold-font`}
                             variant="light"
                             onClick={() => {
                               setsubErrorPhoneVerifiedTabLoading(true);
@@ -9207,26 +9814,24 @@ function RightSideColumn({
                         }}
                       >
                         <div
+                          className="chirp-bold-font"
                           style={{
-                            lineHeight: "32px",
-                            fontWeight: "700",
-                            fontSize: "26px",
-                            letterSpacing: "0.5px",
+                            fontSize: font26.fontSize,
+                            lineHeight: font26.lineHeight,
                             color: themeName === "dark-theme" ? "white" : "",
                           }}
                         >
                           Verify your phone number
                         </div>
                         <div
-                          className="mt-3"
+                          className="mt-3 chirp-regular-font"
                           style={{
                             color:
                               themeName === "dark-theme"
                                 ? "#71767A"
                                 : "rgb(83, 100, 113)",
-                            lineHeight: "20px",
-                            fontSize: "15px",
-                            fontWeight: "400",
+                            fontSize: font15.fontSize,
+                            lineHeight: font15.lineHeight,
                           }}
                         >
                           Use the camera app on your phone to scan this QR code.
@@ -9255,27 +9860,27 @@ function RightSideColumn({
                             }}
                           >
                             <div
+                              className="chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A"
                                     : "rgb(83, 100, 113)",
-                                fontSize: "15px",
-                                lineHeight: "20px",
-                                fontWeight: "400",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                               }}
                             >
                               {"Can't scan the QR code?"}
                             </div>
                             <div
+                              className="chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A"
                                     : "rgb(83, 100, 113)",
-                                fontSize: "15px",
-                                lineHeight: "20px",
-                                fontWeight: "400",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                               }}
                             >{`Text ${verifyPhoneCode} to +13343453935.`}</div>
                           </div>
@@ -9292,13 +9897,12 @@ function RightSideColumn({
                               width: "90%",
                               height: "52px",
                               color: "white",
-                              fontSize: "17px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
+                              fontSize: font17.fontSize,
+                              lineHeight: font17.lineHeight,
                               position: "absolute",
                               bottom: "20px",
                             }}
-                            className={`login-button next-btn ${themeName}-white-btn`}
+                            className={`login-button next-btn ${themeName}-white-btn chirp-bold-font`}
                             variant="dark"
                             onClick={() => {
                               handleVerifyPhoneForSubscription();
@@ -9326,26 +9930,24 @@ function RightSideColumn({
                     }}
                   >
                     <div
+                      className="chirp-bold-font"
                       style={{
-                        lineHeight: "32px",
-                        fontWeight: "700",
-                        fontSize: "26px",
-                        letterSpacing: "0.5px",
+                        fontSize: font26.fontSize,
+                        lineHeight: font26.lineHeight,
                         color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
                       Verifying code...
                     </div>
                     <div
-                      className="mt-3"
+                      className="mt-3 chirp-regular-font"
                       style={{
                         color:
                           themeName === "dark-theme"
                             ? "#71767A"
                             : "rgb(83, 100, 113)",
-                        lineHeight: "20px",
-                        fontSize: "15px",
-                        fontWeight: "400",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                       }}
                     >
                       Please do not close this screen.
@@ -9369,10 +9971,10 @@ function RightSideColumn({
                     }}
                   >
                     <h1
+                      className="chirp-heavy-font"
                       style={{
-                        lineHeight: "36px",
-                        fontSize: "31px",
-                        fontWeight: "800",
+                        fontSize: font31.fontSize,
+                        lineHeight: font31.lineHeight,
                         color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
@@ -9448,7 +10050,7 @@ function RightSideColumn({
                       showVerifyPhoneNumberPasswordModal
                     ? "#232E36"
                     : "",
-                // zIndex: 9999999,
+                zIndex: 99999,
               }}
               contentClassName={
                 themeName === "dark-theme" ? "dark-theme-sub-modal" : ""
@@ -9499,7 +10101,6 @@ function RightSideColumn({
                         <svg
                           style={{
                             border: "none",
-                            fontSize: "15px",
                             margin: "5px",
                           }}
                           onClick={handleCloseSubscriptionModal}
@@ -9525,8 +10126,8 @@ function RightSideColumn({
                     <span
                       style={{
                         fontWeight: "700",
-                        fontSize: "20px",
-                        lineHeight: "24px",
+                        fontSize: font20.fontSize,
+                        lineHeight: font20.lineHeight,
                         position: "absolute",
                         left: "15%",
                         display: selectedOption === "individual" ? "" : "none",
@@ -9538,8 +10139,8 @@ function RightSideColumn({
                     <div
                       style={{
                         fontWeight: "700",
-                        fontSize: "20px",
-                        lineHeight: "24px",
+                        fontSize: font20.fontSize,
+                        lineHeight: font20.lineHeight,
                         margin: "0 auto",
                         position: "relative",
                         right: "15px",
@@ -9563,21 +10164,20 @@ function RightSideColumn({
                     className={`subscription-modal subscription-modal-${themeName}`}
                   >
                     <div
+                      className="chirp-heavy-font"
                       style={{
-                        lineHeight: "36px",
-                        fontSize: "31px",
-                        fontWeight: "800",
+                        fontSize: font31.fontSize,
+                        lineHeight: font31.lineHeight,
                         color: themeName === "dark-theme" ? "white" : "black",
                       }}
                     >
                       Who are you?
                     </div>
                     <div
-                      className="mt-3"
+                      className="mt-3 chirp-regular-font"
                       style={{
-                        lineHeight: "20px",
-                        fontSize: "15px",
-                        fontWeight: "400",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                         color: themeName === "dark-theme" ? "white" : "black",
                       }}
                     >
@@ -9634,21 +10234,22 @@ function RightSideColumn({
                           }}
                         >
                           <div
+                            className="chirp-regular-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "rgb(83, 100, 113)",
-                              fontSize: "15px",
-                              fontWeight: "400",
+                              fontSize: font15.fontSize,
                             }}
                           >
                             Premium
                           </div>
                           <div
+                            className="chirp-bold-font"
                             style={{
-                              fontSize: "18px",
-                              fontWeight: "600",
+                              fontSize: font17.fontSize,
+                              lineHeight: font17.lineHeight,
                               color:
                                 themeName === "dark-theme" ? "white" : "black",
                             }}
@@ -9657,13 +10258,13 @@ function RightSideColumn({
                             I am an individual
                           </div>
                           <div
+                            className="chirp-regular-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "rgb(83, 100, 113)",
-                              fontSize: "14px",
-                              fontWeight: "400",
+                              fontSize: font14.fontSize,
                             }}
                           >
                             {" "}
@@ -9716,38 +10317,39 @@ function RightSideColumn({
                           }}
                         >
                           <div
+                            className="chirp-regular-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "rgb(83, 100, 113)",
-                              fontSize: "15px",
-                              fontWeight: "400",
+                              fontSize: font15.fontSize,
                             }}
                           >
                             {" "}
                             Verified Organizations
                           </div>{" "}
                           <div
+                            className="chirp-bold-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "white"
                                   : "rgb(15, 20, 25)",
-                              fontSize: "18px",
-                              fontWeight: "600",
+                              fontSize: font17.fontSize,
+                              lineHeight: font17.lineHeight,
                             }}
                           >
                             I am an organization
                           </div>{" "}
                           <div
+                            className="chirp-regular-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "rgb(83, 100, 113)",
-                              fontSize: "14px",
-                              fontWeight: "400",
+                              fontSize: font14.fontSize,
                             }}
                           >
                             For businesses, government agencies, and non-profits
@@ -9776,12 +10378,11 @@ function RightSideColumn({
                     </Button>
                     <div
                       style={{
-                        fontSize: "15px",
-                        fontWeight: "400",
-                        lineHeight: "20px",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                         color: themeName === "dark-theme" ? "white" : "black",
                       }}
-                      className="mt-4"
+                      className="mt-4 chirp-regular-font"
                     >
                       Learn more about{" "}
                       <span
@@ -9851,7 +10452,6 @@ function RightSideColumn({
                           <svg
                             style={{
                               border: "none",
-                              fontSize: "15px",
                               margin: "5px",
                             }}
                             onClick={handleCloseSubscriptionModal}
@@ -9875,11 +10475,11 @@ function RightSideColumn({
                         </div>{" "}
                       </div>{" "}
                       <div
+                        className="chirp-bold-font"
                         style={{
                           color: themeName === "dark-theme" ? "white" : "black",
-                          fontWeight: "700",
-                          fontSize: "20px",
-                          lineHeight: "24px",
+                          fontSize: font20.fontSize,
+                          lineHeight: font20.lineHeight,
                           position: "absolute",
                           // left: "20%",
                           top: "19px",
@@ -9952,11 +10552,11 @@ function RightSideColumn({
                               <div style={{}}>
                                 {" "}
                                 <span
+                                  className="chirp-medium-font"
                                   style={{
                                     color: "white",
-                                    lineHeight: "20px",
-                                    fontWeight: "500",
-                                    fontSize: "17px",
+                                    fontSize: font17.fontSize,
+                                    lineHeight: font17.lineHeight,
                                     position: "relative",
                                     left: "5px",
                                   }}
@@ -10018,7 +10618,13 @@ function RightSideColumn({
                                     : "#eff3f4",
                               }}
                             >
-                              <div className="premium-plus-header">
+                              <div
+                                style={{
+                                  fontSize: font17.fontSize,
+                                  lineHeight: font17.lineHeight,
+                                }}
+                                className="premium-plus-header chirp-bold-font"
+                              >
                                 Enhanced Experience
                               </div>
                               <div>
@@ -10029,7 +10635,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Ads in For You</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Ads in For You
+                                    </span>
                                     <svg
                                       width={16}
                                       height={16}
@@ -10055,7 +10669,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Reply boost</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Reply boost
+                                    </span>
                                   </div>
                                   <div>Largest</div>
                                 </div>
@@ -10096,7 +10718,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Longer posts</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Longer posts
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -10124,7 +10754,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Undo post</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Undo post
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -10152,7 +10790,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Post longer videos</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Post longer videos
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -10180,7 +10826,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Top Articles</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Top Articles
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -10209,7 +10863,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Reader</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Reader
+                                    </span>{" "}
                                     <svg
                                       width={20}
                                       height={20}
@@ -10251,7 +10913,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Background video playback</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Background video playback
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -10279,7 +10949,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Download videos</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Download videos
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -10313,7 +10991,13 @@ function RightSideColumn({
                                     : "#eff3f4",
                               }}
                             >
-                              <div className="premium-plus-header">
+                              <div
+                                style={{
+                                  fontSize: font17.fontSize,
+                                  lineHeight: font17.lineHeight,
+                                }}
+                                className="premium-plus-header chirp-bold-font"
+                              >
                                 Creator Hub
                               </div>
                               <div>
@@ -10325,11 +11009,14 @@ function RightSideColumn({
                                 >
                                   <div>
                                     <span
+                                      className="chirp-regular-font"
                                       style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
                                         color:
                                           themeName === "dark-theme"
                                             ? "#71767A"
-                                            : "rgb(83, 100, 113)                                  ",
+                                            : "rgb(83, 100, 113) ",
                                       }}
                                     >
                                       Write Articles
@@ -10383,11 +11070,14 @@ function RightSideColumn({
                                 >
                                   <div>
                                     <span
+                                      className="chirp-regular-font"
                                       style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
                                         color:
                                           themeName === "dark-theme"
                                             ? "#71767A"
-                                            : "rgb(83, 100, 113)                                  ",
+                                            : "rgb(83, 100, 113)",
                                       }}
                                     >
                                       Get paid to post
@@ -10441,11 +11131,14 @@ function RightSideColumn({
                                 >
                                   <div>
                                     <span
+                                      className="chirp-regular-font"
                                       style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
                                         color:
                                           themeName === "dark-theme"
                                             ? "#71767A"
-                                            : "rgb(83, 100, 113)                                  ",
+                                            : "rgb(83, 100, 113)",
                                       }}
                                     >
                                       Creator Subscriptions
@@ -10499,11 +11192,14 @@ function RightSideColumn({
                                 >
                                   <div>
                                     <span
+                                      className="chirp-regular-font"
                                       style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
                                         color:
                                           themeName === "dark-theme"
                                             ? "#71767A"
-                                            : "rgb(83, 100, 113)                                  ",
+                                            : "rgb(83, 100, 113)",
                                       }}
                                     >
                                       X Pro
@@ -10557,11 +11253,14 @@ function RightSideColumn({
                                 >
                                   <div>
                                     <span
+                                      className="chirp-regular-font"
                                       style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
                                         color:
                                           themeName === "dark-theme"
                                             ? "#71767A"
-                                            : "rgb(83, 100, 113)                                  ",
+                                            : "rgb(83, 100, 113)",
                                       }}
                                     >
                                       Media Studio
@@ -10615,11 +11314,14 @@ function RightSideColumn({
                                 >
                                   <div>
                                     <span
+                                      className="chirp-regular-font"
                                       style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
                                         color:
                                           themeName === "dark-theme"
                                             ? "#71767A"
-                                            : "rgb(83, 100, 113)                                  ",
+                                            : "rgb(83, 100, 113)",
                                       }}
                                     >
                                       Analytics
@@ -10678,7 +11380,13 @@ function RightSideColumn({
                                     : "#eff3f4",
                               }}
                             >
-                              <div className="premium-plus-header">
+                              <div
+                                style={{
+                                  fontSize: font17.fontSize,
+                                  lineHeight: font17.lineHeight,
+                                }}
+                                className="premium-plus-header chirp-bold-font"
+                              >
                                 Verification & Security
                               </div>
                               <div>
@@ -10690,11 +11398,14 @@ function RightSideColumn({
                                 >
                                   <div>
                                     <span
+                                      className="chirp-regular-font"
                                       style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
                                         color:
                                           themeName === "dark-theme"
                                             ? "#71767A"
-                                            : "rgba(83,100,113,1.00)",
+                                            : "rgb(83, 100, 113)",
                                       }}
                                     >
                                       {" "}
@@ -10748,7 +11459,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Encrypted direct messages</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Encrypted direct messages
+                                    </span>
                                     <svg
                                       width={20}
                                       height={20}
@@ -10790,11 +11509,14 @@ function RightSideColumn({
                                 >
                                   <div>
                                     <span
+                                      className="chirp-regular-font"
                                       style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
                                         color:
                                           themeName === "dark-theme"
                                             ? "#71767A"
-                                            : "rgba(83,100,113,1.00)",
+                                            : "rgb(83, 100, 113)",
                                       }}
                                     >
                                       Optional ID verification
@@ -10853,7 +11575,13 @@ function RightSideColumn({
                                     : "#eff3f4",
                               }}
                             >
-                              <div className="premium-plus-header">
+                              <div
+                                style={{
+                                  fontSize: font17.fontSize,
+                                  lineHeight: font17.lineHeight,
+                                }}
+                                className="premium-plus-header chirp-bold-font"
+                              >
                                 Customization
                               </div>
                               <div>
@@ -10864,7 +11592,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>App icons</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      App icons
+                                    </span>
                                   </div>
                                   <div>
                                     {" "}
@@ -10891,7 +11627,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Bookmark folders</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Bookmark folders
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -10919,7 +11663,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Customize navigation</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Customize navigation
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -10947,7 +11699,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Highlights tab</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Highlights tab
+                                    </span>{" "}
                                     <svg
                                       width={20}
                                       height={20}
@@ -10988,7 +11748,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Hide your likes</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Hide your likes
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -11016,7 +11784,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Hide your checkmark</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Hide your checkmark
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -11044,7 +11820,15 @@ function RightSideColumn({
                                     justifyContent: "space-between",
                                   }}
                                 >
-                                  <div>Hide your subscriptions</div>
+                                  <div
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Hide your subscriptions
+                                  </div>
                                   <div>
                                     {" "}
                                     <svg
@@ -11126,11 +11910,11 @@ function RightSideColumn({
                               <div style={{}}>
                                 {" "}
                                 <span
+                                  className="chirp-medium-font"
                                   style={{
                                     color: "white",
-                                    lineHeight: "20px",
-                                    fontWeight: "500",
-                                    fontSize: "17px",
+                                    fontSize: font17.fontSize,
+                                    lineHeight: font17.lineHeight,
                                     position: "relative",
                                     left: "5px",
                                   }}
@@ -11192,7 +11976,13 @@ function RightSideColumn({
                                     : "#eff3f4",
                               }}
                             >
-                              <div className="premium-plus-header">
+                              <div
+                                style={{
+                                  fontSize: font17.fontSize,
+                                  lineHeight: font17.lineHeight,
+                                }}
+                                className="premium-plus-header chirp-bold-font"
+                              >
                                 Enhanced Experience
                               </div>
                               <div>
@@ -11203,7 +11993,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Ads in For You</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Ads in For You
+                                    </span>
                                     <svg
                                       width={16}
                                       height={16}
@@ -11229,7 +12027,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Reply boost</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Reply boost
+                                    </span>
                                   </div>
                                   <div>Larger</div>
                                 </div>
@@ -11242,7 +12048,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Edit post</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Edit post
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -11270,7 +12084,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Longer posts</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Longer posts
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -11298,7 +12120,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Undo post</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Undo post
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -11326,7 +12156,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Post longer videos</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Post longer videos
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -11354,7 +12192,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Top Articles</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Top Articles
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -11383,7 +12229,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Reader</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Reader
+                                    </span>{" "}
                                     <svg
                                       width={20}
                                       height={20}
@@ -11425,7 +12279,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Background video playback</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Background video playback
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -11453,7 +12315,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Download videos</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Download videos
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -11487,7 +12357,13 @@ function RightSideColumn({
                                     : "#eff3f4",
                               }}
                             >
-                              <div className="premium-plus-header">
+                              <div
+                                style={{
+                                  fontSize: font17.fontSize,
+                                  lineHeight: font17.lineHeight,
+                                }}
+                                className="premium-plus-header chirp-bold-font"
+                              >
                                 Creator Hub
                               </div>
                               <div>
@@ -11499,11 +12375,14 @@ function RightSideColumn({
                                 >
                                   <div>
                                     <span
+                                      className="chirp-regular-font"
                                       style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
                                         color:
                                           themeName === "dark-theme"
                                             ? "#71767A"
-                                            : "rgba(83,100,113,1.00)",
+                                            : "rgb(83, 100, 113) ",
                                       }}
                                     >
                                       Write Articles
@@ -11557,7 +12436,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Get paid to post</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Get paid to post
+                                    </span>
                                     <svg
                                       width={20}
                                       height={20}
@@ -11598,7 +12485,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Creator Subscriptions</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Creator Subscriptions
+                                    </span>
                                     <svg
                                       width={20}
                                       height={20}
@@ -11639,7 +12534,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>X Pro</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      X Pro
+                                    </span>
                                     <svg
                                       width={20}
                                       height={20}
@@ -11680,7 +12583,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Media Studio</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Media Studio
+                                    </span>
                                     <svg
                                       width={20}
                                       height={20}
@@ -11721,7 +12632,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Analytics</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Analytics
+                                    </span>
                                     <svg
                                       width={20}
                                       height={20}
@@ -11768,7 +12687,13 @@ function RightSideColumn({
                                     : "#eff3f4",
                               }}
                             >
-                              <div className="premium-plus-header">
+                              <div
+                                style={{
+                                  fontSize: font17.fontSize,
+                                  lineHeight: font17.lineHeight,
+                                }}
+                                className="premium-plus-header chirp-bold-font"
+                              >
                                 Verification & Security
                               </div>
                               <div>
@@ -11779,7 +12704,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Checkmark</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Checkmark
+                                    </span>
                                     <svg
                                       width={20}
                                       height={20}
@@ -11820,7 +12753,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Encrypted direct messages</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Encrypted direct messages
+                                    </span>
                                     <svg
                                       width={20}
                                       height={20}
@@ -11861,7 +12802,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Optional ID verification</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Optional ID verification
+                                    </span>
                                     <svg
                                       width={20}
                                       height={20}
@@ -11908,7 +12857,13 @@ function RightSideColumn({
                                     : "#eff3f4",
                               }}
                             >
-                              <div className="premium-plus-header">
+                              <div
+                                style={{
+                                  fontSize: font17.fontSize,
+                                  lineHeight: font17.lineHeight,
+                                }}
+                                className="premium-plus-header chirp-bold-font"
+                              >
                                 Customization
                               </div>
                               <div>
@@ -11919,7 +12874,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>App icons</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      App icons
+                                    </span>
                                   </div>
                                   <div>
                                     {" "}
@@ -11946,7 +12909,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Bookmark folders</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Bookmark folders
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -11974,7 +12945,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Customize navigation</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Customize navigation
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -12002,7 +12981,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Highlights tab</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Highlights tab
+                                    </span>{" "}
                                     <svg
                                       width={20}
                                       height={20}
@@ -12043,7 +13030,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Hide your likes</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Hide your likes
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -12071,7 +13066,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Hide your checkmark</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Hide your checkmark
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -12099,7 +13102,15 @@ function RightSideColumn({
                                     justifyContent: "space-between",
                                   }}
                                 >
-                                  <div>Hide your subscriptions</div>
+                                  <div
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Hide your subscriptions
+                                  </div>
                                   <div>
                                     {" "}
                                     <svg
@@ -12181,11 +13192,11 @@ function RightSideColumn({
                               <div style={{}}>
                                 {" "}
                                 <span
+                                  className="chirp-medium-font"
                                   style={{
                                     color: "white",
-                                    lineHeight: "20px",
-                                    fontWeight: "500",
-                                    fontSize: "17px",
+                                    fontSize: font17.fontSize,
+                                    lineHeight: font17.lineHeight,
                                     position: "relative",
                                     left: "5px",
                                   }}
@@ -12240,7 +13251,13 @@ function RightSideColumn({
                                     : "#eff3f4",
                               }}
                             >
-                              <div className="premium-plus-header">
+                              <div
+                                style={{
+                                  fontSize: font17.fontSize,
+                                  lineHeight: font17.lineHeight,
+                                }}
+                                className="premium-plus-header chirp-bold-font"
+                              >
                                 Enhanced Experience
                               </div>
                               <div>
@@ -12251,7 +13268,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Ads in For You</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Ads in For You
+                                    </span>
                                     <svg
                                       width={16}
                                       height={16}
@@ -12277,7 +13302,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Reply boost</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Reply boost
+                                    </span>
                                   </div>
                                   <div>Largest</div>
                                 </div>
@@ -12290,7 +13323,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Edit post</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Edit post
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -12318,7 +13359,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Longer posts</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Longer posts
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -12346,7 +13395,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Undo post</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Undo post
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -12374,7 +13431,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Post longer videos</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Post longer videos
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -12402,7 +13467,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Top Articles</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Top Articles
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -12431,7 +13504,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Reader</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Reader
+                                    </span>{" "}
                                     <svg
                                       width={20}
                                       height={20}
@@ -12473,7 +13554,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Background video playback</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Background video playback
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -12501,7 +13590,16 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Download videos</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      {" "}
+                                      Download videos
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -12535,7 +13633,13 @@ function RightSideColumn({
                                     : "#eff3f4",
                               }}
                             >
-                              <div className="premium-plus-header">
+                              <div
+                                style={{
+                                  fontSize: font17.fontSize,
+                                  lineHeight: font17.lineHeight,
+                                }}
+                                className="premium-plus-header chirp-bold-font"
+                              >
                                 Creator Hub
                               </div>
                               <div>
@@ -12546,7 +13650,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Write Articles</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Write Articles
+                                    </span>
                                     <svg
                                       width={20}
                                       height={20}
@@ -12587,7 +13699,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Get paid to post</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Get paid to post
+                                    </span>
                                     <svg
                                       width={20}
                                       height={20}
@@ -12628,7 +13748,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Creator Subscriptions</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Creator Subscriptions
+                                    </span>
                                     <svg
                                       width={20}
                                       height={20}
@@ -12669,7 +13797,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>X Pro</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      X Pro
+                                    </span>
                                     <svg
                                       width={20}
                                       height={20}
@@ -12710,7 +13846,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Media Studio</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Media Studio
+                                    </span>
                                     <svg
                                       width={20}
                                       height={20}
@@ -12751,7 +13895,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Analytics</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Analytics
+                                    </span>
                                     <svg
                                       width={20}
                                       height={20}
@@ -12798,7 +13950,13 @@ function RightSideColumn({
                                     : "#eff3f4",
                               }}
                             >
-                              <div className="premium-plus-header">
+                              <div
+                                style={{
+                                  fontSize: font17.fontSize,
+                                  lineHeight: font17.lineHeight,
+                                }}
+                                className="premium-plus-header chirp-bold-font"
+                              >
                                 Verification & Security
                               </div>
                               <div>
@@ -12809,7 +13967,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Checkmark</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Checkmark
+                                    </span>
                                     <svg
                                       width={20}
                                       height={20}
@@ -12850,7 +14016,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Encrypted direct messages</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Encrypted direct messages
+                                    </span>
                                     <svg
                                       width={20}
                                       height={20}
@@ -12891,7 +14065,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Optional ID verification</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Optional ID verification
+                                    </span>
                                     <svg
                                       width={20}
                                       height={20}
@@ -12938,7 +14120,13 @@ function RightSideColumn({
                                     : "#eff3f4",
                               }}
                             >
-                              <div className="premium-plus-header">
+                              <div
+                                style={{
+                                  fontSize: font17.fontSize,
+                                  lineHeight: font17.lineHeight,
+                                }}
+                                className="premium-plus-header chirp-bold-font"
+                              >
                                 Customization
                               </div>
                               <div>
@@ -12949,7 +14137,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>App icons</span>
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      App icons
+                                    </span>
                                   </div>
                                   <div>
                                     {" "}
@@ -12976,7 +14172,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Bookmark folders</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Bookmark folders
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -13004,7 +14208,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Customize navigation</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Customize navigation
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -13032,7 +14244,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Highlights tab</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Highlights tab
+                                    </span>{" "}
                                     <svg
                                       width={20}
                                       height={20}
@@ -13073,7 +14293,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Hide your likes</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Hide your likes
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -13101,7 +14329,15 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div>
-                                    <span>Hide your checkmark</span>{" "}
+                                    <span
+                                      className="chirp-regular-font"
+                                      style={{
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
+                                      }}
+                                    >
+                                      Hide your checkmark
+                                    </span>{" "}
                                   </div>
                                   <div>
                                     {" "}
@@ -13129,7 +14365,15 @@ function RightSideColumn({
                                     justifyContent: "space-between",
                                   }}
                                 >
-                                  <div>Hide your subscriptions</div>
+                                  <div
+                                    className="chirp-regular-font"
+                                    style={{
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
+                                    }}
+                                  >
+                                    Hide your subscriptions
+                                  </div>
                                   <div>
                                     {" "}
                                     <svg
@@ -13228,25 +14472,25 @@ function RightSideColumn({
                           }}
                         >
                           <span
+                            className="chirp-regular-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "#697884",
-                              fontSize: "14px",
-                              fontWeight: "400",
-                              lineHeight: "16px",
+                              fontSize: font14.fontSize,
+                              lineHeight: font14.lineHeight,
                             }}
                           >
                             Annual Plan
                             <span
+                              className="chirp-bold-font"
                               style={{
-                                fontSize: "11px",
+                                fontSize: font11.fontSize,
+                                lineHeight: font11.lineHeight,
                                 borderRadius: "9999px",
                                 position: "relative",
                                 bottom: "1px",
-                                fontWeight: "700",
-                                lineHeight: "12px",
                                 padding: "4px",
                                 height: "20px",
                                 backgroundColor:
@@ -13264,28 +14508,28 @@ function RightSideColumn({
                           </span>
 
                           <span
+                            className="chirp-bold-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "white"
                                   : "rgb(15, 20, 25)",
-                              fontSize: "17px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
+                              fontSize: font17.fontSize,
+                              lineHeight: font17.lineHeight,
                               display: "block",
                             }}
                           >
                             €199.92 / year
                           </span>
                           <div
+                            className="chirp-regular-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "#697884",
-                              fontSize: "13px",
-                              fontWeight: "400",
-                              lineHeight: "16px",
+                              fontSize: font13.fontSize,
+                              lineHeight: font13.lineHeight,
                             }}
                           >
                             €199.92 per year billed annually
@@ -13322,40 +14566,40 @@ function RightSideColumn({
                           }}
                         >
                           <span
+                            className="chirp-regular-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "#697884",
-                              fontSize: "14px",
-                              fontWeight: "400",
-                              lineHeight: "16px",
+                              fontSize: font14.fontSize,
+                              lineHeight: font14.lineHeight,
                             }}
                           >
                             Monthly Plan{" "}
                           </span>
 
                           <div
+                            className="chirp-bold-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "white"
                                   : "rgb(15, 20, 25)",
-                              fontSize: "17px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
+                              fontSize: font17.fontSize,
+                              lineHeight: font17.lineHeight,
                             }}
                           >
                             €19.04 / month
                             <div
+                              className="chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A"
                                     : "#697884",
-                                fontSize: "13px",
-                                fontWeight: "400",
-                                lineHeight: "16px",
+                                fontSize: font13.fontSize,
+                                lineHeight: font13.lineHeight,
                               }}
                             >
                               €228.48 per year billed monthly
@@ -13374,12 +14618,12 @@ function RightSideColumn({
                       >
                         {phoneVerifiedErrorMessage ? (
                           <div
+                            className="chirp-regular-font"
                             style={{
                               borderRadius: "8px",
                               color: "rgb(15, 20, 25)",
-                              lineHeight: "16px",
-                              fontSize: "14px",
-                              fontWeight: "400",
+                              fontSize: font14.fontSize,
+                              lineHeight: font14.lineHeight,
                               backgroundColor: "#fef1f1",
                               minHeight: "40px",
                               display: "flex",
@@ -13416,29 +14660,23 @@ function RightSideColumn({
                           }}
                         >
                           {subErrorPhoneVerifiedTabLoading ? (
-                            <div
-                              style={{
-                                fontSize: "15px",
-                              }}
-                            >
-                              <LoadingSpinner
-                                isCheckoutProcess={true}
-                                strokeColor={"rgb(29, 155, 240)"}
-                              ></LoadingSpinner>
-                            </div>
+                            <LoadingSpinner
+                              isCheckoutProcess={true}
+                              strokeColor={"rgb(29, 155, 240)"}
+                              fontSize={true}
+                            ></LoadingSpinner>
                           ) : (
                             <span>Subscribe & Pay</span>
                           )}
                         </Button>
                       </div>
                       <div
-                        className="mt-1"
+                        className="mt-1 chirp-regular-font"
                         style={{
                           width: "81.5%",
                           margin: "0 auto",
-                          fontSize: "13px",
-                          lineHeight: "16px",
-                          fontWeight: "400",
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
                           border:
                             themeName === "dark-theme"
                               ? "1px solid rgb(70, 70, 70)"
@@ -13538,25 +14776,25 @@ function RightSideColumn({
                           }}
                         >
                           <span
+                            className="chirp-regular-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "#697884",
-                              fontSize: "14px",
-                              fontWeight: "400",
-                              lineHeight: "16px",
+                              fontSize: font14.fontSize,
+                              lineHeight: font14.lineHeight,
                             }}
                           >
                             Annual Plan{" "}
                             <span
+                              className="chirp-bold-font"
                               style={{
-                                fontSize: "11px",
+                                fontSize: font11.fontSize,
+                                lineHeight: font11.lineHeight,
                                 borderRadius: "9999px",
                                 position: "relative",
                                 bottom: "1px",
-                                fontWeight: "700",
-                                lineHeight: "12px",
                                 padding: "4px",
                                 height: "20px",
                                 backgroundColor:
@@ -13574,28 +14812,28 @@ function RightSideColumn({
                           </span>
 
                           <span
+                            className="chirp-bold-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "white"
                                   : "rgb(15, 20, 25)",
-                              fontSize: "17px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
+                              fontSize: font17.fontSize,
+                              lineHeight: font17.lineHeight,
                               display: "block",
                             }}
                           >
                             €99.96 / year
                           </span>
                           <div
+                            className="chirp-regular-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "#697884",
-                              fontSize: "13px",
-                              fontWeight: "400",
-                              lineHeight: "16px",
+                              fontSize: font13.fontSize,
+                              lineHeight: font13.lineHeight,
                             }}
                           >
                             €99.96 per year billed annually
@@ -13632,40 +14870,40 @@ function RightSideColumn({
                           }}
                         >
                           <span
+                            className="chirp-regular-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "#697884",
-                              fontSize: "14px",
-                              fontWeight: "400",
-                              lineHeight: "16px",
+                              fontSize: font14.fontSize,
+                              lineHeight: font14.lineHeight,
                             }}
                           >
                             Monthly Plan{" "}
                           </span>
 
                           <div
+                            className="chirp-bold-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "white"
                                   : "rgb(15, 20, 25)",
-                              fontSize: "17px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
+                              fontSize: font17.fontSize,
+                              lineHeight: font17.lineHeight,
                             }}
                           >
                             €9.52 / month
                             <div
+                              className="chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A"
                                     : "#697884",
-                                fontSize: "13px",
-                                fontWeight: "400",
-                                lineHeight: "16px",
+                                fontSize: font13.fontSize,
+                                lineHeight: font13.lineHeight,
                               }}
                             >
                               €114.28 per year billed monthly
@@ -13686,12 +14924,12 @@ function RightSideColumn({
                         {" "}
                         {phoneVerifiedErrorMessage ? (
                           <div
+                            className="chirp-regular-font"
                             style={{
                               borderRadius: "8px",
                               color: "rgb(15, 20, 25)",
-                              lineHeight: "16px",
-                              fontSize: "14px",
-                              fontWeight: "400",
+                              fontSize: font14.fontSize,
+                              lineHeight: font14.lineHeight,
                               backgroundColor: "#fef1f1",
                               minHeight: "40px",
                               display: "flex",
@@ -13728,29 +14966,23 @@ function RightSideColumn({
                           }}
                         >
                           {subErrorPhoneVerifiedTabLoading ? (
-                            <div
-                              style={{
-                                fontSize: "15px",
-                              }}
-                            >
-                              <LoadingSpinner
-                                isCheckoutProcess={true}
-                                strokeColor={"rgb(29, 155, 240)"}
-                              ></LoadingSpinner>
-                            </div>
+                            <LoadingSpinner
+                              isCheckoutProcess={true}
+                              strokeColor={"rgb(29, 155, 240)"}
+                              fontSize={true}
+                            ></LoadingSpinner>
                           ) : (
                             <span>Subscribe & Pay</span>
                           )}
                         </Button>
                       </div>
                       <div
-                        className="mt-1"
+                        className="mt-1 chirp-regular-font"
                         style={{
                           width: "81.5%",
                           margin: "0 auto",
-                          fontSize: "13px",
-                          lineHeight: "16px",
-                          fontWeight: "400",
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
                           border:
                             themeName === "dark-theme"
                               ? "1px solid rgb(70, 70, 70)"
@@ -13850,25 +15082,25 @@ function RightSideColumn({
                           }}
                         >
                           <span
+                            className="chirp-regular-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "#697884",
-                              fontSize: "14px",
-                              fontWeight: "400",
-                              lineHeight: "16px",
+                              fontSize: font14.fontSize,
+                              lineHeight: font14.lineHeight,
                             }}
                           >
                             Annual Plan{" "}
                             <span
+                              className="chirp-bold-font"
                               style={{
-                                fontSize: "11px",
+                                fontSize: font11.fontSize,
+                                lineHeight: font11.lineHeight,
                                 borderRadius: "9999px",
                                 position: "relative",
                                 bottom: "1px",
-                                fontWeight: "700",
-                                lineHeight: "12px",
                                 padding: "4px",
                                 height: "20px",
                                 backgroundColor:
@@ -13886,28 +15118,28 @@ function RightSideColumn({
                           </span>
 
                           <span
+                            className="chirp-bold-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "white"
                                   : "rgb(15, 20, 25)",
                               display: "block",
-                              fontSize: "17px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
+                              fontSize: font17.fontSize,
+                              lineHeight: font17.lineHeight,
                             }}
                           >
                             €38.08 / year
                           </span>
                           <div
+                            className="chirp-regular-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "#697884",
-                              fontSize: "13px",
-                              fontWeight: "400",
-                              lineHeight: "16px",
+                              fontSize: font13.fontSize,
+                              lineHeight: font13.lineHeight,
                             }}
                           >
                             €38.08 per year billed annually
@@ -13944,40 +15176,40 @@ function RightSideColumn({
                           }}
                         >
                           <span
+                            className="chirp-regular-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "#697884",
-                              fontSize: "14px",
-                              fontWeight: "400",
-                              lineHeight: "16px",
+                              fontSize: font14.fontSize,
+                              lineHeight: font14.lineHeight,
                             }}
                           >
                             Monthly Plan{" "}
                           </span>
 
                           <div
+                            className="chirp-bold-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "white"
                                   : "rgb(15, 20, 25)",
-                              fontSize: "17px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
+                              fontSize: font17.fontSize,
+                              lineHeight: font17.lineHeight,
                             }}
                           >
                             €3.57 / month
                             <div
+                              className="chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A"
                                     : "#697884",
-                                fontSize: "13px",
-                                fontWeight: "400",
-                                lineHeight: "16px",
+                                fontSize: font13.fontSize,
+                                lineHeight: font13.lineHeight,
                               }}
                             >
                               €42.84 per year billed monthly
@@ -13997,12 +15229,12 @@ function RightSideColumn({
                         {" "}
                         {phoneVerifiedErrorMessage ? (
                           <div
+                            className="chirp-regular-font"
                             style={{
                               borderRadius: "8px",
                               color: "rgb(15, 20, 25)",
-                              lineHeight: "16px",
-                              fontSize: "14px",
-                              fontWeight: "400",
+                              fontSize: font14.fontSize,
+                              lineHeight: font14.lineHeight,
                               backgroundColor: "#fef1f1",
                               minHeight: "40px",
                               display: "flex",
@@ -14038,29 +15270,23 @@ function RightSideColumn({
                           }}
                         >
                           {subErrorPhoneVerifiedTabLoading ? (
-                            <div
-                              style={{
-                                fontSize: "15px",
-                              }}
-                            >
-                              <LoadingSpinner
-                                isCheckoutProcess={true}
-                                strokeColor={"rgb(29, 155, 240)"}
-                              ></LoadingSpinner>
-                            </div>
+                            <LoadingSpinner
+                              isCheckoutProcess={true}
+                              strokeColor={"rgb(29, 155, 240)"}
+                              fontSize={true}
+                            ></LoadingSpinner>
                           ) : (
                             <span>Subscribe & Pay</span>
                           )}
                         </Button>
                       </div>
                       <div
-                        className="mt-1"
+                        className="mt-1 chirp-regular-font"
                         style={{
                           width: "81.5%",
                           margin: "0 auto",
-                          fontSize: "13px",
-                          lineHeight: "16px",
-                          fontWeight: "400",
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
                           border:
                             themeName === "dark-theme"
                               ? "1px solid rgb(70, 70, 70)"
@@ -14137,7 +15363,6 @@ function RightSideColumn({
                               <svg
                                 style={{
                                   border: "none",
-                                  fontSize: "15px",
                                   margin: "5px",
                                 }}
                                 onClick={() =>
@@ -14165,10 +15390,10 @@ function RightSideColumn({
                             </div>{" "}
                           </div>
                           <div
+                            className="chirp-bold-font"
                             style={{
-                              fontWeight: "700",
-                              fontSize: "20px",
-                              lineHeight: "24px",
+                              fontSize: font20.fontSize,
+                              lineHeight: font20.lineHeight,
                               position: "relative",
                               bottom: "30px",
                               color:
@@ -14189,12 +15414,35 @@ function RightSideColumn({
                               alignItems: "center",
                               position: "relative",
                               bottom: "15px",
+                              padding: "2px",
                             }}
                           >
                             <div
                               style={{
-                                width: "184px",
-                                height: "40px",
+                                width:
+                                  font15.fontSize === "Default"
+                                    ? "164px"
+                                    : font15.fontSize === "Small"
+                                    ? "156px"
+                                    : font15.fontSize === "Extra small"
+                                    ? "152px"
+                                    : font15.fontSize === "Large"
+                                    ? "184px"
+                                    : font15.fontSize === "Extra large"
+                                    ? "196px"
+                                    : null,
+                                height:
+                                  font15.fontSize === "Default"
+                                    ? "36px"
+                                    : font15.fontSize === "Small"
+                                    ? "35px"
+                                    : font15.fontSize === "Extra small"
+                                    ? "34px"
+                                    : font15.fontSize === "Large"
+                                    ? "38px"
+                                    : font15.fontSize === "Extra large"
+                                    ? "42px"
+                                    : null,
                                 display: "flex",
                                 justifyContent: "center",
                                 alignItems: "center",
@@ -14210,6 +15458,7 @@ function RightSideColumn({
                                   style={{
                                     padding: "6px",
                                   }}
+                                  className="chirp-bold-font"
                                 >
                                   Basic
                                 </span>
@@ -14220,7 +15469,9 @@ function RightSideColumn({
                                 }}
                                 style={tabStyleOrganizationFullAccessStyle}
                               >
-                                <span>Full Access</span>
+                                <span className="chirp-bold-font" style={{}}>
+                                  Full Access
+                                </span>
                               </button>
                             </div>
                           </div>
@@ -14299,23 +15550,23 @@ function RightSideColumn({
                             }}
                           >
                             <div
+                              className="chirp-bold-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767B"
                                     : "rgb(83, 100, 113)",
-                                lineHeight: "28px",
-                                fontWeight: "700",
-                                fontSize: "23px",
+                                fontSize: font23.fontSize,
+                                lineHeight: font23.lineHeight,
                               }}
                             >
                               Basic
                             </div>
                             <div
+                              className="chirp-bold-font"
                               style={{
-                                fontSize: "34px",
-                                lineHeight: "40px",
-                                fontWeight: "700",
+                                fontSize: font34.fontSize,
+                                lineHeight: font34.lineHeight,
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
@@ -14325,11 +15576,10 @@ function RightSideColumn({
                               Find your customers and grow your business
                             </div>
                             <div
-                              className="basic-plan-parent-div"
+                              className="basic-plan-parent-div chirp-medium-font"
                               style={{
-                                lineHeight: "20px",
-                                fontWeight: "500",
-                                fontSize: "15px",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
@@ -14488,21 +15738,20 @@ function RightSideColumn({
                             </div>
                             <div
                               style={{
-                                fontSize: "15px",
-                                fontWeight: "400",
-                                lineHeight: "20px",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                                 color:
                                   themeName === "dark-theme" ? "white" : "",
                               }}
-                              className="mt-1"
+                              className="mt-1 chirp-regular-font"
                             >
                               + For a limited time, advertising credit to spend
                               on your organization{" "}
                               <span
+                                className="chirp-bold-font"
                                 style={{
-                                  lineHeight: "20px",
-                                  fontSize: "15px",
-                                  fontWeight: "700",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                   textDecoration: "underline",
                                 }}
                               >
@@ -14580,21 +15829,24 @@ function RightSideColumn({
                               >
                                 <div>
                                   <div
+                                    className="chirp-bold-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
                                           ? "white"
                                           : "rgb(15, 20, 25)",
-                                      fontSize: "18px",
-                                      fontWeight: "600",
+                                      fontSize: font17.fontSize,
+                                      lineHeight: font17.lineHeight,
                                       display: " flex",
                                     }}
                                   >
                                     {" "}
                                     <div>{yearlyFee} / year</div>
                                     <div
+                                      className="chirp-bold-font"
                                       style={{
-                                        fontSize: "11px",
+                                        fontSize: font11.fontSize,
+                                        lineHeight: font11.lineHeight,
                                         borderRadius: "9999px",
                                         height: "20px",
                                         display: "flex",
@@ -14603,8 +15855,6 @@ function RightSideColumn({
                                         position: "relative",
                                         left: "3px",
                                         top: "5px",
-                                        fontWeight: "700",
-                                        lineHeight: "12px",
                                         backgroundColor:
                                           themeName === "dark-theme"
                                             ? "#05241A"
@@ -14625,13 +15875,13 @@ function RightSideColumn({
                                     </div>
                                   </div>
                                   <div
+                                    className="chirp-regular-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
                                           : "rgb(83, 100, 113)",
-                                      fontSize: "14px",
-                                      fontWeight: "400",
+                                      fontSize: font14.fontSize,
                                     }}
                                   >
                                     {" "}
@@ -14688,25 +15938,26 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div
+                                    className="chirp-bold-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
                                           ? "white"
                                           : "rgb(15, 20, 25)",
-                                      fontSize: "18px",
-                                      fontWeight: "600",
+                                      fontSize: font17.fontSize,
+                                      lineHeight: font17.lineHeight,
                                     }}
                                   >
                                     {monthyleFee} / month
                                   </div>{" "}
                                   <div
+                                    className="chirp-regular-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
                                           : "rgb(83, 100, 113)",
-                                      fontSize: "14px",
-                                      fontWeight: "400",
+                                      fontSize: font14.fontSize,
                                     }}
                                   >
                                     Monthly plan
@@ -14716,15 +15967,14 @@ function RightSideColumn({
                               {/* monthly plan finish to check  */}
                             </div>
                             <div
-                              className="mt-3"
+                              className="mt-3 chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#4A4F51"
                                     : "rgb(83, 100, 113)",
-                                fontSize: "11px",
-                                lineHeight: "12px",
-                                fontWeight: "400",
+                                fontSize: font11.fontSize,
+                                lineHeight: font11.lineHeight,
                                 height: "20px",
                               }}
                             >
@@ -14779,27 +16029,22 @@ function RightSideColumn({
                               variant="info"
                             >
                               {checkoutProcessLoadingBar ? (
-                                <div
-                                  style={{
-                                    fontSize: "15px",
-                                  }}
-                                >
-                                  <LoadingSpinner
-                                    isCheckoutProcess={true}
-                                    strokeColor={"rgb(29, 155, 240)"}
-                                  ></LoadingSpinner>
-                                </div>
+                                <LoadingSpinner
+                                  isCheckoutProcess={true}
+                                  strokeColor={"rgb(29, 155, 240)"}
+                                  fontSize={true}
+                                ></LoadingSpinner>
                               ) : (
                                 <>
                                   <div
+                                    className="chirp-bold-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
                                           ? "black"
                                           : "",
-                                      fontSize: "15px",
-                                      lineHeight: "20px",
-                                      fontWeight: "700",
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                     }}
                                   >
                                     <span>Subscribe</span>
@@ -14821,7 +16066,7 @@ function RightSideColumn({
                               )}
                             </Button>
                             <div
-                              className="mt-3"
+                              className="mt-3 chirp-regular-font"
                               style={{
                                 width: "100%",
                                 color:
@@ -14829,9 +16074,8 @@ function RightSideColumn({
                                     ? "#4A4F51"
                                     : "rgb(83, 100, 113)",
 
-                                fontSize: "11px",
-                                fontWeight: "400",
-                                lineHeight: "12px",
+                                fontSize: font11.fontSize,
+                                lineHeight: font11.lineHeight,
                                 height: "40px",
                               }}
                             >
@@ -14873,23 +16117,23 @@ function RightSideColumn({
                             }}
                           >
                             <div
+                              className="chirp-bold-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A"
                                     : "rgb(83, 100, 113)",
-                                lineHeight: "28px",
-                                fontWeight: "700",
-                                fontSize: "23px",
+                                fontSize: font23.fontSize,
+                                lineHeight: font23.lineHeight,
                               }}
                             >
                               Full Access
                             </div>
                             <div
+                              className="chirp-bold-font"
                               style={{
-                                fontSize: "34px",
-                                lineHeight: "40px",
-                                fontWeight: "700",
+                                fontSize: font34.fontSize,
+                                lineHeight: font34.lineHeight,
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
@@ -14899,11 +16143,10 @@ function RightSideColumn({
                               Find your customers and grow your business
                             </div>
                             <div
-                              className="basic-plan-parent-div"
+                              className="basic-plan-parent-div chirp-medium-font"
                               style={{
-                                lineHeight: "20px",
-                                fontWeight: "500",
-                                fontSize: "15px",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
@@ -15066,21 +16309,20 @@ function RightSideColumn({
                             </div>
                             <div
                               style={{
-                                fontSize: "15px",
-                                fontWeight: "400",
-                                lineHeight: "20px",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                                 color:
                                   themeName === "dark-theme" ? "white" : "",
                               }}
-                              className="mt-1"
+                              className="mt-1 chirp-regular-font"
                             >
                               + For a limited time, advertising credit to spend
                               on your organization{" "}
                               <span
+                                className="chirp-bold-font"
                                 style={{
-                                  lineHeight: "20px",
-                                  fontSize: "15px",
-                                  fontWeight: "700",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                   textDecoration: "underline",
                                 }}
                               >
@@ -15158,21 +16400,22 @@ function RightSideColumn({
                               >
                                 <div>
                                   <div
+                                    className="chirp-bold-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
                                           ? "white"
                                           : "rgb(15, 20, 25)",
-                                      fontSize: "18px",
-                                      fontWeight: "600",
+                                      fontSize: font17.fontSize,
+                                      lineHeight: font17.lineHeight,
                                       display: " flex",
                                     }}
                                   >
                                     {" "}
                                     <div>€11,305 / year</div>
                                     <div
+                                      className="chirp-bold-font"
                                       style={{
-                                        fontSize: "11px",
                                         borderRadius: "9999px",
                                         height: "20px",
                                         display: "flex",
@@ -15181,7 +16424,6 @@ function RightSideColumn({
                                         position: "relative",
                                         left: "3px",
                                         top: "5px",
-                                        fontWeight: "700",
                                         backgroundColor:
                                           themeName === "dark-theme"
                                             ? "#05241A"
@@ -15190,7 +16432,8 @@ function RightSideColumn({
                                           themeName === "dark-theme"
                                             ? "#C2F1DC"
                                             : "rgb(0, 67, 41)",
-                                        lineHeight: "12px",
+                                        fontSize: font11.fontSize,
+                                        lineHeight: font11.lineHeight,
                                       }}
                                     >
                                       <span
@@ -15203,13 +16446,13 @@ function RightSideColumn({
                                     </div>
                                   </div>
                                   <div
+                                    className="chirp-regular-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
                                           : "rgb(83, 100, 113)",
-                                      fontSize: "14px",
-                                      fontWeight: "400",
+                                      fontSize: font14.fontSize,
                                     }}
                                   >
                                     {" "}
@@ -15268,25 +16511,26 @@ function RightSideColumn({
                                   }}
                                 >
                                   <div
+                                    className="chirp-bold-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
                                           ? "white"
                                           : "rgb(15, 20, 25)",
-                                      fontSize: "18px",
-                                      fontWeight: "600",
+                                      fontSize: font17.fontSize,
+                                      lineHeight: font17.lineHeight,
                                     }}
                                   >
                                     €1,130.50 / month
                                   </div>{" "}
                                   <div
+                                    className="chirp-regular-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
                                           : "rgb(83, 100, 113)",
-                                      fontSize: "14px",
-                                      fontWeight: "400",
+                                      fontSize: font14.fontSize,
                                     }}
                                   >
                                     Monthly plan
@@ -15296,15 +16540,14 @@ function RightSideColumn({
                               {/* monthly plan finish to check  */}
                             </div>
                             <div
-                              className="mt-3"
+                              className="mt-3 chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#4A4F51"
                                     : "rgb(83, 100, 113)",
-                                fontSize: "11px",
-                                lineHeight: "12px",
-                                fontWeight: "400",
+                                fontSize: font11.fontSize,
+                                lineHeight: font11.lineHeight,
                                 height: "20px",
                               }}
                             >
@@ -15360,12 +16603,12 @@ function RightSideColumn({
                               variant="info"
                             >
                               <div
+                                className="chirp-bold-font"
                                 style={{
                                   color:
                                     themeName === "dark-theme" ? "black" : "",
-                                  fontSize: "15px",
-                                  lineHeight: "20px",
-                                  fontWeight: "700",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                 }}
                               >
                                 <span>Subscribe</span>
@@ -15385,16 +16628,15 @@ function RightSideColumn({
                               </div>
                             </Button>
                             <div
-                              className="mt-3"
+                              className="mt-3 chirp-regular-font"
                               style={{
                                 width: "100%",
                                 color:
                                   themeName === "dark-theme"
                                     ? "#4A4F51"
                                     : "rgb(83, 100, 113)",
-                                fontSize: "11px",
-                                fontWeight: "400",
-                                lineHeight: "12px",
+                                fontSize: font11.fontSize,
+                                lineHeight: font11.lineHeight,
                                 height: "40px",
                               }}
                             >
@@ -15427,29 +16669,27 @@ function RightSideColumn({
                         <>
                           {" "}
                           <div
-                            className="mt-4"
+                            className="mt-4 chirp-heavy-font"
                             style={{
                               color:
                                 themeName === "dark-theme" ? "white" : "black",
                               width: "81.5%",
-                              lineHeight: "36px",
-                              fontWeight: "800",
-                              fontSize: "31px",
+                              fontSize: font31.fontSize,
+                              lineHeight: font31.lineHeight,
                             }}
                           >
                             Apply for Full Access
                           </div>
                           <div
-                            className="mt-3"
+                            className="mt-3 chirp-regular-font"
                             style={{
                               width: "81.5%",
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "rgb(83, 100, 113)",
-                              fontSize: "15px",
-                              lineHeight: "20px",
-                              fontWeight: "400",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                             }}
                           >
                             We’ll use this information to assess your
@@ -15545,7 +16785,7 @@ function RightSideColumn({
                                 >
                                   <div
                                     style={{
-                                      fontSize: "13px",
+                                      fontSize: font13.fontSize,
                                       position: "relative",
                                       bottom: "5px",
                                     }}
@@ -15709,11 +16949,11 @@ function RightSideColumn({
                           />
                           {invalidEmailError && organizationEmailAdress ? (
                             <div
+                              className="chirp-regular-font"
                               style={{
                                 color: "rgb(244, 33, 46)",
-                                fontSize: "13px",
-                                fontWeight: "400",
-                                lineHeight: "16px",
+                                fontSize: font13.fontSize,
+                                lineHeight: font13.lineHeight,
                                 width: "81.5%",
                                 position: "relative",
                                 left: "10px",
@@ -15828,14 +17068,13 @@ function RightSideColumn({
                                     }}
                                   >
                                     <div
-                                      className="main-outline-text-year-picker"
+                                      className="main-outline-text-year-picker chirp-regular-font"
                                       style={{
                                         position: "relative",
                                         left: "10px",
                                         top: "5px",
-                                        fontSize: "14px",
-                                        lineHeight: "16px",
-                                        fontWeight: "400",
+                                        fontSize: font14.fontSize,
+                                        lineHeight: font14.lineHeight,
                                         color: showOrganizationTypeContent
                                           ? "#1d9bf0"
                                           : "rgba(83,100,113,1.00)",
@@ -15856,12 +17095,12 @@ function RightSideColumn({
                                       </span>
                                     </div>
                                     <div
-                                      className="mt-2 selected-year-string-parent-div"
+                                      className="mt-2 selected-year-string-parent-div chirp-bold-font"
                                       style={{
                                         position: "relative",
                                         left: "10px",
-                                        fontSize: "17px",
-                                        lineHeight: "20px",
+                                        fontSize: font17.fontSize,
+                                        lineHeight: font17.lineHeight,
                                         color:
                                           themeName === "dark-theme"
                                             ? "white"
@@ -16068,15 +17307,14 @@ function RightSideColumn({
                               </div>
                             </div>
                             <div
-                              className="mt-2"
+                              className="mt-2 chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A"
                                     : "rgb(83, 100, 113)",
-                                fontSize: "15px",
-                                lineHeight: "20px",
-                                fontWeight: "400",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                                 position: "relative",
                                 bottom: "4px",
                               }}
@@ -16130,16 +17368,11 @@ function RightSideColumn({
                             }}
                           >
                             {checkoutProcessLoadingBar ? (
-                              <div
-                                style={{
-                                  fontSize: "15px",
-                                }}
-                              >
-                                <LoadingSpinner
-                                  isCheckoutProcess={true}
-                                  strokeColor={"rgb(29, 155, 240)"}
-                                ></LoadingSpinner>
-                              </div>
+                              <LoadingSpinner
+                                isCheckoutProcess={true}
+                                strokeColor={"rgb(29, 155, 240)"}
+                                fontSize={true}
+                              ></LoadingSpinner>
                             ) : (
                               <span>Submit</span>
                             )}
@@ -16218,7 +17451,6 @@ function RightSideColumn({
                           <svg
                             style={{
                               border: "none",
-                              fontSize: "15px",
                               margin: "5px",
                             }}
                             width={20}
@@ -16258,21 +17490,20 @@ function RightSideColumn({
                         }}
                       >
                         <div
+                          className="chirp-heavy-font"
                           style={{
-                            fontSize: "26px",
-                            lineHeight: "32px",
-                            fontWeight: "800",
+                            fontSize: font26.fontSize,
+                            lineHeight: font26.lineHeight,
                             color: themeName === "dark-theme" ? "white" : "",
                           }}
                         >
                           Verify your phone number
                         </div>
                         <div
-                          className="mt-2"
+                          className="mt-2 chirp-regular-font"
                           style={{
-                            fontSize: "15px",
-                            fontWeight: "400",
-                            lineHeight: "20px",
+                            fontSize: font15.fontSize,
+                            lineHeight: font15.lineHeight,
                             color:
                               themeName === "dark-theme"
                                 ? "#71767A"
@@ -16339,10 +17570,10 @@ function RightSideColumn({
                           }}
                         >
                           <div
+                            className="chirp-bold-font"
                             style={{
-                              lineHeight: "36px",
-                              fontWeight: "700",
-                              fontSize: "31px",
+                              fontSize: font31.fontSize,
+                              lineHeight: font31.lineHeight,
                               color: themeName === "dark-theme" ? "white" : "",
                             }}
                           >
@@ -16354,11 +17585,10 @@ function RightSideColumn({
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "rgb(83, 100, 113)",
-                              lineHeight: "20px",
-                              fontWeight: "400",
-                              fontSize: "15px",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                             }}
-                            className="mt-2"
+                            className="mt-2 chirp-regular-font"
                           >
                             Re-enter your C password to continue.
                           </div>
@@ -16476,13 +17706,12 @@ function RightSideColumn({
                               width: "81.5%",
                               height: "52px",
                               color: "white",
-                              fontSize: "17px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
+                              fontSize: font17.fontSize,
+                              lineHeight: font17.lineHeight,
                               position: "relative",
                               bottom: "20px",
                             }}
-                            className={`login-button next-btn ${themeName}-white-btn`}
+                            className={`login-button next-btn ${themeName}-white-btn chirp-bold-font`}
                             variant="dark"
                             onClick={() => {
                               handleCheckIsPasswordInputCorrect();
@@ -16496,13 +17725,12 @@ function RightSideColumn({
                               width: "81.5%",
                               height: "52px",
                               color: "black",
-                              fontSize: "17px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
+                              fontSize: font17.fontSize,
+                              lineHeight: font17.lineHeight,
                               position: "relative",
                               bottom: "20px",
                             }}
-                            className={`forgot-password-button ${themeName}-black-btn ${themeName}-light-theme-white-btn`}
+                            className={`forgot-password-button ${themeName}-black-btn ${themeName}-light-theme-white-btn chirp-bold-font`}
                             variant="light"
                             onClick={() => {
                               setsubErrorPhoneVerifiedTabLoading(true);
@@ -16552,11 +17780,10 @@ function RightSideColumn({
                           }}
                         >
                           <div
+                            className="chirp-bold-font"
                             style={{
-                              lineHeight: "36px",
-                              fontWeight: "700",
-                              fontSize: "31px",
-                              letterSpacing: "0.5px",
+                              fontSize: font31.fontSize,
+                              lineHeight: font31.lineHeight,
                               color:
                                 themeName === "dark-theme" ? "white" : "black",
                             }}
@@ -16569,11 +17796,10 @@ function RightSideColumn({
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "rgb(83, 100, 113)",
-                              lineHeight: "20px",
-                              fontWeight: "400",
-                              fontSize: "15px",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                             }}
-                            className="mt-2"
+                            className="mt-2 chirp-regular-font"
                           >
                             Enter the phone number you’d like to associate with
                             your Connectify account.
@@ -16609,12 +17835,11 @@ function RightSideColumn({
                             >
                               <div
                                 onClick={handleShowOptions}
-                                className="main-outline-text-year-picker"
+                                className="main-outline-text-year-picker chirp-regular-font"
                                 style={{
                                   padding: "0px 8px",
-                                  fontSize: "14px",
-                                  lineHeight: "16px",
-                                  fontWeight: "400",
+                                  fontSize: font14.fontSize,
+                                  lineHeight: font14.lineHeight,
                                   color: showpopoverCountriesAndTheirPhoneCode
                                     ? "#1d9bf0"
                                     : "rgba(83,100,113,1.00)",
@@ -16634,8 +17859,8 @@ function RightSideColumn({
                                   onClick={handleShowOptions}
                                   className="mt-2 selected-year-string-parent-div"
                                   style={{
-                                    fontSize: "17px",
-                                    lineHeight: "20px",
+                                    fontSize: font17.fontSize,
+                                    lineHeight: font17.lineHeight,
                                     color:
                                       themeName === "dark-theme"
                                         ? "white"
@@ -16775,11 +18000,11 @@ function RightSideColumn({
                             }}
                           />{" "}
                           <div
+                            className="chirp-regular-font"
                             style={{
                               color: "rgb(244, 33, 46)",
-                              fontSize: "13px",
-                              lineHeight: "16px",
-                              fontWeight: "400",
+                              fontSize: font13.fontSize,
+                              lineHeight: font13.lineHeight,
                               position: "relative",
                               left: "10px",
                               bottom: "45px",
@@ -16801,15 +18026,14 @@ function RightSideColumn({
                             }}
                           >
                             <div
-                              className="mt-2"
+                              className="mt-2 chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
                                     : "rgb(83, 100, 113)",
-                                fontSize: "15px",
-                                lineHeight: "20px",
-                                fontWeight: "400",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                                 position: "relative",
                                 bottom: "4px",
                               }}
@@ -16906,13 +18130,12 @@ function RightSideColumn({
                               width: "81.5%",
                               height: "52px",
                               color: "white",
-                              fontSize: "17px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
+                              fontSize: font17.fontSize,
+                              lineHeight: font17.lineHeight,
                               position: "relative",
                               bottom: "10px",
                             }}
-                            className={`login-button next-btn ${themeName}-white-btn`}
+                            className={`login-button next-btn ${themeName}-white-btn chirp-bold-font`}
                             variant="dark"
                             onClick={() => {
                               handleSubscriptionInfoNonPhoneVerifiedUser();
@@ -16927,13 +18150,12 @@ function RightSideColumn({
                               height: "52px",
                               color:
                                 themeName === "dark-theme" ? "white" : "black",
-                              fontSize: "17px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
+                              fontSize: font17.fontSize,
+                              lineHeight: font17.lineHeight,
                               position: "relative",
                               bottom: "10px",
                             }}
-                            className={`forgot-password-button ${themeName}-black-btn ${themeName}-light-theme-white-btn`}
+                            className={`forgot-password-button ${themeName}-black-btn ${themeName}-light-theme-white-btn chirp-bold-font`}
                             variant="light"
                             onClick={() => {
                               setsubErrorPhoneVerifiedTabLoading(true);
@@ -17017,7 +18239,6 @@ function RightSideColumn({
                             <svg
                               style={{
                                 border: "none",
-                                fontSize: "15px",
                                 margin: "5px",
                                 position: "relative",
                                 top: "2.5px",
@@ -17045,10 +18266,10 @@ function RightSideColumn({
                         </div>{" "}
                         {/* finish to check close svg  */}
                         <div
+                          className="chirp-bold-font"
                           style={{
-                            lineHeight: "36px",
-                            fontWeight: "700",
-                            fontSize: "31px",
+                            fontSize: font31.fontSize,
+                            lineHeight: font31.lineHeight,
                             letterSpacing: "0.5px",
                             color: themeName === "dark-theme" ? "white" : "",
                           }}
@@ -17056,15 +18277,14 @@ function RightSideColumn({
                           Verify your phone number
                         </div>
                         <div
-                          className="mt-3"
+                          className="mt-3 chirp-regular-font"
                           style={{
                             color:
                               themeName === "dark-theme"
                                 ? "#71767A"
                                 : "rgb(83, 100, 113)",
-                            lineHeight: "20px",
-                            fontSize: "15px",
-                            fontWeight: "400",
+                            fontSize: font15.fontSize,
+                            lineHeight: font15.lineHeight,
                           }}
                         >
                           Use the camera app on your phone to scan this QR code.
@@ -17093,27 +18313,27 @@ function RightSideColumn({
                             }}
                           >
                             <div
+                              className="chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A"
                                     : "rgb(83, 100, 113)",
-                                fontSize: "15px",
-                                lineHeight: "20px",
-                                fontWeight: "400",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                               }}
                             >
                               {"Can't scan the QR code?"}
                             </div>
                             <div
+                              className="chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A"
                                     : "rgb(83, 100, 113)",
-                                fontSize: "15px",
-                                lineHeight: "20px",
-                                fontWeight: "400",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                               }}
                             >{`Text ${verifyPhoneCode} to +13343453935.`}</div>
                           </div>
@@ -17130,13 +18350,12 @@ function RightSideColumn({
                               width: "77.5%",
                               height: "52px",
                               color: "white",
-                              fontSize: "17px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
+                              fontSize: font17.fontSize,
+                              lineHeight: font17.lineHeight,
                               position: "absolute",
                               bottom: "20px",
                             }}
-                            className={`login-button next-btn ${themeName}-white-btn`}
+                            className={`login-button next-btn ${themeName}-white-btn chirp-bold-font`}
                             variant="dark"
                             onClick={() => {
                               handleVerifyPhoneForSubscription();
@@ -17188,7 +18407,6 @@ function RightSideColumn({
                         <svg
                           style={{
                             border: "none",
-                            fontSize: "15px",
                             margin: "5px",
                             position: "relative",
                             top: "2.5px",
@@ -17216,10 +18434,10 @@ function RightSideColumn({
                     </div>{" "}
                     {/* finish to check close svg  */}
                     <div
+                      className="chirp-bold-font"
                       style={{
-                        lineHeight: "36px",
-                        fontWeight: "700",
-                        fontSize: "31px",
+                        fontSize: font31.fontSize,
+                        lineHeight: font31.lineHeight,
                         letterSpacing: "0.5px",
                         color: themeName === "dark-theme" ? "white" : "",
                       }}
@@ -17227,15 +18445,14 @@ function RightSideColumn({
                       Verifying code...
                     </div>
                     <div
-                      className="mt-3"
+                      className="mt-3 chirp-regular-font"
                       style={{
                         color:
                           themeName === "dark-theme"
                             ? "#71767A"
                             : "rgb(83, 100, 113)",
-                        lineHeight: "20px",
-                        fontSize: "15px",
-                        fontWeight: "400",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                       }}
                     >
                       Please do not close this screen.
@@ -17259,10 +18476,10 @@ function RightSideColumn({
                     }}
                   >
                     <h1
+                      className="chirp-heavy-font"
                       style={{
-                        lineHeight: "36px",
-                        fontSize: "31px",
-                        fontWeight: "800",
+                        fontSize: font31.fontSize,
+                        lineHeight: font31.lineHeight,
                         color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
@@ -17441,6 +18658,7 @@ function RightSideColumn({
                 </div>
               ) : null}
               <input
+                className="chirp-regular-font"
                 onFocus={() => {
                   onFocusActive();
                   setOnFocusXBtn(true);
@@ -17467,9 +18685,8 @@ function RightSideColumn({
                   outlineStyle: "none",
                   borderRadius: "9999px",
                   borderWidth: "1px",
-                  fontSize: "15px",
-                  fontWeight: "400",
-                  lineHeight: "20px",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                   wordWrap: "break-word",
                   color: themeName === "dark-theme" ? "white" : "black",
                   paddingLeft: "60px",
@@ -17533,15 +18750,15 @@ function RightSideColumn({
                 }}
               ></div>
               <div
+                className="chirp-regular-font"
                 style={{
                   color:
                     themeName === "dark-theme"
                       ? "#71767A"
                       : "rgb(83, 100, 113)",
 
-                  lineHeight: "20px",
-                  fontSize: "15px",
-                  fontWeight: "400",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                   display: !searchTerm ? "" : "none",
                 }}
               >
@@ -17652,11 +18869,10 @@ function RightSideColumn({
                         <div className="user-info p-2">
                           <div
                             style={{
-                              fontSize: "15px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                             }}
-                            className="fullname"
+                            className="fullname chirp-bold-font"
                           >
                             <Link
                               className="hover-fullname"
@@ -17666,10 +18882,10 @@ function RightSideColumn({
                               }}
                             >
                               <div
+                                className="chirp-bold-font"
                                 style={{
-                                  fontSize: "15px",
-                                  fontWeight: "700",
-                                  lineHeight: "20px",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                   overflow: "hidden",
                                   textOverflow: "ellipsis",
                                   whiteSpace: "nowrap",
@@ -17687,13 +18903,12 @@ function RightSideColumn({
 
                           <div
                             style={{
-                              fontSize: "15px",
-                              fontWeight: "400",
-                              lineHeight: "20px",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                               color: "rgb(83, 100, 113)",
                               position: "relative",
                             }}
-                            className="username"
+                            className="username chirp-regular-font"
                           >
                             <Link
                               style={{
@@ -17701,10 +18916,10 @@ function RightSideColumn({
                               }}
                             >
                               <span
+                                className="chirp-regular-font"
                                 style={{
-                                  fontSize: "15px",
-                                  fontWeight: "400",
-                                  lineHeight: "20px",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                   color:
                                     themeName === "dark-theme"
                                       ? "#71767A"
@@ -17743,9 +18958,8 @@ function RightSideColumn({
                 <div
                   className="chirp-heavy-font"
                   style={{
-                    fontSize: "20px",
-                    fontWeight: "800",
-                    lineHeight: "24px",
+                    fontSize: font20.fontSize,
+                    lineHeight: font20.lineHeight,
                   }}
                 >
                   <span>Subscribe to Premium</span>
@@ -17753,9 +18967,8 @@ function RightSideColumn({
                 <div
                   className="chirp-regular-font"
                   style={{
-                    fontSize: "15px",
-                    fontWeight: "400",
-                    lineHeight: "20px",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                     marginTop: "10px",
                   }}
                 >
@@ -17807,9 +19020,8 @@ function RightSideColumn({
               <div
                 className="chirp-heavy-font"
                 style={{
-                  fontSize: "20px",
-                  fontWeight: "800",
-                  lineHeight: "24px",
+                  fontSize: font20.fontSize,
+                  lineHeight: font20.lineHeight,
                 }}
               >
                 Who to follow
@@ -17895,11 +19107,10 @@ function RightSideColumn({
                                     }}
                                   >
                                     <div
-                                      className="hover-fullname"
+                                      className="hover-fullname chirp-bold-font"
                                       style={{
-                                        lineHeight: "20px",
-                                        fontSize: "15px",
-                                        fontWeight: "700",
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
                                         overflow: "hidden",
                                         textOverflow: "ellipsis",
                                         whiteSpace: "nowrap",
@@ -17952,10 +19163,10 @@ function RightSideColumn({
                                     }}
                                   >
                                     <div
+                                      className="chirp-regular-font"
                                       style={{
-                                        lineHeight: "20px",
-                                        fontSize: "15px",
-                                        fontWeight: "400",
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
                                         color:
                                           themeName === "dark-theme"
                                             ? "#71767A"
@@ -17986,9 +19197,8 @@ function RightSideColumn({
                                         : handleFollow(eachUser)
                                     }
                                     style={{
-                                      fontSize: "14px",
-                                      lineHeight: "16px",
-                                      fontWeight: "700",
+                                      fontSize: font14.fontSize,
+                                      lineHeight: font14.lineHeight,
                                       transitionDuration: "0.2s",
                                       width: "78px",
                                       height: "32px",
@@ -18051,7 +19261,7 @@ function RightSideColumn({
                                       justifyContent: "center",
                                       alignItems: "center",
                                     }}
-                                    className="right-side-bar-button"
+                                    className="right-side-bar-button chirp-bold-font"
                                     variant="dark"
                                   >
                                     <span style={{}}>
@@ -18077,14 +19287,13 @@ function RightSideColumn({
                 style={{
                   cursor: "pointer",
                   color: "rgb(29, 155, 240)",
-                  fontSize: "15px",
-                  lineHeight: "20px",
-                  fontWeight: "400",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
               >
                 Show more
               </div>
-            </div>
+            </div>{" "}
             {activities?.length > 0 && (
               <div
                 style={{
@@ -18099,9 +19308,8 @@ function RightSideColumn({
                 <div
                   className="chirp-heavy-font"
                   style={{
-                    fontSize: "20px",
-                    fontWeight: "800",
-                    lineHeight: "24px",
+                    fontSize: font20.fontSize,
+                    lineHeight: font20.lineHeight,
                   }}
                 >
                   Recent activities{" "}
@@ -18170,8 +19378,8 @@ function RightSideColumn({
                             <div
                               className="chirp-regular-font"
                               style={{
-                                lineHeight: "20px",
-                                fontSize: "15px",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                                 overflow: "hidden",
                                 marginLeft: "5px",
                               }}
@@ -18199,9 +19407,8 @@ function RightSideColumn({
                                 }
                                 style={{
                                   cursor: "pointer",
-                                  lineHeight: "20px",
-                                  fontSize: "15px",
-                                  fontWeight: "700",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                   overflow: "hidden",
                                   textOverflow: "ellipsis",
                                   whiteSpace: "nowrap",
@@ -18238,8 +19445,8 @@ function RightSideColumn({
                                         style={{
                                           cursor: "pointer",
                                           color: "rgb(29, 155, 240)",
-                                          fontSize: "15px",
-                                          lineHeight: "20px",
+                                          fontSize: font15.fontSize,
+                                          lineHeight: font15.lineHeight,
                                           position: "relative",
                                           bottom: "2.5px",
                                           marginLeft: "5px",
@@ -18337,7 +19544,7 @@ function RightSideColumn({
                                             onClick={() => popupState.close()}
                                           >
                                             <Link
-                                              className="post-circle-postowner-fullname hover-fullname"
+                                              className="post-circle-postowner-fullname hover-fullname chirp-bold-font"
                                               to={`/profile/${eachActivity.relatedPost?.userId?._id}`}
                                               style={{
                                                 textDecoration: "none",
@@ -18345,8 +19552,7 @@ function RightSideColumn({
                                                   themeName === "dark-theme"
                                                     ? "white"
                                                     : "black",
-                                                fontWeight: "700",
-                                                fontSize: "13px",
+                                                fontSize: font13.fontSize,
                                                 lineHeight: "20px",
                                                 overflow: "hidden",
                                                 textOverflow: "ellipsis",
@@ -18414,6 +19620,7 @@ function RightSideColumn({
                                           >
                                             {" "}
                                             <Link
+                                              className="chirp-regular-font"
                                               to={`/profile/${eachActivity.relatedPost?.userId?._id}`}
                                               style={{
                                                 textDecoration: "none",
@@ -18422,8 +19629,7 @@ function RightSideColumn({
                                                     ? "#71767A"
                                                     : "rgb(83, 100, 113)",
                                                 lineHeight: "20px",
-                                                fontSize: "13px",
-                                                fontWeight: "400",
+                                                fontSize: font13.fontSize,
                                                 position: "relative",
                                                 top: "3px",
                                               }}
@@ -18448,15 +19654,14 @@ function RightSideColumn({
                                                 onClick={() =>
                                                   popupState.close()
                                                 }
-                                                className="post-circle-date-post-detail"
+                                                className="post-circle-date-post-detail chirp-regular-font"
                                                 style={{
                                                   color:
                                                     themeName === "dark-theme"
                                                       ? "#71767A"
                                                       : "rgb(83, 100, 113)",
                                                   lineHeight: "20px",
-                                                  fontSize: "13px",
-                                                  fontWeight: "400",
+                                                  fontSize: font13.fontSize,
                                                   marginLeft: "5px",
                                                 }}
                                               >
@@ -18513,14 +19718,14 @@ function RightSideColumn({
                                         >
                                           <div>
                                             <div
+                                              className="chirp-regular-font"
                                               onClick={() => {
                                                 navigatePostContentCutePopoverRightSide(
                                                   eachActivity
                                                 );
                                               }}
                                               style={{
-                                                fontSize: "13px",
-                                                fontWeight: "400",
+                                                fontSize: font13.fontSize,
                                                 lineHeight: "20px",
                                                 overflowWrap: "break-word",
                                                 maxWidth: "100%",
@@ -18612,13 +19817,12 @@ function RightSideColumn({
                   );
                 })}
                 <div
-                  className="hover-blue-underline  chirp-regular-font"
+                  className="hover-blue-underline chirp-regular-font"
                   style={{
                     cursor: "pointer",
                     color: "rgb(29, 155, 240)",
-                    fontSize: "15px",
-                    lineHeight: "20px",
-                    fontWeight: "400",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                   }}
                 >
                   Show more
@@ -18640,6 +19844,8 @@ function RightSideColumn({
                   listStyle: "none",
                   margin: "0px",
                   padding: "0px",
+                  fontSize: font13.fontSize,
+                  lineHeight: font13.lineHeight,
                 }}
               >
                 <li>Terms of Service</li>

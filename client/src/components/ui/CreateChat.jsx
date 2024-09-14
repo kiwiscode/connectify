@@ -13,6 +13,7 @@ const API_URL = "http://localhost:3000";
 // ?
 import io from "socket.io-client";
 import axios from "axios";
+import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
 const socket = io.connect(API_URL);
 
 function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
@@ -144,6 +145,17 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
   console.log("Filtered users =>", filteredUsers);
 
   const { width } = useWindowDimensions();
+
+  const {
+    getFontSizeAndLineHeight31,
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight14,
+  } = useFontSizeHandler();
+  const font31 = getFontSizeAndLineHeight31();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font14 = getFontSizeAndLineHeight14();
   return (
     <>
       {messagesPageWriteAmESSAGEoPTION ? (
@@ -151,9 +163,8 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
           <div
             className="chirp-heavy-font"
             style={{
-              lineHeight: "36px",
-              fontSize: "31px",
-              fontWeight: "800",
+              fontSize: font31.fontSize,
+              lineHeight: font31.lineHeight,
               margin: "10px",
             }}
           >
@@ -164,9 +175,8 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
             style={{
               color:
                 themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
-              lineHeight: "20px",
-              fontSize: "15px",
-              fontWeight: "400",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
               margin: "10px",
             }}
           >
@@ -187,8 +197,7 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
               minHeight: "52px",
               paddingLeft: "32px",
               paddingRight: "32px",
-              fontWeight: "700",
-              fontSize: "15px",
+              fontSize: font15.fontSize,
             }}
             onClick={handleShow2}
           >
@@ -216,9 +225,6 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
             aria-hidden="true"
             className={`messages-create-chat r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03`}
             style={{
-              lineHeight: "20px",
-              fontSize: "15px",
-              fontWeight: "700",
               cursor: "pointer",
             }}
           >
@@ -269,7 +275,7 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
                 <svg
                   style={{
                     border: "none",
-                    fontSize: "15px",
+
                     margin: "5px",
                   }}
                   onClick={handleClose2}
@@ -288,11 +294,11 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
               </div>
             </div>
             <div
+              className="chirp-bold-font"
               style={{
                 color: themeName === "dark-theme" ? "white" : "black",
-                fontWeight: "700",
-                fontSize: "20px",
-                lineHeight: "24px",
+                fontSize: font20.fontSize,
+                lineHeight: font20.lineHeight,
                 position: "absolute",
                 left: "80px",
               }}
@@ -314,7 +320,7 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
                 onChange={handleSearchTermChange2}
                 style={{
                   paddingLeft: "62px",
-                  fontSize: "14px",
+                  fontSize: font14.fontSize,
                   width: "100%",
                   outline: "none",
                   border: "none",
@@ -420,20 +426,21 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
                     >
                       {" "}
                       <div
+                        className="chirp-bold-font"
                         style={{
                           color:
                             themeName === "dark-theme"
                               ? "white"
                               : "rgb(15, 20, 25)",
-                          fontSize: "15px",
-                          lineHeight: "20px",
-                          fontWeight: "700",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                           textAlign: "left",
                         }}
                       >
                         {user.fullname}
                       </div>
                       <div
+                        className="chirp-regular-font"
                         style={{
                           marginRight:
                             user.imageUrl.slice(0, 3) !== "../" ? "" : "32px",
@@ -441,9 +448,8 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
                             themeName === "dark-theme"
                               ? "#71767A"
                               : "rgb(83, 100, 113)",
-                          lineHeight: "20px",
-                          fontSize: "15px",
-                          fontWeight: "400",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         @{user.username}
@@ -501,7 +507,7 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
               <svg
                 style={{
                   border: "none",
-                  fontSize: "15px",
+
                   margin: "5px",
                 }}
                 onClick={handleClose}
@@ -520,13 +526,13 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
             </div>
           </div>
           <div
+            className="chirp-bold-font"
             style={{
               color: themeName === "dark-theme" ? "white" : "black",
-              fontWeight: "700",
-              fontSize: "20px",
-              lineHeight: "24px",
               position: "absolute",
               left: "80px",
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
             }}
           >
             New message
@@ -546,7 +552,7 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
               onChange={handleSearchTermChange}
               style={{
                 paddingLeft: "62px",
-                fontSize: "14px",
+                fontSize: font14.fontSize,
                 width: "100%",
                 outline: "none",
                 border: "none",
@@ -650,20 +656,21 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
                   >
                     {" "}
                     <div
+                      className="chirp-bold-font"
                       style={{
                         color:
                           themeName === "dark-theme"
                             ? "white"
                             : "rgb(15, 20, 25)",
-                        fontSize: "15px",
-                        lineHeight: "20px",
-                        fontWeight: "700",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                         textAlign: "left",
                       }}
                     >
                       {user.fullname}
                     </div>
                     <div
+                      className="chirp-regular-font"
                       style={{
                         marginRight:
                           user.imageUrl.slice(0, 3) !== "../" ? "" : "32px",
@@ -672,9 +679,8 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
                             ? "#71767A"
                             : "rgb(83, 100, 113)",
 
-                        lineHeight: "20px",
-                        fontSize: "15px",
-                        fontWeight: "400",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                       }}
                     >
                       @{user.username}

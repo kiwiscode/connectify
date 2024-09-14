@@ -8,6 +8,7 @@ import { UserContext } from "../../../../../../../context/UserContext";
 import SettingsNavigation from "../../../../../../../components/SettingsNavigation/SettingsNavigation";
 import axios from "axios";
 import LoadingSpinner from "../../../../../../../components/ui/LoadingSpinner";
+import { useFontSizeHandler } from "../../../../../../../utils/useFontSizeHandler";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -181,6 +182,19 @@ function LanguageSelector() {
       console.error("Error =>", error);
     }
   };
+
+  const {
+    getFontSizeAndLineHeight31,
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight17,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font31 = getFontSizeAndLineHeight31();
+  const font20 = getFontSizeAndLineHeight20();
+  const font17 = getFontSizeAndLineHeight17();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
 
   return (
     <>
@@ -365,8 +379,8 @@ function LanguageSelector() {
                     <div>
                       <div
                         style={{
-                          fontSize: "31px",
-                          lineHeight: "36px",
+                          fontSize: font31.fontSize,
+                          lineHeight: font31.lineHeight,
                         }}
                         className={
                           themeName === "dark-theme"
@@ -378,8 +392,8 @@ function LanguageSelector() {
                       </div>
                       <div
                         style={{
-                          fontSize: "15px",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                         className={
                           themeName === "dark-theme"
@@ -445,7 +459,7 @@ function LanguageSelector() {
                                     style={{
                                       display: "flex",
                                       justifyContent: "space-between",
-                                      fontSize: "15px",
+                                      fontSize: font15.fontSize,
                                       lineHeight: "20px",
                                       alignItems: "center",
                                     }}
@@ -632,8 +646,8 @@ function LanguageSelector() {
                                       style={{
                                         display: "flex",
                                         justifyContent: "space-between",
-                                        fontSize: "15px",
-                                        lineHeight: "20px",
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
                                         alignItems: "center",
                                       }}
                                     >
@@ -765,8 +779,8 @@ function LanguageSelector() {
                             textAlign: "center",
                             padding: "16px 0px",
                             color: "#1C9BEF",
-                            fontSize: "15px",
-                            lineHeight: "20px",
+                            fontSize: font15.fontSize,
+                            lineHeight: font15.lineHeight,
                           }}
                         >
                           Show more
@@ -780,7 +794,6 @@ function LanguageSelector() {
               <>
                 <div
                   style={{
-                    fontSize: "15px",
                     width: "100%",
                     height: "100%",
                     display: "flex",
@@ -791,6 +804,7 @@ function LanguageSelector() {
                 >
                   <LoadingSpinner
                     strokeColor={"rgb(29, 155, 240)"}
+                    fontSize={true}
                   ></LoadingSpinner>
                 </div>
               </>
@@ -836,8 +850,8 @@ function LanguageSelector() {
               >
                 <span
                   style={{
-                    fontSize: "17px",
-                    lineHeight: "20px",
+                    fontSize: font17.fontSize,
+                    lineHeight: font17.lineHeight,
                   }}
                 >
                   Done
@@ -914,6 +928,10 @@ function LanguageSelector() {
             </svg>
           </div>
           <div
+            style={{
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
+            }}
             className={
               themeName === "dark-theme"
                 ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
@@ -931,8 +949,8 @@ function LanguageSelector() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "13px",
-            lineHeight: "16px",
+            fontSize: font13.fontSize,
+            lineHeight: font13.lineHeight,
           }}
         >
           Manage which languages are used to personalize your X experience.
@@ -945,8 +963,8 @@ function LanguageSelector() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "20px",
-            lineHeight: "24px",
+            fontSize: font20.fontSize,
+            lineHeight: font20.lineHeight,
           }}
         >
           Display language
@@ -959,8 +977,8 @@ function LanguageSelector() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "13px",
-            lineHeight: "16px",
+            fontSize: font13.fontSize,
+            lineHeight: font13.lineHeight,
           }}
         >
           Select your preferred language for headlines, buttons, and other text
@@ -984,8 +1002,8 @@ function LanguageSelector() {
           <div>
             <div
               style={{
-                fontSize: "15px",
-                lineHeight: "20px",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
               }}
               className={
                 themeName === "dark-theme"
@@ -997,8 +1015,8 @@ function LanguageSelector() {
             </div>
             <div
               style={{
-                fontSize: "13px",
-                lineHeight: "16px",
+                fontSize: font13.fontSize,
+                lineHeight: font13.lineHeight,
               }}
               className={
                 themeName === "dark-theme"
@@ -1044,8 +1062,8 @@ function LanguageSelector() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "20px",
-            lineHeight: "24px",
+            fontSize: font20.fontSize,
+            lineHeight: font20.lineHeight,
           }}
         >
           Select additional languages
@@ -1058,8 +1076,8 @@ function LanguageSelector() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "13px",
-            lineHeight: "16px",
+            fontSize: font13.fontSize,
+            lineHeight: font13.lineHeight,
           }}
         >
           Select additional languages for the content you want to see on C.
@@ -1081,8 +1099,8 @@ function LanguageSelector() {
         >
           <div
             style={{
-              fontSize: "15px",
-              lineHeight: "20px",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
             }}
             className={
               themeName === "dark-theme"
@@ -1127,8 +1145,8 @@ function LanguageSelector() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "20px",
-            lineHeight: "24px",
+            fontSize: font20.fontSize,
+            lineHeight: font20.lineHeight,
           }}
         >
           Languages you may know
@@ -1141,8 +1159,8 @@ function LanguageSelector() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "13px",
-            lineHeight: "16px",
+            fontSize: font13.fontSize,
+            lineHeight: font13.lineHeight,
           }}
         >
           Manage the languages C inferred based on your activity, such as the
@@ -1165,8 +1183,8 @@ function LanguageSelector() {
         >
           <div
             style={{
-              fontSize: "15px",
-              lineHeight: "20px",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
             }}
             className={
               themeName === "dark-theme"

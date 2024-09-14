@@ -10,6 +10,7 @@ import { useAntdMessageHandler } from "../../../../utils/useAntdMessageHandler";
 import useWindowDimensions from "../../../../hooks/getWindowDimensions";
 import { ThemeContext } from "../../../../context/ThemeContext";
 import { UserContext } from "../../../../context/UserContext";
+import { useFontSizeHandler } from "../../../../utils/useFontSizeHandler";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -121,11 +122,6 @@ function CreatorSubscriptionMain() {
       });
   };
 
-  useEffect(() => {
-    refreshActiveUser();
-    getSubscription();
-  }, []);
-
   const [subscription, setSubscription] = useState(null);
   const getSubscription = async () => {
     try {
@@ -150,8 +146,21 @@ function CreatorSubscriptionMain() {
     }
   };
 
+  useEffect(() => {
+    refreshActiveUser();
+    getSubscription();
+  }, []);
   const [manageSubscription, setManageSubscription] = useState(null);
-
+  const {
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight14,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font14 = getFontSizeAndLineHeight14();
+  const font13 = getFontSizeAndLineHeight13();
   function formatDateTime(inputDate) {
     const dateObj = new Date(inputDate);
 
@@ -222,9 +231,6 @@ function CreatorSubscriptionMain() {
       >
         <div
           style={{
-            lineHeight: "24px",
-            fontWeight: "700",
-            fontSize: "20px",
             display: "flex",
             justifyContent: "flex-start",
             alignItems: "center",
@@ -314,9 +320,21 @@ function CreatorSubscriptionMain() {
                 </svg>
               </span>
             )}
-            {showSubscriptions
-              ? "Manage Subscription"
-              : "Creator Subscriptions"}
+            <span
+              style={{
+                fontSize: font20.fontSize,
+                lineHeight: font20.lineHeight,
+              }}
+              className={
+                themeName === "dark-theme"
+                  ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font "
+                  : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+              }
+            >
+              {showSubscriptions
+                ? "Manage Subscription"
+                : "Creator Subscriptions"}
+            </span>
           </div>
         </div>{" "}
         {showSubscriptions && (
@@ -343,7 +361,7 @@ function CreatorSubscriptionMain() {
                       : // : "0.1px solid rgb(70, 70, 70)",
                         "1px solid rgb(70, 70, 70)",
                   padding: "0px 8px",
-                  fontSize: "15px",
+                  fontSize: font15.fontSize,
                   lineHeight: "24px",
                   display: "inline-flex",
                   alignItems: "center",
@@ -392,7 +410,7 @@ function CreatorSubscriptionMain() {
               >
                 <span
                   style={{
-                    fontSize: "14px",
+                    fontSize: font14.fontSize,
                     lineHeight: "18px",
                   }}
                   className={
@@ -421,7 +439,7 @@ function CreatorSubscriptionMain() {
               >
                 <div
                   style={{
-                    fontSize: "14px",
+                    fontSize: font14.fontSize,
                     lineHeight: "24px",
                     paddingLeft: "4px",
                   }}
@@ -465,7 +483,7 @@ function CreatorSubscriptionMain() {
                   >
                     <div
                       style={{
-                        fontSize: "15px",
+                        fontSize: font15.fontSize,
                         lineHeight: "24px",
                       }}
                       className={
@@ -478,7 +496,7 @@ function CreatorSubscriptionMain() {
                     </div>
                     <div
                       style={{
-                        fontSize: "14px",
+                        fontSize: font14.fontSize,
                         lineHeight: "24px",
                       }}
                       className={
@@ -514,15 +532,10 @@ function CreatorSubscriptionMain() {
               </div>
             )}
             {manageSubscription && (
-              <div
-                style={{
-                  fontSize: "15px",
-                }}
-              >
-                <LoadingSpinner
-                  strokeColor={"rgb(29, 155, 240)"}
-                ></LoadingSpinner>
-              </div>
+              <LoadingSpinner
+                strokeColor={"rgb(29, 155, 240)"}
+                fontSize={true}
+              ></LoadingSpinner>
             )}
           </>
         )}
@@ -590,10 +603,14 @@ function CreatorSubscriptionMain() {
                   }}
                 >
                   <div
+                    style={{
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
+                    }}
                     className={
                       themeName === "dark-theme"
-                        ? "settings-text-first-exp-dark-theme"
-                        : "settings-text-first-exp-light-theme "
+                        ? "settings-text-first-exp-dark-theme chirp-regular-font"
+                        : "settings-text-first-exp-light-theme chirp-regular-font"
                     }
                   >
                     Manage Creator Subscriptions
@@ -601,9 +618,13 @@ function CreatorSubscriptionMain() {
                   <div
                     className={
                       themeName === "dark-theme"
-                        ? "settings-text-dark-theme"
-                        : "settings-text-light-theme"
+                        ? "settings-text-dark-theme chirp-regular-font"
+                        : "settings-text-light-theme chirp-regular-font"
                     }
+                    style={{
+                      fontSize: font13.fontSize,
+                      lineHeight: font13.lineHeight,
+                    }}
                   >
                     View and manage your subscriptions to creators below using
                     Stripe. Any active subscriptions you initiated on iOS or
@@ -632,13 +653,10 @@ function CreatorSubscriptionMain() {
             )}
           </>
         ) : (
-          <div
-            style={{
-              fontSize: "15px",
-            }}
-          >
-            <LoadingSpinner strokeColor={"rgb(29, 155, 240)"}></LoadingSpinner>
-          </div>
+          <LoadingSpinner
+            fontSize={true}
+            strokeColor={"rgb(29, 155, 240)"}
+          ></LoadingSpinner>
         )}
       </Col>
     </>

@@ -16,6 +16,7 @@ import {
 import axios from "axios";
 import LoadingSpinner from "../../../../../../../../components/ui/LoadingSpinner";
 import BootstrapTooltip from "../../../../../../../../components/BootstrapToolTip/BootstrapToolTip";
+import { useFontSizeHandler } from "../../../../../../../../utils/useFontSizeHandler";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -183,6 +184,17 @@ function ChangeYourEmail() {
       console.error("Error updating email:", error);
     }
   };
+
+  const {
+    getFontSizeAndLineHeight31,
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font31 = getFontSizeAndLineHeight31();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
   return (
     <>
       {" "}
@@ -301,8 +313,8 @@ function ChangeYourEmail() {
                       </div>
                       <div
                         style={{
-                          fontSize: "15px",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                         className={
                           themeName === "dark-theme"
@@ -543,8 +555,8 @@ function ChangeYourEmail() {
                     >
                       <div
                         style={{
-                          fontSize: "31px",
-                          lineHeight: "36px",
+                          fontSize: font31.fontSize,
+                          lineHeight: font31.lineHeight,
                         }}
                         className={
                           themeName === "dark-theme"
@@ -556,8 +568,8 @@ function ChangeYourEmail() {
                       </div>
                       <div
                         style={{
-                          fontSize: "15px",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                         className={
                           themeName === "dark-theme"
@@ -571,8 +583,8 @@ function ChangeYourEmail() {
                       </div>
                       <div
                         style={{
-                          fontSize: "15px",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                         className={
                           themeName === "dark-theme"
@@ -653,12 +665,12 @@ function ChangeYourEmail() {
                     >
                       {emailTypeError === 304 && email.length ? (
                         <div
+                          className="chirp-regular-font"
                           style={{
                             width: "81.5%",
                             color: "rgb(244, 33, 46)",
-                            fontSize: "13px",
-                            lineHeight: "16px",
-                            fontWeight: "400",
+                            fontSize: font13.fontSize,
+                            lineHeight: font13.lineHeight,
                             position: "relative",
                             left: "10px",
                           }}
@@ -667,12 +679,12 @@ function ChangeYourEmail() {
                         </div>
                       ) : emailTypeError === 200 && email.length ? (
                         <div
+                          className="chirp-regular-font"
                           style={{
                             width: "81.5%",
                             color: "rgb(244, 33, 46)",
-                            fontSize: "13px",
-                            lineHeight: "16px",
-                            fontWeight: "400",
+                            fontSize: font13.fontSize,
+                            lineHeight: font13.lineHeight,
                             position: "relative",
                             left: "10px",
                           }}
@@ -698,8 +710,8 @@ function ChangeYourEmail() {
                             : "very-dark-gray-light-theme-text-variant-1 chirp-regular-font"
                         }
                         style={{
-                          fontSize: "15px",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         Let people who have your email address find and connect
@@ -1001,9 +1013,8 @@ function ChangeYourEmail() {
                           border: "none",
                           outlineStyle: "none",
                           cursor: "pointer",
-                          lineHeight: "20px",
-                          fontSize: "15px",
-                          fontWeight: "400",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                           padding: "12px",
                           color: themeName === "dark-theme" ? "white" : "",
                         }}
@@ -1019,9 +1030,8 @@ function ChangeYourEmail() {
                           border: "none",
                           outlineStyle: "none",
                           cursor: "pointer",
-                          lineHeight: "20px",
-                          fontSize: "15px",
-                          fontWeight: "700",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                           padding: "12px",
                           color: themeName === "dark-theme" ? "white" : "",
                         }}
@@ -1039,8 +1049,8 @@ function ChangeYourEmail() {
                         <div
                           className={`use-phone-instead use-phone-instead-${themeName} chirp-regular-font`}
                           style={{
-                            lineHeight: "20px",
-                            fontSize: "15px",
+                            fontSize: font15.fontSize,
+                            lineHeight: font15.lineHeight,
                             fontWeight: "700",
                             padding: "12px",
                             opacity: "0.5",
@@ -1061,8 +1071,8 @@ function ChangeYourEmail() {
                     >
                       <div
                         style={{
-                          fontSize: "32px",
-                          lineHeight: "26px",
+                          fontSize: font31.fontSize,
+                          lineHeight: font31.lineHeight,
                         }}
                         className={
                           themeName === "dark-theme"
@@ -1079,8 +1089,8 @@ function ChangeYourEmail() {
                             : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font mt-2"
                         }
                         style={{
-                          fontSize: "15px",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         Enter the verification code sent to {email.slice(0, 2)}
@@ -1140,14 +1150,13 @@ function ChangeYourEmail() {
                       }}
                     >
                       <div
-                        className="didn-t-receive-email-text"
+                        className="didn-t-receive-email-text chirp-regular-font"
                         style={{
                           cursor: "pointer",
                           position: "relative",
                           left: "10px",
-                          fontSize: "13px",
-                          fontWeight: "400",
-                          lineHeight: "16px",
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
                           color: "#1f9cf0",
                           display: "inline-block",
                           float: "left",
@@ -1193,7 +1202,6 @@ function ChangeYourEmail() {
               <>
                 <div
                   style={{
-                    fontSize: "15px",
                     width: "100%",
                     height: "100%",
                     display: "flex",
@@ -1204,6 +1212,7 @@ function ChangeYourEmail() {
                 >
                   <LoadingSpinner
                     strokeColor={"rgb(29, 155, 240)"}
+                    fontSize={true}
                   ></LoadingSpinner>
                 </div>
               </>
@@ -1276,6 +1285,10 @@ function ChangeYourEmail() {
             </svg>
           </div>
           <div
+            style={{
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
+            }}
             className={
               themeName === "dark-theme"
                 ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
@@ -1293,13 +1306,13 @@ function ChangeYourEmail() {
         >
           {" "}
           <div
+            className="chirp-regular-font"
             style={{
               position: "absolute",
               top: "10%",
               left: "6%",
-              fontSize: "12px",
-              lineHeight: "18px",
-              fontWeight: "400",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
               minWidth: "fit-content",
               color:
                 themeName === "dark-theme" ? "#383B3D" : "rgb(168,177,184)",
@@ -1360,16 +1373,15 @@ function ChangeYourEmail() {
           }}
           className={
             themeName === "dark-theme"
-              ? "dark-theme-stylish-blue-background-color"
-              : "light-theme-stylish-blue-background-color"
+              ? "dark-theme-stylish-blue-background-color chirp-regular-font"
+              : "light-theme-stylish-blue-background-color chirp-regular-font"
           }
           style={{
             padding: "16px",
             textAlign: "center",
             color: "rgb(29, 155, 240)",
-            lineHeight: "20px",
-            fontSize: "15px",
-            fontWeight: "400",
+            fontSize: font15.fontSize,
+            lineHeight: font15.lineHeight,
             cursor: "pointer",
           }}
         >

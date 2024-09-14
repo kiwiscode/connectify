@@ -7,6 +7,7 @@ import { ThemeContext } from "../../../../../../context/ThemeContext";
 import axios from "axios";
 import { UserContext } from "../../../../../../context/UserContext";
 import { useNavigate } from "react-router-dom";
+import { useFontSizeHandler } from "../../../../../../utils/useFontSizeHandler";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -61,7 +62,16 @@ function DownloadYourDataMain() {
   useEffect(() => {
     refreshActiveUser();
   }, []);
-
+  const {
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight14,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font14 = getFontSizeAndLineHeight14();
+  const font13 = getFontSizeAndLineHeight13();
   return (
     <>
       {contextHolder}
@@ -131,6 +141,10 @@ function DownloadYourDataMain() {
             </svg>
           </div>
           <div
+            style={{
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
+            }}
             className={
               themeName === "dark-theme"
                 ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
@@ -148,8 +162,8 @@ function DownloadYourDataMain() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "13px",
-            lineHeight: "16px",
+            fontSize: font13.fontSize,
+            lineHeight: font13.lineHeight,
           }}
         >
           Get insights into the type of information stored for your account.
@@ -162,8 +176,8 @@ function DownloadYourDataMain() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "20px",
-            lineHeight: "24px",
+            fontSize: font20.fontSize,
+            lineHeight: font20.lineHeight,
           }}
         >
           C data{" "}
@@ -176,8 +190,8 @@ function DownloadYourDataMain() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "13px",
-            lineHeight: "16px",
+            fontSize: font13.fontSize,
+            lineHeight: font13.lineHeight,
           }}
         >
           You can request a ZIP file with an archive of your account
@@ -209,8 +223,8 @@ function DownloadYourDataMain() {
                   : "chirp-regular-font very-dark-gray-light-theme-text-variant-1"
               }
               style={{
-                fontSize: "15px",
-                lineHeight: "20px",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
               }}
             >
               C
@@ -219,7 +233,7 @@ function DownloadYourDataMain() {
               <div>
                 <div
                   style={{
-                    fontSize: "13px",
+                    fontSize: font13.fontSize,
                   }}
                   className={
                     themeName === "dark-theme"
@@ -245,8 +259,8 @@ function DownloadYourDataMain() {
                 border: "none",
                 maxWidth: "146px",
                 maxHeight: "32px",
-                fontSize: "14px",
-                lineHeight: "16px",
+                fontSize: font14.fontSize,
+                lineHeight: font14.lineHeight,
                 opacity: user.archive_request ? "0.5" : "",
                 cursor: user.archive_request ? "default" : "pointer",
               }}
@@ -281,8 +295,8 @@ function DownloadYourDataMain() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "20px",
-            lineHeight: "24px",
+            fontSize: font20.fontSize,
+            lineHeight: font20.lineHeight,
           }}
         >
           Periscope data
@@ -304,8 +318,8 @@ function DownloadYourDataMain() {
         >
           <div
             style={{
-              fontSize: "15px",
-              lineHeight: "20px",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
             }}
             className={
               themeName === "dark-theme"

@@ -8,7 +8,6 @@ import { Link, useNavigate } from "react-router-dom";
 import Popover from "@mui/material/Popover";
 import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
-import { List } from "antd";
 import PostPopover from "../components/three-dots-popover/Popover";
 import { CommentModal } from "../components/ui/Modal";
 import RepostAction from "../components/ui/RepostAction";
@@ -18,6 +17,8 @@ import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
+import { SubcsriptionStatusContext } from "../context/SubscriptionStatusContext";
+import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -116,6 +117,16 @@ function Bookmarks() {
     setshowClearAllBookmarksModal(false);
   };
 
+  const {
+    getFontSizeAndLineHeight31,
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font31 = getFontSizeAndLineHeight31();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
   const clearBookmarksOutput = [
     <Modal
       backdropClassName={
@@ -147,9 +158,8 @@ function Bookmarks() {
             className="chirp-bold-font"
             style={{
               color: themeName === "dark-theme" ? "white" : "",
-              fontWeight: "700",
-              fontSize: "20px",
-              lineHeight: "24px",
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
             }}
           >
             Clear all Bookmarks?
@@ -159,9 +169,8 @@ function Bookmarks() {
             style={{
               color:
                 themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
-              fontWeight: "400",
-              fontSize: "15px",
-              lineHeight: "20px",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
             }}
           >
             This can’t be undone and you’ll remove all posts you’ve added to
@@ -232,66 +241,11 @@ function Bookmarks() {
   }
 
   const { isPostModalVisible } = useContext(ModalVisibilityContext);
-  const [subscription, setSubscription] = useState(null);
-  const getSubscription = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/subscription`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      });
-
-      console.log(
-        "response data detail =>",
-        response.data.activeSubscription[0]
-      );
-      console.log(
-        "response data detail 2 =>",
-        response.data.activeCancelledSubscription[0]
-      );
-
-      setSubscription(
-        response.data.activeSubscription[0]
-          ? response.data.activeSubscription[0]
-          : response.data.activeCancelledSubscription[0]
-      );
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-  const [remainingTimeSubscriptions, setRemainingTimeSubscriptions] = useState(
-    []
-  );
-  const [
+  const {
+    subscription,
+    remainingTimeSubscriptions,
     remainingTimeSubscriptionsOwnerIds,
-    setRemainingTimeSubscriptionsOwnerIds,
-  ] = useState([]);
-  const getRemainingTimeSubscriptions = async () => {
-    try {
-      const response = await axios.get(
-        `${API_URL}/remaining_time_subscriptions`,
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      );
-
-      setRemainingTimeSubscriptions(response.data.remainingTimeSubscriptions);
-
-      setRemainingTimeSubscriptionsOwnerIds(
-        response.data.remainingTimeSubscriptions.map((eachSub) => {
-          return eachSub.owner;
-        })
-      );
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-  useEffect(() => {
-    getSubscription();
-    getRemainingTimeSubscriptions();
-  }, []);
+  } = useContext(SubcsriptionStatusContext);
 
   const [headerPosition, setHeaderPosition] = useState(0);
   const handleScroll = () => {
@@ -343,9 +297,15 @@ function Bookmarks() {
       >
         <div
           style={{
-            backgroundColor: "transparent",
+            // for sharp backdrop filter with transparent backgroundcolor start to check
+            // backgroundColor: "transparent",
+            // for sharp backdrop filter with transparent backgroundcolor finish to check
+            backgroundColor:
+              themeName === "dark-theme"
+                ? "rgba(0, 0, 0, 0.65)"
+                : "rgba(255, 255, 255, 0.85)",
             minHeight: "53px",
-            zIndex: 99999,
+            zIndex: 1,
             backdropFilter: "blur(12px)",
             transform: width <= 500 && `translateY(${headerPosition}px)`,
             transition:
@@ -419,9 +379,8 @@ function Bookmarks() {
                 <div
                   className="chirp-regular-font"
                   style={{
-                    fontSize: "13px",
-                    fontWeight: "400",
-                    lineHeight: "16px",
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
                     color:
                       themeName === "dark-theme"
                         ? "#71767A"
@@ -493,6 +452,9 @@ function Bookmarks() {
                         </BootstrapTooltip>
                       </Button>
                       <Popover
+                        style={{
+                          zIndex: 99999,
+                        }}
                         className={`${
                           themeName === "dark-theme"
                             ? "popover-material-ui-dark-theme"
@@ -530,9 +492,8 @@ function Bookmarks() {
                             className="chirp-bold-font"
                             style={{
                               color: "#f2212e",
-                              lineHeight: "20px",
-                              fontWeight: "700",
-                              fontSize: "15px",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                             }}
                           >
                             Clear all Bookmarks
@@ -547,7 +508,6 @@ function Bookmarks() {
           </div>
         </div>
         <div
-          className="mb-2"
           style={{
             borderBottom:
               themeName !== "dark-theme"
@@ -691,9 +651,8 @@ function Bookmarks() {
                                 style={{
                                   color:
                                     themeName === "dark-theme" ? "white" : "",
-                                  fontWeight: "700",
-                                  fontSize: "15px",
-                                  lineHeight: "20px",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                   overflow: "hidden",
                                   textOverflow: "ellipsis",
                                   whiteSpace: "nowrap",
@@ -735,6 +694,7 @@ function Bookmarks() {
                               </span>
                             ) : null}
                             <Link
+                              className="chirp-regular-font"
                               to={`/profile/${eachBookMark?.bookmarkedPost?.userId._id}`}
                               style={{
                                 textDecoration: "none",
@@ -742,9 +702,8 @@ function Bookmarks() {
                                   themeName === "dark-theme"
                                     ? "#71767A"
                                     : "rgb(83, 100, 113)",
-                                lineHeight: "20px",
-                                fontSize: "15px",
-                                fontWeight: "400",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                               }}
                             >
                               <span className="post-circle-postowner-username">
@@ -777,9 +736,8 @@ function Bookmarks() {
                                     themeName === "dark-theme"
                                       ? "#71767A"
                                       : "rgb(83, 100, 113)",
-                                  lineHeight: "20px",
-                                  fontSize: "15px",
-                                  fontWeight: "400",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                 }}
                               >
                                 {" "}
@@ -853,9 +811,8 @@ function Bookmarks() {
                       >
                         <div
                           style={{
-                            fontSize: "15px",
-                            fontWeight: "400",
-                            lineHeight: "20px",
+                            fontSize: font15.fontSize,
+                            lineHeight: font15.lineHeight,
                             overflowWrap: "break-word",
                             maxWidth: "100%",
                             cursor: "pointer",
@@ -1063,9 +1020,8 @@ function Bookmarks() {
               <div
                 className="chirp-heavy-font"
                 style={{
-                  lineHeight: "36px",
-                  fontSize: "31px",
-                  fontWeight: "800",
+                  fontSize: font31.fontSize,
+                  lineHeight: font31.lineHeight,
                 }}
               >
                 Save posts for later
@@ -1077,9 +1033,8 @@ function Bookmarks() {
                     themeName === "dark-theme"
                       ? "#71767A"
                       : "rgb(83, 100, 113)",
-                  lineHeight: "20px",
-                  fontSize: "15px",
-                  fontWeight: "400",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
               >
                 Bookmark posts to easily find them again in the future.

@@ -66,7 +66,6 @@ function VerifiedChooseTest() {
                     <svg
                       style={{
                         border: "none",
-                        fontSize: "15px",
                         margin: "5px",
                       }}
                       width={20}

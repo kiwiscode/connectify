@@ -7,6 +7,8 @@ import axios from "axios";
 import { UserContext } from "../../context/UserContext";
 import { ThemeContext } from "../../context/ThemeContext";
 import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
+import useWindowDimensions from "../../hooks/getWindowDimensions";
+import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -84,8 +86,12 @@ function ResponsiveNavigationBarBottom({
       );
     }
   };
+
+  const { width } = useWindowDimensions();
   useEffect(() => {
-    getActiveUserInfo();
+    if (width <= 500) {
+      getActiveUserInfo();
+    }
   }, []);
 
   const changeNotificationReadedStatus = async () => {
@@ -120,6 +126,8 @@ function ResponsiveNavigationBarBottom({
     return allUnReadedMessages;
   };
 
+  const { getFontSizeAndLineHeight11 } = useFontSizeHandler();
+  const font11 = getFontSizeAndLineHeight11();
   return (
     <>
       <>
@@ -204,10 +212,10 @@ function ResponsiveNavigationBarBottom({
                   >
                     {" "}
                     <span
+                      className="chirp-regular-font"
                       style={{
-                        fontWeight: "400",
-                        fontSize: "11px",
-                        lineHeight: "12px",
+                        fontSize: font11.fontSize,
+                        lineHeight: font11.lineHeight,
                         color: "white",
                       }}
                     >
@@ -269,10 +277,10 @@ function ResponsiveNavigationBarBottom({
                   >
                     {" "}
                     <span
+                      className="chirp-regular-font"
                       style={{
-                        fontWeight: "400",
-                        fontSize: "11px",
-                        lineHeight: "12px",
+                        fontSize: font11.fontSize,
+                        lineHeight: font11.lineHeight,
                         color: "white",
                       }}
                     >

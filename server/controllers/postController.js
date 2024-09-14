@@ -19,7 +19,6 @@ const handlePost = (req, res) => {
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       }
-      console.log("THIS LINE IS WORKING 1 ", user);
 
       console.log("Image:", image);
       console.log("Modal image:", modalImage);

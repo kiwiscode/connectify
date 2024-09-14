@@ -11,6 +11,7 @@ import { getCountries } from "react-phone-number-input/input";
 import en from "react-phone-number-input/locale/en.json";
 
 import LoadingSpinner from "../../../../../../components/ui/LoadingSpinner";
+import { useFontSizeHandler } from "../../../../../../utils/useFontSizeHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -144,7 +145,24 @@ function Country() {
   };
 
   const [notRemoved, setNotRemoved] = useState(null);
-
+  const {
+    getFontSizeAndLineHeight31,
+    getFontSizeAndLineHeight26,
+    getFontSizeAndLineHeight23,
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight17,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight14,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font31 = getFontSizeAndLineHeight31();
+  const font26 = getFontSizeAndLineHeight26();
+  const font23 = getFontSizeAndLineHeight23();
+  const font20 = getFontSizeAndLineHeight20();
+  const font17 = getFontSizeAndLineHeight17();
+  const font15 = getFontSizeAndLineHeight15();
+  const font14 = getFontSizeAndLineHeight14();
+  const font13 = getFontSizeAndLineHeight13();
   return (
     <>
       {contextHolder}
@@ -183,9 +201,8 @@ function Country() {
                 className="chirp-bold-font"
                 style={{
                   color: themeName === "dark-theme" ? "white" : "",
-
-                  fontSize: "20px",
-                  lineHeight: "24px",
+                  fontSize: font20.fontSize,
+                  lineHeight: font20.lineHeight,
                 }}
               >
                 Are you sure?
@@ -196,9 +213,8 @@ function Country() {
                     themeName === "dark-theme"
                       ? "#71767A"
                       : "rgb(83, 100, 113)",
-
-                  fontSize: "15px",
-                  lineHeight: "20px",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
                 className="mt-2 chirp-regular-font"
               >
@@ -381,8 +397,8 @@ function Country() {
                     >
                       <div
                         style={{
-                          fontSize: "26px",
-                          lineHeight: "36px",
+                          fontSize: font26.fontSize,
+                          lineHeight: font26.lineHeight,
                         }}
                         className={
                           themeName === "dark-theme"
@@ -394,8 +410,8 @@ function Country() {
                       </div>
                       <div
                         style={{
-                          fontSize: "15px",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                         className={
                           themeName === "dark-theme"
@@ -637,8 +653,8 @@ function Country() {
                       >
                         <div
                           style={{
-                            fontSize: "31px",
-                            lineHeight: "36px",
+                            fontSize: font31.fontSize,
+                            lineHeight: font31.lineHeight,
                           }}
                           className={
                             themeName === "dark-theme"
@@ -650,8 +666,8 @@ function Country() {
                         </div>
                         <div
                           style={{
-                            fontSize: "15px",
-                            lineHeight: "20px",
+                            fontSize: font15.fontSize,
+                            lineHeight: font15.lineHeight,
                           }}
                           className={
                             themeName === "dark-theme"
@@ -664,8 +680,8 @@ function Country() {
                         </div>
                         <div
                           style={{
-                            fontSize: "20px",
-                            lineHeight: "24px",
+                            fontSize: font20.fontSize,
+                            lineHeight: font20.lineHeight,
                           }}
                           className={
                             themeName === "dark-theme"
@@ -683,8 +699,8 @@ function Country() {
                         >
                           <div
                             style={{
-                              fontSize: "15px",
-                              lineHeight: "20px",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                             }}
                             className={
                               themeName === "dark-theme"
@@ -778,8 +794,8 @@ function Country() {
                         >
                           <div
                             style={{
-                              fontSize: "15px",
-                              lineHeight: "20px",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                             }}
                             className={
                               themeName === "dark-theme"
@@ -869,8 +885,8 @@ function Country() {
                         </div>
                         <div
                           style={{
-                            fontSize: "20px",
-                            lineHeight: "24px",
+                            fontSize: font20.fontSize,
+                            lineHeight: font20.lineHeight,
                           }}
                           className={
                             themeName === "dark-theme"
@@ -888,8 +904,8 @@ function Country() {
                         >
                           <div
                             style={{
-                              fontSize: "15px",
-                              lineHeight: "20px",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                             }}
                             className={
                               themeName === "dark-theme"
@@ -901,8 +917,8 @@ function Country() {
                           </div>
                           <div
                             style={{
-                              fontSize: "13px",
-                              lineHeight: "16px",
+                              fontSize: font13.fontSize,
+                              lineHeight: font13.lineHeight,
                             }}
                             className={
                               themeName === "dark-theme"
@@ -914,8 +930,8 @@ function Country() {
                           </div>
                           <div
                             style={{
-                              fontSize: "13px",
-                              lineHeight: "16px",
+                              fontSize: font13.fontSize,
+                              lineHeight: font13.lineHeight,
                             }}
                             className={
                               themeName === "dark-theme"
@@ -930,8 +946,8 @@ function Country() {
                         </div>
                         <div
                           style={{
-                            fontSize: "20px",
-                            lineHeight: "24px",
+                            fontSize: font20.fontSize,
+                            lineHeight: font20.lineHeight,
                           }}
                           className={
                             themeName === "dark-theme"
@@ -956,8 +972,8 @@ function Country() {
                           >
                             <span
                               style={{
-                                fontSize: "15px",
-                                lineHeight: "20px",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                               }}
                               className={
                                 themeName === "dark-theme"
@@ -969,8 +985,8 @@ function Country() {
                             </span>
                             <span
                               style={{
-                                fontSize: "13px",
-                                lineHeight: "16px",
+                                fontSize: font13.fontSize,
+                                lineHeight: font13.lineHeight,
                               }}
                               className={
                                 themeName === "dark-theme"
@@ -1081,8 +1097,8 @@ function Country() {
                           >
                             <span
                               style={{
-                                fontSize: "15px",
-                                lineHeight: "20px",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                               }}
                               className={
                                 themeName === "dark-theme"
@@ -1094,8 +1110,8 @@ function Country() {
                             </span>
                             <span
                               style={{
-                                fontSize: "13px",
-                                lineHeight: "16px",
+                                fontSize: font13.fontSize,
+                                lineHeight: font13.lineHeight,
                               }}
                               className={
                                 themeName === "dark-theme"
@@ -1207,8 +1223,8 @@ function Country() {
                           >
                             <span
                               style={{
-                                fontSize: "15px",
-                                lineHeight: "20px",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                               }}
                               className={
                                 themeName === "dark-theme"
@@ -1220,8 +1236,8 @@ function Country() {
                             </span>
                             <span
                               style={{
-                                fontSize: "13px",
-                                lineHeight: "16px",
+                                fontSize: font13.fontSize,
+                                lineHeight: font13.lineHeight,
                               }}
                               className={
                                 themeName === "dark-theme"
@@ -1316,8 +1332,8 @@ function Country() {
                         </div>
                         <div
                           style={{
-                            fontSize: "20px",
-                            lineHeight: "24px",
+                            fontSize: font20.fontSize,
+                            lineHeight: font20.lineHeight,
                           }}
                           className={
                             themeName === "dark-theme"
@@ -1341,8 +1357,8 @@ function Country() {
                           >
                             <span
                               style={{
-                                fontSize: "15x",
-                                lineHeight: "20px",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                               }}
                               className={
                                 themeName === "dark-theme"
@@ -1354,8 +1370,8 @@ function Country() {
                             </span>
                             <span
                               style={{
-                                fontSize: "13px",
-                                lineHeight: "16px",
+                                fontSize: font13.fontSize,
+                                lineHeight: font13.lineHeight,
                               }}
                               className={
                                 themeName === "dark-theme"
@@ -1452,8 +1468,8 @@ function Country() {
                         </div>
                         <div
                           style={{
-                            fontSize: "20x",
-                            lineHeight: "24px",
+                            fontSize: font20.fontSize,
+                            lineHeight: font20.lineHeight,
                           }}
                           className={
                             themeName === "dark-theme"
@@ -1465,8 +1481,8 @@ function Country() {
                         </div>
                         <div
                           style={{
-                            fontSize: "20px",
-                            lineHeight: "24px",
+                            fontSize: font20.fontSize,
+                            lineHeight: font20.lineHeight,
                           }}
                           className={
                             themeName === "dark-theme"
@@ -1478,8 +1494,8 @@ function Country() {
                         </div>
                         <div
                           style={{
-                            fontSize: "15px",
-                            lineHeight: "20px",
+                            fontSize: font15.fontSize,
+                            lineHeight: font15.lineHeight,
                           }}
                           className={
                             themeName === "dark-theme"
@@ -1498,8 +1514,8 @@ function Country() {
                         </div>
                         <div
                           style={{
-                            fontSize: "15px",
-                            lineHeight: "20px",
+                            fontSize: font15.fontSize,
+                            lineHeight: font15.lineHeight,
                           }}
                           className={
                             themeName === "dark-theme"
@@ -1511,8 +1527,8 @@ function Country() {
                         </div>
                         <div
                           style={{
-                            fontSize: "13px",
-                            lineHeight: "16px",
+                            fontSize: font13.fontSize,
+                            lineHeight: font13.lineHeight,
                           }}
                           className={
                             themeName === "dark-theme"
@@ -1544,8 +1560,8 @@ function Country() {
                               : "mt-4 chirp-bold-font"
                           }
                           style={{
-                            fontSize: "15px",
-                            lineHeight: "20px",
+                            fontSize: font15.fontSize,
+                            lineHeight: font15.lineHeight,
                             color: showRemoveContactsModal
                               ? "#92171C"
                               : "rgb(244, 33, 46)",
@@ -1716,8 +1732,8 @@ function Country() {
                     </div>
                     <div
                       style={{
-                        fontSize: "23px",
-                        lineHeight: "28px",
+                        fontSize: font23.fontSize,
+                        lineHeight: font23.lineHeight,
                         width: "100%",
                         paddingLeft: width <= 700 ? "32px" : "80px",
                         paddingRight: width <= 700 ? "32px" : "80px",
@@ -2914,7 +2930,6 @@ function Country() {
               <>
                 <div
                   style={{
-                    fontSize: "15px",
                     width: "100%",
                     height: "100%",
                     display: "flex",
@@ -2925,6 +2940,7 @@ function Country() {
                 >
                   <LoadingSpinner
                     strokeColor={"rgb(29, 155, 240)"}
+                    fontSize={true}
                   ></LoadingSpinner>
                 </div>
               </>
@@ -2998,6 +3014,10 @@ function Country() {
             </svg>
           </div>
           <div
+            style={{
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
+            }}
             className={
               themeName === "dark-theme"
                 ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
@@ -3041,12 +3061,11 @@ function Country() {
             >
               <div
                 onClick={handleShowOptions}
-                className="main-outline-text-year-picker"
+                className="main-outline-text-year-picker chirp-regular-font"
                 style={{
                   padding: "0px 8px",
-                  fontSize: "14px",
-                  lineHeight: "16px",
-                  fontWeight: "400",
+                  fontSize: font13.fontSize,
+                  lineHeight: font13.lineHeight,
                   color: showPopoverCountries
                     ? "#1d9bf0"
                     : "rgba(83,100,113,1.00)",
@@ -3067,8 +3086,8 @@ function Country() {
                       : "very-dark-gray-light-theme-text-variant-1 mt-2 selected-year-string-parent-div"
                   }
                   style={{
-                    fontSize: "17px",
-                    lineHeight: "20px",
+                    fontSize: font17.fontSize,
+                    lineHeight: font17.lineHeight,
                     color: themeName === "dark-theme" ? "white" : "black",
                   }}
                 >
@@ -3143,7 +3162,7 @@ function Country() {
         </div>
         <div
           style={{
-            fontSize: "13px",
+            fontSize: font13.fontSize,
             lineHeight: "20px",
             paddingLeft: "24px",
             paddingRight: "24px",
@@ -3152,7 +3171,7 @@ function Country() {
           }}
           className={
             themeName === "dark-theme"
-              ? "hirp-regular-font soft-grey-dark-theme-text-variant-2"
+              ? "chirp-regular-font soft-grey-dark-theme-text-variant-2"
               : "chirp-regular-font very-dark-gray-light-theme-text-variant-2"
           }
         >

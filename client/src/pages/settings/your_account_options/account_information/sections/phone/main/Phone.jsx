@@ -9,6 +9,7 @@ import { NavigationHistoryContext } from "../../../../../../../context/Navigatio
 import axios from "axios";
 import { UserContext } from "../../../../../../../context/UserContext";
 import LoadingSpinner from "../../../../../../../components/ui/LoadingSpinner";
+import { useFontSizeHandler } from "../../../../../../../utils/useFontSizeHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -79,6 +80,14 @@ function Phone() {
     }
   };
 
+  const {
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
   return (
     <>
       {" "}
@@ -119,8 +128,8 @@ function Phone() {
                 style={{
                   color: themeName === "dark-theme" ? "white" : "",
 
-                  fontSize: "20px",
-                  lineHeight: "24px",
+                  fontSize: font20.fontSize,
+                  lineHeight: font20.lineHeight,
                 }}
               >
                 Delete phone number?
@@ -132,8 +141,8 @@ function Phone() {
                       ? "#71767A"
                       : "rgb(83, 100, 113)",
 
-                  fontSize: "15px",
-                  lineHeight: "20px",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
                 className="mt-2 chirp-regular-font"
               >
@@ -249,6 +258,10 @@ function Phone() {
             </svg>
           </div>
           <div
+            style={{
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
+            }}
             className={
               themeName === "dark-theme"
                 ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
@@ -261,11 +274,13 @@ function Phone() {
         {firstLoading ? (
           <div
             style={{
-              fontSize: "15px",
               width: "100%",
             }}
           >
-            <LoadingSpinner strokeColor={"rgb(29, 155, 240)"}></LoadingSpinner>
+            <LoadingSpinner
+              fontSize={true}
+              strokeColor={"rgb(29, 155, 240)"}
+            ></LoadingSpinner>
           </div>
         ) : (
           <>
@@ -279,13 +294,13 @@ function Phone() {
                 >
                   {" "}
                   <div
+                    className="chirp-regular-font"
                     style={{
                       position: "absolute",
                       top: "10%",
                       left: "6%",
-                      fontSize: "12px",
-                      lineHeight: "18px",
-                      fontWeight: "400",
+                      fontSize: font13.fontSize,
+                      lineHeight: font13.lineHeight,
                       minWidth: "fit-content",
                       color:
                         themeName === "dark-theme"
@@ -352,16 +367,15 @@ function Phone() {
                   }}
                   className={
                     themeName === "dark-theme"
-                      ? "dark-theme-stylish-blue-background-color mt-1"
-                      : "light-theme-stylish-blue-background-color mt-1"
+                      ? "dark-theme-stylish-blue-background-color mt-1 chirp-regular-font"
+                      : "light-theme-stylish-blue-background-color mt-1 chirp-regular-font"
                   }
                   style={{
                     padding: "16px",
                     textAlign: "center",
                     color: "rgb(29, 155, 240)",
-                    lineHeight: "20px",
-                    fontSize: "15px",
-                    fontWeight: "400",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                     cursor: "pointer",
                   }}
                 >
@@ -373,16 +387,15 @@ function Phone() {
                   }}
                   className={
                     themeName === "dark-theme"
-                      ? "deactivate-btn-dark-theme mt-1"
-                      : "deactivate-btn-light-theme mt-1"
+                      ? "deactivate-btn-dark-theme mt-1 chirp-regular-font"
+                      : "deactivate-btn-light-theme mt-1 chirp-regular-font"
                   }
                   style={{
                     padding: "16px",
                     textAlign: "center",
                     color: "#F4212D",
-                    lineHeight: "20px",
-                    fontSize: "15px",
-                    fontWeight: "400",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                     cursor: "pointer",
                   }}
                 >
@@ -396,16 +409,15 @@ function Phone() {
                 }}
                 className={
                   themeName === "dark-theme"
-                    ? "dark-theme-stylish-blue-background-color mt-1"
-                    : "light-theme-stylish-blue-background-color mt-1"
+                    ? "dark-theme-stylish-blue-background-color mt-1 chirp-regular-font"
+                    : "light-theme-stylish-blue-background-color mt-1 chirp-regular-font"
                 }
                 style={{
                   padding: "16px",
                   textAlign: "center",
                   color: "rgb(29, 155, 240)",
-                  lineHeight: "20px",
-                  fontSize: "15px",
-                  fontWeight: "400",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                   cursor: "pointer",
                 }}
               >

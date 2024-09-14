@@ -21,6 +21,7 @@ import useWindowDimensions from "../hooks/getWindowDimensions";
 import { ThemeContext } from "../context/ThemeContext";
 import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
 import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
+import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -30,7 +31,26 @@ const API_URL = "http://localhost:3000";
 
 function SignUpPage() {
   const [{ theme, themeName }] = useContext(ThemeContext);
-
+  const {
+    getFontSizeAndLineHeight64,
+    getFontSizeAndLineHeight31,
+    getFontSizeAndLineHeight26,
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight17,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight14,
+    getFontSizeAndLineHeight13,
+    getFontSizeAndLineHeight11,
+  } = useFontSizeHandler();
+  const font64 = getFontSizeAndLineHeight64();
+  const font31 = getFontSizeAndLineHeight31();
+  const font26 = getFontSizeAndLineHeight26();
+  const font20 = getFontSizeAndLineHeight20();
+  const font17 = getFontSizeAndLineHeight17();
+  const font15 = getFontSizeAndLineHeight15();
+  const font14 = getFontSizeAndLineHeight14();
+  const font13 = getFontSizeAndLineHeight13();
+  const font11 = getFontSizeAndLineHeight11();
   const [fullname, setFullname] = useState("");
   const [fullnameFilled, setfullnameFilled] = useState(false);
   const [email, setEmail] = useState("");
@@ -694,7 +714,6 @@ function SignUpPage() {
                               bottom: "7px",
                               border: "none",
                               left: "7px",
-                              fontSize: "15px",
                             }}
                             color={
                               themeName === "dark-theme"
@@ -728,7 +747,6 @@ function SignUpPage() {
                           <svg
                             style={{
                               border: "none",
-                              fontSize: "15px",
                               margin: "5px",
                             }}
                             onClick={handleCloseCreateAccountModal}
@@ -778,11 +796,11 @@ function SignUpPage() {
                 }}
               >
                 <div
+                  className="chirp-regular-font"
                   style={{
                     cursor: "pointer",
-                    lineHeight: "20px",
-                    fontSize: "15px",
-                    fontWeight: "400",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                     padding: "12px",
                     color: themeName === "dark-theme" ? "white" : "",
                   }}
@@ -793,12 +811,11 @@ function SignUpPage() {
                   onClick={() => {
                     sendEmailVerificationCode(email);
                   }}
-                  className={`resend-email resend-email-${themeName}`}
+                  className={`resend-email resend-email-${themeName} chirp-bold-font`}
                   style={{
                     cursor: "pointer",
-                    lineHeight: "20px",
-                    fontSize: "15px",
-                    fontWeight: "700",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                     padding: "12px",
                     color: themeName === "dark-theme" ? "white" : "",
                   }}
@@ -812,12 +829,11 @@ function SignUpPage() {
                   }
                 >
                   <div
-                    className={`use-phone-instead use-phone-instead-${themeName}`}
+                    className={`use-phone-instead use-phone-instead-${themeName} chirp-bold-font`}
                     style={{
                       // cursor: "pointer",
-                      lineHeight: "20px",
-                      fontSize: "15px",
-                      fontWeight: "700",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                       padding: "12px",
                       opacity: "0.5",
                       color: themeName === "dark-theme" ? "white" : "",
@@ -857,10 +873,8 @@ function SignUpPage() {
                         display: "flex",
                         textAlign: "left",
                         width: "81.5%",
-                        lineHeight: "28px",
-                        fontWeight: "700",
-                        fontSize: "26px",
-                        letterSpacing: "0.5px",
+                        fontSize: font26.fontSize,
+                        lineHeight: font26.lineHeight,
                         color: themeName === "dark-theme" ? "white" : "black",
                       }}
                     >
@@ -881,9 +895,8 @@ function SignUpPage() {
                               themeName === "dark-theme"
                                 ? "#71767A"
                                 : "rgb(83, 100, 113)",
-                            fontSize: "13px",
-                            fontWeight: "400",
-                            lineHeight: "16px",
+                            fontSize: font13.fontSize,
+                            lineHeight: font13.lineHeight,
                           }}
                         >
                           {fullname.length} / {50}
@@ -948,12 +961,12 @@ function SignUpPage() {
                     fullname.length === 0 &&
                     !firstAppearence ? (
                       <div
+                        className="chirp-regular-font"
                         style={{
                           width: "81.5%",
                           color: "rgb(244, 33, 46)",
-                          fontSize: "13px",
-                          lineHeight: "16px",
-                          fontWeight: "400",
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
                           position: "relative",
                           left: "10px",
                         }}
@@ -1013,12 +1026,12 @@ function SignUpPage() {
 
                     {emailTypeError === 304 && email.length ? (
                       <div
+                        className="chirp-regular-font"
                         style={{
                           width: "81.5%",
                           color: "rgb(244, 33, 46)",
-                          fontSize: "13px",
-                          lineHeight: "16px",
-                          fontWeight: "400",
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
                           position: "relative",
                           left: "10px",
                         }}
@@ -1027,12 +1040,12 @@ function SignUpPage() {
                       </div>
                     ) : emailTypeError === 200 && email.length ? (
                       <div
+                        className="chirp-regular-font"
                         style={{
                           width: "81.5%",
                           color: "rgb(244, 33, 46)",
-                          fontSize: "13px",
-                          lineHeight: "16px",
-                          fontWeight: "400",
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
                           position: "relative",
                           left: "10px",
                         }}
@@ -1048,21 +1061,21 @@ function SignUpPage() {
                       }}
                     >
                       <div
+                        className="chirp-regular-font"
                         style={{
                           width: "81.5%",
-                          fontSize: "13px",
-                          lineHeight: "16px",
-                          fontWeight: "400",
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
                           color: "#f7555f",
                         }}
                       >
                         {error ? error : null}
                       </div>
                       <div
+                        className="chirp-regular-font"
                         style={{
-                          fontSize: "13px",
-                          lineHeight: "16px",
-                          fontWeight: "400",
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
                           color: "rgb(83, 100, 113)",
                         }}
                       >
@@ -1078,9 +1091,8 @@ function SignUpPage() {
                       <div
                         className="chirp-bold-font"
                         style={{
-                          fontSize: "15px",
-                          lineHeight: "20px",
-                          fontWeight: "700",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                           color: themeName === "dark-theme" ? "white" : "",
                         }}
                       >
@@ -1093,9 +1105,8 @@ function SignUpPage() {
                             themeName === "dark-theme"
                               ? "#71767A"
                               : "rgb(83, 100, 113)",
-                          fontSize: "14px",
-                          lineHeight: "16px",
-                          fontWeight: "400",
+                          fontSize: font14.fontSize,
+                          lineHeight: font14.lineHeight,
                         }}
                       >
                         This will not be shown publicly. Confirm your own age,
@@ -1104,15 +1115,14 @@ function SignUpPage() {
                       </div>
                       {/* date of birth start to check  */}
                       <div
-                        className="mt-4"
+                        className="mt-4 chirp-regular-font"
                         style={{
                           width: "100%",
                           height: "58px",
                           display: "flex",
                           justifyContent: "space-between",
-                          fontSize: "14px",
-                          lineHeight: "16px",
-                          fontWeight: "400",
+                          fontSize: font14.fontSize,
+                          lineHeight: font14.lineHeight,
                         }}
                       >
                         {" "}
@@ -1158,8 +1168,8 @@ function SignUpPage() {
                               <div
                                 className="mt-2 selected-month-string-parent-div"
                                 style={{
-                                  fontSize: "17px",
-                                  lineHeight: "20px",
+                                  fontSize: font17.fontSize,
+                                  lineHeight: font17.lineHeight,
                                   color:
                                     themeName === "dark-theme"
                                       ? "white"
@@ -1238,8 +1248,8 @@ function SignUpPage() {
                               <div
                                 className="mt-2 selected-day-string-parent-div"
                                 style={{
-                                  fontSize: "17px",
-                                  lineHeight: "20px",
+                                  fontSize: font17.fontSize,
+                                  lineHeight: font17.lineHeight,
                                   color:
                                     themeName === "dark-theme"
                                       ? "white"
@@ -1316,8 +1326,8 @@ function SignUpPage() {
                               <div
                                 className="mt-2 selected-year-string-parent-div"
                                 style={{
-                                  fontSize: "17px",
-                                  lineHeight: "20px",
+                                  fontSize: font17.fontSize,
+                                  lineHeight: font17.lineHeight,
                                   color:
                                     themeName === "dark-theme"
                                       ? "white"
@@ -1421,13 +1431,11 @@ function SignUpPage() {
                     }}
                   >
                     <div
-                      className="mb-4"
+                      className="mb-4 chirp-bold-font"
                       style={{
                         width: "81.5%",
-                        lineHeight: "32px",
-                        fontWeight: "700",
-                        fontSize: "26px",
-                        letterSpacing: "0.5px",
+                        fontSize: font26.fontSize,
+                        lineHeight: font26.lineHeight,
                         color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
@@ -1441,22 +1449,20 @@ function SignUpPage() {
                       }}
                     >
                       <div
-                        className="mt-2.5"
+                        className="mt-2.5 chirp-bold-font"
                         style={{
-                          fontWeight: "700",
-                          fontSize: "20px",
-                          lineHeight: "24px",
                           color: themeName === "dark-theme" ? "white" : "",
+                          fontSize: font20.fontSize,
+                          lineHeight: font20.lineHeight,
                         }}
                       >
                         Get more out of C
                       </div>
                       <div
-                        className="mt-2"
+                        className="mt-2 chirp-regular-font"
                         style={{
-                          lineHeight: "20px",
-                          fontSize: "15px",
-                          fontWeight: "400",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         <div
@@ -1540,22 +1546,20 @@ function SignUpPage() {
                         </div>
                       </div>
                       <div
-                        className="mt-3"
+                        className="mt-3 chirp-bold-font"
                         style={{
-                          fontWeight: "700",
-                          fontSize: "20px",
-                          lineHeight: "24px",
                           color: themeName === "dark-theme" ? "white" : "",
+                          fontSize: font20.fontSize,
+                          lineHeight: font20.lineHeight,
                         }}
                       >
                         Connect with people you know
                       </div>
                       <div
-                        className="mt-2"
+                        className="mt-2 chirp-regular-font"
                         style={{
-                          lineHeight: "20px",
-                          fontSize: "15px",
-                          fontWeight: "400",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         <div
@@ -1639,22 +1643,20 @@ function SignUpPage() {
                         </div>
                       </div>
                       <div
-                        className="mt-3"
+                        className="mt-3 chirp-bold-font"
                         style={{
-                          fontWeight: "700",
-                          fontSize: "20px",
-                          lineHeight: "24px",
                           color: themeName === "dark-theme" ? "white" : "",
+                          fontSize: font20.fontSize,
+                          lineHeight: font20.lineHeight,
                         }}
                       >
                         Personalized ads
                       </div>
                       <div
-                        className="mt-2"
+                        className="mt-2 chirp-regular-font"
                         style={{
-                          lineHeight: "20px",
-                          fontSize: "15px",
-                          fontWeight: "400",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         <div
@@ -1744,22 +1746,19 @@ function SignUpPage() {
                     </div>
 
                     <div
-                      className="mt-4"
+                      className="mt-4 chirp-regular-font"
                       style={{
                         width: "81.5%",
                         color:
                           themeName === "dark-theme"
                             ? "#71767A                                  "
                             : "rgb(83, 100, 113)",
-                        fontSize: "15px",
-                        lineHeight: "20px",
-                        fontWeight: "400",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                       }}
                     >
-                      By signing up, you agree to our asd
-                      <span className="customize-experience-tab">
-                        Terms
-                      </span>,{" "}
+                      By signing up, you agree to our{" "}
+                      <span className="customize-experience-tab">Terms</span>,{" "}
                       <span className="customize-experience-tab">
                         Privacy Policy
                       </span>
@@ -1840,27 +1839,25 @@ function SignUpPage() {
                       Test
                     </div>
                     <div
-                      className="mb-4"
+                      className="mb-4 chirp-bold-font"
                       style={{
                         width: "81.5%",
-                        lineHeight: "32px",
-                        fontWeight: "700",
-                        fontSize: "26px",
+                        fontSize: font26.fontSize,
+                        lineHeight: font26.lineHeight,
                         zIndex: "100",
                         color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
                       <div className="chirp-bold-font">We sent you a code</div>
                       <div
-                        className="mt-2"
+                        className="mt-2 chirp-regular-font"
                         style={{
                           color:
                             themeName === "dark-theme"
                               ? "#71767A"
                               : "rgb(83, 100, 113)",
-                          fontSize: "15px",
-                          lineHeight: "20px",
-                          fontWeight: "400",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         Enter it below to verify{" "}
@@ -1920,14 +1917,13 @@ function SignUpPage() {
                       }}
                     >
                       <div
-                        className="didn-t-receive-email-text"
+                        className="didn-t-receive-email-text chirp-regular-font"
                         style={{
                           cursor: "pointer",
                           position: "relative",
                           left: "10px",
-                          fontSize: "13px",
-                          fontWeight: "400",
-                          lineHeight: "16px",
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
                           color: "#1f9cf0",
                           display: "inline-block",
                           float: "left",
@@ -1989,12 +1985,11 @@ function SignUpPage() {
                     className="signin-modal-body-child-non-reactivate"
                   >
                     <div
-                      className="mb-4"
+                      className="mb-4 chirp-bold-font"
                       style={{
                         width: "81.5%",
-                        lineHeight: "32px",
-                        fontWeight: "700",
-                        fontSize: "26px",
+                        fontSize: font26.fontSize,
+                        lineHeight: font26.lineHeight,
                         zIndex: "100",
                       }}
                     >
@@ -2007,15 +2002,14 @@ function SignUpPage() {
                         {"You'll need a password"}
                       </div>
                       <div
-                        className="mt-2.5"
+                        className="mt-2.5 chirp-regular-font"
                         style={{
                           color:
                             themeName === "dark-theme"
                               ? "#71767A"
                               : "rgb(83, 100, 113)",
-                          fontSize: "15px",
-                          lineHeight: "20px",
-                          fontWeight: "400",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         Make sure it’s 8 characters or more.
@@ -2116,12 +2110,12 @@ function SignUpPage() {
                       />
                     </FormControl>
                     <div
+                      className="chirp-regular-font"
                       style={{
                         width: "81.5%",
                         color: "rgb(244, 33, 46)",
-                        fontSize: "13px",
-                        fontWeight: "400",
-                        lineHeight: "16px",
+                        fontSize: font13.fontSize,
+                        lineHeight: font13.lineHeight,
                         position: "relative",
                         left: "10px",
                       }}
@@ -2129,6 +2123,7 @@ function SignUpPage() {
                       {password.length && !passwordIsValid ? error : ""}
                     </div>
                     <div
+                      className="chirp-regular-font"
                       style={{
                         width: "81.5%",
                         position: "absolute",
@@ -2137,9 +2132,8 @@ function SignUpPage() {
                           themeName === "dark-theme"
                             ? "#71767A                                  "
                             : "rgb(83, 100, 113)",
-                        fontSize: "13px",
-                        fontWeight: "400",
-                        lineHeight: "16px",
+                        fontSize: font13.fontSize,
+                        lineHeight: font13.lineHeight,
                       }}
                     >
                       By signing up, you agree to our{" "}
@@ -2240,7 +2234,6 @@ function SignUpPage() {
                               bottom: "7px",
                               border: "none",
                               left: "7px",
-                              fontSize: "15px",
                             }}
                             color={
                               themeName === "dark-theme"
@@ -2274,7 +2267,6 @@ function SignUpPage() {
                           <svg
                             style={{
                               border: "none",
-                              fontSize: "15px",
                               margin: "5px",
                             }}
                             onClick={handleCloseCreateAccountModal}
@@ -2324,13 +2316,13 @@ function SignUpPage() {
                 }}
               >
                 <div
+                  className="chirp-regular-font"
                   style={{
                     border: "none",
                     outlineStyle: "none",
                     cursor: "pointer",
-                    lineHeight: "20px",
-                    fontSize: "15px",
-                    fontWeight: "400",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                     padding: "12px",
                     color: themeName === "dark-theme" ? "white" : "",
                   }}
@@ -2341,14 +2333,13 @@ function SignUpPage() {
                   onClick={() => {
                     sendEmailVerificationCode(email);
                   }}
-                  className={`resend-email resend-email-${themeName}`}
+                  className={`resend-email resend-email-${themeName} chirp-bold-font`}
                   style={{
                     border: "none",
                     outlineStyle: "none",
                     cursor: "pointer",
-                    lineHeight: "20px",
-                    fontSize: "15px",
-                    fontWeight: "700",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                     padding: "12px",
                     color: themeName === "dark-theme" ? "white" : "",
                   }}
@@ -2362,12 +2353,11 @@ function SignUpPage() {
                   }
                 >
                   <div
-                    className={`use-phone-instead use-phone-instead-${themeName}`}
+                    className={`use-phone-instead use-phone-instead-${themeName} chirp-bold-font`}
                     style={{
                       // cursor: "pointer",
-                      lineHeight: "20px",
-                      fontSize: "15px",
-                      fontWeight: "700",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                       padding: "12px",
                       opacity: "0.5",
                       borderBottomRightRadius: "16px",
@@ -2408,9 +2398,8 @@ function SignUpPage() {
                       className="mb-4 chirp-bold-font"
                       style={{
                         width: "81.5%",
-                        lineHeight: "36px",
-                        fontWeight: "700",
-                        fontSize: "31px",
+                        fontSize: font31.fontSize,
+                        lineHeight: font31.lineHeight,
                         color: themeName === "dark-theme" ? "white" : "black",
                       }}
                     >
@@ -2430,9 +2419,8 @@ function SignUpPage() {
                               themeName === "dark-theme"
                                 ? "#71767A"
                                 : "rgb(83, 100, 113)",
-                            fontSize: "13px",
-                            fontWeight: "400",
-                            lineHeight: "16px",
+                            fontSize: font13.fontSize,
+                            lineHeight: font13.lineHeight,
                           }}
                         >
                           {fullname.length} / {50}
@@ -2496,12 +2484,12 @@ function SignUpPage() {
                     fullname.length === 0 &&
                     !firstAppearence ? (
                       <div
+                        className="chirp-regular-font"
                         style={{
                           width: "81.5%",
                           color: "rgb(244, 33, 46)",
-                          fontSize: "13px",
-                          lineHeight: "16px",
-                          fontWeight: "400",
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
                           position: "relative",
                           left: "10px",
                         }}
@@ -2559,12 +2547,12 @@ function SignUpPage() {
                     />
                     {emailTypeError === 304 && email.length ? (
                       <div
+                        className="chirp-regular-font"
                         style={{
                           width: "81.5%",
                           color: "rgb(244, 33, 46)",
-                          fontSize: "13px",
-                          lineHeight: "16px",
-                          fontWeight: "400",
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
                           position: "relative",
                           left: "10px",
                         }}
@@ -2573,12 +2561,12 @@ function SignUpPage() {
                       </div>
                     ) : emailTypeError === 200 && email.length ? (
                       <div
+                        className="chirp-regular-font"
                         style={{
                           width: "81.5%",
                           color: "rgb(244, 33, 46)",
-                          fontSize: "13px",
-                          lineHeight: "16px",
-                          fontWeight: "400",
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
                           position: "relative",
                           left: "10px",
                         }}
@@ -2593,11 +2581,11 @@ function SignUpPage() {
                       }}
                     >
                       <div
+                        className="chirp-regular-font"
                         style={{
                           width: "81.5%",
-                          fontSize: "13px",
-                          lineHeight: "16px",
-                          fontWeight: "400",
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
                           color: "#f7555f",
                           position: "relative",
                           left: "10px",
@@ -2606,10 +2594,10 @@ function SignUpPage() {
                         {error ? error : null}
                       </div>
                       <div
+                        className="chirp-regular-font"
                         style={{
-                          fontSize: "13px",
-                          lineHeight: "16px",
-                          fontWeight: "400",
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
                           color: "rgb(83, 100, 113)",
                         }}
                       >
@@ -2625,9 +2613,8 @@ function SignUpPage() {
                       <div
                         className="chirp-bold-font"
                         style={{
-                          fontSize: "15px",
-                          lineHeight: "20px",
-                          fontWeight: "700",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                           color: themeName === "dark-theme" ? "white" : "",
                         }}
                       >
@@ -2640,9 +2627,8 @@ function SignUpPage() {
                             themeName === "dark-theme"
                               ? "#71767A"
                               : "rgb(83, 100, 113)",
-                          fontSize: "14px",
-                          lineHeight: "16px",
-                          fontWeight: "400",
+                          fontSize: font14.fontSize,
+                          lineHeight: font14.lineHeight,
                         }}
                       >
                         This will not be shown publicly. Confirm your own age,
@@ -2657,9 +2643,8 @@ function SignUpPage() {
                           height: "58px",
                           display: "flex",
                           justifyContent: "space-between",
-                          fontSize: "14px",
-                          lineHeight: "16px",
-                          fontWeight: "400",
+                          fontSize: font14.fontSize,
+                          lineHeight: font14.lineHeight,
                         }}
                       >
                         {" "}
@@ -2705,8 +2690,8 @@ function SignUpPage() {
                               <div
                                 className="mt-2 selected-month-string-parent-div"
                                 style={{
-                                  fontSize: "17px",
-                                  lineHeight: "20px",
+                                  fontSize: font17.fontSize,
+                                  lineHeight: font17.lineHeight,
                                   color:
                                     themeName === "dark-theme"
                                       ? "white"
@@ -2785,8 +2770,8 @@ function SignUpPage() {
                               <div
                                 className="mt-2 selected-day-string-parent-div"
                                 style={{
-                                  fontSize: "17px",
-                                  lineHeight: "20px",
+                                  fontSize: font17.fontSize,
+                                  lineHeight: font17.lineHeight,
                                   color:
                                     themeName === "dark-theme"
                                       ? "white"
@@ -2863,8 +2848,8 @@ function SignUpPage() {
                               <div
                                 className="mt-2 selected-year-string-parent-div"
                                 style={{
-                                  fontSize: "17px",
-                                  lineHeight: "20px",
+                                  fontSize: font17.fontSize,
+                                  lineHeight: font17.lineHeight,
                                   color:
                                     themeName === "dark-theme"
                                       ? "white"
@@ -2982,34 +2967,31 @@ function SignUpPage() {
                         }}
                       >
                         <div
-                          className="mb-4"
+                          className="mb-4 chirp-bold-font"
                           style={{
                             width: "81.5%",
-                            lineHeight: "36px",
-                            fontWeight: "700",
-                            fontSize: "31px",
+                            fontSize: font31.fontSize,
+                            lineHeight: font31.lineHeight,
                             color: themeName === "dark-theme" ? "white" : "",
                           }}
                         >
                           Customize your experience
                         </div>
                         <div
-                          className="mt-3"
+                          className="mt-3 chirp-bold-font"
                           style={{
-                            fontWeight: "700",
-                            fontSize: "20px",
-                            lineHeight: "24px",
                             color: themeName === "dark-theme" ? "white" : "",
+                            fontSize: font20.fontSize,
+                            lineHeight: font20.lineHeight,
                           }}
                         >
                           Get more out of C
                         </div>
                         <div
-                          className="mt-2"
+                          className="mt-2 chirp-regular-font"
                           style={{
-                            lineHeight: "20px",
-                            fontSize: "15px",
-                            fontWeight: "400",
+                            fontSize: font15.fontSize,
+                            lineHeight: font15.lineHeight,
                           }}
                         >
                           <div
@@ -3095,22 +3077,20 @@ function SignUpPage() {
                           </div>
                         </div>
                         <div
-                          className="mt-3"
+                          className="mt-3 chirp-bold-font"
                           style={{
-                            fontWeight: "700",
-                            fontSize: "20px",
-                            lineHeight: "24px",
                             color: themeName === "dark-theme" ? "white" : "",
+                            fontSize: font20.fontSize,
+                            lineHeight: font20.lineHeight,
                           }}
                         >
                           Connect with people you know
                         </div>
                         <div
-                          className="mt-2"
+                          className="mt-2 chirp-regular-font"
                           style={{
-                            lineHeight: "20px",
-                            fontSize: "15px",
-                            fontWeight: "400",
+                            fontSize: font15.fontSize,
+                            lineHeight: font15.lineHeight,
                           }}
                         >
                           <div
@@ -3196,22 +3176,20 @@ function SignUpPage() {
                           </div>
                         </div>
                         <div
-                          className="mt-3"
+                          className="mt-3 chirp-bold-font"
                           style={{
-                            fontWeight: "700",
-                            fontSize: "20px",
-                            lineHeight: "24px",
                             color: themeName === "dark-theme" ? "white" : "",
+                            fontSize: font20.fontSize,
+                            lineHeight: font20.lineHeight,
                           }}
                         >
                           Personalized ads
                         </div>
                         <div
-                          className="mt-2"
+                          className="mt-2 chirp-regular-font"
                           style={{
-                            lineHeight: "20px",
-                            fontSize: "15px",
-                            fontWeight: "400",
+                            fontSize: font15.fontSize,
+                            lineHeight: font15.lineHeight,
                           }}
                         >
                           <div
@@ -3302,7 +3280,7 @@ function SignUpPage() {
                           </div>
                         </div>
                         <div
-                          className="mt-5"
+                          className="mt-5 chirp-regular-font"
                           style={{
                             paddingBottom: "36px",
                             width: "81.5%",
@@ -3310,9 +3288,8 @@ function SignUpPage() {
                               themeName === "dark-theme"
                                 ? "#71767A                                  "
                                 : "rgb(83, 100, 113)",
-                            fontSize: "15px",
-                            lineHeight: "20px",
-                            fontWeight: "400",
+                            fontSize: font15.fontSize,
+                            lineHeight: font15.lineHeight,
                           }}
                         >
                           <span>By signing up, you agree to our </span>
@@ -3418,26 +3395,25 @@ function SignUpPage() {
                       Test
                     </div>
                     <div
-                      className="mb-4"
+                      className="mb-4 chirp-bold-font"
                       style={{
                         width: "81.5%",
-                        lineHeight: "36px",
-                        fontWeight: "700",
-                        fontSize: "31px",
+                        fontSize: font31.fontSize,
+                        lineHeight: font31.lineHeight,
                         zIndex: "100",
                         color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
                       <div>We sent you a code</div>
                       <div
+                        className="chirp-regular-font"
                         style={{
                           color:
                             themeName === "dark-theme"
                               ? "#71767A"
                               : "rgb(83, 100, 113)",
-                          fontSize: "15px",
-                          lineHeight: "20px",
-                          fontWeight: "400",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                           width: "81.5%",
                         }}
                       >
@@ -3498,15 +3474,14 @@ function SignUpPage() {
                       }}
                     >
                       <div
-                        className="didn-t-receive-email-text"
+                        className="didn-t-receive-email-text chirp-regular-font"
                         style={{
                           cursor: "pointer",
                           position: "relative",
                           left: "10px",
-                          fontSize: "13px",
-                          fontWeight: "400",
-                          lineHeight: "16px",
-                          color: "#1f9cf0                   ",
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
+                          color: "#1f9cf0",
                           display: "inline-block",
                           float: "left",
                         }}
@@ -3567,26 +3542,25 @@ function SignUpPage() {
                     className="signin-modal-body-child-non-reactivate"
                   >
                     <div
-                      className="mb-4"
+                      className="mb-4 chirp-bold-font"
                       style={{
                         width: "81.5%",
-                        lineHeight: "36px",
-                        fontWeight: "700",
-                        fontSize: "31px",
+                        fontSize: font31.fontSize,
+                        lineHeight: font31.lineHeight,
                         zIndex: "100",
                         color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
                       <div>{"You'll need a password"}</div>
                       <div
+                        className="chirp-regular-font"
                         style={{
                           color:
                             themeName === "dark-theme"
                               ? "#71767A"
                               : "rgb(83, 100, 113)",
-                          fontSize: "15px",
-                          lineHeight: "20px",
-                          fontWeight: "400",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         Make sure it’s 8 characters or more.
@@ -3687,12 +3661,12 @@ function SignUpPage() {
                       />
                     </FormControl>
                     <div
+                      className="chirp-regular-font"
                       style={{
                         width: "81.5%",
                         color: "rgb(244, 33, 46)",
-                        fontSize: "13px",
-                        fontWeight: "400",
-                        lineHeight: "16px",
+                        fontSize: font13.fontSize,
+                        lineHeight: font13.lineHeight,
                         position: "relative",
                         left: "10px",
                       }}
@@ -3700,6 +3674,7 @@ function SignUpPage() {
                       {password.length && !passwordIsValid ? error : ""}
                     </div>
                     <div
+                      className="chirp-regular-font"
                       style={{
                         width: "81.5%",
                         position: "absolute",
@@ -3708,9 +3683,8 @@ function SignUpPage() {
                           themeName === "dark-theme"
                             ? "#71767A                                  "
                             : "rgb(83, 100, 113)",
-                        fontSize: "13px",
-                        fontWeight: "400",
-                        lineHeight: "16px",
+                        fontSize: font13.fontSize,
+                        lineHeight: font13.lineHeight,
                       }}
                     >
                       By signing up, you agree to our{" "}
@@ -3837,13 +3811,11 @@ function SignUpPage() {
           >
             <span
               style={{
-                // letterSpacing: width < 501 ? "-0.8px" : "-1.2px",
-                fontSize: width < 501 ? "40px" : "64px",
-                lineHeight: width < 501 ? "52px" : "84px ",
-                // fontWeight: "700",
                 color: themeName === "dark-theme" ? "white" : "",
+                fontSize: width <= 500 ? "40px" : font64.fontSize,
+                lineHeight: width <= 500 ? "52px" : font64.lineHeight,
               }}
-              className="header-first header chirp-extended-heavy"
+              className="chirp-extended-heavy"
             >
               Happening now
             </span>
@@ -3856,13 +3828,11 @@ function SignUpPage() {
           >
             <span
               style={{
-                letterSpacing: width < 501 ? "-0.8px" : "-1.2px",
-                fontSize: width < 501 ? "23px" : "31px",
-                lineHeight: width < 501 ? "28px" : "36px",
-                // fontWeight: "700",
+                fontSize: font31.fontSize,
+                lineHeight: font31.lineHeight,
                 color: themeName === "dark-theme" ? "white" : "",
               }}
-              className="header-second header chirp-extended-heavy"
+              className="chirp-extended-heavy"
             >
               Join today.
             </span>
@@ -3891,10 +3861,10 @@ function SignUpPage() {
                 className={`google-variant-sign-in google-variant-sign-in-${themeName}`}
               >
                 <span
+                  className="chirp-regular-font"
                   style={{
-                    fontSize: "13px",
-                    fontWeight: "400",
-                    lineHeight: "16px",
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
                     marginLeft: "10px",
                     color: themeName === "dark-theme" ? "white" : "black",
                   }}
@@ -3955,11 +3925,8 @@ function SignUpPage() {
 
               <p
                 style={{
-                  // backgroundColor: "indianred",
-                  // textAlign: "start",
-                  // fontWeight: "400",
-                  lineHeight: "12px",
-                  fontSize: "11px",
+                  fontSize: font11.fontSize,
+                  lineHeight: font11.lineHeight,
                   margin: "10px 0px",
                   color:
                     themeName === "dark-theme"

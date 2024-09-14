@@ -7,6 +7,7 @@ import { Radio } from "@mui/material";
 import { Button, Stack } from "react-bootstrap";
 import useWindowDimensions from "../../../../../hooks/getWindowDimensions";
 import { ThemeContext } from "../../../../../context/ThemeContext";
+import { useFontSizeHandler } from "../../../../../utils/useFontSizeHandler";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -38,6 +39,16 @@ function SendPasswordResetMain() {
     isWaitingForConfirmationCodeSendingProcess,
     setIsWaitingForConfirmationCodeSendingProcess,
   ] = useState(false);
+  const {
+    getFontSizeAndLineHeight31,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight14,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font31 = getFontSizeAndLineHeight31();
+  const font15 = getFontSizeAndLineHeight15();
+  const font14 = getFontSizeAndLineHeight14();
+  const font13 = getFontSizeAndLineHeight13();
   const handleSendForgotPasswordCodeToEmail = () => {
     axios
       .post(
@@ -118,9 +129,9 @@ function SendPasswordResetMain() {
           </div>
           <div
             style={{
-              fontSize: "16px",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
               color: "#66757f",
-              lineHeight: "40px",
             }}
           >
             {" "}
@@ -129,7 +140,7 @@ function SendPasswordResetMain() {
           <div
             style={{
               color: "#66757f",
-              fontSize: "14px",
+              fontSize: font14.fontSize,
             }}
             className="ms-auto"
           >
@@ -153,10 +164,10 @@ function SendPasswordResetMain() {
           }}
         >
           <span
+            className="chirp-bold-font"
             style={{
-              fontSize: "28px",
-              fontWeight: "700",
-              lineHeight: "24px",
+              fontSize: font31.fontSize,
+              lineHeight: font31.lineHeight,
               padding: "16px 0px",
             }}
           >
@@ -209,9 +220,9 @@ function SendPasswordResetMain() {
               }}
             >
               <div
+                className="chirp-bold-font"
                 style={{
-                  fontSize: "14px",
-                  fontWeight: "bold",
+                  fontSize: font14.fontSize,
                   lineHeight: "18px",
                 }}
               >
@@ -220,8 +231,7 @@ function SendPasswordResetMain() {
               <div
                 style={{
                   color: "#657786",
-                  fontSize: "14px",
-
+                  fontSize: font14.fontSize,
                   lineHeight: "18px",
                 }}
               >
@@ -232,8 +242,7 @@ function SendPasswordResetMain() {
           <div
             className="mt-3"
             style={{
-              fontSize: "14px",
-
+              fontSize: font14.fontSize,
               lineHeight: "18px",
             }}
           >
@@ -267,7 +276,7 @@ function SendPasswordResetMain() {
                 maxWidth: "69.17px",
                 maxHeight: "36px",
                 minHeight: "36px",
-                fontSize: "15px",
+                fontSize: font15.fontSize,
               }}
               className={"change-password-btn"}
               onClick={() => {
@@ -278,13 +287,12 @@ function SendPasswordResetMain() {
             </Button>
           </div>{" "}
           <div
-            className="mt-4"
+            className="mt-4 chirp-regular-font"
             style={{
               cursor: "pointer",
               color: "#55acee",
               width: "100%",
-              fontSize: "13px",
-              fontWeight: "400",
+              fontSize: font13.fontSize,
               fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
             }}
           >

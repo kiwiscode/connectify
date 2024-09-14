@@ -9,11 +9,20 @@ import {
 } from "@mui/material";
 import { ThemeContext } from "../../../../../context/ThemeContext";
 import { useContext } from "react";
+import { useFontSizeHandler } from "../../../../../utils/useFontSizeHandler";
 
 function PasswordResetSurveyMain() {
   const { width } = useWindowDimensions();
   const navigate = useNavigate();
   const [{ theme, themeName }] = useContext(ThemeContext);
+  const {
+    getFontSizeAndLineHeight31,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight14,
+  } = useFontSizeHandler();
+  const font31 = getFontSizeAndLineHeight31();
+  const font15 = getFontSizeAndLineHeight15();
+  const font14 = getFontSizeAndLineHeight14();
 
   return (
     <>
@@ -72,9 +81,9 @@ function PasswordResetSurveyMain() {
           </div>
           <div
             style={{
-              fontSize: "16px",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
               color: "#66757f",
-              lineHeight: "40px",
             }}
           >
             {" "}
@@ -83,7 +92,7 @@ function PasswordResetSurveyMain() {
           <div
             style={{
               color: "#66757f",
-              fontSize: "14px",
+              fontSize: font14.fontSize,
             }}
             className="ms-auto"
           >
@@ -107,10 +116,10 @@ function PasswordResetSurveyMain() {
           }}
         >
           <span
+            className="chirp-bold-font"
             style={{
-              fontSize: "28px",
-              fontWeight: "700",
-              lineHeight: "24px",
+              fontSize: font31.fontSize,
+              lineHeight: font31.fontSize,
               padding: "16px 0px",
             }}
           >
@@ -164,7 +173,7 @@ function PasswordResetSurveyMain() {
                       maxWidth: "69.17px",
                       maxHeight: "36px",
                       minHeight: "36px",
-                      fontSize: "15px",
+                      fontSize: font15.fontSize,
                       fontFamily:
                         "Helvetica Neue, Helvetica, Arial, sans-serif",
                     }}

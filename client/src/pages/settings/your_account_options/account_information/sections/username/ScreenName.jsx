@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import LoadingSpinner from "../../../../../../components/ui/LoadingSpinner";
+import { useFontSizeHandler } from "../../../../../../utils/useFontSizeHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -175,6 +176,15 @@ function ScreenName() {
     refreshActiveUser();
   }, []);
 
+  const {
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
+
   return (
     <>
       {contextHolder}
@@ -244,6 +254,10 @@ function ScreenName() {
             </svg>
           </div>
           <div
+            style={{
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
+            }}
             className={
               themeName === "dark-theme"
                 ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
@@ -269,14 +283,17 @@ function ScreenName() {
               <div
                 onFocus={() => setInputFocus(true)}
                 onClick={() => setInputFocus(true)}
-                className={inputFocus ? "shrink-color-change" : ""}
+                className={
+                  inputFocus
+                    ? "shrink-color-change chirp-regular-font"
+                    : "chirp-regular-font"
+                }
                 style={{
                   position: "absolute",
                   top: "10%",
                   left: "6%",
-                  fontSize: "12px",
-                  lineHeight: "18px",
-                  fontWeight: "400",
+                  fontSize: font13.fontSize,
+                  lineHeight: font13.lineHeight,
                   minWidth: "fit-content",
                   //   width: "80%",
                   color:
@@ -342,11 +359,11 @@ function ScreenName() {
               />
             </div>{" "}
             <span
+              className="chirp-regular-font"
               style={{
                 width: "100%",
                 color: "#f4222d",
-                fontSize: "13px",
-                fontWeight: "400",
+                fontSize: font13.fontSize,
                 lineHeight: "20px",
                 position: "relative",
                 left: "30px",
@@ -368,12 +385,11 @@ function ScreenName() {
               }}
             ></div>
             <div
-              className="mt-2"
+              className="mt-2 chirp-heavy-font"
               style={{
-                fontSize: "20px",
-                lineHeight: "24px",
-                fontWeight: "800",
                 padding: "0px 24px",
+                fontSize: font20.fontSize,
+                lineHeight: font20.lineHeight,
               }}
             >
               Suggestions
@@ -407,7 +423,7 @@ function ScreenName() {
                   maxWidth: "69.17px",
                   maxHeight: "36px",
                   minHeight: "36px",
-                  fontSize: "15px",
+                  fontSize: font15.fontSize,
                   cursor:
                     usernameValidated && username.length
                       ? "pointer"

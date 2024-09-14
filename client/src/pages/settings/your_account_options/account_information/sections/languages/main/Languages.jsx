@@ -7,6 +7,7 @@ import { ThemeContext } from "../../../../../../../context/ThemeContext";
 import { UserContext } from "../../../../../../../context/UserContext";
 import SettingsNavigation from "../../../../../../../components/SettingsNavigation/SettingsNavigation";
 import axios from "axios";
+import { useFontSizeHandler } from "../../../../../../../utils/useFontSizeHandler";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -37,7 +38,14 @@ function Languages() {
   useEffect(() => {
     refreshActiveUser();
   }, []);
-
+  const {
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
   return (
     <>
       {contextHolder}
@@ -108,6 +116,10 @@ function Languages() {
             </svg>
           </div>
           <div
+            style={{
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
+            }}
             className={
               themeName === "dark-theme"
                 ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
@@ -125,8 +137,8 @@ function Languages() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "13px",
-            lineHeight: "16px",
+            fontSize: font13.fontSize,
+            lineHeight: font13.lineHeight,
           }}
         >
           Manage which languages are used to personalize your X experience.
@@ -139,8 +151,8 @@ function Languages() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "20px",
-            lineHeight: "24px",
+            fontSize: font20.fontSize,
+            lineHeight: font20.lineHeight,
           }}
         >
           Display language
@@ -153,8 +165,8 @@ function Languages() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "13px",
-            lineHeight: "16px",
+            fontSize: font13.fontSize,
+            lineHeight: font13.lineHeight,
           }}
         >
           Select your preferred language for headlines, buttons, and other text
@@ -178,8 +190,8 @@ function Languages() {
           <div>
             <div
               style={{
-                fontSize: "15px",
-                lineHeight: "20px",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
               }}
               className={
                 themeName === "dark-theme"
@@ -191,8 +203,8 @@ function Languages() {
             </div>
             <div
               style={{
-                fontSize: "13px",
-                lineHeight: "16px",
+                fontSize: font13.fontSize,
+                lineHeight: font13.lineHeight,
               }}
               className={
                 themeName === "dark-theme"
@@ -238,8 +250,8 @@ function Languages() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "20px",
-            lineHeight: "24px",
+            fontSize: font20.fontSize,
+            lineHeight: font20.lineHeight,
           }}
         >
           Select additional languages
@@ -252,8 +264,8 @@ function Languages() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "13px",
-            lineHeight: "16px",
+            fontSize: font13.fontSize,
+            lineHeight: font13.lineHeight,
           }}
         >
           Select additional languages for the content you want to see on C.
@@ -275,8 +287,8 @@ function Languages() {
         >
           <div
             style={{
-              fontSize: "15px",
-              lineHeight: "20px",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
             }}
             className={
               themeName === "dark-theme"
@@ -321,8 +333,8 @@ function Languages() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "20px",
-            lineHeight: "24px",
+            fontSize: font20.fontSize,
+            lineHeight: font20.lineHeight,
           }}
         >
           Languages you may know
@@ -335,8 +347,8 @@ function Languages() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "13px",
-            lineHeight: "16px",
+            fontSize: font13.fontSize,
+            lineHeight: font13.lineHeight,
           }}
         >
           Manage the languages C inferred based on your activity, such as the
@@ -359,8 +371,8 @@ function Languages() {
         >
           <div
             style={{
-              fontSize: "15px",
-              lineHeight: "20px",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
             }}
             className={
               themeName === "dark-theme"

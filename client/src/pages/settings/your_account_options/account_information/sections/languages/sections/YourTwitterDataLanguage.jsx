@@ -1,14 +1,12 @@
-import { Button, Col, Modal } from "react-bootstrap";
-import { useContext, useEffect, useState } from "react";
+import { Col } from "react-bootstrap";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAntdMessageHandler } from "../../../../../../../utils/useAntdMessageHandler";
 import useWindowDimensions from "../../../../../../../hooks/getWindowDimensions";
 import { ThemeContext } from "../../../../../../../context/ThemeContext";
 import SettingsNavigation from "../../../../../../../components/SettingsNavigation/SettingsNavigation";
 import { NavigationHistoryContext } from "../../../../../../../context/NavigationHistoryContext";
-import axios from "axios";
-import { UserContext } from "../../../../../../../context/UserContext";
-import LoadingSpinner from "../../../../../../../components/ui/LoadingSpinner";
+import { useFontSizeHandler } from "../../../../../../../utils/useFontSizeHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -21,33 +19,15 @@ function YourTwitterDataLanguage() {
   const { width } = useWindowDimensions();
   const [{ theme, themeName }] = useContext(ThemeContext);
   const navigate = useNavigate();
-  const { userInfo, getToken } = useContext(UserContext);
   const { navigationHistoryArray } = useContext(NavigationHistoryContext);
-  const [user, setUser] = useState([]);
-  console.log("Navigation history =>", navigationHistoryArray);
-  const refreshActiveUser = () => {
-    axios
-      .get(`${API_URL}/profile`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        setUser(response.data.user);
-      })
-      .catch((error) => {
-        console.log("Error =>", error);
-      });
-  };
-
-  useEffect(() => {
-    refreshActiveUser();
-  }, []);
 
   const [firstClicked, setFirstClicked] = useState(null);
   const [secondClicked, setSecondClicked] = useState(null);
   const [thirdClicked, setThirdClicked] = useState(null);
-
+  const { getFontSizeAndLineHeight20, getFontSizeAndLineHeight15 } =
+    useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
   return (
     <>
       {" "}
@@ -122,6 +102,10 @@ function YourTwitterDataLanguage() {
             </svg>
           </div>
           <div
+            style={{
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
+            }}
             className={
               themeName === "dark-theme"
                 ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
@@ -134,8 +118,8 @@ function YourTwitterDataLanguage() {
         <div
           style={{
             paddingLeft: "16px",
-            fontSize: "15px",
-            lineHeight: "20px",
+            fontSize: font15.fontSize,
+            lineHeight: font15.lineHeight,
           }}
           className={
             themeName === "dark-theme"
@@ -158,12 +142,12 @@ function YourTwitterDataLanguage() {
         <div
           style={{
             paddingLeft: "16px",
-            fontSize: "15px",
-            lineHeight: "20px",
+            fontSize: font15.fontSize,
+            lineHeight: font15.lineHeight,
           }}
           className={
             themeName === "dark-theme"
-              ? "mt-3 hirp-regular-font soft-grey-dark-theme-text-variant-1"
+              ? "mt-3 chirp-regular-font soft-grey-dark-theme-text-variant-1"
               : "mt-3 chirp-regular-font very-dark-gray-light-theme-text-variant-1"
           }
         >
@@ -182,8 +166,8 @@ function YourTwitterDataLanguage() {
         <div
           style={{
             paddingLeft: "16px",
-            fontSize: "15px",
-            lineHeight: "20px",
+            fontSize: font15.fontSize,
+            lineHeight: font15.lineHeight,
           }}
           className={
             themeName === "dark-theme"
@@ -209,8 +193,8 @@ function YourTwitterDataLanguage() {
             padding: "0px 16px",
             display: "flex",
             justifyContent: "space-between",
-            fontSize: "15px",
-            lineHeight: "20px",
+            fontSize: font15.fontSize,
+            lineHeight: font15.lineHeight,
             alignItems: "center",
           }}
         >
@@ -293,8 +277,8 @@ function YourTwitterDataLanguage() {
             padding: "0px 16px",
             display: "flex",
             justifyContent: "space-between",
-            fontSize: "15px",
-            lineHeight: "20px",
+            fontSize: font15.fontSize,
+            lineHeight: font15.lineHeight,
             alignItems: "center",
           }}
         >
@@ -377,8 +361,8 @@ function YourTwitterDataLanguage() {
             padding: "0px 16px",
             display: "flex",
             justifyContent: "space-between",
-            fontSize: "15px",
-            lineHeight: "20px",
+            fontSize: font15.fontSize,
+            lineHeight: font15.lineHeight,
             alignItems: "center",
           }}
         >

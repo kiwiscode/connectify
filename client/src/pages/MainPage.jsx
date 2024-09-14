@@ -2,20 +2,16 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserContext";
 import { Col, Stack, Button, Accordion, Modal } from "react-bootstrap";
 import { CommentModal } from "../components/ui/Modal";
-
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
-
 import "react-toastify/dist/ReactToastify.css";
-
 // when working on local version
 const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-
 import useWindowDimensions from "../hooks/getWindowDimensions";
 import { ThemeContext } from "../context/ThemeContext";
 import PostPopover from "../components/three-dots-popover/Popover";
@@ -30,73 +26,17 @@ import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
 import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
 import BookmarkAction from "../components/ui/BookmarkAction";
 import MobileTopNavigation from "../components/Navbar/mobile_top_navigation/MobileTopNavigation";
+import { SubcsriptionStatusContext } from "../context/SubscriptionStatusContext";
+import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 function MainPage({ isNewPostShared }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
-  const [subscription, setSubscription] = useState(null);
   const { userInfo, getToken, updateUser } = useContext(UserContext);
-
-  const getSubscription = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/subscription`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      });
-
-      console.log(
-        "response data detail =>",
-        response.data.activeSubscription[0]
-      );
-      console.log(
-        "response data detail 2 =>",
-        response.data.activeCancelledSubscription[0]
-      );
-
-      setSubscription(
-        response.data.activeSubscription[0]
-          ? response.data.activeSubscription[0]
-          : response.data.activeCancelledSubscription[0]
-      );
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  const [remainingTimeSubscriptions, setRemainingTimeSubscriptions] = useState(
-    []
-  );
-  const [
+  const {
+    subscription,
+    remainingTimeSubscriptions,
     remainingTimeSubscriptionsOwnerIds,
-    setRemainingTimeSubscriptionsOwnerIds,
-  ] = useState([]);
-  const getRemainingTimeSubscriptions = async () => {
-    try {
-      const response = await axios.get(
-        `${API_URL}/remaining_time_subscriptions`,
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      );
+  } = useContext(SubcsriptionStatusContext);
 
-      setRemainingTimeSubscriptions(response.data.remainingTimeSubscriptions);
-
-      setRemainingTimeSubscriptionsOwnerIds(
-        response.data.remainingTimeSubscriptions.map((eachSub) => {
-          return eachSub.owner;
-        })
-      );
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  useEffect(() => {
-    refreshActiveUser();
-    getSubscription();
-    getRemainingTimeSubscriptions();
-  }, []);
   const location = useLocation();
   const path = location.pathname;
 
@@ -140,9 +80,6 @@ function MainPage({ isNewPostShared }) {
 
   // finish to check
 
-  const [subscriptionCompletedStatus, setsubscriptionCompletedStatus] =
-    useState(null);
-
   const [showSubscriptionCompletedModal, setshowSubscriptionCompletedModal] =
     useState(null);
 
@@ -169,9 +106,8 @@ function MainPage({ isNewPostShared }) {
   const [tabIndex, setTabIndex] = useState(0);
   const [tabLoading, setTabLoading] = useState(false);
 
-  const [user, setUser] = useState(null);
-
-  const [postsLoadingSpinner, setPostsLoadingSpinner] = useState(null);
+  const [postsLoadingSpinner, setPostsLoadingSpinner] = useState(true);
+  const [posts, setPosts] = useState([]);
 
   const handleShowPostsHomePage = async () => {
     try {
@@ -180,38 +116,16 @@ function MainPage({ isNewPostShared }) {
           Authorization: `Bearer ${getToken()}`,
         },
       });
-      getOnlyFollowingPosts();
       setPosts(response.data);
+      setPostsLoadingSpinner(false);
     } catch (error) {
       console.log("Catch error working!");
       console.error("Error:", error);
     }
   };
 
-  const [shouldHide, setshouldHide] = useState(true);
-
-  const [activeUser, setActiveUser] = useState([]);
-  const refreshActiveUser = () => {
-    axios
-      .get(`${API_URL}/profile`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        console.log("rESPONSE dATA uSER =>", response.data.user);
-        setActiveUser(response.data.user);
-        setUser(response.data.user);
-        localStorage.setItem("userInfo", JSON.stringify(response.data.user));
-      })
-      .catch((error) => {
-        console.log("Error =>", error);
-      });
-  };
-
   // create account variant 1 flow finish to check
 
-  const [posts, setPosts] = useState([]);
   const [postId, setpostId] = useState("");
   const [error, setError] = useState("");
   const [content, setContent] = useState("");
@@ -300,9 +214,7 @@ function MainPage({ isNewPostShared }) {
 
   useEffect(() => {
     if (isNewPostShared) {
-      // setLoadingTrue();
       setTimeout(() => {
-        // setLoadingFalse();
         handleShowPostsHomePage();
       }, 200);
     }
@@ -376,7 +288,7 @@ function MainPage({ isNewPostShared }) {
   const closeImage = () => {
     setImage("");
   };
-
+  const [hoveredTab, setHoveredTab] = useState(null);
   const [activeTab, setActiveTab] = useState("forYou");
   const handleHover = (tab) => {
     setHoveredTab(tab);
@@ -397,13 +309,15 @@ function MainPage({ isNewPostShared }) {
   };
 
   const handleShowFollowing = () => {
+    setPostsLoadingSpinner(true);
     getOnlyFollowingPosts();
     setActiveTab("following");
     setShowFollowing(true);
     setShowForYou(false);
+    setTimeout(() => {
+      setPostsLoadingSpinner(false);
+    }, 200);
   };
-
-  const [hoveredTab, setHoveredTab] = useState(null);
 
   const onEmojiClick = (emojiObject) => {
     const sym = emojiObject.unified.split("_");
@@ -537,6 +451,8 @@ function MainPage({ isNewPostShared }) {
       });
   };
 
+  const [loading, setLoading] = useState(null);
+
   const changeUsername = () => {
     axios
       .post(
@@ -551,7 +467,9 @@ function MainPage({ isNewPostShared }) {
       .then((response) => {
         console.log("Response from server =>", response);
         setTabLoading(true);
+        setLoading(true);
         setTimeout(() => {
+          setTabLoading(false);
           setshowPickProfilePictureModal(false);
           setshowWhatShouldWeCallYouModal(false);
           setshowModalForProfilePictureOrUsernameOrBoth(false);
@@ -564,7 +482,10 @@ function MainPage({ isNewPostShared }) {
               isUsernameCustomized: false,
             },
           });
-        }, 500);
+        }, 350);
+        setTimeout(() => {
+          window.location.reload();
+        }, 300);
       })
       .catch((error) => {
         console.log("Error =>", error);
@@ -628,10 +549,11 @@ function MainPage({ isNewPostShared }) {
         }
       })
       .catch((error) => {
+        updateUser({ hasSubscription: true });
         return error;
         // console.log("Error do not show modal =>", error);
       });
-  }, [subscriptionCompletedStatus]);
+  }, []);
 
   useEffect(() => {
     const getClickLocation = (e) => {
@@ -770,20 +692,19 @@ function MainPage({ isNewPostShared }) {
   }, []);
 
   useEffect(() => {
-    changeProfileImage();
+    if (profileImage) {
+      changeProfileImage();
+    }
   }, [profileImage, completedProfileImage]);
 
   useEffect(() => {
-    checkUsernameDuplicate();
+    if (username) {
+      checkUsernameDuplicate();
+    }
   }, [username]);
 
   useEffect(() => {
-    setPostsLoadingSpinner(true);
-
-    setTimeout(() => {
-      setPostsLoadingSpinner(false);
-      handleShowPostsHomePage();
-    }, 600);
+    handleShowPostsHomePage();
   }, []);
 
   // useEffects finish to check
@@ -826,6 +747,18 @@ function MainPage({ isNewPostShared }) {
     setDataFromTopNavigationComponent(data);
   }
 
+  const {
+    getFontSizeAndLineHeight31,
+    getFontSizeAndLineHeight26,
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font31 = getFontSizeAndLineHeight31();
+  const font26 = getFontSizeAndLineHeight26();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
   return (
     <>
       {contextHolder}
@@ -858,10 +791,10 @@ function MainPage({ isNewPostShared }) {
                   className={`scrollbar-add signin-modal-body-child-non-reactivate create-account-first-tab scrollbar-add-${themeName}`}
                 >
                   <h1
+                    className="chirp-heavy-font"
                     style={{
-                      lineHeight: "36px",
-                      fontSize: "31px",
-                      fontWeight: "800",
+                      fontSize: font31.fontSize,
+                      lineHeight: font31.lineHeight,
                       color: themeName === "dark-theme" ? "white" : "",
                     }}
                   >
@@ -958,10 +891,10 @@ function MainPage({ isNewPostShared }) {
                   className="signin-modal-body-child-non-reactivate"
                 >
                   <h1
+                    className="chirp-heavy-font"
                     style={{
-                      lineHeight: "36px",
-                      fontSize: "31px",
-                      fontWeight: "800",
+                      fontSize: font31.fontSize,
+                      lineHeight: font31.lineHeight,
                       color: themeName === "dark-theme" ? "white" : "black",
                     }}
                   >
@@ -1078,13 +1011,11 @@ function MainPage({ isNewPostShared }) {
                     className={`scrollbar-add signin-modal-body-child-non-reactivate create-account-first-tab scrollbar-add-${themeName}`}
                   >
                     <div
-                      className="mt-5"
+                      className="mt-5 chirp-bold-font"
                       style={{
                         width: "81.5%",
-                        lineHeight: "28px",
-                        fontWeight: "700",
-                        fontSize: "26px",
-                        letterSpacing: "0.5px",
+                        fontSize: font26.fontSize,
+                        lineHeight: font26.lineHeight,
                         color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
@@ -1093,13 +1024,12 @@ function MainPage({ isNewPostShared }) {
                     <div
                       style={{
                         width: "81.5%",
-                        lineHeight: "20px",
-                        fontWeight: "400",
-                        fontSize: "15px",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                         color:
                           themeName === "dark-theme" ? "#71767A" : "#536471",
                       }}
-                      className="mt-2"
+                      className="mt-2 chirp-regular-font"
                     >
                       Have a favorite selfie? Upload it now.
                     </div>
@@ -1279,14 +1209,11 @@ function MainPage({ isNewPostShared }) {
                     className="signin-modal-body-child-non-reactivate"
                   >
                     <div
-                      className="mt-5"
+                      className="mt-5 chirp-bold-font"
                       style={{
                         width: "81.5%",
-                        lineHeight: "28px",
-                        fontWeight: "700",
-                        fontSize: "26px",
-                        letterSpacing: "0.5px",
-
+                        fontSize: font26.fontSize,
+                        lineHeight: font26.lineHeight,
                         color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
@@ -1295,13 +1222,12 @@ function MainPage({ isNewPostShared }) {
                     <div
                       style={{
                         width: "81.5%",
-                        lineHeight: "20px",
-                        fontWeight: "400",
-                        fontSize: "15px",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                         color:
                           themeName === "dark-theme" ? "#71767A" : "#536471",
                       }}
-                      className="mt-2"
+                      className="mt-2 chirp-regular-font"
                     >
                       Your @username is unique. You can always change it later.
                     </div>
@@ -1349,12 +1275,12 @@ function MainPage({ isNewPostShared }) {
                       }}
                     />{" "}
                     <span
+                      className="chirp-regular-font"
                       style={{
                         width: "81.5%",
 
                         color: "#f4222d",
-                        fontSize: "13px",
-                        fontWeight: "400",
+                        fontSize: font13.fontSize,
                         lineHeight: "20px",
                         position: "relative",
                         left: "10px",
@@ -1431,6 +1357,9 @@ function MainPage({ isNewPostShared }) {
             className={"signin-modal-parent-non-reactivate"}
             show={showModalForProfilePictureOrUsernameOrBoth}
             centered={true}
+            style={{
+              zIndex: 999999,
+            }}
           >
             {/* start to check  */}
             {tabIndex === 0 ? (
@@ -1451,12 +1380,11 @@ function MainPage({ isNewPostShared }) {
                 ) : (
                   <Modal.Body className="signin-modal-body-child-non-reactivate create-account-first-tab">
                     <div
-                      className="mt-5"
+                      className="mt-5 chirp-bold-font"
                       style={{
                         width: "81.5%",
-                        lineHeight: "36px",
-                        fontWeight: "700",
-                        fontSize: "31px",
+                        fontSize: font31.fontSize,
+                        lineHeight: font31.lineHeight,
                         color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
@@ -1465,13 +1393,12 @@ function MainPage({ isNewPostShared }) {
                     <div
                       style={{
                         width: "81.5%",
-                        lineHeight: "20px",
-                        fontWeight: "400",
-                        fontSize: "15px",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                         color:
                           themeName === "dark-theme" ? "#71767A" : "#536471",
                       }}
-                      className="mt-2"
+                      className="mt-2 chirp-regular-font"
                     >
                       Have a favorite selfie? Upload it now.
                     </div>
@@ -1654,12 +1581,11 @@ function MainPage({ isNewPostShared }) {
                 ) : (
                   <Modal.Body className="signin-modal-body-child-non-reactivate">
                     <div
-                      className="mt-5"
+                      className="mt-5 chirp-bold-font"
                       style={{
                         width: "81.5%",
-                        lineHeight: "36px",
-                        fontWeight: "700",
-                        fontSize: "31px",
+                        fontSize: font31.fontSize,
+                        lineHeight: font31.lineHeight,
                         color: themeName === "dark-theme" ? "white" : "",
                       }}
                     >
@@ -1668,13 +1594,12 @@ function MainPage({ isNewPostShared }) {
                     <div
                       style={{
                         width: "81.5%",
-                        lineHeight: "20px",
-                        fontWeight: "400",
-                        fontSize: "15px",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                         color:
                           themeName === "dark-theme" ? "#71767A" : "#536471",
                       }}
-                      className="mt-2"
+                      className="mt-2 chirp-regular-font"
                     >
                       Your @username is unique. You can always change it later.
                     </div>
@@ -1721,11 +1646,11 @@ function MainPage({ isNewPostShared }) {
                       onChange={(e) => setUsername(e.target.value)}
                     />{" "}
                     <span
+                      className="chirp-regular-font"
                       style={{
                         width: "81.5%",
                         color: "#f4222d",
-                        fontSize: "13px",
-                        fontWeight: "400",
+                        fontSize: font13.fontSize,
                         lineHeight: "20px",
                         position: "relative",
                         left: "10px",
@@ -1837,9 +1762,6 @@ function MainPage({ isNewPostShared }) {
               dataFromTopNavigationComponent ===
                 "mobile top navigation was closed" &&
               `translateY(${headerPosition}px)`,
-            backgroundColor:
-              dataFromTopNavigationComponent ===
-                "mobile top navigation was closed" && "transparent",
             minHeight:
               dataFromTopNavigationComponent ===
                 "mobile top navigation was closed" && "53px",
@@ -1847,15 +1769,25 @@ function MainPage({ isNewPostShared }) {
               dataFromTopNavigationComponent ===
                 "mobile top navigation was closed" &&
               "transform 0.3s cubic-bezier(0, 0, 0, 1)",
-            backdropFilter:
-              dataFromTopNavigationComponent ===
-                "mobile top navigation was closed" && "blur(12px)",
             position: width > 500 && "sticky",
             top: width > 500 && "0px",
             width: width > 500 && "100%",
-            backgroundColor: width > 500 && "transparent",
+            // for sharp backdrop filter with transparent backgroundcolor start to check
+            // backgroundColor: "transparent",
+            // for sharp backdrop filter with transparent backgroundcolor finish to check
+            backgroundColor:
+              width > 500 && themeName === "dark-theme"
+                ? "rgba(0, 0, 0, 0.65)"
+                : width > 500 && themeName === "light-theme"
+                ? "rgba(255, 255, 255, 0.85)"
+                : "null",
             backdropFilter: width > 500 && "blur(12px)",
-            zIndex: width > 500 && 99999,
+            zIndex: width > 500 && 1,
+            borderBottom:
+              themeName !== "dark-theme"
+                ? "1px solid rgba(0, 0, 0, 0.1)"
+                : // : "0.1px solid rgb(70, 70, 70)",
+                  "1px solid rgb(70, 70, 70)",
           }}
         >
           {width <= 500 && (
@@ -1891,8 +1823,8 @@ function MainPage({ isNewPostShared }) {
                     ? "#71767A"
                     : "#526371",
                 fontWeight: activeTab === "forYou" ? "700" : "500",
-                lineHeight: "20px",
-                fontSize: "15px",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
                 cursor: "pointer",
                 flex: 1,
                 textAlign: "center",
@@ -1907,6 +1839,8 @@ function MainPage({ isNewPostShared }) {
                   padding: "16px 0px 16px 0px",
                   flexDirection: "column",
                   position: "relative",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
                 <span
@@ -1930,7 +1864,7 @@ function MainPage({ isNewPostShared }) {
                       backgroundColor: "rgb(29, 155, 240)",
                       height: "4px",
                       width: "100%",
-                      minWidth: "52px",
+                      minWidth: "56px",
                       position: "absolute",
                       bottom: "0px",
                       borderRadius: "9999px",
@@ -1961,8 +1895,8 @@ function MainPage({ isNewPostShared }) {
                     ? "#71767A"
                     : "#526371",
                 fontWeight: activeTab === "following" ? "700" : "500",
-                lineHeight: "20px",
-                fontSize: "15px",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
                 cursor: "pointer",
                 flex: 1,
                 textAlign: "center",
@@ -1975,6 +1909,8 @@ function MainPage({ isNewPostShared }) {
                   padding: "16px 0px 16px 0px",
                   flexDirection: "column",
                   position: "relative",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
                 <span
@@ -1998,7 +1934,7 @@ function MainPage({ isNewPostShared }) {
                       backgroundColor: "rgb(29, 155, 240)",
                       height: "4px",
                       width: "100%",
-                      minWidth: "52px",
+                      minWidth: "56px",
                       position: "absolute",
                       bottom: "0px",
                       borderRadius: "9999px",
@@ -2010,390 +1946,441 @@ function MainPage({ isNewPostShared }) {
           </div>
         </div>
 
-        {themeName === "dark-theme" ? (
+        {width > 500 && (
           <div
             style={{
-              // borderTop: "0.1px solid rgb(70, 70, 70)",
-              borderTop: width > 700 ? "1px solid rgb(70, 70, 70)" : "",
+              position: "relative",
             }}
-          ></div>
-        ) : (
-          <div
-            className="responsive-top-border"
-            style={{
-              borderTop: "1px solid rgba(0, 0, 0, 0.1)",
-            }}
-          ></div>
-        )}
-
-        <Stack
-          style={{
-            position: "relative",
-            // padding: "12px",
-            backgroundColor: themeName === "dark-theme" ? "black" : "",
-          }}
-          direction="horizontal"
-          gap={1}
-          className="responsive-stack-home-page"
-        >
-          <div
-            className={
-              postSharingStartedActivateAnimate && !postSharingPausedAnimate
-                ? "post_sharing_line_animation"
-                : postSharingPausedAnimate
-                ? "paused"
-                : null
-            }
-            style={{
-              display:
-                postSharingStartedActivateAnimate || postSharingPausedAnimate
-                  ? ""
-                  : "none",
-              position: "absolute",
-              border: "2px solid #1C9BEF",
-              height: "0.2rem",
-              top: "0px",
-              borderTopLeftRadius: "4px",
-            }}
-          ></div>
-          <div className="p-2 mt-3">
-            {" "}
-            {userInfo?.imageUrl?.slice(0, 3) !== "../" ? (
-              <img
-                src={userInfo.imageUrl}
-                width={40}
-                height={40}
-                alt=""
-                style={{
-                  position: "relative",
-                  bottom: "30px",
-                  borderRadius: "50%",
-                }}
-              />
-            ) : (
-              <div>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="40"
-                  height="40"
-                  fill={
-                    themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)"
-                  }
-                  className="bi bi-person-circle"
-                  viewBox="0 0 16 16"
-                  style={{
-                    position: "relative",
-                    bottom: "30px",
-                    borderRadius: "50%",
-                  }}
-                  onClick={() =>
-                    document.getElementById("formuploadModal").click()
-                  }
-                >
-                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                  <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                </svg>
-                <input
-                  onChange={handleImage}
-                  type="file"
-                  id="formuploadModal"
-                  name="image"
-                  className="form-control"
-                  style={{ display: "none" }}
-                />
-              </div>
-            )}
-          </div>
-
-          <div className="p-0 mt-2 ">
-            <textarea
-              onChange={handleChange}
-              rows="4"
-              cols="50"
-              value={content}
-              maxLength={maxCharacters}
-              className="input-post chirp-regular-font"
-              placeholder="What is happening?!"
+          >
+            <div
+              className={
+                postSharingStartedActivateAnimate && !postSharingPausedAnimate
+                  ? "post_sharing_line_animation"
+                  : postSharingPausedAnimate
+                  ? "paused"
+                  : null
+              }
               style={{
-                resize: "none",
-                padding: "8px",
-
-                lineHeight: "24px",
-
-                fontSize: `${content ? "15px" : "20px"}`,
-                width: "100%",
-                height: "100px",
-                color:
-                  themeName === "dark-theme" ? "white" : "rgba(15,20,25,1.00)",
-                backgroundColor:
-                  themeName === "dark-theme" ? "black" : "transparent",
+                display:
+                  postSharingStartedActivateAnimate || postSharingPausedAnimate
+                    ? ""
+                    : "none",
+                position: "absolute",
+                border: "2px solid #1C9BEF",
+                height: "0.2rem",
+                top: "0px",
+                borderTopLeftRadius: "4px",
               }}
-            />
-          </div>
-        </Stack>
-
-        {image && (
-          <div className="p-2" style={{ position: "relative" }}>
+            ></div>
             <div
               style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
+                padding: "0px 16px",
+                position: "relative",
+                maxHeight: "700px",
+                overflowY: "auto",
+                overflowX: "hidden",
+                minHeight: "76px",
               }}
             >
               <div
-                className="close-image-button"
                 style={{
-                  width: "36px",
-                  height: "36px",
-                  backgroundColor: "#4B4F52",
                   display: "flex",
-                  justifyContent: "center",
                   alignItems: "center",
-                  borderRadius: "50%",
-                  cursor: "pointer",
-                  position: "absolute",
-                  right: "60px",
-                  top: "25px",
                 }}
-                onClick={closeImage}
               >
-                <svg
+                <div
                   style={{
-                    border: "none",
-                    fontSize: "15px",
-                    margin: "5px",
+                    height: "100%",
+                    transitionDuration: "0.2s",
+                    outlineStyle: "none",
+                    width: "40px",
+                    height: "40px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    position: "relative",
                   }}
-                  width={20}
-                  height={20}
-                  color={"white"}
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
                 >
-                  <g>
-                    <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
-                  </g>
-                </svg>{" "}
+                  {" "}
+                  {userInfo?.imageUrl?.slice(0, 3) !== "../" ? (
+                    <div
+                      onClick={() => {
+                        navigate("/profile");
+                      }}
+                      className="image-hover-effect"
+                      style={{
+                        width: "44px",
+                        height: "44px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <img
+                        src={userInfo.imageUrl}
+                        width={40}
+                        height={40}
+                        alt=""
+                        style={{
+                          borderRadius: "50%",
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div
+                      onClick={() => {
+                        navigate("/profile");
+                      }}
+                      className="image-hover-effect"
+                      style={{
+                        width: "44px",
+                        height: "44px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="40"
+                        height="40"
+                        fill={
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)"
+                        }
+                        style={{
+                          borderRadius: "50%",
+                        }}
+                        className="bi bi-person-circle"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                        <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+                <div
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                    marginLeft: "5px",
+                  }}
+                >
+                  <div
+                    className="mt-2"
+                    style={{
+                      height: "53px",
+                      width: "100%",
+                    }}
+                  >
+                    <textarea
+                      onChange={handleChange}
+                      value={content}
+                      maxLength={maxCharacters}
+                      className="chirp-regular-font"
+                      placeholder="What is happening?!"
+                      style={{
+                        lineHeight: font20.lineHeight,
+                        fontSize: font20.fontSize,
+                        color:
+                          themeName === "dark-theme"
+                            ? "white"
+                            : "rgba(15,20,25,1.00)",
+                        backgroundColor:
+                          themeName === "dark-theme" ? "black" : "transparent",
+                        border: "none",
+                        outline: "none",
+                        width: "100%",
+                        whiteSpace: "pre-wrap",
+                        overflowWrap: "break-word",
+                        wordWrap: "break-word",
+                        resize: "none",
+                        paddingTop: "12px",
+                      }}
+                    />
+                  </div>
+                </div>{" "}
               </div>
-              <img
-                className="img-fluid"
+              {/* image start to check  */}
+              {image && (
+                <div className="p-2" style={{ position: "relative" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div
+                      className="close-image-button"
+                      style={{
+                        width: "36px",
+                        height: "36px",
+                        backgroundColor: "#4B4F52",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                        position: "absolute",
+                        right: "20px",
+                        top: "15px",
+                      }}
+                      onClick={closeImage}
+                    >
+                      <svg
+                        style={{
+                          border: "none",
+                          margin: "5px",
+                        }}
+                        width={20}
+                        height={20}
+                        color={"white"}
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                      >
+                        <g>
+                          <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                        </g>
+                      </svg>{" "}
+                    </div>
+                    <img
+                      className="img-fluid"
+                      style={{
+                        maxWidth: "515px",
+                        width: "100%",
+                        display: "block",
+                        overflow: "hidden",
+                        borderRadius: "16px",
+                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                      }}
+                      src={image ? image : ""}
+                      alt=""
+                    />
+                  </div>
+                </div>
+              )}
+              {/* image finish to check  */}{" "}
+            </div>
+            <div
+              style={{
+                position: "sticky",
+                bottom: "0px",
+                borderTop:
+                  themeName !== "dark-theme"
+                    ? "1px solid rgba(0, 0, 0, 0.1)"
+                    : // : "0.1px solid rgb(70, 70, 70)",
+                      "1px solid rgb(70, 70, 70)",
+                backgroundColor: themeName === "dark-theme" ? "black" : "white",
+              }}
+            >
+              <Stack
+                direction="horizontal"
+                className="responsive-stack-home-page-2"
                 style={{
-                  maxWidth: "515px",
+                  padding: "0px 16px",
                   width: "100%",
-
-                  display: "block",
-                  overflow: "hidden",
-                  border: "2px solid #ddd",
-                  borderRadius: "8px",
-                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                  height: "53px",
                 }}
-                src={image ? image : ""}
-                alt=""
-              />
+              >
+                {/* INFO */}
+                <BootstrapTooltip
+                  title="Media"
+                  themeName={
+                    themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                  }
+                >
+                  <div
+                    onClick={() =>
+                      document.getElementById("formupload").click()
+                    }
+                  >
+                    <div
+                      style={{
+                        cursor: "pointer",
+                        borderRadius: "50%",
+                      }}
+                      className={`svg-border-parent svg-border-parent-${themeName}`}
+                    >
+                      <svg
+                        style={{
+                          cursor: "pointer",
+                        }}
+                        width={20}
+                        height={20}
+                        color="rgb(29,155,240)"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className="bi bi-image-fill post-modal-image-fill r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                      >
+                        <g>
+                          <path d="M3 5.5C3 4.119 4.119 3 5.5 3h13C19.881 3 21 4.119 21 5.5v13c0 1.381-1.119 2.5-2.5 2.5h-13C4.119 21 3 19.881 3 18.5v-13zM5.5 5c-.276 0-.5.224-.5.5v9.086l3-3 3 3 5-5 3 3V5.5c0-.276-.224-.5-.5-.5h-13zM19 15.414l-3-3-5 5-3-3-3 3V18.5c0 .276.224.5.5.5h13c.276 0 .5-.224.5-.5v-3.086zM9.75 7C8.784 7 8 7.784 8 8.75s.784 1.75 1.75 1.75 1.75-.784 1.75-1.75S10.716 7 9.75 7z"></path>
+                        </g>
+                      </svg>
+                    </div>
+
+                    <input
+                      onChange={handleImage}
+                      type="file"
+                      id="formupload"
+                      name="image"
+                      className="form-control"
+                      style={{ display: "none" }}
+                    />
+                  </div>{" "}
+                </BootstrapTooltip>
+
+                {/* emoji mart start to check */}
+                <div className="p-1">
+                  <PopupState variant="popover" popupId="demo-popup-popover">
+                    {(popupState) => (
+                      <div>
+                        <BootstrapTooltip
+                          title="Emoji"
+                          themeName={
+                            themeName === "dark-theme"
+                              ? "dark-theme"
+                              : "light-theme"
+                          }
+                        >
+                          <Button
+                            {...bindTrigger(popupState)}
+                            style={{
+                              border: "none",
+                              // backgroundColor: "transparent",
+                              padding: "0px",
+                              margin: "0px",
+                              cursor: "pointer",
+                              position: "relative",
+                            }}
+                            variant="text"
+                          >
+                            <div
+                              className={`svg-border-parent svg-border-parent-${themeName}`}
+                              style={{
+                                cursor: "pointer",
+                                borderRadius: "50%",
+                              }}
+                            >
+                              <svg
+                                color="rgb(29,155,240)"
+                                fill="currentColor"
+                                width={20}
+                                height={20}
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                className="post-modal-emoji-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                                style={{
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <g>
+                                  <path d="M8 9.5C8 8.119 8.672 7 9.5 7S11 8.119 11 9.5 10.328 12 9.5 12 8 10.881 8 9.5zm6.5 2.5c.828 0 1.5-1.119 1.5-2.5S15.328 7 14.5 7 13 8.119 13 9.5s.672 2.5 1.5 2.5zM12 16c-2.224 0-3.021-2.227-3.051-2.316l-1.897.633c.05.15 1.271 3.684 4.949 3.684s4.898-3.533 4.949-3.684l-1.896-.638c-.033.095-.83 2.322-3.053 2.322zm10.25-4.001c0 5.652-4.598 10.25-10.25 10.25S1.75 17.652 1.75 12 6.348 1.75 12 1.75 22.25 6.348 22.25 12zm-2 0c0-4.549-3.701-8.25-8.25-8.25S3.75 7.451 3.75 12s3.701 8.25 8.25 8.25 8.25-3.701 8.25-8.25z"></path>
+                                </g>
+                              </svg>
+                            </div>
+                          </Button>
+                        </BootstrapTooltip>
+
+                        <Popover
+                          open={popupState.open}
+                          onClose={popupState.close}
+                          {...bindPopover(popupState)}
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "center",
+                          }}
+                          transformOrigin={{
+                            vertical: "top",
+                            horizontal: 140,
+                          }}
+                          className={`${
+                            themeName === "dark-theme"
+                              ? "popover-material-ui-dark-theme"
+                              : themeName !== "dark-theme"
+                              ? "popover-material-ui-light-theme"
+                              : "hideshowMessageDeletePopover "
+                          }`}
+                        >
+                          <Picker
+                            autoFocus
+                            theme={
+                              themeName === "dark-theme" ? "dark" : "light"
+                            }
+                            data={data}
+                            onEmojiSelect={onEmojiClick}
+                            maxFrequentRows={0}
+                            emojiSize={20}
+                            emojiButtonSize={28}
+                          />
+                        </Popover>
+                      </div>
+                    )}
+                  </PopupState>
+                </div>
+                {/* emoji mart finish to check */}
+
+                <div className="ms-auto">
+                  {" "}
+                  {content !== "" || image ? (
+                    <Button
+                      style={{
+                        border: "none",
+                        maxHeight: "36px",
+                        maxWidth: "66px",
+                      }}
+                      variant="primary"
+                      onClick={() => handlePost()}
+                      className={`post-btn compose-tweet-textArea compose-tweet-2 chirp-bold-font blue-btn`}
+                    >
+                      Post
+                    </Button>
+                  ) : (
+                    <Button
+                      style={{
+                        border: "none",
+                        cursor: "default",
+                        maxHeight: "36px",
+                        maxWidth: "66px",
+                        pointerEvents: "none",
+                      }}
+                      variant="primary"
+                      className={`emptyContent post-btn compose-tweet-textArea chirp-bold-font blue-btn-disabled `}
+                    >
+                      Post
+                    </Button>
+                  )}
+                </div>
+              </Stack>
+              {themeName === "dark-theme" ? (
+                <div
+                  style={{
+                    // borderBottom: "0.1px solid rgb(70, 70, 70)",
+                    borderBottom: "1px solid rgb(70, 70, 70)",
+                  }}
+                ></div>
+              ) : (
+                <div
+                  className="responsive-stack-home-page-row"
+                  style={{
+                    borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
+                  }}
+                ></div>
+              )}
             </div>
           </div>
         )}
-        {themeName !== "dark-theme" ? (
-          <div
-            // className="responsive-stack-home-page-row"
-            style={{
-              borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
-            }}
-          ></div>
-        ) : (
-          <div
-            // className="responsive-stack-home-page-row"
-            style={{
-              // borderBottom: "0.1px solid rgb(70, 70, 70)",
-              borderBottom: width > 700 ? "1px solid rgb(70, 70, 70)" : "",
-            }}
-          ></div>
-        )}
-
-        <Stack
-          direction="horizontal"
-          gap={0}
-          className="responsive-stack-home-page-2"
-          style={{
-            padding: "0px 8px",
-          }}
-        >
-          {/* INFO */}
-          <BootstrapTooltip
-            title="Media"
-            themeName={
-              themeName === "dark-theme" ? "dark-theme" : "light-theme"
-            }
-          >
-            <div onClick={() => document.getElementById("formupload").click()}>
-              <div
-                style={{
-                  // border: "1px solid black",
-                  cursor: "pointer",
-                  borderRadius: "50%",
-                }}
-                className={`svg-border-parent svg-border-parent-${themeName}`}
-              >
-                <svg
-                  style={{
-                    cursor: "pointer",
-                  }}
-                  width={20}
-                  height={20}
-                  color="rgb(29,155,240)"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  className="bi bi-image-fill post-modal-image-fill r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                >
-                  <g>
-                    <path d="M3 5.5C3 4.119 4.119 3 5.5 3h13C19.881 3 21 4.119 21 5.5v13c0 1.381-1.119 2.5-2.5 2.5h-13C4.119 21 3 19.881 3 18.5v-13zM5.5 5c-.276 0-.5.224-.5.5v9.086l3-3 3 3 5-5 3 3V5.5c0-.276-.224-.5-.5-.5h-13zM19 15.414l-3-3-5 5-3-3-3 3V18.5c0 .276.224.5.5.5h13c.276 0 .5-.224.5-.5v-3.086zM9.75 7C8.784 7 8 7.784 8 8.75s.784 1.75 1.75 1.75 1.75-.784 1.75-1.75S10.716 7 9.75 7z"></path>
-                  </g>
-                </svg>
-              </div>
-
-              <input
-                onChange={handleImage}
-                type="file"
-                id="formupload"
-                name="image"
-                className="form-control"
-                style={{ display: "none" }}
-              />
-            </div>{" "}
-          </BootstrapTooltip>
-
-          {/* emoji mart start to check */}
-          <div className="p-1">
-            <PopupState variant="popover" popupId="demo-popup-popover">
-              {(popupState) => (
-                <div>
-                  <BootstrapTooltip
-                    title="Emoji"
-                    themeName={
-                      themeName === "dark-theme" ? "dark-theme" : "light-theme"
-                    }
-                  >
-                    <Button
-                      {...bindTrigger(popupState)}
-                      style={{
-                        border: "none",
-                        // backgroundColor: "transparent",
-                        padding: "0px",
-                        margin: "0px",
-                        cursor: "pointer",
-                        position: "relative",
-                      }}
-                      variant="text"
-                    >
-                      <div
-                        className={`svg-border-parent svg-border-parent-${themeName}`}
-                        style={{
-                          cursor: "pointer",
-                          borderRadius: "50%",
-                        }}
-                      >
-                        <svg
-                          color="rgb(29,155,240)"
-                          fill="currentColor"
-                          width={20}
-                          height={20}
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                          className="post-modal-emoji-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                          style={{
-                            cursor: "pointer",
-                          }}
-                        >
-                          <g>
-                            <path d="M8 9.5C8 8.119 8.672 7 9.5 7S11 8.119 11 9.5 10.328 12 9.5 12 8 10.881 8 9.5zm6.5 2.5c.828 0 1.5-1.119 1.5-2.5S15.328 7 14.5 7 13 8.119 13 9.5s.672 2.5 1.5 2.5zM12 16c-2.224 0-3.021-2.227-3.051-2.316l-1.897.633c.05.15 1.271 3.684 4.949 3.684s4.898-3.533 4.949-3.684l-1.896-.638c-.033.095-.83 2.322-3.053 2.322zm10.25-4.001c0 5.652-4.598 10.25-10.25 10.25S1.75 17.652 1.75 12 6.348 1.75 12 1.75 22.25 6.348 22.25 12zm-2 0c0-4.549-3.701-8.25-8.25-8.25S3.75 7.451 3.75 12s3.701 8.25 8.25 8.25 8.25-3.701 8.25-8.25z"></path>
-                          </g>
-                        </svg>
-                      </div>
-                    </Button>
-                  </BootstrapTooltip>
-
-                  <Popover
-                    open={popupState.open}
-                    onClose={popupState.close}
-                    {...bindPopover(popupState)}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "center",
-                    }}
-                    transformOrigin={{
-                      vertical: "top",
-                      horizontal: 140,
-                    }}
-                    className={`${
-                      themeName === "dark-theme"
-                        ? "popover-material-ui-dark-theme"
-                        : themeName !== "dark-theme"
-                        ? "popover-material-ui-light-theme"
-                        : "hideshowMessageDeletePopover "
-                    }`}
-                  >
-                    <Picker
-                      autoFocus
-                      theme={themeName === "dark-theme" ? "dark" : "light"}
-                      data={data}
-                      onEmojiSelect={onEmojiClick}
-                      maxFrequentRows={0}
-                      emojiSize={20}
-                      emojiButtonSize={28}
-                    />
-                  </Popover>
-                </div>
-              )}
-            </PopupState>
-          </div>
-          {/* emoji mart finish to check */}
-
-          <div className="p-2 ms-auto">
-            {" "}
-            {content !== "" || image ? (
-              <Button
-                style={{
-                  border: "none",
-                }}
-                variant="primary"
-                onClick={() => handlePost()}
-                className={`post-btn compose-tweet-textArea compose-tweet-2 chirp-bold-font blue-btn`}
-              >
-                Post
-              </Button>
-            ) : (
-              <Button
-                style={{
-                  border: "none",
-                  cursor: "default",
-                }}
-                variant="primary"
-                className={`emptyContent post-btn compose-tweet-textArea chirp-bold-font blue-btn-disabled `}
-              >
-                Post
-              </Button>
-            )}
-          </div>
-        </Stack>
-        {themeName === "dark-theme" ? (
-          <div
-            style={{
-              // borderBottom: "0.1px solid rgb(70, 70, 70)",
-              borderBottom: "1px solid rgb(70, 70, 70)",
-            }}
-          ></div>
-        ) : (
-          <div
-            className="responsive-stack-home-page-row"
-            style={{
-              borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
-            }}
-          ></div>
-        )}
-        {/* mainpage yani home rotasına tüm twitlerin gösterileceği column burası !  */}
         <span>
           {isLoading ? (
             <LoadingSpinner strokeColor={"rgb(29, 155, 240)"}></LoadingSpinner>
@@ -2401,7 +2388,6 @@ function MainPage({ isNewPostShared }) {
             ""
           )}
         </span>
-
         <div
           style={{
             height: width <= 700 ? "100vh" : "",
@@ -2484,9 +2470,8 @@ function MainPage({ isNewPostShared }) {
                                     <Link
                                       className={`hover-reposted-text hover-reposted-text-${themeName} chirp-bold-font`}
                                       style={{
-                                        fontSize: "13px",
-                                        lineHeight: "16px",
-                                        fontWeight: "700",
+                                        fontSize: font13.fontSize,
+                                        lineHeight: font13.lineHeight,
                                         color:
                                           themeName === "dark-theme"
                                             ? "#71767A"
@@ -2545,9 +2530,8 @@ function MainPage({ isNewPostShared }) {
                                       {post.reposted[0].fullname ? (
                                         <Link
                                           style={{
-                                            fontSize: "13px",
-                                            lineHeight: "16px",
-                                            fontWeight: "700",
+                                            fontSize: font13.fontSize,
+                                            lineHeight: font13.lineHeight,
                                             color:
                                               themeName === "dark-theme"
                                                 ? "#71767A"
@@ -2559,7 +2543,7 @@ function MainPage({ isNewPostShared }) {
                                             top: "5px",
                                             left: "15px",
                                           }}
-                                          className={`hover-reposted-text hover-reposted-text-${themeName}`}
+                                          className={`hover-reposted-text hover-reposted-text-${themeName} chirp-bold-font`}
                                           onClick={() =>
                                             setclickedPostBox(post)
                                           }
@@ -2658,9 +2642,8 @@ function MainPage({ isNewPostShared }) {
                                               themeName === "dark-theme"
                                                 ? "white"
                                                 : "",
-                                            fontWeight: "700",
-                                            fontSize: "15px",
-                                            lineHeight: "20px",
+                                            fontSize: font15.fontSize,
+                                            lineHeight: font15.lineHeight,
                                             overflow: "hidden",
                                             textOverflow: "ellipsis",
                                             whiteSpace: "nowrap",
@@ -2701,6 +2684,7 @@ function MainPage({ isNewPostShared }) {
                                         </span>
                                       ) : null}
                                       <Link
+                                        className="chirp-regular-font"
                                         to={`/profile/${post.userId._id}`}
                                         style={{
                                           textDecoration: "none",
@@ -2708,9 +2692,8 @@ function MainPage({ isNewPostShared }) {
                                             themeName === "dark-theme"
                                               ? "#71767A"
                                               : "rgb(83, 100, 113)",
-                                          lineHeight: "20px",
-                                          fontSize: "15px",
-                                          fontWeight: "400",
+                                          fontSize: font15.fontSize,
+                                          lineHeight: font15.lineHeight,
                                         }}
                                       >
                                         <span className="post-circle-postowner-username">
@@ -2732,15 +2715,14 @@ function MainPage({ isNewPostShared }) {
                                         }`}
                                       >
                                         <span
-                                          className="post-circle-date-post-detail"
+                                          className="post-circle-date-post-detail chirp-regular-font"
                                           style={{
                                             color:
                                               themeName === "dark-theme"
                                                 ? "#71767A"
                                                 : "rgb(83, 100, 113)",
-                                            lineHeight: "20px",
-                                            fontSize: "15px",
-                                            fontWeight: "400",
+                                            fontSize: font15.fontSize,
+                                            lineHeight: font15.lineHeight,
                                           }}
                                         >
                                           {" "}
@@ -2809,9 +2791,8 @@ function MainPage({ isNewPostShared }) {
                                           themeName === "dark-theme"
                                             ? "#71767A"
                                             : "rgb(83, 100, 113)",
-                                        fontSize: "15px",
-                                        lineHeight: "20px",
-                                        fontWeight: "400",
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
                                       }}
                                     >
                                       Replying to {""}
@@ -2823,13 +2804,12 @@ function MainPage({ isNewPostShared }) {
                                       }}
                                     >
                                       <span
-                                        className="replying-to-text"
+                                        className="replying-to-text chirp-regular-font"
                                         style={{
                                           color: "rgb(29, 155, 240)",
                                           cursor: "pointer",
-                                          fontSize: "15px",
-                                          lineHeight: "20px",
-                                          fontWeight: "400",
+                                          fontSize: font15.fontSize,
+                                          lineHeight: font15.lineHeight,
                                         }}
                                       >
                                         @
@@ -2856,9 +2836,8 @@ function MainPage({ isNewPostShared }) {
                                   <div
                                     className="p-2 chirp-regular-font"
                                     style={{
-                                      fontSize: "15px",
-                                      fontWeight: "400",
-                                      lineHeight: "20px",
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                       overflowWrap: "break-word",
                                       maxWidth: "100%",
                                       cursor: "pointer",
@@ -3045,8 +3024,7 @@ function MainPage({ isNewPostShared }) {
                               width: "100%",
                               textAlign: "center",
                               color: "rgb(29, 155, 240)",
-                              fontSize: "15px",
-                              fontWeight: "400",
+                              fontSize: font15.fontSize,
                               lineHeight: "24px",
                               cursor: "pointer",
                               backgroundColor: "transparent",
@@ -3060,7 +3038,7 @@ function MainPage({ isNewPostShared }) {
                     </Accordion>
                   )}
                 </>
-              ) : postsLoadingSpinner && !posts.length ? (
+              ) : (postsLoadingSpinner && !posts.length) || loading ? (
                 <LoadingSpinner
                   strokeColor={"rgb(29, 155, 240)"}
                 ></LoadingSpinner>
@@ -3077,8 +3055,8 @@ function MainPage({ isNewPostShared }) {
                     <div
                       className="chirp-heavy-font"
                       style={{
-                        lineHeight: "36px",
-                        fontSize: "31px",
+                        fontSize: font31.fontSize,
+                        lineHeight: font31.lineHeight,
                         margin: "10px",
                       }}
                     >
@@ -3091,9 +3069,8 @@ function MainPage({ isNewPostShared }) {
                           themeName === "dark-theme"
                             ? "#71767A"
                             : "rgb(83, 100, 113)",
-                        lineHeight: "20px",
-                        fontSize: "15px",
-                        fontWeight: "400",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                         margin: "10px",
                       }}
                     >
@@ -3178,9 +3155,8 @@ function MainPage({ isNewPostShared }) {
                                   <Link
                                     className={`hover-reposted-text hover-reposted-text-${themeName} chirp-bold-font`}
                                     style={{
-                                      fontSize: "13px",
-                                      lineHeight: "16px",
-                                      fontWeight: "700",
+                                      fontSize: font13.fontSize,
+                                      lineHeight: font13.lineHeight,
                                       color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
@@ -3239,9 +3215,8 @@ function MainPage({ isNewPostShared }) {
                                     {post.reposted[0].fullname ? (
                                       <Link
                                         style={{
-                                          fontSize: "13px",
-                                          lineHeight: "16px",
-                                          fontWeight: "700",
+                                          fontSize: font13.fontSize,
+                                          lineHeight: font13.lineHeight,
                                           color:
                                             themeName === "dark-theme"
                                               ? "#71767A"
@@ -3253,7 +3228,7 @@ function MainPage({ isNewPostShared }) {
                                           top: "5px",
                                           left: "15px",
                                         }}
-                                        className={`hover-reposted-text hover-reposted-text-${themeName}`}
+                                        className={`hover-reposted-text hover-reposted-text-${themeName} chirp-bold-font`}
                                         onClick={() => setclickedPostBox(post)}
                                         to={`/profile/${post.reposted[0]._id}`}
                                       >
@@ -3354,9 +3329,8 @@ function MainPage({ isNewPostShared }) {
                                             themeName === "dark-theme"
                                               ? "white"
                                               : "",
-                                          fontWeight: "700",
-                                          fontSize: "15px",
-                                          lineHeight: "20px",
+                                          fontSize: font15.fontSize,
+                                          lineHeight: font15.lineHeight,
                                           overflow: "hidden",
                                           textOverflow: "ellipsis",
                                           whiteSpace: "nowrap",
@@ -3399,6 +3373,7 @@ function MainPage({ isNewPostShared }) {
                                       <span> </span>
                                     )}
                                     <Link
+                                      className="chirp-regular-font"
                                       to={`/profile/${post.userId._id}`}
                                       style={{
                                         textDecoration: "none",
@@ -3406,9 +3381,8 @@ function MainPage({ isNewPostShared }) {
                                           themeName === "dark-theme"
                                             ? "#71767A"
                                             : "rgb(83, 100, 113)",
-                                        lineHeight: "20px",
-                                        fontSize: "15px",
-                                        fontWeight: "400",
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
                                       }}
                                     >
                                       <span className="post-circle-postowner-username">
@@ -3429,15 +3403,14 @@ function MainPage({ isNewPostShared }) {
                                       }}
                                     >
                                       <span
-                                        className="post-circle-date-post-detail"
+                                        className="post-circle-date-post-detail chirp-regular-font"
                                         style={{
                                           color:
                                             themeName === "dark-theme"
                                               ? "#71767A"
                                               : "rgb(83, 100, 113)",
-                                          lineHeight: "20px",
-                                          fontSize: "15px",
-                                          fontWeight: "400",
+                                          fontSize: font15.fontSize,
+                                          lineHeight: font15.lineHeight,
                                         }}
                                       >
                                         {" "}
@@ -3506,9 +3479,8 @@ function MainPage({ isNewPostShared }) {
                                         themeName === "dark-theme"
                                           ? "#71767A"
                                           : "rgb(83, 100, 113)",
-                                      fontSize: "15px",
-                                      lineHeight: "20px",
-                                      fontWeight: "400",
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                     }}
                                   >
                                     Replying to {""}
@@ -3519,13 +3491,12 @@ function MainPage({ isNewPostShared }) {
                                     }}
                                   >
                                     <span
-                                      className="replying-to-text"
+                                      className="replying-to-text chirp-regular-font"
                                       style={{
                                         color: "rgb(29, 155, 240)",
                                         cursor: "pointer",
-                                        fontSize: "15px",
-                                        lineHeight: "20px",
-                                        fontWeight: "400",
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
                                       }}
                                     >
                                       @{post.commentedForThisUsersPost.username}
@@ -3547,9 +3518,8 @@ function MainPage({ isNewPostShared }) {
                                 <div
                                   className="p-2 chirp-regular-font"
                                   style={{
-                                    fontSize: "15px",
-                                    fontWeight: "400",
-                                    lineHeight: "20px",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
                                     overflowWrap: "break-word",
                                     maxWidth: "100%",
                                     cursor: "pointer",
@@ -3722,8 +3692,7 @@ function MainPage({ isNewPostShared }) {
                               width: "100%",
                               textAlign: "center",
                               color: "rgb(29, 155, 240)",
-                              fontSize: "15px",
-                              fontWeight: "400",
+                              fontSize: font15.fontSize,
                               lineHeight: "24px",
                               cursor: "pointer",
                               backgroundColor: "transparent",
@@ -3737,6 +3706,10 @@ function MainPage({ isNewPostShared }) {
                     </Accordion>
                   )}
                 </>
+              ) : (postsLoadingSpinner && !posts.length) || loading ? (
+                <LoadingSpinner
+                  strokeColor={"rgb(29, 155, 240)"}
+                ></LoadingSpinner>
               ) : (
                 <>
                   {/* when no post yet from following section in general start to check  */}
@@ -3749,8 +3722,8 @@ function MainPage({ isNewPostShared }) {
                     <div
                       className="chirp-heavy-font"
                       style={{
-                        lineHeight: "36px",
-                        fontSize: "31px",
+                        fontSize: font31.fontSize,
+                        lineHeight: font31.lineHeight,
                         margin: "10px",
                       }}
                     >
@@ -3763,9 +3736,8 @@ function MainPage({ isNewPostShared }) {
                           themeName === "dark-theme"
                             ? "#71767A"
                             : "rgb(83, 100, 113)",
-                        lineHeight: "20px",
-                        fontSize: "15px",
-                        fontWeight: "400",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                         margin: "10px",
                       }}
                     >

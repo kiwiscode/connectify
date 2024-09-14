@@ -7,6 +7,7 @@ import useWindowDimensions from "../../../../../../../hooks/getWindowDimensions"
 import { ThemeContext } from "../../../../../../../context/ThemeContext";
 import { UserContext } from "../../../../../../../context/UserContext";
 import SettingsNavigation from "../../../../../../../components/SettingsNavigation/SettingsNavigation";
+import { useFontSizeHandler } from "../../../../../../../utils/useFontSizeHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -68,6 +69,14 @@ function AudienceAndTagging() {
     }
   };
 
+  const {
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
   return (
     <>
       {" "}
@@ -104,11 +113,11 @@ function AudienceAndTagging() {
               }}
             >
               <div
+                className="chirp-bold-font"
                 style={{
                   color: themeName === "dark-theme" ? "white" : "",
-                  fontWeight: "700",
-                  fontSize: "20px",
-                  lineHeight: "24px",
+                  fontSize: font20.fontSize,
+                  lineHeight: font20.lineHeight,
                 }}
               >
                 Protect your posts?
@@ -119,11 +128,10 @@ function AudienceAndTagging() {
                     themeName === "dark-theme"
                       ? "#71767A"
                       : "rgb(83, 100, 113)",
-                  fontWeight: "400",
-                  fontSize: "15px",
-                  lineHeight: "20px",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
-                className="mt-2"
+                className="mt-2 chirp-regular-font"
               >
                 This will make them visible only to your C followers.
               </div>
@@ -235,6 +243,10 @@ function AudienceAndTagging() {
             </svg>
           </div>
           <div
+            style={{
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
+            }}
             className={
               themeName === "dark-theme"
                 ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
@@ -254,13 +266,12 @@ function AudienceAndTagging() {
           <div
             className={
               themeName === "dark-theme"
-                ? "text-dark-theme "
-                : "text-light-theme "
+                ? "text-dark-theme chirp-regular-font"
+                : "text-light-theme chirp-regular-font"
             }
             style={{
-              fontSize: "13px",
-              lineHeight: "16px",
-              fontWeight: "400",
+              fontSize: font13.fontSize,
+              lineHeight: font13.lineHeight,
             }}
           >
             Manage what information you allow other people on X to see.
@@ -290,13 +301,12 @@ function AudienceAndTagging() {
                 <div
                   className={
                     themeName === "dark-theme"
-                      ? "make-dark-theme-bej-color-dark-theme"
-                      : "make-light-theme-color-light-theme"
+                      ? "make-dark-theme-bej-color-dark-theme chirp-regular-font"
+                      : "make-light-theme-color-light-theme chirp-regular-font"
                   }
                   style={{
-                    fontSize: "15px",
-                    lineHeight: "20px",
-                    fontWeight: "400",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                   }}
                 >
                   Protect your posts{" "}
@@ -304,13 +314,12 @@ function AudienceAndTagging() {
                 <div
                   className={
                     themeName === "dark-theme"
-                      ? "text-dark-theme"
-                      : "text-light-theme"
+                      ? "text-dark-theme chirp-regular-font"
+                      : "text-light-theme chirp-regular-font"
                   }
                   style={{
-                    fontSize: "13px",
-                    lineHeight: "16px",
-                    fontWeight: "400",
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
                   }}
                 >
                   When selected, your posts and other account information are
@@ -413,13 +422,12 @@ function AudienceAndTagging() {
               <div
                 className={
                   themeName === "dark-theme"
-                    ? "make-dark-theme-bej-color-dark-theme"
-                    : "make-light-theme-color-light-theme"
+                    ? "make-dark-theme-bej-color-dark-theme chirp-regular-font"
+                    : "make-light-theme-color-light-theme chirp-regular-font"
                 }
                 style={{
-                  fontSize: "15px",
-                  lineHeight: "20px",
-                  fontWeight: "400",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
               >
                 Protect your videos
@@ -427,13 +435,12 @@ function AudienceAndTagging() {
               <div
                 className={
                   themeName === "dark-theme"
-                    ? "text-dark-theme"
-                    : "text-light-theme"
+                    ? "text-dark-theme chirp-regular-font"
+                    : "text-light-theme chirp-regular-font"
                 }
                 style={{
-                  fontSize: "13px",
-                  lineHeight: "16px",
-                  fontWeight: "400",
+                  fontSize: font13.fontSize,
+                  lineHeight: font13.lineHeight,
                 }}
               >
                 If selected, videos in your posts will not be downloadable by
@@ -546,13 +553,12 @@ function AudienceAndTagging() {
               <div
                 className={
                   themeName === "dark-theme"
-                    ? "make-dark-theme-bej-color-dark-theme"
-                    : "make-light-theme-color-light-theme"
+                    ? "make-dark-theme-bej-color-dark-theme chirp-regular-font"
+                    : "make-light-theme-color-light-theme chirp-regular-font"
                 }
                 style={{
-                  fontSize: "15px",
-                  lineHeight: "20px",
-                  fontWeight: "400",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
               >
                 Photo tagging
@@ -560,13 +566,12 @@ function AudienceAndTagging() {
               <div
                 className={
                   themeName === "dark-theme"
-                    ? "text-dark-theme"
-                    : "text-light-theme"
+                    ? "text-dark-theme chirp-regular-font"
+                    : "text-light-theme chirp-regular-font"
                 }
                 style={{
-                  fontSize: "13px",
-                  lineHeight: "16px",
-                  fontWeight: "400",
+                  fontSize: font13.fontSize,
+                  lineHeight: font13.lineHeight,
                 }}
               >
                 {isTaggingOn ? "Off" : "On"}

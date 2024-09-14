@@ -376,7 +376,6 @@ const handleDeleteFavorite = (req, res) => {
         // eğer user kendi postundan favorite silmiyorsa finish to check
 
         if (post.isComment) {
-          console.log("This post is comment =>", post);
           Comment.find({ postId: post._id })
             .then((commentFromDataBase) => {
               // splice the user id from comment start to check
@@ -486,7 +485,6 @@ const handleDeleteFavorite = (req, res) => {
                     notifiedUser.favorites = filteredFavoritesUserArray;
                     // notifiedUser.notifications.splice(findIndex, 1);
                     notifiedUser.save();
-                    console.log("THIS LINE IS WORKING 1");
                   } else if (
                     notifiedUser._id.toString() !== user._id.toString()
                   ) {

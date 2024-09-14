@@ -3,29 +3,29 @@ const logger = require("morgan");
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
+const bodyParser = require("body-parser");
+
 const User = require("../models/User.model");
 const Chat = require("../models/Chat.model");
-const Post = require("../models/Post.model");
 const { default: mongoose } = require("mongoose");
-const router = express();
 let onlineUsers = [];
 let interactedChatRooms = [];
 let currentUrlForSocketId = null;
 let socketUserUsername = null;
-
-// state for deciding what to do if they are in same room ! start to check
 let isBothUserOpenedMessageRoom = null;
-// state for deciding what to do if they are in same room ! finish to check
 
 module.exports = (app) => {
-  const server = http.createServer(app);
-  app.use(logger("dev"));
-
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
-
-  app.set("trust proxy", 1);
   app.use(cors());
+  const server = http.createServer(app);
+
+  require("dotenv").config();
+
+  app.use(logger("dev"));
+  app.use(express.json({ limit: "15mb" }));
+  app.use(express.urlencoded({ extended: true }));
+  app.use(bodyParser.urlencoded({ extended: true, limit: "15mb" }));
+  app.use(bodyParser.json({ type: "application/vnd.api+json" }));
+  app.set("trust proxy", 1);
 
   const io = new Server(server, {
     cors: {
@@ -869,5 +869,5 @@ module.exports = (app) => {
     });
   });
 
-  app.set("io", io);
+  // app.set("io", io);
 };

@@ -33,6 +33,8 @@ import io from "socket.io-client";
 import PopupState, { bindPopover, bindTrigger } from "material-ui-popup-state";
 import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
 import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
+import { SubcsriptionStatusContext } from "../../context/SubscriptionStatusContext";
+import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
 const socket = io.connect(`${API_URL}`);
 function SigninModal({ deactivatedScreen, widthSmaller700 }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
@@ -536,6 +538,16 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
   const phoneRegex =
     /^(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})$/;
 
+  const {
+    getFontSizeAndLineHeight31,
+    getFontSizeAndLineHeight26,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font31 = getFontSizeAndLineHeight31();
+  const font26 = getFontSizeAndLineHeight26();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
   return (
     <>
       {contextHolder}
@@ -550,9 +562,8 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
               textAlign: "center",
               border: "1px solid rgb(185, 202, 211)",
               borderRadius: "9999px",
-              lineHeight: "20px",
-              fontSize: "15px",
-              fontWeight: "700",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
               backgroundColor: "rgba(29,155,240,1.00)",
               // padding: "5px",
               // paddingLeft: "16px",
@@ -631,7 +642,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                       <svg
                         style={{
                           border: "none",
-                          fontSize: "15px",
+
                           margin: "5px",
                         }}
                         onClick={handleCloseReactivatedLoginScreen}
@@ -669,25 +680,25 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                       }}
                     >
                       <div
+                        className="chirp-heavy-font"
                         style={{
-                          fontSize: "26px",
-                          lineHeight: "32px",
-                          fontWeight: "800",
-                          color: themeName === "dark-theme" ? "white" : "black",
+                          fontSize: font26.fontSize,
+                          lineHeight: font26.lineHeight,
+                          color: themeName === "dark-theme" ? "white" : "",
                         }}
                       >
                         Reactivate your account?
                       </div>
                       <div
+                        className="chirp-regular-font"
                         style={{
                           marginTop: "5px",
                           color:
                             themeName === "dark-theme"
                               ? "#71767A                                  "
                               : "rgb(83, 100, 113)",
-                          fontSize: "15px",
-                          fontWeight: "400",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >{`You deactivated your account on ${userdeactivateddate}.On ${userdeletiondate}, it will no longer be possible for you to restore your Connectify account if it was accidentally or wrongfully deactivated. By clicking "Yes, reactivate", you will halt the deactivation process and reactivate your account.`}</div>
                     </div>
@@ -762,7 +773,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                       <svg
                         style={{
                           border: "none",
-                          fontSize: "15px",
+
                           margin: "5px",
                         }}
                         onClick={handleCloseReactivatedLoginScreen}
@@ -800,25 +811,25 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                       }}
                     >
                       <div
+                        className="chirp-heavy-font"
                         style={{
-                          fontSize: "26px",
-                          lineHeight: "32px",
-                          fontWeight: "800",
-                          color: themeName === "dark-theme" ? "white" : "black",
+                          fontSize: font26.fontSize,
+                          lineHeight: font26.lineHeight,
+                          color: themeName === "dark-theme" ? "white" : "",
                         }}
                       >
                         Reactivate your account?
                       </div>
                       <div
+                        className="chirp-regular-font"
                         style={{
                           marginTop: "5px",
                           color:
                             themeName === "dark-theme"
                               ? "#71767A                                  "
                               : "rgb(83, 100, 113)",
-                          fontSize: "15px",
-                          fontWeight: "400",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                           textAlign: "left",
                         }}
                       >{`You deactivated your account on ${userdeactivateddate}.On ${userdeletiondate}, it will no longer be possible for you to restore your Connectify account if it was accidentally or wrongfully deactivated. By clicking "Yes, reactivate", you will halt the deactivation process and reactivate your account.`}</div>
@@ -898,7 +909,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                           <svg
                             style={{
                               border: "none",
-                              fontSize: "15px",
+
                               margin: "5px",
                             }}
                             width={20}
@@ -961,9 +972,8 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                       themeName === "dark-theme"
                                         ? "white"
                                         : "black",
-                                    fontSize: "31px",
-                                    fontWeight: "700",
-                                    lineHeight: "36px",
+                                    fontSize: font31.fontSize,
+                                    lineHeight: font31.lineHeight,
                                   }}
                                   className="sign-in-header mb-4 chirp-bold-font"
                                 >
@@ -989,10 +999,10 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   className="google-variant-sign-in"
                                 >
                                   <span
+                                    className="chirp-regular-font"
                                     style={{
-                                      fontSize: "13px",
-                                      fontWeight: "400",
-                                      lineHeight: "16px",
+                                      fontSize: font13.fontSize,
+                                      lineHeight: font13.lineHeight,
                                       marginLeft: "10px",
                                       color: "black",
                                     }}
@@ -1114,9 +1124,8 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   width: "300px",
                                   minHeight: "36px",
                                   color: "white",
-                                  fontSize: "15px",
-                                  fontWeight: "700",
-                                  lineHeight: "20px",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                 }}
                                 className={`login-button mt-4 next-btn chirp-bold-font ${themeName}-white-btn`}
                                 variant="dark"
@@ -1132,9 +1141,8 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                     themeName === "dark-theme"
                                       ? "white"
                                       : "black",
-                                  fontSize: "15px",
-                                  fontWeight: "700",
-                                  lineHeight: "20px",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                 }}
                                 className={`mt-4 forgot-password-btn chirp-bold-font ${themeName}-black-btn`}
                                 variant="light"
@@ -1162,9 +1170,8 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                       themeName === "dark-theme"
                                         ? "#71767A                                  "
                                         : "rgb(83, 100, 113)",
-                                    fontSize: "15px",
-                                    lineHeight: "20px",
-                                    fontWeight: "400",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
                                     marginLeft: "5px",
                                   }}
                                   className="grid-item mt-5 chirp-regular-font"
@@ -1213,24 +1220,23 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               }}
                             >
                               <div
+                                className="chirp-bold-font"
                                 style={{
                                   display: "flex",
                                   textAlign: "left",
                                   width: "81.5%",
-                                  lineHeight: "28px",
-                                  fontWeight: "700",
-                                  fontSize: "26px",
-                                  letterSpacing: "0.5px",
+                                  fontSize: font26.fontSize,
+                                  lineHeight: font26.lineHeight,
                                   color:
                                     themeName === "dark-theme"
                                       ? "white"
                                       : "black",
                                 }}
                               >
-                                Find your Caccount
+                                Find your C account
                               </div>
                               <div
-                                className="mt-2"
+                                className="mt-2 chirp-regular-font"
                                 style={{
                                   color:
                                     themeName === "dark-theme"
@@ -1238,8 +1244,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                       : "rgb(83, 100, 113)",
                                   lineHeight: "20px",
                                   width: "81.5%",
-                                  fontSize: "15px",
-                                  fontWeight: "400",
+                                  fontSize: font15.fontSize,
                                 }}
                               >
                                 Enter the email, or username associated with
@@ -1341,14 +1346,13 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               }}
                             >
                               <div
+                                className="chirp-bold-font"
                                 style={{
                                   display: "flex",
                                   textAlign: "left",
                                   width: "81.5%",
-                                  lineHeight: "28px",
-                                  fontWeight: "700",
-                                  fontSize: "26px",
-                                  letterSpacing: "0.5px",
+                                  fontSize: font26.fontSize,
+                                  lineHeight: font26.lineHeight,
                                   color:
                                     themeName === "dark-theme"
                                       ? "white"
@@ -1358,7 +1362,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 Confirm your username
                               </div>
                               <div
-                                className="mt-2"
+                                className="mt-2 chirp-regular-font"
                                 style={{
                                   color:
                                     themeName === "dark-theme"
@@ -1366,8 +1370,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                       : "rgb(83, 100, 113)",
                                   lineHeight: "20px",
                                   width: "81.5%",
-                                  fontSize: "15px",
-                                  fontWeight: "400",
+                                  fontSize: font15.fontSize,
                                 }}
                               >
                                 Verify your identity by entering the username
@@ -1461,15 +1464,13 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                         ) : (
                           <Modal.Body className="signin-modal-body-child-non-reactivate">
                             <div
-                              className="mb-4"
+                              className="mb-4 chirp-bold-font"
                               style={{
                                 display: "flex",
                                 textAlign: "left",
                                 width: "81.5%",
-                                lineHeight: "28px",
-                                fontWeight: "700",
-                                fontSize: "26px",
-                                letterSpacing: "0.5px",
+                                fontSize: font26.fontSize,
+                                lineHeight: font26.lineHeight,
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
@@ -1479,15 +1480,14 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               Where should we send a confirmation code?
                             </div>
                             <div
-                              className="mt-2"
+                              className="mt-2 chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A                                  "
                                     : "rgb(83, 100, 113)",
-                                lineHeight: "20px",
-                                fontSize: "15px",
-                                fontWeight: "400",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                                 display: "flex",
                                 textAlign: "left",
                                 width: "81.5%",
@@ -1497,15 +1497,14 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               make sure it’s really you.
                             </div>
                             <div
-                              className="mt-2"
+                              className="mt-2 chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A                                  "
                                     : "rgb(83, 100, 113)",
-                                lineHeight: "20px",
-                                fontSize: "15px",
-                                fontWeight: "400",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                                 display: "flex",
                                 textAlign: "left",
                                 width: "81.5%",
@@ -1527,10 +1526,10 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               }}
                             >
                               <div
+                                className="chirp-bold-font"
                                 style={{
-                                  fontSize: "15px",
-                                  lineHeight: "20px",
-                                  fontWeight: "700",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                 }}
                               >
                                 Send an email to{" "}
@@ -1590,12 +1589,11 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               </div>
                             </div>
                             <div
-                              className="mt-4 connectify-support-forgot-password-screen"
+                              className="mt-4 connectify-support-forgot-password-screen chirp-regular-font"
                               style={{
                                 textAlign: "left",
-                                lineHeight: "20px",
-                                fontSize: "15px",
-                                fontWeight: "400",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                                 width: "81.5%",
                                 color:
                                   themeName === "dark-theme"
@@ -1676,14 +1674,13 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             className={`scrollbar-add signin-modal-body-child-non-reactivate scrollbar-add-${themeName}`}
                           >
                             <div
+                              className="chirp-bold-font"
                               style={{
                                 display: "flex",
                                 textAlign: "left",
                                 width: "81.5%",
-                                lineHeight: "28px",
-                                fontWeight: "700",
-                                fontSize: "26px",
-                                letterSpacing: "0.5px",
+                                fontSize: font26.fontSize,
+                                lineHeight: font26.lineHeight,
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
@@ -1693,16 +1690,15 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               We sent you a code
                             </div>
                             <div
-                              className="mt-2"
+                              className="mt-2 chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A                                  "
                                     : "rgb(83, 100, 113)",
-                                lineHeight: "20px",
                                 width: "81.5%",
-                                fontSize: "15px",
-                                fontWeight: "400",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                               }}
                             >
                               Check your email to get your confirmation code. If
@@ -1820,14 +1816,13 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                           <Modal.Body className="signin-modal-body-child-non-reactivate">
                             <>
                               <div
+                                className="chirp-bold-font"
                                 style={{
                                   display: "flex",
                                   textAlign: "left",
                                   width: "81.5%",
-                                  lineHeight: "28px",
-                                  fontWeight: "700",
-                                  fontSize: "26px",
-                                  letterSpacing: "0.5px",
+                                  fontSize: font26.fontSize,
+                                  lineHeight: font26.lineHeight,
                                   color:
                                     themeName === "dark-theme"
                                       ? "white"
@@ -1837,16 +1832,15 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 Choose a new password
                               </div>
                               <div
-                                className="mt-2"
+                                className="mt-2 chirp-regular-font"
                                 style={{
                                   color:
                                     themeName === "dark-theme"
                                       ? "#71767A                                  "
                                       : "rgb(83, 100, 113)",
-                                  lineHeight: "20px",
                                   width: "81.5%",
-                                  fontSize: "15px",
-                                  fontWeight: "400",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                 }}
                               >
                                 Make sure your new password is 8 characters or
@@ -1861,16 +1855,15 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 </span>
                               </div>
                               <div
-                                className="mt-4"
+                                className="mt-4 chirp-regular-font"
                                 style={{
                                   color:
                                     themeName === "dark-theme"
                                       ? "#71767A                                  "
                                       : "rgb(83, 100, 113)",
-                                  lineHeight: "20px",
                                   width: "81.5%",
-                                  fontSize: "15px",
-                                  fontWeight: "400",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                 }}
                               >
                                 {
@@ -1987,13 +1980,13 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               </FormControl>
                               {errorMessageForFirstInput ? (
                                 <div
+                                  className="chirp-regular-font"
                                   style={{
                                     position: "relative",
                                     left: "10px",
                                     width: "81.5%",
-                                    fontSize: "13px",
-                                    lineHeight: "16px",
-                                    fontWeight: "400",
+                                    fontSize: font13.fontSize,
+                                    lineHeight: font13.lineHeight,
                                     color: "rgb(244, 33, 46)",
                                   }}
                                 >
@@ -2118,13 +2111,13 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               </FormControl>
                               {errorMessageForSecondInput ? (
                                 <div
+                                  className="chirp-regular-font"
                                   style={{
                                     position: "relative",
                                     left: "10px",
                                     width: "81.5%",
-                                    fontSize: "13px",
-                                    lineHeight: "16px",
-                                    fontWeight: "400",
+                                    fontSize: font13.fontSize,
+                                    lineHeight: font13.lineHeight,
                                     color: "rgb(244, 33, 46)",
                                   }}
                                 >
@@ -2179,10 +2172,8 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 display: "flex",
                                 textAlign: "left",
                                 width: "81.5%",
-                                lineHeight: "28px",
-                                fontWeight: "700",
-                                fontSize: "26px",
-                                letterSpacing: "0.5px",
+                                fontSize: font26.fontSize,
+                                lineHeight: font26.lineHeight,
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
@@ -2192,11 +2183,11 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               {"Why'd you change your password"}
                             </div>
                             <div
-                              className="chirp-bold-font mt-2"
+                              className="chirp-regular-font mt-2"
                               style={{
-                                lineHeight: "20px",
                                 width: "81.5%",
-                                fontSize: "15px",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                                 fontWeight: "400",
                                 color:
                                   themeName === "dark-theme"
@@ -2217,15 +2208,17 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               }}
                             >
                               <div
-                                className="mt-2 chirp-bold-font"
+                                className="chirp-bold-font"
                                 style={{
-                                  fontWeight: "700",
-                                  fontSize: "16px",
-                                  lineHeight: "24px",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                   color:
                                     themeName === "dark-theme"
                                       ? "white"
                                       : "black",
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
                                 }}
                               >
                                 I forgot my password
@@ -2314,15 +2307,17 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               }}
                             >
                               <div
-                                className="chirp-bold-font mt-2.5"
+                                className="chirp-bold-font"
                                 style={{
-                                  fontWeight: "700",
-                                  fontSize: "16px",
-                                  lineHeight: "24px",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                   color:
                                     themeName === "dark-theme"
                                       ? "white"
                                       : "black",
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
                                 }}
                               >
                                 There was suspicious activity on my account
@@ -2411,15 +2406,17 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               }}
                             >
                               <div
-                                className="chirp-bold-font mt-2.5"
+                                className="chirp-bold-font"
                                 style={{
-                                  fontWeight: "700",
-                                  fontSize: "16px",
-                                  lineHeight: "24px",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                   color:
                                     themeName === "dark-theme"
                                       ? "white"
                                       : "black",
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
                                 }}
                               >
                                 I changed my password for a different reason
@@ -2556,11 +2553,11 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 }}
                               >
                                 <div
+                                  className="chirp-bold-font"
                                   style={{
                                     width: "81.5%",
-                                    lineHeight: "36px",
-                                    fontWeight: "700",
-                                    fontSize: "31px",
+                                    fontSize: font31.fontSize,
+                                    lineHeight: font31.lineHeight,
                                     color:
                                       themeName === "dark-theme" ? "white" : "",
                                   }}
@@ -2568,31 +2565,27 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   {"You're all set"}
                                 </div>
                                 <div
-                                  className="mt-2"
+                                  className="mt-2 chirp-regular-font"
                                   style={{
                                     color:
                                       themeName === "dark-theme"
                                         ? "#71767A"
                                         : "rgb(83, 100, 113)",
-                                    lineHeight: "20px",
-
-                                    fontSize: "15px",
-                                    fontWeight: "400",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
                                   }}
                                 >
                                   {"You've successfully changed your password."}
                                 </div>
                                 <div
-                                  className="mt-2"
+                                  className="mt-2 chirp-regular-font"
                                   style={{
                                     color:
                                       themeName === "dark-theme"
                                         ? "#71767A"
                                         : "rgb(83, 100, 113)",
-                                    lineHeight: "20px",
-
-                                    fontSize: "15px",
-                                    fontWeight: "400",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
                                   }}
                                 >
                                   Add an extra layer of security to your account
@@ -2661,10 +2654,8 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                     display: "flex",
                                     textAlign: "left",
                                     width: "81.5%",
-                                    lineHeight: "28px",
-                                    fontWeight: "700",
-                                    fontSize: "26px",
-                                    letterSpacing: "0.5px",
+                                    fontSize: font26.fontSize,
+                                    lineHeight: font26.lineHeight,
                                   }}
                                 >
                                   Enter your password
@@ -2693,7 +2684,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                       >
                                         <div
                                           style={{
-                                            fontSize: "13px",
+                                            fontSize: font13.fontSize,
                                             position: "relative",
                                             bottom: "5px",
                                             color:
@@ -2879,15 +2870,15 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                       setTabLoading(false);
                                     }, 500);
                                   }}
+                                  className="chirp-regular-font"
                                   style={{
                                     position: "relative",
                                     left: "10px",
                                     bottom: "5px",
                                     width: "81.5%",
                                     color: "rgb(29, 155, 240)",
-                                    fontSize: "13px",
-                                    fontWeight: "400",
-                                    lineHeight: "16px",
+                                    fontSize: font13.fontSize,
+                                    lineHeight: font13.lineHeight,
                                   }}
                                 >
                                   <span
@@ -2922,9 +2913,8 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                     position: "absolute",
                                     bottom: "15px",
                                     width: "90%",
-                                    fontSize: "15px",
-                                    fontWeight: "400",
-                                    lineHeight: "20px",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
                                     color:
                                       themeName === "dark-theme"
                                         ? "#71767A                                  "
@@ -3003,7 +2993,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                         <svg
                           style={{
                             border: "none",
-                            fontSize: "15px",
                             margin: "5px",
                             display: tabIndex === 7 ? "none" : "",
                           }}
@@ -3051,9 +3040,8 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   themeName === "dark-theme"
                                     ? "white"
                                     : "black",
-                                fontSize: "31px",
-                                lineHeight: "36px",
-                                fontWeight: "700",
+                                fontSize: font31.fontSize,
+                                lineHeight: font31.lineHeight,
                               }}
                               className="sign-in-header mt-4 mb-4 chirp-bold-font"
                             >
@@ -3079,10 +3067,10 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               className="google-variant-sign-in"
                             >
                               <span
+                                className="chirp-regular-font"
                                 style={{
-                                  fontSize: "13px",
-                                  fontWeight: "400",
-                                  lineHeight: "16px",
+                                  fontSize: font13.fontSize,
+                                  lineHeight: font13.lineHeight,
                                   marginLeft: "10px",
                                   color: "black",
                                 }}
@@ -3198,9 +3186,8 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             style={{
                               width: "300px",
                               maxHeight: "36px",
-                              fontSize: "15px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                             }}
                             className={`login-button mt-4 next-btn chirp-bold-font ${themeName}-white-btn`}
                             variant="dark"
@@ -3224,9 +3211,8 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               maxHeight: "36px",
                               color:
                                 themeName === "dark-theme" ? "white" : "black",
-                              fontSize: "15px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                             }}
                             className={`mt-4 forgot-password-btn chirp-bold-font ${themeName}-black-btn`}
                             variant="light"
@@ -3255,9 +3241,8 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   themeName === "dark-theme"
                                     ? "rgb(113, 118, 122)"
                                     : "rgb(83, 100, 113)",
-                                fontSize: "15px",
-                                lineHeight: "20px",
-                                fontWeight: "400",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                                 marginLeft: "5px",
                               }}
                               className="grid-item mt-5 chirp-regular-font"
@@ -3306,11 +3291,11 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             }}
                           >
                             <div
+                              className="chirp-bold-font"
                               style={{
                                 width: "81.5%",
-                                lineHeight: "36px",
-                                fontWeight: "700",
-                                fontSize: "31px",
+                                fontSize: font31.fontSize,
+                                lineHeight: font31.lineHeight,
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
@@ -3320,16 +3305,15 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               Find your C account
                             </div>
                             <div
-                              className="mt-2"
+                              className="mt-2 chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A                                  "
                                     : "rgb(83, 100, 113)",
-                                lineHeight: "20px",
                                 width: "81.5%",
-                                fontSize: "15px",
-                                fontWeight: "400",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                               }}
                             >
                               Enter the email, or username associated with your
@@ -3429,11 +3413,11 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             }}
                           >
                             <div
+                              className="chirp-bold-font"
                               style={{
                                 width: "81.5%",
-                                lineHeight: "36px",
-                                fontWeight: "700",
-                                fontSize: "31px",
+                                fontSize: font31.fontSize,
+                                lineHeight: font31.lineHeight,
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
@@ -3443,16 +3427,15 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               Confirm your username
                             </div>
                             <div
-                              className="mt-2"
+                              className="mt-2 chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A                                  "
                                     : "rgb(83, 100, 113)",
-                                lineHeight: "20px",
                                 width: "81.5%",
-                                fontSize: "15px",
-                                fontWeight: "400",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                               }}
                             >
                               Verify your identity by entering the username
@@ -3545,12 +3528,11 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                       ) : (
                         <Modal.Body className="signin-modal-body-child-non-reactivate">
                           <div
-                            className="mb-4"
+                            className="mb-4 chirp-bold-font"
                             style={{
                               width: "81.5%",
-                              lineHeight: "36px",
-                              fontWeight: "700",
-                              fontSize: "31px",
+                              fontSize: font31.fontSize,
+                              lineHeight: font31.lineHeight,
                               color:
                                 themeName === "dark-theme" ? "white" : "black",
                             }}
@@ -3558,15 +3540,14 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             Where should we send a confirmation code?
                           </div>
                           <div
-                            className="mt-2"
+                            className="mt-2 chirp-regular-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A                                  "
                                   : "rgb(83, 100, 113)",
-                              lineHeight: "20px",
-                              fontSize: "15px",
-                              fontWeight: "400",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                               display: "flex",
                               textAlign: "left",
                               width: "81.5%",
@@ -3576,15 +3557,14 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             sure it’s really you.
                           </div>
                           <div
-                            className="mt-2"
+                            className="mt-2 chirp-regular-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A                                  "
                                   : "rgb(83, 100, 113)",
-                              lineHeight: "20px",
-                              fontSize: "15px",
-                              fontWeight: "400",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                               display: "flex",
                               textAlign: "left",
                               width: "81.5%",
@@ -3603,10 +3583,10 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             }}
                           >
                             <div
+                              className="chirp-bold-font"
                               style={{
-                                fontSize: "15px",
-                                lineHeight: "20px",
-                                fontWeight: "700",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                               }}
                             >
                               Send an email to{" "}
@@ -3666,12 +3646,11 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             </div>
                           </div>
                           <div
-                            className="mt-4 connectify-support-forgot-password-screen"
+                            className="mt-4 connectify-support-forgot-password-screen chirp-regular-font"
                             style={{
                               textAlign: "left",
-                              lineHeight: "20px",
-                              fontSize: "15px",
-                              fontWeight: "400",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                               width: "81.5%",
                               color:
                                 themeName === "dark-theme" ? "white" : "black",
@@ -3751,11 +3730,11 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                           className={`scrollbar-add signin-modal-body-child-non-reactivate scrollbar-add-${themeName}`}
                         >
                           <div
+                            className="chirp-bold-font"
                             style={{
                               width: "81.5%",
-                              lineHeight: "36px",
-                              fontWeight: "700",
-                              fontSize: "31px",
+                              fontSize: font31.fontSize,
+                              lineHeight: font31.lineHeight,
                               color:
                                 themeName === "dark-theme" ? "white" : "black",
                             }}
@@ -3763,16 +3742,15 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             We sent you a code
                           </div>
                           <div
-                            className="mt-2"
+                            className="mt-2 chirp-regular-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A                                  "
                                   : "rgb(83, 100, 113)",
-                              lineHeight: "20px",
                               width: "81.5%",
-                              fontSize: "15px",
-                              fontWeight: "400",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                             }}
                           >
                             Check your email to get your confirmation code. If
@@ -3890,11 +3868,11 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                         <Modal.Body className="signin-modal-body-child-non-reactivate">
                           <>
                             <div
+                              className="chirp-bold-font"
                               style={{
                                 width: "81.5%",
-                                lineHeight: "36px",
-                                fontWeight: "700",
-                                fontSize: "31px",
+                                fontSize: font31.fontSize,
+                                lineHeight: font31.lineHeight,
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
@@ -3904,16 +3882,15 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               Choose a new password
                             </div>
                             <div
-                              className="mt-2"
+                              className="mt-2 chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A                                  "
                                     : "rgb(83, 100, 113)",
-                                lineHeight: "20px",
                                 width: "81.5%",
-                                fontSize: "15px",
-                                fontWeight: "400",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                               }}
                             >
                               Make sure your new password is 8 characters or
@@ -3928,16 +3905,15 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               </span>
                             </div>
                             <div
-                              className="mt-4"
+                              className="mt-4 chirp-regular-font"
                               style={{
                                 color:
                                   themeName === "dark-theme"
                                     ? "#71767A                                  "
                                     : "rgb(83, 100, 113)",
-                                lineHeight: "20px",
                                 width: "81.5%",
-                                fontSize: "15px",
-                                fontWeight: "400",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                               }}
                             >
                               {
@@ -4050,13 +4026,13 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             </FormControl>
                             {errorMessageForFirstInput ? (
                               <div
+                                className="chirp-regular-font"
                                 style={{
                                   position: "relative",
                                   left: "10px",
                                   width: "81.5%",
-                                  fontSize: "13px",
-                                  lineHeight: "16px",
-                                  fontWeight: "400",
+                                  fontSize: font13.fontSize,
+                                  lineHeight: font13.lineHeight,
                                   color: "rgb(244, 33, 46)",
                                 }}
                               >
@@ -4173,13 +4149,13 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             </FormControl>
                             {errorMessageForSecondInput ? (
                               <div
+                                className="chirp-regular-font"
                                 style={{
                                   position: "relative",
                                   left: "10px",
                                   width: "81.5%",
-                                  fontSize: "13px",
-                                  lineHeight: "16px",
-                                  fontWeight: "400",
+                                  fontSize: font13.fontSize,
+                                  lineHeight: font13.lineHeight,
                                   color: "rgb(244, 33, 46)",
                                 }}
                               >
@@ -4235,9 +4211,8 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             className="chirp-bold-font"
                             style={{
                               width: "81.5%",
-                              lineHeight: "36px",
-                              fontWeight: "700",
-                              fontSize: "31px",
+                              fontSize: font31.fontSize,
+                              lineHeight: font31.lineHeight,
                               color:
                                 themeName === "dark-theme" ? "white" : "black",
                             }}
@@ -4245,11 +4220,11 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             {"Why'd you change your password"}
                           </div>
                           <div
-                            className="chirp-bold-font mt-2"
+                            className="chirp-regular-font mt-2"
                             style={{
-                              lineHeight: "20px",
                               width: "81.5%",
-                              fontSize: "15px",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                               fontWeight: "400",
                               color:
                                 themeName === "dark-theme"
@@ -4270,15 +4245,17 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             }}
                           >
                             <div
-                              className="mt-2 chirp-bold-font"
+                              className="chirp-bold-font"
                               style={{
-                                fontWeight: "700",
-                                fontSize: "16px",
-                                lineHeight: "24px",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
                                     : "black",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
                               }}
                             >
                               I forgot my password
@@ -4367,15 +4344,17 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             }}
                           >
                             <div
-                              className="chirp-bold-font mt-2.5"
+                              className="chirp-bold-font"
                               style={{
-                                fontWeight: "700",
-                                fontSize: "16px",
-                                lineHeight: "24px",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
                                     : "black",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
                               }}
                             >
                               There was suspicious activity on my account
@@ -4463,15 +4442,17 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             }}
                           >
                             <div
-                              className="chirp-bold-font mt-2.5"
+                              className="chirp-bold-font"
                               style={{
-                                fontWeight: "700",
-                                fontSize: "16px",
-                                lineHeight: "24px",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
                                     : "black",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
                               }}
                             >
                               I changed my password for a different reason
@@ -4614,11 +4595,11 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               }}
                             >
                               <div
+                                className="chirp-bold-font"
                                 style={{
                                   width: "81.5%",
-                                  lineHeight: "36px",
-                                  fontWeight: "700",
-                                  fontSize: "31px",
+                                  fontSize: font31.fontSize,
+                                  lineHeight: font31.lineHeight,
                                   color:
                                     themeName === "dark-theme" ? "white" : "",
                                 }}
@@ -4626,31 +4607,27 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 {"You're all set"}
                               </div>
                               <div
-                                className="mt-2"
+                                className="mt-2 chirp-regular-font"
                                 style={{
                                   color:
                                     themeName === "dark-theme"
                                       ? "#71767A"
                                       : "rgb(83, 100, 113)",
-                                  lineHeight: "20px",
-
-                                  fontSize: "15px",
-                                  fontWeight: "400",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                 }}
                               >
                                 {"You've successfully changed your password."}
                               </div>
                               <div
-                                className="mt-2"
+                                className="mt-2 chirp-regular-font"
                                 style={{
                                   color:
                                     themeName === "dark-theme"
                                       ? "#71767A"
                                       : "rgb(83, 100, 113)",
-                                  lineHeight: "20px",
-
-                                  fontSize: "15px",
-                                  fontWeight: "400",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                 }}
                               >
                                 Add an extra layer of security to your account
@@ -4718,9 +4695,8 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   display: "flex",
                                   textAlign: "left",
                                   width: "81.5%",
-                                  lineHeight: "36px",
-                                  fontWeight: "700",
-                                  fontSize: "31px",
+                                  fontSize: font31.fontSize,
+                                  lineHeight: font31.lineHeight,
                                 }}
                               >
                                 Enter your password
@@ -4749,7 +4725,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                     >
                                       <div
                                         style={{
-                                          fontSize: "13px",
+                                          fontSize: font13.fontSize,
                                           position: "relative",
                                           bottom: "5px",
                                           color:
@@ -4929,15 +4905,15 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                     setTabLoading(false);
                                   }, 500);
                                 }}
+                                className="chirp-regular-font"
                                 style={{
                                   position: "relative",
                                   left: "10px",
                                   bottom: "5px",
                                   width: "81.5%",
                                   color: "rgb(29, 155, 240)",
-                                  fontSize: "13px",
-                                  fontWeight: "400",
-                                  lineHeight: "16px",
+                                  fontSize: font13.fontSize,
+                                  lineHeight: font13.lineHeight,
                                 }}
                               >
                                 <span
@@ -4972,9 +4948,8 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   position: "absolute",
                                   bottom: "30px",
                                   width: "81.5%",
-                                  fontSize: "15px",
-                                  fontWeight: "400",
-                                  lineHeight: "20px",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                   color:
                                     themeName === "dark-theme"
                                       ? "#71767A                                  "
@@ -5051,7 +5026,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                   <svg
                     style={{
                       border: "none",
-                      fontSize: "15px",
+
                       margin: "5px",
                     }}
                     onClick={handleCloseLoginModal}
@@ -5094,60 +5069,19 @@ function CommentModal({
   isCutePopoverOnRightSide,
 }) {
   const { getToken, userInfo } = useContext(UserContext);
-  const [subscription, setSubscription] = useState(null);
-  const getSubscription = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/subscription`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      });
-
-      setSubscription(
-        response.data.activeSubscription[0]
-          ? response.data.activeSubscription[0]
-          : response.data.activeCancelledSubscription[0]
-      );
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-  const [remainingTimeSubscriptions, setRemainingTimeSubscriptions] = useState(
-    []
-  );
-  const [
+  const {
+    subscription,
+    remainingTimeSubscriptions,
     remainingTimeSubscriptionsOwnerIds,
-    setRemainingTimeSubscriptionsOwnerIds,
-  ] = useState([]);
-  const getRemainingTimeSubscriptions = async () => {
-    try {
-      const response = await axios.get(
-        `${API_URL}/remaining_time_subscriptions`,
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      );
-
-      setRemainingTimeSubscriptions(response.data.remainingTimeSubscriptions);
-
-      setRemainingTimeSubscriptionsOwnerIds(
-        response.data.remainingTimeSubscriptions.map((eachSub) => {
-          return eachSub.owner;
-        })
-      );
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-  useEffect(() => {
-    getSubscription();
-    getRemainingTimeSubscriptions();
-  }, []);
+  } = useContext(SubcsriptionStatusContext);
   const [show, setShow] = useState(false);
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
+
+  const { getFontSizeAndLineHeight26, getFontSizeAndLineHeight15 } =
+    useFontSizeHandler();
+  const font15 = getFontSizeAndLineHeight15();
+  const font26 = getFontSizeAndLineHeight26();
 
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [showEmojisBar, setshowEmojisBar] = useState("hide");
@@ -5332,7 +5266,8 @@ function CommentModal({
   }, []);
 
   const [commentIconHovered, setCommentIconHovered] = useState(null);
-
+  const { getFontSizeAndLineHeight13 } = useFontSizeHandler();
+  const font13 = getFontSizeAndLineHeight13();
   return (
     <>
       <div
@@ -5365,12 +5300,11 @@ function CommentModal({
             onMouseLeave={() => setCommentIconHovered(false)}
           >
             <svg
-              style={{}}
               width={isCutePopoverOnRightSide ? "1em" : width}
               height={isCutePopoverOnRightSide ? "1em" : width}
               viewBox="0 0 24 24"
               aria-hidden="true"
-              className="bi bi-chat r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
               fill={
                 themeName === "dark-theme" && !commentIconHovered
                   ? "#71767A"
@@ -5399,7 +5333,7 @@ function CommentModal({
             </svg>
           </span>
           <span
-            className="post-description"
+            className={"post-description chirp-regular-font"}
             style={{
               color: isImagePostDetail
                 ? "white"
@@ -5414,7 +5348,8 @@ function CommentModal({
                 : null,
               position: "relative",
               bottom: isCutePopoverOnRightSide ? "4px" : "5px",
-              fontSize: isCutePopoverOnRightSide ? "12px" : null,
+              fontSize: isCutePopoverOnRightSide ? "12px" : font13.fontSize,
+              lineHeight: isCutePopoverOnRightSide ? "14px" : font13.lineHeight,
             }}
           >
             {post?.comments && post?.comments.length ? (
@@ -5455,11 +5390,10 @@ function CommentModal({
               : null
           }
           style={{
-            display:
+            visibility:
               postSharingStartedActivateAnimate || postSharingPausedAnimate
                 ? ""
-                : "none",
-            position: "absolute",
+                : "hidden",
             border: "2px solid #1C9BEF",
             height: "0.2rem",
             top: "0px",
@@ -5472,6 +5406,16 @@ function CommentModal({
           style={{
             cursor: "pointer",
             padding: "12px",
+            width: "100%",
+            zIndex: 99999,
+            height: "53px",
+            position: "sticky",
+            top: "0px",
+            backgroundColor:
+              themeName === "dark-theme"
+                ? "rgba(0, 0, 0, 0.65)"
+                : "rgba(255, 255, 255, 0.85)",
+            backdropFilter: "blur(12px)",
           }}
         >
           <div
@@ -5488,7 +5432,6 @@ function CommentModal({
             <svg
               style={{
                 border: "none",
-                fontSize: "15px",
                 margin: "5px",
               }}
               onClick={handleClose}
@@ -5508,12 +5451,12 @@ function CommentModal({
         </div>
         {/* start to check twitterdaki gibi post içeriği gelecek body içerisine  */}
         <Modal.Body
-          className="mt-3"
           style={{
             padding: "0px",
             margin: "0px",
-            overflowX: "hidden",
             zIndex: 9999,
+            marginTop: "12px",
+            overflowX: "hidden",
           }}
         >
           <Container
@@ -5672,9 +5615,8 @@ function CommentModal({
                         <span
                           className="hover-fullname chirp-bold-font"
                           style={{
-                            fontWeight: "700",
-                            fontSize: "15px",
-                            lineHeight: "20px",
+                            fontSize: font15.fontSize,
+                            lineHeight: font15.lineHeight,
                             color: themeName === "dark-theme" ? "white" : "",
                           }}
                         >
@@ -5716,22 +5658,21 @@ function CommentModal({
                               themeName === "dark-theme"
                                 ? "#71767A"
                                 : "rgb(83, 100, 113)",
-                            lineHeight: "20px",
-                            fontSize: "15px",
-                            fontWeight: "400",
+                            fontSize: font15.fontSize,
+                            lineHeight: font15.lineHeight,
                           }}
                         >
                           @{post.authorUserName}
                         </span>
                         <span
+                          className="chirp-regular-font"
                           style={{
                             color:
                               themeName === "dark-theme"
                                 ? "#71767A"
                                 : "rgb(83, 100, 113)",
-                            lineHeight: "20px",
-                            fontSize: "15px",
-                            fontWeight: "400",
+                            fontSize: font15.fontSize,
+                            lineHeight: font15.lineHeight,
                           }}
                         >
                           {" "}
@@ -5747,18 +5688,15 @@ function CommentModal({
 
                   <div
                     style={{
-                      fontSize: "17px",
-                      fontWeight: "400",
-                      lineHeight: "24px",
                       overflowWrap: "break-word",
-                      maxWidth: "100%",
+                      maxWidth: "350px",
                     }}
                   >
                     <div
+                      className="chirp-regular-font"
                       style={{
-                        fontSize: "15px",
-                        fontWeight: "400",
-                        lineHeight: "20px",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                         color: themeName === "dark-theme" ? "white" : "black",
                       }}
                     >
@@ -5766,7 +5704,14 @@ function CommentModal({
                       {post?.image ? (
                         <>
                           {post.image.url.slice(0, 3) !== "ima" ? (
-                            <div>{post.image.url}</div>
+                            <div
+                              style={{
+                                overflowWrap: "break-word",
+                                maxWidth: "fit-content",
+                              }}
+                            >
+                              {post.image.url}
+                            </div>
                           ) : null}
                         </>
                       ) : null}
@@ -5788,9 +5733,8 @@ function CommentModal({
                                     themeName === "dark-theme"
                                       ? "#71767A"
                                       : "rgb(83, 100, 113)",
-                                  fontSize: "15px",
-                                  fontWeight: "400",
-                                  lineHeight: "20px",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                 }}
                               >
                                 Replying to
@@ -5800,31 +5744,30 @@ function CommentModal({
                                 className="chirp-regular-font"
                                 style={{
                                   color: "rgb(29, 155, 240)",
-                                  fontSize: "15px",
-                                  fontWeight: "400",
-                                  lineHeight: "20px",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                   marginLeft: "3px",
                                 }}
                               >
                                 @{post.authorUserName}
                               </span>
                               <span
+                                className="chirp-regular-font"
                                 style={{
                                   color: "rgb(29, 155, 240)",
-                                  fontSize: "15px",
-                                  fontWeight: "400",
-                                  lineHeight: "20px",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                   marginLeft: "3px",
                                 }}
                               >
                                 and
                               </span>
                               <span
+                                className="chirp-regular-font"
                                 style={{
                                   color: "rgb(29, 155, 240)",
-                                  fontSize: "15px",
-                                  fontWeight: "400",
-                                  lineHeight: "20px",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                   marginLeft: "3px",
                                 }}
                               >
@@ -5847,9 +5790,8 @@ function CommentModal({
                                       themeName === "dark-theme"
                                         ? "#71767A"
                                         : "rgb(83, 100, 113)",
-                                    fontSize: "15px",
-                                    fontWeight: "400",
-                                    lineHeight: "20px",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
                                   }}
                                 >
                                   Replying to
@@ -5859,9 +5801,8 @@ function CommentModal({
                                   className="chirp-regular-font"
                                   style={{
                                     color: "rgb(29, 155, 240)",
-                                    fontSize: "15px",
-                                    fontWeight: "400",
-                                    lineHeight: "20px",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
                                     marginLeft: "3px",
                                   }}
                                 >
@@ -6014,33 +5955,39 @@ function CommentModal({
               {modalImage && (
                 <div style={{ position: "relative" }}>
                   <div
-                    className="target"
+                    className="close-image-button"
                     style={{
-                      position: "absolute",
-                      top: "10px",
-                      right: "10px",
-                      width: "30px",
-                      height: "30px",
-                      borderRadius: "50%",
-                      background: "rgba(71,73,74,255)",
+                      width: "36px",
+                      height: "36px",
+                      backgroundColor: "#4B4F52",
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
+                      borderRadius: "50%",
                       cursor: "pointer",
+                      position: "absolute",
+                      right: "5px",
+                      top: "5px",
                     }}
-                    onMouseOver={(e) => handleMouseOver(e)}
-                    onMouseOut={(e) => handleMouseOut(e)}
                     onClick={closeImage}
                   >
-                    <div
+                    <svg
                       style={{
-                        cursor: "pointer",
-                        color: "white",
-                        fontSize: "22px",
+                        border: "none",
+                        margin: "5px",
                       }}
+                      width={20}
+                      height={20}
+                      color={"white"}
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
                     >
-                      &times;
-                    </div>
+                      <g>
+                        <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                      </g>
+                    </svg>{" "}
                   </div>
                   <img
                     className="img-fluid"
@@ -6048,8 +5995,7 @@ function CommentModal({
                       width: "100%",
                       display: "block",
                       overflow: "hidden",
-                      border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
-                      borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
+                      borderRadius: "16px", // Kenarlık köşelerinin yuvarlatılması
                       boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
                     }}
                     src={modalImage ? modalImage : ""}
@@ -6066,7 +6012,16 @@ function CommentModal({
             paddingBottom: "0px",
             paddingTop: "0px",
             margin: "0px",
+            position: "sticky",
+            bottom: "-0.5px",
+            zIndex: 9999,
+            backgroundColor: themeName === "dark-theme" ? "black" : "white",
             border: "none",
+            borderTop:
+              themeName !== "dark-theme"
+                ? "1px solid rgba(0, 0, 0, 0.1)"
+                : // : "0.1px solid rgb(70, 70, 70)",
+                  "1px solid rgb(47, 51, 54)",
           }}
         >
           <Stack direction="horizontal" gap={0}>
@@ -6222,6 +6177,9 @@ function CommentModal({
                 <Button
                   style={{
                     border: "none",
+                    cursor: "default",
+                    maxHeight: "36px",
+                    maxWidth: "66px",
                   }}
                   variant="primary"
                   onClick={() =>
@@ -6242,6 +6200,8 @@ function CommentModal({
                   style={{
                     border: "none",
                     cursor: "default",
+                    maxHeight: "36px",
+                    maxWidth: "66px",
                   }}
                   variant="primary"
                   className={`emptyContent post-btn compose-tweet-textArea chirp-bold-font blue-btn-disabled`}

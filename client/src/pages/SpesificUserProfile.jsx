@@ -25,6 +25,8 @@ import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
 import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
 import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
 import BookmarkAction from "../components/ui/BookmarkAction";
+import { SubcsriptionStatusContext } from "../context/SubscriptionStatusContext";
+import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 
 function SpesificUserProfile({ isNewPostShared }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
@@ -32,67 +34,11 @@ function SpesificUserProfile({ isNewPostShared }) {
     "Is new post shared spesific user profile page =>",
     isNewPostShared
   );
-  const [subscription, setSubscription] = useState(null);
-
-  const getSubscription = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/subscription`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      });
-
-      console.log(
-        "response data detail =>",
-        response.data.activeSubscription[0]
-      );
-      console.log(
-        "response data detail 2 =>",
-        response.data.activeCancelledSubscription[0]
-      );
-
-      setSubscription(
-        response.data.activeSubscription[0]
-          ? response.data.activeSubscription[0]
-          : response.data.activeCancelledSubscription[0]
-      );
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-  const [remainingTimeSubscriptions, setRemainingTimeSubscriptions] = useState(
-    []
-  );
-  const [
+  const {
+    subscription,
+    remainingTimeSubscriptions,
     remainingTimeSubscriptionsOwnerIds,
-    setRemainingTimeSubscriptionsOwnerIds,
-  ] = useState([]);
-  const getRemainingTimeSubscriptions = async () => {
-    try {
-      const response = await axios.get(
-        `${API_URL}/remaining_time_subscriptions`,
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      );
-
-      setRemainingTimeSubscriptions(response.data.remainingTimeSubscriptions);
-
-      setRemainingTimeSubscriptionsOwnerIds(
-        response.data.remainingTimeSubscriptions.map((eachSub) => {
-          return eachSub.owner;
-        })
-      );
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-  useEffect(() => {
-    getSubscription();
-    getRemainingTimeSubscriptions();
-  }, []);
+  } = useContext(SubcsriptionStatusContext);
   const extraDetailedDate = (dateStr) => {
     const date = new Date(dateStr);
 
@@ -335,50 +281,8 @@ function SpesificUserProfile({ isNewPostShared }) {
 
   // start to check
   // NOTE must sorted
-  const handleShowSpesificUserProfilePagePosts = () => {
-    axios
-      .get(`${API_URL}/profile/${id}`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        console.log(
-          "After opening spesific user profile page response =>",
-          response
-        );
-
-        setprofileInfoPosts(response.data.posts);
-        setPostWindow("");
-        setFavoriteWindow("hide");
-        setProfileInfo(response.data);
-      })
-
-      .catch((err) => {
-        return err;
-      });
-  };
 
   console.log("Show profile info posts =>", profileInfoPosts);
-
-  const handleShowSpesificUserProfilePageFavorites = () => {
-    axios
-      .get(`${API_URL}/profile/${id}`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        console.log("Spesific user profile page response likes =>", response);
-        setFavoriteWindow("");
-        setPostWindow("hide");
-        setFavorites(response.data.favorites);
-        setProfileInfo(response.data);
-      })
-      .catch((err) => {
-        return err;
-      });
-  };
 
   console.log("User rendered favorites =>", favorites);
 
@@ -569,6 +473,73 @@ function SpesificUserProfile({ isNewPostShared }) {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [headerPosition]);
+
+  const [hoveredTab, setHoveredTab] = useState(null);
+  const [activeTab, setActiveTab] = useState("forYou");
+  const handleHover = (tab) => {
+    setHoveredTab(tab);
+  };
+
+  const handleLeave = () => {
+    setHoveredTab(null);
+  };
+  const handleShowSpesificUserProfilePageFavorites = () => {
+    setActiveTab("likes");
+    axios
+      .get(`${API_URL}/profile/${id}`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        console.log("Spesific user profile page response likes =>", response);
+        setFavoriteWindow("");
+        setPostWindow("hide");
+        setFavorites(response.data.favorites);
+        setProfileInfo(response.data);
+      })
+      .catch((err) => {
+        return err;
+      });
+  };
+  const handleShowSpesificUserProfilePagePosts = () => {
+    setActiveTab("posts");
+    axios
+      .get(`${API_URL}/profile/${id}`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        console.log(
+          "After opening spesific user profile page response =>",
+          response
+        );
+
+        setprofileInfoPosts(response.data.posts);
+        setPostWindow("");
+        setFavoriteWindow("hide");
+        setProfileInfo(response.data);
+      })
+
+      .catch((err) => {
+        return err;
+      });
+  };
+  const {
+    getFontSizeAndLineHeight31,
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight14,
+    getFontSizeAndLineHeight13,
+    getFontSizeAndLineHeight11,
+  } = useFontSizeHandler();
+  const font31 = getFontSizeAndLineHeight31();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font14 = getFontSizeAndLineHeight14();
+  const font13 = getFontSizeAndLineHeight13();
+  const font11 = getFontSizeAndLineHeight11();
   return (
     <>
       {contextHolder}
@@ -630,9 +601,14 @@ function SpesificUserProfile({ isNewPostShared }) {
             position: width > 500 && "sticky",
             top: width > 500 && "0px",
             width: width > 500 && "100%",
-            backgroundColor: width > 500 && "transparent",
+            backgroundColor:
+              width > 500 && themeName === "dark-theme"
+                ? "rgba(0, 0, 0, 0.65)"
+                : width > 500 && themeName === "light-theme"
+                ? "rgba(255, 255, 255, 0.85)"
+                : null,
             backdropFilter: width > 500 && "blur(12px)",
-            zIndex: width > 500 && 99999,
+            zIndex: width > 500 && 1,
           }}
           direction="horizontal"
           gap={0}
@@ -672,8 +648,8 @@ function SpesificUserProfile({ isNewPostShared }) {
                 : "very-dark-gray-light-theme-text-variant-1 p-2 chirp-bold-font"
             }
             style={{
-              fontSize: "20px",
-              lineHeight: "24px",
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
             }}
           >
             <div
@@ -736,8 +712,10 @@ function SpesificUserProfile({ isNewPostShared }) {
                     themeName === "dark-theme"
                       ? "#71767A"
                       : "rgb(83, 100, 113)",
+                  fontSize: font13.fontSize,
+                  lineHeight: font13.lineHeight,
                 }}
-                className="profile-paragraph"
+                className="profile-paragraph chirp-regular-font"
               >
                 {profileInfo.posts.length} posts
               </div>
@@ -882,14 +860,14 @@ function SpesificUserProfile({ isNewPostShared }) {
               </div>
               {/* finish to check redirect to the messages  */}
               <Button
+                className="chirp-bold-font"
                 onClick={() => handleFollow(profileInfo)}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 style={{
                   transitionDuration: "0.2s",
-                  fontSize: "15px",
-                  lineHeight: "20px",
-                  fontWeight: "700",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                   display: "inline",
                   maxWidth: "107px",
 
@@ -957,7 +935,7 @@ function SpesificUserProfile({ isNewPostShared }) {
           >
             <div
               style={{
-                fontSize: "20px",
+                fontSize: font20.fontSize,
               }}
               className={
                 themeName === "dark-theme"
@@ -1003,8 +981,8 @@ function SpesificUserProfile({ isNewPostShared }) {
           </div>
           <div
             style={{
-              fontSize: "15px",
-              lineHeight: "20px",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
             }}
             className={
               themeName === "dark-theme"
@@ -1022,6 +1000,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                 ) ? (
                   <>
                     <span
+                      className="chirp-medium-font"
                       style={{
                         backgroundColor:
                           themeName === "dark-theme"
@@ -1034,9 +1013,8 @@ function SpesificUserProfile({ isNewPostShared }) {
                             : "rgb(83, 100, 113)",
 
                         marginLeft: "4px",
-                        fontWeight: "500",
-                        lineHeight: "12px",
-                        fontSize: "11px",
+                        fontSize: font11.fontSize,
+                        lineHeight: font11.lineHeight,
                         paddingLeft: "4px",
                         paddingRight: "4px",
                         paddingBottom: "2px",
@@ -1083,14 +1061,14 @@ function SpesificUserProfile({ isNewPostShared }) {
                 </g>
               </svg>
               <span
+                className="chirp-regular-font"
                 style={{
                   color:
                     themeName === "dark-theme"
                       ? "#71767A"
                       : "rgb(83, 100, 113)",
-                  fontSize: "15px",
-                  lineHeight: "12px",
-                  fontWeight: "400",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
               >
                 Joined{" "}
@@ -1112,14 +1090,13 @@ function SpesificUserProfile({ isNewPostShared }) {
                 textDecoration: "none",
                 color: themeName === "dark-theme" ? "white" : "black",
               }}
-              className="following-followers-link"
+              className="following-followers-link chirp-bold-font"
             >
               <span
                 style={{
                   cursor: "pointer",
-                  fontSize: "14px",
-                  lineHeight: "16px",
-                  fontWeight: "700",
+                  fontSize: font14.fontSize,
+                  lineHeight: font14.lineHeight,
                 }}
               >
                 {profileInfo.following && (
@@ -1127,15 +1104,15 @@ function SpesificUserProfile({ isNewPostShared }) {
                 )}
               </span>{" "}
               <span
+                className="chirp-regular-font"
                 style={{
                   cursor: "pointer",
                   color:
                     themeName === "dark-theme"
                       ? "#71767A"
                       : "rgb(83, 100, 113)",
-                  fontSize: "14px",
-                  lineHeight: "16px",
-                  fontWeight: "400",
+                  fontSize: font14.fontSize,
+                  lineHeight: font14.lineHeight,
                 }}
               >
                 Following
@@ -1150,11 +1127,11 @@ function SpesificUserProfile({ isNewPostShared }) {
               className="following-followers-link"
             >
               <span
+                className="chirp-bold-font"
                 style={{
                   cursor: "pointer",
-                  fontSize: "14px",
-                  lineHeight: "16px",
-                  fontWeight: "700",
+                  fontSize: font14.fontSize,
+                  lineHeight: font14.lineHeight,
                 }}
               >
                 {profileInfo.followers && (
@@ -1162,14 +1139,14 @@ function SpesificUserProfile({ isNewPostShared }) {
                 )}
               </span>{" "}
               <span
+                className="chirp-regular-font"
                 style={{
                   color:
                     themeName === "dark-theme"
                       ? "#71767A"
                       : "rgb(83, 100, 113)",
-                  fontSize: "14px",
-                  lineHeight: "16px",
-                  fontWeight: "400",
+                  fontSize: font14.fontSize,
+                  lineHeight: font14.lineHeight,
                 }}
               >
                 <span>
@@ -1187,115 +1164,153 @@ function SpesificUserProfile({ isNewPostShared }) {
         </div>
 
         {/* finish to check responsive error container  */}
-        {/* start */}
+
         <div
-          style={{
-            borderBottom:
-              themeName !== "dark-theme"
-                ? "1px solid rgba(0, 0, 0, 0.1)"
-                : // : "0.1px solid rgb(70, 70, 70)",
-                  "1px solid rgb(70, 70, 70)",
-          }}
-        ></div>
-        <div
-          aria-label="Basic example"
           style={{
             display: "flex",
-            justifyContent: "space-around",
-            width: "100%",
-            height: "40px",
           }}
         >
-          {/* NOTE */}
-          <div
+          <span
+            className={
+              themeName === "dark-theme"
+                ? "hover-effect-dark-theme-pointer-plus chirp-bold-font"
+                : themeName !== "dark-theme"
+                ? "hover-effect-light-theme-pointer-plus"
+                : null
+            }
+            onMouseEnter={() => handleHover("posts")}
+            onMouseLeave={handleLeave}
             onClick={() => handleShowSpesificUserProfilePagePosts()}
             style={{
+              color:
+                activeTab === "posts" && themeName !== "dark-theme"
+                  ? "#0f141a"
+                  : activeTab === "posts" && themeName === "dark-theme"
+                  ? "#e6e9ea"
+                  : themeName === "dark-theme"
+                  ? "#71767A"
+                  : "#526371",
+              fontWeight: activeTab === "posts" ? "700" : "500",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
               cursor: "pointer",
-              width: "50%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              borderRight:
-                themeName !== "dark-theme"
-                  ? "1px solid rgba(0, 0, 0, 0.1)"
-                  : "1px solid rgb(70, 70, 70)",
+              flex: 1,
+              textAlign: "center",
+              transition: "background 0.3s",
+              maxHeight: "inherit",
             }}
           >
+            {/* { color: #e6e9ea !important; }  { color: #0f141a !important; } */}
             <div
               style={{
-                border: "none",
+                display: "inline-flex",
+                padding: "16px 0px 16px 0px",
+                flexDirection: "column",
+                position: "relative",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
-              {favoriteWindow === "" ? (
-                <span
+              <span
+                className={
+                  themeName === "dark-theme" && activeTab === "posts"
+                    ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                    : themeName !== "dark-theme" && activeTab === "posts"
+                    ? "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                    : themeName === "dark-theme" && activeTab !== "posts"
+                    ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                    : themeName !== "dark-theme" && activeTab !== "posts"
+                    ? "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                    : null
+                }
+              >
+                Posts
+              </span>
+              {activeTab === "posts" && (
+                <div
                   style={{
-                    fontWeight: "400",
-                    color:
-                      themeName === "dark-theme"
-                        ? "#71767A"
-                        : "rgb(83, 100, 113)",
+                    backgroundColor: "rgb(29, 155, 240)",
+                    height: "4px",
+                    width: "100%",
+                    minWidth: "56px",
+                    position: "absolute",
+                    bottom: "0px",
+                    borderRadius: "9999px",
                   }}
-                >
-                  Posts
-                </span>
-              ) : (
-                <span
-                  style={{
-                    fontWeight: "700",
-                    color:
-                      themeName === "dark-theme"
-                        ? "white"
-                        : "rgb(29, 155, 240)",
-                  }}
-                >
-                  Posts
-                </span>
+                ></div>
               )}
             </div>
-          </div>
+          </span>
 
-          <div
+          <span
+            className={
+              themeName === "dark-theme"
+                ? "hover-effect-dark-theme-pointer-plus "
+                : themeName !== "dark-theme"
+                ? "hover-effect-light-theme-pointer-plus "
+                : null
+            }
+            onMouseEnter={() => handleHover("likes")}
+            onMouseLeave={handleLeave}
             onClick={() => handleShowSpesificUserProfilePageFavorites()}
             style={{
+              color:
+                activeTab === "likes" && themeName !== "dark-theme"
+                  ? "#0f141a"
+                  : activeTab === "likes" && themeName === "dark-theme"
+                  ? "#e6e9ea"
+                  : themeName === "dark-theme"
+                  ? "#71767A"
+                  : "#526371",
+              fontWeight: activeTab === "likes" ? "700" : "500",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
               cursor: "pointer",
-              width: "50%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
+              flex: 1,
+              textAlign: "center",
+              transition: "background 0.3s",
             }}
           >
             <div
               style={{
-                border: "none",
+                display: "inline-flex",
+                padding: "16px 0px 16px 0px",
+                flexDirection: "column",
+                position: "relative",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
-              {postsWindow === "" ? (
-                <span
+              <span
+                className={
+                  themeName === "dark-theme" && activeTab === "likes"
+                    ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                    : themeName !== "dark-theme" && activeTab === "likes"
+                    ? "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                    : themeName === "dark-theme" && activeTab !== "likes"
+                    ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                    : themeName !== "dark-theme" && activeTab !== "likes"
+                    ? "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                    : null
+                }
+              >
+                Likes
+              </span>{" "}
+              {activeTab === "likes" && (
+                <div
                   style={{
-                    fontWeight: "400",
-                    color:
-                      themeName === "dark-theme"
-                        ? "#71767A"
-                        : "rgb(83, 100, 113)",
+                    backgroundColor: "rgb(29, 155, 240)",
+                    height: "4px",
+                    width: "100%",
+                    minWidth: "56px",
+                    position: "absolute",
+                    bottom: "0px",
+                    borderRadius: "9999px",
                   }}
-                >
-                  Likes
-                </span>
-              ) : (
-                <span
-                  style={{
-                    fontWeight: "700",
-                    color:
-                      themeName === "dark-theme"
-                        ? "white"
-                        : "rgb(29, 155, 240)",
-                  }}
-                >
-                  Likes
-                </span>
+                ></div>
               )}
             </div>
-          </div>
+          </span>
         </div>
         {postsWindow || favoriteWindow ? (
           <div
@@ -1390,9 +1405,8 @@ function SpesificUserProfile({ isNewPostShared }) {
                               <Link
                                 className={`hover-reposted-text hover-reposted-text-${themeName} chirp-bold-font`}
                                 style={{
-                                  fontSize: "13px",
-                                  lineHeight: "16px",
-                                  fontWeight: "700",
+                                  fontSize: font13.fontSize,
+                                  lineHeight: font13.lineHeight,
                                   color:
                                     themeName === "dark-theme"
                                       ? "#71767A"
@@ -1443,11 +1457,10 @@ function SpesificUserProfile({ isNewPostShared }) {
                                 </g>
                               </svg>
                               <Link
-                                className={`hover-reposted-text hover-reposted-text-${themeName}`}
+                                className={`hover-reposted-text hover-reposted-text-${themeName} chirp-bold-font`}
                                 style={{
-                                  fontSize: "13px",
-                                  lineHeight: "16px",
-                                  fontWeight: "700",
+                                  fontSize: font13.fontSize,
+                                  lineHeight: font13.lineHeight,
                                   color:
                                     themeName === "dark-theme"
                                       ? "#71767A"
@@ -1549,9 +1562,8 @@ function SpesificUserProfile({ isNewPostShared }) {
                                   <span
                                     className="hover-fullname chirp-bold-font"
                                     style={{
-                                      fontWeight: "700",
-                                      fontSize: "15px",
-                                      lineHeight: "20px",
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                       color:
                                         themeName === "dark-theme"
                                           ? "white"
@@ -1593,6 +1605,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                                   <span> </span>
                                 )}
                                 <Link
+                                  className="chirp-regular-font"
                                   to={`/profile/${post.userId._id}`}
                                   style={{
                                     textDecoration: "none",
@@ -1600,9 +1613,8 @@ function SpesificUserProfile({ isNewPostShared }) {
                                       themeName === "dark-theme"
                                         ? "#71767A"
                                         : "rgb(83, 100, 113)",
-                                    lineHeight: "20px",
-                                    fontSize: "15px",
-                                    fontWeight: "400",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
                                   }}
                                 >
                                   <span className="chirp-regular-font">
@@ -1621,14 +1633,14 @@ function SpesificUserProfile({ isNewPostShared }) {
                                   }`}
                                 >
                                   <span
+                                    className="chirp-regular-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
                                           : "rgb(83, 100, 113)",
-                                      lineHeight: "20px",
-                                      fontSize: "15px",
-                                      fontWeight: "400",
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                     }}
                                   >
                                     {" "}
@@ -1698,9 +1710,8 @@ function SpesificUserProfile({ isNewPostShared }) {
                                     themeName === "dark-theme"
                                       ? "#71767A"
                                       : "rgb(83, 100, 113)",
-                                  fontSize: "15px",
-                                  lineHeight: "20px",
-                                  fontWeight: "400",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                 }}
                               >
                                 Replying to {""}
@@ -1712,13 +1723,12 @@ function SpesificUserProfile({ isNewPostShared }) {
                                 }}
                               >
                                 <span
-                                  className="replying-to-text"
+                                  className="replying-to-text chirp-regular-font"
                                   style={{
                                     color: "rgb(29, 155, 240)",
                                     cursor: "pointer",
-                                    fontSize: "15px",
-                                    lineHeight: "20px",
-                                    fontWeight: "400",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
                                   }}
                                 >
                                   @{post.commentedForThisUsersPost.username}
@@ -1739,9 +1749,8 @@ function SpesificUserProfile({ isNewPostShared }) {
                           >
                             <div
                               style={{
-                                fontSize: "15px",
-                                fontWeight: "400",
-                                lineHeight: "20px",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                                 overflowWrap: "break-word",
                                 maxWidth: "100%",
                                 cursor: "pointer",
@@ -1911,8 +1920,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                           width: "100%",
                           textAlign: "center",
                           color: "rgb(29, 155, 240)",
-                          fontSize: "15px",
-                          fontWeight: "400",
+                          fontSize: font15.fontSize,
                           lineHeight: "24px",
                           cursor: "pointer",
                           backgroundColor: "transparent",
@@ -1939,9 +1947,8 @@ function SpesificUserProfile({ isNewPostShared }) {
                 <div
                   className="chirp-heavy-font"
                   style={{
-                    lineHeight: "36px",
-                    fontSize: "31px",
-                    fontWeight: "800",
+                    fontSize: font31.fontSize,
+                    lineHeight: font31.lineHeight,
                     margin: "10px",
                   }}
                 >
@@ -1959,9 +1966,8 @@ function SpesificUserProfile({ isNewPostShared }) {
                       themeName === "dark-theme"
                         ? "#71767A"
                         : "rgb(83, 100, 113)",
-                    lineHeight: "20px",
-                    fontSize: "15px",
-                    fontWeight: "400",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                     margin: "10px",
                   }}
                 >
@@ -2093,9 +2099,8 @@ function SpesificUserProfile({ isNewPostShared }) {
                                       <span
                                         className="hover-fullname chirp-bold-font"
                                         style={{
-                                          fontWeight: "700",
-                                          fontSize: "15px",
-                                          lineHeight: "20px",
+                                          fontSize: font15.fontSize,
+                                          lineHeight: font15.lineHeight,
                                           color:
                                             themeName === "dark-theme"
                                               ? "white"
@@ -2138,6 +2143,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                                       <span> </span>
                                     )}
                                     <Link
+                                      className="chirp-regular-font"
                                       to={`/profile/${favorite.userId._id}`}
                                       style={{
                                         textDecoration: "none",
@@ -2145,9 +2151,8 @@ function SpesificUserProfile({ isNewPostShared }) {
                                           themeName === "dark-theme"
                                             ? "#71767A"
                                             : "rgb(83, 100, 113)",
-                                        lineHeight: "20px",
-                                        fontSize: "15px",
-                                        fontWeight: "400",
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
                                       }}
                                     >
                                       <span className="chirp-regular-font">
@@ -2175,9 +2180,8 @@ function SpesificUserProfile({ isNewPostShared }) {
                                             themeName === "dark-theme"
                                               ? "#71767A"
                                               : "rgb(83, 100, 113)",
-                                          lineHeight: "20px",
-                                          fontSize: "15px",
-                                          fontWeight: "400",
+                                          fontSize: font15.fontSize,
+                                          lineHeight: font15.lineHeight,
                                         }}
                                       >
                                         {" "}
@@ -2245,9 +2249,8 @@ function SpesificUserProfile({ isNewPostShared }) {
                             >
                               <div
                                 style={{
-                                  fontSize: "15px",
-                                  fontWeight: "400",
-                                  lineHeight: "20px",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                   overflowWrap: "break-word",
                                   maxWidth: "100%",
                                   color:
@@ -2431,8 +2434,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                           width: "100%",
                           textAlign: "center",
                           color: "rgb(29, 155, 240)",
-                          fontSize: "15px",
-                          fontWeight: "400",
+                          fontSize: font15.fontSize,
                           lineHeight: "24px",
                           cursor: "pointer",
                           backgroundColor: "transparent",
@@ -2459,9 +2461,8 @@ function SpesificUserProfile({ isNewPostShared }) {
                 <div
                   className="chirp-heavy-font"
                   style={{
-                    lineHeight: "36px",
-                    fontSize: "31px",
-                    fontWeight: "800",
+                    fontSize: font31.fontSize,
+                    lineHeight: font31.lineHeight,
                     margin: "10px",
                   }}
                 >
@@ -2480,8 +2481,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                         ? "#71767A"
                         : "rgb(83, 100, 113)",
                     lineHeight: "20px",
-                    fontSize: "15px",
-                    fontWeight: "400",
+                    fontSize: font15.fontSize,
                     margin: "10px",
                   }}
                 >

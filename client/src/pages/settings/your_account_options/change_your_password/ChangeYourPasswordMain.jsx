@@ -8,6 +8,7 @@ import { FormControl, InputLabel, OutlinedInput } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../../context/UserContext";
+import { useFontSizeHandler } from "../../../../utils/useFontSizeHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -137,7 +138,14 @@ function ChangeYourPasswordMain() {
       seterrorInputStyle4(false);
     }
   };
-
+  const {
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
   return (
     <>
       {contextHolder}
@@ -207,6 +215,10 @@ function ChangeYourPasswordMain() {
             </svg>
           </div>
           <div
+            style={{
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
+            }}
             className={
               themeName === "dark-theme"
                 ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
@@ -275,14 +287,13 @@ function ChangeYourPasswordMain() {
           {errorInputStyle3 ? (
             <>
               <div
-                className="mt-1"
+                className="mt-1 chirp-regular-font"
                 style={{
                   display: "inline-block",
                   color: "rgba(244,39,49,255)",
                   textAlign: "left",
-                  fontSize: "13px",
-                  lineHeight: "16px",
-                  fontWeight: "400",
+                  fontSize: font13.fontSize,
+                  lineHeight: font13.lineHeight,
                   width: "92%",
                   position: "relative",
                   left: "5px",
@@ -300,7 +311,7 @@ function ChangeYourPasswordMain() {
             </>
           ) : null}{" "}
           <div
-            className="mt-1"
+            className="mt-1 chirp-regular-font"
             onClick={() => {
               navigate("/account/send_password_reset");
             }}
@@ -308,9 +319,8 @@ function ChangeYourPasswordMain() {
               display: !errorInputStyle3 ? "inline-block" : "none",
               color: "rgb(29, 155, 240)",
               textAlign: "left",
-              fontSize: "13px",
-              lineHeight: "16px",
-              fontWeight: "400",
+              fontSize: font13.fontSize,
+              lineHeight: font13.lineHeight,
               width: "92%",
               position: "relative",
             }}
@@ -404,14 +414,13 @@ function ChangeYourPasswordMain() {
           {errorInputStyle4 ? (
             <>
               <div
-                className="mt-1"
+                className="mt-1 chirp-regular-font"
                 style={{
                   display: "inline-block",
                   color: "rgba(244,39,49,255)",
                   textAlign: "left",
-                  fontSize: "13px",
-                  lineHeight: "16px",
-                  fontWeight: "400",
+                  fontSize: font13.fontSize,
+                  lineHeight: font13.lineHeight,
                   width: "92%",
                   position: "relative",
                   left: "5px",
@@ -431,14 +440,13 @@ function ChangeYourPasswordMain() {
           {errorInputStyle2 ? (
             <>
               <div
-                className="mt-1"
+                className="mt-1 chirp-regular-font"
                 style={{
                   display: "inline-block",
                   color: "rgba(244,39,49,255)",
                   textAlign: "left",
-                  fontSize: "13px",
-                  lineHeight: "16px",
-                  fontWeight: "400",
+                  fontSize: font13.fontSize,
+                  lineHeight: font13.lineHeight,
                   width: "92%",
                   position: "relative",
                   left: "5px",
@@ -511,14 +519,13 @@ function ChangeYourPasswordMain() {
           {errorInputStyle ? (
             <>
               <div
-                className="mt-1"
+                className="mt-1 chirp-regular-font"
                 style={{
                   display: "inline-block",
                   color: "rgba(244,39,49,255)",
                   textAlign: "left",
-                  fontSize: "13px",
-                  lineHeight: "16px",
-                  fontWeight: "400",
+                  fontSize: font13.fontSize,
+                  lineHeight: font13.lineHeight,
                   width: "92%",
                   position: "relative",
                   left: "5px",
@@ -571,7 +578,7 @@ function ChangeYourPasswordMain() {
               maxWidth: "69.17px",
               maxHeight: "36px",
               minHeight: "36px",
-              fontSize: "15px",
+              fontSize: font15.fontSize,
               cursor:
                 oldPassword && newPassword && confirmNewPassword
                   ? "pointer"

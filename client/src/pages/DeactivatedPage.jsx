@@ -16,6 +16,7 @@ import axios from "axios";
 import { Layout, Flex } from "antd";
 import { ThemeContext } from "../context/ThemeContext";
 import useWindowDimensions from "../hooks/getWindowDimensions";
+import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 const { Footer } = Layout;
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -94,156 +95,18 @@ function DeactivatedPage() {
   };
 
   const { width } = useWindowDimensions();
+  const {
+    getFontSizeAndLineHeight23,
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font23 = getFontSizeAndLineHeight23();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
   return (
     <>
-      {/* start to check signup modal  */}
-      <Modal show={show} onHide={handleClose} size="lg" centered={true}>
-        <Modal.Header
-          style={{
-            border: "none",
-          }}
-        >
-          <div
-            onClick={handleClose}
-            className="close-button"
-            style={{
-              borderRadius: "50%",
-              cursor: "pointer",
-            }}
-          >
-            <div>
-              <svg
-                style={{
-                  border: "none",
-                  fontSize: "15px",
-                  margin: "5px",
-                }}
-                onClick={handleClose}
-                width={20}
-                height={20}
-                color="rgb(15,20,25)"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-              >
-                <g>
-                  <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
-                </g>
-              </svg>{" "}
-            </div>
-          </div>
-        </Modal.Header>
-
-        <Modal.Body>
-          <InputGroup className="mb-2">
-            <Form.Control
-              aria-label="Default"
-              aria-describedby="inputGroup-sizing-default"
-              placeholder="Fullname"
-              type="text"
-              value={fullname}
-              onChange={(e) => setFullname(e.target.value)}
-            />
-          </InputGroup>
-          <InputGroup className="mb-2">
-            <Form.Control
-              aria-label="Default"
-              aria-describedby="inputGroup-sizing-default"
-              placeholder="Username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </InputGroup>
-          <InputGroup className="mb-2">
-            <Form.Control
-              aria-label="Default"
-              aria-describedby="inputGroup-sizing-default"
-              placeholder="Email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </InputGroup>
-          <InputGroup className="mb-2">
-            <Form.Control
-              aria-label="Default"
-              aria-describedby="inputGroup-sizing-default"
-              placeholder="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </InputGroup>
-          <div>
-            <Button onClick={() => handleSignUp()} className="create-btn">
-              Create account
-            </Button>
-
-            <p
-              style={{
-                // backgroundColor: "indianred",
-                textAlign: "start",
-              }}
-              className="by-signing"
-            >
-              By signing up, you agree to the{" "}
-              <a href="">
-                {" "}
-                <span style={{ color: " rgb(29, 155, 240)" }}>
-                  Terms of Service{" "}
-                </span>
-              </a>
-              and{" "}
-              <a href="">
-                <span style={{ color: " rgb(29, 155, 240)" }}>
-                  Privacy Policy
-                </span>
-              </a>
-              ,including{" "}
-              <a href="">
-                <span style={{ color: " rgb(29, 155, 240)" }}>Cokkie Use</span>
-              </a>
-              .
-            </p>
-          </div>
-        </Modal.Body>
-        <Modal.Footer
-          style={{
-            border: "none",
-          }}
-        >
-          <div
-            style={{
-              display: " flex",
-              justifyContent: "right",
-            }}
-          >
-            <div
-              style={{
-                fontSize: "13px",
-                lineHeight: "16px",
-                fontWeight: "400",
-                color: "#f7555f",
-              }}
-            >
-              {error ? error + "." : null}
-            </div>
-            <div
-              style={{
-                fontSize: "13px",
-                lineHeight: "16px",
-                fontWeight: "400",
-                color: "rgb(83, 100, 113)",
-              }}
-            >
-              {success ? success + "." : null}
-            </div>
-          </div>
-        </Modal.Footer>
-      </Modal>
-      {/* finish to check signup modal */}
       <Container fluid>
         <Row
           style={{
@@ -309,11 +172,11 @@ function DeactivatedPage() {
                   </svg>
 
                   <span
+                    className="chirp-bold-font"
                     style={{
-                      fontSize: "20px",
-                      fontWeight: "700",
-                      lineHeight: "24px",
                       color: themeName === "dark-theme" ? "white" : "black",
+                      fontSize: font20.fontSize,
+                      lineHeight: font20.lineHeight,
                     }}
                   >
                     Settings
@@ -350,33 +213,30 @@ function DeactivatedPage() {
               }}
             >
               <div
+                className="chirp-bold-font"
                 style={{
                   marginBottom: "15px",
-                  fontWeight: "700",
-                  fontSize: "20px",
-                  lineHeight: "24px",
+                  fontSize: font20.fontSize,
+                  lineHeight: font20.lineHeight,
                 }}
               >
                 Settings
               </div>
               <div
+                className="chirp-bold-font"
                 style={{
                   marginBottom: "15px",
-                  fontWeight: "700",
-                  fontSize: "20px",
-                  lineHeight: "24px",
+                  fontSize: font20.fontSize,
+                  lineHeight: font20.lineHeight,
                 }}
               >
                 Privacy
               </div>
               <div
-                className={`deactivated-info-left-side deactivated-info-left-side-${themeName}`}
-                style={{}}
+                className={`deactivated-info-left-side deactivated-info-left-side-${themeName} chirp-regular-font`}
               >
                 <div
                   style={{
-                    // width: "90%",
-
                     display: "flex",
                   }}
                 >
@@ -385,13 +245,23 @@ function DeactivatedPage() {
                       width: "100%",
                     }}
                   >
-                    <div>Personalization and data</div>
+                    <div
+                      style={{
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
+                      }}
+                    >
+                      Personalization and data
+                    </div>
                     <span
+                      className="chirp-regular-font"
                       style={{
                         color:
                           themeName === "dark-theme"
                             ? "#71767A"
                             : "rgb(83, 100, 113)",
+                        fontSize: font13.fontSize,
+                        lineHeight: font13.lineHeight,
                       }}
                     >
                       Allow some
@@ -458,11 +328,14 @@ function DeactivatedPage() {
                   >
                     <div>Cookie preferences</div>
                     <span
+                      className="chirp-regular-font"
                       style={{
                         color:
                           themeName === "dark-theme"
                             ? "#71767A"
                             : "rgb(83, 100, 113)",
+                        fontSize: font13.fontSize,
+                        lineHeight: font13.lineHeight,
                       }}
                     >
                       Manage your cookie experience on C.
@@ -495,11 +368,10 @@ function DeactivatedPage() {
 
               <div
                 style={{
-                  fontSize: "15px",
-                  lineHeight: "20px",
-                  fontWeight: "400",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
-                className="mt-5"
+                className="mt-5 chirp-regular-font"
               >
                 These settings apply to this browser or device while you’re
                 logged out. They don’t have any effect when you’re logged in.
@@ -516,11 +388,11 @@ function DeactivatedPage() {
             ></div>
 
             <div
+              className="chirp-heavy-font"
               style={{
                 padding: "16px",
-                fontSize: "20px",
-                fontWeight: "800",
-                lineHeight: "24px",
+                fontSize: font20.fontSize,
+                lineHeight: font20.lineHeight,
                 color: themeName === "dark-theme" ? "white" : "black",
               }}
             >
@@ -535,10 +407,10 @@ function DeactivatedPage() {
                 }}
               >
                 <div
+                  className="chirp-regular-font"
                   style={{
-                    fontSize: "15px",
-                    fontWeight: "400",
-                    lineHeight: "20px",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                     color: themeName === "dark-theme" ? "white" : "black",
                   }}
                 >
@@ -582,34 +454,34 @@ function DeactivatedPage() {
               }}
             >
               <div
+                className="chirp-bold-font"
                 style={{
                   marginBottom: "15px",
-                  fontSize: "20px",
-                  fontWeight: "700",
-                  lineHeight: "24px",
+                  fontSize: font20.fontSize,
+                  lineHeight: font20.lineHeight,
                 }}
               >
                 Deactivated
               </div>
               <div
+                className="chirp-heavy-font"
                 style={{
                   marginBottom: "15px",
-                  fontSize: "20px",
-                  fontWeight: "800",
-                  lineHeight: "24px",
+                  fontSize: font20.fontSize,
+                  lineHeight: font20.lineHeight,
                 }}
               >
                 Your account is deactivated
               </div>
               <div
+                className="chirp-regular-font"
                 style={{
                   color:
                     themeName === "dark-theme"
                       ? "#71767A"
                       : "rgb(83, 100, 113)",
-                  fontSize: "13px",
-                  fontWeight: "400",
-                  lineHeight: "16px",
+                  fontSize: font13.fontSize,
+                  lineHeight: font13.lineHeight,
                 }}
               >
                 Sorry to see you go. #GoodBye
@@ -663,19 +535,19 @@ function DeactivatedPage() {
               }}
             >
               <div
+                className="chirp-bold-font"
                 style={{
-                  fontSize: "23px",
-                  fontWeight: "700",
-                  lineHeight: "23px",
+                  fontSize: font23.fontSize,
+                  lineHeight: font23.lineHeight,
                 }}
               >
                 Don’t miss what’s happening
               </div>
               <div
+                className="chirp-regular-font"
                 style={{
-                  fontSize: "15px",
-                  fontWeight: "400",
-                  lineHeight: "20px",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
               >
                 People on Connectify are the first to know.
@@ -689,7 +561,7 @@ function DeactivatedPage() {
             </div>
             <div style={{}} onClick={redirectHomePageToSignUp} className="p-0">
               <Button
-                className="deactivated-footer-signup"
+                className="deactivated-footer-signup chirp-bold-font"
                 style={{
                   cursor: "pointer",
                   maxWidth: width <= 700 ? "200px" : "87px",
@@ -699,9 +571,8 @@ function DeactivatedPage() {
                   paddingLeft: "16px",
                   paddingRight: "16px",
                   borderRadius: "9999px",
-                  lineHeight: "20px",
-                  fontSize: "15px",
-                  fontWeight: "700",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                   padding: "5px",
                   backgroundColor: "#eff3f4",
                   color: "black",

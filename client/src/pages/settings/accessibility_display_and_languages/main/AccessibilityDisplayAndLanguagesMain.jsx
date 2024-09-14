@@ -8,6 +8,7 @@ import { useAntdMessageHandler } from "../../../../utils/useAntdMessageHandler";
 import { UserContext } from "../../../../context/UserContext";
 import { ThemeContext } from "../../../../context/ThemeContext";
 import useWindowDimensions from "../../../../hooks/getWindowDimensions";
+import { useFontSizeHandler } from "../../../../utils/useFontSizeHandler";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -100,7 +101,14 @@ function AccessibilityDisplayAndLanguagesMain() {
   const [isSearchStart, setSearchStart] = useState(null);
 
   const [showNotificationMessage, setShowNotificationMessage] = useState(null);
-
+  const {
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
   return (
     <>
       {!isPostModalVisible && !dataFromCommentModal && (
@@ -152,10 +160,8 @@ function AccessibilityDisplayAndLanguagesMain() {
         }}
       >
         <div
+          className="chirp-bold-font"
           style={{
-            lineHeight: "24px",
-            fontWeight: "700",
-            fontSize: "20px",
             display: "flex",
             justifyContent: "flex-start",
             alignItems: "center",
@@ -201,15 +207,23 @@ function AccessibilityDisplayAndLanguagesMain() {
               </svg>
             </span>
           ) : null}
-          <div className="mt-3">Accessibility, display and languages</div>
+          <div
+            style={{ fontSize: font20.fontSize, lineHeight: font20.lineHeight }}
+            className={
+              themeName === "dark-theme"
+                ? "soft-grey-dark-theme-text-variant-1 mt-3"
+                : "very-dark-gray-light-theme-text-variant-1 mt-3"
+            }
+          >
+            Accessibility, display and languages
+          </div>
         </div>
         <div
-          className="mt-4"
+          className="mt-4 chirp-regular-font"
           style={{
             color: themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
-            fontSize: "13px",
-            lineHeight: "16px",
-            fontWeight: "400",
+            fontSize: font13.fontSize,
+            lineHeight: font13.lineHeight,
             paddingLeft: width <= 500 ? "32px" : "12px",
             paddingRight: width <= 500 ? "32px" : "12px",
           }}
@@ -261,10 +275,14 @@ function AccessibilityDisplayAndLanguagesMain() {
                 }}
               >
                 <div
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-first-exp-dark-theme"
-                      : "settings-text-first-exp-light-theme "
+                      ? "settings-text-first-exp-dark-theme chirp-regular-font"
+                      : "settings-text-first-exp-light-theme chirp-regular-font"
                   }
                 >
                   Accessibility
@@ -272,9 +290,13 @@ function AccessibilityDisplayAndLanguagesMain() {
                 <div
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-dark-theme"
-                      : "settings-text-light-theme"
+                      ? "settings-text-dark-theme chirp-regular-font"
+                      : "settings-text-light-theme chirp-regular-font"
                   }
+                  style={{
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                  }}
                 >
                   Manage aspects of your C experience such as limiting color
                   contrast and motion.
@@ -306,6 +328,7 @@ function AccessibilityDisplayAndLanguagesMain() {
                 ? "has-children-dark-theme"
                 : "has-children-light-theme"
             }
+            onClick={() => navigate("/settings/display")}
           >
             <div
               style={{
@@ -338,10 +361,14 @@ function AccessibilityDisplayAndLanguagesMain() {
                 }}
               >
                 <div
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-first-exp-dark-theme"
-                      : "settings-text-first-exp-light-theme "
+                      ? "settings-text-first-exp-dark-theme chirp-regular-font"
+                      : "settings-text-first-exp-light-theme chirp-regular-font"
                   }
                 >
                   Display
@@ -349,9 +376,13 @@ function AccessibilityDisplayAndLanguagesMain() {
                 <div
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-dark-theme"
-                      : "settings-text-light-theme"
+                      ? "settings-text-dark-theme chirp-regular-font"
+                      : "settings-text-light-theme chirp-regular-font"
                   }
+                  style={{
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                  }}
                 >
                   Manage your font size, color, and background. These settings
                   affect all the C accounts on this browser.
@@ -383,6 +414,7 @@ function AccessibilityDisplayAndLanguagesMain() {
                 ? "has-children-dark-theme"
                 : "has-children-light-theme"
             }
+            onClick={() => navigate("/settings/languages")}
           >
             <div
               style={{
@@ -415,10 +447,14 @@ function AccessibilityDisplayAndLanguagesMain() {
                 }}
               >
                 <div
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-first-exp-dark-theme"
-                      : "settings-text-first-exp-light-theme "
+                      ? "settings-text-first-exp-dark-theme chirp-regular-font"
+                      : "settings-text-first-exp-light-theme chirp-regular-font"
                   }
                 >
                   Languages
@@ -426,9 +462,13 @@ function AccessibilityDisplayAndLanguagesMain() {
                 <div
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-dark-theme"
-                      : "settings-text-light-theme"
+                      ? "settings-text-dark-theme chirp-regular-font"
+                      : "settings-text-light-theme chirp-regular-font"
                   }
+                  style={{
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                  }}
                 >
                   Manage which languages are used to personalize your C
                   experience.
@@ -492,10 +532,14 @@ function AccessibilityDisplayAndLanguagesMain() {
                 }}
               >
                 <div
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-first-exp-dark-theme"
-                      : "settings-text-first-exp-light-theme "
+                      ? "settings-text-first-exp-dark-theme chirp-regular-font"
+                      : "settings-text-first-exp-light-theme chirp-regular-font"
                   }
                 >
                   Data usage
@@ -503,9 +547,13 @@ function AccessibilityDisplayAndLanguagesMain() {
                 <div
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-dark-theme"
-                      : "settings-text-light-theme"
+                      ? "settings-text-dark-theme chirp-regular-font"
+                      : "settings-text-light-theme chirp-regular-font"
                   }
+                  style={{
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                  }}
                 >
                   Limit how C uses some of your network data. These settings
                   affect all the C accounts on this browser.
@@ -569,10 +617,14 @@ function AccessibilityDisplayAndLanguagesMain() {
                 }}
               >
                 <div
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-first-exp-dark-theme"
-                      : "settings-text-first-exp-light-theme "
+                      ? "settings-text-first-exp-dark-theme chirp-regular-font"
+                      : "settings-text-first-exp-light-theme chirp-regular-font"
                   }
                 >
                   Keyboard shortcuts

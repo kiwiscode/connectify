@@ -1,15 +1,17 @@
 import { message } from "antd";
 import { Link } from "react-router-dom";
+import { useFontSizeHandler } from "./useFontSizeHandler";
 
 export const useAntdMessageHandler = () => {
   const [messageApi, contextHolder] = message.useMessage();
-
+  const { getFontSizeAndLineHeight15 } = useFontSizeHandler();
+  const font15 = getFontSizeAndLineHeight15();
   const postSharedMessage = (postOwner, postId) => {
     messageApi.success({
       type: "success",
       content: (
         <div>
-          <span style={{ fontSize: "15px" }}>Your post was sent.</span>
+          <span style={{ fontSize: font15.fontSize }}>Your post was sent.</span>
           <>
             <Link
               className="chirp-bold-font"
@@ -17,8 +19,7 @@ export const useAntdMessageHandler = () => {
               style={{
                 color: "white",
                 marginLeft: "5px",
-                fontWeight: "700",
-                fontSize: "15px",
+                fontSize: font15.fontSize,
               }}
             >
               View
@@ -50,15 +51,15 @@ export const useAntdMessageHandler = () => {
       type: "success",
       content: (
         <div>
-          <span style={{ fontSize: "15px" }}>{customMessage}</span>
+          <span style={{ fontSize: font15.fontSize }}>{customMessage}</span>
           {isBookmarkAddedMessage && (
             <Link
-              className="chirp-bold-message"
+              className="chirp-bold-font"
               style={{
                 color: "white",
                 marginLeft: "15px",
-                fontWeight: "700",
-                fontSize: "15px",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
               }}
             >
               Add to folder

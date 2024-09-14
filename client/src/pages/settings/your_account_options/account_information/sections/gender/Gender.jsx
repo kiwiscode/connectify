@@ -8,6 +8,7 @@ import { UserContext } from "../../../../../../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { InputLabel, TextField } from "@mui/material";
 import axios from "axios";
+import { useFontSizeHandler } from "../../../../../../utils/useFontSizeHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -79,7 +80,14 @@ function Gender() {
       }
     }
   }, []);
-
+  const {
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
   return (
     <>
       {contextHolder}
@@ -150,6 +158,10 @@ function Gender() {
             </svg>
           </div>
           <div
+            style={{
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
+            }}
             className={
               themeName === "dark-theme"
                 ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
@@ -167,8 +179,8 @@ function Gender() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "15px",
-            lineHeight: "20px",
+            fontSize: font15.fontSize,
+            lineHeight: font15.lineHeight,
           }}
         >
           If you haven’t already specified a gender, this is the one associated
@@ -475,9 +487,8 @@ function Gender() {
                     themeName === "dark-theme"
                       ? "#71767A"
                       : "rgb(83, 100, 113)",
-                  fontSize: "13px",
-                  fontWeight: "400",
-                  lineHeight: "16px",
+                  fontSize: font13.fontSize,
+                  lineHeight: font13.lineHeight,
                 }}
               >
                 {addYourGenderFieldValue?.length} / {30}
@@ -549,7 +560,7 @@ function Gender() {
               maxWidth: "69.17px",
               maxHeight: "36px",
               minHeight: "36px",
-              fontSize: "15px",
+              fontSize: font15.fontSize,
               cursor:
                 (wasChosen &&
                   wasChosen !== "Add your gender" &&

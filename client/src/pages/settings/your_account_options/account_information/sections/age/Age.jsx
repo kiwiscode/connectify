@@ -6,6 +6,7 @@ import { useContext } from "react";
 import { ThemeContext } from "../../../../../../context/ThemeContext";
 import { UserContext } from "../../../../../../context/UserContext";
 import { useNavigate } from "react-router-dom";
+import { useFontSizeHandler } from "../../../../../../utils/useFontSizeHandler";
 
 function Age() {
   const { contextHolder } = useAntdMessageHandler;
@@ -13,6 +14,10 @@ function Age() {
   const [{ theme, themeName }] = useContext(ThemeContext);
   const { userInfo } = useContext(UserContext);
   const navigate = useNavigate();
+  const { getFontSizeAndLineHeight20, getFontSizeAndLineHeight15 } =
+    useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
   return (
     <>
       {contextHolder}
@@ -83,6 +88,10 @@ function Age() {
             </svg>
           </div>
           <div
+            style={{
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
+            }}
             className={
               themeName === "dark-theme"
                 ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
@@ -100,8 +109,8 @@ function Age() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "15px",
-            lineHeight: "20px",
+            fontSize: font15.fontSize,
+            lineHeight: font15.lineHeight,
           }}
         >
           These are the age ranges associated with you.
@@ -124,8 +133,8 @@ function Age() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "15px",
-            lineHeight: "20px",
+            fontSize: font15.fontSize,
+            lineHeight: font15.lineHeight,
           }}
         >
           {userInfo.birthDate?.year && (
@@ -150,8 +159,8 @@ function Age() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "15px",
-            lineHeight: "20px",
+            fontSize: font15.fontSize,
+            lineHeight: font15.lineHeight,
           }}
         >
           Not right? You can add your date of birth to your profile without
