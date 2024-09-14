@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../../context/UserContext";
 import { FormControl, InputLabel, OutlinedInput } from "@mui/material";
 import axios from "axios";
+import { useFontSizeHandler } from "../../../../utils/useFontSizeHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -65,6 +66,17 @@ function DeactivateYourAccountMain() {
         }, 200);
       });
   };
+
+  const {
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight14,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font14 = getFontSizeAndLineHeight14();
+  const font13 = getFontSizeAndLineHeight13();
 
   return (
     <>
@@ -205,9 +217,9 @@ function DeactivateYourAccountMain() {
                 }}
               >
                 <div
+                  className="chirp-bold-font"
                   style={{
-                    fontSize: "14px",
-                    fontWeight: "bold",
+                    fontSize: font14.fontSize,
                     lineHeight: "18px",
                   }}
                 >
@@ -216,8 +228,7 @@ function DeactivateYourAccountMain() {
                 <div
                   style={{
                     color: "#657786",
-                    fontSize: "14px",
-
+                    fontSize: font14.fontSize,
                     lineHeight: "18px",
                   }}
                 >
@@ -233,8 +244,8 @@ function DeactivateYourAccountMain() {
             >
               <div
                 style={{
-                  fontSize: "20px",
-                  lineHeight: "24px",
+                  fontSize: font20.fontSize,
+                  lineHeight: font20.lineHeight,
                 }}
                 className={
                   themeName === "dark-theme"
@@ -246,8 +257,8 @@ function DeactivateYourAccountMain() {
               </div>
               <div
                 style={{
-                  fontSize: "13px",
-                  lineHeight: "16px",
+                  fontSize: font13.fontSize,
+                  lineHeight: font13.lineHeight,
                 }}
                 className={
                   themeName === "dark-theme"
@@ -262,8 +273,8 @@ function DeactivateYourAccountMain() {
               </div>
               <div
                 style={{
-                  fontSize: "20px",
-                  lineHeight: "24px",
+                  fontSize: font20.fontSize,
+                  lineHeight: font20.lineHeight,
                 }}
                 className={
                   themeName === "dark-theme"
@@ -275,8 +286,8 @@ function DeactivateYourAccountMain() {
               </div>
               <div
                 style={{
-                  fontSize: "13px",
-                  lineHeight: "16px",
+                  fontSize: font13.fontSize,
+                  lineHeight: font13.lineHeight,
                 }}
                 className={
                   themeName === "dark-theme"
@@ -301,8 +312,8 @@ function DeactivateYourAccountMain() {
             <div
               style={{
                 paddingLeft: "16px",
-                fontSize: "13px",
-                lineHeight: "16px",
+                fontSize: font13.fontSize,
+                lineHeight: font13.lineHeight,
               }}
               className={
                 themeName === "dark-theme"
@@ -327,8 +338,8 @@ function DeactivateYourAccountMain() {
             <div
               style={{
                 paddingLeft: "16px",
-                fontSize: "13px",
-                lineHeight: "16px",
+                fontSize: font13.fontSize,
+                lineHeight: font13.lineHeight,
               }}
               className={
                 themeName === "dark-theme"
@@ -360,8 +371,8 @@ function DeactivateYourAccountMain() {
             <div
               style={{
                 paddingLeft: "16px",
-                fontSize: "13px",
-                lineHeight: "16px",
+                fontSize: font13.fontSize,
+                lineHeight: font13.lineHeight,
               }}
               className={
                 themeName === "dark-theme"
@@ -395,8 +406,8 @@ function DeactivateYourAccountMain() {
             <div
               style={{
                 paddingLeft: "16px",
-                fontSize: "13px",
-                lineHeight: "16px",
+                fontSize: font13.fontSize,
+                lineHeight: font13.lineHeight,
               }}
               className={
                 themeName === "dark-theme"
@@ -437,10 +448,10 @@ function DeactivateYourAccountMain() {
               style={{
                 color: "#F4212D",
                 textAlign: "center",
-                fontSize: "15px",
-                lineHeight: "20px",
                 padding: "16px",
                 cursor: "pointer",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
               }}
             >
               Deactivate
@@ -457,21 +468,19 @@ function DeactivateYourAccountMain() {
               className="mt-4"
             >
               <div
-                className="mt-4"
+                className="mt-4 chirp-heavy-font"
                 style={{
-                  fontSize: "20px",
-                  fontWeight: "800",
-                  lineHeight: "24px",
+                  fontSize: font20.fontSize,
+                  lineHeight: font20.lineHeight,
                 }}
               >
                 Confirm your password
               </div>
               <div
-                className="mt-4"
+                className="mt-4 chirp-regular-font"
                 style={{
-                  fontSize: "13px",
-                  fontWeight: "400",
-                  lineHeight: "16px",
+                  fontSize: font13.fontSize,
+                  lineHeight: font13.lineHeight,
                   color:
                     themeName === "dark-theme"
                       ? "#71767A"
@@ -541,14 +550,13 @@ function DeactivateYourAccountMain() {
                 />
               </FormControl>{" "}
               <div
-                className="mt-1"
+                className="mt-1 chirp-regular-font"
                 style={{
                   display: "inline-block",
                   color: "rgb(29, 155, 240)",
                   textAlign: "left",
-                  fontSize: "13px",
-                  lineHeight: "16px",
-                  fontWeight: "400",
+                  fontSize: font13.fontSize,
+                  lineHeight: font13.lineHeight,
                   width: "92%",
                   position: "relative",
                 }}
@@ -595,11 +603,12 @@ function DeactivateYourAccountMain() {
                   maxWidth: "112.45px",
                   maxHeight: "36px",
                   minHeight: "36px",
-                  fontSize: "15px",
                   cursor: "pointer",
                   backgroundColor: "#F4212D",
                   outlineStyle: "none",
                   outline: "none",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
                 onClick={
                   verifyPasswordInput
@@ -608,7 +617,7 @@ function DeactivateYourAccountMain() {
                       }
                     : null
                 }
-                className="background-hover-effect-red-btn"
+                className="background-hover-effect-red-btn chirp-bold-font"
               >
                 Deactivate
               </Button>

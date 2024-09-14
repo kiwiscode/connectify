@@ -10,6 +10,7 @@ import axios from "axios";
 import { UserContext } from "../../../../../../../context/UserContext";
 import LoadingSpinner from "../../../../../../../components/ui/LoadingSpinner";
 import BootstrapTooltip from "../../../../../../../components/BootstrapToolTip/BootstrapToolTip";
+import { useFontSizeHandler } from "../../../../../../../utils/useFontSizeHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -129,6 +130,19 @@ function ChangeDisplayLanguage() {
     console.log("Hello world we gehts ??");
   };
 
+  const {
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight17,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight14,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font17 = getFontSizeAndLineHeight17();
+  const font15 = getFontSizeAndLineHeight15();
+  const font14 = getFontSizeAndLineHeight14();
+  const font13 = getFontSizeAndLineHeight13();
+
   return (
     <>
       {" "}
@@ -203,6 +217,10 @@ function ChangeDisplayLanguage() {
             </svg>
           </div>
           <div
+            style={{
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
+            }}
             className={
               themeName === "dark-theme"
                 ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
@@ -245,12 +263,11 @@ function ChangeDisplayLanguage() {
               }}
             >
               <div
-                className="main-outline-text-year-picker"
+                className="main-outline-text-year-picker chirp-regular-font"
                 style={{
                   padding: "0px 8px",
-                  fontSize: "14px",
-                  lineHeight: "16px",
-                  fontWeight: "400",
+                  fontSize: font14.fontSize,
+                  lineHeight: font14.lineHeight,
                   color: showPopoverLanguages
                     ? "#1d9bf0"
                     : "rgba(83,100,113,1.00)",
@@ -270,8 +287,8 @@ function ChangeDisplayLanguage() {
                       : "very-dark-gray-light-theme-text-variant-1 mt-2 selected-year-string-parent-div"
                   }
                   style={{
-                    fontSize: "17px",
-                    lineHeight: "20px",
+                    fontSize: font17.fontSize,
+                    lineHeight: font17.lineHeight,
                     color: themeName === "dark-theme" ? "white" : "black",
                   }}
                 >
@@ -348,7 +365,7 @@ function ChangeDisplayLanguage() {
           style={{
             paddingLeft: "24px",
             paddingRight: "24px",
-            fontSize: "13px",
+            fontSize: font13.fontSize,
             lineHeight: "20px",
           }}
         >
@@ -388,7 +405,7 @@ function ChangeDisplayLanguage() {
                 maxWidth: "69.17px",
                 maxHeight: "36px",
                 minHeight: "36px",
-                fontSize: "15px",
+                fontSize: font15.fontSize,
                 cursor:
                   language?.length && language !== userInfo.preferredLanguage
                     ? "default"

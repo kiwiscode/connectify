@@ -16,43 +16,20 @@ export const ThemeContext = createContext();
 export const ThemeProvider = ({ children }) => {
   const [themeName, setThemeName] = useState("light-theme");
 
-  const [activeFontSizeOption, setactiveFontSizeOption] =
-    useState("Default 16px");
-
-  useEffect(() => {
-    const storedFontSize = localStorage.getItem("fontSizeOption");
-    if (storedFontSize) {
-      setactiveFontSizeOption(storedFontSize);
-    }
-  }, []);
-
-  const toggleChangeFontSize = (option) => {
-    console.log("Button clicked, and option : ", option);
-
-    if (option === "Default 16px") {
-      localStorage.setItem("fontSizeOption", "Default 16px");
-      setactiveFontSizeOption("Default 16px");
-    } else if (option === "Extra Small 12px") {
-      localStorage.setItem("fontSizeOption", "Extra Small 12px");
-      setactiveFontSizeOption("Extra Small 12px");
-    } else if (option === "Small 14px") {
-      localStorage.setItem("fontSizeOption", "Small 14px");
-      setactiveFontSizeOption("Small 14px");
-    } else if (option === "Large 18px") {
-      localStorage.setItem("fontSizeOption", "Large 18px");
-      setactiveFontSizeOption("Large 18px");
-    } else if (option === "Extra Large 20px") {
-      localStorage.setItem("fontSizeOption", "Extra Large 20px");
-      setactiveFontSizeOption("Extra Large 20px");
-    }
-  };
-
   useEffect(() => {
     const storedTheme = localStorage.getItem("themeName");
     if (storedTheme) {
       setThemeName(storedTheme);
     }
   }, []);
+
+  useEffect(() => {
+    if (themeName === "dark-theme") {
+      document.documentElement.style.setProperty("color-scheme", "dark");
+    } else {
+      document.documentElement.style.setProperty("color-scheme", "light");
+    }
+  }, [themeName]);
 
   const toggleThemeBetweenLightDarkMode = () => {
     if (themeName === "dark-theme") {
@@ -84,16 +61,14 @@ export const ThemeProvider = ({ children }) => {
     const storedTheme = localStorage.getItem("themeName");
     if (storedTheme) {
       setThemeName(storedTheme);
+    } else {
+      localStorage.setItem("themeName", themeName);
     }
   }, []);
 
   return (
     <ThemeContext.Provider
-      value={[
-        { theme, themeName, activeFontSizeOption },
-        toggleThemeBetweenLightDarkMode,
-        toggleChangeFontSize,
-      ]}
+      value={[{ theme, themeName }, toggleThemeBetweenLightDarkMode]}
     >
       {children}
     </ThemeContext.Provider>

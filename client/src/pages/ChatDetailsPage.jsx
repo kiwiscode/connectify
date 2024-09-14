@@ -8,23 +8,20 @@ import {
   // Popover,
   // OverlayTrigger,
 } from "react-bootstrap";
-
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
-
 import { ThemeContext } from "../context/ThemeContext";
-
 // when working on local version
 const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-
 import io from "socket.io-client";
 import useWindowDimensions from "../hooks/getWindowDimensions";
 import PopupState, { bindPopover, bindTrigger } from "material-ui-popup-state";
 import { Popover } from "@mui/material";
 import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
+import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 const socket = io.connect(API_URL);
 
 function ChatDetailsPage() {
@@ -39,7 +36,14 @@ function ChatDetailsPage() {
   const [disabled, setDisabled] = useState(true);
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [showEmojisBar, setshowEmojisBar] = useState("hide");
-
+  const {
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight14,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font15 = getFontSizeAndLineHeight15();
+  const font14 = getFontSizeAndLineHeight14();
+  const font13 = getFontSizeAndLineHeight13();
   const navigate = useNavigate();
 
   // finish to check shared post view message
@@ -360,7 +364,13 @@ function ChatDetailsPage() {
             width: "inherit",
             maxWidth: "inherit",
             minWidth: "inherit",
-            backgroundColor: "transparent",
+            // for sharp backdrop filter with transparent backgroundcolor start to check
+            // backgroundColor: "transparent",
+            // for sharp backdrop filter with transparent backgroundcolor finish to check
+            backgroundColor:
+              themeName === "dark-theme"
+                ? "rgba(0, 0, 0, 0.65)"
+                : "rgba(255, 255, 255, 0.85)",
             backdropFilter: "blur(12px)",
           }}
         >
@@ -480,7 +490,6 @@ function ChatDetailsPage() {
                 style={{
                   lineHeight: "20px",
                   fontWeight: "700",
-                  fontSize: "17px",
                   color: themeName === "dark-theme" ? "white" : "black",
                 }}
               >
@@ -511,7 +520,6 @@ function ChatDetailsPage() {
                   style={{
                     position: "absolute",
                     border: "none",
-                    fontSize: "15px",
                     bottom: "10px",
                     left: "10px",
                   }}
@@ -630,8 +638,8 @@ function ChatDetailsPage() {
                             : "very-dark-gray-light-theme-text-variant-1 hover-fullname chirp-bold-font"
                         }
                         style={{
-                          lineHeight: "20px",
-                          fontSize: "15px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         {selectedUser[0]?.fullname}
@@ -643,8 +651,8 @@ function ChatDetailsPage() {
                             : "very-dark-gray-light-theme-text-variant-2  chirp-regular-font"
                         }
                         style={{
-                          lineHeight: "20px",
-                          fontSize: "15px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         @{selectedUser[0]?.username}
@@ -656,9 +664,9 @@ function ChatDetailsPage() {
                             : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
                         }
                         style={{
-                          lineHeight: "16px",
                           margin: "15px 0px",
-                          fontSize: "14px",
+                          fontSize: font14.fontSize,
+                          lineHeight: font14.lineHeight,
                         }}
                       >
                         Joined{" "}
@@ -675,8 +683,8 @@ function ChatDetailsPage() {
                                     : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
                                 }
                                 style={{
-                                  lineHeight: "16px",
-                                  fontSize: "14px",
+                                  fontSize: font14.fontSize,
+                                  lineHeight: font14.lineHeight,
                                 }}
                               >
                                 {" "}
@@ -689,8 +697,8 @@ function ChatDetailsPage() {
                                     : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
                                 }
                                 style={{
-                                  lineHeight: "16px",
-                                  fontSize: "14px",
+                                  fontSize: font14.fontSize,
+                                  lineHeight: font14.lineHeight,
                                 }}
                               >
                                 {selectedUser[0].followers.length} follower
@@ -706,8 +714,8 @@ function ChatDetailsPage() {
                             : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
                         }
                         style={{
-                          fontSize: "13px",
-                          lineHeight: "16px",
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
                         }}
                       >
                         Not followed by anyone you&apos;re following =&gt; ??
@@ -737,17 +745,29 @@ function ChatDetailsPage() {
                         style={{}}
                         className={
                           userInfo.username === eachMessage.sender
-                            ? `spesific-room-message-you`
-                            : `spesific-room-message-other spesific-room-message-other-${themeName}`
+                            ? `spesific-room-message-you soft-grey-dark-theme-text-variant-1 `
+                            : userInfo.username !== eachMessage.sender &&
+                              themeName === "dark-theme"
+                            ? `soft-grey-dark-theme-text-variant-1   spesific-room-message-other spesific-room-message-other-${themeName}`
+                            : userInfo.username !== eachMessage.sender &&
+                              themeName !== "dark-theme"
+                            ? `very-dark-gray-light-theme-text-variant-1 spesific-room-message-other spesific-room-message-other-${themeName}`
+                            : null
                         }
                       >
                         <div className="spesific-room-message-container">
-                          <div className="spesific-room-message-content">
+                          <div
+                            style={{
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
+                            }}
+                            className="spesific-room-message-content chirp-regular-font"
+                          >
                             <span
                               className={
                                 themeName === "dark-theme"
-                                  ? "soft-grey-dark-theme-text-variant-1 chirp-regular-font spesific-room-message-text"
-                                  : "very-dark-gray-light-theme-text-variant-1 chirp-regular-font spesific-room-message-text"
+                                  ? "chirp-regular-font spesific-room-message-text"
+                                  : "chirp-regular-font spesific-room-message-text"
                               }
                             >
                               {eachMessage.text}
@@ -767,6 +787,10 @@ function ChatDetailsPage() {
                         {eachMessage.timestamp ? (
                           <>
                             <span
+                              style={{
+                                fontSize: font13.fontSize,
+                                lineHeight: font13.lineHeight,
+                              }}
                               className={
                                 themeName === "dark-theme"
                                   ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font spesific-room-message-text"
@@ -1060,9 +1084,10 @@ function ChatDetailsPage() {
               </div>
               <input
                 autoFocus
-                // className="message-input"
                 style={{
                   color: themeName === "dark-theme" ? "white" : "black",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
                 className={`message-input message-input-${themeName}`}
                 type="text"

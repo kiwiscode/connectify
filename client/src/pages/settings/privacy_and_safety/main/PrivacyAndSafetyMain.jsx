@@ -8,6 +8,7 @@ import { useAntdMessageHandler } from "../../../../utils/useAntdMessageHandler";
 import SettingsNavigation from "../../../../components/SettingsNavigation/SettingsNavigation";
 import { ModalVisibilityContext } from "../../../../context/ModalVisibilityContext";
 import ResponsiveNavigationBarBottom from "../../../../components/Navbar/ResponsiveNavigationBottom";
+import { useFontSizeHandler } from "../../../../utils/useFontSizeHandler";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -101,7 +102,14 @@ function PrivacyAndSafetyMain() {
   const [isSearchStart, setSearchStart] = useState(null);
 
   const [showNotificationMessage, setShowNotificationMessage] = useState(null);
-
+  const {
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
   return (
     <>
       {!isPostModalVisible && !dataFromCommentModal && (
@@ -151,10 +159,10 @@ function PrivacyAndSafetyMain() {
         }}
       >
         <div
+          className="chirp-bold-font"
           style={{
-            lineHeight: "24px",
-            fontWeight: "700",
-            fontSize: "20px",
+            fontSize: font20.fontSize,
+            lineHeight: font20.lineHeight,
             display: "flex",
             justifyContent: "flex-start",
             alignItems: "center",
@@ -200,15 +208,22 @@ function PrivacyAndSafetyMain() {
               </svg>
             </span>
           ) : null}
-          <div className="mt-3">Privacy and safety</div>
+          <div
+            className={
+              themeName === "dark-theme"
+                ? "soft-grey-dark-theme-text-variant-1 mt-3"
+                : "very-dark-gray-light-theme-text-variant-1 mt-3"
+            }
+          >
+            Privacy and safety
+          </div>
         </div>
         <div
-          className="mt-4"
+          className="mt-4 chirp-regular-font"
           style={{
             color: themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
-            fontSize: "13px",
-            lineHeight: "16px",
-            fontWeight: "400",
+            fontSize: font13.fontSize,
+            lineHeight: font13.lineHeight,
             paddingLeft: width <= 500 ? "32px" : "12px",
             paddingRight: width <= 500 ? "32px" : "12px",
           }}
@@ -216,11 +231,10 @@ function PrivacyAndSafetyMain() {
           Manage what information you see and share on C.
         </div>
         <div
-          className="mt-4"
+          className="mt-4 chirp-heavy-font"
           style={{
-            fontSize: "20px",
-            lineHeight: "24px",
-            fontWeight: "800",
+            fontSize: font20.fontSize,
+            lineHeight: font20.lineHeight,
             paddingLeft: width <= 500 ? "32px" : "12px",
             paddingRight: width <= 500 ? "32px" : "12px",
           }}
@@ -272,10 +286,14 @@ function PrivacyAndSafetyMain() {
                 }}
               >
                 <div
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-first-exp-dark-theme"
-                      : "settings-text-first-exp-light-theme "
+                      ? "settings-text-first-exp-dark-theme chirp-regular-font"
+                      : "settings-text-first-exp-light-theme chirp-regular-font"
                   }
                 >
                   Audience,media and tagging
@@ -283,9 +301,13 @@ function PrivacyAndSafetyMain() {
                 <div
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-dark-theme"
-                      : "settings-text-light-theme"
+                      ? "settings-text-dark-theme chirp-regular-font"
+                      : "settings-text-light-theme chirp-regular-font"
                   }
+                  style={{
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                  }}
                 >
                   Manage what information you allow other people on C to see.
                 </div>
@@ -348,10 +370,14 @@ function PrivacyAndSafetyMain() {
                 }}
               >
                 <div
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-first-exp-dark-theme"
-                      : "settings-text-first-exp-light-theme "
+                      ? "settings-text-first-exp-dark-theme chirp-regular-font"
+                      : "settings-text-first-exp-light-theme chirp-regular-font"
                   }
                 >
                   Your posts
@@ -359,9 +385,13 @@ function PrivacyAndSafetyMain() {
                 <div
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-dark-theme"
-                      : "settings-text-light-theme"
+                      ? "settings-text-dark-theme chirp-regular-font"
+                      : "settings-text-light-theme chirp-regular-font"
                   }
+                  style={{
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                  }}
                 >
                   Manage the information associated with your posts.
                 </div>
@@ -424,10 +454,14 @@ function PrivacyAndSafetyMain() {
                 }}
               >
                 <div
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-first-exp-dark-theme"
-                      : "settings-text-first-exp-light-theme "
+                      ? "settings-text-first-exp-dark-theme chirp-regular-font"
+                      : "settings-text-first-exp-light-theme chirp-regular-font"
                   }
                 >
                   Content you see
@@ -435,9 +469,13 @@ function PrivacyAndSafetyMain() {
                 <div
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-dark-theme"
-                      : "settings-text-light-theme"
+                      ? "settings-text-dark-theme chirp-regular-font"
+                      : "settings-text-light-theme chirp-regular-font"
                   }
+                  style={{
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                  }}
                 >
                   Decide what you see on C based on your preferences like Topics
                   and interests.
@@ -501,10 +539,14 @@ function PrivacyAndSafetyMain() {
                 }}
               >
                 <div
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-first-exp-dark-theme"
-                      : "settings-text-first-exp-light-theme "
+                      ? "settings-text-first-exp-dark-theme chirp-regular-font"
+                      : "settings-text-first-exp-light-theme chirp-regular-font"
                   }
                 >
                   Mute and block
@@ -512,9 +554,13 @@ function PrivacyAndSafetyMain() {
                 <div
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-dark-theme"
-                      : "settings-text-light-theme"
+                      ? "settings-text-dark-theme chirp-regular-font"
+                      : "settings-text-light-theme chirp-regular-font"
                   }
+                  style={{
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                  }}
                 >
                   Manage the accounts, words, and notifications that you've
                   muted or blocked.
@@ -578,10 +624,14 @@ function PrivacyAndSafetyMain() {
                 }}
               >
                 <div
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-first-exp-dark-theme"
-                      : "settings-text-first-exp-light-theme "
+                      ? "settings-text-first-exp-dark-theme chirp-regular-font"
+                      : "settings-text-first-exp-light-theme chirp-regular-font"
                   }
                 >
                   Direct Messages
@@ -589,9 +639,13 @@ function PrivacyAndSafetyMain() {
                 <div
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-dark-theme"
-                      : "settings-text-light-theme"
+                      ? "settings-text-dark-theme chirp-regular-font"
+                      : "settings-text-light-theme chirp-regular-font"
                   }
+                  style={{
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                  }}
                 >
                   Manage who can message you directly.
                 </div>
@@ -654,10 +708,14 @@ function PrivacyAndSafetyMain() {
                 }}
               >
                 <div
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-first-exp-dark-theme"
-                      : "settings-text-first-exp-light-theme "
+                      ? "settings-text-first-exp-dark-theme chirp-regular-font"
+                      : "settings-text-first-exp-light-theme chirp-regular-font"
                   }
                 >
                   Spaces
@@ -665,9 +723,13 @@ function PrivacyAndSafetyMain() {
                 <div
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-dark-theme"
-                      : "settings-text-light-theme"
+                      ? "settings-text-dark-theme chirp-regular-font"
+                      : "settings-text-light-theme chirp-regular-font"
                   }
+                  style={{
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                  }}
                 >
                   Manage who can see your Spaces listening activity.
                 </div>
@@ -730,10 +792,14 @@ function PrivacyAndSafetyMain() {
                 }}
               >
                 <div
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-first-exp-dark-theme"
-                      : "settings-text-first-exp-light-theme "
+                      ? "settings-text-first-exp-dark-theme chirp-regular-font"
+                      : "settings-text-first-exp-light-theme chirp-regular-font"
                   }
                 >
                   Discoverability and contacts
@@ -741,9 +807,13 @@ function PrivacyAndSafetyMain() {
                 <div
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-dark-theme"
-                      : "settings-text-light-theme"
+                      ? "settings-text-dark-theme chirp-regular-font"
+                      : "settings-text-light-theme chirp-regular-font"
                   }
+                  style={{
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                  }}
                 >
                   Control your discoverability settings and manage contacts
                   you've imported.
@@ -781,11 +851,10 @@ function PrivacyAndSafetyMain() {
           }}
         ></div>
         <div
-          className="mt-4"
+          className="mt-4 chirp-heavy-font"
           style={{
-            fontSize: "20px",
-            lineHeight: "24px",
-            fontWeight: "800",
+            fontSize: font20.fontSize,
+            lineHeight: font20.lineHeight,
             paddingLeft: width <= 500 ? "32px" : "12px",
             paddingRight: width <= 500 ? "32px" : "12px",
           }}
@@ -837,10 +906,14 @@ function PrivacyAndSafetyMain() {
                 }}
               >
                 <div
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-first-exp-dark-theme"
-                      : "settings-text-first-exp-light-theme "
+                      ? "settings-text-first-exp-dark-theme chirp-regular-font"
+                      : "settings-text-first-exp-light-theme chirp-regular-font"
                   }
                 >
                   Ads preferences
@@ -848,9 +921,13 @@ function PrivacyAndSafetyMain() {
                 <div
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-dark-theme"
-                      : "settings-text-light-theme"
+                      ? "settings-text-dark-theme chirp-regular-font"
+                      : "settings-text-light-theme chirp-regular-font"
                   }
+                  style={{
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                  }}
                 >
                   Manage your ads experience on C.
                 </div>
@@ -913,10 +990,14 @@ function PrivacyAndSafetyMain() {
                 }}
               >
                 <div
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-first-exp-dark-theme"
-                      : "settings-text-first-exp-light-theme "
+                      ? "settings-text-first-exp-dark-theme chirp-regular-font"
+                      : "settings-text-first-exp-light-theme chirp-regular-font"
                   }
                 >
                   Cookie preferences
@@ -924,9 +1005,13 @@ function PrivacyAndSafetyMain() {
                 <div
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-dark-theme"
-                      : "settings-text-light-theme"
+                      ? "settings-text-dark-theme chirp-regular-font"
+                      : "settings-text-light-theme chirp-regular-font"
                   }
+                  style={{
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                  }}
                 >
                   Manage your cookie experience on C.
                 </div>
@@ -989,10 +1074,14 @@ function PrivacyAndSafetyMain() {
                 }}
               >
                 <div
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-first-exp-dark-theme"
-                      : "settings-text-first-exp-light-theme "
+                      ? "settings-text-first-exp-dark-theme chirp-regular-font"
+                      : "settings-text-first-exp-light-theme chirp-regular-font"
                   }
                 >
                   Inferred identity
@@ -1000,9 +1089,13 @@ function PrivacyAndSafetyMain() {
                 <div
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-dark-theme"
-                      : "settings-text-light-theme"
+                      ? "settings-text-dark-theme chirp-regular-font"
+                      : "settings-text-light-theme chirp-regular-font"
                   }
+                  style={{
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                  }}
                 >
                   Allow C to personalize your experience with your inferred
                   activity, e.g. activity on devices you haven't used to log in
@@ -1068,10 +1161,14 @@ function PrivacyAndSafetyMain() {
                 }}
               >
                 <div
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-first-exp-dark-theme"
-                      : "settings-text-first-exp-light-theme "
+                      ? "settings-text-first-exp-dark-theme chirp-regular-font"
+                      : "settings-text-first-exp-light-theme chirp-regular-font"
                   }
                 >
                   Data sharing with business partners
@@ -1079,9 +1176,13 @@ function PrivacyAndSafetyMain() {
                 <div
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-dark-theme"
-                      : "settings-text-light-theme"
+                      ? "settings-text-dark-theme chirp-regular-font"
+                      : "settings-text-light-theme chirp-regular-font"
                   }
+                  style={{
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                  }}
                 >
                   Allow sharing of additional information with C's business
                   partners.
@@ -1145,10 +1246,14 @@ function PrivacyAndSafetyMain() {
                 }}
               >
                 <div
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-first-exp-dark-theme"
-                      : "settings-text-first-exp-light-theme "
+                      ? "settings-text-first-exp-dark-theme chirp-regular-font"
+                      : "settings-text-first-exp-light-theme chirp-regular-font"
                   }
                 >
                   Location information
@@ -1156,9 +1261,13 @@ function PrivacyAndSafetyMain() {
                 <div
                   className={
                     themeName === "dark-theme"
-                      ? "settings-text-dark-theme"
-                      : "settings-text-light-theme"
+                      ? "settings-text-dark-theme chirp-regular-font"
+                      : "settings-text-light-theme chirp-regular-font"
                   }
+                  style={{
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                  }}
                 >
                   Manage the location information C uses to personalize your
                   experience.
@@ -1196,11 +1305,10 @@ function PrivacyAndSafetyMain() {
           }}
         ></div>
         <div
-          className="mt-4"
+          className="mt-4 chirp-heavy-font"
           style={{
-            fontSize: "20px",
-            lineHeight: "24px",
-            fontWeight: "800",
+            fontSize: font20.fontSize,
+            lineHeight: font20.lineHeight,
             paddingLeft: width <= 500 ? "32px" : "12px",
             paddingRight: width <= 500 ? "32px" : "12px",
           }}

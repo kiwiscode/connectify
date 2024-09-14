@@ -1026,9 +1026,7 @@ router.post(
         organizationFullAccessSubscriptionCanStart = undefined;
         // paymentCreatedSuccessfully = undefined;
         // clean all global variables for every checkout success process finish to check
-        console.log(
-          "User does not have a subscription, therefore a modal cannot be shown."
-        );
+
         res.status(404).json({
           success: false,
           message:

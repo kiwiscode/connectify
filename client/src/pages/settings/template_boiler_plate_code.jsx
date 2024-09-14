@@ -1,14 +1,11 @@
-import { Button, Col, Modal } from "react-bootstrap";
-import { useContext, useEffect, useState } from "react";
+import { Col } from "react-bootstrap";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAntdMessageHandler } from "../../../../../../../utils/useAntdMessageHandler";
-import useWindowDimensions from "../../../../../../../hooks/getWindowDimensions";
-import { ThemeContext } from "../../../../../../../context/ThemeContext";
-import SettingsNavigation from "../../../../../../../components/SettingsNavigation/SettingsNavigation";
-import { NavigationHistoryContext } from "../../../../../../../context/NavigationHistoryContext";
-import axios from "axios";
-import { UserContext } from "../../../../../../../context/UserContext";
-import LoadingSpinner from "../../../../../../../components/ui/LoadingSpinner";
+import { ThemeContext } from "../../../../../context/ThemeContext";
+import { NavigationHistoryContext } from "../../../../../context/NavigationHistoryContext";
+import SettingsNavigation from "../../../../../components/SettingsNavigation/SettingsNavigation";
+import useWindowDimensions from "../../../../../hooks/getWindowDimensions";
+import { useAntdMessageHandler } from "../../../../../utils/useAntdMessageHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -16,33 +13,13 @@ const API_URL = "http://localhost:3000";
 // when working on deployment version
 // ?
 
-function ComponentName() {
+function Display() {
   const { contextHolder } = useAntdMessageHandler();
   const { width } = useWindowDimensions();
   const [{ theme, themeName }] = useContext(ThemeContext);
   const navigate = useNavigate();
-  const { userInfo, getToken } = useContext(UserContext);
   const { navigationHistoryArray } = useContext(NavigationHistoryContext);
-  const [user, setUser] = useState([]);
   console.log("Navigation history =>", navigationHistoryArray);
-  const refreshActiveUser = () => {
-    axios
-      .get(`${API_URL}/profile`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        setUser(response.data.user);
-      })
-      .catch((error) => {
-        console.log("Error =>", error);
-      });
-  };
-
-  useEffect(() => {
-    refreshActiveUser();
-  }, []);
 
   return (
     <>
@@ -132,4 +109,4 @@ function ComponentName() {
   );
 }
 
-export default ComponentName;
+export default Display;

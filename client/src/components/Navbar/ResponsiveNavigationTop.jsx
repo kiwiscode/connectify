@@ -6,11 +6,7 @@ import { ThemeContext } from "../../context/ThemeContext";
 
 function ResponsiveNavigationBarTop() {
   const { userInfo } = useContext(UserContext);
-  const [
-    { theme, themeName, activeFontSizeOption },
-    toggleThemeBetweenLightDarkMode,
-    toggleChangeFontSize,
-  ] = useContext(ThemeContext);
+  const [{ theme, themeName }] = useContext(ThemeContext);
   return (
     <>
       <div

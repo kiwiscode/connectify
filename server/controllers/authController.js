@@ -124,8 +124,6 @@ const handleSignup = async (req, res, next) => {
     });
   } else {
     try {
-      console.log("THIS LINE IS WORKING 1");
-
       bcrypt
         .genSalt(saltRounds)
         .then((salt) => bcrypt.hash(password, salt))
@@ -560,13 +558,6 @@ const handleEmailVerificationCode = (req, res) => {
   };
 
   for (let i = 0; i < 6; i++) {
-    console.log("Random index =>", generateRandomCode());
-
-    console.log(
-      "Random code value individual =>",
-      characters[generateRandomCode()]
-    );
-
     randomCode.push(characters[generateRandomCode()]);
   }
 

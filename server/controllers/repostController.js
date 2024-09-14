@@ -352,7 +352,6 @@ const handleDeleteReposts = (req, res) => {
       // notified olması mümkün olan kullanıcıdan notificationı silme veya bırakma işlemi finish to check
 
       if (post.isComment) {
-        console.log("This post is comment =>", post);
         Comment.find({ postId: post._id })
           .then((commentFromDataBase) => {
             // splice the user id from comment start to check

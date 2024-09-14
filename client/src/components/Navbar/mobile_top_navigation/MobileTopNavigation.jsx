@@ -4,12 +4,20 @@ import LogoutModal from "../../Main-Left-Side-Navbar/LogoutModal";
 import { UserContext } from "../../../context/UserContext";
 import { ThemeContext } from "../../../context/ThemeContext";
 import "./MobileTopNavigation.css";
+import { useFontSizeHandler } from "../../../utils/useFontSizeHandler";
 
 function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
   const { userInfo } = useContext(UserContext);
   const [{ theme, themeName }] = useContext(ThemeContext);
   const [openNavigationBar, setOpenNavigationBar] = useState(false);
-
+  const {
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight14,
+  } = useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font14 = getFontSizeAndLineHeight14();
   const navigate = useNavigate();
   const handleParentClick = () => {
     setOpenNavigationBar(false);
@@ -125,7 +133,7 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                       onClick={() => {
                         navigate("/profile");
                       }}
-                      className="test"
+                      className="image-hover-effect"
                       style={{
                         width: "44px",
                         height: "44px",
@@ -151,7 +159,7 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                       onClick={() => {
                         navigate("/profile");
                       }}
-                      className="test"
+                      className="image-hover-effect"
                       style={{
                         width: "44px",
                         height: "44px",
@@ -278,8 +286,8 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                           : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font hover-fullname"
                       }
                       style={{
-                        fontSize: "15px",
-                        lineHeight: "20px",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                         cursor: "pointer",
                       }}
                     >
@@ -330,8 +338,8 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                         navigate("/profile");
                       }}
                       style={{
-                        fontSize: "15px",
-                        lineHeight: "20px",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                         cursor: "pointer",
                       }}
                     >
@@ -388,8 +396,8 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                             : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
                         }
                         style={{
-                          fontSize: "14px",
-                          lineHeight: "16px",
+                          fontSize: font14.fontSize,
+                          lineHeight: font14.lineHeight,
                           cursor: "pointer",
                         }}
                       >
@@ -402,8 +410,8 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                             : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
                         }
                         style={{
-                          fontSize: "14px",
-                          lineHeight: "16px",
+                          fontSize: font14.fontSize,
+                          lineHeight: font14.lineHeight,
                           cursor: "pointer",
                         }}
                       >
@@ -426,8 +434,8 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                             : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
                         }
                         style={{
-                          fontSize: "14px",
-                          lineHeight: "16px",
+                          fontSize: font14.fontSize,
+                          lineHeight: font14.lineHeight,
                           cursor: "pointer",
                         }}
                       >
@@ -440,8 +448,8 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                             : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
                         }
                         style={{
-                          fontSize: "14px",
-                          lineHeight: "16px",
+                          fontSize: font14.fontSize,
+                          lineHeight: font14.lineHeight,
                           cursor: "pointer",
                         }}
                       >
@@ -563,11 +571,9 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                       overflowWrap: "break-word",
                       maxWidth: "100%",
                       minWidth: "0px",
-                      fontSize: "20px",
                       whiteSpace: "nowrap",
                       textAlign: "inherit",
                       flexGrow: "1",
-                      lineHeight: "24px",
                       overflow: "hidden",
                       boxSizing: "border-box",
                       margin: "0px",
@@ -575,6 +581,8 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                       position: "relative",
                       listStyle: "none",
                       textDecoration: "none",
+                      fontSize: font20.fontSize,
+                      lineHeight: font20.lineHeight,
                     }}
                   >
                     Profile
@@ -701,11 +709,9 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                       overflowWrap: "break-word",
                       maxWidth: "100%",
                       minWidth: "0px",
-                      fontSize: "20px",
                       whiteSpace: "nowrap",
                       textAlign: "inherit",
                       flexGrow: "1",
-                      lineHeight: "24px",
                       overflow: "hidden",
                       boxSizing: "border-box",
                       margin: "0px",
@@ -713,6 +719,8 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                       position: "relative",
                       listStyle: "none",
                       textDecoration: "none",
+                      fontSize: font20.fontSize,
+                      lineHeight: font20.lineHeight,
                     }}
                   >
                     Premium
@@ -824,11 +832,9 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                       overflowWrap: "break-word",
                       maxWidth: "100%",
                       minWidth: "0px",
-                      fontSize: "20px",
                       whiteSpace: "nowrap",
                       textAlign: "inherit",
                       flexGrow: "1",
-                      lineHeight: "24px",
                       overflow: "hidden",
                       boxSizing: "border-box",
                       margin: "0px",
@@ -836,6 +842,8 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                       position: "relative",
                       listStyle: "none",
                       textDecoration: "none",
+                      fontSize: font20.fontSize,
+                      lineHeight: font20.lineHeight,
                     }}
                   >
                     Lists
@@ -947,11 +955,9 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                       overflowWrap: "break-word",
                       maxWidth: "100%",
                       minWidth: "0px",
-                      fontSize: "20px",
                       whiteSpace: "nowrap",
                       textAlign: "inherit",
                       flexGrow: "1",
-                      lineHeight: "24px",
                       overflow: "hidden",
                       boxSizing: "border-box",
                       margin: "0px",
@@ -959,6 +965,8 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                       position: "relative",
                       listStyle: "none",
                       textDecoration: "none",
+                      fontSize: font20.fontSize,
+                      lineHeight: font20.lineHeight,
                     }}
                   >
                     Bookmarks
@@ -1070,11 +1078,9 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                       overflowWrap: "break-word",
                       maxWidth: "100%",
                       minWidth: "0px",
-                      fontSize: "20px",
                       whiteSpace: "nowrap",
                       textAlign: "inherit",
                       flexGrow: "1",
-                      lineHeight: "24px",
                       overflow: "hidden",
                       boxSizing: "border-box",
                       margin: "0px",
@@ -1082,6 +1088,8 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                       position: "relative",
                       listStyle: "none",
                       textDecoration: "none",
+                      fontSize: font20.fontSize,
+                      lineHeight: font20.lineHeight,
                     }}
                   >
                     Monetization
@@ -1193,11 +1201,9 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                       overflowWrap: "break-word",
                       maxWidth: "100%",
                       minWidth: "0px",
-                      fontSize: "20px",
                       whiteSpace: "nowrap",
                       textAlign: "inherit",
                       flexGrow: "1",
-                      lineHeight: "24px",
                       overflow: "hidden",
                       boxSizing: "border-box",
                       margin: "0px",
@@ -1205,6 +1211,8 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                       position: "relative",
                       listStyle: "none",
                       textDecoration: "none",
+                      fontSize: font20.fontSize,
+                      lineHeight: font20.lineHeight,
                     }}
                   >
                     Ads
@@ -1314,11 +1322,9 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                       overflowWrap: "break-word",
                       maxWidth: "100%",
                       minWidth: "0px",
-                      fontSize: "20px",
                       whiteSpace: "nowrap",
                       textAlign: "inherit",
                       flexGrow: "1",
-                      lineHeight: "24px",
                       overflow: "hidden",
                       boxSizing: "border-box",
                       margin: "0px",
@@ -1326,6 +1332,8 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                       position: "relative",
                       listStyle: "none",
                       textDecoration: "none",
+                      fontSize: font20.fontSize,
+                      lineHeight: font20.lineHeight,
                     }}
                   >
                     Jobs
@@ -1333,7 +1341,7 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                   <div
                     className="chirp-bold-font"
                     style={{
-                      fontSize: "15px",
+                      fontSize: font15.fontSize,
                       height: "20px",
                       paddingLeft: "4px",
                       paddingRight: "4px",
@@ -1456,11 +1464,9 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                       overflowWrap: "break-word",
                       maxWidth: "100%",
                       minWidth: "0px",
-                      fontSize: "20px",
                       whiteSpace: "nowrap",
                       textAlign: "inherit",
                       flexGrow: "1",
-                      lineHeight: "24px",
                       overflow: "hidden",
                       boxSizing: "border-box",
                       margin: "0px",
@@ -1468,6 +1474,8 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                       position: "relative",
                       listStyle: "none",
                       textDecoration: "none",
+                      fontSize: font20.fontSize,
+                      lineHeight: font20.lineHeight,
                     }}
                   >
                     Settings and privacy
@@ -1498,8 +1506,8 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
               }
               style={{
                 padding: "16px",
-                fontSize: "15px",
-                lineHeight: "20px",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
               }}
             >
               MStV Transparenzangaben
@@ -1512,8 +1520,8 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
               }
               style={{
                 padding: "16px",
-                fontSize: "15px",
-                lineHeight: "20px",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
               }}
             >
               Imprint

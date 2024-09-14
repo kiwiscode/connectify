@@ -1,19 +1,16 @@
 import axios from "axios";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserContext";
-import { Container, Row, Col, Stack, Accordion } from "react-bootstrap";
+import { Col, Stack, Accordion } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { CommentModal } from "../components/ui/Modal";
-
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
-
 // when working on local version
 const API_URL = "http://localhost:3000";
 
 // when working on deployment version
 // ?
-
 import { ThemeContext } from "../context/ThemeContext";
 import PostPopover from "../components/three-dots-popover/Popover";
 import useWindowDimensions from "../hooks/getWindowDimensions";
@@ -23,71 +20,16 @@ import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
 import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
 import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
 import BookmarkAction from "../components/ui/BookmarkAction";
+import { SubcsriptionStatusContext } from "../context/SubscriptionStatusContext";
+import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 
 function UserProfile({ isNewPostShared }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
-  const [subscription, setSubscription] = useState(null);
-  const getSubscription = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/subscription`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      });
-
-      console.log(
-        "response data detail =>",
-        response.data.activeSubscription[0]
-      );
-      console.log(
-        "response data detail 2 =>",
-        response.data.activeCancelledSubscription[0]
-      );
-
-      setSubscription(
-        response.data.activeSubscription[0]
-          ? response.data.activeSubscription[0]
-          : response.data.activeCancelledSubscription[0]
-      );
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  const [remainingTimeSubscriptions, setRemainingTimeSubscriptions] = useState(
-    []
-  );
-  const [
+  const {
+    subscription,
+    remainingTimeSubscriptions,
     remainingTimeSubscriptionsOwnerIds,
-    setRemainingTimeSubscriptionsOwnerIds,
-  ] = useState([]);
-  const getRemainingTimeSubscriptions = async () => {
-    try {
-      const response = await axios.get(
-        `${API_URL}/remaining_time_subscriptions`,
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      );
-
-      setRemainingTimeSubscriptions(response.data.remainingTimeSubscriptions);
-
-      setRemainingTimeSubscriptionsOwnerIds(
-        response.data.remainingTimeSubscriptions.map((eachSub) => {
-          return eachSub.owner;
-        })
-      );
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  useEffect(() => {
-    getSubscription();
-    getRemainingTimeSubscriptions();
-  }, []);
+  } = useContext(SubcsriptionStatusContext);
   const extraDetailedDate = (dateStr) => {
     const date = new Date(dateStr);
 
@@ -155,7 +97,7 @@ function UserProfile({ isNewPostShared }) {
             `/${clickedPostBox.userId.username}/status/${
               !clickedPostBox.isReposted
                 ? clickedPostBox._id
-                : clickedPostBox.repostedFromThisOriginalPost[0]._id
+                : clickedPostBox.repostedFromThisOriginalPost[0]?._id
             }`
           );
         }
@@ -183,6 +125,7 @@ function UserProfile({ isNewPostShared }) {
   const [completedProfileImage, setcompletedProfileImage] = useState(false);
 
   const handleGetFavorites = () => {
+    setActiveTab("likes");
     setFavoriteWindow("");
     setPostWindow("hide");
     axios
@@ -216,6 +159,7 @@ function UserProfile({ isNewPostShared }) {
   };
   const [profile, setProfile] = useState([]);
   const handleShowPostsProfilePage = () => {
+    setActiveTab("posts");
     setFavoriteWindow("hide");
     setPostWindow("");
     axios
@@ -338,38 +282,42 @@ function UserProfile({ isNewPostShared }) {
   };
 
   const getRepostedIds = (array) => {
-    return array.reposted.map((eachRepost) => {
-      return eachRepost._id;
+    return array?.reposted.map((eachRepost) => {
+      return eachRepost?._id;
     });
   };
 
   useEffect(() => {
     if (postsWindow === "hide") {
-      changeProfileImage();
+      if (profileImage) {
+        changeProfileImage();
+      }
       handleGetFavorites();
     } else if (favoriteWindow === "hide") {
-      changeProfileImage();
+      if (profileImage) {
+        changeProfileImage();
+      }
       handleShowPostsProfilePage();
     }
   }, [profileImage, postsWindow, favoriteWindow]);
 
-  const [activeUserFollowing, setactiveUserFollowing] = useState([]);
-  const [activeUserFollowers, setactiveUserFollowers] = useState([]);
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/profile`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        setactiveUserFollowers(response.data.user.followers);
-        setactiveUserFollowing(response.data.user.following);
-      })
-      .catch((error) => {
-        console.log("Error =>", error);
-      });
-  }, []);
+  // const [activeUserFollowing, setactiveUserFollowing] = useState([]);
+  // const [activeUserFollowers, setactiveUserFollowers] = useState([]);
+  // useEffect(() => {
+  //   axios
+  //     .get(`${API_URL}/profile`, {
+  //       headers: {
+  //         Authorization: `Bearer ${getToken()}`,
+  //       },
+  //     })
+  //     .then((response) => {
+  //       setactiveUserFollowers(response.data.user.followers);
+  //       setactiveUserFollowing(response.data.user.following);
+  //     })
+  //     .catch((error) => {
+  //       console.log("Error =>", error);
+  //     });
+  // }, []);
 
   const [visibleTweets, setVisibleTweets] = useState(25);
   const [visibleLikedTweets, setvisibleLikedTweets] = useState(25);
@@ -433,7 +381,28 @@ function UserProfile({ isNewPostShared }) {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [headerPosition]);
+  const [hoveredTab, setHoveredTab] = useState(null);
+  const [activeTab, setActiveTab] = useState("forYou");
+  const handleHover = (tab) => {
+    setHoveredTab(tab);
+  };
 
+  const handleLeave = () => {
+    setHoveredTab(null);
+  };
+
+  const {
+    getFontSizeAndLineHeight31,
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight14,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font31 = getFontSizeAndLineHeight31();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font14 = getFontSizeAndLineHeight14();
+  const font13 = getFontSizeAndLineHeight13();
   return (
     <>
       {contextHolder}
@@ -460,7 +429,7 @@ function UserProfile({ isNewPostShared }) {
             : ""
         } // 992px - 1400px aralığı
         xxl={5} // 1400px ve sonrası aralığı
-        className={`main-column `}
+        className={`main-column`}
         style={{
           borderLeft:
             themeName !== "dark-theme"
@@ -489,9 +458,14 @@ function UserProfile({ isNewPostShared }) {
             position: width > 500 && "sticky",
             top: width > 500 && "0px",
             width: width > 500 && "100%",
-            backgroundColor: width > 500 && "transparent",
+            backgroundColor:
+              width > 500 && themeName === "dark-theme"
+                ? "rgba(0, 0, 0, 0.65)"
+                : width > 500 && themeName === "dark-theme"
+                ? "rgba(255, 255, 255, 0.85)"
+                : null,
             backdropFilter: width > 500 && "blur(12px)",
-            zIndex: width > 500 && 99999,
+            zIndex: width > 500 && 1,
           }}
           direction="horizontal"
           gap={0}
@@ -534,8 +508,8 @@ function UserProfile({ isNewPostShared }) {
                 : "very-dark-gray-light-theme-text-variant-1 p-2 chirp-bold-font"
             }
             style={{
-              fontSize: "20px",
-              lineHeight: "24px",
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
             }}
           >
             <div
@@ -594,8 +568,10 @@ function UserProfile({ isNewPostShared }) {
                     themeName === "dark-theme"
                       ? "#71767A"
                       : "rgb(83, 100, 113)",
+                  fontSize: font13.fontSize,
+                  lineHeight: font13.lineHeight,
                 }}
-                className="profile-paragraph"
+                className="profile-paragraph chirp-regular-font"
               >
                 {userInfo.posts.length} posts
               </div>
@@ -723,12 +699,13 @@ function UserProfile({ isNewPostShared }) {
           >
             <div
               style={{
-                fontSize: "20px",
+                fontSize: font20.fontSize,
+                lineHeight: font20.lineHeight,
               }}
               className={
                 themeName === "dark-theme"
-                  ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
-                  : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                  ? "soft-grey-dark-theme-text-variant-1 chirp-heavy-font"
+                  : "very-dark-gray-light-theme-text-variant-1 chirp-heavy-font"
               }
             >
               {userInfo.fullname}
@@ -767,8 +744,8 @@ function UserProfile({ isNewPostShared }) {
           </div>
           <div
             style={{
-              fontSize: "15px",
-              lineHeight: "20px",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
             }}
             className={
               themeName === "dark-theme"
@@ -810,9 +787,8 @@ function UserProfile({ isNewPostShared }) {
                     themeName === "dark-theme"
                       ? "#71767A"
                       : "rgb(83, 100, 113)",
-                  fontSize: "15px",
-                  lineHeight: "12px",
-                  fontWeight: "400",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
               >
                 Joined {getCreatedDateForProfile(userInfo.createdAt)}
@@ -835,24 +811,24 @@ function UserProfile({ isNewPostShared }) {
               className="following-followers-link"
             >
               <span>
-                {activeUserFollowing.length ? (
+                {userInfo?.following.length ? (
                   <span
+                    className="chirp-bold-font"
                     style={{
                       cursor: "pointer",
-                      fontSize: "14px",
-                      lineHeight: "16px",
-                      fontWeight: "700",
+                      fontSize: font14.fontSize,
+                      lineHeight: font14.lineHeight,
                     }}
                   >
-                    {activeUserFollowing.length}
+                    {userInfo?.following.length}
                   </span>
                 ) : (
                   <span
+                    className="chirp-bold-font"
                     style={{
                       cursor: "pointer",
-                      fontSize: "14px",
-                      lineHeight: "16px",
-                      fontWeight: "700",
+                      fontSize: font14.fontSize,
+                      lineHeight: font14.lineHeight,
                     }}
                   >
                     0
@@ -867,9 +843,8 @@ function UserProfile({ isNewPostShared }) {
                     themeName === "dark-theme"
                       ? "#71767A"
                       : "rgb(83, 100, 113)",
-                  fontSize: "14px",
-                  lineHeight: "16px",
-                  fontWeight: "400",
+                  fontSize: font14.fontSize,
+                  lineHeight: font14.lineHeight,
                 }}
               >
                 Following
@@ -884,24 +859,24 @@ function UserProfile({ isNewPostShared }) {
               }}
             >
               <span>
-                {activeUserFollowers.length ? (
+                {userInfo?.followers.length ? (
                   <span
+                    className="chirp-bold-font"
                     style={{
                       cursor: "pointer",
-                      fontSize: "14px",
-                      lineHeight: "16px",
-                      fontWeight: "700",
+                      fontSize: font14.fontSize,
+                      lineHeight: font14.lineHeight,
                     }}
                   >
-                    {activeUserFollowers.length}
+                    {userInfo?.followers.length}
                   </span>
                 ) : (
                   <span
+                    className="chirp-bold-font"
                     style={{
                       cursor: "pointer",
-                      fontSize: "14px",
-                      lineHeight: "16px",
-                      fontWeight: "700",
+                      fontSize: font14.fontSize,
+                      lineHeight: font14.lineHeight,
                     }}
                   >
                     0
@@ -916,9 +891,8 @@ function UserProfile({ isNewPostShared }) {
                     themeName === "dark-theme"
                       ? "#71767A"
                       : "rgb(83, 100, 113)",
-                  fontSize: "14px",
-                  lineHeight: "16px",
-                  fontWeight: "400",
+                  fontSize: font14.fontSize,
+                  lineHeight: font14.lineHeight,
                 }}
               >
                 <span>
@@ -938,115 +912,150 @@ function UserProfile({ isNewPostShared }) {
 
         <div
           style={{
-            borderBottom:
-              themeName !== "dark-theme"
-                ? "1px solid rgba(0, 0, 0, 0.1)"
-                : // : "0.1px solid rgb(70, 70, 70)",
-                  "1px solid rgb(70, 70, 70)",
-          }}
-        ></div>
-
-        <div
-          aria-label="Basic example"
-          style={{
             display: "flex",
-            justifyContent: "space-around",
-            width: "100%",
-            height: "40px",
           }}
         >
-          <div
+          <span
+            className={
+              themeName === "dark-theme"
+                ? "hover-effect-dark-theme-pointer-plus chirp-bold-font"
+                : themeName !== "dark-theme"
+                ? "hover-effect-light-theme-pointer-plus"
+                : null
+            }
+            onMouseEnter={() => handleHover("posts")}
+            onMouseLeave={handleLeave}
             onClick={() => handleShowPostsProfilePage()}
             style={{
+              color:
+                activeTab === "posts" && themeName !== "dark-theme"
+                  ? "#0f141a"
+                  : activeTab === "posts" && themeName === "dark-theme"
+                  ? "#e6e9ea"
+                  : themeName === "dark-theme"
+                  ? "#71767A"
+                  : "#526371",
+              fontWeight: activeTab === "posts" ? "700" : "500",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
               cursor: "pointer",
-              width: "50%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              borderRight:
-                themeName !== "dark-theme"
-                  ? "1px solid rgba(0, 0, 0, 0.1)"
-                  : "1px solid rgb(70, 70, 70)",
+              flex: 1,
+              textAlign: "center",
+              transition: "background 0.3s",
+              maxHeight: "inherit",
             }}
           >
+            {/* { color: #e6e9ea !important; }  { color: #0f141a !important; } */}
             <div
               style={{
-                border: "none",
+                display: "inline-flex",
+                padding: "16px 0px 16px 0px",
+                flexDirection: "column",
+                position: "relative",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
-              {favoriteWindow === "" ? (
-                <span
-                  className="chirp-regular-font"
+              <span
+                className={
+                  themeName === "dark-theme" && activeTab === "posts"
+                    ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                    : themeName !== "dark-theme" && activeTab === "posts"
+                    ? "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                    : themeName === "dark-theme" && activeTab !== "posts"
+                    ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                    : themeName !== "dark-theme" && activeTab !== "posts"
+                    ? "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                    : null
+                }
+              >
+                Posts
+              </span>
+              {activeTab === "posts" && (
+                <div
                   style={{
-                    fontWeight: "400",
-                    color:
-                      themeName === "dark-theme"
-                        ? "#71767A"
-                        : "rgb(83, 100, 113)",
+                    backgroundColor: "rgb(29, 155, 240)",
+                    height: "4px",
+                    width: "100%",
+                    minWidth: "56px",
+                    position: "absolute",
+                    bottom: "0px",
+                    borderRadius: "9999px",
                   }}
-                >
-                  Posts
-                </span>
-              ) : (
-                <span
-                  className="chirp-bold-font"
-                  style={{
-                    fontWeight: "700",
-                    color:
-                      themeName === "dark-theme"
-                        ? "white"
-                        : "rgb(29, 155, 240)",
-                  }}
-                >
-                  Posts
-                </span>
+                ></div>
               )}
             </div>
-          </div>
-          <div
+          </span>
+
+          <span
+            className={
+              themeName === "dark-theme"
+                ? "hover-effect-dark-theme-pointer-plus "
+                : themeName !== "dark-theme"
+                ? "hover-effect-light-theme-pointer-plus "
+                : null
+            }
+            onMouseEnter={() => handleHover("likes")}
+            onMouseLeave={handleLeave}
             onClick={() => handleGetFavorites()}
             style={{
+              color:
+                activeTab === "likes" && themeName !== "dark-theme"
+                  ? "#0f141a"
+                  : activeTab === "likes" && themeName === "dark-theme"
+                  ? "#e6e9ea"
+                  : themeName === "dark-theme"
+                  ? "#71767A"
+                  : "#526371",
+              fontWeight: activeTab === "likes" ? "700" : "500",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
               cursor: "pointer",
-              width: "50%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
+              flex: 1,
+              textAlign: "center",
+              transition: "background 0.3s",
             }}
           >
             <div
               style={{
-                border: "none",
+                display: "inline-flex",
+                padding: "16px 0px 16px 0px",
+                flexDirection: "column",
+                position: "relative",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
-              {postsWindow === "" ? (
-                <span
-                  className="chirp-regular-font"
+              <span
+                className={
+                  themeName === "dark-theme" && activeTab === "likes"
+                    ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                    : themeName !== "dark-theme" && activeTab === "likes"
+                    ? "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                    : themeName === "dark-theme" && activeTab !== "likes"
+                    ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                    : themeName !== "dark-theme" && activeTab !== "likes"
+                    ? "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                    : null
+                }
+              >
+                Likes
+              </span>{" "}
+              {activeTab === "likes" && (
+                <div
                   style={{
-                    fontWeight: "400",
-                    color:
-                      themeName === "dark-theme"
-                        ? "#71767A"
-                        : "rgb(83, 100, 113)",
+                    backgroundColor: "rgb(29, 155, 240)",
+                    height: "4px",
+                    width: "100%",
+                    minWidth: "56px",
+                    position: "absolute",
+                    bottom: "0px",
+                    borderRadius: "9999px",
                   }}
-                >
-                  Likes
-                </span>
-              ) : (
-                <span
-                  className="chirp-bold-font"
-                  style={{
-                    fontWeight: "700",
-                    color:
-                      themeName === "dark-theme"
-                        ? "white"
-                        : "rgb(29, 155, 240)",
-                  }}
-                >
-                  Likes
-                </span>
+                ></div>
               )}
             </div>
-          </div>
+          </span>
         </div>
 
         {postsWindow || favoriteWindow ? (
@@ -1140,9 +1149,8 @@ function UserProfile({ isNewPostShared }) {
                               <Link
                                 className={`hover-reposted-text hover-reposted-text-${themeName} chirp-bold-font`}
                                 style={{
-                                  fontSize: "13px",
-                                  lineHeight: "16px",
-                                  fontWeight: "700",
+                                  fontSize: font13.fontSize,
+                                  lineHeight: font13.lineHeight,
                                   color:
                                     themeName === "dark-theme"
                                       ? "#71767A"
@@ -1169,7 +1177,7 @@ function UserProfile({ isNewPostShared }) {
                           to={`/${post.userId.username}/status/${
                             !post.isReposted
                               ? post._id
-                              : post.repostedFromThisOriginalPost[0]._id
+                              : post.repostedFromThisOriginalPost[0]?._id
                           }`}
                           onClick={() => setclickedPostBox(post)}
                           className="outside-of-inner-circle-post-info-user-info-svg-three-dots"
@@ -1241,9 +1249,8 @@ function UserProfile({ isNewPostShared }) {
                                   <span
                                     className="hover-fullname chirp-bold-font"
                                     style={{
-                                      fontWeight: "700",
-                                      fontSize: "15px",
-                                      lineHeight: "20px",
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                       color:
                                         themeName === "dark-theme"
                                           ? "white"
@@ -1285,6 +1292,7 @@ function UserProfile({ isNewPostShared }) {
                                   <span> </span>
                                 )}
                                 <Link
+                                  className="chirp-regular-font"
                                   to={`/profile/${post.userId._id}`}
                                   style={{
                                     textDecoration: "none",
@@ -1292,9 +1300,8 @@ function UserProfile({ isNewPostShared }) {
                                       themeName === "dark-theme"
                                         ? "#71767A"
                                         : "rgb(83, 100, 113)",
-                                    lineHeight: "20px",
-                                    fontSize: "15px",
-                                    fontWeight: "400",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
                                   }}
                                 >
                                   <span className="chirp-regular-font">
@@ -1308,7 +1315,8 @@ function UserProfile({ isNewPostShared }) {
                                   to={`/${post.userId.username}/status/${
                                     !post.isReposted
                                       ? post._id
-                                      : post.repostedFromThisOriginalPost[0]._id
+                                      : post.repostedFromThisOriginalPost[0]
+                                          ?._id
                                   }`}
                                 >
                                   <span
@@ -1318,9 +1326,8 @@ function UserProfile({ isNewPostShared }) {
                                         themeName === "dark-theme"
                                           ? "#71767A"
                                           : "rgb(83, 100, 113)",
-                                      lineHeight: "20px",
-                                      fontSize: "15px",
-                                      fontWeight: "400",
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                     }}
                                   >
                                     {" "}
@@ -1362,7 +1369,7 @@ function UserProfile({ isNewPostShared }) {
                           to={`/${post.userId.username}/status/${
                             !post.isReposted
                               ? post._id
-                              : post.repostedFromThisOriginalPost[0]._id
+                              : post.repostedFromThisOriginalPost[0]?._id
                           }`}
                           onClick={() => setclickedPostBox(post)}
                           className="outside-of-inner-circle-action-comment-text"
@@ -1374,7 +1381,7 @@ function UserProfile({ isNewPostShared }) {
                               to={`/${post.userId.username}/status/${
                                 !post.isReposted
                                   ? post._id
-                                  : post.repostedFromThisOriginalPost[0]._id
+                                  : post.repostedFromThisOriginalPost[0]?._id
                               }`}
                               onClick={() => setclickedPostBox(post)}
                               className="p-2 parent-comment-text"
@@ -1386,9 +1393,8 @@ function UserProfile({ isNewPostShared }) {
                                     themeName === "dark-theme"
                                       ? "#71767A"
                                       : "rgb(83, 100, 113)",
-                                  fontSize: "15px",
-                                  lineHeight: "20px",
-                                  fontWeight: "400",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                 }}
                               >
                                 Replying to {""}
@@ -1400,13 +1406,12 @@ function UserProfile({ isNewPostShared }) {
                                 }}
                               >
                                 <span
-                                  className="replying-to-text"
+                                  className="replying-to-text chirp-regular-font"
                                   style={{
                                     color: "rgb(29, 155, 240)",
                                     cursor: "pointer",
-                                    fontSize: "15px",
-                                    lineHeight: "20px",
-                                    fontWeight: "400",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
                                   }}
                                 >
                                   @{post.commentedForThisUsersPost.username}
@@ -1419,7 +1424,7 @@ function UserProfile({ isNewPostShared }) {
                             to={`/${post.userId.username}/status/${
                               !post.isReposted
                                 ? post._id
-                                : post.repostedFromThisOriginalPost[0]._id
+                                : post.repostedFromThisOriginalPost[0]?._id
                             }`}
                             style={{
                               textDecoration: "none",
@@ -1429,9 +1434,8 @@ function UserProfile({ isNewPostShared }) {
                             <div
                               className="p-2 chirp-regular-font"
                               style={{
-                                fontSize: "15px",
-                                fontWeight: "400",
-                                lineHeight: "20px",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                                 overflowWrap: "break-word",
                                 maxWidth: "100%",
                                 cursor: "pointer",
@@ -1451,7 +1455,7 @@ function UserProfile({ isNewPostShared }) {
                               to={`/${post.userId.username}/status/${
                                 !post.isReposted
                                   ? post._id
-                                  : post.repostedFromThisOriginalPost[0]
+                                  : post?.repostedFromThisOriginalPost[0]
                               }/photo/${1}`}
                               style={{
                                 textDecoration: "none",
@@ -1591,8 +1595,7 @@ function UserProfile({ isNewPostShared }) {
                           width: "100%",
                           textAlign: "center",
                           color: "rgb(29, 155, 240)",
-                          fontSize: "15px",
-                          fontWeight: "400",
+                          fontSize: font15.fontSize,
                           lineHeight: "24px",
                           cursor: "pointer",
                           backgroundColor: "transparent",
@@ -1618,9 +1621,8 @@ function UserProfile({ isNewPostShared }) {
                 <div
                   className="chirp-heavy-font"
                   style={{
-                    lineHeight: "36px",
-                    fontSize: "31px",
-                    fontWeight: "800",
+                    fontSize: font31.fontSize,
+                    lineHeight: font31.lineHeight,
                     margin: "10px",
                   }}
                 >
@@ -1633,9 +1635,8 @@ function UserProfile({ isNewPostShared }) {
                       themeName === "dark-theme"
                         ? "#71767A"
                         : "rgb(83, 100, 113)",
-                    lineHeight: "20px",
-                    fontSize: "15px",
-                    fontWeight: "400",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                     margin: "10px",
                   }}
                 >
@@ -1687,7 +1688,7 @@ function UserProfile({ isNewPostShared }) {
                             to={`/${favorite.userId.username}/status/${
                               !favorite.isReposted
                                 ? favorite._id
-                                : favorite.repostedFromThisOriginalPost[0]._id
+                                : favorite.repostedFromThisOriginalPost[0]?._id
                             }`}
                             onClick={() => setclickedPostBox(favorite)}
                             className="outside-of-inner-circle-post-info-user-info-svg-three-dots"
@@ -1760,9 +1761,8 @@ function UserProfile({ isNewPostShared }) {
                                     <span
                                       className="hover-fullname chirp-bold-font"
                                       style={{
-                                        fontWeight: "700",
-                                        fontSize: "15px",
-                                        lineHeight: "20px",
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
                                         color:
                                           themeName === "dark-theme"
                                             ? "white"
@@ -1805,6 +1805,7 @@ function UserProfile({ isNewPostShared }) {
                                     <span> </span>
                                   )}
                                   <Link
+                                    className="chirp-regular-font"
                                     to={`/profile/${favorite.userId._id}`}
                                     style={{
                                       textDecoration: "none",
@@ -1812,9 +1813,8 @@ function UserProfile({ isNewPostShared }) {
                                         themeName === "dark-theme"
                                           ? "#71767A"
                                           : "rgb(83, 100, 113)",
-                                      lineHeight: "20px",
-                                      fontSize: "15px",
-                                      fontWeight: "400",
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                     }}
                                   >
                                     <span className="chirp-regular-font">
@@ -1829,7 +1829,8 @@ function UserProfile({ isNewPostShared }) {
                                       !favorite.isReposted
                                         ? favorite._id
                                         : favorite
-                                            .repostedFromThisOriginalPost[0]._id
+                                            .repostedFromThisOriginalPost[0]
+                                            ?._id
                                     }`}
                                   >
                                     <span
@@ -1839,9 +1840,8 @@ function UserProfile({ isNewPostShared }) {
                                           themeName === "dark-theme"
                                             ? "#71767A"
                                             : "rgb(83, 100, 113)",
-                                        lineHeight: "20px",
-                                        fontSize: "15px",
-                                        fontWeight: "400",
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
                                       }}
                                     >
                                       {" "}
@@ -1886,7 +1886,7 @@ function UserProfile({ isNewPostShared }) {
                           to={`/${favorite.userId.username}/status/${
                             !favorite.isReposted
                               ? favorite._id
-                              : favorite.repostedFromThisOriginalPost[0]._id
+                              : favorite.repostedFromThisOriginalPost[0]?._id
                           }`}
                           onClick={() => setclickedPostBox(favorite)}
                           className="outside-of-inner-circle-action-comment-text"
@@ -1901,16 +1901,15 @@ function UserProfile({ isNewPostShared }) {
                             to={`/${favorite.userId.username}/status/${
                               !favorite.isReposted
                                 ? favorite._id
-                                : favorite.repostedFromThisOriginalPost[0]._id
+                                : favorite.repostedFromThisOriginalPost[0]?._id
                             }`}
                           >
                             <div
                               style={{
                                 color:
                                   themeName === "dark-theme" ? "white" : "",
-                                fontSize: "15px",
-                                fontWeight: "400",
-                                lineHeight: "20px",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                                 overflowWrap: "break-word",
                                 maxWidth: "100%",
                               }}
@@ -1929,7 +1928,7 @@ function UserProfile({ isNewPostShared }) {
                               to={`/${favorite.userId.username}/status/${
                                 !favorite.isReposted
                                   ? favorite._id
-                                  : favorite.repostedFromThisOriginalPost[0]
+                                  : favorite?.repostedFromThisOriginalPost[0]
                               }/photo/${1}`}
                               style={{
                                 textDecoration: "none",
@@ -2012,7 +2011,7 @@ function UserProfile({ isNewPostShared }) {
                             to={`/${favorite.userId.username}/status/${
                               !favorite.isReposted
                                 ? favorite._id
-                                : favorite.repostedFromThisOriginalPost[0]._id
+                                : favorite.repostedFromThisOriginalPost[0]?._id
                             }`}
                             onClick={() => setclickedPostBox(favorite)}
                             className="p-1 next-to-like"
@@ -2033,7 +2032,7 @@ function UserProfile({ isNewPostShared }) {
                             to={`/${favorite.userId.username}/status/${
                               !favorite.isReposted
                                 ? favorite._id
-                                : favorite.repostedFromThisOriginalPost[0]._id
+                                : favorite.repostedFromThisOriginalPost[0]?._id
                             }`}
                             onClick={() => setclickedPostBox(favorite)}
                             className="p-1 next-to-like"
@@ -2083,8 +2082,7 @@ function UserProfile({ isNewPostShared }) {
                           width: "100%",
                           textAlign: "center",
                           color: "rgb(29, 155, 240)",
-                          fontSize: "15px",
-                          fontWeight: "400",
+                          fontSize: font15.fontSize,
                           lineHeight: "24px",
                           cursor: "pointer",
                           backgroundColor: "transparent",
@@ -2111,9 +2109,8 @@ function UserProfile({ isNewPostShared }) {
                 <div
                   className="chirp-heavy-font"
                   style={{
-                    lineHeight: "36px",
-                    fontSize: "31px",
-                    fontWeight: "800",
+                    fontSize: font31.fontSize,
+                    lineHeight: font31.lineHeight,
                     margin: "10px",
                   }}
                 >
@@ -2127,8 +2124,8 @@ function UserProfile({ isNewPostShared }) {
                         ? "#71767A"
                         : "rgb(83, 100, 113)",
                     lineHeight: "20px",
-                    fontSize: "15px",
-                    fontWeight: "400",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                     margin: "10px",
                   }}
                 >

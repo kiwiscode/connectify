@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { NavigationHistoryContext } from "../../../../../../../context/NavigationHistoryContext";
+import { useFontSizeHandler } from "../../../../../../../utils/useFontSizeHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -145,6 +146,18 @@ function Automation() {
     }
   });
 
+  const {
+    getFontSizeAndLineHeight26,
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight17,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font26 = getFontSizeAndLineHeight26();
+  const font20 = getFontSizeAndLineHeight20();
+  const font17 = getFontSizeAndLineHeight17();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
   return (
     <>
       {" "}
@@ -255,8 +268,8 @@ function Automation() {
                         }
                         style={{
                           width: "100%",
-                          fontSize: "26px",
-                          lineHeight: "32px",
+                          fontSize: font26.fontSize,
+                          lineHeight: font26.lineHeight,
                         }}
                       >
                         Disconnect your managing account?
@@ -269,8 +282,8 @@ function Automation() {
                         }
                         style={{
                           width: "100%",
-                          fontSize: "15px",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                           marginBottom: "32px",
                         }}
                       >
@@ -290,8 +303,8 @@ function Automation() {
                             minWidth: "52px",
                             minHeight: "52px",
                             border: "none",
-                            fontSize: "17px",
-                            lineHeight: "20px",
+                            fontSize: font17.fontSize,
+                            lineHeight: font17.lineHeight,
                           }}
                         >
                           <span className=" ">Yes, disconnect</span>
@@ -311,8 +324,8 @@ function Automation() {
                             width: "100%",
                             minWidth: "52px",
                             minHeight: "52px",
-                            fontSize: "17px",
-                            lineHeight: "20px",
+                            fontSize: font17.fontSize,
+                            lineHeight: font17.lineHeight,
                           }}
                         >
                           <span>Cancel</span>
@@ -326,7 +339,6 @@ function Automation() {
               <>
                 <div
                   style={{
-                    fontSize: "15px",
                     width: "100%",
                     height: "100%",
                     display: "flex",
@@ -337,6 +349,7 @@ function Automation() {
                 >
                   <LoadingSpinner
                     strokeColor={"rgb(29, 155, 240)"}
+                    fontSize={true}
                   ></LoadingSpinner>
                 </div>
               </>
@@ -414,6 +427,10 @@ function Automation() {
             </svg>
           </div>
           <div
+            style={{
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
+            }}
             className={
               themeName === "dark-theme"
                 ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
@@ -431,8 +448,8 @@ function Automation() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "13px",
-            lineHeight: "16px",
+            fontSize: font13.fontSize,
+            lineHeight: font13.lineHeight,
           }}
         >
           Manage your automated account.
@@ -447,8 +464,8 @@ function Automation() {
               }
               style={{
                 paddingLeft: "16px",
-                fontSize: "15px",
-                lineHeight: "20px",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
               }}
             >
               Managing account
@@ -461,8 +478,8 @@ function Automation() {
               }
               style={{
                 paddingLeft: "16px",
-                fontSize: "13px",
-                lineHeight: "16px",
+                fontSize: font13.fontSize,
+                lineHeight: font13.lineHeight,
               }}
             >
               {user.automated_account.username}
@@ -487,8 +504,8 @@ function Automation() {
                     : "very-dark-gray-light-theme-text-variant-1  chirp-regular-font"
                 }
                 style={{
-                  fontSize: "15px",
-                  lineHeight: "20px",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
               >
                 Change managing account
@@ -554,8 +571,8 @@ function Automation() {
                         : "chirp-bold-font very-dark-gray-light-theme-text-variant-1"
                     }
                     style={{
-                      fontSize: "15px",
-                      lineHeight: "20px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                   >
                     Managing account connected
@@ -583,8 +600,8 @@ function Automation() {
               style={{
                 color: "#F4212D",
                 textAlign: "center",
-                fontSize: "15px",
-                lineHeight: "20px",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
                 padding: "16px",
                 cursor: "pointer",
               }}
@@ -620,8 +637,8 @@ function Automation() {
                     : "chirp-regular-font very-dark-gray-light-theme-text-variant-1"
                 }
                 style={{
-                  fontSize: "15px",
-                  lineHeight: "20px",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
               >
                 Set up account automation
@@ -629,7 +646,7 @@ function Automation() {
               <div>
                 <div
                   style={{
-                    fontSize: "13px",
+                    fontSize: font13.fontSize,
                   }}
                   className={
                     themeName === "dark-theme"
@@ -707,8 +724,8 @@ function Automation() {
                     : "chirp-bold-font very-dark-gray-light-theme-text-variant-1"
                 }
                 style={{
-                  fontSize: "15px",
-                  lineHeight: "20px",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
               >
                 Managing account disconnected

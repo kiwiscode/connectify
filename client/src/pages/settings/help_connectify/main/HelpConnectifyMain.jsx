@@ -8,8 +8,6 @@ function HelpConnectifyMain() {
     <div
       style={{
         textAlign: "center",
-        fontSize: "64px",
-        fontWeight: "800",
       }}
     >
       Help connectify

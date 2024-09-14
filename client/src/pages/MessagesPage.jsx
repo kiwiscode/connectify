@@ -1,17 +1,12 @@
 import { useContext, useEffect, useState } from "react";
-
 import { UserContext } from "../context/UserContext";
-
 import { Col, Stack, Modal, Button } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import CreateChat from "../components/ui/CreateChat";
-
 import { List } from "antd";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import { ThemeContext } from "../context/ThemeContext";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
-
 import Popover from "@mui/material/Popover";
 import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 
@@ -25,6 +20,8 @@ import useWindowDimensions from "../hooks/getWindowDimensions";
 import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
 import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
 import MobileTopNavigation from "../components/Navbar/mobile_top_navigation/MobileTopNavigation";
+import { useFontSizeHandler } from "../utils/useFontSizeHandler";
+import { useNavigate } from "react-router-dom";
 function MessagesPage() {
   const { userInfo, getToken } = useContext(UserContext);
 
@@ -42,7 +39,6 @@ function MessagesPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [content, setContent] = useState("");
 
-  const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
   const [receivedMessageRoom, setReceivedMessageRoom] = useState(null);
 
   const [activeUsers, setActiveUsers] = useState([]);
@@ -50,9 +46,7 @@ function MessagesPage() {
 
   const [filteredUsers, setFilteredUsers] = useState([]);
 
-  const [room, setRoom] = useState("");
   const [showThreeDots, setShowThreeDots] = useState(false);
-  const navigate = useNavigate();
   const [{ theme, themeName }] = useContext(ThemeContext);
 
   useEffect(() => {
@@ -136,7 +130,14 @@ function MessagesPage() {
   };
 
   const [isHoveredPopoverItem, setisHoveredPopoverItem] = useState(null);
-
+  const {
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight14,
+  } = useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font14 = getFontSizeAndLineHeight14();
   const deleteModalOutput = [
     <Modal
       backdropClassName={
@@ -168,9 +169,8 @@ function MessagesPage() {
             className="chirp-bold-font"
             style={{
               color: themeName === "dark-theme" ? "white" : "",
-              fontWeight: "700",
-              fontSize: "20px",
-              lineHeight: "24px",
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
             }}
           >
             Leave conversation?
@@ -180,9 +180,8 @@ function MessagesPage() {
             style={{
               color:
                 themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
-              fontWeight: "400",
-              fontSize: "15px",
-              lineHeight: "20px",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
             }}
           >
             This conversation will be deleted from your inbox. Other people in
@@ -257,8 +256,6 @@ function MessagesPage() {
           return eachUser.username !== userInfo.username;
         });
         setActiveUsers(spliceActiveUser);
-
-        console.log("Active users =>", spliceActiveUser);
       })
       .catch((err) => {
         return err;
@@ -273,8 +270,12 @@ function MessagesPage() {
     }
   }, [searchString]);
 
+  const navigate = useNavigate();
+
   const redirectToChatDetailPage = (chatRoomId) => {
-    window.location.href = `http://localhost:5173/messages/${chatRoomId}`;
+    // window.location.href = `http://localhost:5173/messages/${chatRoomId}`;
+
+    navigate(`/messages/${chatRoomId}`);
   };
 
   // start to check filtering rooms
@@ -473,7 +474,13 @@ function MessagesPage() {
               `translateY(${headerPosition}px)`,
             backgroundColor:
               dataFromTopNavigationComponent ===
-                "mobile top navigation was closed" && "transparent",
+                "mobile top navigation was closed" && themeName === "dark-theme"
+                ? "rgba(0, 0, 0, 0.65)"
+                : dataFromTopNavigationComponent ===
+                    "mobile top navigation was closed" &&
+                  themeName === "light-theme"
+                ? "rgba(255, 255, 255, 0.85)"
+                : null,
             minHeight:
               dataFromTopNavigationComponent ===
                 "mobile top navigation was closed" && "53px",
@@ -527,9 +534,6 @@ function MessagesPage() {
           >
             <svg
               style={{
-                lineHeight: "20px",
-                fontSize: "15px",
-                fontWeight: "700",
                 cursor: "pointer",
               }}
               width={20}
@@ -611,8 +615,8 @@ function MessagesPage() {
                   style={{
                     color: themeName === "dark-theme" ? "white" : "black",
                     paddingLeft: "36px",
-                    fontSize: "14px",
-                    lineHeight: "16px",
+                    fontSize: font14.fontSize,
+                    lineHeight: font14.lineHeight,
                     width: "100%",
                     backgroundColor:
                       themeName !== "dark-theme" ? "white" : "black",
@@ -759,9 +763,8 @@ function MessagesPage() {
                                                 ? "white"
                                                 : "rgb(15, 20, 25)",
 
-                                            fontSize: "15px",
-                                            fontWeight: "700",
-                                            lineHeight: "20px",
+                                            fontSize: font15.fontSize,
+                                            lineHeight: font15.lineHeight,
                                           }}
                                         >
                                           {eachMessageRoom.members[1] &&
@@ -783,9 +786,8 @@ function MessagesPage() {
                                               themeName === "dark-theme"
                                                 ? "#71767A"
                                                 : "rgb(83, 100, 113)",
-                                            fontSize: "15px",
-                                            lineHeight: "20px",
-                                            fontWeight: "400",
+                                            fontSize: font15.fontSize,
+                                            lineHeight: font15.lineHeight,
                                           }}
                                         >
                                           @
@@ -802,14 +804,14 @@ function MessagesPage() {
                                           ) : null}
                                         </span>
                                         <span
+                                          className="chirp-regular-font"
                                           style={{
                                             color:
                                               themeName === "dark-theme"
                                                 ? "#71767A"
                                                 : "rgb(83, 100, 113)",
-                                            fontSize: "15px",
-                                            lineHeight: "20px",
-                                            fontWeight: "400",
+                                            fontSize: font15.fontSize,
+                                            lineHeight: font15.lineHeight,
                                           }}
                                         >
                                           {" "}
@@ -1017,9 +1019,10 @@ function MessagesPage() {
                                                         <span
                                                           className="chirp-bold-font"
                                                           style={{
-                                                            lineHeight: "20px",
-                                                            fontWeight: "700",
-                                                            fontSize: "15px",
+                                                            fontSize:
+                                                              font15.fontSize,
+                                                            lineHeight:
+                                                              font15.lineHeight,
                                                             color:
                                                               themeName ===
                                                               "dark-theme"
@@ -1067,9 +1070,10 @@ function MessagesPage() {
                                                         <span
                                                           className="chirp-bold-font"
                                                           style={{
-                                                            lineHeight: "20px",
-                                                            fontWeight: "700",
-                                                            fontSize: "15px",
+                                                            fontSize:
+                                                              font15.fontSize,
+                                                            lineHeight:
+                                                              font15.lineHeight,
 
                                                             color:
                                                               themeName ===
@@ -1118,9 +1122,10 @@ function MessagesPage() {
                                                         <span
                                                           className="chirp-bold-font"
                                                           style={{
-                                                            lineHeight: "20px",
-                                                            fontWeight: "700",
-                                                            fontSize: "15px",
+                                                            fontSize:
+                                                              font15.fontSize,
+                                                            lineHeight:
+                                                              font15.lineHeight,
                                                             color:
                                                               themeName ===
                                                               "dark-theme"
@@ -1181,9 +1186,10 @@ function MessagesPage() {
                                                           className="chirp-bold-font"
                                                           style={{
                                                             color: "#f2212e",
-                                                            lineHeight: "20px",
-                                                            fontWeight: "700",
-                                                            fontSize: "15px",
+                                                            fontSize:
+                                                              font15.fontSize,
+                                                            lineHeight:
+                                                              font15.lineHeight,
                                                           }}
                                                         >
                                                           Delete conversation
@@ -1219,15 +1225,10 @@ function MessagesPage() {
           </>
         ) : messagesLoadingbar ? (
           <div style={{ textAlign: "center", padding: "64px" }}>
-            <div
-              style={{
-                fontSize: "15px",
-              }}
-            >
-              <LoadingSpinner
-                strokeColor={"rgb(29, 155, 240)"}
-              ></LoadingSpinner>
-            </div>
+            <LoadingSpinner
+              strokeColor={"rgb(29, 155, 240)"}
+              fontSize={true}
+            ></LoadingSpinner>
           </div>
         ) : !messageRooms.length ? (
           <CreateChat messagesPageWriteAmESSAGEoPTION={true} />

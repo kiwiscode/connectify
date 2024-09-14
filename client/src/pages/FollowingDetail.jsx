@@ -1,10 +1,9 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserContext";
-import { Container, Row, Col, Stack } from "react-bootstrap";
+import { Col, Stack } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
-import { message } from "antd";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -16,10 +15,25 @@ const socket = io.connect(`${API_URL}`);
 import { ThemeContext } from "../context/ThemeContext";
 import UnfollowModal from "../components/unfollow-modal/UnfollowModal";
 import useWindowDimensions from "../hooks/getWindowDimensions";
+import { SubcsriptionStatusContext } from "../context/SubscriptionStatusContext";
+import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 
 function FollowingDetailPage() {
   const { userId } = useParams();
-
+  const {
+    getFontSizeAndLineHeight31,
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight17,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+    getFontSizeAndLineHeight11,
+  } = useFontSizeHandler();
+  const font31 = getFontSizeAndLineHeight31();
+  const font20 = getFontSizeAndLineHeight20();
+  const font17 = getFontSizeAndLineHeight17();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
+  const font11 = getFontSizeAndLineHeight11();
   const navigate = useNavigate();
 
   const { getToken, userInfo } = useContext(UserContext);
@@ -33,67 +47,11 @@ function FollowingDetailPage() {
   // start to check shared post view message
 
   // finish to check shared post view message
-  const [subscription, setSubscription] = useState(null);
-
-  const getSubscription = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/subscription`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      });
-
-      console.log(
-        "response data detail =>",
-        response.data.activeSubscription[0]
-      );
-      console.log(
-        "response data detail 2 =>",
-        response.data.activeCancelledSubscription[0]
-      );
-
-      setSubscription(
-        response.data.activeSubscription[0]
-          ? response.data.activeSubscription[0]
-          : response.data.activeCancelledSubscription[0]
-      );
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-  const [remainingTimeSubscriptions, setRemainingTimeSubscriptions] = useState(
-    []
-  );
-  const [
+  const {
+    subscription,
+    remainingTimeSubscriptions,
     remainingTimeSubscriptionsOwnerIds,
-    setRemainingTimeSubscriptionsOwnerIds,
-  ] = useState([]);
-  const getRemainingTimeSubscriptions = async () => {
-    try {
-      const response = await axios.get(
-        `${API_URL}/remaining_time_subscriptions`,
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      );
-
-      setRemainingTimeSubscriptions(response.data.remainingTimeSubscriptions);
-
-      setRemainingTimeSubscriptionsOwnerIds(
-        response.data.remainingTimeSubscriptions.map((eachSub) => {
-          return eachSub.owner;
-        })
-      );
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-  useEffect(() => {
-    getSubscription();
-    getRemainingTimeSubscriptions();
-  }, []);
+  } = useContext(SubcsriptionStatusContext);
   const [activeUserFollowing, setactiveUserFollowing] = useState([]);
   const [clicked, setClicked] = useState(false);
   const getActiveUser = () => {
@@ -271,9 +229,15 @@ function FollowingDetailPage() {
       >
         <div
           style={{
-            backgroundColor: "transparent",
+            // for sharp backdrop filter with transparent backgroundcolor start to check
+            // backgroundColor: "transparent",
+            // for sharp backdrop filter with transparent backgroundcolor finish to check
+            backgroundColor:
+              themeName === "dark-theme"
+                ? "rgba(0, 0, 0, 0.65)"
+                : "rgba(255, 255, 255, 0.85)",
             minHeight: "53px",
-            zIndex: 99999,
+            zIndex: 1,
             backdropFilter: "blur(12px)",
             transform: width <= 500 && `translateY(${headerPosition}px)`,
             transition:
@@ -353,8 +317,8 @@ function FollowingDetailPage() {
                           : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
                       }
                       style={{
-                        fontSize: "17px",
-                        lineHeight: "20px",
+                        fontSize: font17.fontSize,
+                        lineHeight: font17.lineHeight,
                       }}
                     >
                       {followingofthemonitoreduser.fullname}
@@ -366,8 +330,8 @@ function FollowingDetailPage() {
                           : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
                       }
                       style={{
-                        fontSize: "13px",
-                        lineHeight: "16px",
+                        fontSize: font13.fontSize,
+                        lineHeight: font13.lineHeight,
                       }}
                     >
                       @{followingofthemonitoreduser.username}
@@ -397,8 +361,8 @@ function FollowingDetailPage() {
                           ? "#71767A"
                           : "#526371",
                       fontWeight: activeTab === "followers" ? "700" : "500",
-                      lineHeight: "20px",
-                      fontSize: "15px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                       cursor: "pointer",
                       flex: 1,
                       textAlign: "center",
@@ -412,6 +376,8 @@ function FollowingDetailPage() {
                         padding: "16px 0px 16px 0px",
                         flexDirection: "column",
                         position: "relative",
+                        justifyContent: "center",
+                        alignItems: "center",
                       }}
                     >
                       <span
@@ -439,7 +405,7 @@ function FollowingDetailPage() {
                             backgroundColor: "rgb(29, 155, 240)",
                             height: "4px",
                             width: "100%",
-                            minWidth: "52px",
+                            minWidth: "56px",
                             position: "absolute",
                             bottom: "0px",
                             borderRadius: "9999px",
@@ -471,8 +437,8 @@ function FollowingDetailPage() {
                           ? "#71767A"
                           : "#526371",
                       fontWeight: activeTab === "following" ? "700" : "500",
-                      lineHeight: "20px",
-                      fontSize: "15px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                       cursor: "pointer",
                       flex: 1,
                       textAlign: "center",
@@ -485,6 +451,8 @@ function FollowingDetailPage() {
                         padding: "16px 0px 16px 0px",
                         flexDirection: "column",
                         position: "relative",
+                        justifyContent: "center",
+                        alignItems: "center",
                       }}
                     >
                       <span
@@ -512,7 +480,7 @@ function FollowingDetailPage() {
                             backgroundColor: "rgb(29, 155, 240)",
                             height: "4px",
                             width: "100%",
-                            minWidth: "52px",
+                            minWidth: "56px",
                             position: "absolute",
                             bottom: "0px",
                             borderRadius: "9999px",
@@ -574,8 +542,8 @@ function FollowingDetailPage() {
                         : "very-dark-gray-light-theme-text-variant-1 p-2 chirp-bold-font"
                     }
                     style={{
-                      fontSize: "20px",
-                      lineHeight: "24px",
+                      fontSize: font20.fontSize,
+                      lineHeight: font20.lineHeight,
                     }}
                   >
                     <div
@@ -602,8 +570,10 @@ function FollowingDetailPage() {
                           themeName === "dark-theme"
                             ? "#71767A"
                             : "rgb(83, 100, 113)",
+                        fontSize: font13.fontSize,
+                        lineHeight: font13.lineHeight,
                       }}
-                      className="profile-paragraph"
+                      className="profile-paragraph chirp-regular-font"
                     >
                       @{followingofthemonitoreduser.username}
                     </div>
@@ -632,8 +602,8 @@ function FollowingDetailPage() {
                           ? "#71767A"
                           : "#526371",
                       fontWeight: activeTab === "followers" ? "700" : "500",
-                      lineHeight: "20px",
-                      fontSize: "15px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                       cursor: "pointer",
                       flex: 1,
                       textAlign: "center",
@@ -706,8 +676,8 @@ function FollowingDetailPage() {
                           ? "#71767A"
                           : "#526371",
                       fontWeight: activeTab === "following" ? "700" : "500",
-                      lineHeight: "20px",
-                      fontSize: "15px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                       cursor: "pointer",
                       flex: 1,
                       textAlign: "center",
@@ -951,12 +921,11 @@ function FollowingDetailPage() {
                           {/* Fullname */}
                           <div
                             style={{
-                              fontSize: "15px",
-                              fontWeight: "700",
-                              lineHeight: "20px",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                               padding: "2px 0px",
                             }}
-                            className="fullname"
+                            className="fullname chirp-bold-font"
                           >
                             <Link
                               to={`/profile/${user._id}`}
@@ -970,10 +939,10 @@ function FollowingDetailPage() {
                               }}
                             >
                               <div
+                                className="chirp-bold-font"
                                 style={{
-                                  fontSize: "15px",
-                                  fontWeight: "700",
-                                  lineHeight: "20px",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                   overflow: "hidden",
                                   textOverflow: "ellipsis",
                                   whiteSpace: "nowrap",
@@ -989,13 +958,12 @@ function FollowingDetailPage() {
                           {/* Username */}
                           <div
                             style={{
-                              fontSize: "15px",
-                              fontWeight: "400",
-                              lineHeight: "20px",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                               color: "rgb(83, 100, 113)",
                               position: "relative",
                             }}
-                            className="username"
+                            className="username chirp-regular-font"
                           >
                             <Link
                               style={{
@@ -1004,10 +972,10 @@ function FollowingDetailPage() {
                               to={`/profile/${user._id}`}
                             >
                               <span
+                                className="chirp-regular-font"
                                 style={{
-                                  fontSize: "15px",
-                                  fontWeight: "400",
-                                  lineHeight: "20px",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                   color:
                                     themeName === "dark-theme"
                                       ? "#71767A"
@@ -1020,14 +988,14 @@ function FollowingDetailPage() {
                             </Link>
                             {user._id !== userInfo._id ? (
                               <span
+                                className="chirp-medium-font"
                                 style={{
                                   position: "absolute",
                                   textAlign: "center",
                                   top: "3px",
                                   marginLeft: "4px",
-                                  fontWeight: "500",
-                                  lineHeight: "10px",
-                                  fontSize: "11px",
+                                  fontSize: font11.fontSize,
+                                  lineHeight: font11.lineHeight,
                                   wordWrap: "break-word",
                                   whiteSpace: "nowrap",
                                   color:
@@ -1103,11 +1071,11 @@ function FollowingDetailPage() {
                         >
                           {user._id !== userInfo._id ? (
                             <div
+                              className="chirp-bold-font"
                               style={{
                                 padding: "8px 16px",
-                                lineHeight: "20px",
-                                fontSize: "15px",
-                                fontWeight: "700",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
                               }}
                             >
                               {isFollowing
@@ -1143,10 +1111,10 @@ function FollowingDetailPage() {
                 }}
               >
                 <div
+                  className="chirp-heavy-font"
                   style={{
-                    lineHeight: "36px",
-                    fontSize: "31px",
-                    fontWeight: "800",
+                    fontSize: font31.fontSize,
+                    lineHeight: font31.lineHeight,
                     margin: "10px",
                   }}
                 >
@@ -1158,14 +1126,14 @@ function FollowingDetailPage() {
                     : "Be in the know"}
                 </div>
                 <div
+                  className="chirp-regular-font"
                   style={{
                     color:
                       themeName === "dark-theme"
                         ? "#71767A"
                         : "rgb(83, 100, 113)",
-                    lineHeight: "20px",
-                    fontSize: "15px",
-                    fontWeight: "400",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                     margin: "10px",
                   }}
                 >

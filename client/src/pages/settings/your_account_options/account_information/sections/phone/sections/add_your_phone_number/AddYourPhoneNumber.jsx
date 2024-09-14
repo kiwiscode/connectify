@@ -24,6 +24,7 @@ import {
   isValidPhoneNumber,
 } from "react-phone-number-input/input";
 import en from "react-phone-number-input/locale/en.json";
+import { useFontSizeHandler } from "../../../../../../../../utils/useFontSizeHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -295,6 +296,20 @@ function AddYourPhoneNumber() {
     handlePhoneNumberCheck();
   }, [phoneNumber]);
 
+  const {
+    getFontSizeAndLineHeight31,
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight17,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight14,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font31 = getFontSizeAndLineHeight31();
+  const font20 = getFontSizeAndLineHeight20();
+  const font17 = getFontSizeAndLineHeight17();
+  const font15 = getFontSizeAndLineHeight15();
+  const font14 = getFontSizeAndLineHeight14();
+  const font13 = getFontSizeAndLineHeight13();
   return (
     <>
       {" "}
@@ -345,8 +360,8 @@ function AddYourPhoneNumber() {
                   style={{
                     color: themeName === "dark-theme" ? "white" : "",
 
-                    fontSize: "20px",
-                    lineHeight: "24px",
+                    fontSize: font20.fontSize,
+                    lineHeight: font20.lineHeight,
                   }}
                 >
                   Verify phone
@@ -357,9 +372,8 @@ function AddYourPhoneNumber() {
                       themeName === "dark-theme"
                         ? "#71767A"
                         : "rgb(83, 100, 113)",
-
-                    fontSize: "15px",
-                    lineHeight: "20px",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                   }}
                   className="mt-2 chirp-regular-font"
                 >
@@ -412,9 +426,10 @@ function AddYourPhoneNumber() {
                     <span>
                       {" "}
                       <span
+                        className="chirp-regular-font"
                         style={{
-                          fontSize: "15px",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         OK
@@ -462,9 +477,10 @@ function AddYourPhoneNumber() {
                     <span>
                       {" "}
                       <span
+                        className="chirp-regular-font"
                         style={{
-                          fontSize: "15px",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         Edit
@@ -602,8 +618,8 @@ function AddYourPhoneNumber() {
                       </div>
                       <div
                         style={{
-                          fontSize: "15px",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                         className={
                           themeName === "dark-theme"
@@ -848,8 +864,8 @@ function AddYourPhoneNumber() {
                     >
                       <div
                         style={{
-                          fontSize: "31px",
-                          lineHeight: "36px",
+                          fontSize: font31.fontSize,
+                          lineHeight: font31.lineHeight,
                         }}
                         className={
                           themeName === "dark-theme"
@@ -861,8 +877,8 @@ function AddYourPhoneNumber() {
                       </div>
                       <div
                         style={{
-                          fontSize: "15px",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                         className={
                           themeName === "dark-theme"
@@ -914,12 +930,11 @@ function AddYourPhoneNumber() {
                         >
                           <div
                             onClick={handleShowOptions}
-                            className="main-outline-text-year-picker"
+                            className="main-outline-text-year-picker chirp-regular-font"
                             style={{
                               padding: "0px 8px",
-                              fontSize: "14px",
-                              lineHeight: "16px",
-                              fontWeight: "400",
+                              fontSize: font14.fontSize,
+                              lineHeight: font14.lineHeight,
                               color: showpopoverCountriesAndTheirPhoneCode
                                 ? "#1d9bf0"
                                 : "rgba(83,100,113,1.00)",
@@ -937,8 +952,8 @@ function AddYourPhoneNumber() {
                               onClick={handleShowOptions}
                               className="mt-2 selected-year-string-parent-div"
                               style={{
-                                fontSize: "17px",
-                                lineHeight: "20px",
+                                fontSize: font17.fontSize,
+                                lineHeight: font17.lineHeight,
                                 color:
                                   themeName === "dark-theme"
                                     ? "white"
@@ -1099,11 +1114,11 @@ function AddYourPhoneNumber() {
                         }}
                       />
                       <div
+                        className="chirp-regular-font"
                         style={{
                           color: "rgb(244, 33, 46)",
-                          fontSize: "13px",
-                          lineHeight: "16px",
-                          fontWeight: "400",
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
                           position: "relative",
                           left: "10px",
                           bottom: "45px",
@@ -1136,9 +1151,8 @@ function AddYourPhoneNumber() {
                             themeName === "dark-theme"
                               ? "white"
                               : "rgb(83, 100, 113)",
-                          fontSize: "15px",
-                          lineHeight: "20px",
-                          fontWeight: "400",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                           position: "relative",
                           bottom: "4px",
                         }}
@@ -1234,13 +1248,12 @@ function AddYourPhoneNumber() {
                           width: "81.5%",
                           height: "52px",
                           color: "white",
-                          fontSize: "17px",
-                          fontWeight: "700",
-                          lineHeight: "20px",
+                          fontSize: font17.fontSize,
+                          lineHeight: font17.lineHeight,
                           position: "absolute",
                           bottom: "20px",
                         }}
-                        className={`login-button next-btn ${themeName}-white-btn`}
+                        className={`login-button next-btn ${themeName}-white-btn chirp-bold-font`}
                         variant="dark"
                         onClick={() => {
                           if (validPhoneNumber && validPhoneNumber2) {
@@ -1256,9 +1269,8 @@ function AddYourPhoneNumber() {
                           width: "81.5%",
                           height: "52px",
                           color: themeName === "dark-theme" ? "white" : "black",
-                          fontSize: "17px",
-                          fontWeight: "700",
-                          lineHeight: "20px",
+                          fontSize: font17.fontSize,
+                          lineHeight: font17.lineHeight,
                           position: "absolute",
                           bottom: "20px",
                         }}
@@ -1409,9 +1421,8 @@ function AddYourPhoneNumber() {
                           border: "none",
                           outlineStyle: "none",
                           cursor: "pointer",
-                          lineHeight: "20px",
-                          fontSize: "15px",
-                          fontWeight: "400",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                           padding: "12px",
                           color: themeName === "dark-theme" ? "white" : "",
                         }}
@@ -1434,9 +1445,8 @@ function AddYourPhoneNumber() {
                           borderBottomLeftRadius: "16px",
                           outlineStyle: "none",
                           cursor: "pointer",
-                          lineHeight: "20px",
-                          fontSize: "15px",
-                          fontWeight: "700",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                           padding: "12px",
                           color: themeName === "dark-theme" ? "white" : "",
                         }}
@@ -1452,8 +1462,8 @@ function AddYourPhoneNumber() {
                     >
                       <div
                         style={{
-                          fontSize: "32px",
-                          lineHeight: "26px",
+                          fontSize: font31.fontSize,
+                          lineHeight: font31.lineHeight,
                         }}
                         className={
                           themeName === "dark-theme"
@@ -1470,8 +1480,8 @@ function AddYourPhoneNumber() {
                             : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font mt-2"
                         }
                         style={{
-                          fontSize: "15px",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         Enter it below to verify {phoneNumber}.
@@ -1530,14 +1540,13 @@ function AddYourPhoneNumber() {
                         onClick={() =>
                           setShowOptionsReceivedEmail(!showOptionsReceivedEmail)
                         }
-                        className="hover-blue-underline"
+                        className="hover-blue-underline chirp-regular-font"
                         style={{
                           cursor: "pointer",
                           position: "relative",
                           left: "10px",
-                          fontSize: "13px",
-                          fontWeight: "400",
-                          lineHeight: "16px",
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
                           color: "#1f9cf0",
                           display: "inline-block",
                           float: "left",
@@ -1583,7 +1592,6 @@ function AddYourPhoneNumber() {
               <>
                 <div
                   style={{
-                    fontSize: "15px",
                     width: "100%",
                     height: "100%",
                     display: "flex",
@@ -1594,6 +1602,7 @@ function AddYourPhoneNumber() {
                 >
                   <LoadingSpinner
                     strokeColor={"rgb(29, 155, 240)"}
+                    fontSize={true}
                   ></LoadingSpinner>
                 </div>
               </>
@@ -1670,6 +1679,10 @@ function AddYourPhoneNumber() {
             </svg>
           </div>
           <div
+            style={{
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
+            }}
             className={
               themeName === "dark-theme"
                 ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
@@ -1682,11 +1695,13 @@ function AddYourPhoneNumber() {
         {firstLoading ? (
           <div
             style={{
-              fontSize: "15px",
               width: "100%",
             }}
           >
-            <LoadingSpinner strokeColor={"rgb(29, 155, 240)"}></LoadingSpinner>
+            <LoadingSpinner
+              fontSize={true}
+              strokeColor={"rgb(29, 155, 240)"}
+            ></LoadingSpinner>
           </div>
         ) : (
           <>
@@ -1700,13 +1715,13 @@ function AddYourPhoneNumber() {
                 >
                   {" "}
                   <div
+                    className="chirp-regular-font"
                     style={{
                       position: "absolute",
                       top: "10%",
                       left: "6%",
-                      fontSize: "12px",
-                      lineHeight: "18px",
-                      fontWeight: "400",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                       minWidth: "fit-content",
                       //   width: "80%",
                       color:
@@ -1774,16 +1789,15 @@ function AddYourPhoneNumber() {
                   }}
                   className={
                     themeName === "dark-theme"
-                      ? "dark-theme-stylish-blue-background-color mt-1"
-                      : "light-theme-stylish-blue-background-color mt-1"
+                      ? "dark-theme-stylish-blue-background-color mt-1 chirp-regular-font"
+                      : "light-theme-stylish-blue-background-color mt-1 chirp-regular-font"
                   }
                   style={{
                     padding: "16px",
                     textAlign: "center",
                     color: "rgb(29, 155, 240)",
-                    lineHeight: "20px",
-                    fontSize: "15px",
-                    fontWeight: "400",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                     cursor: "pointer",
                   }}
                 >
@@ -1795,16 +1809,15 @@ function AddYourPhoneNumber() {
                   }}
                   className={
                     themeName === "dark-theme"
-                      ? "deactivate-btn-dark-theme mt-1"
-                      : "deactivate-btn-light-theme mt-1"
+                      ? "deactivate-btn-dark-theme mt-1 chirp-regular-font"
+                      : "deactivate-btn-light-theme mt-1 chirp-regular-font"
                   }
                   style={{
                     padding: "16px",
                     textAlign: "center",
                     color: "#F4212D",
-                    lineHeight: "20px",
-                    fontSize: "15px",
-                    fontWeight: "400",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                     cursor: "pointer",
                   }}
                 >
@@ -1818,16 +1831,15 @@ function AddYourPhoneNumber() {
                 }}
                 className={
                   themeName === "dark-theme"
-                    ? "dark-theme-stylish-blue-background-color mt-1"
-                    : "light-theme-stylish-blue-background-color mt-1"
+                    ? "dark-theme-stylish-blue-background-color mt-1 chirp-regular-font"
+                    : "light-theme-stylish-blue-background-color mt-1 chirp-regular-font"
                 }
                 style={{
                   padding: "16px",
                   textAlign: "center",
                   color: "rgb(29, 155, 240)",
-                  lineHeight: "20px",
-                  fontSize: "15px",
-                  fontWeight: "400",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                   cursor: "pointer",
                 }}
               >

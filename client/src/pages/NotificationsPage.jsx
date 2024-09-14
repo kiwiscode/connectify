@@ -13,6 +13,8 @@ import RepostAction from "../components/ui/RepostAction";
 import LikeAction from "../components/ui/LikeAction";
 import PostPopover from "../components/three-dots-popover/Popover";
 import MobileTopNavigation from "../components/Navbar/mobile_top_navigation/MobileTopNavigation";
+import { SubcsriptionStatusContext } from "../context/SubscriptionStatusContext";
+import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -61,67 +63,14 @@ function NotificationsPage() {
       );
     }
   };
-  const [remainingTimeSubscriptions, setRemainingTimeSubscriptions] = useState(
-    []
-  );
-  const [
+  const {
+    subscription,
+    remainingTimeSubscriptions,
     remainingTimeSubscriptionsOwnerIds,
-    setRemainingTimeSubscriptionsOwnerIds,
-  ] = useState([]);
-  const [subscription, setSubscription] = useState(null);
-  const getSubscription = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/subscription`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      });
-
-      console.log(
-        "response data detail =>",
-        response.data.activeSubscription[0]
-      );
-      console.log(
-        "response data detail 2 =>",
-        response.data.activeCancelledSubscription[0]
-      );
-
-      setSubscription(
-        response.data.activeSubscription[0]
-          ? response.data.activeSubscription[0]
-          : response.data.activeCancelledSubscription[0]
-      );
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-  const getRemainingTimeSubscriptions = async () => {
-    try {
-      const response = await axios.get(
-        `${API_URL}/remaining_time_subscriptions`,
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      );
-
-      setRemainingTimeSubscriptions(response.data.remainingTimeSubscriptions);
-
-      setRemainingTimeSubscriptionsOwnerIds(
-        response.data.remainingTimeSubscriptions.map((eachSub) => {
-          return eachSub.owner;
-        })
-      );
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
+  } = useContext(SubcsriptionStatusContext);
 
   useEffect(() => {
     getAllNotifications();
-    getRemainingTimeSubscriptions();
-    getSubscription();
   }, []);
 
   console.log("All notifications =>", allNotifications);
@@ -273,6 +222,10 @@ function NotificationsPage() {
     setDataFromTopNavigationComponent(data);
   }
 
+  const { getFontSizeAndLineHeight31, getFontSizeAndLineHeight15 } =
+    useFontSizeHandler();
+  const font31 = getFontSizeAndLineHeight31();
+  const font15 = getFontSizeAndLineHeight15();
   return (
     <>
       {contextHolder}
@@ -315,9 +268,7 @@ function NotificationsPage() {
               dataFromTopNavigationComponent ===
                 "mobile top navigation was closed" &&
               `translateY(${headerPosition}px)`,
-            backgroundColor:
-              dataFromTopNavigationComponent ===
-                "mobile top navigation was closed" && "transparent",
+
             minHeight:
               dataFromTopNavigationComponent ===
                 "mobile top navigation was closed" && "53px",
@@ -325,17 +276,19 @@ function NotificationsPage() {
               dataFromTopNavigationComponent ===
                 "mobile top navigation was closed" &&
               "transform 0.3s cubic-bezier(0, 0, 0, 1)",
-            backdropFilter:
-              dataFromTopNavigationComponent ===
-                "mobile top navigation was closed" && "blur(12px)",
             height: "53px",
             minHeight: "53px",
             position: width > 500 && "sticky",
             top: width > 500 && "0px",
             width: width > 500 && "100%",
-            backgroundColor: width > 500 && "transparent",
+            backgroundColor:
+              width > 500 && themeName === "dark-theme"
+                ? "rgba(0, 0, 0, 0.65)"
+                : width > 500 && themeName === "light-theme"
+                ? "rgba(255, 255, 255, 0.85)"
+                : null,
             backdropFilter: width > 500 && "blur(12px)",
-            zIndex: width > 500 && 99999,
+            zIndex: width > 500 && 1,
           }}
           direction="horizontal"
           gap={3}
@@ -382,9 +335,6 @@ function NotificationsPage() {
           >
             <svg
               style={{
-                lineHeight: "20px",
-                fontSize: "15px",
-                fontWeight: "700",
                 cursor: "pointer",
               }}
               color={themeName === "dark-theme" ? "white" : ""}
@@ -513,9 +463,8 @@ function NotificationsPage() {
                                   to={`/profile/${eachNotification.notificationSender._id}`}
                                   className="hover-fullname chirp-bold-font"
                                   style={{
-                                    fontSize: "15px",
-                                    lineHeight: "20px",
-                                    fontWeight: "700",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
                                     textDecoration: "none",
                                     color:
                                       themeName === "dark-theme"
@@ -568,9 +517,8 @@ function NotificationsPage() {
                                   className="chirp-regular-font"
                                   to={`/profile/${eachNotification.notificationSender._id}`}
                                   style={{
-                                    fontSize: "15px",
-                                    lineHeight: "20px",
-                                    fontWeight: "400",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
                                     marginLeft: "5px",
                                     textDecoration: "none",
 
@@ -635,15 +583,15 @@ function NotificationsPage() {
                                 }}
                               >
                                 <div
+                                  className="chirp-regular-font"
                                   style={{
                                     display: "flex",
                                     color:
                                       themeName === "dark-theme"
                                         ? "#71767A"
                                         : "rgb(83, 100, 113)",
-                                    fontSize: "15px",
-                                    fontWeight: "400",
-                                    lineHeight: "20px",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
                                   }}
                                 >
                                   <div className="chirp-regular-font">
@@ -651,11 +599,10 @@ function NotificationsPage() {
                                   </div>
                                   <Link
                                     to={`/profile/${eachNotification.notificationReceiver._id}`}
-                                    className="replying-to-text"
+                                    className="replying-to-text chirp-regular-font"
                                     style={{
-                                      fontSize: "15px",
-                                      fontWeight: "400",
-                                      lineHeight: "20px",
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                       marginLeft: "5px",
                                       textDecoration: "none",
                                       color: "rgb(29, 155, 240)",
@@ -669,11 +616,11 @@ function NotificationsPage() {
                                   </Link>
                                 </div>
                                 <div
+                                  className="chirp-regular-font"
                                   style={{
                                     display: "flex",
-                                    fontSize: "15px",
-                                    fontWeight: "400",
-                                    lineHeight: "20px",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
                                   }}
                                 >
                                   {" "}
@@ -905,9 +852,8 @@ function NotificationsPage() {
                                   <span
                                     className="hover-fullname chirp-bold-font"
                                     style={{
-                                      fontSize: "15px",
-                                      lineHeight: "20px",
-                                      fontWeight: "700",
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                     }}
                                   >
                                     {
@@ -955,9 +901,8 @@ function NotificationsPage() {
                                 <span
                                   className="chirp-regular-font"
                                   style={{
-                                    fontSize: "15px",
-                                    lineHeight: "20px",
-                                    fontWeight: "400",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
                                     marginLeft: "5px",
                                   }}
                                 >
@@ -965,12 +910,12 @@ function NotificationsPage() {
                                 </span>
                               </div>
                               <div
+                                className="chirp-regular-font"
                                 style={{
                                   marginLeft: "-2px",
                                   marginTop: "5px",
-                                  fontSize: "15px",
-                                  lineHeight: "20px",
-                                  fontWeight: "400",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                   color:
                                     themeName === "dark-theme"
                                       ? "#414345"
@@ -1031,11 +976,10 @@ function NotificationsPage() {
                                   }}
                                 >
                                   <span
-                                    className="hover-fullname"
+                                    className="hover-fullname chirp-bold-font"
                                     style={{
-                                      fontSize: "15px",
-                                      lineHeight: "20px",
-                                      fontWeight: "700",
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                     }}
                                   >
                                     {
@@ -1047,9 +991,8 @@ function NotificationsPage() {
                                 <span
                                   className="chirp-regular-font"
                                   style={{
-                                    fontSize: "15px",
-                                    lineHeight: "20px",
-                                    fontWeight: "400",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
                                     marginLeft: "5px",
                                   }}
                                 >
@@ -1057,11 +1000,11 @@ function NotificationsPage() {
                                 </span>
                               </div>
                               <div
+                                className="chirp-regular-font"
                                 style={{
                                   marginTop: "5px",
-                                  fontSize: "15px",
-                                  lineHeight: "20px",
-                                  fontWeight: "400",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                   color:
                                     themeName === "dark-theme"
                                       ? "#414345"
@@ -1198,9 +1141,8 @@ function NotificationsPage() {
                                   <span
                                     className="hover-fullname chirp-bold-font"
                                     style={{
-                                      fontSize: "15px",
-                                      lineHeight: "20px",
-                                      fontWeight: "700",
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                     }}
                                   >
                                     {
@@ -1248,9 +1190,8 @@ function NotificationsPage() {
                                 <span
                                   className="chirp-regular-font"
                                   style={{
-                                    fontSize: "15px",
-                                    lineHeight: "20px",
-                                    fontWeight: "400",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
                                     marginLeft: "5px",
                                   }}
                                 >
@@ -1258,12 +1199,12 @@ function NotificationsPage() {
                                 </span>
                               </div>
                               <div
+                                className="chirp-regular-font"
                                 style={{
                                   marginLeft: "-2px",
                                   marginTop: "5px",
-                                  fontSize: "15px",
-                                  lineHeight: "20px",
-                                  fontWeight: "400",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                   color:
                                     themeName === "dark-theme"
                                       ? "#414345"
@@ -1319,11 +1260,10 @@ function NotificationsPage() {
                                   }}
                                 >
                                   <span
-                                    className="hover-fullname "
+                                    className="hover-fullname chirp-bold-font"
                                     style={{
-                                      fontSize: "15px",
-                                      lineHeight: "20px",
-                                      fontWeight: "700",
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                     }}
                                   >
                                     {
@@ -1335,9 +1275,8 @@ function NotificationsPage() {
                                 <span
                                   className="chirp-regular-font"
                                   style={{
-                                    fontSize: "15px",
-                                    lineHeight: "20px",
-                                    fontWeight: "400",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
                                     marginLeft: "5px",
                                   }}
                                 >
@@ -1345,11 +1284,11 @@ function NotificationsPage() {
                                 </span>
                               </div>
                               <div
+                                className="chirp-regular-font"
                                 style={{
                                   marginTop: "5px",
-                                  fontSize: "15px",
-                                  lineHeight: "20px",
-                                  fontWeight: "400",
+                                  fontSize: font15.fontSize,
+                                  lineHeight: font15.lineHeight,
                                   color:
                                     themeName === "dark-theme"
                                       ? "#414345"
@@ -1381,8 +1320,8 @@ function NotificationsPage() {
               <div
                 className="chirp-heavy-font"
                 style={{
-                  lineHeight: "36px",
-                  fontSize: "31px",
+                  fontSize: font31.fontSize,
+                  lineHeight: font31.lineHeight,
                   margin: "10px",
                 }}
               >
@@ -1395,9 +1334,8 @@ function NotificationsPage() {
                     themeName === "dark-theme"
                       ? "#71767A"
                       : "rgb(83, 100, 113)",
-                  lineHeight: "20px",
-                  fontSize: "15px",
-                  fontWeight: "400",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                   margin: "10px",
                 }}
               >

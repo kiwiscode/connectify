@@ -7,7 +7,6 @@ const Activity = require("../models/Activity.model");
 router.get("/activities", authenticateToken, async (req, res) => {
   const { userId } = req.user;
 
-  console.log("User id from request for activities end point =>", userId);
   try {
     const user = await User.findById(userId);
 

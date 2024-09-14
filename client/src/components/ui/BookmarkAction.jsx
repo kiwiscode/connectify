@@ -12,6 +12,7 @@ import io from "socket.io-client";
 import { ThemeContext } from "../../context/ThemeContext";
 import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
 import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
+import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
 const socket = io.connect(`${API_URL}`);
 
 const BookmarkAction = ({
@@ -30,7 +31,8 @@ const BookmarkAction = ({
   bookmarkDeletedMessage,
 }) => {
   const [{ theme, themeName }] = useContext(ThemeContext);
-
+  const { getFontSizeAndLineHeight13 } = useFontSizeHandler();
+  const font13 = getFontSizeAndLineHeight13();
   const { userInfo, getToken } = useContext(UserContext);
 
   const getBookmarkIds = (array) => {
@@ -132,10 +134,12 @@ const BookmarkAction = ({
               </svg>
             </span>
             <span
-              className={"post-description"}
+              className={"post-description chirp-regular-font"}
               style={{
                 cursor: "pointer",
                 position: "relative",
+                fontSize: font13.fontSize,
+                lineHeight: font13.lineHeight,
               }}
             >
               {post.bookmarks.length ? (
@@ -207,10 +211,12 @@ const BookmarkAction = ({
               </svg>
             </span>
             <span
-              className={"post-description"}
+              className={"post-description chirp-regular-font"}
               style={{
                 cursor: "pointer",
                 position: "relative",
+                fontSize: font13.fontSize,
+                lineHeight: font13.lineHeight,
               }}
             >
               {post?.bookmarks?.length ? (

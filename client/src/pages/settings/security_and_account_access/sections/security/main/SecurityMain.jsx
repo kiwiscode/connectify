@@ -5,10 +5,8 @@ import { useAntdMessageHandler } from "../../../../../../utils/useAntdMessageHan
 import useWindowDimensions from "../../../../../../hooks/getWindowDimensions";
 import SettingsNavigation from "../../../../../../components/SettingsNavigation/SettingsNavigation";
 import { NavigationHistoryContext } from "../../../../../../context/NavigationHistoryContext";
-import axios from "axios";
-import { UserContext } from "../../../../../../context/UserContext";
-import LoadingSpinner from "../../../../../../components/ui/LoadingSpinner";
 import { ThemeContext } from "../../../../../../context/ThemeContext";
+import { useFontSizeHandler } from "../../../../../../utils/useFontSizeHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -21,31 +19,17 @@ function SecurityMain() {
   const { width } = useWindowDimensions();
   const [{ theme, themeName }] = useContext(ThemeContext);
   const navigate = useNavigate();
-  const { userInfo, getToken } = useContext(UserContext);
   const { navigationHistoryArray } = useContext(NavigationHistoryContext);
-  const [user, setUser] = useState([]);
-  console.log("Navigation history =>", navigationHistoryArray);
-  const refreshActiveUser = () => {
-    axios
-      .get(`${API_URL}/profile`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        setUser(response.data.user);
-      })
-      .catch((error) => {
-        console.log("Error =>", error);
-      });
-  };
-
-  useEffect(() => {
-    refreshActiveUser();
-  }, []);
 
   const [firstClicked, setfirstClicked] = useState(null);
-
+  const {
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
   return (
     <>
       {" "}
@@ -120,6 +104,10 @@ function SecurityMain() {
             </svg>
           </div>
           <div
+            style={{
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
+            }}
             className={
               themeName === "dark-theme"
                 ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
@@ -137,8 +125,8 @@ function SecurityMain() {
                 : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
             }
             style={{
-              fontSize: "13px",
-              lineHeight: "16px",
+              fontSize: font13.fontSize,
+              lineHeight: font13.lineHeight,
             }}
           >
             Manage your account’s security.
@@ -150,8 +138,8 @@ function SecurityMain() {
                 : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font mt-3"
             }
             style={{
-              fontSize: "20px",
-              lineHeight: "24px",
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
             }}
           >
             Two-factor authentication
@@ -163,8 +151,8 @@ function SecurityMain() {
                 : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font mt-3"
             }
             style={{
-              fontSize: "13px",
-              lineHeight: "16px",
+              fontSize: font13.fontSize,
+              lineHeight: font13.lineHeight,
             }}
           >
             Help protect your account from unauthorized access by requiring a
@@ -181,8 +169,8 @@ function SecurityMain() {
           >
             <div
               style={{
-                fontSize: "15px",
-                lineHeight: "20px",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
               }}
               className={
                 themeName === "dark-theme"
@@ -237,16 +225,16 @@ function SecurityMain() {
                 : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font mt-3"
             }
             style={{
-              fontSize: "20px",
-              lineHeight: "24px",
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
             }}
           >
             ID verification
           </div>
           <div
             style={{
-              fontSize: "13px",
-              lineHeight: "16px",
+              fontSize: font13.fontSize,
+              lineHeight: font13.lineHeight,
             }}
             className={
               themeName === "dark-theme"
@@ -268,8 +256,8 @@ function SecurityMain() {
           >
             <div
               style={{
-                fontSize: "15px",
-                lineHeight: "20px",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
               }}
               className={
                 themeName === "dark-theme"
@@ -324,8 +312,8 @@ function SecurityMain() {
                 : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font mt-3"
             }
             style={{
-              fontSize: "20px",
-              lineHeight: "24px",
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
             }}
           >
             Additional password protection
@@ -337,8 +325,8 @@ function SecurityMain() {
                 : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font mt-3"
             }
             style={{
-              fontSize: "13px",
-              lineHeight: "16px",
+              fontSize: font13.fontSize,
+              lineHeight: font13.lineHeight,
             }}
           >
             Enabling this setting adds extra security to your account by
@@ -361,8 +349,8 @@ function SecurityMain() {
             >
               <div
                 style={{
-                  fontSize: "15px",
-                  lineHeight: "20px",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
                 className={
                   themeName === "dark-theme"
@@ -373,10 +361,10 @@ function SecurityMain() {
                 Password reset protect
               </div>
               <div
-                className="hover-blue-underline"
+                className="hover-blue-underline chirp-regular-font"
                 style={{
-                  fontSize: "13px",
-                  lineHeight: "16px",
+                  fontSize: font13.fontSize,
+                  lineHeight: font13.lineHeight,
                 }}
               >
                 Learn more

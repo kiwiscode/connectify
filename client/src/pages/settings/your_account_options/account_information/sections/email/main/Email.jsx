@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { NavigationHistoryContext } from "../../../../../../../context/NavigationHistoryContext";
+import { useFontSizeHandler } from "../../../../../../../utils/useFontSizeHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -82,6 +83,14 @@ function Email() {
   const { navigationHistoryArray } = useContext(NavigationHistoryContext);
 
   console.log("Navigation history =>", navigationHistoryArray);
+  const {
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
 
   return (
     <>
@@ -157,6 +166,10 @@ function Email() {
             </svg>
           </div>
           <div
+            style={{
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
+            }}
             className={
               themeName === "dark-theme"
                 ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
@@ -174,15 +187,14 @@ function Email() {
         >
           {" "}
           <div
+            className="chirp-regular-font"
             style={{
               position: "absolute",
               top: "10%",
               left: "6%",
-              fontSize: "12px",
-              lineHeight: "18px",
-              fontWeight: "400",
+              fontSize: font13.fontSize,
+              lineHeight: font13.lineHeight,
               minWidth: "fit-content",
-              //   width: "80%",
               color:
                 themeName === "dark-theme" ? "#383B3D" : "rgb(168,177,184)",
               zIndex: 9999,
@@ -243,16 +255,15 @@ function Email() {
           }}
           className={
             themeName === "dark-theme"
-              ? "dark-theme-stylish-blue-background-color"
-              : "light-theme-stylish-blue-background-color"
+              ? "dark-theme-stylish-blue-background-color chirp-regular-font"
+              : "light-theme-stylish-blue-background-color chirp-regular-font"
           }
           style={{
             padding: "16px",
             textAlign: "center",
             color: "rgb(29, 155, 240)",
-            lineHeight: "20px",
-            fontSize: "15px",
-            fontWeight: "400",
+            fontSize: font15.fontSize,
+            lineHeight: font15.lineHeight,
             cursor: "pointer",
           }}
         >

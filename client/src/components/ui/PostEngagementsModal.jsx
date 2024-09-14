@@ -14,6 +14,8 @@ const API_URL = "http://localhost:3000";
 // ?
 
 import io from "socket.io-client";
+import { SubcsriptionStatusContext } from "../../context/SubscriptionStatusContext";
+import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
 const socket = io.connect(`${API_URL}`);
 
 function PostEngagements({
@@ -21,66 +23,11 @@ function PostEngagements({
   postDetailPage,
   imagePostDetailPage,
 }) {
-  const [subscription, setSubscription] = useState(null);
-  const getSubscription = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/subscription`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      });
-
-      console.log(
-        "response data detail =>",
-        response.data.activeSubscription[0]
-      );
-      console.log(
-        "response data detail 2 =>",
-        response.data.activeCancelledSubscription[0]
-      );
-
-      setSubscription(
-        response.data.activeSubscription[0]
-          ? response.data.activeSubscription[0]
-          : response.data.activeCancelledSubscription[0]
-      );
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-  const [remainingTimeSubscriptions, setRemainingTimeSubscriptions] = useState(
-    []
-  );
-  const [
+  const {
+    subscription,
+    remainingTimeSubscriptions,
     remainingTimeSubscriptionsOwnerIds,
-    setRemainingTimeSubscriptionsOwnerIds,
-  ] = useState([]);
-  const getRemainingTimeSubscriptions = async () => {
-    try {
-      const response = await axios.get(
-        `${API_URL}/remaining_time_subscriptions`,
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      );
-
-      setRemainingTimeSubscriptions(response.data.remainingTimeSubscriptions);
-
-      setRemainingTimeSubscriptionsOwnerIds(
-        response.data.remainingTimeSubscriptions.map((eachSub) => {
-          return eachSub.owner;
-        })
-      );
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-  useEffect(() => {
-    getSubscription();
-    getRemainingTimeSubscriptions();
-  }, []);
+  } = useContext(SubcsriptionStatusContext);
   const [show, setShow] = useState(false);
 
   const { userInfo, getToken } = useContext(UserContext);
@@ -97,7 +44,14 @@ function PostEngagements({
     setshowReposts(true);
     setshowLikes(false);
   };
-
+  const {
+    getFontSizeAndLineHeight31,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight11,
+  } = useFontSizeHandler();
+  const font31 = getFontSizeAndLineHeight31();
+  const font15 = getFontSizeAndLineHeight15();
+  const font11 = getFontSizeAndLineHeight11();
   const handleClose = () => setShow(false);
   const handleShow = () => {
     setActiveTab("reposts");
@@ -130,8 +84,8 @@ function PostEngagements({
           ? "#71767A"
           : "rgb(83,100,113)",
       fontWeight: activeTab === tab ? "700" : "400",
-      lineHeight: "20px",
-      fontSize: "15px",
+      fontSize: font15.fontSize,
+      lineHeight: font15.lineHeight,
       cursor: "pointer",
       flex: 1,
       textAlign: "center",
@@ -287,13 +241,12 @@ function PostEngagements({
                 </svg>
 
                 <span
-                  className="p-0"
+                  className="p-0 chirp-regular-font"
                   style={{
                     position: "relative",
                     top: "1px",
-                    fontSize: "15px",
-                    lineHeight: "20px",
-                    fontWeight: "400",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                     color:
                       themeName === "dark-theme"
                         ? "#71767A"
@@ -333,7 +286,6 @@ function PostEngagements({
               <svg
                 style={{
                   border: "none",
-                  fontSize: "15px",
                   margin: "5px",
                 }}
                 onClick={handleClose}
@@ -403,8 +355,8 @@ function PostEngagements({
                     };
                     const buttonStyles = {
                       transitionDuration: "0.2s",
-                      fontSize: "15px",
-                      lineHeight: "20px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                       fontWeight: "700",
                       display: "inline",
                       maxWidth: "107px",
@@ -557,16 +509,15 @@ function PostEngagements({
                                 }}
                               >
                                 <span
-                                  className="hover-fullname"
+                                  className="hover-fullname chirp-bold-font"
                                   style={{
                                     color:
                                       themeName === "dark-theme"
                                         ? "white"
                                         : "rgb(15, 20, 25)",
 
-                                    fontSize: "15px",
-                                    fontWeight: "700",
-                                    lineHeight: "20px",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
                                   }}
                                 >
                                   {eachReposter.fullname}
@@ -617,14 +568,14 @@ function PostEngagements({
                                   }}
                                 >
                                   <span
+                                    className="chirp-regular-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
                                           : "rgb(83, 100, 113)",
-                                      fontSize: "15px",
-                                      lineHeight: "20px",
-                                      fontWeight: "400",
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                     }}
                                   >
                                     @{eachReposter.username}{" "}
@@ -632,14 +583,14 @@ function PostEngagements({
                                 </Link>
                                 {allFollowerIds().includes(eachReposter._id) ? (
                                   <span
+                                    className="chirp-medium-font"
                                     style={{
                                       position: "absolute",
                                       textAlign: "center",
                                       top: "4px",
                                       marginLeft: "4px",
-                                      fontWeight: "500",
-                                      lineHeight: "10px",
-                                      fontSize: "11px",
+                                      fontSize: font11.fontSize,
+                                      lineHeight: font11.lineHeight,
                                       wordWrap: "break-word",
                                       whiteSpace: "nowrap",
                                       color:
@@ -717,10 +668,10 @@ function PostEngagements({
                     }}
                   >
                     <div
+                      className="chirp-heavy-font"
                       style={{
-                        lineHeight: "36px",
-                        fontSize: "31px",
-                        fontWeight: "800",
+                        fontSize: font31.fontSize,
+                        lineHeight: font31.lineHeight,
                         textAlign: "left",
                         color: themeName === "dark-theme" ? "white" : "black",
                       }}
@@ -728,14 +679,14 @@ function PostEngagements({
                       No reposts yet
                     </div>
                     <div
+                      className="chirp-regular-font"
                       style={{
                         color:
                           themeName === "dark-theme"
                             ? "#71767A"
                             : "rgb(83, 100, 113)",
-                        lineHeight: "20px",
-                        fontSize: "15px",
-                        fontWeight: "400",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                       }}
                     >
                       When someone chooses to repost this post, it will show up
@@ -765,8 +716,8 @@ function PostEngagements({
                     };
                     const buttonStyles = {
                       transitionDuration: "0.2s",
-                      fontSize: "15px",
-                      lineHeight: "20px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                       fontWeight: "700",
                       display: "inline",
                       maxWidth: "107px",
@@ -919,16 +870,14 @@ function PostEngagements({
                                 }}
                               >
                                 <span
-                                  className="hover-fullname"
+                                  className="hover-fullname chirp-bold-font"
                                   style={{
                                     color:
                                       themeName === "dark-theme"
                                         ? "white"
                                         : "rgb(15, 20, 25)",
-
-                                    fontSize: "15px",
-                                    fontWeight: "700",
-                                    lineHeight: "20px",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
                                   }}
                                 >
                                   {eachLiker.fullname}
@@ -979,14 +928,14 @@ function PostEngagements({
                                   }}
                                 >
                                   <span
+                                    className="chirp-regular-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
                                           : "rgb(83, 100, 113)",
-                                      fontSize: "15px",
-                                      lineHeight: "20px",
-                                      fontWeight: "400",
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                     }}
                                   >
                                     @{eachLiker.username}{" "}
@@ -994,14 +943,14 @@ function PostEngagements({
                                 </Link>
                                 {allFollowerIds().includes(eachLiker._id) ? (
                                   <span
+                                    className="chirp-medium-font"
                                     style={{
                                       position: "absolute",
                                       textAlign: "center",
                                       top: "4px",
                                       marginLeft: "4px",
-                                      fontWeight: "500",
-                                      lineHeight: "10px",
-                                      fontSize: "11px",
+                                      fontSize: font11.fontSize,
+                                      lineHeight: font11.lineHeight,
                                       wordWrap: "break-word",
                                       whiteSpace: "nowrap",
                                       color:
@@ -1077,10 +1026,10 @@ function PostEngagements({
                     }}
                   >
                     <div
+                      className="chirp-heavy-font"
                       style={{
-                        lineHeight: "36px",
-                        fontSize: "31px",
-                        fontWeight: "800",
+                        fontSize: font31.fontSize,
+                        lineHeight: font31.lineHeight,
                         textAlign: "left",
                         color: themeName === "dark-theme" ? "white" : "black",
                       }}
@@ -1088,14 +1037,14 @@ function PostEngagements({
                       No Likes yet
                     </div>
                     <div
+                      className="chirp-regular-font"
                       style={{
                         color:
                           themeName === "dark-theme"
                             ? "#71767A"
                             : "rgb(83, 100, 113)",
-                        lineHeight: "20px",
-                        fontSize: "15px",
-                        fontWeight: "400",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                       }}
                     >
                       When someone taps the heart to like this post, it’ll show

@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { NavigationHistoryContext } from "../../../../../../../context/NavigationHistoryContext";
+import { useFontSizeHandler } from "../../../../../../../utils/useFontSizeHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -59,27 +60,6 @@ function Enable_Automated_Account() {
         showCustomMessage("Wrong password!");
       });
   };
-
-  const [user, setUser] = useState([]);
-
-  const refreshActiveUser = () => {
-    axios
-      .get(`${API_URL}/profile`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        setUser(response.data.user);
-      })
-      .catch((error) => {
-        console.log("Error =>", error);
-      });
-  };
-
-  useEffect(() => {
-    refreshActiveUser();
-  }, []);
 
   const { navigationHistoryArray } = useContext(NavigationHistoryContext);
 
@@ -163,6 +143,18 @@ function Enable_Automated_Account() {
       console.error("Error =>", error);
     }
   };
+  const {
+    getFontSizeAndLineHeight31,
+    getFontSizeAndLineHeight26,
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font31 = getFontSizeAndLineHeight31();
+  const font26 = getFontSizeAndLineHeight26();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
   return (
     <>
       {" "}
@@ -345,8 +337,8 @@ function Enable_Automated_Account() {
                     >
                       <div
                         style={{
-                          fontSize: "31px",
-                          lineHeight: "36px",
+                          fontSize: font31.fontSize,
+                          lineHeight: font31.lineHeight,
                           paddingLeft: width <= 700 ? "32px" : "80px",
                           paddingRight: width <= 700 ? "32px" : "80px",
                         }}
@@ -463,8 +455,8 @@ function Enable_Automated_Account() {
                     >
                       <div
                         style={{
-                          fontSize: "26px",
-                          lineHeight: "32px",
+                          fontSize: font26.fontSize,
+                          lineHeight: font26.lineHeight,
                           maxWidth: "440px",
                           width: "100%",
                         }}
@@ -478,8 +470,8 @@ function Enable_Automated_Account() {
                       </div>
                       <div
                         style={{
-                          fontSize: "15px",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                           width: "100%",
                         }}
                         className={
@@ -533,9 +525,8 @@ function Enable_Automated_Account() {
                         display: "flex",
                         textAlign: "left",
                         width: "81.5%",
-                        lineHeight: "36px",
-                        fontWeight: "700",
-                        fontSize: "31px",
+                        fontSize: font31.fontSize,
+                        lineHeight: font31.lineHeight,
                       }}
                     >
                       Enter your password
@@ -563,7 +554,7 @@ function Enable_Automated_Account() {
                           >
                             <div
                               style={{
-                                fontSize: "13px",
+                                fontSize: font13.fontSize,
                                 position: "relative",
                                 bottom: "5px",
                                 color:
@@ -739,7 +730,6 @@ function Enable_Automated_Account() {
               <>
                 <div
                   style={{
-                    fontSize: "15px",
                     width: "100%",
                     height: "100%",
                     display: "flex",
@@ -750,6 +740,7 @@ function Enable_Automated_Account() {
                 >
                   <LoadingSpinner
                     strokeColor={"rgb(29, 155, 240)"}
+                    fontSize={true}
                   ></LoadingSpinner>
                 </div>
               </>
@@ -826,6 +817,10 @@ function Enable_Automated_Account() {
             </svg>
           </div>
           <div
+            style={{
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
+            }}
             className={
               themeName === "dark-theme"
                 ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
@@ -835,98 +830,6 @@ function Enable_Automated_Account() {
             Automation
           </div>
         </div>{" "}
-        {/* <div
-          style={{
-            padding: "0px 24px",
-            position: "relative",
-          }}
-        >
-          {" "}
-          <div
-            style={{
-              position: "absolute",
-              top: "10%",
-              left: "6%",
-              fontSize: "12px",
-              lineHeight: "18px",
-              fontWeight: "400",
-              minWidth: "fit-content",
-              //   width: "80%",
-              color:
-                themeName === "dark-theme" ? "#383B3D" : "rgb(168,177,184)",
-              zIndex: 9999,
-            }}
-          >
-            Current
-          </div>
-          <div
-            className={"mt-3"}
-            type="text"
-            style={{
-              height: "56px",
-              width: "100%",
-              borderRadius: "4px",
-              backgroundColor:
-                themeName === "dark-theme" ? "#111214" : "rgb(248,249,250)",
-            }}
-          />
-          <input
-            type="text"
-            defaultValue={user.email}
-            style={{
-              height: "50px",
-              position: "absolute",
-              top: "5%",
-              left: "6%",
-              width: "87%",
-              minWidth: "fit-content",
-              border: "none",
-              outline: "none",
-              paddingTop: "15px",
-              textAlign: "left",
-              paddingLeft: "0px",
-              paddingRight: "0px",
-              paddingBottom: "0px",
-              backgroundColor: "transparent",
-              color:
-                themeName === "dark-theme" ? "#383B3D" : "rgb(168,177,184)",
-            }}
-          />
-        </div>{" "} */}
-        {/* <div
-          className="mt-4"
-          style={{
-            borderBottom:
-              themeName !== "dark-theme"
-                ? "1px solid rgba(0, 0, 0, 0.1)"
-                : // : "0.1px solid rgb(70, 70, 70)",
-                  "1px solid rgb(70, 70, 70)",
-
-            display: "inline-block",
-            width: "100%",
-          }}
-        ></div> */}
-        {/* <div
-          onClick={() => {
-            navigate("/i/flow/add_email");
-          }}
-          className={
-            themeName === "dark-theme"
-              ? "dark-theme-stylish-blue-background-color"
-              : "light-theme-stylish-blue-background-color"
-          }
-          style={{
-            padding: "16px",
-            textAlign: "center",
-            color: "rgb(29, 155, 240)",
-            lineHeight: "20px",
-            fontSize: "15px",
-            fontWeight: "400",
-            cursor: "pointer",
-          }}
-        >
-          Update email address
-        </div> */}
         <div
           className={
             themeName === "dark-theme"
@@ -935,8 +838,8 @@ function Enable_Automated_Account() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "13px",
-            lineHeight: "16px",
+            fontSize: font13.fontSize,
+            lineHeight: font13.lineHeight,
           }}
         >
           Manage your automated account.
@@ -967,8 +870,8 @@ function Enable_Automated_Account() {
                   : "chirp-regular-font very-dark-gray-light-theme-text-variant-1"
               }
               style={{
-                fontSize: "15px",
-                lineHeight: "20px",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
               }}
             >
               Set up account automation
@@ -977,7 +880,7 @@ function Enable_Automated_Account() {
             <div>
               <div
                 style={{
-                  fontSize: "13px",
+                  fontSize: font13.fontSize,
                 }}
                 className={
                   themeName === "dark-theme"

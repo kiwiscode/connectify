@@ -1,11 +1,12 @@
 import { Col } from "react-bootstrap";
 import useWindowDimensions from "../../../../hooks/getWindowDimensions";
-import { useContext, useEffect, useState } from "react";
-import { ThemeContext } from "../../../../context/ThemeContext";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { UserContext } from "../../../../context/UserContext";
 import LoadingSpinner from "../../../../components/ui/LoadingSpinner";
+import { SubcsriptionStatusContext } from "../../../../context/SubscriptionStatusContext";
+import { useFontSizeHandler } from "../../../../utils/useFontSizeHandler";
 // when working on local version
 const API_URL = "http://localhost:3000";
 
@@ -13,29 +14,14 @@ const API_URL = "http://localhost:3000";
 // ?
 function BillingStripeSubscriptionMain() {
   const { width } = useWindowDimensions();
-  const [{ theme, themeName }] = useContext(ThemeContext);
   const navigate = useNavigate();
   const { getToken } = useContext(UserContext);
 
-  const [subscription, setSubscription] = useState(null);
-  const getSubscription = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/subscription`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      });
-
-      console.log("Response active subscriptions =>", response);
-      setSubscription(response.data.activeSubscription[0]);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  useEffect(() => {
-    getSubscription();
-  }, []);
+  const {
+    subscription,
+    remainingTimeSubscriptions,
+    remainingTimeSubscriptionsOwnerIds,
+  } = useContext(SubcsriptionStatusContext);
 
   const nextBillingDateForAnnualSub = (originalDate) => {
     let newDate = new Date(originalDate);
@@ -60,22 +46,42 @@ function BillingStripeSubscriptionMain() {
   const [cancelProcess, setCancelProcess] = useState(false);
   const [cancelProcessStart, setCancelProcessStart] = useState(null);
   const handleCancelSubscription = async () => {
+    setCancelProcessStart(true);
     try {
       const response = axios.post(`${API_URL}/cancel_subscription`, null, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
       });
-      setCancelProcessStart(true);
+
       setTimeout(() => {
         navigate("/home");
-      }, 300);
+      }, 350);
       console.log("Response =>", response);
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = { year: "numeric", month: "short", day: "numeric" };
+    return date.toLocaleDateString("en-GB", options);
+  };
+
+  const {
+    getFontSizeAndLineHeight31,
+    getFontSizeAndLineHeight18,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight14,
+    getFontSizeAndLineHeight13,
+    getFontSizeAndLineHeight11,
+  } = useFontSizeHandler();
+  const font31 = getFontSizeAndLineHeight31();
+  const font15 = getFontSizeAndLineHeight15();
+  const font14 = getFontSizeAndLineHeight14();
+  const font13 = getFontSizeAndLineHeight13();
+  const font11 = getFontSizeAndLineHeight11();
   return (
     <>
       <Col
@@ -132,29 +138,21 @@ function BillingStripeSubscriptionMain() {
         </div>
         <div
           style={{
-            fontSize: "18px",
-            lineHeight: "32px",
+            fontSize: font18.fontSize,
+            lineHeight: font18.lineHeight,
             paddingLeft: "32px",
           }}
-          className={
-            themeName === "dark-theme"
-              ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font mt-5"
-              : "soft-grey-dark-theme-text-variant-1 chirp-bold-font mt-5"
-          }
+          className={"soft-grey-dark-theme-text-variant-1 chirp-bold-font mt-5"}
         >
           Connectify Blue
         </div>
         <div
           style={{
-            fontSize: "12px",
-            lineHeight: "24px",
+            fontSize: font11.fontSize,
+            lineHeight: font11.lineHeight,
             paddingLeft: "32px",
           }}
-          className={
-            themeName === "dark-theme"
-              ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font mt-3"
-              : "soft-grey-dark-theme-text-variant-1 chirp-bold-font mt-3"
-          }
+          className={"soft-grey-dark-theme-text-variant-1 chirp-bold-font mt-3"}
         >
           <span
             style={{
@@ -170,8 +168,7 @@ function BillingStripeSubscriptionMain() {
               style={{
                 cursor: "pointer",
               }}
-              color={themeName === "dark-theme" ? "white" : ""}
-              fill="currentColor"
+              fill="#e6e9ea"
               width={`${1}em`}
               height={`${1}em`}
               viewBox="0 0 24 24"
@@ -201,14 +198,10 @@ function BillingStripeSubscriptionMain() {
         >
           <span
             style={{
-              fontSize: "13px",
+              fontSize: font13.fontSize,
               lineHeight: "24px",
             }}
-            className={
-              themeName === "dark-theme"
-                ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
-                : "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
-            }
+            className={"soft-grey-dark-theme-text-variant-1 chirp-bold-font"}
           >
             Powered by{" "}
           </span>
@@ -228,29 +221,21 @@ function BillingStripeSubscriptionMain() {
           </span>{" "}
           <span
             style={{
-              fontSize: "13px",
+              fontSize: font13.fontSize,
               lineHeight: "24px",
               marginLeft: "5px",
             }}
-            className={
-              themeName === "dark-theme"
-                ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
-                : "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
-            }
+            className={"soft-grey-dark-theme-text-variant-1 chirp-bold-font"}
           >
             |
           </span>{" "}
           <span
             style={{
-              fontSize: "13px",
+              fontSize: font13.fontSize,
               lineHeight: "24px",
               marginLeft: "5px",
             }}
-            className={
-              themeName === "dark-theme"
-                ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
-                : "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
-            }
+            className={"soft-grey-dark-theme-text-variant-1 chirp-bold-font"}
           >
             Privacy
           </span>
@@ -276,8 +261,8 @@ function BillingStripeSubscriptionMain() {
           >
             <div
               style={{
-                fontSize: "16px",
-                lineHeight: "32px",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
               }}
               className={
                 "very-dark-gray-light-theme-text-variant-1 chirp-regular-font "
@@ -288,11 +273,7 @@ function BillingStripeSubscriptionMain() {
             <div
               className="mt-2"
               style={{
-                borderBottom:
-                  themeName !== "dark-theme"
-                    ? "1px solid rgba(0, 0, 0, 0.1)"
-                    : // : "0.1px solid rgb(70, 70, 70)",
-                      "1px solid rgb(70, 70, 70)",
+                borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
               }}
             ></div>
             <div
@@ -304,8 +285,8 @@ function BillingStripeSubscriptionMain() {
             >
               <div
                 style={{
-                  fontSize: "16px",
-                  lineHeight: "32px",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
                 className={
                   "very-dark-gray-light-theme-text-variant-1 chirp-bold-font mt-2"
@@ -315,18 +296,16 @@ function BillingStripeSubscriptionMain() {
               </div>
               <div
                 onClick={() => setCancelProcess(true)}
-                className="mt-2 chirp-regular-font"
+                className={
+                  "very-dark-gray-light-theme-text-variant-1 chirp-regular-font mt-2"
+                }
                 style={{
                   padding: "4px 8px",
                   width: "150px",
                   textAlign: "center",
-                  border:
-                    themeName !== "dark-theme"
-                      ? "1px solid rgba(0, 0, 0, 0.1)"
-                      : // : "0.1px solid rgb(70, 70, 70)",
-                        "1px solid rgb(70, 70, 70)",
+                  border: "1px solid rgba(0, 0, 0, 0.1)",
                   cursor: "pointer",
-                  fontSize: "15px",
+                  fontSize: font15.fontSize,
                   lineHeight: "18px",
                 }}
               >
@@ -336,7 +315,7 @@ function BillingStripeSubscriptionMain() {
             <div>
               <span
                 style={{
-                  fontSize: "15px",
+                  fontSize: font15.fontSize,
                   lineHeight: "18px",
                 }}
                 className={
@@ -349,7 +328,7 @@ function BillingStripeSubscriptionMain() {
               </span>{" "}
               <span
                 style={{
-                  fontSize: "15px",
+                  fontSize: font15.fontSize,
                   lineHeight: "18px",
                 }}
                 className={
@@ -360,7 +339,7 @@ function BillingStripeSubscriptionMain() {
               </span>{" "}
               <span
                 style={{
-                  fontSize: "15px",
+                  fontSize: font15.fontSize,
                   lineHeight: "18px",
                 }}
                 className={
@@ -379,7 +358,7 @@ function BillingStripeSubscriptionMain() {
               <div>
                 <span
                   style={{
-                    fontSize: "13px",
+                    fontSize: font13.fontSize,
                     lineHeight: "15px",
                   }}
                   className={
@@ -397,7 +376,7 @@ function BillingStripeSubscriptionMain() {
             </div>
             <div
               style={{
-                fontSize: "14px",
+                fontSize: font14.fontSize,
                 lineHeight: "18px",
               }}
               className={
@@ -418,20 +397,26 @@ function BillingStripeSubscriptionMain() {
               </span>
             </div>
 
-            <div className="mt-5">PAYMENT METHODS</div>
+            <div
+              style={{
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
+              }}
+              className={
+                "very-dark-gray-light-theme-text-variant-1 chirp-regular-font mt-5"
+              }
+            >
+              PAYMENT METHODS
+            </div>
             <div
               className="mt-2"
               style={{
-                borderBottom:
-                  themeName !== "dark-theme"
-                    ? "1px solid rgba(0, 0, 0, 0.1)"
-                    : // : "0.1px solid rgb(70, 70, 70)",
-                      "1px solid rgb(70, 70, 70)",
+                borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
               }}
             ></div>
             <div
               style={{
-                fontSize: "14px",
+                fontSize: font14.fontSize,
                 lineHeight: "18px",
               }}
               className={
@@ -442,8 +427,8 @@ function BillingStripeSubscriptionMain() {
             </div>
             <div
               style={{
-                fontSize: "16px",
-                lineHeight: "32px",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
               }}
               className={
                 "very-dark-gray-light-theme-text-variant-1 chirp-regular-font mt-5"
@@ -454,16 +439,12 @@ function BillingStripeSubscriptionMain() {
             <div
               className="mt-2"
               style={{
-                borderBottom:
-                  themeName !== "dark-theme"
-                    ? "1px solid rgba(0, 0, 0, 0.1)"
-                    : // : "0.1px solid rgb(70, 70, 70)",
-                      "1px solid rgb(70, 70, 70)",
+                borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
               }}
             ></div>
             <div
               style={{
-                fontSize: "14px",
+                fontSize: font14.fontSize,
                 lineHeight: "18px",
               }}
               className={
@@ -474,7 +455,7 @@ function BillingStripeSubscriptionMain() {
             </div>
             <div
               style={{
-                fontSize: "14px",
+                fontSize: font14.fontSize,
                 lineHeight: "18px",
               }}
               className={
@@ -485,8 +466,8 @@ function BillingStripeSubscriptionMain() {
             </div>
             <div
               style={{
-                fontSize: "16px",
-                lineHeight: "32px",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
               }}
               className={
                 "very-dark-gray-light-theme-text-variant-1 chirp-regular-font mt-5"
@@ -497,21 +478,52 @@ function BillingStripeSubscriptionMain() {
             <div
               className="mt-2"
               style={{
-                borderBottom:
-                  themeName !== "dark-theme"
-                    ? "1px solid rgba(0, 0, 0, 0.1)"
-                    : // : "0.1px solid rgb(70, 70, 70)",
-                      "1px solid rgb(70, 70, 70)",
+                borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
               }}
             ></div>
             <div
-              className="mt-2"
+              className={
+                "very-dark-gray-light-theme-text-variant-1 chirp-regular-font mt-2"
+              }
               style={{
-                fontSize: "14px",
+                fontSize: font14.fontSize,
                 lineHeight: "18px",
               }}
             >
-              örneğin : 1 mart 2023 price Paid Connectify Blue
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  maxWidth: "400px",
+                  minWidth: "fit-content",
+                }}
+              >
+                <span className="very-dark-gray-light-theme-text-variant-1 chirp-medium-font">
+                  {formatDate(subscription?.createdAt)}
+                </span>
+                <span className="very-dark-gray-light-theme-text-variant-1 chirp-regular-font">
+                  {subscription?.subscriptionDetails?.subscriptionPrice}
+                </span>
+                <span
+                  className="chirp-bold-font"
+                  style={{
+                    fontSize: font11.fontSize,
+                    lineHeight: font11.lineHeight,
+                    borderRadius: "4px",
+                    position: "relative",
+                    bottom: "1px",
+                    padding: "4px",
+                    height: "20px",
+                    backgroundColor: "#dcf8eb",
+                    color: "rgb(0, 67, 41)",
+                  }}
+                >
+                  <span>Paid</span>
+                </span>
+                <span className="very-dark-gray-light-theme-text-variant-1 chirp-regular-font">
+                  Twitter Blue
+                </span>
+              </div>
             </div>
           </div>
         ) : (
@@ -522,7 +534,7 @@ function BillingStripeSubscriptionMain() {
           >
             <div
               style={{
-                fontSize: "15px",
+                fontSize: font15.fontSize,
                 lineHeight: "18px",
                 display: "flex",
               }}
@@ -534,7 +546,7 @@ function BillingStripeSubscriptionMain() {
                 style={{
                   cursor: "pointer",
                 }}
-                className="chirp-regular-font"
+                className="chirp-regular-font very-dark-gray-light-theme-text-variant-1"
               >
                 Billing
               </div>
@@ -561,8 +573,8 @@ function BillingStripeSubscriptionMain() {
             </div>
             <div
               style={{
-                fontSize: "31px",
-                lineHeight: "36px",
+                fontSize: font31.fontSize,
+                lineHeight: font31.lineHeight,
               }}
               className={
                 "very-dark-gray-light-theme-text-variant-1 chirp-bold-font mt-5"
@@ -572,8 +584,8 @@ function BillingStripeSubscriptionMain() {
             </div>
             <div
               style={{
-                fontSize: "16px",
-                lineHeight: "32px",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
               }}
               className={
                 "very-dark-gray-light-theme-text-variant-1 chirp-regular-font mt-5"
@@ -584,22 +596,16 @@ function BillingStripeSubscriptionMain() {
             <div
               className="mt-2"
               style={{
-                borderBottom:
-                  themeName !== "dark-theme"
-                    ? "1px solid rgba(0, 0, 0, 0.1)"
-                    : // : "0.1px solid rgb(70, 70, 70)",
-                      "1px solid rgb(70, 70, 70)",
+                borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
               }}
             ></div>
             <div
               style={{
-                fontSize: "18px",
-                lineHeight: "32px",
+                fontSize: font18.fontSize,
+                lineHeight: font18.lineHeight,
               }}
               className={
-                themeName === "dark-theme"
-                  ? "soft-grey-light-theme-text-variant-1 chirp-bold-font mt-3"
-                  : "soft-grey-light-theme-text-variant-1 chirp-bold-font mt-3"
+                "very-dark-gray-light-theme-text-variant-1 chirp-bold-font mt-3"
               }
             >
               Connectify Blue
@@ -607,7 +613,7 @@ function BillingStripeSubscriptionMain() {
             <div>
               <span
                 style={{
-                  fontSize: "15px",
+                  fontSize: font15.fontSize,
                   lineHeight: "18px",
                 }}
                 className={
@@ -620,7 +626,7 @@ function BillingStripeSubscriptionMain() {
               </span>{" "}
               <span
                 style={{
-                  fontSize: "15px",
+                  fontSize: font15.fontSize,
                   lineHeight: "18px",
                 }}
                 className={
@@ -631,7 +637,7 @@ function BillingStripeSubscriptionMain() {
               </span>{" "}
               <span
                 style={{
-                  fontSize: "15px",
+                  fontSize: font15.fontSize,
                   lineHeight: "18px",
                 }}
                 className={
@@ -650,7 +656,7 @@ function BillingStripeSubscriptionMain() {
               <div>
                 <span
                   style={{
-                    fontSize: "13px",
+                    fontSize: font13.fontSize,
                     lineHeight: "15px",
                   }}
                   className={
@@ -668,7 +674,7 @@ function BillingStripeSubscriptionMain() {
             </div>
             <div
               style={{
-                fontSize: "14px",
+                fontSize: font14.fontSize,
                 lineHeight: "24px",
               }}
               className={
@@ -691,7 +697,7 @@ function BillingStripeSubscriptionMain() {
             </div>
             <div
               style={{
-                fontSize: "14px",
+                fontSize: font14.fontSize,
                 lineHeight: "24px",
               }}
               className={
@@ -702,7 +708,7 @@ function BillingStripeSubscriptionMain() {
             </div>
             <div
               style={{
-                fontSize: "13px",
+                fontSize: font13.fontSize,
                 lineHeight: "15px",
               }}
               className={
@@ -737,14 +743,12 @@ function BillingStripeSubscriptionMain() {
                 <button
                   onClick={handleCancelSubscription}
                   className={
-                    themeName === "dark-theme"
-                      ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
-                      : "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                    "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
                   }
                   style={{
                     backgroundColor: "#1C9BEE",
                     border: "none",
-                    fontSize: "15px",
+                    fontSize: font15.fontSize,
                     lineHeight: "18px",
                     padding: "12px",
                     borderRadius: "4px",
@@ -754,15 +758,11 @@ function BillingStripeSubscriptionMain() {
                   {!cancelProcessStart ? (
                     <div>Cancel plan</div>
                   ) : (
-                    <div
-                      style={{
-                        padding: "0px",
-                        margin: "0px",
-                      }}
-                    >
+                    <div>
                       <LoadingSpinner
                         isCheckoutProcess={true}
-                        strokeColor={"rgb(29, 155, 240)"}
+                        // strokeColor={"rgb(29, 155, 240)"}
+                        strokeColor={"white"}
                       ></LoadingSpinner>
                     </div>
                   )}
@@ -775,21 +775,15 @@ function BillingStripeSubscriptionMain() {
                     setCancelProcess(false);
                   }}
                   className={
-                    themeName === "dark-theme"
-                      ? "very-dark-gray-light-theme-text-variant-1 chirp-bold-font mt-3"
-                      : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font mt-3"
+                    "very-dark-gray-light-theme-text-variant-1 chirp-bold-font mt-3"
                   }
                   style={{
                     backgroundColor: "transparent",
                     border: "none",
-                    fontSize: "15px",
+                    fontSize: font15.fontSize,
                     lineHeight: "18px",
                     width: "100%",
-                    border:
-                      themeName !== "dark-theme"
-                        ? "1px solid rgba(0, 0, 0, 0.1)"
-                        : // : "0.1px solid rgb(70, 70, 70)",
-                          "1px solid rgb(70, 70, 70)",
+                    border: "1px solid rgba(0, 0, 0, 0.1)",
                     padding: "12px",
                     borderRadius: "4px",
                   }}

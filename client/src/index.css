@@ -18,7 +18,6 @@
 #root {
   --toastify-color-light: rgba(0, 0, 0, 0.1);
   --toastify-text-color-light: rgb(83, 100, 113);
-
   --toastify-color-progress-light: linear-gradient(
     to right,
     rgb(29, 155, 240),
@@ -87,11 +86,6 @@
 body {
   margin: 0;
   padding: 0;
-  /* font weight broken after change font family like twitter font family start to check */
-  /* font-family: var(--font-family), sans-serif; */
-  /* font-family: "cloneFont", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, Helvetica, Arial, sans-serif; */
-  /* font weight broken after change font family like twitter font family finish to check */
 }
 
 .cyber-punk-theme,
@@ -222,8 +216,6 @@ body {
   background-color: rgba(239, 243, 244, 1);
   cursor: pointer;
   outline: none;
-  font-size: 15px;
-  line-height: 20px;
 }
 
 .send-button-dark-theme {
@@ -234,8 +226,6 @@ body {
   background-color: #202327;
   cursor: pointer;
   outline: none;
-  font-size: 15px;
-  line-height: 20px;
 }
 
 .each-post:hover {
@@ -369,7 +359,6 @@ body {
   border-style: none;
   background-color: rgba(239, 243, 244, 1);
   outline: none;
-  font-size: 15px;
   width: 100%;
 }
 
@@ -380,7 +369,6 @@ body {
   border-style: none;
   background-color: #202327 !important;
   outline: none;
-  font-size: 15px;
   width: 100%;
 }
 .message-input::placeholder {
@@ -455,23 +443,14 @@ body {
 
 .deactivated-info-left-side div {
   color: black;
-  font-size: 15px;
-  line-height: 20px;
-  font-weight: 400;
   margin-top: 10px;
 }
 
 .deactivated-info-left-side-dark-theme div {
   color: white;
-  font-size: 15px;
-  line-height: 20px;
-  font-weight: 400;
 }
 .deactivated-info-left-side div span {
   color: rgb(113, 118, 123);
-  font-size: 13px;
-  line-height: 16px;
-  font-weight: 400;
 }
 
 .deactivated-footer-login:hover {
@@ -531,27 +510,6 @@ body {
 
 .responsive-post-button:hover {
   background-color: #198cd8 !important;
-}
-
-.header-first {
-  font-size: 64px;
-  line-height: 84px;
-  font-weight: 700;
-  letter-spacing: -2.2px;
-}
-
-.header-second {
-  font-size: 31px;
-  font-weight: 700;
-  line-height: 36px;
-  letter-spacing: -2.2px;
-}
-
-.header-first,
-.header-second {
-  font-family: TwitterChirpExtendedHeavy, Verdana, -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  color: rgba(15, 20, 25, 1);
 }
 
 .btn-primary {
@@ -648,13 +606,10 @@ body {
 }
 
 .by-signing {
-  font-size: 12px;
   color: rgb(83, 100, 113);
   height: 32px;
   margin-top: 8px;
-  font-weight: 400;
   max-width: 300px;
-  line-height: 13px;
   font-weight: 400;
   font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, Helvetica, Arial, sans-serif;
@@ -732,7 +687,6 @@ body {
   color: rgb(83, 100, 113);
   padding-right: 16px;
   word-wrap: break-word;
-  font-size: 13px;
 }
 
 .footer-container-dark-theme a > span {
@@ -762,9 +716,6 @@ span > a:hover {
     Roboto, Helvetica, Arial, sans-serif;
   text-decoration: none;
   color: rgba(15, 20, 25, 1);
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 50px;
 }
 
 .nav-bar-home {
@@ -857,9 +808,6 @@ span > a:hover {
 }
 
 .inner-div-fonts span {
-  font-size: 20px;
-  font-weight: 400;
-  line-height: 24px;
   margin-left: 10px;
   position: relative;
   top: 2px;
@@ -893,17 +841,6 @@ span > a:hover {
 .logout-body {
   width: 100%;
   height: 30px;
-}
-
-.logout-p {
-  font: 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 1rem;
-  position: relative;
-  padding: 5px;
-  margin: 0;
 }
 
 .post-btn {
@@ -957,40 +894,8 @@ span > a:hover {
   margin-bottom: 5px;
 }
 
-.bi-heart,
-.bi-repeat,
-.bi-chat {
-  cursor: pointer;
-}
-
 .profile-paragraph {
   color: rgb(83, 100, 113);
-  line-height: 16px;
-  font-size: 13px;
-  font-weight: 400;
-  font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, Helvetica, Arial, sans-serif;
-}
-
-.bi-heart,
-.bi-repeat,
-.bi-chat {
-  color: rgb(83, 100, 113);
-  font-weight: 400;
-  font-size: 15px;
-  font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, Helvetica, Arial, sans-serif;
-  line-height: 20px;
-  cursor: pointer;
-}
-
-.bi-heart-fill {
-  font-weight: 400;
-  font-size: 15px;
-  font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, Helvetica, Arial, sans-serif;
-  line-height: 20px;
-  cursor: pointer;
 }
 
 .comment-svg:hover,
@@ -999,13 +904,9 @@ span > a:hover {
 }
 
 .post-description {
-  line-height: 16px;
-  font-size: 13px;
-  color: rgb(83, 100, 113);
-  font-weight: 400;
   font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, Helvetica, Arial, sans-serif;
-  line-height: 20px;
+  color: rgb(83, 100, 113);
   cursor: pointer;
   margin-left: -3px !important;
 }
@@ -1023,20 +924,6 @@ span > a:hover {
   display: flex;
   flex-direction: column;
   margin: 0px 100px 0px 5px;
-}
-
-.notification-num {
-  color: white;
-  background-color: rgb(29, 155, 240);
-  position: relative;
-  font-size: 11px;
-  font-weight: 600;
-  top: -10px;
-  right: 134px;
-  line-height: 12px;
-  padding: 1px 5px;
-  border-radius: 50%;
-  border: 1px solid white;
 }
 
 .bi-chevron-double-left {
@@ -1076,7 +963,6 @@ span > a:hover {
   min-width: 40px;
   height: 40px;
   padding: 22px;
-  font-size: 16px;
   border-color: rgb(207, 217, 222);
   border-bottom-left-radius: 9999px;
   border-bottom-right-radius: 9999px;
@@ -1188,11 +1074,6 @@ span > a:hover {
   font-weight: bold;
 }
 
-.chat-window .chat-body .message .message-meta {
-  display: flex;
-  font-size: 12px;
-}
-
 .chat-window .chat-footer {
   height: 40px;
   border: 1px solid #263238;
@@ -1205,7 +1086,6 @@ span > a:hover {
   flex: 85%;
   border: 0;
   padding: 0 0.7em;
-  font-size: 1em;
   border-right: 1px dotted #607d8b;
 
   outline: none;
@@ -1221,7 +1101,6 @@ span > a:hover {
   height: 100%;
   background: transparent;
   outline: none;
-  font-size: 25px;
   color: lightgray;
 }
 
@@ -1256,20 +1135,15 @@ span > a:hover {
 
 #time {
   color: rgb(83, 100, 113);
-  font-size: 13px;
-  line-height: 16px;
-  font-weight: 400;
 }
 
 .spesific-room-message-content {
   padding: 12px 16px;
-  line-height: 20px;
   word-wrap: break-word;
   width: 100%;
   border-color: rgb(207, 217, 222);
   border-radius: 24px;
   border-bottom-left-radius: 4px;
-  font-size: 15px;
   box-sizing: border-box;
   max-width: 100%;
 }
@@ -1702,14 +1576,6 @@ span > a:hover {
 /* Navigation bar nav-bar-home ve left-bar-column responsive ayarları finish to check */
 
 @media (max-width: 768px) and (min-width: 281px) {
-  .header-first {
-    font-size: 40px;
-  }
-
-  .header-second {
-    font-size: 23px;
-  }
-
   .header-container {
     line-height: 28px;
     width: 100%;
@@ -1717,14 +1583,6 @@ span > a:hover {
 }
 
 @media (max-width: 280px) and (min-width: 0px) {
-  .header-first {
-    font-size: 40px;
-  }
-
-  .header-second {
-    font-size: 23px;
-  }
-
   .header-container {
     /* background: #26a7de; */
     line-height: 28px;
@@ -2012,9 +1870,6 @@ span > a:hover {
 .ant-message-notice-content {
   background-color: #1d9bf0 !important;
   color: white !important;
-  font-size: 15px;
-  line-height: 20px;
-  font-weight: 400;
 }
 
 .ant-message-custom-content a {
@@ -2108,7 +1963,7 @@ span > a:hover {
   transition-duration: 0.2s !important;
 }
 
-/* .loading-spinner test start to check  */
+/* .loading-spinner  start to check  */
 .spinner {
   width: 1.5em;
 }
@@ -2158,7 +2013,7 @@ span > a:hover {
     transform: rotate(0.75turn);
   }
 }
-/* .loading-spinner test finish to check  */
+/* .loading-spinner  finish to check  */
 
 /* new navigation bar left side start responsiveness and general styling start to check  */
 
@@ -2455,9 +2310,6 @@ span > a:hover {
 
 .right-side-bar-column-list li {
   margin: 2px 5px;
-  line-height: 16px;
-  font-size: 13px;
-  font-weight: 400;
   color: rgb(83, 100, 113);
   cursor: pointer;
 }
@@ -2591,9 +2443,6 @@ span > a:hover {
 }
 
 .customize-experience-tab {
-  font-size: 15px;
-  line-height: 20px;
-  font-weight: 400;
   cursor: pointer;
   color: rgb(29, 155, 240);
 }
@@ -2744,7 +2593,7 @@ span > a:hover {
   transition-duration: 0.2s;
 }
 
-/* slider test by using package start to check  */
+/* slider  by using package start to check  */
 .premium-btn-back:hover {
   background-color: #25282e !important;
   transition-duration: 0.2s !important;
@@ -2781,19 +2630,10 @@ span > a:hover {
 } */
 /* finish to check do not override css class if you are going to use react-slick again IMPORTANT */
 
-/* slider test by using  package finish to check  */
+/* slider  by using  package finish to check  */
 
-.premium-plus-header {
-  font-weight: 700;
-  line-height: 20px;
-  font-size: 17px;
-}
-
-.premium-plus-parent-div span {
-  /* background-color: yellow; */
-  font-size: 15px;
-  line-height: 20px;
-  font-weight: 400;
+.premium-plus-parent-div-dark-theme {
+  color: white;
 }
 .premium-plus-parent-div svg {
   position: relative;
@@ -2803,10 +2643,6 @@ span > a:hover {
 
 .premium-plus-parent-div div div {
   margin: 2px 0px;
-}
-
-.premium-plus-parent-div-dark-theme {
-  color: white;
 }
 
 .slick-arrow {
@@ -2826,7 +2662,7 @@ span > a:hover {
   outline-style: none !important;
 }
 
-/* test slider start to check  */
+/*  slider start to check  */
 .subscription-modal-basic-width-smaller-700 div {
   /* max-width: 550px !important; */
   /* height: 100% !important; */
@@ -2848,7 +2684,7 @@ span > a:hover {
   text-decoration: underline;
 }
 
-/* test slider finish to check  */
+/*  slider finish to check  */
 
 .post-modal-from-left-side-navigation-bar .modal-content::-webkit-scrollbar {
   width: 1em;
@@ -3481,26 +3317,12 @@ select {
   text-decoration: underline;
 }
 
-.dark-theme-post-popover-detail {
-  color: white;
-  line-height: 20px;
-  font-weight: 700;
-  font-size: 15px;
-}
-
 .dark-theme-post-popover-detail div {
   padding: 12px;
   cursor: pointer;
   display: flex;
   justify-content: left;
   align-items: center;
-}
-
-.post-popover-detail {
-  color: black;
-  line-height: 20px;
-  font-weight: 700;
-  font-size: 15px;
 }
 
 .post-popover-detail div {
@@ -3830,46 +3652,6 @@ input[data-autocompleted] {
 }
 
 /* start to check post description  */
-
-/* .animated-heart {
-  aspect-ratio: 1;
-  animation: heartBeat 0.7s linear;
-}
-*/
-/* @keyframes heartBeat {
-  0% {
-    transform: scale(0);
-    opacity: 0;
-  }
-  20% {
-    opacity: 0;
-    transform: scale(0.2);
-  }
-  40% {
-    transform: scale(0.4);
-  }
-  60% {
-    transform: scale(0.6);
-  }
-  70% {
-    transform: scale(1);
-  }
-  80% {
-    transform: scale(1);
-  }
-  90% {
-    transform: scale(0.8);
-  }
-  100% {
-    transform: scale(1);
-  }
-} */
-@keyframes heart {
-  0%,
-  17.5% {
-    font-size: 0;
-  }
-}
 
 .animated-heart {
   animation: heart 1s cubic-bezier(0.17, 0.89, 0.15, 1.49) forwards;
@@ -4221,7 +4003,7 @@ themeName === "dark-theme"
   z-index: 99999 !important;
 }
 
-/* glassmorphism effect test finish to check for premium sign up page  */
+/* glassmorphism effect  finish to check for premium sign up page  */
 
 .hide-me-modal,
 .hide-me-modal-fade {
@@ -4229,10 +4011,6 @@ themeName === "dark-theme"
 }
 
 .dark-theme-settings div {
-  font-size: 15px;
-  line-height: 20px;
-  font-weight: 400;
-  color: #e1e3e4 !important;
   cursor: pointer;
   padding: 7px 12px;
 }
@@ -4261,10 +4039,6 @@ themeName === "dark-theme"
 }
 
 .light-theme-settings div {
-  font-size: 15px;
-  line-height: 20px;
-  font-weight: 400;
-  color: #3f4347 !important;
   cursor: pointer;
   padding: 7px 12px;
 }
@@ -4303,29 +4077,17 @@ themeName === "dark-theme"
 
 .settings-text-first-exp-dark-theme {
   color: #e6e9ea;
-  font-size: 15px;
-  line-height: 20px;
-  font-weight: 400;
 }
 
 .settings-text-first-exp-light-theme {
   color: #0f141a;
-  font-size: 15px;
-  line-height: 20px;
-  font-weight: 400;
 }
 
 .settings-text-dark-theme {
-  color: #71767a;
-  font-size: 13px;
-  line-height: 16px;
-  font-weight: 400;
+  color: rgb(113, 118, 123);
 }
 .settings-text-light-theme {
-  color: #536371;
-  font-size: 13px;
-  line-height: 16px;
-  font-weight: 400;
+  color: rgb(83, 100, 113);
 }
 
 .settings-header-with-arrow {
@@ -4336,8 +4098,6 @@ themeName === "dark-theme"
 
 .first-head {
   margin-left: 24px;
-  font-size: 20px;
-  line-height: 24px;
 }
 
 .hover-blue-btn-light-theme:hover {
@@ -4383,7 +4143,8 @@ themeName === "dark-theme"
   background-color: #061019;
   transition-duration: 0.2s !important;
 }
-.hover-background-effect-clicked-light-theme:hover {
+.hover-background-effect-clicked-light-theme:hover,
+.hover-background-effect-clicked-dim-theme:hover {
   background-color: #ebf5fe;
   transition-duration: 0.2s !important;
 }
@@ -4397,11 +4158,11 @@ themeName === "dark-theme"
 }
 
 .soft-grey-dark-theme-text-variant-1 {
-  color: #e6e9ea !important;
+  color: rgb(231, 233, 234) !important;
 }
 
 .very-dark-gray-light-theme-text-variant-1 {
-  color: #0f141a !important;
+  color: rgb(15, 20, 26) !important;
 }
 .soft-grey-dark-theme-text-variant-2 {
   color: #71767a !important;
@@ -4629,4 +4390,54 @@ themeName === "dark-theme"
   cursor: pointer;
   transition-duration: 0.2s !important;
   background-color: #181919 !important;
+}
+
+.display-dark-theme-hover-circle-bg:hover {
+  transition-duration: 0.2s;
+  background-color: #09131c !important;
+}
+
+.display-light-theme-hover-circle-bg:hover {
+  transition-duration: 0.2s;
+  background-color: #e8f2fb !important  ;
+}
+
+.hover-background-effect-clicked-non-light-theme:hover {
+  transition-duration: 0.2s;
+  background-color: #f0f1f1 !important;
+}
+
+.hover-background-effect-clicked-non-dim-theme:hover {
+  transition-duration: 0.2s;
+  background-color: #1d2732 !important;
+}
+
+.hover-background-effect-clicked-non-dark-theme:hover {
+  transition-duration: 0.2s;
+  background-color: #0e0e10 !important;
+}
+
+/* cute image hover effect start to check  */
+.image-hover-effect::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: transparent;
+  transition: background-color 0.2s ease;
+  z-index: 0;
+}
+
+.image-hover-effect:hover::before {
+  background-color: rgba(26, 26, 26, 0.14);
+}
+/* cute image hover effect finish to check  */
+
+.comment-modal {
+  max-height: 600px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }

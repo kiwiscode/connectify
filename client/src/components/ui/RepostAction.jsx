@@ -14,6 +14,7 @@ import { Popover } from "@mui/material";
 import PopupState, { bindPopover, bindTrigger } from "material-ui-popup-state";
 import { Button } from "react-bootstrap";
 import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
+import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
 
 const socket = io.connect(`${API_URL}`);
 
@@ -102,6 +103,11 @@ function RepostAction({
   const [hoveredOption, setHoveredOption] = useState(null);
 
   const [repostIconHovered, setRepostIconHovered] = useState(null);
+
+  const { getFontSizeAndLineHeight15, getFontSizeAndLineHeight13 } =
+    useFontSizeHandler();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
   return (
     <>
       <PopupState variant="popover" popupId="demo-popup-popover">
@@ -160,9 +166,14 @@ function RepostAction({
                       color: "rgb(0, 186, 124)",
                       position: "relative",
                       bottom: isCutePopoverOnRightSide ? "4px" : "5px",
-                      fontSize: isCutePopoverOnRightSide ? "12px" : null,
+                      fontSize: isCutePopoverOnRightSide
+                        ? "12px"
+                        : font13.fontSize,
+                      lineHeight: isCutePopoverOnRightSide
+                        ? "14px"
+                        : font13.lineHeight,
                     }}
-                    className="post-description"
+                    className="post-description chirp-regular-font"
                   >
                     {post.reposted.length ? (
                       <span>{post.reposted.length}</span>
@@ -235,7 +246,7 @@ function RepostAction({
                     </svg>
                   </span>
                   <span
-                    className="post-description"
+                    className="post-description chirp-regular-font"
                     style={{
                       color:
                         themeName === "dark-theme" && !repostIconHovered
@@ -250,7 +261,12 @@ function RepostAction({
                       position: "relative",
                       cursor: "pointer",
                       bottom: isCutePopoverOnRightSide ? "4px" : "5px",
-                      fontSize: isCutePopoverOnRightSide ? "12px" : null,
+                      fontSize: isCutePopoverOnRightSide
+                        ? "12px"
+                        : font13.fontSize,
+                      lineHeight: isCutePopoverOnRightSide
+                        ? "14px"
+                        : font13.lineHeight,
                     }}
                   >
                     {post?.reposted.length ? (
@@ -334,13 +350,13 @@ function RepostAction({
                       </span>
 
                       <span
+                        className="chirp-bold-font"
                         style={{
                           marginLeft: "5px",
                           position: "relative",
                           top: "2px",
-                          fontSize: "15px",
-                          fontWeight: "700",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                           color: themeName === "dark-theme" ? "white" : "black",
                         }}
                       >
@@ -386,13 +402,13 @@ function RepostAction({
                       </span>
 
                       <span
+                        className="chirp-bold-font"
                         style={{
                           marginLeft: "5px",
                           position: "relative",
                           top: "2px",
-                          fontSize: "15px",
-                          fontWeight: "700",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                           color: themeName === "dark-theme" ? "white" : "black",
                         }}
                       >
@@ -445,13 +461,13 @@ function RepostAction({
                       </span>
 
                       <span
+                        className="chirp-bold-font"
                         style={{
                           marginLeft: "5px",
                           position: "relative",
                           top: "2px",
-                          fontSize: "15px",
-                          fontWeight: "700",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                           color: themeName === "dark-theme" ? "white" : "black",
                         }}
                       >
@@ -495,13 +511,13 @@ function RepostAction({
                       </span>
 
                       <span
+                        className="chirp-bold-font"
                         style={{
                           marginLeft: "5px",
                           position: "relative",
                           top: "2px",
-                          fontSize: "15px",
-                          fontWeight: "700",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                           color: themeName === "dark-theme" ? "white" : "black",
                         }}
                       >

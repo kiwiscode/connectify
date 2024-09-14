@@ -16,6 +16,7 @@ import { UserContext } from "../../../../../context/UserContext";
 import axios from "axios";
 import LoadingSpinner from "../../../../../components/ui/LoadingSpinner";
 import BootstrapTooltip from "../../../../../components/BootstrapToolTip/BootstrapToolTip";
+import { useFontSizeHandler } from "../../../../../utils/useFontSizeHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -167,6 +168,18 @@ function DownloadAnArchiveOfYourDataMain() {
     refreshActiveUser();
   }, []);
 
+  const {
+    getFontSizeAndLineHeight26,
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight17,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font26 = getFontSizeAndLineHeight26();
+  const font20 = getFontSizeAndLineHeight20();
+  const font17 = getFontSizeAndLineHeight17();
+  const font15 = getFontSizeAndLineHeight15();
+  const font13 = getFontSizeAndLineHeight13();
   return (
     <>
       {contextHolder}
@@ -328,8 +341,8 @@ function DownloadAnArchiveOfYourDataMain() {
                       </div>
                       <div
                         style={{
-                          fontSize: "15px",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                         className={
                           themeName === "dark-theme"
@@ -571,8 +584,8 @@ function DownloadAnArchiveOfYourDataMain() {
                     >
                       <div
                         style={{
-                          fontSize: "26px",
-                          lineHeight: "36px",
+                          fontSize: font26.fontSize,
+                          lineHeight: font26.lineHeight,
                         }}
                         className={
                           themeName === "dark-theme"
@@ -584,8 +597,8 @@ function DownloadAnArchiveOfYourDataMain() {
                       </div>
                       <div
                         style={{
-                          fontSize: "15px",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                         className={
                           themeName === "dark-theme"
@@ -650,8 +663,8 @@ function DownloadAnArchiveOfYourDataMain() {
                         >
                           <span
                             style={{
-                              fontSize: "17px",
-                              lineHeight: "20px",
+                              fontSize: font17.fontSize,
+                              lineHeight: font17.lineHeight,
                               textOverflow: "unset",
                               borderBottom:
                                 themeName !== "dark-theme"
@@ -699,9 +712,8 @@ function DownloadAnArchiveOfYourDataMain() {
                           border: "none",
                           outlineStyle: "none",
                           cursor: "pointer",
-                          lineHeight: "20px",
-                          fontSize: "15px",
-                          fontWeight: "400",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                           padding: "12px",
                           color: themeName === "dark-theme" ? "white" : "",
                         }}
@@ -717,9 +729,8 @@ function DownloadAnArchiveOfYourDataMain() {
                           border: "none",
                           outlineStyle: "none",
                           cursor: "pointer",
-                          lineHeight: "20px",
-                          fontSize: "15px",
-                          fontWeight: "700",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                           padding: "12px",
                           color: themeName === "dark-theme" ? "white" : "",
                         }}
@@ -737,8 +748,8 @@ function DownloadAnArchiveOfYourDataMain() {
                         <div
                           className={`use-phone-instead use-phone-instead-${themeName} chirp-regular-font`}
                           style={{
-                            lineHeight: "20px",
-                            fontSize: "15px",
+                            fontSize: font15.fontSize,
+                            lineHeight: font15.lineHeight,
                             fontWeight: "700",
                             padding: "12px",
                             opacity: "0.5",
@@ -777,8 +788,8 @@ function DownloadAnArchiveOfYourDataMain() {
                             : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font mt-2"
                         }
                         style={{
-                          fontSize: "15px",
-                          lineHeight: "20px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         Enter the verification code sent to{" "}
@@ -838,14 +849,13 @@ function DownloadAnArchiveOfYourDataMain() {
                       }}
                     >
                       <div
-                        className="didn-t-receive-email-text"
+                        className="didn-t-receive-email-text chirp-regular-font"
                         style={{
                           cursor: "pointer",
                           position: "relative",
                           left: "10px",
-                          fontSize: "13px",
-                          fontWeight: "400",
-                          lineHeight: "16px",
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
                           color: "#1f9cf0",
                           display: "inline-block",
                           float: "left",
@@ -890,7 +900,6 @@ function DownloadAnArchiveOfYourDataMain() {
               <>
                 <div
                   style={{
-                    fontSize: "15px",
                     width: "100%",
                     height: "100%",
                     display: "flex",
@@ -901,6 +910,7 @@ function DownloadAnArchiveOfYourDataMain() {
                 >
                   <LoadingSpinner
                     strokeColor={"rgb(29, 155, 240)"}
+                    fontSize={true}
                   ></LoadingSpinner>
                 </div>
               </>
@@ -974,6 +984,10 @@ function DownloadAnArchiveOfYourDataMain() {
             </svg>
           </div>
           <div
+            style={{
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
+            }}
             className={
               themeName === "dark-theme"
                 ? "mt-2 first-head chirp-bold-font soft-grey-dark-theme-text-variant-1"
@@ -991,8 +1005,8 @@ function DownloadAnArchiveOfYourDataMain() {
           }
           style={{
             paddingLeft: "16px",
-            fontSize: "13px",
-            lineHeight: "16px",
+            fontSize: font13.fontSize,
+            lineHeight: font13.lineHeight,
           }}
         >
           Get insights into the type of information stored for your account.

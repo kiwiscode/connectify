@@ -12,6 +12,7 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ThemeContext } from "../../../../../context/ThemeContext";
+import { useFontSizeHandler } from "../../../../../utils/useFontSizeHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -20,6 +21,16 @@ const API_URL = "http://localhost:3000";
 // ?
 
 function ResetPasswordMain() {
+  const {
+    getFontSizeAndLineHeight31,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight14,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font31 = getFontSizeAndLineHeight31();
+  const font15 = getFontSizeAndLineHeight15();
+  const font14 = getFontSizeAndLineHeight14();
+  const font13 = getFontSizeAndLineHeight13();
   const { width } = useWindowDimensions();
   const [{ theme, themeName }] = useContext(ThemeContext);
   const { userInfo, getToken } = useContext(UserContext);
@@ -132,9 +143,9 @@ function ResetPasswordMain() {
           </div>
           <div
             style={{
-              fontSize: "16px",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
               color: "#66757f",
-              lineHeight: "40px",
             }}
           >
             {" "}
@@ -143,7 +154,7 @@ function ResetPasswordMain() {
           <div
             style={{
               color: "#66757f",
-              fontSize: "14px",
+              fontSize: font14.fontSize,
             }}
             className="ms-auto"
           >
@@ -167,10 +178,10 @@ function ResetPasswordMain() {
           }}
         >
           <span
+            className="chirp-bold-font"
             style={{
-              fontSize: "28px",
-              fontWeight: "700",
-              lineHeight: "24px",
+              fontSize: font31.fontSize,
+              lineHeight: font31.fontSize,
               padding: "16px 0px",
             }}
           >
@@ -227,22 +238,22 @@ function ResetPasswordMain() {
               }}
             >
               <div
+                className="chirp-bold-font"
                 style={{
-                  fontWeight: "700",
-                  fontSize: "15px",
-                  lineHeight: "20px",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                   fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
                 }}
               >
                 {userInfo.fullname}
               </div>
               <div
+                className="chirp-regular-font"
                 style={{
                   textDecoration: "none",
                   color: "rgb(83, 100, 113)",
-                  lineHeight: "20px",
-                  fontSize: "15px",
-                  fontWeight: "400",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                   fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
                 }}
               >
@@ -252,22 +263,22 @@ function ResetPasswordMain() {
           </div>
           <div className="mt-2">
             <span
+              className="chirp-regular-font"
               style={{
-                fontWeight: "400",
-                fontSize: "15px",
-                lineHeight: "20px",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
                 fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
               }}
             >
               Strong passwords include numbers, letters, and punctuation marks.
             </span>{" "}
             <span
+              className="chirp-regular-font"
               style={{
                 cursor: "pointer",
                 color: "#55acee",
                 width: "100%",
-                fontSize: "13px",
-                fontWeight: "400",
+                fontSize: font13.fontSize,
                 fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
               }}
             >
@@ -334,14 +345,13 @@ function ResetPasswordMain() {
           {errorResetPassword ? (
             <>
               <span
-                className="mt-1"
+                className="mt-1 chirp-regular-font"
                 style={{
                   display: "flex",
                   color: "rgba(244,39,49,255)",
                   textAlign: "left",
-                  fontSize: "13px",
-                  lineHeight: "16px",
-                  fontWeight: "400",
+                  fontSize: font13.fontSize,
+                  lineHeight: font13.lineHeight,
                   width: "92%",
                   position: "relative",
                   left: "5px",
@@ -417,14 +427,13 @@ function ResetPasswordMain() {
           {errorResetPassword2 ? (
             <>
               <div
-                className="mt-1"
+                className="mt-1 chirp-regular-font"
                 style={{
                   display: "inline-block",
                   color: "rgba(244,39,49,255)",
                   textAlign: "left",
-                  fontSize: "13px",
-                  lineHeight: "16px",
-                  fontWeight: "400",
+                  fontSize: font13.fontSize,
+                  lineHeight: font13.lineHeight,
                   width: "92%",
                   position: "relative",
                   left: "5px",
@@ -454,10 +463,10 @@ function ResetPasswordMain() {
           />{" "}
           <div className="mt-2">
             <span
+              className="chirp-regular-font"
               style={{
-                fontWeight: "400",
-                fontSize: "15px",
-                lineHeight: "20px",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
                 fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
               }}
             >
@@ -482,7 +491,7 @@ function ResetPasswordMain() {
                 maxWidth: "145px",
                 maxHeight: "36px",
                 minHeight: "36px",
-                fontSize: "15px",
+                fontSize: font15.fontSize,
                 cursor: "pointer",
                 borderRadius: "9999px",
               }}

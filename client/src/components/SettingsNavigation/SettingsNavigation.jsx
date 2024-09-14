@@ -4,13 +4,21 @@ import { ThemeContext } from "../../context/ThemeContext";
 import { NavigationHistoryContext } from "../../context/NavigationHistoryContext";
 import { Col, Stack } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
 
 function SettingsNavigation() {
   const { width } = useWindowDimensions();
   const { navigationHistoryArray } = useContext(NavigationHistoryContext);
   const [{ theme, themeName }] = useContext(ThemeContext);
   const navigate = useNavigate();
-
+  const {
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight14,
+  } = useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
+  const font14 = getFontSizeAndLineHeight14();
   const [onFocus, setOnFocus] = useState(null);
   const [onFocusXBtn, setOnFocusXBtn] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -51,10 +59,10 @@ function SettingsNavigation() {
       >
         <Stack direction="vertical" className="mt-3">
           <div
+            className="chirp-bold-font"
             style={{
-              lineHeight: "24px",
-              fontWeight: "700",
-              fontSize: "20px",
+              fontSize: font20.fontSize,
+              lineHeight: font20.lineHeight,
               paddingLeft: "12px",
               paddingRight: "12px",
             }}
@@ -203,8 +211,7 @@ function SettingsNavigation() {
                   outlineStyle: "none",
                   borderRadius: "9999px",
                   borderWidth: "1px",
-                  fontSize: "14px",
-                  fontWeight: "400",
+                  fontSize: font14.fontSize,
                   lineHeight: "20px",
                   wordWrap: "break-word",
                   color: themeName === "dark-theme" ? "white" : "black",
@@ -224,9 +231,8 @@ function SettingsNavigation() {
             style={{
               color:
                 themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
-              lineHeight: "20px",
-              fontSize: "15px",
-              fontWeight: "400",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
               display:
                 !showNotificationMessage || searchTerm.length > 0 ? "none" : "",
               textAlign: "center",
@@ -238,8 +244,8 @@ function SettingsNavigation() {
           <div
             className={
               themeName === "dark-theme"
-                ? "dark-theme-settings"
-                : "light-theme-settings"
+                ? "dark-theme-settings soft-grey-dark-theme-text-variant-1"
+                : "light-theme-settings very-dark-gray-light-theme-text-variant-1"
             }
             style={{
               padding: "0px",
@@ -269,7 +275,15 @@ function SettingsNavigation() {
                     : null,
               }}
             >
-              <div>Your account</div>
+              <div
+                className="chirp-regular-font"
+                style={{
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
+                }}
+              >
+                Your account
+              </div>
               <div>
                 <svg
                   viewBox="0 0 24 24"
@@ -304,7 +318,15 @@ function SettingsNavigation() {
                     : null,
               }}
             >
-              <div>Monetization</div>
+              <div
+                className="chirp-regular-font"
+                style={{
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
+                }}
+              >
+                Monetization
+              </div>
               <div>
                 <svg
                   viewBox="0 0 24 24"
@@ -327,7 +349,15 @@ function SettingsNavigation() {
                 justifyContent: "space-between",
               }}
             >
-              <div>Premium</div>
+              <div
+                className="chirp-regular-font"
+                style={{
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
+                }}
+              >
+                Premium
+              </div>
               <div>
                 <svg
                   viewBox="0 0 24 24"
@@ -364,7 +394,15 @@ function SettingsNavigation() {
                     : null,
               }}
             >
-              <div>Creator Subscriptions</div>
+              <div
+                className="chirp-regular-font"
+                style={{
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
+                }}
+              >
+                Creator Subscriptions
+              </div>
               <div>
                 <svg
                   viewBox="0 0 24 24"
@@ -402,7 +440,15 @@ function SettingsNavigation() {
                     : null,
               }}
             >
-              <div>Security and account access</div>
+              <div
+                className="chirp-regular-font"
+                style={{
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
+                }}
+              >
+                Security and account access
+              </div>
               <div>
                 <svg
                   viewBox="0 0 24 24"
@@ -438,7 +484,15 @@ function SettingsNavigation() {
                     : null,
               }}
             >
-              <div>Privacy and safety</div>
+              <div
+                className="chirp-regular-font"
+                style={{
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
+                }}
+              >
+                Privacy and safety
+              </div>
               <div>
                 <svg
                   viewBox="0 0 24 24"
@@ -473,7 +527,15 @@ function SettingsNavigation() {
                     : null,
               }}
             >
-              <div>Notifications</div>
+              <div
+                className="chirp-regular-font"
+                style={{
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
+                }}
+              >
+                Notifications
+              </div>
               <div>
                 <svg
                   viewBox="0 0 24 24"
@@ -511,7 +573,15 @@ function SettingsNavigation() {
                     : null,
               }}
             >
-              <div>Accessibility, display, and languages</div>
+              <div
+                className="chirp-regular-font"
+                style={{
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
+                }}
+              >
+                Accessibility, display, and languages
+              </div>
               <div>
                 <svg
                   viewBox="0 0 24 24"
@@ -546,7 +616,15 @@ function SettingsNavigation() {
                     : null,
               }}
             >
-              <div>Additional resources</div>
+              <div
+                className="chirp-regular-font"
+                style={{
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
+                }}
+              >
+                Additional resources
+              </div>
               <div>
                 <svg
                   viewBox="0 0 24 24"
@@ -569,7 +647,15 @@ function SettingsNavigation() {
                 justifyContent: "space-between",
               }}
             >
-              <div>Help Center</div>
+              <div
+                className="chirp-regular-font"
+                style={{
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
+                }}
+              >
+                Help Center
+              </div>
               <div>
                 <svg
                   viewBox="0 0 24 24"

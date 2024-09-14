@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../../../context/UserContext";
 import { useAntdMessageHandler } from "../../../../../utils/useAntdMessageHandler";
 import { ThemeContext } from "../../../../../context/ThemeContext";
+import { useFontSizeHandler } from "../../../../../utils/useFontSizeHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -51,6 +52,18 @@ function ConfirmPinResetMain() {
         console.log("Error =>", error);
       });
   };
+
+  const {
+    getFontSizeAndLineHeight31,
+    getFontSizeAndLineHeight15,
+    getFontSizeAndLineHeight14,
+    getFontSizeAndLineHeight13,
+  } = useFontSizeHandler();
+  const font31 = getFontSizeAndLineHeight31();
+  const font15 = getFontSizeAndLineHeight15();
+  const font14 = getFontSizeAndLineHeight14();
+  const font13 = getFontSizeAndLineHeight13();
+
   return (
     <>
       {contextHolder}
@@ -109,9 +122,9 @@ function ConfirmPinResetMain() {
           </div>
           <div
             style={{
-              fontSize: "16px",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
               color: "#66757f",
-              lineHeight: "40px",
             }}
           >
             {" "}
@@ -120,7 +133,7 @@ function ConfirmPinResetMain() {
           <div
             style={{
               color: "#66757f",
-              fontSize: "14px",
+              fontSize: font14.fontSize,
             }}
             className="ms-auto"
           >
@@ -144,10 +157,10 @@ function ConfirmPinResetMain() {
           }}
         >
           <span
+            className="chirp-bold-font"
             style={{
-              fontSize: "28px",
-              fontWeight: "700",
-              lineHeight: "24px",
+              fontSize: font31.fontSize,
+              lineHeight: font31.lineHeight,
               padding: "16px 0px",
             }}
           >
@@ -156,7 +169,8 @@ function ConfirmPinResetMain() {
           <div
             className="mt-3"
             style={{
-              fontSize: "14px",
+              fontSize: font14.fontSize,
+
               lineHeight: "18px",
             }}
           >
@@ -212,7 +226,7 @@ function ConfirmPinResetMain() {
                 maxWidth: "69.17px",
                 maxHeight: "36px",
                 minHeight: "36px",
-                fontSize: "15px",
+                fontSize: font15.fontSize,
                 fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
               }}
               onClick={() => {
@@ -236,7 +250,8 @@ function ConfirmPinResetMain() {
           <div
             className="mt-3"
             style={{
-              fontSize: "14px",
+              fontSize: font14.fontSize,
+
               lineHeight: "18px",
             }}
           >
@@ -247,13 +262,12 @@ function ConfirmPinResetMain() {
             onClick={() => {
               handleSendForgotPasswordCodeToEmail();
             }}
-            className="mt-4"
+            className="mt-4 chirp-regular-font"
             style={{
               cursor: "pointer",
               color: "#55acee",
               width: "100%",
-              fontSize: "13px",
-              fontWeight: "400",
+              fontSize: font13.fontSize,
               fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
             }}
           >

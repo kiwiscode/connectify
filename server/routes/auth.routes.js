@@ -28,8 +28,6 @@ router.post("/login-variant-one-result", (req, res) => {
     isVariantOneResultRouteSuccess
   );
 
-  req.session.currentUser = "Hello World!";
-
   const userFirstInfoFromStepOne = authentication.multi_factor_authentication;
 
   const passwordFromReqBody = authentication.password;

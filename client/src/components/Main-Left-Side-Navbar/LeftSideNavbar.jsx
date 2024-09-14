@@ -16,6 +16,8 @@ import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 import { ModalVisibilityContext } from "../../context/ModalVisibilityContext";
 import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
 import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
+import { FontSizeContext } from "../../context/FontSizeContext";
+import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
 
 // when working on local version
 const API_URL = "http://localhost:3000";
@@ -24,7 +26,17 @@ const API_URL = "http://localhost:3000";
 // ?
 function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
-
+  const {
+    getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight11,
+    getFontSizeAndLineHeight17,
+    getFontSizeAndLineHeight15,
+  } = useFontSizeHandler();
+  const font20 = getFontSizeAndLineHeight20();
+  const font17 = getFontSizeAndLineHeight17();
+  const font15 = getFontSizeAndLineHeight15();
+  const font11 = getFontSizeAndLineHeight11();
+  const { fontSize, setFontSize } = useContext(FontSizeContext);
   const [isHomeRouteActive, setIsHomeRouteActive] = useState(false);
   const [isNotificationsRouteActive, setIsNotificationsRouteActive] =
     useState(false);
@@ -133,19 +145,6 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
     } else {
       setError("Tweet length to 140 characters");
     }
-  };
-
-  const { togglePostModalVisibility } = useContext(ModalVisibilityContext);
-
-  const handleClose = () => {
-    setShow(false);
-    togglePostModalVisibility();
-    // parentCallBackSecond(false);
-  };
-  const handleShow = () => {
-    setShow(true);
-    togglePostModalVisibility();
-    // parentCallBackSecond(true);
   };
 
   const { postSharedMessage, contextHolder } = useAntdMessageHandler();
@@ -325,7 +324,16 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
 
     return allUnReadedMessages;
   };
+  const { togglePostModalVisibility } = useContext(ModalVisibilityContext);
 
+  const handleClose = () => {
+    setShow(false);
+    togglePostModalVisibility();
+  };
+  const handleShow = () => {
+    setShow(true);
+    togglePostModalVisibility();
+  };
   return (
     <>
       <Modal
@@ -390,7 +398,6 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
               <svg
                 style={{
                   border: "none",
-                  fontSize: "15px",
                   margin: "5px",
                 }}
                 onClick={handleClose}
@@ -469,9 +476,9 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       themeName === "dark-theme"
                         ? "white"
                         : "rgba(15,20,25,1.00)",
-                    lineHeight: "24px",
                     fontWeight: "400",
-                    fontSize: `${content ? "15px" : "20px"}`,
+                    lineHeight: content ? font15.lineHeight : font20.lineHeight,
+                    fontSize: content ? font15.fontSize : font20.fontSize,
                     width: "100%",
                     height: "100px",
                     backgroundColor:
@@ -511,7 +518,6 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                           <svg
                             style={{
                               border: "none",
-                              fontSize: "15px",
                               margin: "5px",
                             }}
                             width={20}
@@ -724,6 +730,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                     style={{
                       border: "none",
                       cursor: "default",
+                      pointerEvents: "none",
                     }}
                     variant="primary"
                     className={`emptyContent post-btn compose-tweet-textArea chirp-bold-font blue-btn-disabled`}
@@ -1014,11 +1021,11 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                               >
                                 {" "}
                                 <span
+                                  className="chirp-regular-font"
                                   style={{
-                                    fontWeight: "400",
-                                    fontSize: "11px",
-                                    lineHeight: "12px",
                                     color: "white",
+                                    fontSize: font11.fontSize,
+                                    lineHeight: font11.lineHeight,
                                   }}
                                 >
                                   {unReadNotifications?.length}
@@ -1111,11 +1118,11 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                               >
                                 {" "}
                                 <span
+                                  className="chirp-regular-font"
                                   style={{
-                                    fontWeight: "400",
-                                    fontSize: "11px",
-                                    lineHeight: "12px",
                                     color: "white",
+                                    fontSize: font11.fontSize,
+                                    lineHeight: font11.lineHeight,
                                   }}
                                 >
                                   {checkHowManyUnReadMessages()?.length}
@@ -1609,11 +1616,9 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                     overflowWrap: "break-word",
                                     maxWidth: "100%",
                                     minWidth: "0px",
-                                    fontSize: "20px",
                                     whiteSpace: "nowrap",
                                     textAlign: "inherit",
                                     flexGrow: "1",
-                                    lineHeight: "24px",
                                     overflow: "hidden",
                                     boxSizing: "border-box",
                                     margin: "0px",
@@ -1621,6 +1626,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                     position: "relative",
                                     listStyle: "none",
                                     textDecoration: "none",
+                                    fontSize: font20.fontSize,
+                                    lineHeight: font20.lineHeight,
                                   }}
                                 >
                                   Lists
@@ -1733,11 +1740,9 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                     overflowWrap: "break-word",
                                     maxWidth: "100%",
                                     minWidth: "0px",
-                                    fontSize: "20px",
                                     whiteSpace: "nowrap",
                                     textAlign: "inherit",
                                     flexGrow: "1",
-                                    lineHeight: "24px",
                                     overflow: "hidden",
                                     boxSizing: "border-box",
                                     margin: "0px",
@@ -1745,6 +1750,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                     position: "relative",
                                     listStyle: "none",
                                     textDecoration: "none",
+                                    fontSize: font20.fontSize,
+                                    lineHeight: font20.lineHeight,
                                   }}
                                 >
                                   Monetization
@@ -1857,11 +1864,9 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                     overflowWrap: "break-word",
                                     maxWidth: "100%",
                                     minWidth: "0px",
-                                    fontSize: "20px",
                                     whiteSpace: "nowrap",
                                     textAlign: "inherit",
                                     flexGrow: "1",
-                                    lineHeight: "24px",
                                     overflow: "hidden",
                                     boxSizing: "border-box",
                                     margin: "0px",
@@ -1869,6 +1874,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                     position: "relative",
                                     listStyle: "none",
                                     textDecoration: "none",
+                                    fontSize: font20.fontSize,
+                                    lineHeight: font20.lineHeight,
                                   }}
                                 >
                                   Ads
@@ -1981,11 +1988,9 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                     overflowWrap: "break-word",
                                     maxWidth: "100%",
                                     minWidth: "0px",
-                                    fontSize: "20px",
                                     whiteSpace: "nowrap",
                                     textAlign: "inherit",
                                     flexGrow: "1",
-                                    lineHeight: "24px",
                                     overflow: "hidden",
                                     boxSizing: "border-box",
                                     margin: "0px",
@@ -1993,6 +1998,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                     position: "relative",
                                     listStyle: "none",
                                     textDecoration: "none",
+                                    fontSize: font20.fontSize,
+                                    lineHeight: font20.lineHeight,
                                   }}
                                 >
                                   Jobs
@@ -2000,7 +2007,6 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                 <div
                                   className="chirp-bold-font"
                                   style={{
-                                    fontSize: "15px",
                                     height: "20px",
                                     paddingLeft: "4px",
                                     paddingRight: "4px",
@@ -2014,6 +2020,18 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                       themeName === "dark-theme"
                                         ? "rgb(255, 224, 194)"
                                         : "rgb(105, 33, 0)",
+                                    fontSize:
+                                      fontSize === "Default"
+                                        ? "15px"
+                                        : fontSize === "Small"
+                                        ? "14px"
+                                        : fontSize === "Extra small"
+                                        ? "14px"
+                                        : fontSize === "Large"
+                                        ? "17px"
+                                        : fontSize === "Extra large"
+                                        ? "18px"
+                                        : null,
                                   }}
                                 >
                                   <div>Beta</div>
@@ -2126,11 +2144,9 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                     overflowWrap: "break-word",
                                     maxWidth: "100%",
                                     minWidth: "0px",
-                                    fontSize: "20px",
                                     whiteSpace: "nowrap",
                                     textAlign: "inherit",
                                     flexGrow: "1",
-                                    lineHeight: "24px",
                                     overflow: "hidden",
                                     boxSizing: "border-box",
                                     margin: "0px",
@@ -2138,6 +2154,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                     position: "relative",
                                     listStyle: "none",
                                     textDecoration: "none",
+                                    fontSize: font20.fontSize,
+                                    lineHeight: font20.lineHeight,
                                   }}
                                 >
                                   Create your Space
@@ -2250,11 +2268,9 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                     overflowWrap: "break-word",
                                     maxWidth: "100%",
                                     minWidth: "0px",
-                                    fontSize: "20px",
                                     whiteSpace: "nowrap",
                                     textAlign: "inherit",
                                     flexGrow: "1",
-                                    lineHeight: "24px",
                                     overflow: "hidden",
                                     boxSizing: "border-box",
                                     margin: "0px",
@@ -2262,6 +2278,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                     position: "relative",
                                     listStyle: "none",
                                     textDecoration: "none",
+                                    fontSize: font20.fontSize,
+                                    lineHeight: font20.lineHeight,
                                   }}
                                 >
                                   Settings and privacy
@@ -2333,7 +2351,6 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
 
             padding: "0px",
             margin: "0px",
-            paddingLeft: "92px",
             display: "flex",
             justifyContent: "center",
             minWidth: "fit-content",
@@ -2348,6 +2365,9 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
           <div
             style={{
               position: "fixed",
+              height: "100%",
+              overflowY: "auto",
+              left: "60px",
             }}
           >
             <Stack
@@ -2463,9 +2483,10 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       }
                       style={{
                         marginLeft: "20px",
-                        fontSize: "20px",
                         position: "relative",
                         top: "3px",
+                        fontSize: font20.fontSize,
+                        lineHeight: font20.lineHeight,
                       }}
                     >
                       Home
@@ -2518,9 +2539,10 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       }
                       style={{
                         marginLeft: "20px",
-                        fontSize: "20px",
                         position: "relative",
                         top: "3px",
+                        fontSize: font20.fontSize,
+                        lineHeight: font20.lineHeight,
                       }}
                     >
                       Explore
@@ -2573,11 +2595,11 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                           >
                             {" "}
                             <span
+                              className="chirp-regular-font"
                               style={{
-                                fontWeight: "400",
-                                fontSize: "11px",
-                                lineHeight: "12px",
                                 color: "white",
+                                fontSize: font11.fontSize,
+                                lineHeight: font11.lineHeight,
                               }}
                             >
                               {unReadNotifications?.length}
@@ -2615,10 +2637,10 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       }
                       style={{
                         marginLeft: "20px",
-                        fontSize: "20px",
-                        lineHeight: "24px",
                         position: "relative",
                         top: "3px",
+                        fontSize: font20.fontSize,
+                        lineHeight: font20.lineHeight,
                       }}
                     >
                       Notifications{" "}
@@ -2668,11 +2690,11 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                           >
                             {" "}
                             <span
+                              className="chirp-regular-font"
                               style={{
-                                fontWeight: "400",
-                                fontSize: "11px",
-                                lineHeight: "12px",
                                 color: "white",
+                                fontSize: font11.fontSize,
+                                lineHeight: font11.lineHeight,
                               }}
                             >
                               {checkHowManyUnReadMessages()?.length}
@@ -2709,11 +2731,10 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       }
                       style={{
                         marginLeft: "20px",
-
-                        fontSize: "20px",
-                        lineHeight: "24px",
                         position: "relative",
                         top: "3px",
+                        fontSize: font20.fontSize,
+                        lineHeight: font20.lineHeight,
                       }}
                     >
                       Messages{" "}
@@ -2771,9 +2792,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       }
                       style={{
                         marginLeft: "20px",
-
-                        fontSize: "20px",
-                        lineHeight: "24px",
+                        fontSize: font20.fontSize,
+                        lineHeight: font20.lineHeight,
                         position: "relative",
                         top: "3px",
                       }}
@@ -2829,11 +2849,10 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       }
                       style={{
                         marginLeft: "20px",
-
-                        fontSize: "20px",
-                        lineHeight: "24px",
                         position: "relative",
                         top: "3px",
+                        fontSize: font20.fontSize,
+                        lineHeight: font20.lineHeight,
                       }}
                     >
                       Bookmarks
@@ -2887,11 +2906,10 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       }
                       style={{
                         marginLeft: "20px",
-
-                        fontSize: "20px",
-                        lineHeight: "24px",
                         position: "relative",
                         top: "3px",
+                        fontSize: font20.fontSize,
+                        lineHeight: font20.lineHeight,
                       }}
                     >
                       Communities
@@ -2956,13 +2974,11 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                           : `chirp-regular-font`
                       }
                       style={{
-                        marginLeft: "20px",
-                        fontSize: "20px",
-                        lineHeight: "24px",
+                        marginLeft: "12px",
+                        fontSize: font20.fontSize,
+                        lineHeight: font20.lineHeight,
                         position: "relative",
                         top: "3px",
-
-                        right: "10px",
                       }}
                     >
                       Premium{" "}
@@ -3016,11 +3032,10 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       }
                       style={{
                         marginLeft: "20px",
-
-                        fontSize: "20px",
-                        lineHeight: "24px",
                         position: "relative",
                         top: "3px",
+                        fontSize: font20.fontSize,
+                        lineHeight: font20.lineHeight,
                       }}
                     >
                       Profile{" "}
@@ -3069,11 +3084,10 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                           <span
                             style={{
                               marginLeft: "20px",
-                              fontWeight: "400",
-                              fontSize: "20px",
-                              lineHeight: "24px",
                               position: "relative",
                               top: "3px",
+                              fontSize: font20.fontSize,
+                              lineHeight: font20.lineHeight,
                             }}
                           >
                             More
@@ -3208,11 +3222,9 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                   overflowWrap: "break-word",
                                   maxWidth: "100%",
                                   minWidth: "0px",
-                                  fontSize: "20px",
                                   whiteSpace: "nowrap",
                                   textAlign: "inherit",
                                   flexGrow: "1",
-                                  lineHeight: "24px",
                                   overflow: "hidden",
                                   boxSizing: "border-box",
                                   margin: "0px",
@@ -3220,6 +3232,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                   position: "relative",
                                   listStyle: "none",
                                   textDecoration: "none",
+                                  fontSize: font20.fontSize,
+                                  lineHeight: font20.lineHeight,
                                 }}
                               >
                                 Lists
@@ -3333,11 +3347,9 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                 overflowWrap: "break-word",
                                 maxWidth: "100%",
                                 minWidth: "0px",
-                                fontSize: "20px",
                                 whiteSpace: "nowrap",
                                 textAlign: "inherit",
                                 flexGrow: "1",
-                                lineHeight: "24px",
                                 overflow: "hidden",
                                 boxSizing: "border-box",
                                 margin: "0px",
@@ -3345,6 +3357,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                 position: "relative",
                                 listStyle: "none",
                                 textDecoration: "none",
+                                fontSize: font20.fontSize,
+                                lineHeight: font20.lineHeight,
                               }}
                             >
                               Monetization
@@ -3457,11 +3471,9 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                 overflowWrap: "break-word",
                                 maxWidth: "100%",
                                 minWidth: "0px",
-                                fontSize: "20px",
                                 whiteSpace: "nowrap",
                                 textAlign: "inherit",
                                 flexGrow: "1",
-                                lineHeight: "24px",
                                 overflow: "hidden",
                                 boxSizing: "border-box",
                                 margin: "0px",
@@ -3469,6 +3481,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                 position: "relative",
                                 listStyle: "none",
                                 textDecoration: "none",
+                                fontSize: font20.fontSize,
+                                lineHeight: font20.lineHeight,
                               }}
                             >
                               Ads
@@ -3581,11 +3595,9 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                 overflowWrap: "break-word",
                                 maxWidth: "100%",
                                 minWidth: "0px",
-                                fontSize: "20px",
                                 whiteSpace: "nowrap",
                                 textAlign: "inherit",
                                 flexGrow: "1",
-                                lineHeight: "24px",
                                 overflow: "hidden",
                                 boxSizing: "border-box",
                                 margin: "0px",
@@ -3593,6 +3605,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                 position: "relative",
                                 listStyle: "none",
                                 textDecoration: "none",
+                                fontSize: font20.fontSize,
+                                lineHeight: font20.lineHeight,
                               }}
                             >
                               Jobs
@@ -3600,7 +3614,18 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                             <div
                               className="chirp-bold-font"
                               style={{
-                                fontSize: "15px",
+                                fontSize:
+                                  fontSize === "Default"
+                                    ? "15px"
+                                    : fontSize === "Small"
+                                    ? "14px"
+                                    : fontSize === "Extra small"
+                                    ? "14px"
+                                    : fontSize === "Large"
+                                    ? "17px"
+                                    : fontSize === "Extra large"
+                                    ? "18px"
+                                    : null,
                                 height: "20px",
                                 paddingLeft: "4px",
                                 paddingRight: "4px",
@@ -3726,11 +3751,9 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                 overflowWrap: "break-word",
                                 maxWidth: "100%",
                                 minWidth: "0px",
-                                fontSize: "20px",
                                 whiteSpace: "nowrap",
                                 textAlign: "inherit",
                                 flexGrow: "1",
-                                lineHeight: "24px",
                                 overflow: "hidden",
                                 boxSizing: "border-box",
                                 margin: "0px",
@@ -3738,6 +3761,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                 position: "relative",
                                 listStyle: "none",
                                 textDecoration: "none",
+                                fontSize: font20.fontSize,
+                                lineHeight: font20.lineHeight,
                               }}
                             >
                               Create your Space
@@ -3850,11 +3875,9 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                 overflowWrap: "break-word",
                                 maxWidth: "100%",
                                 minWidth: "0px",
-                                fontSize: "20px",
                                 whiteSpace: "nowrap",
                                 textAlign: "inherit",
                                 flexGrow: "1",
-                                lineHeight: "24px",
                                 overflow: "hidden",
                                 boxSizing: "border-box",
                                 margin: "0px",
@@ -3862,6 +3885,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                 position: "relative",
                                 listStyle: "none",
                                 textDecoration: "none",
+                                fontSize: font20.fontSize,
+                                lineHeight: font20.lineHeight,
                               }}
                             >
                               Settings and privacy
@@ -3896,7 +3921,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                 >
                   <span
                     style={{
-                      fontSize: "17px",
+                      fontSize: font17.fontSize,
+                      lineHeight: font17.lineHeight,
                     }}
                   >
                     Post

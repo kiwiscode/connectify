@@ -21,69 +21,15 @@ import BookmarkAction from "../components/ui/BookmarkAction";
 import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
 import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
 import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
+import { SubcsriptionStatusContext } from "../context/SubscriptionStatusContext";
+import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 
 function PostDetailPage() {
-  const [subscription, setSubscription] = useState(null);
-  const getSubscription = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/subscription`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      });
-
-      console.log(
-        "response data detail =>",
-        response.data.activeSubscription[0]
-      );
-      console.log(
-        "response data detail 2 =>",
-        response.data.activeCancelledSubscription[0]
-      );
-
-      setSubscription(
-        response.data.activeSubscription[0]
-          ? response.data.activeSubscription[0]
-          : response.data.activeCancelledSubscription[0]
-      );
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  const [remainingTimeSubscriptions, setRemainingTimeSubscriptions] = useState(
-    []
-  );
-  const [
+  const {
+    subscription,
+    remainingTimeSubscriptions,
     remainingTimeSubscriptionsOwnerIds,
-    setRemainingTimeSubscriptionsOwnerIds,
-  ] = useState([]);
-  const getRemainingTimeSubscriptions = async () => {
-    try {
-      const response = await axios.get(
-        `${API_URL}/remaining_time_subscriptions`,
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      );
-
-      setRemainingTimeSubscriptions(response.data.remainingTimeSubscriptions);
-
-      setRemainingTimeSubscriptionsOwnerIds(
-        response.data.remainingTimeSubscriptions.map((eachSub) => {
-          return eachSub.owner;
-        })
-      );
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-  useEffect(() => {
-    getSubscription();
-    getRemainingTimeSubscriptions();
-  }, []);
+  } = useContext(SubcsriptionStatusContext);
   const extraDetailedDate = (dateStr) => {
     const date = new Date(dateStr);
 
@@ -337,6 +283,11 @@ function PostDetailPage() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [headerPosition]);
+
+  const { getFontSizeAndLineHeight15, getFontSizeAndLineHeight17 } =
+    useFontSizeHandler();
+  const font17 = getFontSizeAndLineHeight17();
+  const font15 = getFontSizeAndLineHeight15();
   return (
     <>
       {contextHolder}
@@ -388,9 +339,14 @@ function PostDetailPage() {
             position: width > 500 && "sticky",
             top: width > 500 && "0px",
             width: width > 500 && "100%",
-            backgroundColor: width > 500 && "transparent",
+            backgroundColor:
+              width > 500 && themeName === "dark-theme"
+                ? "rgba(0, 0, 0, 0.65)"
+                : width > 500 && themeName === "dark-theme"
+                ? "rgba(255, 255, 255, 0.85)"
+                : null,
             backdropFilter: width > 500 && "blur(12px)",
-            zIndex: width > 500 && 99999,
+            zIndex: width > 500 && 1,
           }}
         >
           <div
@@ -625,9 +581,8 @@ function PostDetailPage() {
                             style={{
                               color:
                                 themeName === "dark-theme" ? "white" : "black",
-                              fontWeight: "700",
-                              fontSize: "15px",
-                              lineHeight: "20px",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                             }}
                           >
                             {commentedForThisPost.authorFullName}
@@ -677,9 +632,8 @@ function PostDetailPage() {
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "rgb(83, 100, 113)",
-                              lineHeight: "20px",
-                              fontSize: "15px",
-                              fontWeight: "400",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                             }}
                           >
                             @{commentedForThisPost.authorUserName}
@@ -693,14 +647,14 @@ function PostDetailPage() {
                           to={`/${commentedForThisPost.authorUserName}/status/${commentedForThisPost._id}`}
                         >
                           <span
+                            className="chirp-regular-font"
                             style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "rgb(83, 100, 113)",
-                              lineHeight: "20px",
-                              fontSize: "15px",
-                              fontWeight: "400",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
                             }}
                           >
                             {" "}
@@ -742,9 +696,6 @@ function PostDetailPage() {
 
                   <div
                     style={{
-                      fontSize: "17px",
-                      fontWeight: "400",
-                      lineHeight: "24px",
                       overflowWrap: "break-word",
                       maxWidth: "100%",
                     }}
@@ -757,10 +708,10 @@ function PostDetailPage() {
                       to={`/${commentedForThisPost.authorUserName}/status/${commentedForThisPost._id}`}
                     >
                       <div
+                        className="chirp-regular-font"
                         style={{
-                          fontSize: "15px",
-                          fontWeight: "400",
-                          lineHeight: "20px",
+                          fontSize: font17.fontSize,
+                          lineHeight: font17.lineHeight,
                         }}
                       >
                         <span
@@ -873,31 +824,30 @@ function PostDetailPage() {
                   : // : "0.1px solid rgb(70, 70, 70)",
                     "1px solid rgb(70, 70, 70)",
               borderRadius: "16px",
-              fontSize: "15px",
+              fontSize: font15.fontSize,
               marginLeft: "15px",
               marginRight: "15px",
             }}
           >
             <span
+              className="chirp-regular-font"
               style={{
                 marginLeft: "15px",
                 color:
                   themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
-                fontSize: "15px",
-                lineHeight: "20px",
-                fontWeight: "400",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
               }}
             >
               This Post was deleted by the Post author.
             </span>{" "}
             <span
-              className="learn-more-post-detail"
+              className="learn-more-post-detail chirp-regular-font"
               style={{
                 cursor: "pointer",
                 color: "rgba(29,155,240)",
-                fontSize: "15px",
-                lineHeight: "20px",
-                fontWeight: "400",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
               }}
             >
               Learn more
@@ -951,28 +901,27 @@ function PostDetailPage() {
                     ? "1px solid rgba(0, 0, 0, 0.1)"
                     : "1px solid rgb(70, 70, 70)",
                 borderRadius: "16px",
-                fontSize: "15px",
+                fontSize: font15.fontSize,
               }}
             >
               <span
+                className="chirp-regular-font"
                 style={{
                   marginLeft: "15px",
                   color: "rgba(83,100,113)",
-                  fontSize: "15px",
-                  lineHeight: "20px",
-                  fontWeight: "400",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
               >
                 This Post is from an account that no longer exists.
               </span>{" "}
               <span
-                className="learn-more-post-detail"
+                className="learn-more-post-detail chirp-regular-font"
                 style={{
                   cursor: "pointer",
                   color: "rgba(29,155,240)",
-                  fontSize: "15px",
-                  lineHeight: "20px",
-                  fontWeight: "400",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
               >
                 Learn more
@@ -1092,9 +1041,8 @@ function PostDetailPage() {
                         className="post-detail-underline-text-2 hover-fullname chirp-bold-font"
                         style={{
                           color: themeName === "dark-theme" ? "white" : "black",
-                          lineHeight: "20px",
-                          fontWeight: "700",
-                          fontSize: "15px",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
                         }}
                       >
                         {detailedPost.authorFullName}
@@ -1162,9 +1110,8 @@ function PostDetailPage() {
                           themeName === "dark-theme"
                             ? "#71767A"
                             : "rgb(83, 100, 113)",
-                        lineHeight: "20px",
-                        fontSize: "15px",
-                        fontWeight: "400",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                       }}
                     >
                       @{detailedPost.authorUserName}
@@ -1179,13 +1126,12 @@ function PostDetailPage() {
               <div
                 style={{
                   marginLeft: "10px",
-                  fontSize: "17px",
-                  fontWeight: "400",
-                  lineHeight: "24px",
+                  fontSize: font17.fontSize,
+                  lineHeight: font17.lineHeight,
                   overflowWrap: "break-word",
                   maxWidth: "100%",
                 }}
-                className="p-1"
+                className="p-1 chirp-regular-font"
               >
                 <Link
                   to={`/${detailedPost.authorUserName}/status/${detailedPost._id}`}
@@ -1253,12 +1199,11 @@ function PostDetailPage() {
                       themeName === "dark-theme"
                         ? "#71767A"
                         : "rgb(83, 100, 113)",
-                    fontSize: "15px",
-                    fontWeight: "400",
-                    lineHeight: "20px",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                     marginLeft: "10px",
                   }}
-                  className="p-0 mt-3 mb-3 post-detail-underline-text-1"
+                  className="p-0 mt-3 mb-3 post-detail-underline-text-1 chirp-regular-font"
                 >
                   <BootstrapTooltip
                     title={extraDetailedDate(detailedPost.createdAt)}
@@ -1394,7 +1339,7 @@ function PostDetailPage() {
               </div>
               <a
                 href="http://localhost:5173/explore"
-                className="mt-3 hover-blue-btn"
+                className="mt-3 hover-blue-btn chirp-bold-font"
                 style={{
                   textDecoration: "none",
                   borderRadius: "9999px",
@@ -1408,9 +1353,8 @@ function PostDetailPage() {
                   alignItems: "center",
                   backgroundColor: "#1C9BEF",
                   color: "white",
-                  fontWeight: "700",
-                  lineHeight: "20px",
-                  fontSize: "15px",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
               >
                 Search
@@ -1452,13 +1396,13 @@ function PostDetailPage() {
                 className={`accordion-2 accordion-2-${themeName}`}
               >
                 <div
+                  className="chirp-regular-font"
                   style={{
                     border: "none",
                     width: "100%",
                     textAlign: "center",
                     color: "rgb(29, 155, 240)",
-                    fontSize: "15px",
-                    fontWeight: "400",
+                    fontSize: font15.fontSize,
                     lineHeight: "24px",
                     cursor: "pointer",
                     backgroundColor: "transparent",
@@ -1565,9 +1509,9 @@ function PostDetailPage() {
                                                 <span
                                                   className="hover-fullname chirp-bold-font"
                                                   style={{
-                                                    fontWeight: "700",
-                                                    fontSize: "15px",
-                                                    lineHeight: "20px",
+                                                    fontSize: font15.fontSize,
+                                                    lineHeight:
+                                                      font15.lineHeight,
                                                     color:
                                                       themeName === "dark-theme"
                                                         ? "white"
@@ -1610,6 +1554,7 @@ function PostDetailPage() {
                                                 </span>
                                               ) : null}
                                               <Link
+                                                className="chirp-regular-font"
                                                 to={`/profile/${eachComment.userId._id}`}
                                                 style={{
                                                   textDecoration: "none",
@@ -1617,9 +1562,8 @@ function PostDetailPage() {
                                                     themeName === "dark-theme"
                                                       ? "#71767A"
                                                       : "rgb(83, 100, 113)",
-                                                  lineHeight: "20px",
-                                                  fontSize: "15px",
-                                                  fontWeight: "400",
+                                                  fontSize: font15.fontSize,
+                                                  lineHeight: font15.lineHeight,
                                                 }}
                                               >
                                                 <span>
@@ -1644,14 +1588,15 @@ function PostDetailPage() {
                                                 }}
                                               >
                                                 <span
+                                                  className="chirp-regular-font"
                                                   style={{
                                                     color:
                                                       themeName === "dark-theme"
                                                         ? "#71767A"
                                                         : "rgb(83, 100, 113)",
-                                                    lineHeight: "20px",
-                                                    fontSize: "15px",
-                                                    fontWeight: "400",
+                                                    fontSize: font15.fontSize,
+                                                    lineHeight:
+                                                      font15.lineHeight,
                                                   }}
                                                 >
                                                   {" "}
@@ -1713,9 +1658,8 @@ function PostDetailPage() {
                                           <div
                                             className="p-2 chirp-regular-font"
                                             style={{
-                                              fontSize: "15px",
-                                              fontWeight: "400",
-                                              lineHeight: "20px",
+                                              fontSize: font15.fontSize,
+                                              lineHeight: font15.lineHeight,
                                               overflowWrap: "break-word",
                                               maxWidth: "100%",
                                               color:
@@ -1879,13 +1823,13 @@ function PostDetailPage() {
                 className={`accordion-2 accordion-2-${themeName}`}
               >
                 <div
+                  className="chirp-regular-font"
                   style={{
                     border: "none",
                     width: "100%",
                     textAlign: "center",
                     color: "rgb(29, 155, 240)",
-                    fontSize: "15px",
-                    fontWeight: "400",
+                    fontSize: font15.fontSize,
                     lineHeight: "24px",
                     cursor: "pointer",
                     backgroundColor: "transparent",
@@ -1994,9 +1938,9 @@ function PostDetailPage() {
                                                 <span
                                                   className="hover-fullname chirp-bold-font"
                                                   style={{
-                                                    fontWeight: "700",
-                                                    fontSize: "15px",
-                                                    lineHeight: "20px",
+                                                    fontSize: font15.fontSize,
+                                                    lineHeight:
+                                                      font15.lineHeight,
                                                     color:
                                                       themeName === "dark-theme"
                                                         ? "white"
@@ -2038,6 +1982,7 @@ function PostDetailPage() {
                                                 </span>
                                               ) : null}
                                               <Link
+                                                className="chirp-regular-font"
                                                 to={`/profile/${eachComment.userId._id}`}
                                                 style={{
                                                   textDecoration: "none",
@@ -2045,9 +1990,8 @@ function PostDetailPage() {
                                                     themeName === "dark-theme"
                                                       ? "#71767A"
                                                       : "rgb(83, 100, 113)",
-                                                  lineHeight: "20px",
-                                                  fontSize: "15px",
-                                                  fontWeight: "400",
+                                                  fontSize: font15.fontSize,
+                                                  lineHeight: font15.lineHeight,
                                                 }}
                                               >
                                                 <span>
@@ -2072,14 +2016,15 @@ function PostDetailPage() {
                                                 }}
                                               >
                                                 <span
+                                                  className="chirp-regular-font"
                                                   style={{
                                                     color:
                                                       themeName === "dark-theme"
                                                         ? "#71767A"
                                                         : "rgb(83, 100, 113)",
-                                                    lineHeight: "20px",
-                                                    fontSize: "15px",
-                                                    fontWeight: "400",
+                                                    fontSize: font15.fontSize,
+                                                    lineHeight:
+                                                      font15.lineHeight,
                                                   }}
                                                 >
                                                   {" "}
@@ -2142,9 +2087,8 @@ function PostDetailPage() {
                                         >
                                           <div
                                             style={{
-                                              fontSize: "15px",
-                                              fontWeight: "400",
-                                              lineHeight: "20px",
+                                              fontSize: font15.fontSize,
+                                              lineHeight: font15.lineHeight,
                                               overflowWrap: "break-word",
                                               maxWidth: "100%",
                                               color:

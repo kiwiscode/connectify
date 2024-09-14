@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import { ThemeContext } from "../../context/ThemeContext";
+import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
 
 const CustomNotification = ({
   senderName,
@@ -17,6 +18,9 @@ const CustomNotification = ({
   };
   const [{ theme, themeName }] = useContext(ThemeContext);
   console.log("Contact has been made =>", contactHasBeenMade);
+
+  const { getFontSizeAndLineHeight15 } = useFontSizeHandler();
+  const font15 = getFontSizeAndLineHeight15();
   return (
     <>
       <div
@@ -94,13 +98,12 @@ const CustomNotification = ({
                 <span>
                   {" "}
                   <Link
-                    className="test-notification"
+                    className="test-notification chirp-bold-font"
                     style={{
                       color: "black",
                       textDecoration: "none",
-                      fontWeight: "700",
-                      fontSize: "15px",
-                      lineHeight: "20px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                     to={`/profile/${senderInfo._id}`}
                   >
@@ -117,12 +120,12 @@ const CustomNotification = ({
                 </span>
               </div>
               <Link
+                className="chirp-regular-font"
                 style={{
                   color: "black",
                   textDecoration: "none",
-                  fontWeight: "400",
-                  fontSize: "15px",
-                  lineHeight: "20px",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
                 to={`/${userInfo.username}/status/${contactHasBeenMade._id}`}
               >
@@ -141,12 +144,12 @@ const CustomNotification = ({
               <div>
                 <span>
                   <Link
+                    className="chirp-bold-font"
                     style={{
                       color: "black",
                       textDecoration: "none",
-                      fontWeight: "700",
-                      fontSize: "15px",
-                      lineHeight: "20px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                     to={`/profile/${senderInfo._id}`}
                   >
@@ -163,11 +166,11 @@ const CustomNotification = ({
                 </span>
               </div>
               <Link
+                className="chirp-regular-font"
                 style={{
                   textDecoration: "none",
-                  fontWeight: "400",
-                  fontSize: "15px",
-                  lineHeight: "20px",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
                 to={`/${userInfo.username}/status/${contactHasBeenMade._id}`}
               >
@@ -188,12 +191,12 @@ const CustomNotification = ({
               <div>
                 <span>
                   <Link
+                    className="chirp-bold-font"
                     style={{
                       color: "black",
                       textDecoration: "none",
-                      fontWeight: "700",
-                      fontSize: "15px",
-                      lineHeight: "20px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                     to={`/profile/${senderInfo._id}`}
                   >
@@ -212,11 +215,11 @@ const CustomNotification = ({
                 </span>
               </div>
               <Link
+                className="chirp-regular-font"
                 style={{
                   textDecoration: "none",
-                  fontWeight: "400",
-                  fontSize: "15px",
-                  lineHeight: "20px",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                 }}
                 to={`/${userInfo.username}/status/${contactHasBeenMade._id}`}
               >
@@ -238,12 +241,12 @@ const CustomNotification = ({
                 <span>
                   {" "}
                   <Link
+                    className="chirp-bold-font"
                     style={{
                       color: "black",
                       textDecoration: "none",
-                      fontWeight: "700",
-                      fontSize: "15px",
-                      lineHeight: "20px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                     to={`/profile/${senderInfo._id}`}
                   >
@@ -269,12 +272,12 @@ const CustomNotification = ({
                 <span>
                   {" "}
                   <Link
+                    className="chirp-bold-font"
                     style={{
                       color: "black",
                       textDecoration: "none",
-                      fontWeight: "700",
-                      fontSize: "15px",
-                      lineHeight: "20px",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
                     }}
                     to={`/profile/${senderInfo._id}`}
                   >
@@ -291,11 +294,11 @@ const CustomNotification = ({
                 </span>
 
                 <p
+                  className="chirp-regular-font"
                   style={{
                     color: themeName === "dark-theme" ? "white" : "black",
-                    fontSize: "15px",
-                    fontWeight: "400",
-                    lineHeight: "20px",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
                   }}
                 >
                   {text}
