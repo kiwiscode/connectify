@@ -7,11 +7,9 @@ import axios from "axios";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import "react-toastify/dist/ReactToastify.css";
-// when working on local version
-const API_URL = "http://localhost:3000";
 
-// when working on deployment version
-// ?
+const API_URL = import.meta.env.VITE_APP_API_URL;
+
 import useWindowDimensions from "../hooks/getWindowDimensions";
 import { ThemeContext } from "../context/ThemeContext";
 import PostPopover from "../components/three-dots-popover/Popover";
@@ -130,7 +128,6 @@ function MainPage({ isNewPostShared }) {
   const [error, setError] = useState("");
   const [content, setContent] = useState("");
   const [chosenEmoji, setChosenEmoji] = useState(null);
-  const [showEmojisBar, setshowEmojisBar] = useState(false);
   const [showSecondModal, setShowSecondModal] = useState(false);
   const maxCharacters = 140;
   const [isLoading, setIsLoading] = useState(false);
@@ -604,45 +601,6 @@ function MainPage({ isNewPostShared }) {
     };
   }, [clickedPostBox]);
 
-  // const getUser = async () => {
-  //   try {
-  //     const url = `${API_URL}/auth/login-success`;
-
-  //     const { data } = await axios.get(url, { withCredentials: true });
-  //     updateUser(data.user);
-  //     setUser(data.user);
-  //     localStorage.setItem("userInfo", JSON.stringify(data.user));
-  //     localStorage.setItem("token", data.token);
-  //     if (
-  //       data.user.signedUpWithVariantOne?.isSignedUpWithVariantOne &&
-  //       (!data.user.signedUpWithVariantOne
-  //         ?.isProfileImageCustomizationModalShown ||
-  //         !data.user.signedUpWithVariantOne?.isUsernameCustomizationModalShown)
-  //     ) {
-  //       setTabIndex(0);
-  //       setshowPickProfilePictureModal(true);
-  //       setshowModalForProfilePictureOrUsernameOrBoth(true);
-  //     } else if (
-  //       data.user.signedUpWithGoogle?.isSignedUpWithGoogle &&
-  //       !data.user.signedUpWithGoogle?.isUsernameCustomizationModalShown
-  //     ) {
-  //       setTabIndex(1);
-  //       setshowWhatShouldWeCallYouModal(true);
-  //       setshowModalForProfilePictureOrUsernameOrBoth(true);
-  //       console.log(
-  //         "User created account by using google show What should we call you modal for editing username !!"
-  //       );
-  //     } else {
-  //       console.log(
-  //         "User is already signed up with google or variant one and did or did not change profile picture or username !"
-  //       );
-  //     }
-  //   } catch (err) {
-  //     return err;
-  //     // console.log("Error =>", err);
-  //   }
-  // };
-
   useEffect(() => {
     console.log(userInfo?.signedUpWithVariantOne);
 
@@ -659,28 +617,6 @@ function MainPage({ isNewPostShared }) {
       setshowModalForProfilePictureOrUsernameOrBoth(true);
     }
     // getUser();
-  }, []);
-
-  useEffect(() => {
-    const closeEmojiContainer = (e) => {
-      if (
-        e.target.classList.contains("post-modal-emoji-picker") ||
-        e.srcElement.parentElement.className ===
-          "svg-border-parent show-emoji" ||
-        e.srcElement.parentNode.className === "p-2" ||
-        e.target.classList.value === ""
-      ) {
-        setshowEmojisBar(false);
-      } else {
-        setshowEmojisBar(true);
-      }
-    };
-
-    document.body.addEventListener("click", closeEmojiContainer);
-
-    return () => {
-      document.body.removeEventListener("click", closeEmojiContainer);
-    };
   }, []);
 
   useEffect(() => {
@@ -1724,7 +1660,6 @@ function MainPage({ isNewPostShared }) {
             isSubModalTabIndexNull={tabIndexValue}
           />
         )}
-      {/* <ResponsiveNavigationBarTop /> */}
       <Col
         xs={12} // 0px - 576px aralığı
         sm={12} // 576px - 768px aralığı

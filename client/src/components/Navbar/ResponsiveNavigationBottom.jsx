@@ -10,11 +10,7 @@ import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
 import useWindowDimensions from "../../hooks/getWindowDimensions";
 import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
 
-// when working on local version
-const API_URL = "http://localhost:3000";
-
-// when working on deployment version
-// ?
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
 function ResponsiveNavigationBarBottom({
   refreshPosts,

@@ -11,11 +11,9 @@ import {
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { ThemeContext } from "../context/ThemeContext";
-// when working on local version
-const API_URL = "http://localhost:3000";
 
-// when working on deployment version
-// ?
+const API_URL = import.meta.env.VITE_APP_API_URL;
+
 import io from "socket.io-client";
 import useWindowDimensions from "../hooks/getWindowDimensions";
 import PopupState, { bindPopover, bindTrigger } from "material-ui-popup-state";
@@ -35,7 +33,6 @@ function ChatDetailsPage() {
   const [room, setRoom] = useState("");
   const [disabled, setDisabled] = useState(true);
   const [chosenEmoji, setChosenEmoji] = useState(null);
-  const [showEmojisBar, setshowEmojisBar] = useState("hide");
   const {
     getFontSizeAndLineHeight15,
     getFontSizeAndLineHeight14,
@@ -164,28 +161,6 @@ function ChatDetailsPage() {
   useEffect(() => {
     setDisabled(currentMessage.length || chosenEmoji ? false : true);
   }, [currentMessage, chosenEmoji]);
-
-  useEffect(() => {
-    const closeEmojiContainer = (e) => {
-      if (
-        e.target.classList.contains("chat-detail-emoji-picker") ||
-        e.srcElement.parentElement.className ===
-          "chat-detail-emoji-svg-border-parent" ||
-        e.srcElement.parentNode.className === "p-2 chat-detail-emoji" ||
-        e.target.classList.value === ""
-      ) {
-        setshowEmojisBar(false);
-      } else {
-        setshowEmojisBar(true);
-      }
-    };
-
-    document.body.addEventListener("click", closeEmojiContainer);
-
-    return () => {
-      document.body.removeEventListener("click", closeEmojiContainer);
-    };
-  }, []);
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 

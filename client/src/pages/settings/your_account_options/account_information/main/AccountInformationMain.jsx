@@ -11,11 +11,8 @@ import LoadingSpinner from "../../../../../components/ui/LoadingSpinner";
 import { ThemeContext } from "../../../../../context/ThemeContext";
 import { useFontSizeHandler } from "../../../../../utils/useFontSizeHandler";
 
-// when working on local version
-const API_URL = "http://localhost:3000";
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
-// when working on deployment version
-// ?
 function AccountInformationMain() {
   const { width } = useWindowDimensions();
   const [{ theme, themeName }] = useContext(ThemeContext);

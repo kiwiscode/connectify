@@ -1,7 +1,7 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 import { UserContext } from "../../context/UserContext";
 import { Button, Modal, Stack } from "react-bootstrap";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 // import Picker from "emoji-picker-react";
@@ -10,28 +10,13 @@ import "../../index.css";
 
 import Popover from "@mui/material/Popover";
 import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
-import { Steps } from "antd";
-import { Divider, List } from "antd";
+import { List } from "antd";
 import LoadingSpinner from "../ui/LoadingSpinner";
 import { ThemeContext } from "../../context/ThemeContext";
 import useWindowDimensions from "../../hooks/getWindowDimensions";
-import {
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  InputLabel,
-  OutlinedInput,
-  Radio,
-  RadioGroup,
-  TextField,
-} from "@mui/material";
-import RightSideColumn from "../Main-Right-Side-Column/RightSideColumn";
+import { TextField } from "@mui/material";
 
-// when working on local version
-const API_URL = "http://localhost:3000";
-
-// when working on deployment version
-// ?
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
 import io from "socket.io-client";
 import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
@@ -43,7 +28,6 @@ function LogoutModal({
   isMobileNavigationBarTop,
 }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
-
   const data = [
     "See your account information like your phone number and email address.",
     "Change your password at any time.",
@@ -62,26 +46,6 @@ function LogoutModal({
   const [errorInputStyle4, seterrorInputStyle4] = useState(false);
   const [errorInput4, seterrorInput4] = useState("");
   const [deactivatePassword, setdeactivatePassword] = useState("");
-
-  const handleDeactivateUser = () => {
-    axios
-      .post(
-        `${API_URL}/profile/deactivate-account`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        navigate("/settings/deactivated");
-        logout();
-      })
-      .catch((error) => {
-        console.log("Error =>", error);
-      });
-  };
 
   const [confirmed, setConfirmed] = useState(false);
   const checkConfirmPassword = () => {
@@ -710,45 +674,6 @@ function LogoutModal({
     }
   };
 
-  useEffect(() => {
-    const getClickLocation = (e) => {
-      const classList = e.target.classList;
-      const parentNodeClassName = e.srcElement.parentNode.className;
-      const parentNodeClassNameBaseVal =
-        e.srcElement.parentNode.className.baseVal;
-
-      if (
-        classList.contains("logout-profile-img") ||
-        parentNodeClassName === "p-2 profile-img-and-svg" ||
-        classList.contains("p-2 profile-img-and-svg") ||
-        classList.contains("stack-logout-navigation-parent") ||
-        classList.contains("responsive-logout") ||
-        classList.contains("p-2 responsive-logout") ||
-        classList.contains("logout-three-dots") ||
-        classList.contains("localeInfo-username") ||
-        parentNodeClassName === "stack-logout-navigation-parent hstack" ||
-        parentNodeClassName === "p-2 responsive-logout" ||
-        parentNodeClassNameBaseVal === "profile-svg bi bi-person-circle" ||
-        classList.contains("profile-svg-logout-modal") ||
-        parentNodeClassNameBaseVal ===
-          "profile-svg-logout-modal bi bi-person-circle"
-      ) {
-        setShowLogoutPopup(true);
-      } else {
-        setShowLogoutPopup(false);
-      }
-    };
-
-    document.body.addEventListener("click", getClickLocation);
-    return () => {
-      document.body.removeEventListener("click", getClickLocation);
-    };
-  }, [showlogoutPopup]);
-
-  const { updateUser } = useContext(UserContext);
-
-  const [isHoveredIndex, setIsHoveredIndex] = useState(null);
-
   const [startForgotPasswordProcessModal, setStartForgotPasswordProcessModal] =
     useState(false);
 
@@ -1192,7 +1117,7 @@ function LogoutModal({
                 lineHeight: font15.lineHeight,
               }}
               onClick={() =>
-                userInfo.signedUpWithGoogle.isSignedUpWithGoogle
+                userInfo.signedUpWithGoogle?.isSignedUpWithGoogle
                   ? handleLogoutFromGoogleAccount()
                   : handleLogout()
               }
@@ -1440,6 +1365,7 @@ function LogoutModal({
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
                       width: "100%",
+                      height: "100%",
                     }}
                   >
                     <span
@@ -1589,6 +1515,7 @@ function LogoutModal({
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
                       width: "100%",
+                      height: "100%",
                     }}
                   >
                     <span

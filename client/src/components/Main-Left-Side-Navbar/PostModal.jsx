@@ -6,11 +6,9 @@ import { Button, Modal, Stack } from "react-bootstrap";
 import { UserContext } from "../../context/UserContext";
 import { ThemeContext } from "../../context/ThemeContext";
 import useWindowDimensions from "../../hooks/getWindowDimensions";
-// when working on local version
-const API_URL = "http://localhost:3000";
 
-// when working on deployment version
-// ?
+const API_URL = import.meta.env.VITE_APP_API_URL;
+
 import Popover from "@mui/material/Popover";
 import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 import data from "@emoji-mart/data";
@@ -29,7 +27,6 @@ function PostModal({
   const [error, setError] = useState("");
   const { getToken, userInfo } = useContext(UserContext);
   const [chosenEmoji, setChosenEmoji] = useState(null);
-  const [showEmojisBar, setshowEmojisBar] = useState("hide");
   const [showSecondModal, setShowSecondModal] = useState(false);
   const maxCharacters = 140;
 
@@ -102,27 +99,6 @@ function PostModal({
     setContent((prevText) => prevText + emoji);
   };
 
-  useEffect(() => {
-    const closeEmojiContainer = (e) => {
-      if (
-        e.target.classList.contains("post-modal-emoji-picker") ||
-        e.srcElement.parentElement.className ===
-          "svg-border-parent show-emoji" ||
-        e.srcElement.parentNode.className === "p-2" ||
-        e.target.classList.value === ""
-      ) {
-        setshowEmojisBar(false);
-      } else {
-        setshowEmojisBar(true);
-      }
-    };
-
-    document.body.addEventListener("click", closeEmojiContainer);
-
-    return () => {
-      document.body.removeEventListener("click", closeEmojiContainer);
-    };
-  }, []);
   const [
     postSharingStartedActivateAnimate,
     setPostSharingStartedActivateAnimate,
@@ -489,7 +465,6 @@ function PostModal({
                         {...bindTrigger(popupState)}
                         style={{
                           border: "none",
-                          // backgroundColor: "transparent",
                           padding: "0px",
                           margin: "0px",
                           cursor: "pointer",

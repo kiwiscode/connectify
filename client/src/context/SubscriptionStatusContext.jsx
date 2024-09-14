@@ -4,11 +4,7 @@ import axios from "axios";
 
 export const SubcsriptionStatusContext = createContext();
 
-// when working on local version
-const API_URL = "http://localhost:3000";
-
-// when working on deployment version
-// ?
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
 export const SubscriptionStatusProvider = ({ children }) => {
   const { getToken } = useContext(UserContext);

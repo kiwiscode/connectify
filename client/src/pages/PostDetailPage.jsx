@@ -5,11 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { CommentModal } from "../components/ui/Modal";
 import { UserContext } from "../context/UserContext";
 import PostEngagements from "../components/ui/PostEngagementsModal";
-// when working on local version
-const API_URL = "http://localhost:3000";
-
-// when working on deployment version
-// ?
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import { ThemeContext } from "../context/ThemeContext";

@@ -24,11 +24,8 @@ import {
 } from "@mui/material";
 import { ThemeContext } from "../../context/ThemeContext";
 
-// when working on local version
-const API_URL = "http://localhost:3000";
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
-// when working on deployment version
-// ?
 import io from "socket.io-client";
 import PopupState, { bindPopover, bindTrigger } from "material-ui-popup-state";
 import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";

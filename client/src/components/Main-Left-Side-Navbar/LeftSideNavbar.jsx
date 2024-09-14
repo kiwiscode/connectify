@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 import LogoutModal from "./LogoutModal";
@@ -18,12 +18,9 @@ import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
 import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
 import { FontSizeContext } from "../../context/FontSizeContext";
 import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
-// when working on local version
-const API_URL = "http://localhost:3000";
-
-// when working on deployment version
-// ?
 function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
   const {
@@ -37,80 +34,6 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
   const font15 = getFontSizeAndLineHeight15();
   const font11 = getFontSizeAndLineHeight11();
   const { fontSize, setFontSize } = useContext(FontSizeContext);
-  const [isHomeRouteActive, setIsHomeRouteActive] = useState(false);
-  const [isNotificationsRouteActive, setIsNotificationsRouteActive] =
-    useState(false);
-
-  const [isMessagesRouteActive, setIsMessagesRouteActive] = useState(false);
-  const [isProfileRouteActive, setIsProfileRouteActive] = useState(false);
-
-  useEffect(() => {
-    const getClickLocation = (e) => {
-      const classList = e.target.classList;
-      const parentNodeClassName = e.srcElement.parentNode.className;
-      const svgGroupClassName = e.srcElement.parentNode.className.baseVal;
-
-      if (
-        (parentNodeClassName !== "nav-bar-test vstack gap-2" &&
-          parentNodeClassName === "home-nav-link active") ||
-        classList.contains("home-svg") ||
-        classList.contains("nav-home-text") ||
-        classList.contains("home-nav-link-parent-div") ||
-        parentNodeClassName === "p-2 home-nav-link-parent-div" ||
-        svgGroupClassName === "home-svg-group"
-      ) {
-        setIsHomeRouteActive(true);
-        setIsNotificationsRouteActive(false);
-        setIsMessagesRouteActive(false);
-        setIsProfileRouteActive(false);
-      } else if (
-        (parentNodeClassName !== "nav-bar-test vstack gap-2" &&
-          parentNodeClassName === "notifications-nav-link active") ||
-        classList.contains("notifications-svg") ||
-        classList.contains("nav-notifications-text") ||
-        classList.contains("notifications-nav-link-parent-div") ||
-        parentNodeClassName === "p-2 notifications-nav-link-parent-div" ||
-        svgGroupClassName === "notifications-svg-group"
-      ) {
-        setIsNotificationsRouteActive(true);
-        setIsHomeRouteActive(false);
-        setIsMessagesRouteActive(false);
-        setIsProfileRouteActive(false);
-      } else if (
-        (parentNodeClassName !== "nav-bar-test vstack gap-2" &&
-          parentNodeClassName === "messages-nav-link active") ||
-        classList.contains("messages-svg") ||
-        classList.contains("nav-messages-text") ||
-        classList.contains("messages-nav-link-parent-div") ||
-        parentNodeClassName === "p-2 messages-nav-link-parent-div" ||
-        svgGroupClassName === "messages-svg-group"
-      ) {
-        setIsMessagesRouteActive(true);
-        setIsNotificationsRouteActive(false);
-        setIsHomeRouteActive(false);
-        setIsProfileRouteActive(false);
-      } else if (
-        (parentNodeClassName !== "nav-bar-test vstack gap-2" &&
-          parentNodeClassName === "profile-nav-link active") ||
-        classList.contains("profile-svg") ||
-        classList.contains("nav-profile-text") ||
-        classList.contains("profile-nav-link-parent-div") ||
-        parentNodeClassName === "p-2 profile-nav-link-parent-div" ||
-        svgGroupClassName === "profile-svg-group"
-      ) {
-        setIsProfileRouteActive(true);
-        setIsNotificationsRouteActive(false);
-        setIsHomeRouteActive(false);
-        setIsMessagesRouteActive(false);
-      }
-    };
-
-    document.addEventListener("click", getClickLocation);
-
-    return () => {
-      document.removeEventListener("click", getClickLocation);
-    };
-  }, []);
 
   const navigate = useNavigate();
 
@@ -216,28 +139,6 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
     setChosenEmoji(emoji);
     setContent((prevText) => prevText + emoji);
   };
-
-  useEffect(() => {
-    const closeEmojiContainer = (e) => {
-      if (
-        e.target.classList.contains("post-modal-emoji-picker") ||
-        e.srcElement.parentElement.className ===
-          "svg-border-parent show-emoji" ||
-        e.srcElement.parentNode.className === "p-2" ||
-        e.target.classList.value === ""
-      ) {
-        setshowEmojisBar(false);
-      } else {
-        setshowEmojisBar(true);
-      }
-    };
-
-    document.body.addEventListener("click", closeEmojiContainer);
-
-    return () => {
-      document.body.removeEventListener("click", closeEmojiContainer);
-    };
-  }, []);
 
   const [unReadNotifications, setUnReadNotifications] = useState([]);
   const getActiveUserInfo = async () => {
@@ -676,8 +577,6 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                         open={popupState.open}
                         onClose={popupState.close}
                         {...bindPopover(popupState)}
-                        // anchorReference="anchorPosition"
-                        // anchorPosition={{ top: 0, left: 0 }}
                         anchorOrigin={{
                           vertical: "bottom",
                           horizontal: "center",
@@ -693,6 +592,9 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                             ? "popover-material-ui-light-theme"
                             : "hideshowMessageDeletePopover "
                         }`}
+                        style={{
+                          zIndex: 99999, // should bigger than post modal
+                        }}
                       >
                         <Picker
                           autoFocus

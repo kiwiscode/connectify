@@ -10,11 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../../context/UserContext";
 import { useFontSizeHandler } from "../../../../utils/useFontSizeHandler";
 
-// when working on local version
-const API_URL = "http://localhost:3000";
-
-// when working on deployment version
-// ?
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
 function ChangeYourPasswordMain() {
   const { width } = useWindowDimensions();

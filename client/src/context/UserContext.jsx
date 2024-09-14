@@ -1,11 +1,7 @@
 import { useState, useEffect, createContext } from "react";
 import PropTypes from "prop-types";
 
-// when working on local version
-const API_URL = "http://localhost:3000";
-
-// when working on deployment version
-// ?
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
 const UserContext = createContext();
 

@@ -9,11 +9,8 @@ import useWindowDimensions from "../../../../hooks/getWindowDimensions";
 import { ThemeContext } from "../../../../context/ThemeContext";
 import { UserContext } from "../../../../context/UserContext";
 import { useFontSizeHandler } from "../../../../utils/useFontSizeHandler";
-// when working on local version
-const API_URL = "http://localhost:3000";
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
-// when working on deployment version
-// ?
 function SecurityAndAccountAccessMain() {
   const { getToken, userInfo } = useContext(UserContext);
   const [{ theme, themeName }] = useContext(ThemeContext);

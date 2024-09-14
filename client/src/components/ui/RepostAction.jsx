@@ -2,12 +2,8 @@ import axios from "axios";
 import { useContext, useState } from "react";
 import { UserContext } from "../../context/UserContext";
 
-// import { OverlayTrigger, Popover } from "react-bootstrap";
-// when working on local version
-const API_URL = "http://localhost:3000";
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
-// when working on deployment version
-// ?
 import io from "socket.io-client";
 import { ThemeContext } from "../../context/ThemeContext";
 import { Popover } from "@mui/material";

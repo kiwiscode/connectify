@@ -4,11 +4,8 @@ import { UserContext } from "../context/UserContext";
 import { Col, Stack } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
-// when working on local version
-const API_URL = "http://localhost:3000";
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
-// when working on deployment version
-// ?
 import io from "socket.io-client";
 const socket = io.connect(`${API_URL}`);
 import { ThemeContext } from "../context/ThemeContext";

@@ -3,11 +3,8 @@ import IndexFooter from "../components/IndexFooter/IndexFooter";
 import { Container, Col, Row } from "react-bootstrap";
 import useWindowDimensions from "../hooks/getWindowDimensions";
 
-// when working on local version
-const API_URL = "http://localhost:3000";
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
-// when working on deployment version
-// ?
 function HomePage() {
   const { width } = useWindowDimensions();
 

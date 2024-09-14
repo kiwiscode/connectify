@@ -8,11 +8,7 @@ import { Button, Stack } from "react-bootstrap";
 import useWindowDimensions from "../../../../../hooks/getWindowDimensions";
 import { ThemeContext } from "../../../../../context/ThemeContext";
 import { useFontSizeHandler } from "../../../../../utils/useFontSizeHandler";
-// when working on local version
-const API_URL = "http://localhost:3000";
-
-// when working on deployment version
-// ?
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
 function SendPasswordResetMain() {
   const { userInfo } = useContext(UserContext);

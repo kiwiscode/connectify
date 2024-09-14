@@ -8,11 +8,7 @@ import SettingsNavigation from "../../../../../../../components/SettingsNavigati
 import { NavigationHistoryContext } from "../../../../../../../context/NavigationHistoryContext";
 import { useFontSizeHandler } from "../../../../../../../utils/useFontSizeHandler";
 
-// when working on local version
-const API_URL = "http://localhost:3000";
-
-// when working on deployment version
-// ?
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
 function YourTwitterDataLanguage() {
   const { contextHolder } = useAntdMessageHandler();

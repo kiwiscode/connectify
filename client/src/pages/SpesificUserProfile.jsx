@@ -6,11 +6,8 @@ import { Container, Row, Col, Stack, Button, Accordion } from "react-bootstrap";
 import { CommentModal } from "../components/ui/Modal";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 
-// when working on local version
-const API_URL = "http://localhost:3000";
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
-// when working on deployment version
-// ?
 import io from "socket.io-client";
 const socket = io.connect(`${API_URL}`);
 

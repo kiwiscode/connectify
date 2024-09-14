@@ -10,11 +10,7 @@ import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNaviga
 import Popover from "@mui/material/Popover";
 import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 
-// when working on local version
-const API_URL = "http://localhost:3000";
-
-// when working on deployment version
-// ?
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
 import useWindowDimensions from "../hooks/getWindowDimensions";
 import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
@@ -63,27 +59,6 @@ function MessagesPage() {
       .catch((error) => {
         console.log("Error =>", error);
       });
-  }, []);
-
-  useEffect(() => {}, []);
-
-  useEffect(() => {
-    const closePopover = (e) => {
-      if (
-        e.target.classList.contains("message-delete-three-dots") ||
-        e.srcElement.parentNode.className === "btn-toolbar" ||
-        e.srcElement.parentNode.className === "p-2 ms-auto message-icon"
-      ) {
-        // setIsHovered(!isHovered);
-        setshowMessageDeletePopover(!showMessageDeletePopover);
-      }
-    };
-
-    document.body.addEventListener("click", closePopover);
-
-    return () => {
-      document.body.removeEventListener("click", closePopover);
-    };
   }, []);
 
   const handleShowDeleteConversationModal = () => {

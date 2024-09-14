@@ -31,10 +31,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { ThemeContext } from "../../context/ThemeContext";
 import UnfollowModal from "../unfollow-modal/UnfollowModal";
 
-// when working on local version
-const API_URL = "http://localhost:3000";
-// when working on deployment version
-// ?
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
 import io from "socket.io-client";
 import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
@@ -265,38 +262,6 @@ function RightSideColumn({
   const onFocusInActiveForXBtn = () => {
     setOnFocusXBtn(false);
   };
-
-  useEffect(() => {
-    const getClickedLocation = (e) => {
-      if (
-        e.target.classList.contains("right-side-bar-input") ||
-        e.target.classList.contains("search-bar-right-side-column") ||
-        e.srcElement.parentNode.className ===
-          "search-bar-right-side-column-group" ||
-        e.target.classList.contains(
-          "right-side-input-close-text-search-input"
-        ) ||
-        e.srcElement.parentNode.className ===
-          "search-input-delete-search-term-svg-group" ||
-        e.target.classList.contains("search-input-delete-search-term-svg") ||
-        e.srcElement.parentNode.className ===
-          "div-second-parent-search-input-delete-search-term" ||
-        e.srcElement.parentNode.className.baseVal ===
-          "search-input-delete-search-term-svg-group"
-      ) {
-        onFocusActive();
-      } else {
-        onFocusInActiveForXBtn();
-        setCloseDeleteSearchTermBtn(true);
-      }
-    };
-
-    document.body.addEventListener("click", getClickedLocation);
-
-    return () => {
-      document.body.removeEventListener("click", getClickedLocation);
-    };
-  }, []);
 
   const refreshActiveUser = () => {
     axios

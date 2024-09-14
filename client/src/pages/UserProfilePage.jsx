@@ -6,11 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { CommentModal } from "../components/ui/Modal";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
-// when working on local version
-const API_URL = "http://localhost:3000";
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
-// when working on deployment version
-// ?
 import { ThemeContext } from "../context/ThemeContext";
 import PostPopover from "../components/three-dots-popover/Popover";
 import useWindowDimensions from "../hooks/getWindowDimensions";

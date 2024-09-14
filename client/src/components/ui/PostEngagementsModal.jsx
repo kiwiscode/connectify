@@ -7,11 +7,7 @@ import { ThemeContext } from "../../context/ThemeContext";
 import UnfollowModal from "../unfollow-modal/UnfollowModal";
 import useWindowDimensions from "../../hooks/getWindowDimensions";
 
-// when working on local version
-const API_URL = "http://localhost:3000";
-
-// when working on deployment version
-// ?
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
 import io from "socket.io-client";
 import { SubcsriptionStatusContext } from "../../context/SubscriptionStatusContext";

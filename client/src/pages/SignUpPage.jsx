@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Button, Col, Modal, Popover, OverlayTrigger } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../index.css";
@@ -23,11 +23,7 @@ import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
 import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
 import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 
-// when working on local version
-const API_URL = "http://localhost:3000";
-
-// when working on deployment version
-// ?
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
 function SignUpPage() {
   const [{ theme, themeName }] = useContext(ThemeContext);
@@ -126,6 +122,13 @@ function SignUpPage() {
   const [styleOfBoxDay, setStyleOfBoxDay] = useState(false);
   const [styleOfBoxYear, setStyleOfBoxYear] = useState(false);
 
+  const didNotReceiveEmailRef = useRef(null);
+  const monthPickerRef = useRef(null);
+  const dayPickerRef = useRef(null);
+  const yearPickerRef = useRef(null);
+  const [closeOptionsReceivedEmail, setCloseOptionsReceivedEmail] =
+    useState(false);
+
   const months = [
     "January",
     "February",
@@ -187,10 +190,10 @@ function SignUpPage() {
   };
 
   const handleMonthSelect = (month) => {
-    setTimeout(() => {
-      setSelectedMonth(month);
-      setshowMonthPicker(false);
-    }, 300);
+    // setTimeout(() => {
+    setSelectedMonth(month);
+    setshowMonthPicker(false);
+    // }, 300);
   };
 
   const handleDayClick = () => {
@@ -199,11 +202,11 @@ function SignUpPage() {
   };
 
   const handleDaySelect = (day) => {
-    setTimeout(() => {
-      setselectedDay(day);
-      setshowDayPicker(false);
-      setStyleOfBoxDay(false);
-    }, 300);
+    // setTimeout(() => {
+    setselectedDay(day);
+    setshowDayPicker(false);
+    setStyleOfBoxDay(false);
+    // }, 300);
   };
 
   const handleYearClick = () => {
@@ -214,28 +217,25 @@ function SignUpPage() {
   const [yearSelectedShow, setYearSelectedShow] = useState(false);
 
   const handleYearSelect = (year) => {
-    setTimeout(() => {
-      setselectedYear(year);
-      setdisplayedYear(year);
-      setYearSelectedShow(true);
-      setshowYearPicker(false);
-      setStyleOfBoxYear(false);
-    }, 300);
+    // setTimeout(() => {
+    setselectedYear(year);
+    setdisplayedYear(year);
+    setYearSelectedShow(true);
+    setshowYearPicker(false);
+    setStyleOfBoxYear(false);
+    // }, 300);
   };
 
   // later start to check
   const [onFocusedToFullNameField, setonFocusedToFullNameField] =
     useState(false);
-
   const [informationsAreCorrect, setinformationsAreCorrect] = useState(false);
-
   const [checkFields, setcheckFields] = useState({
     nameInput: false,
     emailInput: false,
     dateofbirthInput: false,
   });
   const [tabIndex, setTabIndex] = useState(0);
-
   const [hoveredIndexMonth, setIshoveredIndexMonth] = useState(null);
   // later finish to check
   const popoverContent = (
@@ -447,12 +447,6 @@ function SignUpPage() {
     }
   }, [email, fullname, selectedMonth, selectedDay, selectedYear]);
 
-  console.log("Check fields outside of useEffect =>", checkFields);
-
-  console.log("fullname =>", fullname);
-  console.log("email =>", email);
-  console.log("date of birth =>", selectedMonth, selectedDay, selectedYear);
-
   const [firstClicked, setfirstClicked] = useState(false);
   const [secondClicked, setsecondClicked] = useState(false);
   const [thirdClicked, setthirdClicked] = useState(false);
@@ -517,65 +511,93 @@ function SignUpPage() {
     }, 300);
   };
 
-  useEffect(() => {
-    const getClickedLocation = (e) => {
-      const classList = e.target?.classList;
-      const parentNodeClassName = e.srcElement?.parentNode.className;
-      const svgGroupClassName = e.srcElement?.parentNode.className.baseVal;
-
-      if (!classList.contains("didn-t-receive-email-text")) {
+  // click outside scenarios w/useRef
+  const handleClickOutsideOptionsReceivedEmail = (event) => {
+    if (
+      didNotReceiveEmailRef.current &&
+      !didNotReceiveEmailRef.current.contains(event.target)
+    ) {
+      setCloseOptionsReceivedEmail(true);
+      setTimeout(() => {
+        setCloseOptionsReceivedEmail(false);
         setShowOptionsReceivedEmail(false);
+      }, 500);
+    } else if (
+      didNotReceiveEmailRef.current &&
+      didNotReceiveEmailRef.current.contains(event.target)
+    ) {
+      if (showOptionsReceivedEmail) {
+        setCloseOptionsReceivedEmail(true);
+        setTimeout(() => {
+          setCloseOptionsReceivedEmail(false);
+          setShowOptionsReceivedEmail(false);
+        }, 500);
       }
+    }
+  };
+  const handleClickOutsideMonthPicker = (event) => {
+    if (
+      monthPickerRef.current &&
+      !monthPickerRef.current.contains(event.target)
+    ) {
+      setStyleOfBoxMonth(false);
+      setshowMonthPicker(false);
+    } else {
+      setStyleOfBoxMonth(true);
+    }
+  };
+  const handleClickOutsideDayPicker = (event) => {
+    if (dayPickerRef.current && !dayPickerRef.current.contains(event.target)) {
+      setStyleOfBoxDay(false);
+      setshowDayPicker(false);
+    } else {
+      setStyleOfBoxDay(true);
+    }
+  };
+  const handleClickOutsideYearPicker = (event) => {
+    if (
+      yearPickerRef.current &&
+      !yearPickerRef.current.contains(event.target)
+    ) {
+      setStyleOfBoxYear(false);
+      setshowYearPicker(false);
+    } else {
+      setStyleOfBoxYear(true);
+    }
+  };
 
-      if (
-        parentNodeClassName === "parent-div-month-content-over-flow-y" ||
-        classList.contains("child-div-after-overlay-trigger") ||
-        classList.contains("svg-month-picker") ||
-        svgGroupClassName === "path-parent-g" ||
-        classList.contains("selected-month-string-parent-div") ||
-        parentNodeClassName === "child-div-after-overlay-trigger" ||
-        classList.contains("main-outline-text")
-      ) {
-        setStyleOfBoxMonth(true);
-      } else {
-        setStyleOfBoxMonth(false);
-        setshowMonthPicker(false);
-      }
-
-      if (
-        parentNodeClassName === "parent-div-day-picker-content-over-flow-y" ||
-        classList.contains("child-div-day-picker-after-overlay-trigger") ||
-        classList.contains("svg-day-picker") ||
-        svgGroupClassName === "path-parent-g-day-picker" ||
-        classList.contains("selected-day-string-parent-div") ||
-        parentNodeClassName === "child-div-day-picker-after-overlay-trigger" ||
-        classList.contains("main-outline-text-day-picker")
-      ) {
-        setStyleOfBoxDay(true);
-      } else {
-        setStyleOfBoxDay(false);
-        setshowDayPicker(false);
-      }
-
-      if (
-        parentNodeClassName === "parent-div-year-picker-content-over-flow-y" ||
-        classList.contains("child-div-year-picker-after-overlay-trigger") ||
-        classList.contains("svg-year-picker") ||
-        svgGroupClassName === "path-parent-g-year-picker" ||
-        classList.contains("selected-year-string-parent-div") ||
-        parentNodeClassName === "child-div-year-picker-after-overlay-trigger" ||
-        classList.contains("main-outline-text-year-picker")
-      ) {
-        setStyleOfBoxYear(true);
-      } else {
-        setStyleOfBoxYear(false);
-        setshowYearPicker(false);
-      }
-    };
-    document.addEventListener("click", getClickedLocation);
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutsideYearPicker);
 
     return () => {
-      document.removeEventListener("click", getClickedLocation);
+      document.removeEventListener("mousedown", handleClickOutsideYearPicker);
+    };
+  }, []);
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutsideDayPicker);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutsideDayPicker);
+    };
+  }, []);
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutsideMonthPicker);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutsideMonthPicker);
+    };
+  }, []);
+  useEffect(() => {
+    document.addEventListener(
+      "mousedown",
+      handleClickOutsideOptionsReceivedEmail
+    );
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutsideOptionsReceivedEmail
+      );
     };
   }, []);
 
@@ -773,76 +795,83 @@ function SignUpPage() {
                   </>
                 ) : null}
               </>
-              <div
-                style={{
-                  position: "absolute",
-                  right: "0px",
-                  top: "0px",
-                  display: showOptionsReceivedEmail ? "flex" : "none",
-                  flexDirection: "column",
-                  borderRadius: "16px",
-                  filter:
-                    themeName === "dark-theme"
-                      ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
-                      : "",
+              {showOptionsReceivedEmail && (
+                <div
+                  style={{
+                    position: "absolute",
+                    right: "0px",
+                    top: "0px",
+                    display: showOptionsReceivedEmail ? "flex" : "none",
+                    transform: `scale(${
+                      showOptionsReceivedEmail ? "1" : "0.8"
+                    })`,
+                    flexDirection: "column",
+                    borderRadius: "16px",
+                    filter:
+                      themeName === "dark-theme"
+                        ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                        : "",
 
-                  boxShadow:
-                    themeName === "dark-theme"
-                      ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
-                      : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
-                  zIndex: "999",
-                  transform: `scale(${showOptionsReceivedEmail ? "1" : "0.8"})`,
-                  animation: "fadeIn 0.5s ease",
-                }}
-              >
-                <div
-                  className="chirp-regular-font"
-                  style={{
-                    cursor: "pointer",
-                    fontSize: font15.fontSize,
-                    lineHeight: font15.lineHeight,
-                    padding: "12px",
-                    color: themeName === "dark-theme" ? "white" : "",
+                    boxShadow:
+                      themeName === "dark-theme"
+                        ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                        : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
+                    zIndex: "999",
+
+                    animation: closeOptionsReceivedEmail
+                      ? "fadeOut 0.5s ease"
+                      : "fadeIn 0.5s ease",
                   }}
-                >
-                  {"Didn't receive email?"}
-                </div>
-                <div
-                  onClick={() => {
-                    sendEmailVerificationCode(email);
-                  }}
-                  className={`resend-email resend-email-${themeName} chirp-bold-font`}
-                  style={{
-                    cursor: "pointer",
-                    fontSize: font15.fontSize,
-                    lineHeight: font15.lineHeight,
-                    padding: "12px",
-                    color: themeName === "dark-theme" ? "white" : "",
-                  }}
-                >
-                  {"Resend email"}
-                </div>
-                <BootstrapTooltip
-                  title="This feature is not yet active. "
-                  themeName={
-                    themeName === "dark-theme" ? "dark-theme" : "light-theme"
-                  }
                 >
                   <div
-                    className={`use-phone-instead use-phone-instead-${themeName} chirp-bold-font`}
+                    className="chirp-regular-font"
                     style={{
-                      // cursor: "pointer",
+                      cursor: "pointer",
                       fontSize: font15.fontSize,
                       lineHeight: font15.lineHeight,
                       padding: "12px",
-                      opacity: "0.5",
                       color: themeName === "dark-theme" ? "white" : "",
                     }}
                   >
-                    {"Use phone instead"}{" "}
+                    {"Didn't receive email?"}
                   </div>
-                </BootstrapTooltip>
-              </div>
+                  <div
+                    onClick={() => {
+                      sendEmailVerificationCode(email);
+                    }}
+                    className={`resend-email resend-email-${themeName} chirp-bold-font`}
+                    style={{
+                      cursor: "pointer",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
+                      padding: "12px",
+                      color: themeName === "dark-theme" ? "white" : "",
+                    }}
+                  >
+                    {"Resend email"}
+                  </div>
+                  <BootstrapTooltip
+                    title="This feature is not yet active. "
+                    themeName={
+                      themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                    }
+                  >
+                    <div
+                      className={`use-phone-instead use-phone-instead-${themeName} chirp-bold-font`}
+                      style={{
+                        // cursor: "pointer",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
+                        padding: "12px",
+                        opacity: "0.5",
+                        color: themeName === "dark-theme" ? "white" : "",
+                      }}
+                    >
+                      {"Use phone instead"}{" "}
+                    </div>
+                  </BootstrapTooltip>
+                </div>
+              )}
             </Modal.Header>
             {tabIndex === 0 ? (
               <>
@@ -1133,6 +1162,7 @@ function SignUpPage() {
                           overlay={popoverContent}
                         >
                           <div
+                            ref={monthPickerRef}
                             className="child-div-after-overlay-trigger parent-div-month-content-over-flow-y"
                             onClick={handleMonthClick}
                             style={{
@@ -1212,6 +1242,7 @@ function SignUpPage() {
                           overlay={popoverDayContent}
                         >
                           <div
+                            ref={dayPickerRef}
                             className="child-div-day-picker-after-overlay-trigger parent-div-day-picker-content-over-flow-y"
                             onClick={handleDayClick}
                             style={{
@@ -1289,6 +1320,7 @@ function SignUpPage() {
                           overlay={popoverYearContent}
                         >
                           <div
+                            ref={yearPickerRef}
                             className="child-div-year-picker-after-overlay-trigger parent-div-year-picker-content-over-flow-y"
                             onClick={handleYearClick}
                             style={{
@@ -1909,9 +1941,16 @@ function SignUpPage() {
                       }}
                     />
                     <div
-                      onClick={() =>
-                        setShowOptionsReceivedEmail(!showOptionsReceivedEmail)
-                      }
+                      ref={didNotReceiveEmailRef}
+                      onClick={() => {
+                        if (showOptionsReceivedEmail) {
+                          setTimeout(() => {
+                            setShowOptionsReceivedEmail(false);
+                          }, 250);
+                        } else {
+                          setShowOptionsReceivedEmail(true);
+                        }
+                      }}
                       style={{
                         width: "81.5%",
                       }}
@@ -2293,82 +2332,88 @@ function SignUpPage() {
                   </>
                 ) : null}
               </>
-              <div
-                style={{
-                  position: "absolute",
-                  right: "0px",
-                  top: "0px",
-                  display: showOptionsReceivedEmail ? "flex" : "none",
-                  flexDirection: "column",
-                  borderRadius: "16px",
-                  filter:
-                    themeName === "dark-theme"
-                      ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
-                      : "",
+              {showOptionsReceivedEmail && (
+                <div
+                  style={{
+                    position: "absolute",
+                    right: "0px",
+                    top: "0px",
+                    display: showOptionsReceivedEmail ? "flex" : "none",
+                    transform: `scale(${
+                      showOptionsReceivedEmail ? "1" : "0.8"
+                    })`,
+                    flexDirection: "column",
+                    borderRadius: "16px",
+                    filter:
+                      themeName === "dark-theme"
+                        ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                        : "",
 
-                  boxShadow:
-                    themeName === "dark-theme"
-                      ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
-                      : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
-                  zIndex: "999",
-                  transform: `scale(${showOptionsReceivedEmail ? "1" : "0.8"})`,
-                  animation: "fadeIn 0.5s ease",
-                }}
-              >
-                <div
-                  className="chirp-regular-font"
-                  style={{
-                    border: "none",
-                    outlineStyle: "none",
-                    cursor: "pointer",
-                    fontSize: font15.fontSize,
-                    lineHeight: font15.lineHeight,
-                    padding: "12px",
-                    color: themeName === "dark-theme" ? "white" : "",
+                    boxShadow:
+                      themeName === "dark-theme"
+                        ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                        : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
+                    zIndex: "999",
+                    animation: closeOptionsReceivedEmail
+                      ? "fadeOut 0.5s"
+                      : "fadeIn 0.5s ease",
                   }}
-                >
-                  {"Didn't receive email?"}
-                </div>
-                <div
-                  onClick={() => {
-                    sendEmailVerificationCode(email);
-                  }}
-                  className={`resend-email resend-email-${themeName} chirp-bold-font`}
-                  style={{
-                    border: "none",
-                    outlineStyle: "none",
-                    cursor: "pointer",
-                    fontSize: font15.fontSize,
-                    lineHeight: font15.lineHeight,
-                    padding: "12px",
-                    color: themeName === "dark-theme" ? "white" : "",
-                  }}
-                >
-                  {"Resend email"}
-                </div>
-                <BootstrapTooltip
-                  title="This feature is not yet active. "
-                  themeName={
-                    themeName === "dark-theme" ? "dark-theme" : "light-theme"
-                  }
                 >
                   <div
-                    className={`use-phone-instead use-phone-instead-${themeName} chirp-bold-font`}
+                    className="chirp-regular-font"
                     style={{
-                      // cursor: "pointer",
+                      border: "none",
+                      outlineStyle: "none",
+                      cursor: "pointer",
                       fontSize: font15.fontSize,
                       lineHeight: font15.lineHeight,
                       padding: "12px",
-                      opacity: "0.5",
-                      borderBottomRightRadius: "16px",
-                      borderBottomLeftRadius: "16px",
                       color: themeName === "dark-theme" ? "white" : "",
                     }}
                   >
-                    {"Use phone instead"}{" "}
+                    {"Didn't receive email?"}
                   </div>
-                </BootstrapTooltip>
-              </div>
+                  <div
+                    onClick={() => {
+                      sendEmailVerificationCode(email);
+                    }}
+                    className={`resend-email resend-email-${themeName} chirp-bold-font`}
+                    style={{
+                      border: "none",
+                      outlineStyle: "none",
+                      cursor: "pointer",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
+                      padding: "12px",
+                      color: themeName === "dark-theme" ? "white" : "",
+                    }}
+                  >
+                    {"Resend email"}
+                  </div>
+                  <BootstrapTooltip
+                    title="This feature is not yet active. "
+                    themeName={
+                      themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                    }
+                  >
+                    <div
+                      className={`use-phone-instead use-phone-instead-${themeName} chirp-bold-font`}
+                      style={{
+                        // cursor: "pointer",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
+                        padding: "12px",
+                        opacity: "0.5",
+                        borderBottomRightRadius: "16px",
+                        borderBottomLeftRadius: "16px",
+                        color: themeName === "dark-theme" ? "white" : "",
+                      }}
+                    >
+                      {"Use phone instead"}{" "}
+                    </div>
+                  </BootstrapTooltip>
+                </div>
+              )}
             </Modal.Header>
             {tabIndex === 0 ? (
               <>
@@ -2655,6 +2700,7 @@ function SignUpPage() {
                           overlay={popoverContent}
                         >
                           <div
+                            ref={monthPickerRef}
                             className="child-div-after-overlay-trigger parent-div-month-content-over-flow-y"
                             onClick={handleMonthClick}
                             style={{
@@ -2722,9 +2768,6 @@ function SignUpPage() {
                                 </g>
                               </svg>
                             </div>
-                            {/* dropdown month picker start to check  */}
-
-                            {/* dropdown month picker finish to check  */}
                           </div>
                         </OverlayTrigger>
                         <OverlayTrigger
@@ -2734,6 +2777,7 @@ function SignUpPage() {
                           overlay={popoverDayContent}
                         >
                           <div
+                            ref={dayPickerRef}
                             className="child-div-day-picker-after-overlay-trigger parent-div-day-picker-content-over-flow-y"
                             onClick={handleDayClick}
                             style={{
@@ -2811,6 +2855,7 @@ function SignUpPage() {
                           overlay={popoverYearContent}
                         >
                           <div
+                            ref={yearPickerRef}
                             className="child-div-year-picker-after-overlay-trigger parent-div-year-picker-content-over-flow-y"
                             onClick={handleYearClick}
                             style={{
@@ -3466,9 +3511,16 @@ function SignUpPage() {
                       }}
                     />
                     <div
-                      onClick={() =>
-                        setShowOptionsReceivedEmail(!showOptionsReceivedEmail)
-                      }
+                      ref={didNotReceiveEmailRef}
+                      onClick={() => {
+                        if (showOptionsReceivedEmail) {
+                          setTimeout(() => {
+                            setShowOptionsReceivedEmail(false);
+                          }, 250);
+                        } else {
+                          setShowOptionsReceivedEmail(true);
+                        }
+                      }}
                       style={{
                         width: "81.5%",
                       }}

@@ -7,22 +7,25 @@ import { ModalVisibilityProvider } from "./context/ModalVisibilityContext.jsx";
 import { NavigationHistoryProvider } from "./context/NavigationHistoryContext.jsx";
 import { FontSizeProvider } from "./context/FontSizeContext.jsx";
 import { ColorContextProvider } from "./context/ColorContext.jsx";
+import { UserProvider } from "./context/UserContext.jsx";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   // <React.StrictMode>
   <BrowserRouter>
-    <NavigationHistoryProvider>
-      <ThemeProvider>
-        <FontSizeProvider>
-          <ColorContextProvider>
-            <ModalVisibilityProvider>
-              <App />
-            </ModalVisibilityProvider>
-          </ColorContextProvider>
-        </FontSizeProvider>
-      </ThemeProvider>
-    </NavigationHistoryProvider>
+    <UserProvider>
+      <NavigationHistoryProvider>
+        <ThemeProvider>
+          <FontSizeProvider>
+            <ColorContextProvider>
+              <ModalVisibilityProvider>
+                <App />
+              </ModalVisibilityProvider>
+            </ColorContextProvider>
+          </FontSizeProvider>
+        </ThemeProvider>
+      </NavigationHistoryProvider>
+    </UserProvider>
   </BrowserRouter>
   // </React.StrictMode>
 );

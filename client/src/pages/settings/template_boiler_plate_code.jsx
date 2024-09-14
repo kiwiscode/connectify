@@ -7,11 +7,7 @@ import SettingsNavigation from "../../../../../components/SettingsNavigation/Set
 import useWindowDimensions from "../../../../../hooks/getWindowDimensions";
 import { useAntdMessageHandler } from "../../../../../utils/useAntdMessageHandler";
 
-// when working on local version
-const API_URL = "http://localhost:3000";
-
-// when working on deployment version
-// ?
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
 function Display() {
   const { contextHolder } = useAntdMessageHandler();

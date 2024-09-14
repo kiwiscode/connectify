@@ -8,8 +8,23 @@
   }
 }
 
-.mobile-top-navigation-column {
+@keyframes mobile-top-navigation-animation-close {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.mobile-top-navigation-column.active {
   animation-name: mobile-top-navigation-animation;
+  animation-duration: 250ms;
+  animation-timing-function: ease;
+}
+
+.mobile-top-navigation-column.close {
+  animation-name: mobile-top-navigation-animation-close;
   animation-duration: 250ms;
   animation-timing-function: ease;
 }

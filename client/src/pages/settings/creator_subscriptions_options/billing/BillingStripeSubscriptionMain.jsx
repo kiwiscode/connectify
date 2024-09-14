@@ -7,11 +7,8 @@ import { UserContext } from "../../../../context/UserContext";
 import LoadingSpinner from "../../../../components/ui/LoadingSpinner";
 import { SubcsriptionStatusContext } from "../../../../context/SubscriptionStatusContext";
 import { useFontSizeHandler } from "../../../../utils/useFontSizeHandler";
-// when working on local version
-const API_URL = "http://localhost:3000";
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
-// when working on deployment version
-// ?
 function BillingStripeSubscriptionMain() {
   const { width } = useWindowDimensions();
   const navigate = useNavigate();

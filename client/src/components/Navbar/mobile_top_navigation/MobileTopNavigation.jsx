@@ -35,11 +35,41 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
     navigationBarOpenedStatus("mobile top navigation was closed");
   }
 
+  const [animationSideBar, setAnimationSideBar] = useState(false);
+  const sideBarParentRef = useRef(null);
+  const sideBarChildRef = useRef(null);
+
+  const toggleMenu = () => {
+    setAnimationSideBar("active");
+    setOpenNavigationBar(!openNavigationBar);
+  };
+
+  const handleClickOutside = (event) => {
+    if (
+      sideBarChildRef.current &&
+      !sideBarChildRef.current.contains(event.target)
+    ) {
+      setAnimationSideBar("close");
+      setTimeout(() => {
+        setAnimationSideBar(null);
+        setOpenNavigationBar(false);
+      }, 250);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <>
       {openNavigationBar && (
         <div
-          // onClick={handleParentClick}
+          ref={sideBarParentRef}
           onClick={() => {
             handleParentClick();
             handleClickNavigationBarClosed();
@@ -59,8 +89,9 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
           }}
         >
           <div
+            ref={sideBarChildRef}
             onClick={handleChildClick}
-            className={`mobile-top-navigation-column scrollbar-add-mobile-navigation-top scrollbar-add-mobile-navigation-top-${themeName}`}
+            className={`mobile-top-navigation-column scrollbar-add-mobile-navigation-top scrollbar-add-mobile-navigation-top-${themeName} ${animationSideBar}`}
             style={{
               position: "absolute",
               left: "0px",
@@ -1573,6 +1604,7 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
         >
           {userInfo?.imageUrl?.slice(0, 3) !== "../" ? (
             <img
+              onClick={toggleMenu}
               src={userInfo.imageUrl}
               width={32}
               height={32}
@@ -1584,6 +1616,7 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
             />
           ) : (
             <svg
+              onClick={toggleMenu}
               xmlns="http://www.w3.org/2000/svg"
               width="32"
               height="32"
