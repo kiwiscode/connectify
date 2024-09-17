@@ -86,8 +86,6 @@ const handlePost = (req, res) => {
     });
 };
 const handleShowPosts = (req, res) => {
-  const { userId } = req.user;
-
   Post.find()
     // IMPORTANT
     // start to check
@@ -109,7 +107,6 @@ const handleShowPosts = (req, res) => {
         .json({ errorMessage: "An error occurred while fetching posts" });
     });
 };
-
 const handleDeletePost = (req, res) => {
   const { userId, postId } = req.body;
 
@@ -127,13 +124,77 @@ const handleDeletePost = (req, res) => {
           const deleteConditions = [];
           const bookmarkIds = [];
 
-          if (post.isReposted || post.reposted.length) {
+          if (post.isReposted) {
+            console.log("if block is working 1");
             deleteConditions.push(
               post._id.toString(),
               post.repostedFromThisOriginalPost[0]?._id.toString()
             );
+          } else if (post.reposted.length) {
+            console.log("else if block is working 2");
+            Post.find({ repostedFromThisOriginalPost: post._id })
+              .then((originalPost) => {
+                Post.deleteMany({
+                  _id: {
+                    $in: [post._id.toString(), originalPost[0]?._id.toString()],
+                  },
+                })
+                  .then((result) => {
+                    console.log("Delete conditions =>", [
+                      post._id.toString(),
+                      originalPost[0]?._id.toString(),
+                    ]);
+                    console.log("Posts deleted successfully result =>", result);
+                  })
+                  .catch((error) => {
+                    console.error("Error deleting posts:", error);
+                  });
+              })
+              .catch((error) => {
+                console.log("error:", error);
+              });
           } else {
+            console.log("else block is working 3");
             deleteConditions.push(post._id.toString());
+          }
+
+          console.log("Delete Conditions ids:", bookmarkIds);
+
+          // If the post is a comment
+          if (post.isComment) {
+            // Use findOne to find the specific comment
+            Comment.findOne({ postId: postId })
+              .then((foundComment) => {
+                if (foundComment) {
+                  const commentId = foundComment._id;
+                  console.log("Found comment ID:", commentId);
+
+                  // Remove this comment from the comments array in other posts
+                  Post.updateMany(
+                    { comments: commentId }, // Find all posts that have this commentId in their comments array
+                    { $pull: { comments: commentId } } // Remove the commentId from the comments array
+                  )
+                    .then(() => {
+                      console.log(
+                        `Comment ${commentId} was removed from the comments array in all posts.`
+                      );
+                    })
+                    .catch((error) => {
+                      console.error(
+                        "An error occurred while removing the comment from posts:",
+                        error
+                      );
+                    });
+                } else {
+                  console.error("Comment not found.");
+                }
+              })
+              .catch((error) => {
+                console.error(
+                  "An error occurred while searching for the comment:",
+                  error
+                );
+              });
           }
 
           Bookmark.find({ bookmarkedPost: { $in: deleteConditions } })
@@ -184,14 +245,14 @@ const handleDeletePost = (req, res) => {
           }, 1250);
 
           Post.deleteMany({
-            _id: deleteConditions,
+            _id: { $in: deleteConditions },
           })
             .then((result) => {
               console.log("Delete conditions =>", deleteConditions);
               console.log("Posts deleted successfully result =>", result);
             })
             .catch((error) => {
-              console.error("Error deleting favorites:", error);
+              console.error("Error deleting posts:", error);
             });
 
           Favorite.deleteMany({

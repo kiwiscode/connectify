@@ -2583,12 +2583,14 @@ span > a:hover {
 }
 
 .subscribe-btn-basic-plan:hover,
-.subscribe-btn-full-access-plan:hover {
+.subscribe-btn-full-access-plan:hover,
+.discard-changes-light-theme:hover {
   background-color: #262b30 !important;
   transition-duration: 0.2s;
 }
 .subscribe-btn-basic-plan-dark-theme:hover,
-.subscribe-btn-full-access-plan-dark-theme:hover {
+.subscribe-btn-full-access-plan-dark-theme:hover,
+.discard-changes-dark-theme:hover {
   background-color: #d7dbdc !important;
   transition-duration: 0.2s;
 }
@@ -4440,4 +4442,17 @@ themeName === "dark-theme"
   max-height: 600px;
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+/* reject accept request */
+
+.circle_hover_accept:hover {
+  transition-duration: 0.2s !important;
+  background-color: #e4f0f9 !important;
+  outline: none !important;
+}
+.circle_hover_reject:hover {
+  transition-duration: 0.2s !important;
+  background-color: #f8e5e6 !important;
+  outline: none !important;
 }

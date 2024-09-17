@@ -68,7 +68,6 @@ export const useAntdMessageHandler = () => {
         </div>
       ),
       duration: duration,
-
       className: "custom-message-style chirp-regular-font",
     });
   };

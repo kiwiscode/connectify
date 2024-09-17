@@ -37,6 +37,9 @@ const io = socketIo(server, {
 const authRoutes = require("./routes/auth.routes");
 app.use("/auth", authRoutes);
 
+const userRoutes = require("./routes/user.routes.js");
+app.use("/users", userRoutes);
+
 const homeRoutes = require("./routes/home.routes");
 app.use("/home", homeRoutes);
 

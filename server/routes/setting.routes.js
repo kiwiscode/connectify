@@ -37,6 +37,7 @@ router.post("/add_gender_to_user", authenticateToken, async (req, res) => {
     res.status(500).json("Server error!");
   }
 });
+
 router.post("/add_country_to_user", authenticateToken, async (req, res) => {
   try {
     const { countryOption } = req.body;
@@ -66,6 +67,7 @@ router.post("/add_country_to_user", authenticateToken, async (req, res) => {
     res.status(500).json("Server error!");
   }
 });
+
 router.post(
   "/add_phone_number_to_user",
   authenticateToken,
@@ -100,6 +102,7 @@ router.post(
     }
   }
 );
+
 router.post("/user_update_email", authenticateToken, async (req, res) => {
   try {
     const { newEmail } = req.body;

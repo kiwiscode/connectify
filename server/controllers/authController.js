@@ -233,6 +233,7 @@ const handleLogin = (req, res, next) => {
                   signedUpWithGoogle,
                   signedUpWithVariantOne,
                   bio,
+                  isPrivate,
                 } = user;
 
                 const token = jwt.sign(
@@ -265,6 +266,7 @@ const handleLogin = (req, res, next) => {
                     signedUpWithGoogle,
                     signedUpWithVariantOne,
                     bio,
+                    isPrivate,
                   },
                   message:
                     "Show 2 modal, first => profile image customization modal, second => username customization modal",
@@ -300,6 +302,7 @@ const handleLogin = (req, res, next) => {
                     signedUpWithGoogle,
                     signedUpWithVariantOne,
                     bio,
+                    isPrivate,
                   } = user;
 
                   const token = jwt.sign(
@@ -333,6 +336,7 @@ const handleLogin = (req, res, next) => {
                       signedUpWithGoogle,
                       signedUpWithVariantOne,
                       bio,
+                      isPrivate,
                     },
                   });
                 });
@@ -454,6 +458,7 @@ const handleDeactivatedUserLoginBack = (req, res) => {
                   imageUrl,
                   notifications,
                   chatEngineInfos,
+                  isPrivate,
                 } = reactivatedUser;
 
                 const token = jwt.sign(
@@ -484,6 +489,7 @@ const handleDeactivatedUserLoginBack = (req, res) => {
                     imageUrl,
                     notifications,
                     chatEngineInfos,
+                    isPrivate,
                   },
                 });
               });

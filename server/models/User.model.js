@@ -148,6 +148,30 @@ const userSchema = new Schema(
     isPrivate: { type: Boolean, default: false },
     isVideosProtected: { type: Boolean, default: false },
     photoTaggingPermission: { type: String, default: "Anyone can tag you" },
+    sentFollowRequests: [
+      {
+        recipient: {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+        },
+        status: {
+          type: String,
+          enum: ["pending", "accepted", "rejected"],
+        },
+      },
+    ],
+    receivedFollowRequests: [
+      {
+        requester: {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+        },
+        status: {
+          type: String,
+          enum: ["pending", "accepted", "rejected"],
+        },
+      },
+    ],
   },
   {
     timestamps: true,

@@ -398,6 +398,25 @@ function MessagesPage() {
     console.log("Data =>", data);
     setDataFromTopNavigationComponent(data);
   }
+
+  const [headerPosition, setHeaderPosition] = useState(0);
+  const handleScroll = () => {
+    const scrollPosition = window.pageYOffset;
+
+    if (scrollPosition < 53) {
+      setHeaderPosition(-scrollPosition);
+    } else {
+      setHeaderPosition(-53);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [headerPosition]);
+
   return (
     <>
       {" "}
@@ -435,7 +454,6 @@ function MessagesPage() {
           borderBottom: "none",
           padding: "0px",
           position: "relative",
-          minHeight: width <= 700 ? "100vh" : "",
           minHeight: width <= 700 ? "100dvh" : "",
         }}
       >

@@ -18,6 +18,7 @@ function PostPopover({
   postDeletionProcess,
   isCutePopoverOnRightSide,
   notificationPageComment,
+  refreshPosts,
 }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
 
@@ -72,6 +73,7 @@ function PostPopover({
         }
       )
       .then(() => {
+        refreshPosts();
         postDeletedMessage();
         postDeletionProcess();
       })

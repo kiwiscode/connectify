@@ -262,6 +262,39 @@ function Bookmarks() {
   }, [headerPosition, window.pageYOffset]);
 
   const navigate = useNavigate();
+
+  // get following users
+  const [followedIds, setFollowedIds] = useState([]);
+
+  const getFollowingArray = async () => {
+    try {
+      const result = await axios.get(
+        `${API_URL}/users/${userInfo._id}/following`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+      const followedUserIds = result.data.following.map((user) => user._id);
+      setFollowedIds(followedUserIds);
+
+      console.log("result of followed users:", result);
+    } catch (error) {
+      console.error("error:", error);
+    }
+  };
+
+  const checkIfFollowing = (userId) => {
+    return followedIds.includes(userId);
+  };
+
+  useEffect(() => {
+    if (userInfo._id) {
+      getFollowingArray();
+    }
+  }, []);
+
   return (
     <>
       {!isPostModalVisible && !dataFromCommentModal && (
@@ -519,217 +552,218 @@ function Bookmarks() {
           <>
             {bookmarks.slice(0, visibleTweets).map((eachBookMark) => (
               <div key={eachBookMark?._id}>
-                <div
-                  onClick={() => {
-                    console.log(
-                      "Post box parent class =>",
-                      eachBookMark?.bookmarkedPost
-                    );
-                    setclickedPostBox(eachBookMark?.bookmarkedPost);
-                  }}
-                  className={
-                    themeName === "dark-theme"
-                      ? `each-post-${themeName}`
-                      : "each-post"
-                  }
-                >
+                {eachBookMark?.bookmarkedPost?.userId.isDeactivated ||
+                (eachBookMark?.bookmarkedPost?.userId.isPrivate &&
+                  !checkIfFollowing(eachBookMark?.bookmarkedPost?.userId._id) &&
+                  eachBookMark?.bookmarkedPost?.userId._id !==
+                    userInfo._id) ? null : (
                   <div
-                    style={{
-                      textDecoration: "none",
-                    }}
                     onClick={() => {
+                      console.log(
+                        "Post box parent class =>",
+                        eachBookMark?.bookmarkedPost
+                      );
                       setclickedPostBox(eachBookMark?.bookmarkedPost);
                     }}
-                    className="posts-details outside-of-inner-circle-actions"
+                    className={
+                      themeName === "dark-theme"
+                        ? `each-post-${themeName}`
+                        : "each-post"
+                    }
                   >
                     <div
                       style={{
-                        position: "relative",
+                        textDecoration: "none",
                       }}
-                      className="post-head"
-                    ></div>
-                    <Stack
-                      style={{
-                        cursor: "pointer",
+                      onClick={() => {
+                        setclickedPostBox(eachBookMark?.bookmarkedPost);
                       }}
-                      to={`/${
-                        eachBookMark?.bookmarkedPost?.userId.username
-                      }/status/${
-                        !eachBookMark?.bookmarkedPost?.isReposted
-                          ? eachBookMark?.bookmarkedPost?._id
-                          : eachBookMark?.bookmarkedPost
-                              ?.repostedFromThisOriginalPost[0]._id
-                      }`}
-                      onClick={() =>
-                        setclickedPostBox(eachBookMark?.bookmarkedPost)
-                      }
-                      className="outside-of-inner-circle-post-info-user-info-svg-three-dots"
-                      direction="horizontal"
-                      gap={1}
+                      className="posts-details outside-of-inner-circle-actions"
                     >
-                      {/* profile image start to check */}
-                      <div className="p-1">
-                        {eachBookMark?.bookmarkedPost?.userId.imageUrl.slice(
-                          0,
-                          3
-                        ) !== "../" ? (
-                          <Link
-                            className="post-circle-profile-image-on-point"
-                            style={{
-                              cursor: "pointer",
-                              borderRadius: "50%",
-                            }}
-                            to={`/profile/${
-                              eachBookMark?.bookmarkedPost
-                                ? eachBookMark?.bookmarkedPost?.userId._id
-                                : null
-                            }`}
-                          >
-                            <img
-                              width={40}
-                              height={40}
-                              src={
-                                eachBookMark?.bookmarkedPost?.userId.imageUrl
-                                  ? eachBookMark?.bookmarkedPost?.userId
-                                      .imageUrl
-                                  : null
-                              }
-                              alt="??"
-                              style={{ borderRadius: "50%" }}
-                            />
-                          </Link>
-                        ) : (
-                          <Link
-                            className="post-circle-profile-svg-on-point"
-                            to={`/profile/${
-                              eachBookMark?.bookmarkedPost?.userId
-                                ? eachBookMark?.bookmarkedPost?.userId._id
-                                : null
-                            }`}
-                            style={{ cursor: "pointer" }}
-                          >
-                            {" "}
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width={40}
-                              height={40}
-                              fill={
-                                themeName === "dark-theme"
-                                  ? "#71767A"
-                                  : "rgb(83, 100, 113)"
-                              }
-                              className="bi bi-person-circle"
-                              viewBox="0 0 16 16"
+                      <div
+                        style={{
+                          position: "relative",
+                        }}
+                        className="post-head"
+                      ></div>
+                      <Stack
+                        style={{
+                          cursor: "pointer",
+                        }}
+                        to={`/${
+                          eachBookMark?.bookmarkedPost?.userId.username
+                        }/status/${
+                          !eachBookMark?.bookmarkedPost?.isReposted
+                            ? eachBookMark?.bookmarkedPost?._id
+                            : eachBookMark?.bookmarkedPost
+                                ?.repostedFromThisOriginalPost[0]._id
+                        }`}
+                        onClick={() =>
+                          setclickedPostBox(eachBookMark?.bookmarkedPost)
+                        }
+                        className="outside-of-inner-circle-post-info-user-info-svg-three-dots"
+                        direction="horizontal"
+                        gap={1}
+                      >
+                        {/* profile image start to check */}
+                        <div className="p-1">
+                          {eachBookMark?.bookmarkedPost?.userId.imageUrl.slice(
+                            0,
+                            3
+                          ) !== "../" ? (
+                            <Link
+                              className="post-circle-profile-image-on-point"
                               style={{
+                                cursor: "pointer",
                                 borderRadius: "50%",
                               }}
+                              to={`/profile/${
+                                eachBookMark?.bookmarkedPost
+                                  ? eachBookMark?.bookmarkedPost?.userId._id
+                                  : null
+                              }`}
                             >
-                              <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                              <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                            </svg>
-                          </Link>
-                        )}
-                      </div>
-                      {/* profile image finish to check  */}
-
-                      {/* post owner full name + verified account svg + post owner user name + post created date start to check  */}
-                      <div className="p-1">
-                        {eachBookMark?.bookmarkedPost?.userId ? (
-                          <>
-                            <Link
-                              className="post-circle-postowner-fullname"
-                              to={`/profile/${eachBookMark?.bookmarkedPost?.userId._id}`}
-                              style={{
-                                textDecoration: "none",
-                                color: "black",
-                              }}
-                            >
-                              <span
-                                className="hover-fullname chirp-bold-font"
-                                style={{
-                                  color:
-                                    themeName === "dark-theme" ? "white" : "",
-                                  fontSize: font15.fontSize,
-                                  lineHeight: font15.lineHeight,
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  whiteSpace: "nowrap",
-                                  width: "120px",
-                                }}
-                              >
-                                {eachBookMark?.bookmarkedPost?.userId.fullname}
-                              </span>{" "}
+                              <img
+                                width={40}
+                                height={40}
+                                src={
+                                  eachBookMark?.bookmarkedPost?.userId.imageUrl
+                                    ? eachBookMark?.bookmarkedPost?.userId
+                                        .imageUrl
+                                    : null
+                                }
+                                alt="??"
+                                style={{ borderRadius: "50%" }}
+                              />
                             </Link>
-                            {eachBookMark?.bookmarkedPost?.userId
-                              .hasSubscription ||
-                            (!subscription?.isActive &&
-                              subscription?.remainingTimeSubscription &&
-                              subscription?.cancelledDate &&
-                              subscription?.owner ===
-                                eachBookMark?.bookmarkedPost?.userId._id) ||
-                            remainingTimeSubscriptionsOwnerIds.includes(
-                              eachBookMark?.bookmarkedPost?.userId._id
-                            ) ? (
-                              <span>
-                                {/* start to check  */}{" "}
-                                <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
-                                  <svg
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    viewBox="0 0 22 22"
-                                    aria-label="Verified account"
-                                    role="img"
-                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
-                                    data-testid="verified-icon"
-                                    color="rgba(29,155,240,1.00)"
-                                    fill="currentColor"
-                                  >
-                                    <g>
-                                      <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
-                                    </g>
-                                  </svg>
-                                </span>{" "}
-                              </span>
-                            ) : null}
+                          ) : (
                             <Link
-                              className="chirp-regular-font"
-                              to={`/profile/${eachBookMark?.bookmarkedPost?.userId._id}`}
-                              style={{
-                                textDecoration: "none",
-                                color:
+                              className="post-circle-profile-svg-on-point"
+                              to={`/profile/${
+                                eachBookMark?.bookmarkedPost?.userId
+                                  ? eachBookMark?.bookmarkedPost?.userId._id
+                                  : null
+                              }`}
+                              style={{ cursor: "pointer" }}
+                            >
+                              {" "}
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width={40}
+                                height={40}
+                                fill={
                                   themeName === "dark-theme"
                                     ? "#71767A"
-                                    : "rgb(83, 100, 113)",
-                                fontSize: font15.fontSize,
-                                lineHeight: font15.lineHeight,
-                              }}
-                            >
-                              <span className="post-circle-postowner-username">
-                                <span className="chirp-regular-font">
-                                  @
+                                    : "rgb(83, 100, 113)"
+                                }
+                                className="bi bi-person-circle"
+                                viewBox="0 0 16 16"
+                                style={{
+                                  borderRadius: "50%",
+                                }}
+                              >
+                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                              </svg>
+                            </Link>
+                          )}
+                        </div>
+                        {/* profile image finish to check  */}
+
+                        {/* post owner full name + verified account svg + post owner user name + post created date start to check  */}
+                        <div className="p-1">
+                          {eachBookMark?.bookmarkedPost?.userId ? (
+                            <>
+                              <Link
+                                className="post-circle-postowner-fullname"
+                                to={`/profile/${eachBookMark?.bookmarkedPost?.userId._id}`}
+                                style={{
+                                  textDecoration: "none",
+                                  color: "black",
+                                }}
+                              >
+                                <span
+                                  className="hover-fullname chirp-bold-font"
+                                  style={{
+                                    color:
+                                      themeName === "dark-theme" ? "white" : "",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
+                                    width: "120px",
+                                  }}
+                                >
                                   {
                                     eachBookMark?.bookmarkedPost?.userId
-                                      .username
+                                      .fullname
                                   }
+                                </span>{" "}
+                                {eachBookMark?.bookmarkedPost?.userId
+                                  .isPrivate && (
+                                  <span
+                                    style={{
+                                      marginRight: "5px",
+                                    }}
+                                  >
+                                    <svg
+                                      fill={
+                                        themeName === "dark-theme"
+                                          ? "#E6E9EA"
+                                          : "#0F141A"
+                                      }
+                                      width={`${1.25}em`}
+                                      height={`${1.25}em`}
+                                      viewBox="0 0 24 24"
+                                      aria-label="Protected account"
+                                      role="img"
+                                      className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-lrvibr r-m6rgpd r-3t4u6i r-18jsvk2 r-f9ja8p r-og9te1"
+                                      data-testid="icon-lock"
+                                    >
+                                      <g>
+                                        <path d="M17.5 7H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.39 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.89 7 17.5 7zM13 14.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2 0 .74-.4 1.39-1 1.73zM15 7H9v-.25c0-1.66 1.35-3 3-3 1.66 0 3 1.34 3 3V7z"></path>
+                                      </g>
+                                    </svg>
+                                  </span>
+                                )}
+                              </Link>
+                              {eachBookMark?.bookmarkedPost?.userId
+                                .hasSubscription ||
+                              (!subscription?.isActive &&
+                                subscription?.remainingTimeSubscription &&
+                                subscription?.cancelledDate &&
+                                subscription?.owner ===
+                                  eachBookMark?.bookmarkedPost?.userId._id) ||
+                              remainingTimeSubscriptionsOwnerIds.includes(
+                                eachBookMark?.bookmarkedPost?.userId._id
+                              ) ? (
+                                <span>
+                                  {/* start to check  */}{" "}
+                                  <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
+                                    <svg
+                                      width={`${1.25}em`}
+                                      height={`${1.25}em`}
+                                      viewBox="0 0 22 22"
+                                      aria-label="Verified account"
+                                      role="img"
+                                      className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                                      data-testid="verified-icon"
+                                      color="rgba(29,155,240,1.00)"
+                                      fill="currentColor"
+                                    >
+                                      <g>
+                                        <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                                      </g>
+                                    </svg>
+                                  </span>{" "}
                                 </span>
-                              </span>
-                            </Link>
-                            <Link
-                              to={`/${
-                                eachBookMark?.bookmarkedPost?.userId.username
-                              }/status/${
-                                !eachBookMark?.bookmarkedPost?.isReposted
-                                  ? eachBookMark?.bookmarkedPost?._id
-                                  : eachBookMark?.bookmarkedPost
-                                      ?.repostedFromThisOriginalPost[0]._id
-                              }`}
-                              style={{
-                                textDecoration: "none",
-                              }}
-                            >
-                              <span
-                                className="post-circle-date-post-detail chirp-regular-font"
+                              ) : null}
+                              <Link
+                                className="chirp-regular-font"
+                                to={`/profile/${eachBookMark?.bookmarkedPost?.userId._id}`}
                                 style={{
+                                  textDecoration: "none",
                                   color:
                                     themeName === "dark-theme"
                                       ? "#71767A"
@@ -738,62 +772,81 @@ function Bookmarks() {
                                   lineHeight: font15.lineHeight,
                                 }}
                               >
-                                {" "}
-                                ·{" "}
-                                <BootstrapTooltip
-                                  title={extraDetailedDate(
-                                    eachBookMark?.bookmarkedPost?.createdAt
-                                  )}
-                                  themeName={
-                                    themeName === "dark-theme"
-                                      ? "dark-theme"
-                                      : "light-theme"
-                                  }
+                                <span className="post-circle-postowner-username">
+                                  <span className="chirp-regular-font">
+                                    @
+                                    {
+                                      eachBookMark?.bookmarkedPost?.userId
+                                        .username
+                                    }
+                                  </span>
+                                </span>
+                              </Link>
+                              <Link
+                                to={`/${
+                                  eachBookMark?.bookmarkedPost?.userId.username
+                                }/status/${
+                                  !eachBookMark?.bookmarkedPost?.isReposted
+                                    ? eachBookMark?.bookmarkedPost?._id
+                                    : eachBookMark?.bookmarkedPost
+                                        ?.repostedFromThisOriginalPost[0]._id
+                                }`}
+                                style={{
+                                  textDecoration: "none",
+                                }}
+                              >
+                                <span
+                                  className="post-circle-date-post-detail chirp-regular-font"
+                                  style={{
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgb(83, 100, 113)",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
+                                  }}
                                 >
-                                  <span className="date-post-detail">
-                                    {getCreatedDate(
+                                  {" "}
+                                  ·{" "}
+                                  <BootstrapTooltip
+                                    title={extraDetailedDate(
                                       eachBookMark?.bookmarkedPost?.createdAt
                                     )}
-                                  </span>
-                                </BootstrapTooltip>
-                              </span>
-                            </Link>
-                            {/* finish to check  */}
-                          </>
-                        ) : null}
-                      </div>
-                      {/* post owner full name + verified account svg + post owner user name + post created date  finish to check  */}
+                                    themeName={
+                                      themeName === "dark-theme"
+                                        ? "dark-theme"
+                                        : "light-theme"
+                                    }
+                                  >
+                                    <span className="date-post-detail">
+                                      {getCreatedDate(
+                                        eachBookMark?.bookmarkedPost?.createdAt
+                                      )}
+                                    </span>
+                                  </BootstrapTooltip>
+                                </span>
+                              </Link>
+                              {/* finish to check  */}
+                            </>
+                          ) : null}
+                        </div>
+                        {/* post owner full name + verified account svg + post owner user name + post created date  finish to check  */}
 
-                      {/* three dots svg start to check */}
-                      <div className="p-1 ms-auto">
-                        <PostPopover
-                          postDeletionProcess={
-                            handleDeletePostFromBookmarksPage
-                          }
-                          post={eachBookMark?.bookmarkedPost}
-                        />
-                      </div>
-                      {/* three dots svg finish to check */}
-                    </Stack>
+                        {/* three dots svg start to check */}
+                        <div className="p-1 ms-auto">
+                          <PostPopover
+                            postDeletionProcess={
+                              handleDeletePostFromBookmarksPage
+                            }
+                            post={eachBookMark?.bookmarkedPost}
+                            refreshPosts={fetchBookmarks}
+                          />
+                        </div>
+                        {/* three dots svg finish to check */}
+                      </Stack>
 
-                    {/* post content start to check  */}
-                    <Stack
-                      to={`/${
-                        eachBookMark?.bookmarkedPost?.userId.username
-                      }/status/${
-                        !eachBookMark?.bookmarkedPost?.isReposted
-                          ? eachBookMark?.bookmarkedPost?._id
-                          : eachBookMark?.bookmarkedPost
-                              ?.repostedFromThisOriginalPost[0]._id
-                      }`}
-                      onClick={() =>
-                        setclickedPostBox(eachBookMark?.bookmarkedPost)
-                      }
-                      className="outside-of-inner-circle-action-comment-text"
-                      direction="vertical"
-                      gap={1}
-                    >
-                      <Link
+                      {/* post content start to check  */}
+                      <Stack
                         to={`/${
                           eachBookMark?.bookmarkedPost?.userId.username
                         }/status/${
@@ -802,30 +855,13 @@ function Bookmarks() {
                             : eachBookMark?.bookmarkedPost
                                 ?.repostedFromThisOriginalPost[0]._id
                         }`}
-                        style={{
-                          textDecoration: "none",
-                          color: "rgb(15, 20, 25)",
-                        }}
+                        onClick={() =>
+                          setclickedPostBox(eachBookMark?.bookmarkedPost)
+                        }
+                        className="outside-of-inner-circle-action-comment-text"
+                        direction="vertical"
+                        gap={1}
                       >
-                        <div
-                          style={{
-                            fontSize: font15.fontSize,
-                            lineHeight: font15.lineHeight,
-                            overflowWrap: "break-word",
-                            maxWidth: "100%",
-                            cursor: "pointer",
-                            color: themeName === "dark-theme" ? "white" : "",
-                          }}
-                          className="p-2 chirp-regular-font"
-                        >
-                          {eachBookMark?.bookmarkedPost?.content}
-                        </div>
-                      </Link>
-                    </Stack>
-                    {/* post content finish to check  */}
-                    {/* start to check NOTE if there is no internet connection images would be hidden because of 'cloudinary connection' */}
-                    {eachBookMark?.bookmarkedPost?.image.url !== "image@url" ? (
-                      <>
                         <Link
                           to={`/${
                             eachBookMark?.bookmarkedPost?.userId.username
@@ -834,167 +870,202 @@ function Bookmarks() {
                               ? eachBookMark?.bookmarkedPost?._id
                               : eachBookMark?.bookmarkedPost
                                   ?.repostedFromThisOriginalPost[0]._id
-                          }/photo/${1}`}
+                          }`}
                           style={{
                             textDecoration: "none",
+                            color: "rgb(15, 20, 25)",
                           }}
                         >
                           <div
                             style={{
-                              overflow: "hidden",
-                              border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
-                              borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
-                              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
+                              overflowWrap: "break-word",
+                              maxWidth: "100%",
+                              cursor: "pointer",
+                              color: themeName === "dark-theme" ? "white" : "",
                             }}
+                            className="p-2 chirp-regular-font"
                           >
-                            <img
-                              src={eachBookMark?.bookmarkedPost?.image.url}
-                              alt="Description"
-                              style={{
-                                width: "100%",
-                                maxWidth: "100%",
-                                display: "block",
-                              }}
-                            />
+                            {eachBookMark?.bookmarkedPost?.content}
                           </div>
                         </Link>
-                      </>
-                    ) : null}
-                    {/* finish to check NOTE if there is no internet connection images would be hidden because of 'cloudinary connection' */}
-                    {/* new version favorite repost comment start to check */}
-                    <Stack
-                      className="mt-0 parent-footer-stack"
-                      onClick={() =>
-                        setclickedPostBox(eachBookMark?.bookmarkedPost)
-                      }
-                      direction="horizontal"
-                      style={{
-                        justifyContent: "space-between",
-                        margin: "5px 0px 5px 0px",
-                        cursor: "pointer",
+                      </Stack>
+                      {/* post content finish to check  */}
+                      {/* start to check NOTE if there is no internet connection images would be hidden because of 'cloudinary connection' */}
+                      {eachBookMark?.bookmarkedPost?.image.url !==
+                      "image@url" ? (
+                        <>
+                          <Link
+                            to={`/${
+                              eachBookMark?.bookmarkedPost?.userId.username
+                            }/status/${
+                              !eachBookMark?.bookmarkedPost?.isReposted
+                                ? eachBookMark?.bookmarkedPost?._id
+                                : eachBookMark?.bookmarkedPost
+                                    ?.repostedFromThisOriginalPost[0]._id
+                            }/photo/${1}`}
+                            style={{
+                              textDecoration: "none",
+                            }}
+                          >
+                            <div
+                              style={{
+                                overflow: "hidden",
+                                border: "2px solid #ddd", // Kenarlık rengi ve kalınlığı
+                                borderRadius: "8px", // Kenarlık köşelerinin yuvarlatılması
+                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Gölge efekti
+                              }}
+                            >
+                              <img
+                                src={eachBookMark?.bookmarkedPost?.image.url}
+                                alt="Description"
+                                style={{
+                                  width: "100%",
+                                  maxWidth: "100%",
+                                  display: "block",
+                                }}
+                              />
+                            </div>
+                          </Link>
+                        </>
+                      ) : null}
+                      {/* finish to check NOTE if there is no internet connection images would be hidden because of 'cloudinary connection' */}
+                      {/* new version favorite repost comment start to check */}
+                      <Stack
+                        className="mt-0 parent-footer-stack"
+                        onClick={() =>
+                          setclickedPostBox(eachBookMark?.bookmarkedPost)
+                        }
+                        direction="horizontal"
+                        style={{
+                          justifyContent: "space-between",
+                          margin: "5px 0px 5px 0px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: "100px",
+                          }}
+                          onClick={() =>
+                            setclickedPostBox(eachBookMark?.bookmarkedPost)
+                          }
+                          className="p-1 next-to-comment"
+                        >
+                          <CommentModal
+                            post={
+                              eachBookMark?.bookmarkedPost
+                                ? eachBookMark?.bookmarkedPost
+                                : null
+                            }
+                            width={`${1.25}em`}
+                            height={`${1.25}em`}
+                            refreshPosts={fetchBookmarks}
+                            sendDataToParent={handleDataFromCommentModal}
+                            postSharedMessage={postSharedMessage}
+                          />
+                        </div>
+                        <div
+                          style={{
+                            width: "100px",
+                          }}
+                          onClick={() =>
+                            setclickedPostBox(eachBookMark?.bookmarkedPost)
+                          }
+                          className="p-1 next-to-repost"
+                        >
+                          <RepostAction
+                            post={
+                              eachBookMark?.bookmarkedPost
+                                ? eachBookMark?.bookmarkedPost
+                                : null
+                            }
+                            width={`${1.25}em`}
+                            height={`${1.25}em`}
+                            refreshPosts={fetchBookmarks}
+                          />
+                        </div>
+                        <div
+                          style={{
+                            width: "100px",
+                          }}
+                          to={`/${
+                            eachBookMark?.bookmarkedPost?.userId.username
+                          }/status/${
+                            !eachBookMark?.bookmarkedPost?.isReposted
+                              ? eachBookMark?.bookmarkedPost?._id
+                              : eachBookMark?.bookmarkedPost
+                                  ?.repostedFromThisOriginalPost[0]._id
+                          }`}
+                          onClick={() =>
+                            setclickedPostBox(eachBookMark?.bookmarkedPost)
+                          }
+                          className="p-1 next-to-like"
+                        >
+                          <LikeAction
+                            post={
+                              eachBookMark?.bookmarkedPost
+                                ? eachBookMark?.bookmarkedPost
+                                : null
+                            }
+                            width={`${1.25}em`}
+                            height={`${1.25}em`}
+                            refreshPosts={fetchBookmarks}
+                          />
+                        </div>{" "}
+                        <div
+                          style={{
+                            width: "100px",
+                          }}
+                          to={`/${
+                            eachBookMark?.bookmarkedPost?.userId.username
+                          }/status/${
+                            !eachBookMark?.bookmarkedPost?.isReposted
+                              ? eachBookMark?.bookmarkedPost?._id
+                              : eachBookMark?.bookmarkedPost
+                                  ?.repostedFromThisOriginalPost[0]?._id
+                          }`}
+                          onClick={() =>
+                            setclickedPostBox(eachBookMark?.bookmarkedPost)
+                          }
+                          className="p-1 next-to-like"
+                        >
+                          {" "}
+                          <BookmarkAction
+                            post={
+                              eachBookMark?.bookmarkedPost
+                                ? eachBookMark?.bookmarkedPost
+                                : null
+                            }
+                            width={`${1.25}em`}
+                            height={`${1.25}em`}
+                            refreshPosts={fetchBookmarks}
+                            bookmarkDeletedMessage={showCustomMessage}
+                          />
+                        </div>
+                      </Stack>
+                      {/* new version favorite repost comment finish to check */}
+                    </div>
+                    <div
+                      onClick={() => {
+                        console.log(
+                          "Post box child class =>",
+                          eachBookMark?.bookmarkedPost
+                        );
+                        setclickedPostBox(eachBookMark?.bookmarkedPost);
                       }}
-                    >
-                      <div
-                        style={{
-                          width: "100px",
-                        }}
-                        onClick={() =>
-                          setclickedPostBox(eachBookMark?.bookmarkedPost)
-                        }
-                        className="p-1 next-to-comment"
-                      >
-                        <CommentModal
-                          post={
-                            eachBookMark?.bookmarkedPost
-                              ? eachBookMark?.bookmarkedPost
-                              : null
-                          }
-                          width={`${1.25}em`}
-                          height={`${1.25}em`}
-                          refreshPosts={fetchBookmarks}
-                          sendDataToParent={handleDataFromCommentModal}
-                          postSharedMessage={postSharedMessage}
-                        />
-                      </div>
-                      <div
-                        style={{
-                          width: "100px",
-                        }}
-                        onClick={() =>
-                          setclickedPostBox(eachBookMark?.bookmarkedPost)
-                        }
-                        className="p-1 next-to-repost"
-                      >
-                        <RepostAction
-                          post={
-                            eachBookMark?.bookmarkedPost
-                              ? eachBookMark?.bookmarkedPost
-                              : null
-                          }
-                          width={`${1.25}em`}
-                          height={`${1.25}em`}
-                          refreshPosts={fetchBookmarks}
-                        />
-                      </div>
-                      <div
-                        style={{
-                          width: "100px",
-                        }}
-                        to={`/${
-                          eachBookMark?.bookmarkedPost?.userId.username
-                        }/status/${
-                          !eachBookMark?.bookmarkedPost?.isReposted
-                            ? eachBookMark?.bookmarkedPost?._id
-                            : eachBookMark?.bookmarkedPost
-                                ?.repostedFromThisOriginalPost[0]._id
-                        }`}
-                        onClick={() =>
-                          setclickedPostBox(eachBookMark?.bookmarkedPost)
-                        }
-                        className="p-1 next-to-like"
-                      >
-                        <LikeAction
-                          post={
-                            eachBookMark?.bookmarkedPost
-                              ? eachBookMark?.bookmarkedPost
-                              : null
-                          }
-                          width={`${1.25}em`}
-                          height={`${1.25}em`}
-                          refreshPosts={fetchBookmarks}
-                        />
-                      </div>{" "}
-                      <div
-                        style={{
-                          width: "100px",
-                        }}
-                        to={`/${
-                          eachBookMark?.bookmarkedPost?.userId.username
-                        }/status/${
-                          !eachBookMark?.bookmarkedPost?.isReposted
-                            ? eachBookMark?.bookmarkedPost?._id
-                            : eachBookMark?.bookmarkedPost
-                                ?.repostedFromThisOriginalPost[0]?._id
-                        }`}
-                        onClick={() =>
-                          setclickedPostBox(eachBookMark?.bookmarkedPost)
-                        }
-                        className="p-1 next-to-like"
-                      >
-                        {" "}
-                        <BookmarkAction
-                          post={
-                            eachBookMark?.bookmarkedPost
-                              ? eachBookMark?.bookmarkedPost
-                              : null
-                          }
-                          width={`${1.25}em`}
-                          height={`${1.25}em`}
-                          refreshPosts={fetchBookmarks}
-                          bookmarkDeletedMessage={showCustomMessage}
-                        />
-                      </div>
-                    </Stack>
-                    {/* new version favorite repost comment finish to check */}
+                      className="border-extra"
+                      style={{
+                        borderBottom:
+                          themeName !== "dark-theme"
+                            ? "1px solid rgba(0, 0, 0, 0.1)"
+                            : // : "0.1px solid rgb(70, 70, 70)",
+                              "1px solid rgb(70, 70, 70)",
+                      }}
+                    ></div>
                   </div>
-                  <div
-                    onClick={() => {
-                      console.log(
-                        "Post box child class =>",
-                        eachBookMark?.bookmarkedPost
-                      );
-                      setclickedPostBox(eachBookMark?.bookmarkedPost);
-                    }}
-                    className="border-extra"
-                    style={{
-                      borderBottom:
-                        themeName !== "dark-theme"
-                          ? "1px solid rgba(0, 0, 0, 0.1)"
-                          : // : "0.1px solid rgb(70, 70, 70)",
-                            "1px solid rgb(70, 70, 70)",
-                    }}
-                  ></div>
-                </div>
+                )}
               </div>
             ))}
           </>

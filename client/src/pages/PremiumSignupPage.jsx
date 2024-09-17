@@ -1081,7 +1081,6 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                               : null,
                           fontSize: font15.fontSize,
                           lineHeight: font15.lineHeight,
-                          lineHeight: "24px",
                         }}
                       >
                         Monthly

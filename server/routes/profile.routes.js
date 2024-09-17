@@ -10,6 +10,7 @@ router.get(
   authenticateToken,
   profileController.getFollowers
 );
+
 router.get(
   "/:userId/following",
   authenticateToken,

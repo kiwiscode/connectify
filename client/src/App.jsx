@@ -1,6 +1,13 @@
-import { Suspense, lazy, useContext, useEffect, useState } from "react";
+import {
+  Suspense,
+  lazy,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import HomePage from "./pages/HomePage";
-
+// const HomePage = lazy(() => import("./pages/HomePage"));
 const MainPage = lazy(() => import("./pages/MainPage"));
 const UserProfile = lazy(() => import("./pages/UserProfilePage"));
 const SpesificUserProfile = lazy(() => import("./pages/SpesificUserProfile"));
@@ -11,6 +18,9 @@ import "react-toastify/dist/ReactToastify.css";
 const MessagesPage = lazy(() => import("./pages/MessagesPage"));
 const ChatDetailsPage = lazy(() => import("./pages/ChatDetailsPage"));
 const PostDetailPage = lazy(() => import("./pages/PostDetailPage"));
+const FollowingRequestsDetailPage = lazy(() =>
+  import("./pages/FollowingRequests")
+);
 const FollowingDetailPage = lazy(() => import("./pages/FollowingDetail"));
 const FollowerDetailPage = lazy(() => import("./pages/FollowersDetailPage"));
 const DeactivatedPage = lazy(() => import("./pages/DeactivatedPage"));
@@ -221,7 +231,6 @@ const RightSideColumn = lazy(() =>
 );
 
 import { ThemeContext } from "./context/ThemeContext";
-import { UserContext, UserProvider } from "./context/UserContext";
 
 import LoadingSpinner from "./components/ui/LoadingSpinner";
 import { Bounce, ToastContainer, toast } from "react-toastify";
@@ -233,29 +242,24 @@ import io from "socket.io-client";
 const socket = io.connect(`${API_URL}`);
 import { Container, Row } from "react-bootstrap";
 
-import useWindowDimensions from "./hooks/getWindowDimensions";
 import { SubscriptionStatusProvider } from "./context/SubscriptionStatusContext";
+
+// smoothscroll effect gsap
+import gsap from "gsap";
+import ScrollSmoother from "gsap-trial/ScrollSmoother";
+import ScrollTrigger from "gsap-trial/ScrollTrigger";
+import { UserContext } from "./context/UserContext";
+
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
 function App() {
   const location = useLocation();
   const path = location.pathname;
-  const navigate = useNavigate();
 
   console.log("Current path:", path);
 
   const [{ theme, themeName }] = useContext(ThemeContext);
-  const { getToken } = useContext(UserContext);
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-
-  useEffect(() => {
-    const token = getToken();
-
-    if (token) {
-      navigate("/home");
-    } else {
-      navigate("/");
-    }
-  }, [navigate]);
 
   useEffect(() => {
     socket.emit(
@@ -313,15 +317,6 @@ function App() {
     });
   }, [socket]);
 
-  // left side navigation bar props start to check
-
-  // left side navigation bar props finish to check
-  const { width } = useWindowDimensions();
-
-  const writeTheRouteNameForRefreshPosts = (routePath) => {
-    console.log("Route path =>", routePath);
-  };
-
   const [isPostShared, setIsPostShared] = useState(false);
   const handleShareNewPost = () => {
     console.log("Post shared =>", isPostShared);
@@ -368,20 +363,12 @@ function App() {
     openIndividualEligibilityVerifyNumberScreen,
   ]);
 
-  const [planPrice, setPlanPrice] = useState(null);
-  const [planType, setPlanType] = useState(null);
-  const [premiumRole, setPremiumRole] = useState(null);
-  const [premiumType, setPremiumType] = useState(null);
   const [premiumInfo, setPremiumInfo] = useState({});
 
   const handleReceiveBasicIndividualPremiumDetailFromChildPremiumSignUpPage = (
     data
   ) => {
     console.log("Data received about individual subscription detail:", data);
-    setPlanPrice(data.planPrice);
-    setPlanType(data.planType);
-    setPremiumRole(data.premiumRole);
-    setPremiumType(data.premiumType);
 
     setPremiumInfo((prevPremiumInfo) => {
       return {
@@ -394,8 +381,88 @@ function App() {
     });
   };
   console.log("Active theme =>", themeName);
+
+  // for smooth scroll effect for the whole app
+  // useLayoutEffect(() => {
+  //   ScrollSmoother.create({
+  //     smooth: 0.8,
+  //     effects: true,
+  //     smoothTouch: 0.1,
+  //   });
+  // }, []);
+
+  const allowedPaths = [
+    "/home",
+    "/notifications",
+    "/messages",
+    "/i/bookmarks",
+    "/profile",
+    "/profile/:id",
+    "/:postOwner/status/:postId",
+    "/messages/:chatRoomId",
+    "/profile/:userId/requests",
+    "/profile/:userId/following",
+    "/profile/:userId/followers",
+    "/settings",
+    "/settings/account",
+    "/settings/your_twitter_data/account",
+    "/settings/password",
+    "/account/send_password_reset",
+    "/account/confirm_pin_reset",
+    "/account/reset_password",
+    "/account/password_reset_survey",
+    "/account/password_reset_complete",
+    "/settings/deactivate",
+    "/i/flow/verify_account_ownership",
+    "/settings/download-your-data",
+    "/settings/screen_name",
+    "/settings/phone",
+    "/i/flow/add_phone",
+    "/settings/email",
+    "/settings/languages",
+    "/settings/your_twitter_data/language",
+    "/i/flow/language_selector",
+    "/settings/language",
+    "/i/flow/add_email",
+    "/settings/your_twitter_data/age",
+    "/settings/account/automation",
+    "/i/flow/enable_automated_account",
+    "/settings/your_twitter_data/gender",
+    "/settings/country",
+    "/settings/audience_and_tagging",
+    "/settings/tagging",
+    "/settings/monetization",
+    "/settings/superfollows/application/eligibility",
+    "/settings/ad_rev_share_eligibility",
+    "/i/verified-choose",
+    "/settings/manage_subscriptions",
+    "/billing/stripe/subscription",
+    "/settings/security_and_account_access",
+    "/settings/security",
+    "/settings/privacy_and_safety",
+    "/settings/notifications",
+    "/settings/accessibility_display_and_languages",
+    "/settings/display",
+    "/settings/about",
+    "/help_connectify",
+  ];
   return (
     <>
+      <div
+        style={{
+          position: "fixed",
+          left: 0,
+          right: 0,
+          bottom: 0,
+          top: 0,
+          width: "100%",
+          height: "100dvh",
+          backgroundColor: path.startsWith("/billing")
+            ? ""
+            : theme.backgroundColor,
+          zIndex: -1,
+        }}
+      ></div>
       <SubscriptionStatusProvider>
         {((path.startsWith("/notifications") &&
           notificationType === "message") ||
@@ -408,6 +475,7 @@ function App() {
         )}
 
         <div
+          // id="smooth-content"
           className={
             themeName === "dark-theme"
               ? "dark-theme"
@@ -420,15 +488,11 @@ function App() {
             backgroundColor: path.startsWith("/billing")
               ? ""
               : theme.backgroundColor,
-            height: "100%",
-            width: "100%",
             overflow: path.startsWith("/messages/") ? "hidden" : "",
           }}
         >
-          {/* test for one time component leftsidenavbar start to check  */}
           <Container
             style={{
-              minHeight: "100vh",
               minHeight: "100dvh",
             }}
             fluid
@@ -446,7 +510,16 @@ function App() {
                 path !== "/i/premium_sign_up" &&
                 path !== "/help_connectify" &&
                 !path.startsWith("/account") &&
-                path !== "/billing/stripe/subscription" && (
+                path !== "/billing/stripe/subscription" &&
+                path !== "/explore" &&
+                !path.endsWith("/communities/explore") &&
+                path !== "/settings/apps_and_sessions" &&
+                path !== "/settings/connected_accounts" &&
+                path !== "/settings/delegate" &&
+                path !== "/jobs" &&
+                path !== "/help/connectify" &&
+                path !== `/${userInfo.username}/lists` &&
+                path !== "/i/spaces/start" && (
                   <LeftSideNavBar
                     refreshPosts={handleShareNewPost}
                     setIsPostShared={handlePostSharingIsDone}
@@ -496,6 +569,10 @@ function App() {
                     element={<ChatDetailsPage />}
                   ></Route>
 
+                  <Route
+                    path="/profile/:userId/requests"
+                    element={<FollowingRequestsDetailPage />}
+                  ></Route>
                   <Route
                     path="/profile/:userId/following"
                     element={<FollowingDetailPage />}
@@ -699,7 +776,13 @@ function App() {
                 path !== "/i/flow/language_selector" &&
                 path !== "/i/flow/add_email" &&
                 path !== "/i/flow/enable_automated_account" &&
-                path !== "/billing/stripe/subscription" && (
+                path !== "/billing/stripe/subscription" &&
+                path !== "/explore" &&
+                !path.endsWith("/communities/explore") &&
+                path !== "/jobs" &&
+                path !== "/help/connectify" &&
+                path !== `/${userInfo.username}/lists` &&
+                path !== "/i/spaces/start" && (
                   <RightSideColumn
                     isVerifiedOrgsSignUpRoute={
                       openVerifiedOrganizationSubscriptionTypedModal
@@ -712,12 +795,10 @@ function App() {
                 )}
             </Row>
           </Container>
-          {/* test for one time component leftsidenavbar finish to check  */}
         </div>
       </SubscriptionStatusProvider>
     </>
   );
 }
-// &&
-//                 path !== "/i/flow/subscription_eligibility_check"
+
 export default App;

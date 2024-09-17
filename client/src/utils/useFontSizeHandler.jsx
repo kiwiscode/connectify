@@ -1,4 +1,3 @@
-// src/utils/useFontSizeHandler.jsx
 import { useContext } from "react";
 import { FontSizeContext } from "../context/FontSizeContext";
 
@@ -27,7 +26,6 @@ export const useFontSizeHandler = () => {
       lineHeight: lineHeights[fontSize] || "84px",
     };
   };
-
   const getFontSizeAndLineHeight36 = () => {
     const fontSizes = {
       Default: "36px",
@@ -204,7 +202,6 @@ export const useFontSizeHandler = () => {
       lineHeight: lineHeights[fontSize] || "20px",
     };
   };
-
   const getFontSizeAndLineHeight15 = () => {
     const fontSizes = {
       Default: "15px",

@@ -148,6 +148,12 @@ function FollowerDetailPage() {
   const handleLeave = () => {
     setHoveredTab(null);
   };
+
+  const handleShowRequests = () => {
+    setActiveTab("requests");
+    navigate(`/profile/${followersofthemonitoreduser._id}/requests`);
+  };
+
   const handleShowFollowers = () => {
     setActiveTab("followers");
     navigate(`/profile/${followersofthemonitoreduser._id}/followers`);
@@ -175,6 +181,33 @@ function FollowerDetailPage() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [headerPosition]);
+
+  const [requests, setRequests] = useState([]);
+
+  const getReceivedFollowRequests = async () => {
+    try {
+      const result = await axios.get(
+        `${API_URL}/users/${userInfo._id}/received-follow-requests`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      console.log("received follow requests:", result);
+      setRequests(result.data.receivedFollowRequests);
+    } catch (error) {
+      console.error("error:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (userInfo._id) {
+      getReceivedFollowRequests();
+    }
+  }, []);
+
   return (
     <>
       {!isPostModalVisible && <ResponsiveNavigationBarBottom />}
@@ -324,6 +357,99 @@ function FollowerDetailPage() {
                   </div>
                 </div>
                 <div style={{ display: "flex" }}>
+                  {requests?.length ? (
+                    <div
+                      className={
+                        themeName === "dark-theme"
+                          ? "hover-effect-dark-theme-pointer-plus chirp-bold-font"
+                          : themeName !== "dark-theme"
+                          ? "hover-effect-light-theme-pointer-plus"
+                          : null
+                      }
+                      onMouseEnter={() => handleHover("requests")}
+                      onMouseLeave={handleLeave}
+                      onClick={handleShowRequests}
+                      style={{
+                        color:
+                          activeTab === "requests" && themeName !== "dark-theme"
+                            ? "#0f141a"
+                            : activeTab === "requests" &&
+                              themeName === "dark-theme"
+                            ? "#e6e9ea"
+                            : themeName === "dark-theme"
+                            ? "#71767A"
+                            : "#526371",
+                        fontWeight: activeTab === "requests" ? "700" : "500",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
+                        cursor: "pointer",
+                        flex: 1,
+                        textAlign: "center",
+                        transition: "background 0.3s",
+                        maxHeight: "inherit",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "inline-flex",
+                          padding: "16px 0px 16px 0px",
+                          flexDirection: "column",
+                          position: "relative",
+                        }}
+                      >
+                        <span
+                          className={
+                            themeName === "dark-theme" &&
+                            activeTab === "requests"
+                              ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                              : themeName !== "dark-theme" &&
+                                activeTab === "requests"
+                              ? "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                              : themeName === "dark-theme" &&
+                                activeTab !== "requests"
+                              ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                              : themeName !== "dark-theme" &&
+                                activeTab !== "requests"
+                              ? "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                              : null
+                          }
+                        >
+                          Requests
+                        </span>
+                        <div
+                          style={{
+                            fontSize: "9px",
+                            position: "absolute",
+                            right: -20,
+                            top: 12,
+                            width: "18px",
+                            height: "18px",
+                            backgroundColor: "#1C9BEF",
+                            borderRadius: "50%",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            color: "white",
+                          }}
+                        >
+                          <span>{requests.length}</span>
+                        </div>
+                        {activeTab === "requests" && (
+                          <div
+                            style={{
+                              backgroundColor: "rgb(29, 155, 240)",
+                              height: "4px",
+                              width: "100%",
+                              minWidth: "52px",
+                              position: "absolute",
+                              bottom: "0px",
+                              borderRadius: "9999px",
+                            }}
+                          ></div>
+                        )}
+                      </div>
+                    </div>
+                  ) : null}
                   <div
                     className={
                       themeName === "dark-theme"
@@ -399,7 +525,6 @@ function FollowerDetailPage() {
                       )}
                     </div>
                   </div>
-
                   <div
                     className={
                       themeName === "dark-theme"
@@ -565,6 +690,99 @@ function FollowerDetailPage() {
                   </div>{" "}
                 </div>
                 <div style={{ display: "flex" }}>
+                  {requests?.length ? (
+                    <div
+                      className={
+                        themeName === "dark-theme"
+                          ? "hover-effect-dark-theme-pointer-plus chirp-bold-font"
+                          : themeName !== "dark-theme"
+                          ? "hover-effect-light-theme-pointer-plus"
+                          : null
+                      }
+                      onMouseEnter={() => handleHover("requests")}
+                      onMouseLeave={handleLeave}
+                      onClick={handleShowRequests}
+                      style={{
+                        color:
+                          activeTab === "requests" && themeName !== "dark-theme"
+                            ? "#0f141a"
+                            : activeTab === "requests" &&
+                              themeName === "dark-theme"
+                            ? "#e6e9ea"
+                            : themeName === "dark-theme"
+                            ? "#71767A"
+                            : "#526371",
+                        fontWeight: activeTab === "requests" ? "700" : "500",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
+                        cursor: "pointer",
+                        flex: 1,
+                        textAlign: "center",
+                        transition: "background 0.3s",
+                        maxHeight: "inherit",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "inline-flex",
+                          padding: "16px 0px 16px 0px",
+                          flexDirection: "column",
+                          position: "relative",
+                        }}
+                      >
+                        <span
+                          className={
+                            themeName === "dark-theme" &&
+                            activeTab === "requests"
+                              ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                              : themeName !== "dark-theme" &&
+                                activeTab === "requests"
+                              ? "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                              : themeName === "dark-theme" &&
+                                activeTab !== "requests"
+                              ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                              : themeName !== "dark-theme" &&
+                                activeTab !== "requests"
+                              ? "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                              : null
+                          }
+                        >
+                          Requests
+                        </span>
+                        <div
+                          style={{
+                            fontSize: "9px",
+                            position: "absolute",
+                            right: -20,
+                            top: 12,
+                            width: "18px",
+                            height: "18px",
+                            backgroundColor: "#1C9BEF",
+                            borderRadius: "50%",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            color: "white",
+                          }}
+                        >
+                          <span>{requests.length}</span>
+                        </div>
+                        {activeTab === "requests" && (
+                          <div
+                            style={{
+                              backgroundColor: "rgb(29, 155, 240)",
+                              height: "4px",
+                              width: "100%",
+                              minWidth: "52px",
+                              position: "absolute",
+                              bottom: "0px",
+                              borderRadius: "9999px",
+                            }}
+                          ></div>
+                        )}
+                      </div>
+                    </div>
+                  ) : null}
                   <div
                     className={
                       themeName === "dark-theme"
@@ -638,7 +856,6 @@ function FollowerDetailPage() {
                       )}
                     </div>
                   </div>
-
                   <div
                     className={
                       themeName === "dark-theme"
@@ -965,35 +1182,33 @@ function FollowerDetailPage() {
                               </span>
                             </Link>
 
-                            {user._id !== userInfo._id ? (
-                              <span
-                                className="chirp-medium-font"
-                                style={{
-                                  position: "absolute",
-                                  textAlign: "center",
-                                  top: "3px",
-                                  marginLeft: "4px",
-                                  fontSize: font11.fontSize,
-                                  lineHeight: font11.lineHeight,
-                                  wordWrap: "break-word",
-                                  whiteSpace: "nowrap",
-                                  color:
-                                    themeName === "dark-theme"
-                                      ? "#71767A"
-                                      : "rgb(83, 100, 113)",
-                                  backgroundColor:
-                                    themeName === "dark-theme"
-                                      ? "#202327"
-                                      : "rgba(239,243,244,1.00)",
-                                  borderRadius: "3px",
-                                  padding: "4px",
-                                  overflowX: "hidden",
-                                  overflowY: "hidden",
-                                }}
-                              >
-                                Follows you
-                              </span>
-                            ) : null}
+                            <span
+                              className="chirp-medium-font"
+                              style={{
+                                position: "absolute",
+                                textAlign: "center",
+                                top: "3px",
+                                marginLeft: "4px",
+                                fontSize: font11.fontSize,
+                                lineHeight: font11.lineHeight,
+                                wordWrap: "break-word",
+                                whiteSpace: "nowrap",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#71767A"
+                                    : "rgb(83, 100, 113)",
+                                backgroundColor:
+                                  themeName === "dark-theme"
+                                    ? "#202327"
+                                    : "rgba(239,243,244,1.00)",
+                                borderRadius: "3px",
+                                padding: "4px",
+                                overflowX: "hidden",
+                                overflowY: "hidden",
+                              }}
+                            >
+                              Follows you
+                            </span>
                           </div>
                         </div>
                         {/* Verified Account Icon (Assuming 'verified' is a boolean property) */}

@@ -15,7 +15,7 @@ import useWindowDimensions from "../hooks/getWindowDimensions";
 import { SubcsriptionStatusContext } from "../context/SubscriptionStatusContext";
 import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 
-function FollowingDetailPage() {
+function FollowingRequests() {
   const { userId } = useParams();
   const {
     getFontSizeAndLineHeight31,
@@ -30,63 +30,25 @@ function FollowingDetailPage() {
   const font17 = getFontSizeAndLineHeight17();
   const font15 = getFontSizeAndLineHeight15();
   const font13 = getFontSizeAndLineHeight13();
-  const font11 = getFontSizeAndLineHeight11();
   const navigate = useNavigate();
 
   const { getToken, userInfo } = useContext(UserContext);
 
-  const [following, setFollowing] = useState([]);
+  const [requests, setRequests] = useState([]);
 
   const [isHovered, setIsHovered] = useState(false);
   const [showUnfollowModal, setshowUnfollowModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState("");
 
-  // start to check shared post view message
-
-  // finish to check shared post view message
   const {
     subscription,
     remainingTimeSubscriptions,
     remainingTimeSubscriptionsOwnerIds,
   } = useContext(SubcsriptionStatusContext);
-  const [activeUserFollowing, setactiveUserFollowing] = useState([]);
-  const [activeUserFollowers, setactiveUserFollowers] = useState([]);
-
-  const [clicked, setClicked] = useState(false);
-  const getActiveUser = () => {
-    axios
-      .get(`${API_URL}/profile`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        setactiveUserFollowing(response.data.user.following);
-        setactiveUserFollowers(response.data.user.followers);
-      })
-      .catch((error) => {
-        console.log("Error =>", error);
-      });
-  };
-
-  const checkActiveUserFollowingIds = () => {
-    return activeUserFollowing.map((eachFollowerUser) => {
-      return eachFollowerUser._id;
-    });
-  };
-
-  const checkActiveUserFollowerIds = () => {
-    return activeUserFollowers.map((eachFollowerUser) => {
-      return eachFollowerUser._id;
-    });
-  };
 
   useEffect(() => {
-    getActiveUser();
-  }, [clicked]);
-
-  useEffect(() => {
-    getFollowing();
+    if (userInfo._id) {
+      getReceivedFollowRequests();
+    }
   }, []);
 
   const handleGoBack = () => {
@@ -94,31 +56,29 @@ function FollowingDetailPage() {
   };
   const [activeTab, setActiveTab] = useState("");
 
-  const openUnfollowModal = (selectedUser) => {
-    setSelectedUser(selectedUser);
-    setIsHovered(false);
-    setshowUnfollowModal(true);
-  };
-
   const handleClose = () => setshowUnfollowModal(false);
 
-  const [followingofthemonitoreduser, setfollowingofthemonitoreduser] =
-    useState([]);
-  const getFollowing = () => {
-    axios
-      .get(`${API_URL}/profile/${userId}/following`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        setfollowingofthemonitoreduser(response.data.user);
-        setActiveTab("following");
-        setFollowing(response.data.following);
-      })
-      .catch((error) => {
-        console.log("Error =>", error);
-      });
+  const [requestsOfthemonitoreduser, setRequestsOfthemonitoreduser] = useState(
+    []
+  );
+  const getReceivedFollowRequests = async () => {
+    try {
+      const result = await axios.get(
+        `${API_URL}/users/${userInfo._id}/received-follow-requests`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      console.log("received follow requests:", result);
+      setRequestsOfthemonitoreduser(result.data);
+      setActiveTab("requests");
+      setRequests(result.data.receivedFollowRequests);
+    } catch (error) {
+      console.error("error:", error);
+    }
   };
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -134,17 +94,7 @@ function FollowingDetailPage() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-  const handleFollowingNotification = (selectedUser, userInfo, type) => {
-    console.log("Sending notification to => ", selectedUser.username);
 
-    socket.emit("sendNotification", {
-      senderName: userInfo.username,
-      receiverName: selectedUser.username,
-      type: type,
-      contactHasBeenMade: userInfo,
-      senderInfo: userInfo,
-    });
-  };
   const [
     { theme, themeName },
     lightModeActive,
@@ -190,43 +140,18 @@ function FollowingDetailPage() {
 
   const handleShowRequests = () => {
     setActiveTab("requests");
-    navigate(`/profile/${followingofthemonitoreduser._id}/requests`);
+    navigate(`/profile/${requestsOfthemonitoreduser._id}/requests`);
   };
 
   const handleShowFollowers = () => {
     setActiveTab("followers");
-    navigate(`/profile/${followingofthemonitoreduser._id}/followers`);
+    navigate(`/profile/${requestsOfthemonitoreduser._id}/followers`);
   };
 
   const handleShowFollowing = () => {
     setActiveTab("following");
-    navigate(`/profile/${followingofthemonitoreduser._id}/following`);
+    navigate(`/profile/${requestsOfthemonitoreduser._id}/following`);
   };
-
-  const [requests, setRequests] = useState([]);
-  const getReceivedFollowRequests = async () => {
-    try {
-      const result = await axios.get(
-        `${API_URL}/users/${userInfo._id}/received-follow-requests`,
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      );
-
-      console.log("received follow requests:", result);
-      setRequests(result.data.receivedFollowRequests);
-    } catch (error) {
-      console.error("error:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (userInfo._id) {
-      getReceivedFollowRequests();
-    }
-  }, []);
 
   return (
     <>
@@ -359,7 +284,7 @@ function FollowingDetailPage() {
                         lineHeight: font17.lineHeight,
                       }}
                     >
-                      {followingofthemonitoreduser.fullname}
+                      {requestsOfthemonitoreduser.fullname}
                     </div>
                     <div
                       className={
@@ -372,70 +297,69 @@ function FollowingDetailPage() {
                         lineHeight: font13.lineHeight,
                       }}
                     >
-                      @{followingofthemonitoreduser.username}
+                      @{requestsOfthemonitoreduser.username}
                     </div>
                   </div>
                 </div>
                 <div style={{ display: "flex" }}>
-                  {requests?.length ? (
+                  <div
+                    className={
+                      themeName === "dark-theme"
+                        ? "hover-effect-dark-theme-pointer-plus chirp-bold-font"
+                        : themeName !== "dark-theme"
+                        ? "hover-effect-light-theme-pointer-plus"
+                        : null
+                    }
+                    onMouseEnter={() => handleHover("requests")}
+                    onMouseLeave={handleLeave}
+                    onClick={handleShowRequests}
+                    style={{
+                      color:
+                        activeTab === "requests" && themeName !== "dark-theme"
+                          ? "#0f141a"
+                          : activeTab === "requests" &&
+                            themeName === "dark-theme"
+                          ? "#e6e9ea"
+                          : themeName === "dark-theme"
+                          ? "#71767A"
+                          : "#526371",
+                      fontWeight: activeTab === "requests" ? "700" : "500",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
+                      cursor: "pointer",
+                      flex: 1,
+                      textAlign: "center",
+                      transition: "background 0.3s",
+                      maxHeight: "inherit",
+                    }}
+                  >
                     <div
-                      className={
-                        themeName === "dark-theme"
-                          ? "hover-effect-dark-theme-pointer-plus chirp-bold-font"
-                          : themeName !== "dark-theme"
-                          ? "hover-effect-light-theme-pointer-plus"
-                          : null
-                      }
-                      onMouseEnter={() => handleHover("requests")}
-                      onMouseLeave={handleLeave}
-                      onClick={handleShowRequests}
                       style={{
-                        color:
-                          activeTab === "requests" && themeName !== "dark-theme"
-                            ? "#0f141a"
-                            : activeTab === "requests" &&
-                              themeName === "dark-theme"
-                            ? "#e6e9ea"
-                            : themeName === "dark-theme"
-                            ? "#71767A"
-                            : "#526371",
-                        fontWeight: activeTab === "requests" ? "700" : "500",
-                        fontSize: font15.fontSize,
-                        lineHeight: font15.lineHeight,
-                        cursor: "pointer",
-                        flex: 1,
-                        textAlign: "center",
-                        transition: "background 0.3s",
-                        maxHeight: "inherit",
+                        display: "inline-flex",
+                        padding: "16px 0px 16px 0px",
+                        flexDirection: "column",
+                        position: "relative",
                       }}
                     >
-                      <div
-                        style={{
-                          display: "inline-flex",
-                          padding: "16px 0px 16px 0px",
-                          flexDirection: "column",
-                          position: "relative",
-                        }}
+                      <span
+                        className={
+                          themeName === "dark-theme" && activeTab === "requests"
+                            ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                            : themeName !== "dark-theme" &&
+                              activeTab === "requests"
+                            ? "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                            : themeName === "dark-theme" &&
+                              activeTab !== "requests"
+                            ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                            : themeName !== "dark-theme" &&
+                              activeTab !== "requests"
+                            ? "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                            : null
+                        }
                       >
-                        <span
-                          className={
-                            themeName === "dark-theme" &&
-                            activeTab === "requests"
-                              ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
-                              : themeName !== "dark-theme" &&
-                                activeTab === "requests"
-                              ? "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
-                              : themeName === "dark-theme" &&
-                                activeTab !== "requests"
-                              ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
-                              : themeName !== "dark-theme" &&
-                                activeTab !== "requests"
-                              ? "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
-                              : null
-                          }
-                        >
-                          Requests
-                        </span>
+                        Requests
+                      </span>
+                      {requests.length ? (
                         <div
                           style={{
                             fontSize: "9px",
@@ -454,22 +378,22 @@ function FollowingDetailPage() {
                         >
                           <span>{requests.length}</span>
                         </div>
-                        {activeTab === "requests" && (
-                          <div
-                            style={{
-                              backgroundColor: "rgb(29, 155, 240)",
-                              height: "4px",
-                              width: "100%",
-                              minWidth: "52px",
-                              position: "absolute",
-                              bottom: "0px",
-                              borderRadius: "9999px",
-                            }}
-                          ></div>
-                        )}
-                      </div>
+                      ) : null}
+                      {activeTab === "requests" && (
+                        <div
+                          style={{
+                            backgroundColor: "rgb(29, 155, 240)",
+                            height: "4px",
+                            width: "100%",
+                            minWidth: "52px",
+                            position: "absolute",
+                            bottom: "0px",
+                            borderRadius: "9999px",
+                          }}
+                        ></div>
+                      )}
                     </div>
-                  ) : null}
+                  </div>
                   <div
                     className={
                       themeName === "dark-theme"
@@ -548,9 +472,9 @@ function FollowingDetailPage() {
                   <div
                     className={
                       themeName === "dark-theme"
-                        ? "hover-effect-dark-theme-pointer-plus "
+                        ? "hover-effect-dark-theme-pointer-plus"
                         : themeName !== "dark-theme"
-                        ? "hover-effect-light-theme-pointer-plus "
+                        ? "hover-effect-light-theme-pointer-plus"
                         : null
                     }
                     onMouseEnter={() => handleHover("following")}
@@ -639,7 +563,6 @@ function FollowingDetailPage() {
                 >
                   <div
                     onClick={handleGoBack}
-                    // className="p-2 arrow"
                     className={`p-2 arrow arrow-${themeName}`}
                     style={{
                       width: "36px",
@@ -690,7 +613,7 @@ function FollowingDetailPage() {
                           fontSize: width <= 500 ? "17px" : "20px",
                         }}
                       >
-                        {followingofthemonitoreduser.fullname}
+                        {requestsOfthemonitoreduser.fullname}
                       </div>
                     </div>
 
@@ -705,70 +628,69 @@ function FollowingDetailPage() {
                       }}
                       className="profile-paragraph chirp-regular-font"
                     >
-                      @{followingofthemonitoreduser.username}
+                      @{requestsOfthemonitoreduser.username}
                     </div>
                   </div>{" "}
                 </div>
                 <div style={{ display: "flex" }}>
-                  {requests?.length ? (
+                  <div
+                    className={
+                      themeName === "dark-theme"
+                        ? "hover-effect-dark-theme-pointer-plus chirp-bold-font"
+                        : themeName !== "dark-theme"
+                        ? "hover-effect-light-theme-pointer-plus"
+                        : null
+                    }
+                    onMouseEnter={() => handleHover("requests")}
+                    onMouseLeave={handleLeave}
+                    onClick={handleShowRequests}
+                    style={{
+                      color:
+                        activeTab === "requests" && themeName !== "dark-theme"
+                          ? "#0f141a"
+                          : activeTab === "requests" &&
+                            themeName === "dark-theme"
+                          ? "#e6e9ea"
+                          : themeName === "dark-theme"
+                          ? "#71767A"
+                          : "#526371",
+                      fontWeight: activeTab === "requests" ? "700" : "500",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
+                      cursor: "pointer",
+                      flex: 1,
+                      textAlign: "center",
+                      transition: "background 0.3s",
+                      maxHeight: "inherit",
+                    }}
+                  >
                     <div
-                      className={
-                        themeName === "dark-theme"
-                          ? "hover-effect-dark-theme-pointer-plus chirp-bold-font"
-                          : themeName !== "dark-theme"
-                          ? "hover-effect-light-theme-pointer-plus"
-                          : null
-                      }
-                      onMouseEnter={() => handleHover("requests")}
-                      onMouseLeave={handleLeave}
-                      onClick={handleShowRequests}
                       style={{
-                        color:
-                          activeTab === "requests" && themeName !== "dark-theme"
-                            ? "#0f141a"
-                            : activeTab === "requests" &&
-                              themeName === "dark-theme"
-                            ? "#e6e9ea"
-                            : themeName === "dark-theme"
-                            ? "#71767A"
-                            : "#526371",
-                        fontWeight: activeTab === "requests" ? "700" : "500",
-                        fontSize: font15.fontSize,
-                        lineHeight: font15.lineHeight,
-                        cursor: "pointer",
-                        flex: 1,
-                        textAlign: "center",
-                        transition: "background 0.3s",
-                        maxHeight: "inherit",
+                        display: "inline-flex",
+                        padding: "16px 0px 16px 0px",
+                        flexDirection: "column",
+                        position: "relative",
                       }}
                     >
-                      <div
-                        style={{
-                          display: "inline-flex",
-                          padding: "16px 0px 16px 0px",
-                          flexDirection: "column",
-                          position: "relative",
-                        }}
+                      <span
+                        className={
+                          themeName === "dark-theme" && activeTab === "requests"
+                            ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                            : themeName !== "dark-theme" &&
+                              activeTab === "requests"
+                            ? "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                            : themeName === "dark-theme" &&
+                              activeTab !== "requests"
+                            ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                            : themeName !== "dark-theme" &&
+                              activeTab !== "requests"
+                            ? "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                            : null
+                        }
                       >
-                        <span
-                          className={
-                            themeName === "dark-theme" &&
-                            activeTab === "requests"
-                              ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
-                              : themeName !== "dark-theme" &&
-                                activeTab === "requests"
-                              ? "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
-                              : themeName === "dark-theme" &&
-                                activeTab !== "requests"
-                              ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
-                              : themeName !== "dark-theme" &&
-                                activeTab !== "requests"
-                              ? "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
-                              : null
-                          }
-                        >
-                          Requests
-                        </span>
+                        <span>Requests</span>
+                      </span>
+                      {requests.length ? (
                         <div
                           style={{
                             fontSize: "9px",
@@ -787,22 +709,22 @@ function FollowingDetailPage() {
                         >
                           <span>{requests.length}</span>
                         </div>
-                        {activeTab === "requests" && (
-                          <div
-                            style={{
-                              backgroundColor: "rgb(29, 155, 240)",
-                              height: "4px",
-                              width: "100%",
-                              minWidth: "52px",
-                              position: "absolute",
-                              bottom: "0px",
-                              borderRadius: "9999px",
-                            }}
-                          ></div>
-                        )}
-                      </div>
+                      ) : null}
+                      {activeTab === "requests" && (
+                        <div
+                          style={{
+                            backgroundColor: "rgb(29, 155, 240)",
+                            height: "4px",
+                            width: "100%",
+                            minWidth: "52px",
+                            position: "absolute",
+                            bottom: "0px",
+                            borderRadius: "9999px",
+                          }}
+                        ></div>
+                      )}
                     </div>
-                  ) : null}
+                  </div>
                   <div
                     className={
                       themeName === "dark-theme"
@@ -969,69 +891,9 @@ function FollowingDetailPage() {
             padding: "0px 12px",
           }}
         >
-          {following && following.length ? (
-            following.map((user, index) => {
+          {requests && requests.length ? (
+            requests.map((request, index) => {
               const buttonId = `followButton_${index}`;
-
-              const isFollowing = checkActiveUserFollowingIds().includes(
-                user._id
-              );
-              const isFollower = checkActiveUserFollowerIds().includes(
-                user._id
-              );
-
-              const handleFollow = (selectedUser) => {
-                axios
-                  .post(
-                    `${API_URL}/follow`,
-                    {
-                      activeUserId: userInfo._id,
-                      theFollowedUserID: user._id,
-                    },
-                    {
-                      headers: {
-                        Authorization: `Bearer ${getToken()}`,
-                      },
-                    }
-                  )
-                  .then(() => {
-                    setClicked(!clicked);
-                    handleFollowingNotification(
-                      selectedUser,
-                      userInfo,
-                      "followed"
-                    );
-                    setIsHovered(false);
-                    getFollowing();
-                  })
-                  .catch((error) => {
-                    console.log(error);
-                  });
-              };
-
-              const handleUnfollow = (selectedUser) => {
-                axios
-                  .post(
-                    `${API_URL}/unfollow
-                      `,
-                    {
-                      activeUserId: userInfo._id,
-                      theUnfollowedUserID: selectedUser._id,
-                    },
-                    {
-                      headers: {
-                        Authorization: `Bearer ${getToken()}`,
-                      },
-                    }
-                  )
-                  .then(() => {
-                    setClicked(!clicked);
-                    handleClose();
-                  })
-                  .catch((error) => {
-                    console.log("Error =>", error);
-                  });
-              };
 
               const handleMouseEnter = () => {
                 setIsHovered(buttonId);
@@ -1041,62 +903,42 @@ function FollowingDetailPage() {
                 setIsHovered(false);
               };
 
-              const buttonStyles = {
-                cursor: "pointer",
-                textAlign: "center",
-                border:
-                  isHovered === buttonId &&
-                  isFollowing &&
-                  themeName !== "dark-theme"
-                    ? "1px solid rgba(253,201,206,255)"
-                    : isHovered === buttonId &&
-                      isFollowing &&
-                      themeName === "dark-theme"
-                    ? "1px solid #e71f2c"
-                    : isFollowing && themeName !== "dark-theme"
-                    ? "1px solid rgba(0, 0, 0, 0.1)"
-                    : "1px solid rgb(70, 70, 70)",
-                borderRadius: "9999px",
-                transitionDuration: "0.2s",
-                backgroundColor:
-                  !isFollowing &&
-                  themeName === "dark-theme" &&
-                  isHovered !== buttonId
-                    ? "white"
-                    : !isFollowing &&
-                      themeName === "dark-theme" &&
-                      isHovered === buttonId
-                    ? "#d7dbdc"
-                    : isHovered === buttonId &&
-                      isFollowing &&
-                      themeName !== "dark-theme"
-                    ? "rgba(255,234,235,255)"
-                    : isHovered === buttonId &&
-                      isFollowing &&
-                      themeName === "dark-theme"
-                    ? "#230608"
-                    : isFollowing && themeName === "dark-theme"
-                    ? "black"
-                    : isFollowing && themeName !== "dark-theme"
-                    ? "white"
-                    : !isFollowing &&
-                      themeName !== "dark-theme" &&
-                      isHovered === buttonId
-                    ? "#272c30"
-                    : "black",
-                color:
-                  !isFollowing && themeName === "dark-theme"
-                    ? "black"
-                    : isHovered === buttonId && isFollowing
-                    ? "rgba(244,34,45,255)"
-                    : isFollowing && themeName !== "dark-theme"
-                    ? "black"
-                    : "white",
+              const handleRejectRequest = async (requestId) => {
+                try {
+                  await axios.post(
+                    `${API_URL}/users/${userInfo._id}/reject-follow-request/${requestId}`,
+                    {},
+                    {
+                      headers: {
+                        Authorization: `Bearer ${getToken()}`,
+                      },
+                    }
+                  );
+                  getReceivedFollowRequests();
+                } catch (error) {
+                  console.error("error:", error);
+                }
+              };
+              const handleAcceptRequest = async (requestId) => {
+                try {
+                  await axios.post(
+                    `${API_URL}/users/${userInfo._id}/accept-follow-request/${requestId}`,
+                    {},
+                    {
+                      headers: {
+                        Authorization: `Bearer ${getToken()}`,
+                      },
+                    }
+                  );
+                  getReceivedFollowRequests();
+                } catch (error) {
+                  console.error("error:", error);
+                }
               };
 
               return (
-                <div key={user._id} className="following-user">
-                  {user.isDeactivated ? null : (
+                <div key={request.requester._id} className="following-user">
+                  {request.requester.isDeactivated ? null : (
                     <>
                       <Stack
                         style={{
@@ -1105,11 +947,11 @@ function FollowingDetailPage() {
                         }}
                         direction="horizontal"
                       >
-                        {user.imageUrl.slice(0, 3) !== "../" ? (
-                          <Link to={`/profile/${user._id}`}>
+                        {request.requester.imageUrl.slice(0, 3) !== "../" ? (
+                          <Link to={`/profile/${request.requester._id}`}>
                             <img
-                              src={user.imageUrl}
-                              alt={`${user.fullname}'s profile`}
+                              src={request.requester.imageUrl}
+                              alt={`${request.requester.fullname}'s profile`}
                               width={40}
                               height={40}
                               className="profile-image"
@@ -1120,7 +962,7 @@ function FollowingDetailPage() {
                           </Link>
                         ) : (
                           <div>
-                            <Link to={`/profile/${user._id}`}>
+                            <Link to={`/profile/${request.requester._id}`}>
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="40"
@@ -1154,7 +996,7 @@ function FollowingDetailPage() {
                             className="fullname chirp-bold-font"
                           >
                             <Link
-                              to={`/profile/${user._id}`}
+                              to={`/profile/${request.requester._id}`}
                               className="hover-fullname"
                               style={{
                                 textDecoration: "none",
@@ -1176,7 +1018,7 @@ function FollowingDetailPage() {
                                   display: "initial",
                                 }}
                               >
-                                {user.fullname}
+                                {request.requester.fullname}
                               </div>
                             </Link>
                           </div>
@@ -1195,7 +1037,7 @@ function FollowingDetailPage() {
                               style={{
                                 textDecoration: "none",
                               }}
-                              to={`/profile/${user._id}`}
+                              to={`/profile/${request.requester._id}`}
                             >
                               <span
                                 className="chirp-regular-font"
@@ -1209,48 +1051,19 @@ function FollowingDetailPage() {
                                   position: "relative",
                                 }}
                               >
-                                @{user.username}
+                                @{request.requester.username}
                               </span>
                             </Link>
-                            {isFollower ? (
-                              <span
-                                className="chirp-medium-font"
-                                style={{
-                                  position: "absolute",
-                                  textAlign: "center",
-                                  top: "3px",
-                                  marginLeft: "4px",
-                                  fontSize: font11.fontSize,
-                                  lineHeight: font11.lineHeight,
-                                  wordWrap: "break-word",
-                                  whiteSpace: "nowrap",
-                                  color:
-                                    themeName === "dark-theme"
-                                      ? "#71767A"
-                                      : "rgb(83, 100, 113)",
-                                  backgroundColor:
-                                    themeName === "dark-theme"
-                                      ? "#202327"
-                                      : "rgba(239,243,244,1.00)",
-                                  borderRadius: "3px",
-                                  padding: "4px",
-                                  overflowX: "hidden",
-                                  overflowY: "hidden",
-                                }}
-                              >
-                                Follows you
-                              </span>
-                            ) : null}
                           </div>
                         </div>
                         {/* Verified Account Icon (Assuming 'verified' is a boolean property) start to check */}
-                        {user?.hasSubscription ||
+                        {request.requester?.hasSubscription ||
                         (!subscription?.isActive &&
                           subscription?.remainingTimeSubscription &&
                           subscription?.cancelledDate &&
-                          subscription?.owner === user?._id) ||
+                          subscription?.owner === request.requester?._id) ||
                         remainingTimeSubscriptionsOwnerIds.includes(
-                          user?._id
+                          request.requester?._id
                         ) ? (
                           <span>
                             {/* start to check  */}{" "}
@@ -1281,46 +1094,64 @@ function FollowingDetailPage() {
                         {/* Verified Account Icon (Assuming 'verified' is a boolean property) finish to check */}
                         {/* Following Button start to check */}
                         <div
-                          className="follow-following-section-spesific-profile ms-auto"
-                          style={
-                            buttonStyles && user._id !== userInfo._id
-                              ? buttonStyles
-                              : null
-                          }
-                          onMouseEnter={handleMouseEnter}
-                          onMouseLeave={handleMouseLeave}
-                          onClick={() =>
-                            isFollowing
-                              ? openUnfollowModal(user)
-                              : handleFollow(user)
-                          }
+                          className="ms-auto chirp-bold-font"
+                          style={{
+                            display: "flex",
+                            gap: "15px",
+                          }}
                         >
-                          {user._id !== userInfo._id ? (
-                            <div
-                              className="chirp-bold-font"
-                              style={{
-                                padding: "8px 16px",
-                                fontSize: font15.fontSize,
-                                lineHeight: font15.lineHeight,
-                              }}
-                            >
-                              {isFollowing
-                                ? isHovered === buttonId
-                                  ? "Unfollow"
-                                  : "Following"
-                                : "Follow"}
-                            </div>
-                          ) : null}
+                          <button
+                            className="circle_hover_reject"
+                            onClick={() => handleRejectRequest(request._id)}
+                            onMouseEnter={handleMouseEnter}
+                            onMouseLeave={handleMouseLeave}
+                            style={{
+                              display: "inline-flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              cursor: "pointer",
+                              backgroundColor: "transparent",
+                              border: "1px solid rgb(253, 201, 206)",
+                              borderRadius: "9999px",
+                              minWidth: "32px",
+                              minHeight: "32px",
+                              padding: "0px 16px",
+                              width: "80px",
+                              color: "rgb(244, 33, 46)",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
+                            }}
+                          >
+                            Decline
+                          </button>
+
+                          <button
+                            className="circle_hover_accept"
+                            onClick={() => handleAcceptRequest(request._id)}
+                            onMouseEnter={handleMouseEnter}
+                            onMouseLeave={handleMouseLeave}
+                            style={{
+                              display: "inline-flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              cursor: "pointer",
+                              backgroundColor: "transparent",
+                              border: "1px solid rgb(207, 217, 222)",
+                              display: "inline-flex",
+                              borderRadius: "9999px",
+                              minWidth: "32px",
+                              minHeight: "32px",
+                              padding: "0px 16px",
+                              width: "80px",
+                              color: "rgb(29, 155, 240)",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
+                            }}
+                          >
+                            Accept
+                          </button>
                         </div>
                         {/* Following Button finish to check */}
-                        {/* unfollow modal start to check  */}
-                        <UnfollowModal
-                          selectedUser={selectedUser}
-                          handleUnfollow={handleUnfollow}
-                          showUnfollowModal={showUnfollowModal}
-                          handleClose={handleClose}
-                        />
-                        {/* unfollow modal finish to check  */}
                       </Stack>
                     </>
                   )}
@@ -1344,12 +1175,7 @@ function FollowingDetailPage() {
                     margin: "10px",
                   }}
                 >
-                  {userId !== userInfo._id
-                    ? "@" +
-                      followingofthemonitoreduser.username +
-                      " " +
-                      "isn’t following anyone"
-                    : "Be in the know"}
+                  {"Looking for follow requests?"}
                 </div>
                 <div
                   className="chirp-regular-font"
@@ -1363,9 +1189,9 @@ function FollowingDetailPage() {
                     margin: "10px",
                   }}
                 >
-                  {userId !== userInfo._id
-                    ? "Once they follow accounts, they’ll show up here."
-                    : "Following accounts is an easy way to curate your timeline and know what’s happening with the topics and people you’re interested in."}
+                  {
+                    "When someone sends you a request, it’ll show up here. Engaging with others and exploring new connections increases your chances of receiving follow requests."
+                  }
                 </div>
               </div>
               {/* when no followers yet from for followers section in general finish to check  */}{" "}
@@ -1377,4 +1203,4 @@ function FollowingDetailPage() {
   );
 }
 
-export default FollowingDetailPage;
+export default FollowingRequests;

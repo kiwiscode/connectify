@@ -2,6 +2,7 @@ const User = require("../models/User.model");
 const Post = require("../models/Post.model");
 const cloudinary = require("../utils/cloudinary");
 const bcrypt = require("bcrypt");
+
 const handleProfile = (req, res) => {
   const { userId } = req.user;
   User.findById(userId)
@@ -211,6 +212,7 @@ const getFollowers = (req, res) => {
       res.status(404).json({ errorMessage: "User not found !" });
     });
 };
+
 const getFollowing = (req, res) => {
   const { userId } = req.params;
 

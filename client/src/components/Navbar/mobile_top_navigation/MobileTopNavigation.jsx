@@ -148,7 +148,6 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
               >
                 <div
                   style={{
-                    height: "100%",
                     transitionDuration: "0.2s",
                     outlineStyle: "none",
                     width: "40px",
@@ -329,7 +328,7 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                         marginLeft: "2px",
                       }}
                     >
-                      {!userInfo?.isPrivate && (
+                      {userInfo?.isPrivate && (
                         <span
                           style={{
                             display: "flex",
@@ -549,7 +548,6 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                     flexDirection: "row",
                     alignItems: "center",
                     flexGrow: "1",
-                    padding: "16px",
                     boxSizing: "border-box",
                     flexBasis: "auto",
                     flexShrink: "0",
@@ -672,7 +670,6 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                     flexDirection: "row",
                     alignItems: "center",
                     flexGrow: "1",
-                    padding: "16px",
                     boxSizing: "border-box",
                     flexBasis: "auto",
                     flexShrink: "0",
@@ -810,7 +807,6 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                     flexDirection: "row",
                     alignItems: "center",
                     flexGrow: "1",
-                    padding: "16px",
                     boxSizing: "border-box",
                     flexBasis: "auto",
                     flexShrink: "0",
@@ -933,7 +929,6 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                     flexDirection: "row",
                     alignItems: "center",
                     flexGrow: "1",
-                    padding: "16px",
                     boxSizing: "border-box",
                     flexBasis: "auto",
                     flexShrink: "0",
@@ -1056,7 +1051,6 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                     flexDirection: "row",
                     alignItems: "center",
                     flexGrow: "1",
-                    padding: "16px",
                     boxSizing: "border-box",
                     flexBasis: "auto",
                     flexShrink: "0",
@@ -1179,7 +1173,6 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                     flexDirection: "row",
                     alignItems: "center",
                     flexGrow: "1",
-                    padding: "16px",
                     boxSizing: "border-box",
                     flexBasis: "auto",
                     flexShrink: "0",
@@ -1300,7 +1293,6 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                     flexDirection: "row",
                     alignItems: "center",
                     flexGrow: "1",
-                    padding: "16px",
                     boxSizing: "border-box",
                     flexBasis: "auto",
                     flexShrink: "0",
@@ -1442,7 +1434,6 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                     flexDirection: "row",
                     alignItems: "center",
                     flexGrow: "1",
-                    padding: "16px",
                     boxSizing: "border-box",
                     flexBasis: "auto",
                     flexShrink: "0",

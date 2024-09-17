@@ -2,11 +2,22 @@ import SignUpPage from "../pages/SignUpPage";
 import IndexFooter from "../components/IndexFooter/IndexFooter";
 import { Container, Col, Row } from "react-bootstrap";
 import useWindowDimensions from "../hooks/getWindowDimensions";
-
-const API_URL = import.meta.env.VITE_APP_API_URL;
+import { useContext, useEffect } from "react";
+import { UserContext } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
 
 function HomePage() {
   const { width } = useWindowDimensions();
+  const { getToken } = useContext(UserContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = getToken();
+
+    if (token) {
+      navigate("/home");
+    }
+  }, [navigate]);
 
   return (
     <>

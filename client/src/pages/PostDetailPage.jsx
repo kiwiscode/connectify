@@ -680,6 +680,7 @@ function PostDetailPage() {
                           <PostPopover
                             post={commentedForThisPost}
                             postDeletionProcess={handleDeletePostPostDetailPage}
+                            refreshPosts={refreshPostDetailPage}
                           />
                         </div>
 
@@ -1084,6 +1085,7 @@ function PostDetailPage() {
                       <PostPopover
                         post={detailedPost}
                         postDeletionProcess={handleDeletePostPostDetailPage}
+                        refreshPosts={refreshPostDetailPage}
                       />
                     </span>
 
@@ -1629,6 +1631,7 @@ function PostDetailPage() {
                                             postDeletionProcess={
                                               handleDeletePostPostDetailPage
                                             }
+                                            refreshPosts={refreshPostDetailPage}
                                           />
                                         </div>
                                         {/* three dots svg finish to check */}
@@ -2057,6 +2060,7 @@ function PostDetailPage() {
                                             postDeletionProcess={
                                               handleDeletePostPostDetailPage
                                             }
+                                            refreshPosts={refreshPostDetailPage}
                                           />
                                         </div>
                                         {/* three dots svg finish to check */}

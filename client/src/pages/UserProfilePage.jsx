@@ -400,6 +400,39 @@ function UserProfile({ isNewPostShared }) {
   const font15 = getFontSizeAndLineHeight15();
   const font14 = getFontSizeAndLineHeight14();
   const font13 = getFontSizeAndLineHeight13();
+
+  // get following users
+  const [followedIds, setFollowedIds] = useState([]);
+
+  const getFollowingArray = async () => {
+    try {
+      const result = await axios.get(
+        `${API_URL}/users/${userInfo._id}/following`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+      const followedUserIds = result.data.following.map((user) => user._id);
+      setFollowedIds(followedUserIds);
+
+      console.log("result of followed users:", result);
+    } catch (error) {
+      console.error("error:", error);
+    }
+  };
+
+  const checkIfFollowing = (userId) => {
+    return followedIds.includes(userId);
+  };
+
+  useEffect(() => {
+    if (userInfo._id) {
+      getFollowingArray();
+    }
+  }, []);
+
   return (
     <>
       {contextHolder}
@@ -1097,7 +1130,10 @@ function UserProfile({ isNewPostShared }) {
                   }
                   key={post._id}
                 >
-                  {post.deactivatedOwner ? null : (
+                  {post.deactivatedOwner ||
+                  (post.userId.isPrivate &&
+                    !checkIfFollowing(post.userId._id) &&
+                    userInfo._id !== post.userId._id) ? null : (
                     <>
                       <div
                         style={{
@@ -1234,7 +1270,7 @@ function UserProfile({ isNewPostShared }) {
                           {/* post owner full name + verified account svg + post owner user name + post created date start to check  */}
                           <div className="p-1">
                             {post.userId ? (
-                              <>
+                              <div>
                                 <Link
                                   className="post-circle-postowner-fullname"
                                   to={`/profile/${post.userId._id}`}
@@ -1256,7 +1292,29 @@ function UserProfile({ isNewPostShared }) {
                                   >
                                     {post.authorFullName}
                                   </span>
-                                </Link>
+                                </Link>{" "}
+                                {post?.userId.isPrivate && (
+                                  <span>
+                                    <svg
+                                      fill={
+                                        themeName === "dark-theme"
+                                          ? "#E6E9EA"
+                                          : "#0F141A"
+                                      }
+                                      width={`${1.25}em`}
+                                      height={`${1.25}em`}
+                                      viewBox="0 0 24 24"
+                                      aria-label="Protected account"
+                                      role="img"
+                                      className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-lrvibr r-m6rgpd r-3t4u6i r-18jsvk2 r-f9ja8p r-og9te1"
+                                      data-testid="icon-lock"
+                                    >
+                                      <g>
+                                        <path d="M17.5 7H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.39 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.89 7 17.5 7zM13 14.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2 0 .74-.4 1.39-1 1.73zM15 7H9v-.25c0-1.66 1.35-3 3-3 1.66 0 3 1.34 3 3V7z"></path>
+                                      </g>
+                                    </svg>
+                                  </span>
+                                )}
                                 {post?.userId.hasSubscription ||
                                 (!subscription?.isActive &&
                                   subscription?.remainingTimeSubscription &&
@@ -1344,7 +1402,7 @@ function UserProfile({ isNewPostShared }) {
                                   </span>
                                 </Link>
                                 {/* finish to check  */}
-                              </>
+                              </div>
                             ) : null}
                           </div>
                           {/* post owner full name + verified account svg + post owner user name + post created date  finish to check  */}
@@ -1356,6 +1414,7 @@ function UserProfile({ isNewPostShared }) {
                                 handleDeletePostFromProfilePage
                               }
                               post={post}
+                              refreshPosts={handleShowPostsProfilePage}
                             />
                           </div>
                           {/* three dots svg finish to check */}
@@ -1666,7 +1725,10 @@ function UserProfile({ isNewPostShared }) {
                   }
                   key={favorite._id}
                 >
-                  {favorite.deactivatedOwner ? null : (
+                  {favorite.deactivatedOwner ||
+                  (favorite.userId.isPrivate &&
+                    !checkIfFollowing(favorite.userId._id) &&
+                    userInfo._id !== favorite.userId._id) ? null : (
                     <>
                       <div
                         style={{
@@ -1769,6 +1831,32 @@ function UserProfile({ isNewPostShared }) {
                                       {favorite.authorFullName}
                                     </span>
                                   </Link>
+                                  {favorite?.userId.isPrivate && (
+                                    <span
+                                      style={{
+                                        marginLeft: "5px",
+                                      }}
+                                    >
+                                      <svg
+                                        fill={
+                                          themeName === "dark-theme"
+                                            ? "#E6E9EA"
+                                            : "#0F141A"
+                                        }
+                                        width={`${1.25}em`}
+                                        height={`${1.25}em`}
+                                        viewBox="0 0 24 24"
+                                        aria-label="Protected account"
+                                        role="img"
+                                        className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-lrvibr r-m6rgpd r-3t4u6i r-18jsvk2 r-f9ja8p r-og9te1"
+                                        data-testid="icon-lock"
+                                      >
+                                        <g>
+                                          <path d="M17.5 7H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.39 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.89 7 17.5 7zM13 14.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2 0 .74-.4 1.39-1 1.73zM15 7H9v-.25c0-1.66 1.35-3 3-3 1.66 0 3 1.34 3 3V7z"></path>
+                                        </g>
+                                      </svg>
+                                    </span>
+                                  )}
                                   {favorite?.userId.hasSubscription ||
                                   (!subscription?.isActive &&
                                     subscription?.remainingTimeSubscription &&
@@ -1872,6 +1960,7 @@ function UserProfile({ isNewPostShared }) {
                                   handleDeletePostFromProfilePage
                                 }
                                 post={favorite}
+                                refreshPosts={handleShowPostsProfilePage}
                               />
                             </div>
                             {/* three dots svg finish to check */}
@@ -2120,7 +2209,6 @@ function UserProfile({ isNewPostShared }) {
                       themeName === "dark-theme"
                         ? "#71767A"
                         : "rgb(83, 100, 113)",
-                    lineHeight: "20px",
                     fontSize: font15.fontSize,
                     lineHeight: font15.lineHeight,
                     margin: "10px",

@@ -252,7 +252,6 @@ function NotificationsPage() {
           borderBottom: "none",
           padding: "0px",
           position: "relative",
-          minHeight: width <= 700 ? "100vh" : "",
           minHeight: width <= 700 ? "100dvh" : "",
         }}
       >
@@ -265,9 +264,6 @@ function NotificationsPage() {
                 "mobile top navigation was closed" &&
               `translateY(${headerPosition}px)`,
 
-            minHeight:
-              dataFromTopNavigationComponent ===
-                "mobile top navigation was closed" && "53px",
             transition:
               dataFromTopNavigationComponent ===
                 "mobile top navigation was closed" &&
@@ -568,6 +564,7 @@ function NotificationsPage() {
                                     post={
                                       eachNotification.isComment.commentPostId
                                     }
+                                    refreshPosts={getAllNotifications}
                                   />
                                 </span>
                               </div>

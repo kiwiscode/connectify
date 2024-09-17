@@ -889,7 +889,6 @@ function LogoutModal({
                 flexDirection: "row",
                 alignItems: "center",
                 flexGrow: "1",
-                padding: "16px",
                 boxSizing: "border-box",
                 flexBasis: "auto",
                 flexShrink: "0",
@@ -1352,26 +1351,23 @@ function LogoutModal({
                       popupState.close();
                     }}
                     style={{
-                      paddingBottom: "12px",
-                      paddingTop: "5px",
-                      lineHeight: "20px",
                       fontWeight: "700",
+                      lineHeight: font15.lineHeight,
                       fontSize: font15.fontSize,
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
                       cursor: "pointer",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
                       width: "100%",
                       height: "100%",
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
                     }}
                   >
                     <span
                       style={{
-                        position: "relative",
-                        left: "10px",
+                        marginLeft: "10px",
                         color: themeName === "dark-theme" ? "white" : "",
                         fontSize: font15.fontSize,
                         lineHeight: font15.lineHeight,
@@ -1490,7 +1486,7 @@ function LogoutModal({
                 {" "}
                 <div
                   style={{
-                    height: width <= 700 ? "12%" : "50px",
+                    height: width <= 700 ? "50px" : "50px",
                     width: "300px",
                   }}
                   className="logout-body"
@@ -1503,25 +1499,23 @@ function LogoutModal({
                       popupState.close();
                     }}
                     style={{
-                      paddingBottom: "12px",
-                      paddingTop: "5px",
+                      fontWeight: "700",
                       fontSize: font15.fontSize,
                       lineHeight: font15.lineHeight,
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
                       cursor: "pointer",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
                       width: "100%",
                       height: "100%",
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
                     }}
                   >
                     <span
                       style={{
-                        position: "relative",
-                        left: "10px",
+                        marginLeft: "10px",
                         color: themeName === "dark-theme" ? "white" : "",
                         fontSize: font15.fontSize,
                         lineHeight: font15.lineHeight,

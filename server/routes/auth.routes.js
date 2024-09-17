@@ -105,6 +105,7 @@ router.post("/login-variant-one-result", (req, res) => {
                   signedUpWithGoogle,
                   signedUpWithVariantOne,
                   bio,
+                  isPrivate,
                 } = user;
 
                 const token = jwt.sign(
@@ -137,6 +138,7 @@ router.post("/login-variant-one-result", (req, res) => {
                     signedUpWithGoogle,
                     signedUpWithVariantOne,
                     bio,
+                    isPrivate,
                   },
                   message:
                     "Show 2 modal, first => profile image customization modal, second => username customization modal",

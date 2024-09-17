@@ -32,6 +32,7 @@ import { ThemeContext } from "../../context/ThemeContext";
 import UnfollowModal from "../unfollow-modal/UnfollowModal";
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
+const TWILIO_NUMBER = import.meta.env.VITE_APP_TWILIO_ACCOUNT_NUMBER;
 
 import io from "socket.io-client";
 import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
@@ -63,6 +64,8 @@ function RightSideColumn({
     remainingTimeSubscriptions,
     remainingTimeSubscriptionsOwnerIds,
   } = useContext(SubcsriptionStatusContext);
+
+  console.log("twilio phone number:", TWILIO_NUMBER);
 
   const {
     getFontSizeAndLineHeight34,
@@ -7113,11 +7116,6 @@ function RightSideColumn({
                                   themeName === "dark-theme"
                                     ? "rgb(32,35,39)"
                                     : "black",
-                                width: "184px",
-                                height: "40px",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
                                 padding: "2px",
                                 width:
                                   font15.fontSize === "Default"
@@ -9283,7 +9281,6 @@ function RightSideColumn({
                               color: "white",
                               fontSize: font17.fontSize,
                               lineHeight: font17.lineHeight,
-                              lineHeight: "20px",
                               position: "absolute",
                               bottom: "20px",
                             }}
@@ -9815,7 +9812,7 @@ function RightSideColumn({
                           <div>
                             {" "}
                             <QRCodeSVG
-                              value={`sms:+13343453935&body=${verifyPhoneCode}`}
+                              value={`sms:${TWILIO_NUMBER}&body=${verifyPhoneCode}`}
                             />
                           </div>
                           <div
@@ -9847,7 +9844,7 @@ function RightSideColumn({
                                 fontSize: font15.fontSize,
                                 lineHeight: font15.lineHeight,
                               }}
-                            >{`Text ${verifyPhoneCode} to +13343453935.`}</div>
+                            >{`Text ${verifyPhoneCode} to ${TWILIO_NUMBER}.`}</div>
                           </div>
                         </div>
                         <div
@@ -18268,7 +18265,7 @@ function RightSideColumn({
                           <div>
                             {" "}
                             <QRCodeSVG
-                              value={`sms:+13343453935&body=${verifyPhoneCode}`}
+                              value={`sms:+${TWILIO_NUMBER}&body=${verifyPhoneCode}`}
                             />
                           </div>
                           <div
@@ -18300,7 +18297,7 @@ function RightSideColumn({
                                 fontSize: font15.fontSize,
                                 lineHeight: font15.lineHeight,
                               }}
-                            >{`Text ${verifyPhoneCode} to +13343453935.`}</div>
+                            >{`Text ${verifyPhoneCode} to ${TWILIO_NUMBER}.`}</div>
                           </div>
                         </div>
                         <div
@@ -18844,6 +18841,10 @@ function RightSideColumn({
                               style={{
                                 textDecoration: "none",
                                 color: "black",
+                                display: eachUser._doc?.isPrivate && "flex",
+                                gap: eachUser._doc?.isPrivate && "5px",
+                                alignItems:
+                                  eachUser._doc?.isPrivate && "center",
                               }}
                             >
                               <div
@@ -18854,7 +18855,9 @@ function RightSideColumn({
                                   overflow: "hidden",
                                   textOverflow: "ellipsis",
                                   whiteSpace: "nowrap",
-                                  width: "200px",
+                                  width: eachUser._doc?.isPrivate
+                                    ? ""
+                                    : "200px",
                                   color:
                                     themeName === "dark-theme"
                                       ? "white"
@@ -18863,6 +18866,28 @@ function RightSideColumn({
                               >
                                 {eachUser._doc?.fullname}
                               </div>
+                              {eachUser._doc?.isPrivate && (
+                                <div>
+                                  <svg
+                                    fill={
+                                      themeName === "dark-theme"
+                                        ? "#E6E9EA"
+                                        : "#0F141A"
+                                    }
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    viewBox="0 0 24 24"
+                                    aria-label="Protected account"
+                                    role="img"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-lrvibr r-m6rgpd r-3t4u6i r-18jsvk2 r-f9ja8p r-og9te1"
+                                    data-testid="icon-lock"
+                                  >
+                                    <g>
+                                      <path d="M17.5 7H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.39 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.89 7 17.5 7zM13 14.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2 0 .74-.4 1.39-1 1.73zM15 7H9v-.25c0-1.66 1.35-3 3-3 1.66 0 3 1.34 3 3V7z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              )}
                             </Link>
                           </div>
 
@@ -19014,55 +19039,65 @@ function RightSideColumn({
                                 className="each-who-to-follow-user"
                                 direction="horizontal"
                               >
-                                <div>
-                                  {" "}
-                                  {eachUser.imageUrl.slice(0, 3) !== "../" ? (
-                                    <>
-                                      <Link
-                                        to={`/profile/${eachUser._id}`}
-                                        style={{
-                                          textDecoration: "none",
-                                          borderRadius: "50%",
-                                        }}
-                                      >
-                                        <img
-                                          width={40}
-                                          height={40}
+                                <BootstrapTooltip
+                                  title={eachUser.fullname}
+                                  themeName={
+                                    themeName === "dark-theme"
+                                      ? "dark-theme"
+                                      : "light-theme"
+                                  }
+                                >
+                                  <div>
+                                    {" "}
+                                    {eachUser.imageUrl.slice(0, 3) !== "../" ? (
+                                      <>
+                                        <Link
+                                          to={`/profile/${eachUser._id}`}
                                           style={{
+                                            textDecoration: "none",
                                             borderRadius: "50%",
                                           }}
-                                          src={eachUser.imageUrl}
-                                          alt=""
-                                        />
-                                      </Link>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Link
-                                        to={`/profile/${eachUser._id}`}
-                                        style={{
-                                          textDecoration: "none",
-                                        }}
-                                      >
-                                        <svg
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          width="40"
-                                          height="40"
-                                          fill={
-                                            themeName === "dark-theme"
-                                              ? "#71767A"
-                                              : "rgb(83, 100, 113)"
-                                          }
-                                          className="bi bi-person-circle"
-                                          viewBox="0 0 16 16"
                                         >
-                                          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                          <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                        </svg>
-                                      </Link>
-                                    </>
-                                  )}
-                                </div>
+                                          <img
+                                            width={40}
+                                            height={40}
+                                            style={{
+                                              borderRadius: "50%",
+                                            }}
+                                            src={eachUser.imageUrl}
+                                            alt=""
+                                          />
+                                        </Link>
+                                      </>
+                                    ) : (
+                                      <div>
+                                        <Link
+                                          to={`/profile/${eachUser._id}`}
+                                          style={{
+                                            textDecoration: "none",
+                                          }}
+                                        >
+                                          <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="40"
+                                            height="40"
+                                            fill={
+                                              themeName === "dark-theme"
+                                                ? "#71767A"
+                                                : "rgb(83, 100, 113)"
+                                            }
+                                            className="bi bi-person-circle"
+                                            viewBox="0 0 16 16"
+                                          >
+                                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                            <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                          </svg>
+                                        </Link>
+                                      </div>
+                                    )}
+                                  </div>
+                                </BootstrapTooltip>
+
                                 <div className="p-3">
                                   <Link
                                     to={`/profile/${eachUser._id}`}
@@ -19086,7 +19121,40 @@ function RightSideColumn({
                                             : "black",
                                       }}
                                     >
-                                      <span>{eachUser.fullname}</span>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <span>{eachUser.fullname}</span>
+                                        {eachUser.isPrivate && (
+                                          <span
+                                            style={{
+                                              marginLeft: "5px",
+                                            }}
+                                          >
+                                            <svg
+                                              fill={
+                                                themeName === "dark-theme"
+                                                  ? "#E6E9EA"
+                                                  : "#0F141A"
+                                              }
+                                              width={`${1.25}em`}
+                                              height={`${1.25}em`}
+                                              viewBox="0 0 24 24"
+                                              aria-label="Protected account"
+                                              role="img"
+                                              className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-lrvibr r-m6rgpd r-3t4u6i r-18jsvk2 r-f9ja8p r-og9te1"
+                                              data-testid="icon-lock"
+                                            >
+                                              <g>
+                                                <path d="M17.5 7H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.39 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.89 7 17.5 7zM13 14.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2 0 .74-.4 1.39-1 1.73zM15 7H9v-.25c0-1.66 1.35-3 3-3 1.66 0 3 1.34 3 3V7z"></path>
+                                              </g>
+                                            </svg>
+                                          </span>
+                                        )}
+                                      </div>
                                       {eachUser.hasSubscription ||
                                       (!subscription?.isActive &&
                                         subscription?.remainingTimeSubscription &&
@@ -19293,31 +19361,41 @@ function RightSideColumn({
                               alignItems: "center",
                             }}
                           >
-                            <div>
-                              {eachActivity.thePersonWhoCarriedOutTheActivity?.imageUrl?.slice(
-                                0,
-                                3
-                              ) !== "../" ? (
-                                <Link
-                                  to={`/profile/${eachActivity.thePersonWhoCarriedOutTheActivity._id}`}
-                                >
-                                  <img
-                                    src={
-                                      eachActivity
-                                        .thePersonWhoCarriedOutTheActivity
-                                        .imageUrl
-                                    }
-                                    alt={`${eachActivity.thePersonWhoCarriedOutTheActivity.fullname}'s profile`}
-                                    width={32}
-                                    height={32}
-                                    className="profile-image"
-                                    style={{
-                                      borderRadius: "50%",
-                                    }}
-                                  />
-                                </Link>
-                              ) : (
-                                <div>
+                            <BootstrapTooltip
+                              title={
+                                eachActivity.thePersonWhoCarriedOutTheActivity
+                                  .fullname
+                              }
+                              themeName={
+                                themeName === "dark-theme"
+                                  ? "dark-theme"
+                                  : "light-theme"
+                              }
+                            >
+                              <div>
+                                {eachActivity.thePersonWhoCarriedOutTheActivity?.imageUrl?.slice(
+                                  0,
+                                  3
+                                ) !== "../" ? (
+                                  <Link
+                                    to={`/profile/${eachActivity.thePersonWhoCarriedOutTheActivity._id}`}
+                                  >
+                                    <img
+                                      src={
+                                        eachActivity
+                                          .thePersonWhoCarriedOutTheActivity
+                                          .imageUrl
+                                      }
+                                      alt={`${eachActivity.thePersonWhoCarriedOutTheActivity.fullname}'s profile`}
+                                      width={32}
+                                      height={32}
+                                      className="profile-image"
+                                      style={{
+                                        borderRadius: "50%",
+                                      }}
+                                    />
+                                  </Link>
+                                ) : (
                                   <Link
                                     to={`/profile/${eachActivity.thePersonWhoCarriedOutTheActivity._id}`}
                                   >
@@ -19337,9 +19415,9 @@ function RightSideColumn({
                                       <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
                                     </svg>
                                   </Link>
-                                </div>
-                              )}
-                            </div>
+                                )}
+                              </div>
+                            </BootstrapTooltip>
                             <div
                               className="chirp-regular-font"
                               style={{
@@ -19667,6 +19745,7 @@ function RightSideColumn({
                                             <PostPopover
                                               isCutePopoverOnRightSide={true}
                                               post={eachActivity.relatedPost}
+                                              // refreshPosts={} // no need to refresh something in here
                                             />
                                           </div>
                                         </div>

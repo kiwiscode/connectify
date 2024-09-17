@@ -3816,7 +3816,6 @@ function SignUpPage() {
           {" "}
           <div
             style={{
-              display: "flex",
               padding: "0px",
               margin: "0px",
               display: width <= 1000 ? "" : "none",
