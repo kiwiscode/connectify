@@ -109,7 +109,7 @@ function MainPage({ isNewPostShared }) {
 
   const handleShowPostsHomePage = async () => {
     try {
-      const response = await axios.get(`${API_URL}/home`, {
+      const response = await axios.get(`${API_URL}/posts`, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
@@ -231,7 +231,7 @@ function MainPage({ isNewPostShared }) {
     if (content || chosenEmoji || image) {
       axios
         .post(
-          `${API_URL}/home/post`,
+          `${API_URL}/posts`,
           {
             content,
             image,
@@ -254,7 +254,7 @@ function MainPage({ isNewPostShared }) {
             setPostSharingStartedActivateAnimate(false);
 
             axios
-              .get(`${API_URL}/home`, {
+              .get(`${API_URL}/posts`, {
                 headers: {
                   Authorization: `Bearer ${getToken()}`,
                 },
@@ -711,8 +711,6 @@ function MainPage({ isNewPostShared }) {
       );
       const followedUserIds = result.data.following.map((user) => user._id);
       setFollowedIds(followedUserIds);
-
-      console.log("result of followed users:", result);
     } catch (error) {
       console.error("error:", error);
     }
@@ -1072,19 +1070,7 @@ function MainPage({ isNewPostShared }) {
                               marginTop: "10rem",
                             }}
                           >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="133"
-                              height="133"
-                              color={
-                                themeName === "dark-theme"
-                                  ? "#71767A"
-                                  : "rgb(83, 100, 113)"
-                              }
-                              fill="currentColor"
-                              className="bi bi-person-circle"
-                              viewBox="0 0 16 16"
-                              style={{ cursor: "pointer", borderRadius: "50%" }}
+                            <img
                               onClick={() =>
                                 document
                                   .getElementById(
@@ -1092,10 +1078,13 @@ function MainPage({ isNewPostShared }) {
                                   )
                                   .click()
                               }
-                            >
-                              <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                              <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                            </svg>
+                              style={{ cursor: "pointer", borderRadius: "50%" }}
+                              width="133"
+                              height="133"
+                              src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                              alt=""
+                            />
+
                             <input
                               onChange={handleChangeProfileImage}
                               type="file"
@@ -1442,22 +1431,7 @@ function MainPage({ isNewPostShared }) {
                                 marginTop: "10rem",
                               }}
                             >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="133"
-                                height="133"
-                                color={
-                                  themeName === "dark-theme"
-                                    ? "#71767A"
-                                    : "rgb(83, 100, 113)"
-                                }
-                                fill="currentColor"
-                                className="bi bi-person-circle"
-                                viewBox="0 0 16 16"
-                                style={{
-                                  cursor: "pointer",
-                                  borderRadius: "50%",
-                                }}
+                              <img
                                 onClick={() =>
                                   document
                                     .getElementById(
@@ -1465,10 +1439,16 @@ function MainPage({ isNewPostShared }) {
                                     )
                                     .click()
                                 }
-                              >
-                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                              </svg>
+                                style={{
+                                  cursor: "pointer",
+                                  borderRadius: "50%",
+                                }}
+                                width="133"
+                                height="133"
+                                src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                                alt=""
+                              />
+
                               <input
                                 onChange={handleChangeProfileImage}
                                 type="file"
@@ -2010,24 +1990,13 @@ function MainPage({ isNewPostShared }) {
                         cursor: "pointer",
                       }}
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
+                      <img
+                        style={{ borderRadius: "50%" }}
                         width="40"
                         height="40"
-                        fill={
-                          themeName === "dark-theme"
-                            ? "#71767A"
-                            : "rgb(83, 100, 113)"
-                        }
-                        style={{
-                          borderRadius: "50%",
-                        }}
-                        className="bi bi-person-circle"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                        <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                      </svg>
+                        src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                        alt=""
+                      />
                     </div>
                   )}
                 </div>
@@ -2411,7 +2380,7 @@ function MainPage({ isNewPostShared }) {
                                   >
                                     <svg
                                       style={{
-                                        marginLeft: "20px",
+                                        marginLeft: "10px",
                                         position: "relative",
                                         top: "5px",
                                         left: "20px",
@@ -2470,7 +2439,7 @@ function MainPage({ isNewPostShared }) {
                                   >
                                     <svg
                                       style={{
-                                        marginLeft: "20px",
+                                        marginLeft: "10px",
                                         position: "relative",
                                         top: "5px",
                                         left: "20px",
@@ -2569,24 +2538,13 @@ function MainPage({ isNewPostShared }) {
                                       style={{ cursor: "pointer" }}
                                     >
                                       {" "}
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width={40}
-                                        height={40}
-                                        fill={
-                                          themeName === "dark-theme"
-                                            ? "#71767A"
-                                            : "rgb(83, 100, 113)"
-                                        }
-                                        className="bi bi-person-circle"
-                                        viewBox="0 0 16 16"
-                                        style={{
-                                          borderRadius: "50%",
-                                        }}
-                                      >
-                                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                        <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                      </svg>
+                                      <img
+                                        style={{ borderRadius: "50%" }}
+                                        width="40"
+                                        height="40"
+                                        src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                                        alt=""
+                                      />
                                     </Link>
                                   )}
                                 </div>
@@ -3123,7 +3081,7 @@ function MainPage({ isNewPostShared }) {
                                 >
                                   <svg
                                     style={{
-                                      marginLeft: "20px",
+                                      marginLeft: "10px",
                                       position: "relative",
                                       top: "5px",
                                       left: "20px",
@@ -3282,24 +3240,13 @@ function MainPage({ isNewPostShared }) {
                                     style={{ cursor: "pointer" }}
                                   >
                                     {" "}
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
+                                    <img
+                                      style={{ borderRadius: "50%" }}
                                       width={40}
                                       height={40}
-                                      fill={
-                                        themeName === "dark-theme"
-                                          ? "#71767A"
-                                          : "rgb(83, 100, 113)"
-                                      }
-                                      className="bi bi-person-circle"
-                                      viewBox="0 0 16 16"
-                                      style={{
-                                        borderRadius: "50%",
-                                      }}
-                                    >
-                                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                      <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                    </svg>
+                                      src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                                      alt=""
+                                    />
                                   </Link>
                                 )}
                               </div>

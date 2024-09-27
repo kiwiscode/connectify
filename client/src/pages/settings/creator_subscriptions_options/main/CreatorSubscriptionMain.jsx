@@ -128,11 +128,6 @@ function CreatorSubscriptionMain() {
         },
       });
 
-      console.log(
-        "response data detail =>",
-        response.data.activeSubscription[0]
-      );
-
       setSubscription(
         response.data.activeSubscription[0]
           ? response.data.activeSubscription[0]

@@ -183,7 +183,6 @@ const handleLogin = (req, res, next) => {
     .populate("following")
     .populate("favorites")
     .populate("messages")
-
     .then((user) => {
       bcrypt
         .compare(password, user.password)
@@ -848,6 +847,7 @@ const handleLoginVariantOne = (req, res) => {
       });
     });
 };
+
 const handlePhoneNumberCheck = async (req, res) => {
   try {
     const { phone_number_input } = req.body;

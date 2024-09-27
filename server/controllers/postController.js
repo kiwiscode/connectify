@@ -321,8 +321,126 @@ const handleDeletePost = (req, res) => {
     });
 };
 
+const handlePinPost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { userId } = req.user;
+
+    const user = await User.findById(userId).populate("posts");
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const postIndex = user.posts.findIndex(
+      (post) => post._id.toString() === postId
+    );
+
+    if (postIndex === -1) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    // Postu bul ve repost durumu olup olmadığını kontrol et
+    const post = await Post.findById(postId);
+    let originalPostId = postId;
+
+    // find reference post
+    const referencePost = await Post.findOne({
+      _id: post?.repostedFromThisOriginalPost[0]?._id,
+    });
+    console.log("reference post:", referencePost);
+
+    // Eğer reposted ise orijinal post id'sini kullan
+    if (
+      post.isReposted &&
+      post.repostedFromThisOriginalPost &&
+      post.repostedFromThisOriginalPost.length > 0
+    ) {
+      originalPostId = post.repostedFromThisOriginalPost[0]._id.toString(); // Orijinal post ID'sini al
+    }
+
+    // PinnedPosts'in ilk elemanını kontrol et, varsa al
+    const pinnedPostId =
+      user.pinnedPosts.length > 0 ? user.pinnedPosts[0]._id.toString() : null;
+
+    // Eğer aynı post tekrar pinlenmek isteniyorsa, pinlemeyi kaldır
+    if (
+      pinnedPostId &&
+      pinnedPostId === originalPostId &&
+      !post.reposted.length
+    ) {
+      console.log("buradayız 1!!!");
+
+      // Pinned postu kaldır
+      user.pinnedPosts.splice(0, 1);
+
+      // Post'un pinned durumunu güncelle
+      await Post.updateOne({ _id: originalPostId }, { pinned: false });
+
+      await user.save();
+      return res.status(200).json({
+        message: "Post unpinned successfully",
+        pinnedPosts: user.pinnedPosts,
+      });
+    } else if (
+      pinnedPostId &&
+      pinnedPostId === originalPostId &&
+      post.reposted.length &&
+      referencePost?._id.toString() !== pinnedPostId
+    ) {
+      console.log("buradayız 2 !!!");
+
+      // Pinned postu kaldır
+      user.pinnedPosts.splice(0, 1);
+
+      // Post'un pinned durumunu güncelle
+      await Post.updateOne({ _id: pinnedPostId }, { pinned: false });
+
+      await user.save();
+      return res.status(200).json({
+        message: "Post unpinned successfully",
+        pinnedPosts: user.pinnedPosts,
+      });
+    } else if (
+      pinnedPostId &&
+      pinnedPostId === originalPostId &&
+      post.reposted.length &&
+      referencePost._id.toString() === pinnedPostId
+    ) {
+      console.log("buradayız 3 !!!");
+      return res.status(200).json({
+        message: "Post pinned successfully",
+        pinnedPosts: user.pinnedPosts,
+      });
+    }
+
+    // Eski pinned postu kaldır (eğer farklı bir post varsa)
+    if (user.pinnedPosts.length > 0) {
+      user.pinnedPosts.splice(0, 1); // Eski pinned postu kaldır
+    }
+
+    // Yeni postu pinnedPosts dizisine ekle
+    user.pinnedPosts.unshift(originalPostId);
+
+    // Yeni postu pinned durumuna getir
+    await Post.updateOne({ _id: originalPostId }, { pinned: true });
+
+    // Kullanıcıyı kaydet
+    await user.save();
+
+    return res.status(200).json({
+      message: "Post pinned successfully",
+      pinnedPosts: user.pinnedPosts,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   handlePost,
   handleShowPosts,
   handleDeletePost,
+  handlePinPost,
 };

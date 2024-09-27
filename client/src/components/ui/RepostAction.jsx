@@ -92,9 +92,11 @@ function RepostAction({
 
   const getRepostedIds = (array) => {
     return array?.reposted.map((eachRepost) => {
-      return eachRepost._id;
+      return eachRepost._id || eachRepost;
     });
   };
+
+  console.log("reposted ids from repost action:", post);
 
   const [hoveredOption, setHoveredOption] = useState(null);
 

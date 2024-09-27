@@ -22,7 +22,6 @@ function ChangeDisplayLanguage() {
   const { userInfo, getToken } = useContext(UserContext);
   const { navigationHistoryArray } = useContext(NavigationHistoryContext);
   const [user, setUser] = useState([]);
-  console.log("Navigation history =>", navigationHistoryArray);
   const refreshActiveUser = () => {
     axios
       .get(`${API_URL}/profile`, {

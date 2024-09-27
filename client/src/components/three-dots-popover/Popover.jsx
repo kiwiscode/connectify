@@ -19,6 +19,7 @@ function PostPopover({
   isCutePopoverOnRightSide,
   notificationPageComment,
   refreshPosts,
+  isPinnedPost,
 }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
 
@@ -56,15 +57,15 @@ function PostPopover({
   const [threeDotsColor, setThreeDotsColor] = useState(null);
   const [postId, setPostId] = useState(null);
 
-  const { postDeletedMessage, contextHolder } = useAntdMessageHandler();
+  const { contextHolder, pinnedMessage, unpinnedMessage } =
+    useAntdMessageHandler();
 
   const handlePostDelete = (postId) => {
     handleClose();
-
     setPostId(postId);
     axios
       .post(
-        `${API_URL}/home/delete-post`,
+        `${API_URL}/posts/delete-post`,
         { userId: userInfo._id, postId },
         {
           headers: {
@@ -74,7 +75,6 @@ function PostPopover({
       )
       .then(() => {
         refreshPosts();
-        postDeletedMessage();
         postDeletionProcess();
       })
       .catch((error) => {
@@ -82,6 +82,33 @@ function PostPopover({
         console.error("Error =>", error);
         // tüm popoover kullanılan yerlerde aynı catch mesajı mevcut finish to check INFO
       });
+  };
+
+  const pinPost = async (postId) => {
+    try {
+      const result = await axios.patch(
+        `${API_URL}/posts/${postId}/pin`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      const { message } = result.data;
+
+      if (message === "Post pinned successfully") {
+        pinnedMessage();
+      } else if (message === "Post unpinned successfully") {
+        unpinnedMessage();
+      }
+      setTimeout(() => {
+        refreshPosts();
+      }, 300);
+    } catch (error) {
+      console.error("error:", error);
+    }
   };
 
   return (
@@ -349,6 +376,10 @@ function PostPopover({
                   </div>
 
                   <div
+                    onClick={() => {
+                      pinPost(post._id);
+                      popupState.close();
+                    }}
                     onMouseEnter={() => {
                       setHoveredOption("Pin to your profile");
                     }}
@@ -388,7 +419,9 @@ function PostPopover({
                         marginLeft: "10px",
                       }}
                     >
-                      Pin to your profile
+                      {isPinnedPost
+                        ? "Unpin from profile"
+                        : "  Pin to your profile"}
                     </span>
                   </div>
                   <div

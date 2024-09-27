@@ -52,8 +52,6 @@ function UserProfile({ isNewPostShared }) {
 
   const navigate = useNavigate();
 
-  console.log("Is new post shared profile page =>", isNewPostShared);
-
   // finish to check
 
   // use effect to grab current mouse click location start to check
@@ -155,6 +153,8 @@ function UserProfile({ isNewPostShared }) {
     navigate(-1);
   };
   const [profile, setProfile] = useState([]);
+  const [pinnedPost, setPinnedPost] = useState(null);
+
   const handleShowPostsProfilePage = () => {
     setActiveTab("posts");
     setFavoriteWindow("hide");
@@ -166,14 +166,18 @@ function UserProfile({ isNewPostShared }) {
         },
       })
       .then((response) => {
-        setProfile(response.data.user);
-        console.log("Response updated with populate =>", response);
-        setUserprofiledata(response.data.posts);
+        const { posts } = response.data;
+        const { user } = response.data;
+        setProfile(user);
+        setPinnedPost(user.pinnedPosts[0]);
+        setUserprofiledata(posts);
+        console.log("Response updated with populate for profile =>", response);
       })
       .catch((err) => {
         return err;
       });
   };
+
   const { postDeletedMessage, postSharedMessage, contextHolder } =
     useAntdMessageHandler();
 
@@ -416,8 +420,6 @@ function UserProfile({ isNewPostShared }) {
       );
       const followedUserIds = result.data.following.map((user) => user._id);
       setFollowedIds(followedUserIds);
-
-      console.log("result of followed users:", result);
     } catch (error) {
       console.error("error:", error);
     }
@@ -612,12 +614,28 @@ function UserProfile({ isNewPostShared }) {
 
         {/* start to check */}
 
-        <Stack
-          direction="horizontal"
-          gap={0}
-          style={{ marginTop: "45px", padding: "0px 16px" }}
+        <div
+          style={{
+            // marginTop: "45px",
+            // padding: "0px 16px",
+            backgroundColor:
+              themeName === "light-theme" ? "rgb(207, 217, 222)" : "",
+            height: "200px",
+            position: "relative",
+            backgroundImage: `url("https://marketplace.canva.com/EAE91Kz0wsI/1/0/1600w/canva-blue-yellow-retro-quotes-twitter-header-xTB_BZnqeew.jpg")`,
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center",
+            backgroundSize: "cover",
+            backgroundAttachment: "fixed",
+          }}
         >
-          <div className="p-2">
+          <div
+            style={{
+              padding: "12px 16px",
+              position: "absolute",
+              bottom: -80,
+            }}
+          >
             {userInfo.imageUrl?.slice(0, 3) !== "../" ? (
               <>
                 {profileImageChangingLoadingBar ? (
@@ -681,23 +699,24 @@ function UserProfile({ isNewPostShared }) {
               </>
             ) : (
               <div>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="133"
-                  height="133"
-                  fill={
-                    themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)"
-                  }
-                  className="bi bi-person-circle"
-                  viewBox="0 0 16 16"
-                  style={{ cursor: "pointer", borderRadius: "50%" }}
+                <img
                   onClick={() =>
                     document.getElementById("formuploadModal").click()
                   }
-                >
-                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                  <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                </svg>
+                  style={{
+                    cursor: "pointer",
+                    borderRadius: "50%",
+                    border:
+                      themeName === "dark-theme"
+                        ? "4px solid black"
+                        : "4px solid white",
+                    cursor: "pointer",
+                  }}
+                  width="133"
+                  height="133"
+                  src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                  alt=""
+                />
                 <input
                   onChange={handleChangeProfileImage}
                   type="file"
@@ -709,7 +728,7 @@ function UserProfile({ isNewPostShared }) {
               </div>
             )}
           </div>
-        </Stack>
+        </div>
 
         {/* finish to check */}
         <div
@@ -724,7 +743,7 @@ function UserProfile({ isNewPostShared }) {
               display: "flex",
               gap: ".2rem",
               alignItems: "center",
-              marginTop: "50px",
+              marginTop: "75px",
             }}
           >
             <div
@@ -841,7 +860,7 @@ function UserProfile({ isNewPostShared }) {
               className="following-followers-link"
             >
               <span>
-                {userInfo?.following.length ? (
+                {profile?.following?.length ? (
                   <span
                     className="chirp-bold-font"
                     style={{
@@ -850,7 +869,7 @@ function UserProfile({ isNewPostShared }) {
                       lineHeight: font14.lineHeight,
                     }}
                   >
-                    {userInfo?.following.length}
+                    {profile?.following?.length}
                   </span>
                 ) : (
                   <span
@@ -889,7 +908,7 @@ function UserProfile({ isNewPostShared }) {
               }}
             >
               <span>
-                {userInfo?.followers.length ? (
+                {profile?.followers?.length ? (
                   <span
                     className="chirp-bold-font"
                     style={{
@@ -898,7 +917,7 @@ function UserProfile({ isNewPostShared }) {
                       lineHeight: font14.lineHeight,
                     }}
                   >
-                    {userInfo?.followers.length}
+                    {profile?.followers?.length}
                   </span>
                 ) : (
                   <span
@@ -1115,6 +1134,497 @@ function UserProfile({ isNewPostShared }) {
           }}
           className={`all-posts ${postsWindow}`}
         >
+          {pinnedPost ? (
+            <div
+              onClick={() => {
+                console.log("Post box parent class =>", post);
+                setclickedPostBox(pinnedPost);
+              }}
+              className={
+                themeName === "dark-theme"
+                  ? `each-post-${themeName}`
+                  : "each-post"
+              }
+              key={pinnedPost._id}
+            >
+              {/* start to check */}
+              <div
+                style={{
+                  textDecoration: "none",
+                }}
+                onClick={() => {
+                  setclickedPostBox(pinnedPost);
+                }}
+                className="posts-details outside-of-inner-circle-actions"
+              >
+                {/* pinned banner */}
+                <div
+                  style={{
+                    cursor: "pointer",
+                  }}
+                  className="post-head"
+                >
+                  <svg
+                    style={{
+                      marginLeft: "10px",
+                      position: "relative",
+                      top: "5px",
+                      left: "20px",
+                    }}
+                    width={16}
+                    height={16}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    fill={
+                      themeName === "dark-theme"
+                        ? "#71767A"
+                        : "rgb(83, 100, 113)"
+                    }
+                  >
+                    <g>
+                      <path d="M7 4.5C7 3.12 8.12 2 9.5 2h5C15.88 2 17 3.12 17 4.5v5.26L20.12 16H13v5l-1 2-1-2v-5H3.88L7 9.76V4.5z"></path>
+                    </g>
+                  </svg>
+                  <Link
+                    className={`hover-reposted-text hover-reposted-text-${themeName} chirp-bold-font`}
+                    style={{
+                      fontSize: font13.fontSize,
+                      lineHeight: font13.lineHeight,
+                      color:
+                        themeName === "dark-theme"
+                          ? "#71767A"
+                          : "rgb(83, 100, 113)",
+                      marginLeft: "10px",
+                      cursor: "pointer",
+                      textDecoration: "none",
+                      position: "relative",
+                      top: "5px",
+                      left: "15px",
+                    }}
+                    onClick={() => setclickedPostBox(pinnedPost)}
+                    to={`/profile/${pinnedPost}`}
+                  >
+                    Pinned
+                  </Link>
+                </div>
+                <Stack
+                  style={{
+                    cursor: "pointer",
+                  }}
+                  to={`/${pinnedPost?.userId?.userName}/status/${
+                    !pinnedPost.isReposted
+                      ? pinnedPost._id
+                      : pinnedPost.repostedFromThisOriginalPost[0]?._id
+                  }`}
+                  onClick={() => setclickedPostBox(pinnedPost)}
+                  className="outside-of-inner-circle-post-info-user-info-svg-three-dots"
+                  direction="horizontal"
+                  gap={1}
+                >
+                  {/* profile image start to check */}
+                  <div className="p-1">
+                    {pinnedPost?.userId?.imageUrl.slice(0, 3) !== "../" ? (
+                      <Link
+                        className="post-circle-profile-image-on-point"
+                        style={{ cursor: "pointer" }}
+                        to={`/profile/${
+                          pinnedPost ? pinnedPost?.userId?._id : null
+                        }`}
+                      >
+                        <img
+                          width={40}
+                          height={40}
+                          src={pinnedPost?.userId?.imageUrl}
+                          alt=""
+                          style={{
+                            borderRadius: "50%",
+                          }}
+                        />
+                      </Link>
+                    ) : (
+                      <Link
+                        className="post-circle-profile-svg-on-point"
+                        to={`/profile/${
+                          pinnedPost.userId ? pinnedPost.userId._id : null
+                        }`}
+                        style={{ cursor: "pointer" }}
+                      >
+                        {" "}
+                        <img
+                          style={{
+                            borderRadius: "50%",
+                          }}
+                          width="40"
+                          height="40"
+                          src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                          alt=""
+                        />
+                      </Link>
+                    )}
+                  </div>
+                  {/* profile image finish to check  */}
+
+                  {/* post owner full name + verified account svg + post owner user name + post created date start to check  */}
+                  <div className="p-1">
+                    {pinnedPost.userId ? (
+                      <div>
+                        <Link
+                          className="post-circle-postowner-fullname"
+                          to={`/profile/${pinnedPost.userId._id}`}
+                          style={{
+                            textDecoration: "none",
+                            color: "black",
+                          }}
+                        >
+                          <span
+                            className="hover-fullname chirp-bold-font"
+                            style={{
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
+                              color: themeName === "dark-theme" ? "white" : "",
+                            }}
+                          >
+                            {pinnedPost.authorFullName}
+                          </span>
+                        </Link>{" "}
+                        {pinnedPost?.userId.isPrivate && (
+                          <span>
+                            <svg
+                              fill={
+                                themeName === "dark-theme"
+                                  ? "#E6E9EA"
+                                  : "#0F141A"
+                              }
+                              width={`${1.25}em`}
+                              height={`${1.25}em`}
+                              viewBox="0 0 24 24"
+                              aria-label="Protected account"
+                              role="img"
+                              className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-lrvibr r-m6rgpd r-3t4u6i r-18jsvk2 r-f9ja8p r-og9te1"
+                              data-testid="icon-lock"
+                            >
+                              <g>
+                                <path d="M17.5 7H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.39 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.89 7 17.5 7zM13 14.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2 0 .74-.4 1.39-1 1.73zM15 7H9v-.25c0-1.66 1.35-3 3-3 1.66 0 3 1.34 3 3V7z"></path>
+                              </g>
+                            </svg>
+                          </span>
+                        )}
+                        {pinnedPost?.userId.hasSubscription ||
+                        (!subscription?.isActive &&
+                          subscription?.remainingTimeSubscription &&
+                          subscription?.cancelledDate &&
+                          subscription?.owner === pinnedPost?.userId._id) ||
+                        remainingTimeSubscriptionsOwnerIds.includes(
+                          pinnedPost?.userId._id
+                        ) ? (
+                          <span>
+                            {/* start to check  */}{" "}
+                            <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
+                              <svg
+                                width={`${1.25}em`}
+                                height={`${1.25}em`}
+                                viewBox="0 0 22 22"
+                                aria-label="Verified account"
+                                role="img"
+                                className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                                data-testid="verified-icon"
+                                color="rgba(29,155,240,1.00)"
+                                fill="currentColor"
+                              >
+                                <g>
+                                  <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                                </g>
+                              </svg>
+                            </span>{" "}
+                          </span>
+                        ) : (
+                          <span> </span>
+                        )}
+                        <Link
+                          className="chirp-regular-font"
+                          to={`/profile/${pinnedPost.userId._id}`}
+                          style={{
+                            textDecoration: "none",
+                            color:
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)",
+                            fontSize: font15.fontSize,
+                            lineHeight: font15.lineHeight,
+                          }}
+                        >
+                          <span className="chirp-regular-font">
+                            <span>@{pinnedPost.authorUserName}</span>
+                          </span>
+                        </Link>
+                        <Link
+                          style={{
+                            textDecoration: "none",
+                          }}
+                          to={`/${pinnedPost.userId.username}/status/${
+                            !pinnedPost.isReposted
+                              ? pinnedPost._id
+                              : pinnedPost.repostedFromThisOriginalPost[0]?._id
+                          }`}
+                        >
+                          <span
+                            className="post-circle-date-post-detail chirp-regular-font"
+                            style={{
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#71767A"
+                                  : "rgb(83, 100, 113)",
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
+                            }}
+                          >
+                            {" "}
+                            ·{" "}
+                            <BootstrapTooltip
+                              title={extraDetailedDate(pinnedPost.createdAt)}
+                              themeName={
+                                themeName === "dark-theme"
+                                  ? "dark-theme"
+                                  : "light-theme"
+                              }
+                            >
+                              <span className="date-post-detail chirp-regular-font">
+                                {getCreatedDate(pinnedPost.createdAt)}
+                              </span>
+                            </BootstrapTooltip>
+                          </span>
+                        </Link>
+                        {/* finish to check  */}
+                      </div>
+                    ) : null}
+                  </div>
+                  {/* post owner full name + verified account svg + post owner user name + post created date  finish to check  */}
+
+                  {/* three dots svg start to check */}
+                  <div className="p-1 ms-auto">
+                    <PostPopover
+                      isPinnedPost={true}
+                      post={pinnedPost}
+                      refreshPosts={handleShowPostsProfilePage}
+                    />
+                  </div>
+                  {/* three dots svg finish to check */}
+                </Stack>
+
+                {/* post content start to check  */}
+                <Stack
+                  to={`/${pinnedPost.authorUserName}/status/${
+                    !pinnedPost.isReposted
+                      ? pinnedPost._id
+                      : pinnedPost.repostedFromThisOriginalPost[0]?._id
+                  }`}
+                  onClick={() => setclickedPostBox(pinnedPost)}
+                  className="outside-of-inner-circle-action-comment-text"
+                  direction="vertical"
+                  gap={1}
+                >
+                  {pinnedPost.isComment ? (
+                    <div
+                      to={`/${pinnedPost.userId.username}/status/${
+                        !pinnedPost.isReposted
+                          ? pinnedPost._id
+                          : pinnedPost.repostedFromThisOriginalPost[0]?._id
+                      }`}
+                      onClick={() => setclickedPostBox(pinnedPost)}
+                      className="p-2 parent-comment-text"
+                    >
+                      <span
+                        className="chirp-regular-font"
+                        style={{
+                          color:
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)",
+                          fontSize: font15.fontSize,
+                          lineHeight: font15.lineHeight,
+                        }}
+                      >
+                        Replying to {""}
+                      </span>
+                      <Link
+                        to={`/profile/${pinnedPost.commentedForThisUsersPost._id}`}
+                        style={{
+                          textDecoration: "none",
+                        }}
+                      >
+                        <span
+                          className="replying-to-text chirp-regular-font"
+                          style={{
+                            color: "rgb(29, 155, 240)",
+                            cursor: "pointer",
+                            fontSize: font15.fontSize,
+                            lineHeight: font15.lineHeight,
+                          }}
+                        >
+                          @{pinnedPost.commentedForThisUsersPost.username}
+                        </span>
+                      </Link>
+                    </div>
+                  ) : null}
+
+                  <Link
+                    to={`/${pinnedPost.authorUserName}/status/${
+                      !pinnedPost.isReposted
+                        ? pinnedPost._id
+                        : pinnedPost.repostedFromThisOriginalPost[0]?._id
+                    }`}
+                    style={{
+                      textDecoration: "none",
+                      color: "rgb(15, 20, 25)",
+                    }}
+                  >
+                    <div
+                      className="p-2 chirp-regular-font"
+                      style={{
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
+                        overflowWrap: "break-word",
+                        maxWidth: "100%",
+                        cursor: "pointer",
+                        color: themeName === "dark-theme" ? "white" : "",
+                      }}
+                    >
+                      {pinnedPost.content}
+                    </div>
+                  </Link>
+                </Stack>
+                {/* post content finish to check  */}
+                {/* start to check NOTE if there is no internet connection images would be hidden because of 'cloudinary connection' */}
+                {pinnedPost?.image?.url !== "image@url" ? (
+                  <>
+                    <Link
+                      to={`/${pinnedPost?.userId?.username}/status/${
+                        !pinnedPost.isReposted
+                          ? pinnedPost._id
+                          : pinnedPost?.repostedFromThisOriginalPost[0]
+                      }/photo/${1}`}
+                      style={{
+                        textDecoration: "none",
+                      }}
+                    >
+                      <div
+                        style={{
+                          overflow: "hidden",
+                          borderRadius: "8px",
+                          padding: "12px",
+                        }}
+                      >
+                        <img
+                          src={pinnedPost?.image?.url}
+                          alt="Description"
+                          style={{
+                            width: "100%",
+                            maxWidth: "100%",
+                            display: "block",
+                            borderRadius: "16px",
+                          }}
+                        />
+                      </div>
+                    </Link>
+                  </>
+                ) : null}
+                {/* finish to check NOTE if there is no internet connection images would be hidden because of 'cloudinary connection' */}
+                {/* new version favorite repost comment start to check */}
+                <Stack
+                  className="mt-0"
+                  direction="horizontal"
+                  style={{
+                    justifyContent: "space-between",
+                    margin: "5px 0px 5px 0px",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "100px",
+                    }}
+                    onClick={() => setclickedPostBox(pinnedPost)}
+                    className="p-1 next-to-comment"
+                  >
+                    <CommentModal
+                      post={pinnedPost}
+                      width={`${1.25}em`}
+                      height={`${1.25}em`}
+                      refreshPosts={handleShowPostsProfilePage}
+                      sendDataToParent={handleDataFromCommentModal}
+                      postSharedMessage={postSharedMessage}
+                    />
+                  </div>
+
+                  {/* start to check */}
+                  <div
+                    style={{
+                      width: "100px",
+                    }}
+                    className="p-1"
+                  >
+                    <RepostAction
+                      post={pinnedPost ? pinnedPost : null}
+                      width={`${1.25}em`}
+                      height={`${1.25}em`}
+                      refreshPosts={handleShowPostsProfilePage}
+                      setLoadingFalse={setLoadingFalse}
+                      setLoadingTrue={setLoadingTrue}
+                    />
+                    {/* start  */}
+                  </div>
+
+                  {/* finish to check  */}
+                  <div
+                    style={{
+                      width: "100px",
+                    }}
+                    className="p-1"
+                  >
+                    <LikeAction
+                      post={pinnedPost || null}
+                      width={`${1.25}em`}
+                      height={`${1.25}em`}
+                      refreshPosts={handleShowPostsProfilePage}
+                      setLoadingFalse={setLoadingFalse}
+                      setLoadingTrue={setLoadingTrue}
+                    />
+                  </div>
+                  <div
+                    style={{
+                      width: "100px",
+                    }}
+                    className="p-1"
+                  >
+                    <BookmarkAction
+                      post={pinnedPost || null}
+                      width={`${1.25}em`}
+                      height={`${1.25}em`}
+                      refreshPosts={handleShowPostsProfilePage}
+                      setLoadingFalse={setLoadingFalse}
+                      setLoadingTrue={setLoadingTrue}
+                    />
+                  </div>
+                </Stack>
+                {/* new version favorite repost comment finish to check */}
+              </div>
+              {/* finish to check */}
+
+              <div
+                onClick={() => {
+                  console.log("Post box child class =>", pinnedPost);
+                  setclickedPostBox(pinnedPost);
+                }}
+                className="border-extra"
+                style={{
+                  borderBottom:
+                    themeName !== "dark-theme"
+                      ? "1px solid rgba(0, 0, 0, 0.1)"
+                      : // : "0.1px solid rgb(70, 70, 70)",
+                        "1px solid rgb(70, 70, 70)",
+                }}
+              ></div>
+            </div>
+          ) : null}
           {userprofiledata.length ? (
             <>
               {userprofiledata.slice(0, visibleTweets).map((post, index) => (
@@ -1131,6 +1641,7 @@ function UserProfile({ isNewPostShared }) {
                   key={post._id}
                 >
                   {post.deactivatedOwner ||
+                  post.pinned ||
                   (post.userId.isPrivate &&
                     !checkIfFollowing(post.userId._id) &&
                     userInfo._id !== post.userId._id) ? null : (
@@ -1144,6 +1655,7 @@ function UserProfile({ isNewPostShared }) {
                         }}
                         className="posts-details outside-of-inner-circle-actions"
                       >
+                        {" "}
                         <div
                           style={{
                             cursor: "pointer",
@@ -1155,7 +1667,7 @@ function UserProfile({ isNewPostShared }) {
                             <>
                               <svg
                                 style={{
-                                  marginLeft: "20px",
+                                  marginLeft: "10px",
                                   position: "relative",
                                   top: "5px",
                                   left: "20px",
@@ -1244,24 +1756,15 @@ function UserProfile({ isNewPostShared }) {
                                 style={{ cursor: "pointer" }}
                               >
                                 {" "}
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="40"
-                                  height="40"
-                                  fill={
-                                    themeName === "dark-theme"
-                                      ? "#71767A"
-                                      : "rgb(83, 100, 113)"
-                                  }
-                                  className="bi bi-person-circle"
-                                  viewBox="0 0 16 16"
+                                <img
                                   style={{
                                     borderRadius: "50%",
                                   }}
-                                >
-                                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                  <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                </svg>
+                                  width="40"
+                                  height="40"
+                                  src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                                  alt=""
+                                />
                               </Link>
                             )}
                           </div>
@@ -1419,7 +1922,6 @@ function UserProfile({ isNewPostShared }) {
                           </div>
                           {/* three dots svg finish to check */}
                         </Stack>
-
                         {/* post content start to check  */}
                         <Stack
                           to={`/${post.userId.username}/status/${
@@ -1782,24 +2284,15 @@ function UserProfile({ isNewPostShared }) {
                                   style={{ cursor: "pointer" }}
                                 >
                                   {" "}
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width={40}
-                                    height={40}
-                                    fill={
-                                      themeName === "dark-theme"
-                                        ? "#71767A"
-                                        : "rgb(83, 100, 113)"
-                                    }
-                                    className="bi bi-person-circle"
-                                    viewBox="0 0 16 16"
+                                  <img
                                     style={{
                                       borderRadius: "50%",
                                     }}
-                                  >
-                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                  </svg>
+                                    width="40"
+                                    height="40"
+                                    src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                                    alt=""
+                                  />
                                 </Link>
                               )}
                             </div>

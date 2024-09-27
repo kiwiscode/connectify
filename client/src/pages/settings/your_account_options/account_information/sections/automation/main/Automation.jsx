@@ -79,8 +79,6 @@ function Automation() {
 
   const { navigationHistoryArray } = useContext(NavigationHistoryContext);
 
-  console.log("Navigation history =>", navigationHistoryArray);
-
   const [showManagingAccountModal, setShowManagingAccountModal] =
     useState(null);
 

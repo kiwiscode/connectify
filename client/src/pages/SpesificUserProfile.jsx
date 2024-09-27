@@ -630,8 +630,6 @@ function SpesificUserProfile({ isNewPostShared }) {
       );
       const followedUserIds = result.data.following.map((user) => user._id);
       setFollowedIds(followedUserIds);
-
-      console.log("result of followed users:", result);
     } catch (error) {
       console.error("error:", error);
     }
@@ -973,61 +971,82 @@ function SpesificUserProfile({ isNewPostShared }) {
           </div>
         </Stack>
         {/* start to check stack on the way  */}
-        <Stack
-          direction="horizontal"
-          gap={3}
-          style={{ marginTop: "45px", padding: "0px 16px" }}
+        <div
+          style={{
+            backgroundColor:
+              themeName === "light-theme" ? "rgb(207, 217, 222)" : "",
+            height: "200px",
+            position: "relative",
+            backgroundImage: `url("https://marketplace.canva.com/EAE91Kz0wsI/1/0/1600w/canva-blue-yellow-retro-quotes-twitter-header-xTB_BZnqeew.jpg")`,
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center",
+            backgroundSize: "cover",
+            backgroundAttachment: "fixed",
+          }}
         >
-          {profileInfo.imageUrl && (
-            <div className="p-2">
-              {profileInfo.imageUrl.slice(0, 3) !== "../" ? (
-                <div>
-                  <img
-                    width={133}
-                    height={133}
-                    src={profileInfo.imageUrl}
-                    alt=""
-                    style={{
-                      borderRadius: "50%",
-                    }}
-                  />
-                </div>
-              ) : (
-                <div>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="133"
-                    height="133"
-                    fill={
-                      themeName === "dark-theme"
-                        ? "#71767A"
-                        : "rgb(83, 100, 113)"
-                    }
-                    className="bi bi-person-circle"
-                    viewBox="0 0 16 16"
-                    style={{ cursor: "pointer", borderRadius: "50%" }}
-                    onClick={() =>
-                      document.getElementById("formuploadModal").click()
-                    }
-                  >
-                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                  </svg>
-                </div>
-              )}
-            </div>
-          )}
-
+          <div
+            style={{
+              padding: "12px 16px",
+              position: "absolute",
+              bottom: -80,
+            }}
+          >
+            {profileInfo.imageUrl && (
+              <div>
+                {profileInfo.imageUrl.slice(0, 3) !== "../" ? (
+                  <div>
+                    <img
+                      width={133}
+                      height={133}
+                      src={profileInfo.imageUrl}
+                      alt=""
+                      style={{
+                        borderRadius: "50%",
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <img
+                      style={{
+                        cursor: "pointer",
+                        borderRadius: "50%",
+                        border:
+                          themeName === "dark-theme"
+                            ? "4px solid black"
+                            : "4px solid white",
+                        cursor: "pointer",
+                      }}
+                      width="133"
+                      height="133"
+                      src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                      alt=""
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "flex-end",
+            padding: "0px 12px",
+            marginTop: "6px",
+          }}
+        >
           {profileInfo._id !== userInfo._id ? (
             <div
               style={{
-                // backgroundColor: "yellow",
                 display: "flex",
-                justifyContent: "center",
+                justifyContent: "flex-end",
                 width: "100%",
-                gap: "2%",
+                gap: "10px",
               }}
-              className="p-2 ms-auto"
+              className="ms-auto"
             >
               <div
                 style={{
@@ -1234,7 +1253,7 @@ function SpesificUserProfile({ isNewPostShared }) {
               )}
             </div>
           ) : null}
-        </Stack>
+        </div>
 
         <div
           style={{
@@ -1248,7 +1267,7 @@ function SpesificUserProfile({ isNewPostShared }) {
               display: "flex",
               gap: ".2rem",
               alignItems: "center",
-              marginTop: "50px",
+              marginTop: "30px",
             }}
           >
             <div
@@ -1791,78 +1810,19 @@ function SpesificUserProfile({ isNewPostShared }) {
                               <div className="post-head">
                                 {post.isReposted &&
                                 userInfo._id === profileInfo._id ? (
-                                  <div
-                                    className={`${show} you-reposted-head`}
-                                    style={{
-                                      cursor: "pointer",
-                                      position: "relative",
-                                      left: "6px",
-                                    }}
-                                  >
+                                  <>
                                     <svg
                                       style={{
-                                        color: "rgb(83, 100, 113)",
-                                        marginLeft: "20px",
-                                      }}
-                                      width={`16px`}
-                                      height={`16px`}
-                                      viewBox="0 0 24 24"
-                                      aria-hidden="true"
-                                      className="repost-svg-post-box svg-repost-post box svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                      fill={
-                                        themeName === "dark-theme"
-                                          ? "#71767A"
-                                          : "rgb(83, 100, 113)"
-                                      }
-                                    >
-                                      <g>
-                                        <path
-                                          stroke="rgb(83, 100, 113)"
-                                          strokeWidth="0.1"
-                                          d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
-                                        ></path>
-                                      </g>
-                                    </svg>
-                                    <Link
-                                      className={`hover-reposted-text hover-reposted-text-${themeName} chirp-bold-font`}
-                                      style={{
-                                        fontSize: font13.fontSize,
-                                        lineHeight: font13.lineHeight,
-                                        color:
-                                          themeName === "dark-theme"
-                                            ? "#71767A"
-                                            : "rgb(83, 100, 113)",
                                         marginLeft: "10px",
-                                        cursor: "pointer",
-                                        textDecoration: "none",
-                                      }}
-                                      onClick={() => setclickedPostBox(post)}
-                                      to={`/profile/${post.reposted[0]._id}`}
-                                    >
-                                      You reposted
-                                    </Link>{" "}
-                                  </div>
-                                ) : null}
-                                {/* start to check */}
-                                {post.isReposted &&
-                                userInfo._id !== profileInfo._id ? (
-                                  <div
-                                    style={{
-                                      cursor: "pointer",
-                                    }}
-                                  >
-                                    <svg
-                                      style={{
-                                        marginLeft: "20px",
                                         position: "relative",
                                         top: "5px",
                                         left: "20px",
                                       }}
-                                      width={`16px`}
-                                      height={`16px`}
+                                      width={16}
+                                      height={16}
                                       viewBox="0 0 24 24"
                                       aria-hidden="true"
-                                      className="repost-svg-post-box svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                      className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                                       fill={
                                         themeName === "dark-theme"
                                           ? "#71767A"
@@ -1896,8 +1856,67 @@ function SpesificUserProfile({ isNewPostShared }) {
                                       onClick={() => setclickedPostBox(post)}
                                       to={`/profile/${post.reposted[0]._id}`}
                                     >
-                                      {profileInfo.fullname} reposted
+                                      You reposted
                                     </Link>{" "}
+                                  </>
+                                ) : null}
+                                {/* start to check */}
+                                {post.isReposted &&
+                                userInfo._id !== profileInfo._id ? (
+                                  <div
+                                    style={{
+                                      cursor: "pointer",
+                                    }}
+                                  >
+                                    <svg
+                                      style={{
+                                        marginLeft: "10px",
+                                        position: "relative",
+                                        top: "5px",
+                                        left: "20px",
+                                      }}
+                                      width={`16px`}
+                                      height={`16px`}
+                                      viewBox="0 0 24 24"
+                                      aria-hidden="true"
+                                      className="repost-svg-post-box svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                      fill={
+                                        themeName === "dark-theme"
+                                          ? "#71767A"
+                                          : "rgb(83, 100, 113)"
+                                      }
+                                    >
+                                      <g>
+                                        <path
+                                          stroke="rgb(83, 100, 113)"
+                                          strokeWidth="0.1"
+                                          d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                                        ></path>
+                                      </g>
+                                    </svg>
+                                    <span>
+                                      <Link
+                                        style={{
+                                          fontSize: font13.fontSize,
+                                          lineHeight: font13.lineHeight,
+                                          color:
+                                            themeName === "dark-theme"
+                                              ? "#71767A"
+                                              : "rgb(83, 100, 113)",
+                                          marginLeft: "10px",
+                                          cursor: "pointer",
+                                          textDecoration: "none",
+                                          position: "relative",
+                                          top: "5px",
+                                          left: "15px",
+                                        }}
+                                        className={`hover-reposted-text hover-reposted-text-${themeName} chirp-bold-font`}
+                                        onClick={() => setclickedPostBox(post)}
+                                        to={`/profile/${post.reposted[0]._id}`}
+                                      >
+                                        {profileInfo.fullname} reposted
+                                      </Link>{" "}
+                                    </span>
                                   </div>
                                 ) : null}
                                 {/* finish to check */}
@@ -1947,24 +1966,15 @@ function SpesificUserProfile({ isNewPostShared }) {
                                       style={{ cursor: "pointer" }}
                                     >
                                       {" "}
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="40"
-                                        height="40"
-                                        fill={
-                                          themeName === "dark-theme"
-                                            ? "#71767A"
-                                            : "rgb(83, 100, 113)"
-                                        }
-                                        className="bi bi-person-circle"
-                                        viewBox="0 0 16 16"
+                                      <img
                                         style={{
                                           borderRadius: "50%",
                                         }}
-                                      >
-                                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                        <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                      </svg>
+                                        width="40"
+                                        height="40"
+                                        src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                                        alt=""
+                                      />
                                     </Link>
                                   )}
                                 </div>
@@ -2534,24 +2544,15 @@ function SpesificUserProfile({ isNewPostShared }) {
                                           style={{ cursor: "pointer" }}
                                         >
                                           {" "}
-                                          <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width={40}
-                                            height={40}
-                                            fill={
-                                              themeName === "dark-theme"
-                                                ? "#71767A"
-                                                : "rgb(83, 100, 113)"
-                                            }
-                                            className="bi bi-person-circle"
-                                            viewBox="0 0 16 16"
+                                          <img
                                             style={{
                                               borderRadius: "50%",
                                             }}
-                                          >
-                                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                            <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                          </svg>
+                                            width="40"
+                                            height="40"
+                                            src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                                            alt=""
+                                          />
                                         </Link>
                                       )}
                                     </div>

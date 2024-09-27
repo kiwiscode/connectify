@@ -40,11 +40,9 @@ function HomePage() {
             }}
           >
             <svg
-              fill="yellow"
               xmlns="http://www.w3.org/2000/svg"
               width={712}
               height={438}
-              // height={438}
               viewBox="0 0 100 110"
               style={{
                 filter: "drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))",

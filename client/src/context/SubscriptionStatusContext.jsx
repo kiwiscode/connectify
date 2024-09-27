@@ -25,15 +25,6 @@ export const SubscriptionStatusProvider = ({ children }) => {
         },
       });
 
-      console.log(
-        "response data detail =>",
-        response.data.activeSubscription[0]
-      );
-      console.log(
-        "response data detail 2 =>",
-        response.data.activeCancelledSubscription[0]
-      );
-
       setSubscription(
         response.data.activeSubscription[0]
           ? response.data.activeSubscription[0]

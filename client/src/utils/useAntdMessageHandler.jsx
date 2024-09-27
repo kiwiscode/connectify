@@ -41,6 +41,26 @@ export const useAntdMessageHandler = () => {
     });
   };
 
+  const pinnedMessage = () => {
+    console.log("here is working rn pinned +");
+    messageApi.success({
+      type: "success",
+      content: <div>Your post was pinned to your profile.</div>,
+      duration: 6,
+      className: "custom-message-style chirp-regular-font",
+    });
+  };
+
+  const unpinnedMessage = () => {
+    console.log("here is working rn unpinned -");
+    messageApi.success({
+      type: "success",
+      content: <div>Your post was unpinned from your profile</div>,
+      duration: 6,
+      className: "custom-message-style chirp-regular-font",
+    });
+  };
+
   const showCustomMessage = (
     customMessage,
     duration,
@@ -75,6 +95,8 @@ export const useAntdMessageHandler = () => {
   return {
     postSharedMessage,
     postDeletedMessage,
+    pinnedMessage,
+    unpinnedMessage,
     showCustomMessage,
     contextHolder,
   };

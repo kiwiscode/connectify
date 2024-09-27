@@ -78,7 +78,6 @@ function Email() {
 
   const { navigationHistoryArray } = useContext(NavigationHistoryContext);
 
-  console.log("Navigation history =>", navigationHistoryArray);
   const {
     getFontSizeAndLineHeight20,
     getFontSizeAndLineHeight15,

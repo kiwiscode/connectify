@@ -65,8 +65,6 @@ function RightSideColumn({
     remainingTimeSubscriptionsOwnerIds,
   } = useContext(SubcsriptionStatusContext);
 
-  console.log("twilio phone number:", TWILIO_NUMBER);
-
   const {
     getFontSizeAndLineHeight34,
     getFontSizeAndLineHeight31,
@@ -104,10 +102,6 @@ function RightSideColumn({
           planPrice: premiumInfoFromParentAppJsx.planPrice,
         };
       });
-      console.log(
-        "Data received from my parents child =>",
-        premiumInfoFromParentAppJsx
-      );
     }
   }, [
     premiumInfoFromParentAppJsx,
@@ -252,7 +246,6 @@ function RightSideColumn({
         },
       })
       .then((response) => {
-        console.log("Response for first 3 user =>", response.data);
         setFirst3User(response.data.first3User);
       })
       .catch((error) => {
@@ -397,12 +390,10 @@ function RightSideColumn({
   }, [isVerifiedOrgsSignUpRoute]);
 
   useEffect(() => {
-    console.log("Şu anda burası çalışıyor ! ");
     if (isSubscriptionEligibilityCheckRouteForIndividualSubscription) {
       setisIndividualSubscriptionClicked(true);
       setisOrganizationSubscriptionClicked(false);
       setshowSubscriptionModal(true);
-      console.log("Şu anda burası çalışıyor 2 ! ");
 
       setTabIndex(2);
     }
@@ -18809,21 +18800,15 @@ function RightSideColumn({
                         ) : (
                           <div>
                             <Link>
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
+                              <img
+                                style={{
+                                  borderRadius: "50%",
+                                }}
                                 width="40"
                                 height="40"
-                                fill={
-                                  themeName === "dark-theme"
-                                    ? "#71767A"
-                                    : "rgb(83, 100, 113)"
-                                }
-                                className="bi bi-person-circle"
-                                viewBox="0 0 16 16"
-                              >
-                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                              </svg>
+                                src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                                alt=""
+                              />
                             </Link>
                           </div>
                         )}
@@ -19077,21 +19062,15 @@ function RightSideColumn({
                                             textDecoration: "none",
                                           }}
                                         >
-                                          <svg
-                                            xmlns="http://www.w3.org/2000/svg"
+                                          <img
+                                            style={{
+                                              borderRadius: "50%",
+                                            }}
                                             width="40"
                                             height="40"
-                                            fill={
-                                              themeName === "dark-theme"
-                                                ? "#71767A"
-                                                : "rgb(83, 100, 113)"
-                                            }
-                                            className="bi bi-person-circle"
-                                            viewBox="0 0 16 16"
-                                          >
-                                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                            <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                          </svg>
+                                            src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                                            alt=""
+                                          />
                                         </Link>
                                       </div>
                                     )}
@@ -19399,21 +19378,15 @@ function RightSideColumn({
                                   <Link
                                     to={`/profile/${eachActivity.thePersonWhoCarriedOutTheActivity._id}`}
                                   >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
+                                    <img
+                                      style={{
+                                        borderRadius: "50%",
+                                      }}
                                       width={32}
                                       height={32}
-                                      fill={
-                                        themeName === "dark-theme"
-                                          ? "#71767A"
-                                          : "rgb(83, 100, 113)"
-                                      }
-                                      className="bi bi-person-circle"
-                                      viewBox="0 0 16 16"
-                                    >
-                                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                      <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                    </svg>
+                                      src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                                      alt=""
+                                    />
                                   </Link>
                                 )}
                               </div>
@@ -19564,21 +19537,15 @@ function RightSideColumn({
                                                 <Link
                                                   to={`/profile/${eachActivity.relatedPost?.userId?._id}`}
                                                 >
-                                                  <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
+                                                  <img
+                                                    style={{
+                                                      borderRadius: "50%",
+                                                    }}
                                                     width={32}
                                                     height={32}
-                                                    fill={
-                                                      themeName === "dark-theme"
-                                                        ? "#71767A"
-                                                        : "rgb(83, 100, 113)"
-                                                    }
-                                                    className="bi bi-person-circle"
-                                                    viewBox="0 0 16 16"
-                                                  >
-                                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                                                  </svg>
+                                                    src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                                                    alt=""
+                                                  />
                                                 </Link>
                                               </div>
                                             )}

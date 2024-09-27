@@ -115,7 +115,8 @@ router.post("/:userId/send-follow-request", async (req, res) => {
 });
 
 // 4. Takip isteğini güncelleme (örneğin, kabul etme veya reddetme)
-// cancel request
+
+// cancel
 router.post(
   "/:userId/cancel-follow-request/:requestId",
   authenticateToken,

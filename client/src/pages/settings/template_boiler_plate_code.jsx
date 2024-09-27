@@ -15,7 +15,6 @@ function Display() {
   const [{ theme, themeName }] = useContext(ThemeContext);
   const navigate = useNavigate();
   const { navigationHistoryArray } = useContext(NavigationHistoryContext);
-  console.log("Navigation history =>", navigationHistoryArray);
 
   return (
     <>

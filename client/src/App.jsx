@@ -256,8 +256,6 @@ function App() {
   const location = useLocation();
   const path = location.pathname;
 
-  console.log("Current path:", path);
-
   const [{ theme, themeName }] = useContext(ThemeContext);
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
@@ -343,17 +341,11 @@ function App() {
 
   useEffect(() => {
     if (path == "/i/verified-orgs-signup") {
-      console.log(
-        "Talking from bubbaa parent : You are in the right path to open verified organization sign up !!!"
-      );
       setOpenVerifiedOrganizationSubscriptionTypedModal(true);
     } else if (path == "/i/flow/subscription_eligibility_check") {
       console.log("Open individual subscription modal ...!");
       setopenIndividualEligibilityVerifyNumberScreen(true);
     } else {
-      console.log(
-        "Talking from bubbaa parent : You are not in the right path to open verified organization sign up or individual sign up!!!"
-      );
       setOpenVerifiedOrganizationSubscriptionTypedModal(false);
       setopenIndividualEligibilityVerifyNumberScreen(false);
     }
@@ -385,7 +377,8 @@ function App() {
   // for smooth scroll effect for the whole app
   // useLayoutEffect(() => {
   //   ScrollSmoother.create({
-  //     smooth: 0.8,
+  //     // smooth: 0.8,
+  //     smooth: !0,
   //     effects: true,
   //     smoothTouch: 0.1,
   //   });

@@ -14,7 +14,6 @@ export const NavigationHistoryProvider = ({ children }) => {
       setNavigationHistoryArray([path, ...navigationHistoryArray]);
     }
   }, [path]);
-  console.log("Navigation history:" + navigationHistoryArray);
 
   return (
     <NavigationHistoryContext.Provider value={{ navigationHistoryArray }}>

@@ -141,7 +141,6 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
 
   const { navigationHistoryArray } = useContext(NavigationHistoryContext);
 
-  console.log("Navigation history array =>", navigationHistoryArray);
   return (
     <>
       {width > 700 && (

@@ -33,8 +33,16 @@ const handleProfile = (req, res) => {
       },
     })
     .populate("automated_account")
+    .populate("pinnedPosts")
+    .populate({
+      path: "pinnedPosts",
+      populate: {
+        path: "userId",
+        model: "User",
+      },
+    })
     .then((user) => {
-      res.status(200).json({ posts: user.posts, user });
+      res.status(200).json({ posts: user.posts, user, message: "success" });
     })
     .catch((err) => {
       console.log("Error =>", err);

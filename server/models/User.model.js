@@ -172,6 +172,7 @@ const userSchema = new Schema(
         },
       },
     ],
+    pinnedPosts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
   },
   {
     timestamps: true,

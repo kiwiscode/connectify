@@ -66,7 +66,6 @@ router.post("/login-variant-one-result", (req, res) => {
     .populate("favorites")
     .populate("subscriptions")
     .populate("messages")
-
     .then((user) => {
       console.log("User =>", user.username);
       console.log("User password =>", passwordFromReqBody);

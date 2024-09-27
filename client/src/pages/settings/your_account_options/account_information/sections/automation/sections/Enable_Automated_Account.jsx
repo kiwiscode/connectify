@@ -59,8 +59,6 @@ function Enable_Automated_Account() {
 
   const { navigationHistoryArray } = useContext(NavigationHistoryContext);
 
-  console.log("Navigation history =>", navigationHistoryArray);
-
   const [
     multi_factor_authentication_input,
     setMulti_factor_authentication_input,

@@ -40,8 +40,8 @@ app.use("/auth", authRoutes);
 const userRoutes = require("./routes/user.routes.js");
 app.use("/users", userRoutes);
 
-const homeRoutes = require("./routes/home.routes");
-app.use("/home", homeRoutes);
+const postRoutes = require("./routes/post.routes.js");
+app.use("/posts", postRoutes);
 
 const profileRoutes = require("./routes/profile.routes");
 app.use("/profile", profileRoutes);

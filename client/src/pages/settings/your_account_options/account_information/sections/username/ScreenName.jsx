@@ -335,7 +335,7 @@ function ScreenName() {
                 onChange={(e) => setUsername(e.target.value)}
                 type="text"
                 value={username.length > 0 ? username : null}
-                defaultValue={userInfo.username}
+                defaultValue={`${userInfo.username}`}
                 style={{
                   height: "50px",
                   position: "absolute",
