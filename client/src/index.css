@@ -1787,6 +1787,16 @@ span > a:hover {
   text-decoration-color: rgba(29, 155, 240);
 }
 
+.edit-profile-edit-btn {
+  cursor: pointer !important;
+  color: rgba(29, 155, 240) !important;
+}
+
+.edit-profile-edit-btn:hover {
+  text-decoration: underline !important;
+  text-decoration-color: rgba(29, 155, 240) !important;
+}
+
 .three-dots-spesific-profile:hover,
 .message-box-spesific-profile:hover {
   background-color: #e7e7e8;
@@ -1925,8 +1935,14 @@ span > a:hover {
 
 .cancel-btn-reactivate-tab:hover,
 .cancel-btn-delete-conversation-tab:hover {
-  background-color: #e7e7e8;
+  background-color: #e7e7e8 !important;
   transition-duration: 0.2s !important;
+}
+.edit-profile-btn.light-theme:hover {
+  background-color: #e7e7e8 !important;
+}
+.edit-profile-btn.dark-theme:hover {
+  background-color: #181818 !important;
 }
 
 /* #e7e7e8 */
@@ -2688,26 +2704,15 @@ span > a:hover {
 
 /*  slider finish to check  */
 
-.post-modal-from-left-side-navigation-bar .modal-content::-webkit-scrollbar {
-  width: 1em;
-}
-.post-modal-from-left-side-navigation-bar
-  .modal-content::-webkit-scrollbar-track {
-  background: #f7f9f9;
-  border-top-right-radius: 100vw;
-  border-bottom-right-radius: 100vw;
-  margin-block: 0.5em;
-  padding: 0;
-  margin: 0;
-}
-
-.post-modal-from-left-side-navigation-bar .modal-content::-webkit-scrollbar {
+.post-modal-from-left-side-navigation-bar .modal-content::-webkit-scrollbar,
+.edit-profile-modal .modal-content::-webkit-scrollbar {
   width: 1em;
 }
 
 .post-modal-from-left-side-navigation-bar
-  .modal-content::-webkit-scrollbar-track {
-  background: #f7f9f9;
+  .modal-content::-webkit-scrollbar-track,
+.edit-profile-modal .modal-content::-webkit-scrollbar-track {
+  background: #f7f9f9 !important;
   border-top-right-radius: 100vw;
   border-bottom-right-radius: 100vw;
   margin-block: 0.5em;
@@ -2716,20 +2721,23 @@ span > a:hover {
 }
 
 .post-modal-from-left-side-navigation-bar
-  .modal-content::-webkit-scrollbar-thumb {
-  background: #b9cad3;
+  .modal-content::-webkit-scrollbar-thumb,
+.edit-profile-modal .modal-content::-webkit-scrollbar-thumb {
+  background: #b9cad3 !important;
   border-radius: 100vw;
   width: 5px;
-  border: 0.25em solid #f7f9f9;
+  border: 0.25em solid #f7f9f9 !important;
 }
 
 .post-modal-from-left-side-navigation-bar-dark-theme
-  .modal-content::-webkit-scrollbar {
+  .modal-content::-webkit-scrollbar,
+.edit-profile-modal-dark-theme .modal-content::-webkit-scrollbar {
   width: 1em;
 }
 
 .post-modal-from-left-side-navigation-bar-dark-theme
-  .modal-content::-webkit-scrollbar-track {
+  .modal-content::-webkit-scrollbar-track,
+.edit-profile-modal .modal-content::-webkit-scrollbar-track {
   background: #3e4144;
   border-top-right-radius: 100vw;
   border-bottom-right-radius: 100vw;
@@ -2739,21 +2747,18 @@ span > a:hover {
 }
 
 .post-modal-from-left-side-navigation-bar-dark-theme
-  .modal-content::-webkit-scrollbar-thumb {
-  background: #3e4144;
+  .modal-content::-webkit-scrollbar-thumb,
+.edit-profile-modal-dark-theme .modal-content::-webkit-scrollbar-thumb {
+  background: #3e4144 !important;
   border-radius: 100vw;
   width: 5px;
-  border: 0.25em solid #16181c;
+  border: 0.25em solid #16181c !important;
 }
 
 .post-modal-from-left-side-navigation-bar-dark-theme
-  .modal-content::-webkit-scrollbar {
-  width: 1em;
-}
-
-.post-modal-from-left-side-navigation-bar-dark-theme
-  .modal-content::-webkit-scrollbar-track {
-  background: #16181c;
+  .modal-content::-webkit-scrollbar-track,
+.edit-profile-modal-dark-theme .modal-content::-webkit-scrollbar-track {
+  background: #16181c !important;
   border-top-right-radius: 100vw;
   border-bottom-right-radius: 100vw;
   margin-block: 0.5em;
@@ -2996,12 +3001,49 @@ select {
   overflow-y: auto;
 }
 
+.edit-profile-modal .modal-content,
+.edit-profile-modal-dark-theme .modal-content {
+  max-height: 600px !important;
+  overflow-y: auto !important;
+  min-width: 600px !important;
+}
+
+.post-modal-from-left-side-navigation-bar .modal-dialog {
+  max-width: 600px !important;
+}
+
 .post-modal-from-left-side-navigation-bar-dark-theme .modal-content {
   width: 600px;
   max-height: 600px;
   overflow-y: auto;
   background-color: black !important;
   border-radius: 16px;
+}
+
+.smaller-edit-modal {
+  width: 100% !important;
+  z-index: 9999;
+  padding: 0 !important;
+  margin: 0 !important;
+  height: 100dvh !important;
+  background-color: white;
+  min-width: fit-content;
+}
+.smaller-edit-modal-dark-theme {
+  width: 100% !important;
+  z-index: 9999;
+  padding: 0 !important;
+  margin: 0 !important;
+  height: 100dvh;
+  background-color: black;
+  min-width: fit-content;
+}
+
+.smaller-edit-modal .modal-dialog {
+  width: 100%;
+}
+.smaller-edit-modal .modal-content {
+  overflow-y: auto;
 }
 
 .width-smaller-700-post-modal-left-side-navigation-bar-dark-theme
@@ -3092,10 +3134,30 @@ select {
   background-color: #d7dbdc !important;
   color: black;
 }
+.dark-theme-white-btn-for-save:hover {
+  background-color: #d7dbdc !important;
+}
 
 .settings-and-privacy-second-dark-theme,
 .forgot-password-process-dark-theme {
   background-color: black !important;
+}
+
+.save-edited-profile-light-theme {
+  background-color: black !important;
+}
+
+.save-edited-profile-dark-theme {
+  background-color: white !important;
+}
+.save-edited-profile-dark-theme:hover {
+  background-color: #e7e7e8 !important;
+  transition-duration: 0.2s !important;
+}
+
+.save-edited-profile-light-theme:hover {
+  background-color: #181818 !important;
+  transition-duration: 0.2s !important;
 }
 
 .divider-your-account-settings-and-privacy-dark-theme::after,
@@ -4455,4 +4517,31 @@ themeName === "dark-theme"
   transition-duration: 0.2s !important;
   background-color: #f8e5e6 !important;
   outline: none !important;
+}
+
+/* test input */
+.mui-bio-edit-profile-input input {
+  padding-top: 14.5px;
+  padding-bottom: 14.5px;
+}
+
+.mui-bio-edit-profile-input label {
+  top: -5px;
+}
+
+.mui-bio-edit-profile-input label[data-shrink="true"] {
+  top: 0;
+}
+
+.mui-bio-edit-profile-input:focus + fieldset {
+  border: 5px solid black !important;
+}
+
+.edit-profile-modal-dark-theme .modal-content {
+  background-color: black;
+}
+
+.edit-photo-machine-img:hover {
+  background-color: rgba(39, 44, 48, 0.75) !important;
+  transition-duration: 0.2s;
 }

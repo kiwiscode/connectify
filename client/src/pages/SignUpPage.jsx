@@ -3855,11 +3855,7 @@ function SignUpPage() {
               </text>
             </svg>
           </div>
-          <div
-            style={{
-              width: "100vw",
-            }}
-          >
+          <div>
             <span
               style={{
                 color: themeName === "dark-theme" ? "white" : "",

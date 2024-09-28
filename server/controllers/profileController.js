@@ -362,8 +362,50 @@ const handleDeactivateAccount = (req, res) => {
     });
 };
 
+const editProfile = async (req, res) => {
+  const {
+    fullName,
+    bioOnEdit,
+    locationOnEdit,
+    websiteOnEdit,
+    birthDateOnEdit,
+    birthDateVisibilityRestriction,
+  } = req.body;
+
+  const { userId } = req.params;
+  try {
+    const user = await User.findById(userId);
+
+    console.log("body:", req.body);
+
+    if (!user) {
+      return res.status(404).json({ message: "Kullanıcı bulunamadı." });
+    }
+
+    if (fullName) user.fullname = fullName;
+    if (bioOnEdit) user.bio = bioOnEdit;
+    if (locationOnEdit) user.location = locationOnEdit;
+    if (websiteOnEdit) user.webSite = websiteOnEdit;
+    if (birthDateOnEdit) user.birthDate = birthDateOnEdit;
+    if (birthDateVisibilityRestriction)
+      user.birthDateVisibility = {
+        monthAndDay: birthDateVisibilityRestriction.monthAndDay,
+        year: birthDateVisibilityRestriction.year,
+      };
+
+    // Değişiklikleri kaydet
+    await user.save();
+
+    res.json({ message: "Profil başarıyla güncellendi.", user });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ errorMessage: "An error occurred." });
+  }
+};
+
 module.exports = {
   handleProfile,
+  editProfile,
   handleShowSpesificProfile,
   handleProfilePicture,
   getFollowers,

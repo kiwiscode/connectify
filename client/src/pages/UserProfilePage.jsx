@@ -1,7 +1,15 @@
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../context/UserContext";
-import { Col, Stack, Accordion } from "react-bootstrap";
+import {
+  Col,
+  Stack,
+  Accordion,
+  Modal,
+  Button,
+  OverlayTrigger,
+  Popover,
+} from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { CommentModal } from "../components/ui/Modal";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
@@ -19,6 +27,8 @@ import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
 import BookmarkAction from "../components/ui/BookmarkAction";
 import { SubcsriptionStatusContext } from "../context/SubscriptionStatusContext";
 import { useFontSizeHandler } from "../utils/useFontSizeHandler";
+import { InputLabel, TextField } from "@mui/material";
+import { lineHeight } from "@mui/system";
 
 function UserProfile({ isNewPostShared }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
@@ -118,6 +128,43 @@ function UserProfile({ isNewPostShared }) {
   const [isLoading, setIsLoading] = useState(false);
   const [profileImage, setprofileImage] = useState("");
   const [completedProfileImage, setcompletedProfileImage] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
+
+  const showEditModal = () => {
+    setOpenEditModal(true);
+  };
+
+  const saveEdit = async () => {
+    try {
+      await axios.patch(
+        `${API_URL}/profile/${userInfo._id}/edit`,
+        {
+          fullName,
+          bioOnEdit,
+          locationOnEdit,
+          websiteOnEdit,
+          birthDateOnEdit,
+          birthDateVisibilityRestriction: restrictions,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      updateUser({
+        fullname: fullName,
+        bio: bioOnEdit,
+        location: locationOnEdit,
+        webSite: websiteOnEdit,
+        birthDate: birthDateOnEdit,
+        birthDateVisibility: restrictions,
+      });
+    } catch (error) {
+      console.error("error:", error);
+    }
+  };
 
   const handleGetFavorites = () => {
     setActiveTab("likes");
@@ -395,12 +442,15 @@ function UserProfile({ isNewPostShared }) {
   const {
     getFontSizeAndLineHeight31,
     getFontSizeAndLineHeight20,
+    getFontSizeAndLineHeight17,
     getFontSizeAndLineHeight15,
     getFontSizeAndLineHeight14,
     getFontSizeAndLineHeight13,
   } = useFontSizeHandler();
+
   const font31 = getFontSizeAndLineHeight31();
   const font20 = getFontSizeAndLineHeight20();
+  const font17 = getFontSizeAndLineHeight17();
   const font15 = getFontSizeAndLineHeight15();
   const font14 = getFontSizeAndLineHeight14();
   const font13 = getFontSizeAndLineHeight13();
@@ -435,13 +485,2044 @@ function UserProfile({ isNewPostShared }) {
     }
   }, []);
 
+  // edit form general scenario
+  const [checkFields, setcheckFields] = useState({
+    nameInput: false,
+    bioInput: false,
+    locationInput: false,
+    websiteInput: false,
+    birthDateInput: false,
+  });
+
+  const [onFocusedToFullNameField, setonFocusedToFullNameField] =
+    useState(false);
+  const [onFocusedToBioField, setonFocusedToBioField] = useState(false);
+  const [onFocusedToLocationField, setonFocusedToLocationField] =
+    useState(false);
+  const [onFocusedToWebsiteField, setonFocusedToWebsiteField] = useState(false);
+  const [fullName, setFullName] = useState(userInfo.fullname);
+  const [bioOnEdit, setBioOnEdit] = useState("");
+  const [locationOnEdit, setLocationOnEdit] = useState("");
+  const [websiteOnEdit, setWebsiteOnEdit] = useState("");
+  const [birthDateOnEdit, setBirthDateOnEdit] = useState({
+    month: "",
+    day: "",
+    year: "",
+  });
+  const [fullnameFilled, setfullnameFilled] = useState("");
+  const [firstAppearence, setFirstAppearance] = useState("");
+
+  useEffect(() => {
+    console.log("birthdate, month:", birthDateOnEdit.month);
+    console.log("birthdate, year:", birthDateOnEdit.year);
+    console.log("birthdate, day:", birthDateOnEdit.day);
+  }, [birthDateOnEdit.month, birthDateOnEdit.year, birthDateOnEdit.day]);
+
+  const handleChangeFullName = (e) => {
+    if (e.target.value.length <= 50) {
+      setFullName(e.target.value);
+      setfullnameFilled(false);
+      setFirstAppearance(false);
+      setcheckFields((prevState) => ({
+        ...prevState,
+        nameInput: true,
+      }));
+    }
+  };
+  const handleChangeBio = (e) => {
+    if (e.target.value.length <= 160) {
+      setBioOnEdit(e.target.value);
+      setcheckFields((prevState) => ({
+        ...prevState,
+        bioInput: true,
+      }));
+    }
+  };
+  const handleChangeLocation = (e) => {
+    if (e.target.value.length <= 30) {
+      setLocationOnEdit(e.target.value);
+      setcheckFields((prevState) => ({
+        ...prevState,
+        locationInput: true,
+      }));
+    }
+  };
+  const handleChangeWebsite = (e) => {
+    if (e.target.value.length <= 100) {
+      setWebsiteOnEdit(e.target.value);
+      setcheckFields((prevState) => ({
+        ...prevState,
+        websiteInput: true,
+      }));
+    }
+  };
+
+  const [showWarningAgeEditingModal, setshowWarningAgeEditingModal] =
+    useState(false);
+  const showWarningForEditAge = () => {
+    setshowWarningAgeEditingModal(true);
+  };
+  const closeWarningForEditAge = () => {
+    setshowWarningAgeEditingModal(false);
+  };
+
+  const [showBirthDateChangeScenario, setshowBirthDateChangeScenario] =
+    useState(false);
+
+  const [showMonthPicker, setshowMonthPicker] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState("");
+
+  const [showDayPicker, setshowDayPicker] = useState(false);
+  const [selectedDay, setselectedDay] = useState("");
+
+  const [hoveredIndexMonth, setIshoveredIndexMonth] = useState(null);
+  const [hoveredIndexDay, setIshoveredIndexDay] = useState(null);
+  const [hoveredIndexYear, setIshoveredIndexYear] = useState(null);
+
+  const [styleOfBoxMonth, setStyleOfBoxMonth] = useState(false);
+  const [styleOfBoxDay, setStyleOfBoxDay] = useState(false);
+  const [styleOfBoxYear, setStyleOfBoxYear] = useState(false);
+
+  const monthPickerRef = useRef(null);
+  const dayPickerRef = useRef(null);
+  const yearPickerRef = useRef(null);
+
+  const [showYearPicker, setshowYearPicker] = useState(false);
+  const [selectedYear, setselectedYear] = useState(new Date().getFullYear());
+  const [displayedYear, setdisplayedYear] = useState("");
+
+  const monthsBirthDate = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const isLeapYear = (year) => {
+    return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+  };
+
+  const getDaysInMonth = (month) => {
+    switch (month) {
+      case "January":
+      case "March":
+      case "May":
+      case "July":
+      case "August":
+      case "October":
+      case "December":
+        return 31;
+      case "April":
+      case "June":
+      case "September":
+      case "November":
+        return 30;
+      case "February":
+        return isLeapYear(selectedYear) ? 29 : 28;
+      default:
+        return 0; // Geçersiz ay ismi durumu
+    }
+  };
+
+  const [dayNum, setDayNum] = useState([]);
+
+  const currentMonth = monthsBirthDate[new Date().getMonth()];
+
+  console.log("Selected month =>", selectedMonth);
+  console.log("Current month =>", currentMonth);
+
+  useEffect(() => {
+    const newDays = [];
+    if (selectedMonth) {
+      console.log("ay seçildi!", selectedMonth);
+      console.log("get days in month:", getDaysInMonth(selectedMonth));
+      for (let i = 1; i <= getDaysInMonth(selectedMonth); i++) {
+        console.log("i: ", i);
+        newDays.push(i);
+      }
+    } else {
+      console.log("ay seçimi yapılmadı!");
+      for (let i = 1; i <= getDaysInMonth(currentMonth); i++) {
+        newDays.push(i);
+      }
+    }
+    setDayNum(newDays);
+  }, [selectedMonth]);
+
+  const rangeOfYears120Year = 120;
+  const currentYear = new Date().getFullYear();
+  const rangeNumbers = [];
+
+  for (let i = currentYear; i >= currentYear - rangeOfYears120Year; i--) {
+    rangeNumbers.push(i);
+  }
+
+  const handleMonthClick = () => {
+    setshowMonthPicker(!showMonthPicker);
+  };
+
+  const handleMonthSelect = (month) => {
+    // setTimeout(() => {
+    setSelectedMonth(month);
+    setshowMonthPicker(false);
+    setBirthDateOnEdit((prevData) => ({
+      ...prevData,
+      month: month,
+    }));
+    // }, 300);
+  };
+
+  const handleDayClick = () => {
+    setshowDayPicker(!showDayPicker);
+    setStyleOfBoxDay(true);
+  };
+
+  const handleDaySelect = (day) => {
+    // setTimeout(() => {
+    setselectedDay(day);
+    setshowDayPicker(false);
+    setStyleOfBoxDay(false);
+    // }, 300);
+    setBirthDateOnEdit((prevData) => ({
+      ...prevData,
+      day: day,
+    }));
+  };
+
+  const handleYearClick = () => {
+    setshowYearPicker(!showYearPicker);
+    setStyleOfBoxYear(true);
+  };
+
+  const handleYearSelect = (year) => {
+    // setTimeout(() => {
+    setdisplayedYear(year);
+    setshowYearPicker(false);
+    setStyleOfBoxYear(false);
+    setBirthDateOnEdit((prevData) => ({
+      ...prevData,
+      year: year,
+    }));
+    // }, 300);
+  };
+
+  const popoverContent = (
+    <Popover
+      className={`scrollbar-add scrollbar-add-${themeName} chirp-regular-font`}
+      style={{
+        zIndex: 99999,
+        padding: "8px",
+        height: "250px",
+        width: "175px",
+        overflowY: "scroll",
+        backgroundColor: themeName === "dark-theme" ? "black" : "#e4e2e9",
+        border: "none",
+        filter:
+          themeName === "dark-theme"
+            ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+            : "",
+
+        boxShadow:
+          themeName === "dark-theme"
+            ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+            : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
+      }}
+      id="monthPopover"
+    >
+      {monthsBirthDate.map((month, index) => (
+        <div
+          className="testtt !!!"
+          onMouseEnter={() => {
+            setIshoveredIndexMonth(index);
+          }}
+          key={index}
+          onClick={() => handleMonthSelect(month)}
+          style={{
+            color: themeName === "dark-theme" ? "white" : "black",
+            padding: "8px",
+            cursor: "pointer",
+            backgroundColor: hoveredIndexMonth === index ? "#5aa0ff" : "",
+            borderRadius: "4px",
+          }}
+        >
+          {month}
+        </div>
+      ))}
+    </Popover>
+  );
+
+  const popoverDayContent = (
+    <Popover
+      className={`scrollbar-add scrollbar-add-${themeName} chirp-regular-font`}
+      style={{
+        zIndex: 99999,
+        padding: "8px",
+        height: "250px",
+        width: "175px",
+        border: "none",
+        overflowY: "scroll",
+        backgroundColor: themeName === "dark-theme" ? "black" : "#e4e2e9",
+        filter:
+          themeName === "dark-theme"
+            ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+            : "",
+
+        boxShadow:
+          themeName === "dark-theme"
+            ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+            : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
+      }}
+      id="dayPopover"
+    >
+      {dayNum.map((day, index) => (
+        <div
+          onMouseEnter={() => {
+            setIshoveredIndexDay(index);
+          }}
+          key={index}
+          onClick={() => handleDaySelect(day)}
+          style={{
+            color: themeName === "dark-theme" ? "white" : "black",
+            padding: "8px",
+            cursor: "pointer",
+            backgroundColor: hoveredIndexDay === index ? "#5aa0ff" : "",
+            borderRadius: "4px",
+          }}
+        >
+          {day}
+        </div>
+      ))}
+    </Popover>
+  );
+
+  const popoverYearContent = (
+    <Popover
+      className={`scrollbar-add scrollbar-add-${themeName} chirp-regular-font`}
+      style={{
+        zIndex: 99999,
+        padding: "8px",
+        height: "250px",
+        width: "175px",
+        border: "none",
+        overflowY: "scroll",
+        backgroundColor: themeName === "dark-theme" ? "black" : "#e4e2e9",
+        filter:
+          themeName === "dark-theme"
+            ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+            : "",
+
+        boxShadow:
+          themeName === "dark-theme"
+            ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+            : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
+      }}
+      id="yearPopover"
+    >
+      {rangeNumbers.map((year, index) => (
+        <div
+          onMouseEnter={() => {
+            setIshoveredIndexYear(index);
+          }}
+          key={index}
+          onClick={() => {
+            console.log("picked year:", year);
+            if (year) {
+              handleYearSelect(year);
+            }
+          }}
+          style={{
+            color: themeName === "dark-theme" ? "white" : "black",
+            padding: "8px",
+            cursor: "pointer",
+            backgroundColor: hoveredIndexYear === index ? "#5aa0ff" : "",
+            borderRadius: "4px",
+          }}
+        >
+          {year}
+        </div>
+      ))}
+    </Popover>
+  );
+
+  const restrictionsMonthAndDay = [
+    "Only you",
+    "You follow each other",
+    "People you follow",
+    "Your followers",
+    "Public",
+  ];
+  const restrictionsYear = [
+    "Only you",
+    "You follow each other",
+    "People you follow",
+    "Your followers",
+    "Public",
+  ];
+
+  const [ishoveredRestrictionIndex, setIshoveredRestrictionIndex] =
+    useState(null);
+
+  const popoverContentRestrictionMonthAndDay = (
+    <Popover
+      className={`scrollbar-add scrollbar-add-${themeName} chirp-regular-font`}
+      style={{
+        zIndex: 99999,
+        padding: "8px",
+        border: "none",
+        overflowY: "auto",
+        backgroundColor: themeName === "dark-theme" ? "black" : "#e4e2e9",
+        filter:
+          themeName === "dark-theme"
+            ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+            : "",
+
+        boxShadow:
+          themeName === "dark-theme"
+            ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+            : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
+      }}
+      id="yearPopover"
+    >
+      {restrictionsMonthAndDay.map((restriction, index) => (
+        <div
+          onMouseEnter={() => {
+            setIshoveredRestrictionIndex(index);
+          }}
+          key={index}
+          onClick={() => handleRestrictionMonthAndDaySelect(restriction)}
+          style={{
+            color: themeName === "dark-theme" ? "white" : "black",
+            padding: "8px",
+            cursor: "pointer",
+            backgroundColor:
+              ishoveredRestrictionIndex === index ? "#5aa0ff" : "",
+            borderRadius: "4px",
+          }}
+        >
+          {restriction}
+        </div>
+      ))}
+    </Popover>
+  );
+
+  const handleRestrictionMonthAndDaySelect = (option) => {
+    // setTimeout(() => {
+    setStyleOfBoxMonth(false);
+    setshowMonthPicker(false);
+    setRestrictions((prevData) => ({
+      ...prevData,
+      monthAndDay: option,
+    }));
+    // }, 300);
+  };
+
+  const handleClickOutsideMonthPicker = (event) => {
+    if (
+      monthPickerRef.current &&
+      !monthPickerRef.current.contains(event.target)
+    ) {
+      setStyleOfBoxMonth(false);
+      setshowMonthPicker(false);
+    } else {
+      setStyleOfBoxMonth(true);
+    }
+  };
+  const handleClickOutsideDayPicker = (event) => {
+    if (dayPickerRef.current && !dayPickerRef.current.contains(event.target)) {
+      setStyleOfBoxDay(false);
+      setshowDayPicker(false);
+    } else {
+      setStyleOfBoxDay(true);
+    }
+  };
+  const handleClickOutsideYearPicker = (event) => {
+    if (
+      yearPickerRef.current &&
+      !yearPickerRef.current.contains(event.target)
+    ) {
+      setStyleOfBoxYear(false);
+      setshowYearPicker(false);
+    } else {
+      setStyleOfBoxYear(true);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutsideYearPicker);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutsideYearPicker);
+    };
+  }, []);
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutsideDayPicker);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutsideDayPicker);
+    };
+  }, []);
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutsideMonthPicker);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutsideMonthPicker);
+    };
+  }, []);
+
+  const restrictionMonthAndDayRef = useRef(null);
+  const [
+    selectedRestrictionForMonthAndDay,
+    setSelectedRestrictionForMonthAndDay,
+  ] = useState("Only you");
+  const [
+    showMonthAndDayRestrictionPicker,
+    setshowMonthAndDayRestrictionPicker,
+  ] = useState(false);
+  const [styleOfRestrictionsMonthAndDayBox, setStyleOfRestrictionsMonthAndDay] =
+    useState(false);
+
+  const handleClickOutsideRestrictionsMonthAndDay = (event) => {
+    if (
+      restrictionMonthAndDayRef.current &&
+      !restrictionMonthAndDayRef.current.contains(event.target)
+    ) {
+      setStyleOfRestrictionsMonthAndDay(false);
+      setshowMonthAndDayRestrictionPicker(false);
+    } else {
+      setStyleOfRestrictionsMonthAndDay(true);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener(
+      "mousedown",
+      handleClickOutsideRestrictionsMonthAndDay
+    );
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutsideRestrictionsMonthAndDay
+      );
+    };
+  }, []);
+
+  const [ishoveredRestrictionYearIndex, setIshoveredRestrictionYearIndex] =
+    useState(null);
+
+  const popoverContentRestrictionYear = (
+    <Popover
+      className={`scrollbar-add scrollbar-add-${themeName} chirp-regular-font`}
+      style={{
+        zIndex: 99999,
+        padding: "8px",
+        border: "none",
+        overflowY: "auto",
+        backgroundColor: themeName === "dark-theme" ? "black" : "#e4e2e9",
+        filter:
+          themeName === "dark-theme"
+            ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+            : "",
+
+        boxShadow:
+          themeName === "dark-theme"
+            ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+            : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
+      }}
+      id="yearPopover"
+    >
+      {restrictionsYear.map((restriction, index) => (
+        <div
+          onMouseEnter={() => {
+            setIshoveredRestrictionYearIndex(index);
+          }}
+          key={index}
+          onClick={() => handleRestrictionYearSelect(restriction)}
+          style={{
+            color: themeName === "dark-theme" ? "white" : "black",
+            padding: "8px",
+            cursor: "pointer",
+            backgroundColor:
+              ishoveredRestrictionYearIndex === index ? "#5aa0ff" : "",
+            borderRadius: "4px",
+          }}
+        >
+          {restriction}
+        </div>
+      ))}
+    </Popover>
+  );
+
+  const handleRestrictionMonthAndDayClick = () => {
+    setshowMonthAndDayRestrictionPicker(!showMonthAndDayRestrictionPicker);
+  };
+
+  const restrictionYearRef = useRef(null);
+  const [selectedRestrictionForYear, setSelectedRestrictionForYear] =
+    useState("Only you");
+  const [showYearRestrictionPicker, setshowYearRestrictionPicker] =
+    useState(false);
+  const [styleOfRestrictionsYearBox, setStyleOfRestrictionsYear] =
+    useState(false);
+
+  const handleRestrictionYearSelect = (option) => {
+    // setTimeout(() => {
+    setStyleOfRestrictionsYear(false);
+    setshowYearRestrictionPicker(false);
+    setRestrictions((prevData) => ({
+      ...prevData,
+      year: option,
+    }));
+    // }, 300);
+  };
+
+  const handleClickOutsideRestrictionsYear = (event) => {
+    if (
+      restrictionYearRef.current &&
+      !restrictionYearRef.current.contains(event.target)
+    ) {
+      setStyleOfRestrictionsYear(false);
+      setshowYearRestrictionPicker(false);
+    } else {
+      setStyleOfRestrictionsYear(true);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutsideRestrictionsYear);
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutsideRestrictionsYear
+      );
+    };
+  }, []);
+
+  const handleRestrictionYearClick = () => {
+    setshowYearRestrictionPicker(!showYearRestrictionPicker);
+  };
+
+  const [restrictions, setRestrictions] = useState({
+    monthAndDay: "",
+    year: "",
+  });
+
+  useEffect(() => {
+    console.log(
+      "data",
+      "fullname:",
+      fullName,
+      "bio:",
+      bioOnEdit,
+      "location:",
+      locationOnEdit,
+      "website:",
+      websiteOnEdit,
+      "birthdate:",
+      birthDateOnEdit,
+      "restrictions for birthdate:",
+      restrictions
+    );
+  }, [
+    fullName,
+    bioOnEdit,
+    locationOnEdit,
+    websiteOnEdit,
+    birthDateOnEdit,
+    restrictions,
+  ]);
+
+  const closeEditModal = () => {
+    setWebsiteOnEdit("");
+    setLocationOnEdit("");
+    setBioOnEdit("");
+    setFullName(userInfo.fullname);
+    setonFocusedToWebsiteField(false);
+    setonFocusedToLocationField(false);
+    setonFocusedToBioField(false);
+    setonFocusedToFullNameField(false);
+    setshowBirthDateChangeScenario(false);
+    setOpenEditModal(false);
+    setSelectedRestrictionForMonthAndDay("Only you");
+    setshowMonthAndDayRestrictionPicker(false);
+    setStyleOfRestrictionsMonthAndDay(false);
+    setSelectedMonth("");
+    setselectedDay("");
+    setdisplayedYear("");
+    setcheckFields({
+      nameInput: "",
+      bioInput: "",
+      locationInput: "",
+      websiteInput: "",
+    });
+    setBirthDateOnEdit({
+      month: "",
+      day: "",
+      year: "",
+    });
+    setRestrictions({
+      monthAndDay: "",
+      year: "",
+    });
+  };
+
   return (
     <>
-      {contextHolder}
       {/* {contextHolder} */}
-      {/* start to check  main column */}
-      {/* start to check */}
+      {contextHolder}
 
+      {/* edit age warning modal */}
+      <>
+        <Modal
+          backdropClassName={
+            themeName === "dark-theme" ? `back-drop-${themeName}` : ""
+          }
+          centered={true}
+          show={showWarningAgeEditingModal}
+          onHide={closeWarningForEditAge}
+          className="leave-conversation"
+          contentClassName={
+            themeName === "dark-theme"
+              ? "leave-conversation-modal-dark-theme"
+              : "leave-conversation-modal"
+          }
+          style={{
+            zIndex: 9999,
+          }}
+        >
+          <Modal.Body>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                paddingBottom: "16px",
+                paddingTop: "16px",
+                maxWidth: "256px",
+              }}
+            >
+              <div
+                className={
+                  themeName === "dark-theme"
+                    ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                    : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                }
+                style={{
+                  color: themeName === "dark-theme" ? "white" : "",
+                  fontSize: font20.fontSize,
+                  lineHeight: font20.lineHeight,
+                }}
+              >
+                Edit date of birth?
+              </div>
+              <div
+                className={
+                  themeName === "dark-theme"
+                    ? "mt-2 soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                    : "mt-2 very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                }
+                style={{
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
+                }}
+              >
+                This can only be changed a few times. Make sure you enter the
+                age of the person using the account.
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                padding: "12px",
+              }}
+            >
+              <Button
+                onClick={() => {
+                  closeWarningForEditAge();
+                  setshowBirthDateChangeScenario(true);
+                }}
+                className={
+                  themeName === "light-theme"
+                    ? `save-edited-profile-light-theme chirp-bold-font`
+                    : `save-edited-profile-dark-theme`
+                }
+                style={{
+                  maxWidth: "256px",
+                  minHeight: "44px",
+                  color: "white",
+                  border: "none",
+                  color: themeName === "dark-theme" ? "black" : "white",
+                }}
+              >
+                Edit
+              </Button>
+              <Button
+                variant="light"
+                onClick={closeWarningForEditAge}
+                style={{
+                  color: themeName === "dark-theme" ? "white" : "black",
+                  maxWidth: "256px",
+                  minHeight: "44px",
+                }}
+                className={`mt-2 forgot-password-btn ${themeName}-black-btn chirp-bold-font`}
+              >
+                Cancel
+              </Button>
+            </div>
+          </Modal.Body>
+        </Modal>
+      </>
+
+      {/* edit modal */}
+      <>
+        <Modal
+          backdropClassName={
+            themeName === "dark-theme" ? `back-drop-${themeName}` : ""
+          }
+          centered
+          style={{
+            margin: width <= 768 && "0px",
+            padding: width <= 768 && "0px",
+          }}
+          dialogClassName={width <= 700 ? "modal-fullscreen" : ""}
+          className={
+            width <= 700 && themeName !== "dark-theme"
+              ? "smaller-edit-modal"
+              : width <= 700 && themeName === "dark-theme"
+              ? `smaller-edit-modal-dark-theme width-smaller-700-post-modal-left-side-navigation-bar width-smaller-700-post-modal-left-side-navigation-bar-${themeName}`
+              : `edit-profile-modal edit-profile-modal-${themeName}`
+          }
+          show={openEditModal}
+          onHide={closeEditModal}
+        >
+          <div>
+            <div
+              style={{
+                padding: "0px 12px",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                backgroundColor:
+                  themeName === "dark-theme"
+                    ? "rgba(0, 0, 0, 0.65)"
+                    : "rgba(255, 255, 255, 0.85)",
+                backdropFilter: "blur(12px)",
+                height: "53px",
+                position: "sticky",
+                top: "0px",
+                width: "100%",
+                zIndex: 99999,
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  gap: "26px",
+                  alignItems: "center",
+                }}
+              >
+                <div
+                  onClick={closeEditModal}
+                  className={
+                    themeName === "dark-theme"
+                      ? `close-button-${themeName}`
+                      : `close-button`
+                  }
+                  style={{
+                    display: "inline-flex",
+                    borderRadius: "50%",
+                    cursor: "pointer",
+                    width: "40px",
+                    height: "40px",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <svg
+                    style={{
+                      border: "none",
+                      margin: "5px",
+                    }}
+                    width={20}
+                    height={20}
+                    color={
+                      themeName === "dark-theme" ? "white" : "rgb(15,20,25)"
+                    }
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                  >
+                    <g>
+                      <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+                    </g>
+                  </svg>{" "}
+                </div>
+                <div
+                  className="chirp-bold-font"
+                  style={{
+                    fontSize: font20.fontSize,
+                    lineHeight: font20.lineHeight,
+                    color: themeName === "dark-theme" ? "white" : "black",
+                  }}
+                >
+                  Edit profile
+                </div>
+              </div>
+              <div
+                onClick={saveEdit}
+                className="chirp-bold-font"
+                style={{
+                  padding: "12px 12px",
+                  textAlign: "right",
+                }}
+              >
+                <button
+                  className={
+                    themeName === "light-theme"
+                      ? `save-edited-profile-light-theme`
+                      : `save-edited-profile-dark-theme`
+                  }
+                  style={{
+                    borderRadius: "9999px",
+                    border:
+                      themeName !== "dark-theme"
+                        ? "1px solid rgba(0, 0, 0, 0.1)"
+                        : // : "0.1px solid rgb(70, 70, 70)",
+                          "1px solid rgb(70, 70, 70)",
+                    backgroundColor:
+                      themeName === "light-theme" ? "black" : "white",
+                    color: themeName === "dark-theme" ? "black" : "white",
+                    minHeight: "32px",
+                    minWidth: "32px",
+                    outlineStyle: "none",
+                    cursor: "pointer",
+                    transitionDuration: "0.2s",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                    opacity:
+                      !fullnameFilled &&
+                      fullName.length === 0 &&
+                      !firstAppearence &&
+                      "0.5",
+                    cursor:
+                      !fullnameFilled &&
+                      fullName.length === 0 &&
+                      !firstAppearence &&
+                      "default",
+                    pointerEvents:
+                      !fullnameFilled &&
+                      fullName.length === 0 &&
+                      !firstAppearence &&
+                      "none",
+                  }}
+                >
+                  <span
+                    style={{
+                      padding: "0px 12px",
+                    }}
+                  >
+                    Save
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            <div
+              style={{
+                height: "200px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: themeName === "light-theme" && "#B2B2B2",
+                opacity: "0.75",
+                position: "relative",
+              }}
+            >
+              <div
+                className="edit-photo-machine-img"
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "gray",
+                  borderRadius: "50%",
+                  backgroundColor:
+                    themeName === "dark-theme"
+                      ? "rgba(15, 20, 25, 0.75)"
+                      : "#56595B",
+                  cursor: "pointer",
+                  position: "relative",
+                }}
+              >
+                <svg
+                  width={24}
+                  height={24}
+                  fill="rgb(255, 255, 255)"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <g>
+                    <path d="M9.697 3H11v2h-.697l-3 2H5c-.276 0-.5.224-.5.5v11c0 .276.224.5.5.5h14c.276 0 .5-.224.5-.5V10h2v8.5c0 1.381-1.119 2.5-2.5 2.5H5c-1.381 0-2.5-1.119-2.5-2.5v-11C2.5 6.119 3.619 5 5 5h1.697l3-2zM12 10.5c-1.105 0-2 .895-2 2s.895 2 2 2 2-.895 2-2-.895-2-2-2zm-4 2c0-2.209 1.791-4 4-4s4 1.791 4 4-1.791 4-4 4-4-1.791-4-4zM17 2c0 1.657-1.343 3-3 3v1c1.657 0 3 1.343 3 3h1c0-1.657 1.343-3 3-3V5c-1.657 0-3-1.343-3-3h-1z"></path>
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <div
+              style={{
+                position: "relative",
+                padding: "0px 12px",
+              }}
+            >
+              <div
+                style={{
+                  position: "absolute",
+                  top: "-50px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRadius: "50%",
+                }}
+              >
+                {profile?.imageUrl?.slice(0, 3) !== "../" ? (
+                  <img
+                    width={112}
+                    height={112}
+                    src={profile?.imageUrl}
+                    alt=""
+                    style={{
+                      borderRadius: "50%",
+                      opacity: 0.75,
+                      border:
+                        themeName === "dark-theme"
+                          ? "4px solid black"
+                          : "4px solid white",
+                    }}
+                  />
+                ) : (
+                  <img
+                    style={{
+                      borderRadius: "50%",
+                      opacity: 0.75,
+                      border:
+                        themeName === "dark-theme"
+                          ? "4px solid black"
+                          : "4px solid white",
+                    }}
+                    width="112"
+                    height="112"
+                    src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                    alt=""
+                  />
+                )}
+
+                <div
+                  className="edit-photo-machine-img"
+                  style={{
+                    width: "50px",
+                    height: "50px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "gray",
+                    borderRadius: "50%",
+                    backgroundColor:
+                      themeName === "dark-theme"
+                        ? "rgba(15, 20, 25, 0.75)"
+                        : "#56595B",
+                    cursor: "pointer",
+                    position: "absolute",
+                    backdropFilter: "blur(12px)",
+                    backgroundColor: "rgba(15, 20, 25, 0.75)",
+                    opacity: 0.75,
+                  }}
+                >
+                  <svg
+                    width={24}
+                    height={24}
+                    fill="rgb(255, 255, 255)"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <g>
+                      <path d="M9.697 3H11v2h-.697l-3 2H5c-.276 0-.5.224-.5.5v11c0 .276.224.5.5.5h14c.276 0 .5-.224.5-.5V10h2v8.5c0 1.381-1.119 2.5-2.5 2.5H5c-1.381 0-2.5-1.119-2.5-2.5v-11C2.5 6.119 3.619 5 5 5h1.697l3-2zM12 10.5c-1.105 0-2 .895-2 2s.895 2 2 2 2-.895 2-2-.895-2-2-2zm-4 2c0-2.209 1.791-4 4-4s4 1.791 4 4-1.791 4-4 4-4-1.791-4-4zM17 2c0 1.657-1.343 3-3 3v1c1.657 0 3 1.343 3 3h1c0-1.657 1.343-3 3-3V5c-1.657 0-3-1.343-3-3h-1z"></path>
+                    </g>
+                  </svg>
+                </div>
+              </div>
+            </div>
+            {/* inputs */}
+            <div
+              style={{
+                marginTop: "80px",
+                padding: "0px 12px",
+                position: "relative",
+                zIndex: 9999,
+              }}
+            >
+              {/* name */}
+              <InputLabel
+                style={{
+                  width: "98%",
+                  textAlign: "right",
+                }}
+              >
+                <div
+                  className="chirp-regular-font"
+                  style={{
+                    color:
+                      themeName === "dark-theme"
+                        ? "#71767A"
+                        : "rgb(83, 100, 113)",
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                    visibility: onFocusedToFullNameField ? "visible" : "hidden",
+                  }}
+                >
+                  {fullName.length} / 50
+                </div>
+              </InputLabel>
+              <TextField
+                // autoFocus={true}
+                onFocus={() => setonFocusedToFullNameField(true)}
+                onBlur={() => setonFocusedToFullNameField(false)}
+                value={fullName}
+                onChange={handleChangeFullName}
+                type="text"
+                id="outlined-basic"
+                variant={"outlined"}
+                label={`Name`}
+                style={{
+                  width: "100%",
+                  height: "58px",
+                }}
+                InputLabelProps={{
+                  style: {
+                    color: themeName === "dark-theme" ? "#71767B" : "",
+                  },
+                }}
+                InputProps={{
+                  style: {
+                    color: themeName === "dark-theme" ? "white" : "",
+                    fontSize: font17.fontSize,
+                    lineHeight: font17.lineHeight,
+                  },
+                }}
+                sx={{
+                  "& .Mui-focused input + fieldset": {
+                    border:
+                      !fullnameFilled &&
+                      fullName.length === 0 &&
+                      !firstAppearence
+                        ? "2px solid rgb(244, 33, 46)!important"
+                        : "2px solid #1d9bf0 !important",
+                  },
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor:
+                      !fullnameFilled &&
+                      fullName.length === 0 &&
+                      !firstAppearence
+                        ? "rgb(244, 33, 46)!important"
+                        : themeName === "dark-theme"
+                        ? "rgb(70, 70, 70) !important"
+                        : "#cfd9de !important",
+                  },
+                  "& .MuiInputLabel-shrink": {
+                    color:
+                      !fullnameFilled &&
+                      fullName.length === 0 &&
+                      !firstAppearence
+                        ? "rgb(244, 33, 46)!important"
+                        : "#1f9cf0 !important",
+                  },
+                }}
+              />
+              {!fullnameFilled && fullName.length === 0 && !firstAppearence ? (
+                <div
+                  className="chirp-regular-font"
+                  style={{
+                    width: "81.5%",
+                    color: "rgb(244, 33, 46)",
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                    position: "relative",
+                    left: "10px",
+                  }}
+                >
+                  {"Name can't be blank"}
+                </div>
+              ) : null}
+              <div
+                style={{
+                  marginTop: "20px",
+                }}
+              ></div>
+              {/* bio */}
+              <InputLabel
+                style={{
+                  width: "98%",
+                  textAlign: "right",
+                }}
+              >
+                <div
+                  className="chirp-regular-font"
+                  style={{
+                    color:
+                      themeName === "dark-theme"
+                        ? "#71767A"
+                        : "rgb(83, 100, 113)",
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                    visibility: onFocusedToBioField ? "visible" : "hidden",
+                  }}
+                >
+                  {fullName.length} / 160
+                </div>
+              </InputLabel>
+              <TextField
+                className="mui-bio-edit-profile-input"
+                // autoFocus={true}
+                onFocus={() => setonFocusedToBioField(true)}
+                onBlur={() => setonFocusedToBioField(false)}
+                value={bioOnEdit}
+                onChange={handleChangeBio}
+                type="text"
+                id="outlined-basic"
+                variant={"outlined"}
+                autoComplete="off"
+                label={`Bio`}
+                // IMPORTANT
+                // multiline true ve rows 3 kullanıldığında TextField textarea olarak render edilir
+
+                multiline={true}
+                rows={3}
+                style={{
+                  width: "100%",
+                }}
+                InputLabelProps={{
+                  style: {
+                    color: themeName === "dark-theme" ? "#71767B" : "",
+                  },
+                }}
+                InputProps={{
+                  style: {
+                    color: themeName === "dark-theme" ? "white" : "",
+                    fontSize: font17.fontSize,
+                    lineHeight: font17.lineHeight,
+                  },
+                }}
+                sx={{
+                  "& .Mui-focused textarea + fieldset": {
+                    border:
+                      onFocusedToBioField && "2px solid #1d9bf0 !important",
+                  },
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor:
+                      themeName === "dark-theme"
+                        ? "rgb(70, 70, 70) !important"
+                        : "#cfd9de !important",
+                  },
+                  "& .MuiInputLabel-shrink": {
+                    color: "#1f9cf0 !important",
+                  },
+                }}
+              />
+              <div
+                style={{
+                  marginTop: "20px",
+                }}
+              ></div>
+              {/* location */}
+              <InputLabel
+                style={{
+                  width: "98%",
+                  textAlign: "right",
+                }}
+              >
+                <div
+                  className="chirp-regular-font"
+                  style={{
+                    color:
+                      themeName === "dark-theme"
+                        ? "#71767A"
+                        : "rgb(83, 100, 113)",
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                    visibility: onFocusedToLocationField ? "visible" : "hidden",
+                  }}
+                >
+                  {locationOnEdit.length} / 30
+                </div>
+              </InputLabel>
+              <TextField
+                // autoFocus={true}
+                onFocus={() => setonFocusedToLocationField(true)}
+                onBlur={() => setonFocusedToLocationField(false)}
+                value={locationOnEdit}
+                onChange={handleChangeLocation}
+                type="text"
+                id="outlined-basic"
+                variant={"outlined"}
+                label={`Location`}
+                style={{
+                  width: "100%",
+                  height: "58px",
+                }}
+                InputLabelProps={{
+                  style: {
+                    color: themeName === "dark-theme" ? "#71767B" : "",
+                  },
+                }}
+                InputProps={{
+                  style: {
+                    color: themeName === "dark-theme" ? "white" : "",
+                    fontSize: font17.fontSize,
+                    lineHeight: font17.lineHeight,
+                  },
+                }}
+                sx={{
+                  "& .Mui-focused input + fieldset": {
+                    border: "2px solid #1d9bf0 !important",
+                  },
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor:
+                      themeName === "dark-theme"
+                        ? "rgb(70, 70, 70) !important"
+                        : "#cfd9de !important",
+                  },
+                  "& .MuiInputLabel-shrink": {
+                    color: "#1f9cf0 !important",
+                  },
+                }}
+              />{" "}
+              <div
+                style={{
+                  marginTop: "20px",
+                }}
+              ></div>
+              {/* website */}
+              <InputLabel
+                style={{
+                  width: "98%",
+                  textAlign: "right",
+                }}
+              >
+                <div
+                  className="chirp-regular-font"
+                  style={{
+                    color:
+                      themeName === "dark-theme"
+                        ? "#71767A"
+                        : "rgb(83, 100, 113)",
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                    visibility: onFocusedToWebsiteField ? "visible" : "hidden",
+                  }}
+                >
+                  {websiteOnEdit.length} / 100
+                </div>
+              </InputLabel>
+              <TextField
+                // autoFocus={true}
+                onFocus={() => setonFocusedToWebsiteField(true)}
+                onBlur={() => setonFocusedToWebsiteField(false)}
+                value={websiteOnEdit}
+                onChange={handleChangeWebsite}
+                type="text"
+                id="outlined-basic"
+                variant={"outlined"}
+                label={`Website`}
+                style={{
+                  width: "100%",
+                  height: "58px",
+                }}
+                InputLabelProps={{
+                  style: {
+                    color: themeName === "dark-theme" ? "#71767B" : "",
+                  },
+                }}
+                InputProps={{
+                  style: {
+                    color: themeName === "dark-theme" ? "white" : "",
+                    fontSize: font17.fontSize,
+                    lineHeight: font17.lineHeight,
+                  },
+                }}
+                sx={{
+                  "& .Mui-focused input + fieldset": {
+                    border: "2px solid #1d9bf0 !important",
+                  },
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor:
+                      themeName === "dark-theme"
+                        ? "rgb(70, 70, 70) !important"
+                        : "#cfd9de !important",
+                  },
+                  "& .MuiInputLabel-shrink": {
+                    color: "#1f9cf0 !important",
+                  },
+                }}
+              />{" "}
+            </div>
+            <div
+              style={{
+                marginTop: "30px",
+              }}
+            ></div>
+
+            {showBirthDateChangeScenario ? (
+              <div
+                style={{
+                  position: "relative",
+                  padding: "0px 12px",
+                  marginBottom: "60px",
+                }}
+              >
+                <div>
+                  <span
+                    style={{
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
+                    }}
+                  >
+                    {" "}
+                    <span
+                      className={
+                        themeName === "dark-theme"
+                          ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                          : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                      }
+                    >
+                      Birth date
+                    </span>{" "}
+                    <span
+                      className={
+                        themeName === "dark-theme"
+                          ? "soft-grey-dark-theme-text-variant-2 chirp-bold-font"
+                          : "very-dark-gray-light-theme-text-variant-2 chirp-bold-font"
+                      }
+                    >
+                      {" "}
+                      &middot;{" "}
+                    </span>
+                    <span
+                      className="edit-profile-edit-btn"
+                      onClick={() => setshowBirthDateChangeScenario(false)}
+                    >
+                      Cancel
+                    </span>
+                  </span>
+                </div>
+                <div
+                  className={
+                    themeName === "dark-theme"
+                      ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                      : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                  }
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
+                >
+                  <div>
+                    This should be the date of birth of the person using the
+                    account. Even if you’re making an account for your business,
+                    event, or cat.
+                  </div>
+                  <div></div>
+                  <br />
+                  <div>
+                    C uses your age to customize your experience, including ads,
+                    as explained in our{" "}
+                  </div>
+                  <div
+                    className="edit-profile-edit-btn"
+                    style={{
+                      display: "inline",
+                    }}
+                  >
+                    Privacy Policy.
+                  </div>
+                </div>
+
+                {/* date of birth start to check  */}
+                <div
+                  className="mt-4 chirp-regular-font"
+                  style={{
+                    width: "100%",
+                    height: "58px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    fontSize: font14.fontSize,
+                    lineHeight: font14.lineHeight,
+                  }}
+                >
+                  {" "}
+                  <OverlayTrigger
+                    show={showMonthPicker}
+                    trigger="click"
+                    placement="top"
+                    overlay={popoverContent}
+                  >
+                    <div
+                      ref={monthPickerRef}
+                      className="child-div-after-overlay-trigger parent-div-month-content-over-flow-y"
+                      onClick={handleMonthClick}
+                      style={{
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                        color: "#536471",
+                        flex: "255.5px",
+                        padding: "4px",
+                        border: "1px solid",
+                        borderWidth: styleOfBoxMonth ? "2px" : "1px",
+                        borderColor: styleOfBoxMonth
+                          ? "#1d9bf0                          "
+                          : themeName === "dark-theme"
+                          ? "rgb(70,70,70)"
+                          : "#cfd9de",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "inline-block",
+                          float: "left",
+                        }}
+                      >
+                        <div
+                          className="main-outline-text"
+                          style={{
+                            color: themeName === "dark-theme" ? "#71767B" : "",
+                          }}
+                        >
+                          Month
+                        </div>
+                        <div
+                          className="mt-2 selected-month-string-parent-div"
+                          style={{
+                            fontSize: font17.fontSize,
+                            lineHeight: font17.lineHeight,
+                            color:
+                              themeName === "dark-theme" ? "white" : "black",
+                          }}
+                        >
+                          {selectedMonth || profile?.birthDate?.month}
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          float: "right",
+                          position: "relative",
+                          top: "30%",
+                        }}
+                      >
+                        <svg
+                          width={`${1.5}em`}
+                          height={`${1.5}em`}
+                          color="rgba(83,100,113,1.00)"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className="svg-month-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-1plcrui r-lrvibr r-14j79pv r-1pgswnq r-50lct3 r-fdch1b r-633pao r-u8s1d r-1v2oles"
+                        >
+                          <g className="path-parent-g">
+                            <path d="M3.543 8.96l1.414-1.42L12 14.59l7.043-7.05 1.414 1.42L12 17.41 3.543 8.96z"></path>
+                          </g>
+                        </svg>
+                      </div>
+                      {/* dropdown month picker start to check  */}
+
+                      {/* dropdown month picker finish to check  */}
+                    </div>
+                  </OverlayTrigger>
+                  <OverlayTrigger
+                    show={showDayPicker}
+                    trigger="click"
+                    placement="top"
+                    overlay={popoverDayContent}
+                  >
+                    <div
+                      ref={dayPickerRef}
+                      className="child-div-day-picker-after-overlay-trigger parent-div-day-picker-content-over-flow-y"
+                      onClick={handleDayClick}
+                      style={{
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                        color: "#536471",
+                        flex: "113.75px",
+                        padding: "4px",
+                        marginLeft: "15px",
+                        border: "1px solid rgb(207, 217, 222)",
+                        borderWidth: styleOfBoxDay ? "2px" : "1px",
+                        borderColor: styleOfBoxDay
+                          ? "#1d9bf0                          "
+                          : themeName === "dark-theme"
+                          ? "rgb(70,70,70)"
+                          : "rgb(207, 217, 222)",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "inline-block",
+                          float: "left",
+                        }}
+                      >
+                        <div
+                          className="main-outline-text-day-picker"
+                          style={{
+                            color: themeName === "dark-theme" ? "#71767A" : "",
+                          }}
+                        >
+                          Day
+                        </div>
+                        <div
+                          className="mt-2 selected-day-string-parent-div"
+                          style={{
+                            fontSize: font17.fontSize,
+                            lineHeight: font17.lineHeight,
+                            color:
+                              themeName === "dark-theme" ? "white" : "black",
+                          }}
+                        >
+                          {selectedDay || profile?.birthDate?.day}
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          float: "right",
+                          position: "relative",
+                          top: "30%",
+                        }}
+                      >
+                        <svg
+                          width={`${1.5}em`}
+                          height={`${1.5}em`}
+                          color="rgba(83,100,113,1.00)"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className="svg-day-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-1plcrui r-lrvibr r-14j79pv r-1pgswnq r-50lct3 r-fdch1b r-633pao r-u8s1d r-1v2oles"
+                        >
+                          <g className="path-parent-g-day-picker">
+                            <path d="M3.543 8.96l1.414-1.42L12 14.59l7.043-7.05 1.414 1.42L12 17.41 3.543 8.96z"></path>
+                          </g>
+                        </svg>
+                      </div>
+                    </div>
+                  </OverlayTrigger>
+                  <OverlayTrigger
+                    show={showYearPicker}
+                    trigger="click"
+                    placement="top"
+                    overlay={popoverYearContent}
+                  >
+                    <div
+                      ref={yearPickerRef}
+                      className="child-div-year-picker-after-overlay-trigger parent-div-year-picker-content-over-flow-y"
+                      onClick={handleYearClick}
+                      style={{
+                        borderRadius: "4px",
+
+                        cursor: "pointer",
+                        color: "#536471",
+                        flex: "136.75px",
+                        padding: "4px",
+                        marginLeft: "15px",
+                        border: "1px solid rgb(207, 217, 222)",
+                        borderWidth: styleOfBoxYear ? "2px" : "1px",
+                        borderColor: styleOfBoxYear
+                          ? "#1d9bf0                          "
+                          : themeName === "dark-theme"
+                          ? "rgb(70,70,70)"
+                          : "#cfd9de",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "inline-block",
+                          float: "left",
+                        }}
+                      >
+                        <div
+                          className="main-outline-text-year-picker"
+                          style={{
+                            color: themeName === "dark-theme" ? "#71767A" : "",
+                          }}
+                        >
+                          Year
+                        </div>
+                        <div
+                          className="mt-2 selected-year-string-parent-div"
+                          style={{
+                            fontSize: font17.fontSize,
+                            lineHeight: font17.lineHeight,
+                            color:
+                              themeName === "dark-theme" ? "white" : "black",
+                          }}
+                        >
+                          {displayedYear || profile?.birthDate?.year}
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          float: "right",
+                          position: "relative",
+                          top: "30%",
+                        }}
+                      >
+                        <svg
+                          width={`${1.5}em`}
+                          height={`${1.5}em`}
+                          color="rgba(83,100,113,1.00)"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className="svg-year-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-1plcrui r-lrvibr r-14j79pv r-1pgswnq r-50lct3 r-fdch1b r-633pao r-u8s1d r-1v2oles"
+                        >
+                          <g className="path-parent-g-year-picker">
+                            <path d="M3.543 8.96l1.414-1.42L12 14.59l7.043-7.05 1.414 1.42L12 17.41 3.543 8.96z"></path>
+                          </g>
+                        </svg>
+                      </div>
+                    </div>
+                  </OverlayTrigger>
+                </div>
+                {/* date of birth finish to check  */}
+
+                <div
+                  style={{
+                    marginTop: "20px",
+                  }}
+                ></div>
+
+                {/* who can sees this? start to check*/}
+                <div>
+                  <span
+                    style={{
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
+                    }}
+                  >
+                    {" "}
+                    <span
+                      className={
+                        themeName === "dark-theme"
+                          ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                          : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                      }
+                    >
+                      Who sees this?
+                    </span>{" "}
+                  </span>
+                </div>
+                <div>
+                  <span
+                    style={{
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
+                    }}
+                  >
+                    {" "}
+                    <span
+                      className={
+                        themeName === "dark-theme"
+                          ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                          : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                      }
+                    >
+                      <span>You can control who sees your birthday on C.</span>{" "}
+                      <span className="edit-profile-edit-btn">Learn more</span>
+                    </span>{" "}
+                  </span>
+                </div>
+                {/* who can sees this? finish to check*/}
+
+                <div
+                  style={{
+                    marginTop: "20px",
+                  }}
+                ></div>
+
+                {/* restrictions */}
+                <div
+                  className="mt-4 chirp-regular-font"
+                  style={{
+                    width: "100%",
+                    height: "58px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    fontSize: font14.fontSize,
+                    lineHeight: font14.lineHeight,
+                  }}
+                >
+                  {" "}
+                  <OverlayTrigger
+                    show={showMonthAndDayRestrictionPicker}
+                    trigger="click"
+                    placement="top"
+                    overlay={popoverContentRestrictionMonthAndDay}
+                  >
+                    <div
+                      ref={restrictionMonthAndDayRef}
+                      className="child-div-after-overlay-trigger parent-div-month-content-over-flow-y"
+                      onClick={handleRestrictionMonthAndDayClick}
+                      style={{
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                        color: "#536471",
+                        flex: "255.5px",
+                        padding: "4px",
+                        border: "1px solid",
+                        borderWidth: styleOfRestrictionsMonthAndDayBox
+                          ? "2px"
+                          : "1px",
+                        borderColor: styleOfRestrictionsMonthAndDayBox
+                          ? "#1d9bf0                          "
+                          : themeName === "dark-theme"
+                          ? "rgb(70,70,70)"
+                          : "#cfd9de",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "inline-block",
+                          float: "left",
+                        }}
+                      >
+                        <div
+                          className="main-outline-text"
+                          style={{
+                            color: themeName === "dark-theme" ? "#71767B" : "",
+                          }}
+                        >
+                          Month and day
+                        </div>
+                        <div
+                          className="mt-2 selected-month-string-parent-div"
+                          style={{
+                            fontSize: font17.fontSize,
+                            lineHeight: font17.lineHeight,
+                            color:
+                              themeName === "dark-theme" ? "white" : "black",
+                          }}
+                        >
+                          {restrictions.monthAndDay ||
+                            selectedRestrictionForMonthAndDay}
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          float: "right",
+                          position: "relative",
+                          top: "30%",
+                        }}
+                      >
+                        <svg
+                          width={`${1.5}em`}
+                          height={`${1.5}em`}
+                          color="rgba(83,100,113,1.00)"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className="svg-month-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-1plcrui r-lrvibr r-14j79pv r-1pgswnq r-50lct3 r-fdch1b r-633pao r-u8s1d r-1v2oles"
+                        >
+                          <g className="path-parent-g">
+                            <path d="M3.543 8.96l1.414-1.42L12 14.59l7.043-7.05 1.414 1.42L12 17.41 3.543 8.96z"></path>
+                          </g>
+                        </svg>
+                      </div>
+                      {/* dropdown month picker start to check  */}
+
+                      {/* dropdown month picker finish to check  */}
+                    </div>
+                  </OverlayTrigger>
+                </div>
+                <div
+                  style={{
+                    marginTop: "20px",
+                  }}
+                ></div>
+                <div
+                  className="mt-4 chirp-regular-font"
+                  style={{
+                    width: "100%",
+                    height: "58px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    fontSize: font14.fontSize,
+                    lineHeight: font14.lineHeight,
+                  }}
+                >
+                  {" "}
+                  <OverlayTrigger
+                    show={showYearRestrictionPicker}
+                    trigger="click"
+                    placement="top"
+                    overlay={popoverContentRestrictionYear}
+                  >
+                    <div
+                      ref={restrictionYearRef}
+                      className="child-div-after-overlay-trigger parent-div-month-content-over-flow-y"
+                      onClick={handleRestrictionYearClick}
+                      style={{
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                        color: "#536471",
+                        flex: "255.5px",
+                        padding: "4px",
+                        border: "1px solid",
+                        borderWidth: styleOfRestrictionsYearBox ? "2px" : "1px",
+                        borderColor: styleOfRestrictionsYearBox
+                          ? "#1d9bf0                          "
+                          : themeName === "dark-theme"
+                          ? "rgb(70,70,70)"
+                          : "#cfd9de",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "inline-block",
+                          float: "left",
+                        }}
+                      >
+                        <div
+                          className="main-outline-text"
+                          style={{
+                            color: themeName === "dark-theme" ? "#71767B" : "",
+                          }}
+                        >
+                          Year
+                        </div>
+                        <div
+                          className="mt-2 selected-month-string-parent-div"
+                          style={{
+                            fontSize: font17.fontSize,
+                            lineHeight: font17.lineHeight,
+                            color:
+                              themeName === "dark-theme" ? "white" : "black",
+                          }}
+                        >
+                          {restrictions.year || selectedRestrictionForYear}
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          float: "right",
+                          position: "relative",
+                          top: "30%",
+                        }}
+                      >
+                        <svg
+                          width={`${1.5}em`}
+                          height={`${1.5}em`}
+                          color="rgba(83,100,113,1.00)"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className="svg-month-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-1plcrui r-lrvibr r-14j79pv r-1pgswnq r-50lct3 r-fdch1b r-633pao r-u8s1d r-1v2oles"
+                        >
+                          <g className="path-parent-g">
+                            <path d="M3.543 8.96l1.414-1.42L12 14.59l7.043-7.05 1.414 1.42L12 17.41 3.543 8.96z"></path>
+                          </g>
+                        </svg>
+                      </div>
+                      {/* dropdown month picker start to check  */}
+
+                      {/* dropdown month picker finish to check  */}
+                    </div>
+                  </OverlayTrigger>
+                </div>
+                <div
+                  style={{
+                    marginTop: "30px",
+                  }}
+                ></div>
+                {/* remove birthday start to check */}
+                <div
+                  // onClick={() => {
+                  //   openSecondTabDeactivate();
+                  // }}
+                  className={
+                    themeName === "dark-theme"
+                      ? "mt-1 chirp-regular-font deactivate-btn-dark-theme"
+                      : "mt-1 chirp-regular-font deactivate-btn-light-theme"
+                  }
+                  style={{
+                    color: "#F4212D",
+                    textAlign: "center",
+                    padding: "16px",
+                    cursor: "pointer",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
+                >
+                  Remove birth date
+                </div>
+                {/* remove birthday finish to check */}
+                <div
+                  style={{
+                    marginTop: "20px",
+                  }}
+                ></div>
+              </div>
+            ) : (
+              <div
+                style={{
+                  position: "relative",
+                  padding: "0px 12px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                  marginBottom: "60px",
+                  color: themeName === "dark-theme" ? "white" : "black",
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
+                  className="chirp-regular-font"
+                >
+                  {" "}
+                  Birth date &middot;{" "}
+                  <span
+                    className="edit-profile-edit-btn"
+                    onClick={showWarningForEditAge}
+                  >
+                    Edit
+                  </span>
+                </span>
+                <span
+                  style={{
+                    fontSize: font20.fontSize,
+                    lineHeight: font20.lineHeight,
+                    fontWeight: "900",
+                  }}
+                  className="chirp-regular-font"
+                >
+                  {profile?.birthDate?.month} {profile?.birthDate?.day},{" "}
+                  {profile?.birthDate?.year}
+                </span>
+              </div>
+            )}
+          </div>
+        </Modal>
+      </>
+      {/* start to check */}
       {!isPostModalVisible && !dataFromCommentModal && (
         <ResponsiveNavigationBarBottom
           refreshPosts={() => handleShowPostsProfilePage()}
@@ -616,8 +2697,6 @@ function UserProfile({ isNewPostShared }) {
 
         <div
           style={{
-            // marginTop: "45px",
-            // padding: "0px 16px",
             backgroundColor:
               themeName === "light-theme" ? "rgb(207, 217, 222)" : "",
             height: "200px",
@@ -673,9 +2752,15 @@ function UserProfile({ isNewPostShared }) {
                   <>
                     <div>
                       <img
+                        width={133}
+                        height={133}
                         style={{
                           cursor: "pointer",
                           borderRadius: "50%",
+                          border:
+                            themeName === "dark-theme"
+                              ? "4px solid black"
+                              : "4px solid white",
                         }}
                         src={userInfo.imageUrl}
                         alt=""
@@ -730,6 +2815,46 @@ function UserProfile({ isNewPostShared }) {
           </div>
         </div>
 
+        {/* edit profile btn */}
+        <div
+          className="chirp-bold-font"
+          style={{
+            padding: "12px 12px",
+            textAlign: "right",
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
+          <button
+            onClick={showEditModal}
+            className={`edit-profile-btn ${themeName}`}
+            style={{
+              borderRadius: "9999px",
+              border:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
+              backgroundColor: "transparent",
+              minHeight: "36px",
+              minWidth: "36px",
+              outlineStyle: "none",
+              cursor: "pointer",
+              transitionDuration: "0.2s",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
+            }}
+          >
+            <span
+              style={{
+                padding: "0px 16px",
+              }}
+            >
+              Edit profile
+            </span>
+          </button>
+        </div>
+
         {/* finish to check */}
         <div
           style={{
@@ -743,7 +2868,7 @@ function UserProfile({ isNewPostShared }) {
               display: "flex",
               gap: ".2rem",
               alignItems: "center",
-              marginTop: "75px",
+              marginTop: "30px",
             }}
           >
             <div
@@ -804,14 +2929,244 @@ function UserProfile({ isNewPostShared }) {
           >
             @{userInfo.username}
           </div>
-          <div>
+
+          {profile?.automated_account ? (
             <div
-              className="mt-2"
               style={{
+                marginBottom: "20px",
+                marginTop: "10px",
+              }}
+            >
+              <div
+                className="chirp-regular-font"
+                style={{
+                  color:
+                    themeName === "dark-theme"
+                      ? "#71767A"
+                      : "rgb(83, 100, 113)",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px",
+                }}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  color={
+                    themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)"
+                  }
+                  fill="currentColor"
+                  width={`${1.25}em`}
+                  height={`${1.25}em`}
+                >
+                  <g>
+                    <path d="M.998 15V9h2v6h-2zm22 0V9h-2v6h2zM12 2c-4.418 0-8 3.58-8 8v7c0 2.76 2.239 5 5 5h6c2.761 0 5-2.24 5-5v-7c0-4.42-3.582-8-8-8zM8.998 14c-1.105 0-2-.9-2-2s.895-2 2-2 2 .9 2 2-.895 2-2 2zm6 0c-1.104 0-2-.9-2-2s.895-2 2-2 2 .9 2 2-.896 2-2 2z"></path>
+                  </g>
+                </svg>
+
+                <div
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
+                >
+                  <span>Automated by</span>{" "}
+                  <span
+                    onClick={() =>
+                      navigate(`/profile/${profile.automated_account._id}`)
+                    }
+                    className="edit-profile-edit-btn"
+                  >
+                    @{profile.automated_account.username}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {profile?.bio ? (
+            <div
+              className="unica-regular-font"
+              style={{ marginTop: "10px", marginBottom: "10px" }}
+            >
+              <div
+                style={{
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
+                }}
+              >
+                {profile.bio}
+              </div>
+              <div
+                style={{
+                  fontSize: font13.fontSize,
+                  lineHeight: font13.lineHeight,
+                  display: "inline",
+                  padding: 0,
+                  margin: 0,
+                }}
+                className="edit-profile-edit-btn"
+              >
+                Translate bio
+              </div>
+            </div>
+          ) : null}
+
+          <div
+            className="mt-2 chirp-regular-font"
+            style={{
+              display: "flex",
+              gap: "12px",
+              flexWrap: "wrap",
+            }}
+          >
+            {profile?.location ? (
+              <div
+                className="chirp-regular-font"
+                style={{
+                  color:
+                    themeName === "dark-theme"
+                      ? "#71767A"
+                      : "rgb(83, 100, 113)",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px",
+                }}
+              >
+                <svg
+                  color={
+                    themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)"
+                  }
+                  fill="currentColor"
+                  width={`${1.25}em`}
+                  height={`${1.25}em`}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <g>
+                    <path d="M12 7c-1.93 0-3.5 1.57-3.5 3.5S10.07 14 12 14s3.5-1.57 3.5-3.5S13.93 7 12 7zm0 5c-.827 0-1.5-.673-1.5-1.5S11.173 9 12 9s1.5.673 1.5 1.5S12.827 12 12 12zm0-10c-4.687 0-8.5 3.813-8.5 8.5 0 5.967 7.621 11.116 7.945 11.332l.555.37.555-.37c.324-.216 7.945-5.365 7.945-11.332C20.5 5.813 16.687 2 12 2zm0 17.77c-1.665-1.241-6.5-5.196-6.5-9.27C5.5 6.916 8.416 4 12 4s6.5 2.916 6.5 6.5c0 4.073-4.835 8.028-6.5 9.27z"></path>
+                  </g>
+                </svg>
+
+                <span
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
+                >
+                  {profile.location}
+                </span>
+              </div>
+            ) : null}
+            {profile?.webSite ? (
+              <div
+                className="chirp-regular-font"
+                style={{
+                  color:
+                    themeName === "dark-theme"
+                      ? "#71767A"
+                      : "rgb(83, 100, 113)",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px",
+                }}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  color={
+                    themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)"
+                  }
+                  fill="currentColor"
+                  width={`${1.25}em`}
+                  height={`${1.25}em`}
+                >
+                  <g>
+                    <path d="M18.36 5.64c-1.95-1.96-5.11-1.96-7.07 0L9.88 7.05 8.46 5.64l1.42-1.42c2.73-2.73 7.16-2.73 9.9 0 2.73 2.74 2.73 7.17 0 9.9l-1.42 1.42-1.41-1.42 1.41-1.41c1.96-1.96 1.96-5.12 0-7.07zm-2.12 3.53l-7.07 7.07-1.41-1.41 7.07-7.07 1.41 1.41zm-12.02.71l1.42-1.42 1.41 1.42-1.41 1.41c-1.96 1.96-1.96 5.12 0 7.07 1.95 1.96 5.11 1.96 7.07 0l1.41-1.41 1.42 1.41-1.42 1.42c-2.73 2.73-7.16 2.73-9.9 0-2.73-2.74-2.73-7.17 0-9.9z"></path>
+                  </g>
+                </svg>
+
+                <a
+                  style={{
+                    textDecoration: "none",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
+                  href={profile.webSite}
+                  target="_blank"
+                  className="edit-profile-edit-btn"
+                >
+                  {profile.webSite}
+                </a>
+              </div>
+            ) : null}
+            {profile?.birthDate ? (
+              <>
+                <div
+                  className="chirp-regular-font"
+                  style={{
+                    color:
+                      themeName === "dark-theme"
+                        ? "#71767A"
+                        : "rgb(83, 100, 113)",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px",
+                  }}
+                >
+                  <svg
+                    color={
+                      themeName === "dark-theme"
+                        ? "#71767A"
+                        : "rgb(83, 100, 113)"
+                    }
+                    fill="currentColor"
+                    width={`${1.25}em`}
+                    height={`${1.25}em`}
+                    viewBox="0 0 24 24"
+                  >
+                    <g>
+                      <path d="M8 10c0-2.21 1.79-4 4-4v2c-1.1 0-2 .9-2 2H8zm12 1c0 4.27-2.69 8.01-6.44 8.83L15 22H9l1.45-2.17C6.7 19.01 4 15.27 4 11c0-4.84 3.46-9 8-9s8 4.16 8 9zm-8 7c3.19 0 6-3 6-7s-2.81-7-6-7-6 3-6 7 2.81 7 6 7z"></path>
+                    </g>
+                  </svg>
+
+                  <div
+                    style={{
+                      textDecoration: "none",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
+                      display: "flex",
+                      gap: "5px",
+                      padding: 0,
+                      margin: 0,
+                    }}
+                  >
+                    <div>Born</div>
+                    <div>{profile.birthDate.month}</div>
+                    <div>{profile.birthDate.day},</div>
+                    <div>{profile.birthDate.year}</div>
+                  </div>
+                </div>
+              </>
+            ) : null}
+            <div
+              className="chirp-regular-font"
+              style={{
+                color:
+                  themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
                 display: "flex",
-                justifyContent: "left",
                 alignItems: "center",
-                gap: "0.5%",
+                gap: "5px",
               }}
             >
               <svg
@@ -829,25 +3184,16 @@ function UserProfile({ isNewPostShared }) {
                   <path d="M7 4V3h2v1h6V3h2v1h1.5C19.89 4 21 5.12 21 6.5v12c0 1.38-1.11 2.5-2.5 2.5h-13C4.12 21 3 19.88 3 18.5v-12C3 5.12 4.12 4 5.5 4H7zm0 2H5.5c-.27 0-.5.22-.5.5v12c0 .28.23.5.5.5h13c.28 0 .5-.22.5-.5v-12c0-.28-.22-.5-.5-.5H17v1h-2V6H9v1H7V6zm0 6h2v-2H7v2zm0 4h2v-2H7v2zm4-4h2v-2h-2v2zm0 4h2v-2h-2v2zm4-4h2v-2h-2v2z"></path>
                 </g>
               </svg>
-              <span
-                className="chirp-regular-font"
-                style={{
-                  color:
-                    themeName === "dark-theme"
-                      ? "#71767A"
-                      : "rgb(83, 100, 113)",
-                  fontSize: font15.fontSize,
-                  lineHeight: font15.lineHeight,
-                }}
-              >
-                Joined {getCreatedDateForProfile(userInfo.createdAt)}
-              </span>
+
+              <span>Joined {getCreatedDateForProfile(userInfo.createdAt)}</span>
             </div>
           </div>
+
           <div
             style={{
               display: "flex",
               gap: "3%",
+              marginTop: "5px",
             }}
           >
             {/* following and followers details start to check  */}

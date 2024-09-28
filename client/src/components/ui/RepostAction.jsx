@@ -96,8 +96,6 @@ function RepostAction({
     });
   };
 
-  console.log("reposted ids from repost action:", post);
-
   const [hoveredOption, setHoveredOption] = useState(null);
 
   const [repostIconHovered, setRepostIconHovered] = useState(null);

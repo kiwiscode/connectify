@@ -1002,6 +1002,10 @@ function SpesificUserProfile({ isNewPostShared }) {
                       alt=""
                       style={{
                         borderRadius: "50%",
+                        border:
+                          themeName === "dark-theme"
+                            ? "4px solid black"
+                            : "4px solid white",
                       }}
                     />
                   </div>
@@ -1035,7 +1039,7 @@ function SpesificUserProfile({ isNewPostShared }) {
             justifyContent: "flex-end",
             alignItems: "flex-end",
             padding: "0px 12px",
-            marginTop: "6px",
+            marginTop: "60px",
           }}
         >
           {profileInfo._id !== userInfo._id ? (

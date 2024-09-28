@@ -38,8 +38,6 @@ function MainPage({ isNewPostShared }) {
   const location = useLocation();
   const path = location.pathname;
 
-  console.log("Path name =>", path);
-
   const [isSubModalOpened, setIsSubModalOpened] = useState(false);
   const [tabIndexValue, settabIndexValue] = useState(null);
   const handleModalToggle = (modalOpen) => {

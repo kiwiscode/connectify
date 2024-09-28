@@ -5,6 +5,8 @@ const authenticateToken = require("../middleware/jwtMiddleware");
 
 router.get("/", authenticateToken, profileController.handleProfile);
 
+router.patch("/:userId/edit", authenticateToken, profileController.editProfile);
+
 router.get(
   "/:userId/followers",
   authenticateToken,

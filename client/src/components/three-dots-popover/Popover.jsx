@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ThemeContext } from "../../context/ThemeContext";
 import { Modal, Button } from "react-bootstrap";
 import { UserContext } from "../../context/UserContext";
@@ -14,12 +14,12 @@ const API_URL = import.meta.env.VITE_APP_API_URL;
 
 function PostPopover({
   post,
+  onClose,
   postDetailPageActive,
   postDeletionProcess,
   isCutePopoverOnRightSide,
   notificationPageComment,
   refreshPosts,
-  isPinnedPost,
 }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
 
@@ -83,6 +83,32 @@ function PostPopover({
         // tüm popoover kullanılan yerlerde aynı catch mesajı mevcut finish to check INFO
       });
   };
+
+  const [pinnedPost, setPinnedPost] = useState(null);
+  const handleGetPinPostIfExist = () => {
+    axios
+      .get(`${API_URL}/profile`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      .then((response) => {
+        const { posts } = response.data;
+        const { user } = response.data;
+
+        setPinnedPost(user.pinnedPosts[0]);
+      })
+      .catch((err) => {
+        return err;
+      });
+  };
+
+  useEffect(() => {
+    if (getToken() && post) {
+      handleGetPinPostIfExist();
+      console.log("post:", post);
+    }
+  }, []);
 
   const pinPost = async (postId) => {
     try {
@@ -379,6 +405,7 @@ function PostPopover({
                     onClick={() => {
                       pinPost(post._id);
                       popupState.close();
+                      onClose();
                     }}
                     onMouseEnter={() => {
                       setHoveredOption("Pin to your profile");
@@ -419,7 +446,7 @@ function PostPopover({
                         marginLeft: "10px",
                       }}
                     >
-                      {isPinnedPost
+                      {pinnedPost?._id === post?._id
                         ? "Unpin from profile"
                         : "  Pin to your profile"}
                     </span>
