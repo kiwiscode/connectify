@@ -5265,6 +5265,7 @@ function CommentModal({
   const [commentIconHovered, setCommentIconHovered] = useState(null);
   const { getFontSizeAndLineHeight13 } = useFontSizeHandler();
   const font13 = getFontSizeAndLineHeight13();
+
   return (
     <>
       <div

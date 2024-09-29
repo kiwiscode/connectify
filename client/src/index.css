@@ -264,6 +264,12 @@ body {
   transition-duration: 0.2s !important;
 }
 
+.arrow-pp-exit:hover {
+  cursor: pointer;
+  background-color: #061019 !important;
+  transition-duration: 0.2s;
+}
+
 .each-message-parent-div:hover {
   background-color: #f7f9f9 !important ;
 }
@@ -658,7 +664,6 @@ body {
 }
 
 .sign-in-dark-theme:hover {
-  background-color: #061019;
   transition-duration: 0.2s !important;
   outline-style: none !important;
   border: 1px solid rgb(83, 100, 113);
@@ -4544,4 +4549,8 @@ themeName === "dark-theme"
 .edit-photo-machine-img:hover {
   background-color: rgba(39, 44, 48, 0.75) !important;
   transition-duration: 0.2s;
+}
+
+.nested-child-back-drop {
+  z-index: 9999;
 }

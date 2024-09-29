@@ -7,6 +7,7 @@ const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const capitalize = require("../utils/capitalize");
 const Post = require("../models/Post.model");
+const Comment = require("../models/Comment.model");
 require("dotenv").config();
 let sendVerificationCodeToEmail;
 emailProcess();
@@ -231,8 +232,12 @@ const handleLogin = (req, res, next) => {
                   notifications,
                   signedUpWithGoogle,
                   signedUpWithVariantOne,
-                  bio,
                   isPrivate,
+                  bio,
+                  location,
+                  webSite,
+                  birthDate,
+                  birthDateVisibility,
                 } = user;
 
                 const token = jwt.sign(
@@ -264,8 +269,12 @@ const handleLogin = (req, res, next) => {
                     notifications,
                     signedUpWithGoogle,
                     signedUpWithVariantOne,
-                    bio,
                     isPrivate,
+                    bio,
+                    location,
+                    webSite,
+                    birthDate,
+                    birthDateVisibility,
                   },
                   message:
                     "Show 2 modal, first => profile image customization modal, second => username customization modal",
@@ -300,8 +309,12 @@ const handleLogin = (req, res, next) => {
                     notifications,
                     signedUpWithGoogle,
                     signedUpWithVariantOne,
-                    bio,
                     isPrivate,
+                    bio,
+                    location,
+                    webSite,
+                    birthDate,
+                    birthDateVisibility,
                   } = user;
 
                   const token = jwt.sign(
@@ -334,8 +347,12 @@ const handleLogin = (req, res, next) => {
                       notifications,
                       signedUpWithGoogle,
                       signedUpWithVariantOne,
-                      bio,
                       isPrivate,
+                      bio,
+                      location,
+                      webSite,
+                      birthDate,
+                      birthDateVisibility,
                     },
                   });
                 });
@@ -458,6 +475,11 @@ const handleDeactivatedUserLoginBack = (req, res) => {
                   notifications,
                   chatEngineInfos,
                   isPrivate,
+                  bio,
+                  location,
+                  webSite,
+                  birthDate,
+                  birthDateVisibility,
                 } = reactivatedUser;
 
                 const token = jwt.sign(
@@ -489,6 +511,11 @@ const handleDeactivatedUserLoginBack = (req, res) => {
                     notifications,
                     chatEngineInfos,
                     isPrivate,
+                    bio,
+                    location,
+                    webSite,
+                    birthDate,
+                    birthDateVisibility,
                   },
                 });
               });
@@ -763,6 +790,16 @@ const handleUsernameChange = async (req, res) => {
       user.signedUpWithVariantOne.isUsernameCustomizationModalShown = true;
     }
     await user.save();
+
+    await Post.updateMany(
+      { userId: userId },
+      { $set: { authorUserName: username } }
+    );
+
+    await Comment.updateMany(
+      { userId: userId },
+      { $set: { authorUserName: username } }
+    );
 
     res.status(200).json({
       user: user,

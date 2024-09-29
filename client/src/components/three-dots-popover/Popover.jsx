@@ -106,7 +106,6 @@ function PostPopover({
   useEffect(() => {
     if (getToken() && post) {
       handleGetPinPostIfExist();
-      console.log("post:", post);
     }
   }, []);
 

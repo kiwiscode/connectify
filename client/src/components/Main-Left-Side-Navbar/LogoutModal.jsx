@@ -1215,15 +1215,16 @@ function LogoutModal({
                         className="chirp-bold-font"
                         style={{
                           color: themeName === "dark-theme" ? "white" : "black",
-                          // lineHeight: "20px",
                           fontSize: font15.fontSize,
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                          width: "120px",
+                          lineHeight: font15.lineHeight,
                           textAlign: "left",
                           display: "flex",
                           alignItems: "center",
+                          width: "120px",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          display: "block",
                         }}
                       >
                         <span

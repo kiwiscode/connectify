@@ -34,6 +34,10 @@ function Country() {
   const [loading, setLoading] = useState();
   const [show, setShowModal] = useState(null);
 
+  const closeShowModal = () => {
+    setShowModal(false);
+  };
+
   const [test, setTest] = useState(userInfo.country);
   const [user, setUser] = useState([]);
 
@@ -168,12 +172,15 @@ function Country() {
           style={{
             padding: "0px",
             margin: "0px",
+            zIndex: 9999,
           }}
           centered
           show={showRemoveContactsModal}
           onHide={handleCloseRemoveContactsModal}
           backdropClassName={
-            themeName === "dark-theme" ? `back-drop-${themeName}` : ""
+            themeName === "dark-theme"
+              ? `back-drop-${themeName} ${show && "nested-child-back-drop"}`
+              : `${show && "nested-child-back-drop"}`
           }
           className="delete-post"
           contentClassName={
@@ -285,6 +292,7 @@ function Country() {
                 : "",
           }}
           show={show}
+          onHide={closeShowModal}
           centered={true}
           dialogClassName={
             width <= 700 ? "modal-fullscreen" : "modal_center_with_width"

@@ -1219,8 +1219,8 @@ function PostDetailPage() {
                 <CommentModal
                   refreshPosts={refreshPostDetailPage}
                   post={detailedPost}
-                  width={`${1.5}em`}
-                  height={`${1.5}em`}
+                  width={`${1.25}em`}
+                  height={`${1.25}em`}
                   sendDataToParent={handleDataFromCommentModal}
                   postSharedMessage={postSharedMessage}
                 />

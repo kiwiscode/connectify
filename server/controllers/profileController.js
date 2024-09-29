@@ -1,5 +1,6 @@
 const User = require("../models/User.model");
 const Post = require("../models/Post.model");
+const Comment = require("../models/Comment.model");
 const cloudinary = require("../utils/cloudinary");
 const bcrypt = require("bcrypt");
 
@@ -67,6 +68,7 @@ const handleShowSpesificProfile = (req, res) => {
     })
     .populate("followers")
     .populate("following")
+    .populate("automated_account")
     .populate({
       path: "posts",
       populate: {
@@ -379,24 +381,74 @@ const editProfile = async (req, res) => {
     console.log("body:", req.body);
 
     if (!user) {
-      return res.status(404).json({ message: "Kullanıcı bulunamadı." });
+      return res.status(404).json({ message: "User not found." });
     }
 
-    if (fullName) user.fullname = fullName;
-    if (bioOnEdit) user.bio = bioOnEdit;
-    if (locationOnEdit) user.location = locationOnEdit;
-    if (websiteOnEdit) user.webSite = websiteOnEdit;
-    if (birthDateOnEdit) user.birthDate = birthDateOnEdit;
-    if (birthDateVisibilityRestriction)
+    user.fullname = fullName;
+    user.bio = bioOnEdit;
+    user.location = locationOnEdit;
+    user.webSite = websiteOnEdit;
+    user.birthDate = birthDateOnEdit;
+
+    if (
+      birthDateOnEdit.month &&
+      birthDateOnEdit.day &&
+      birthDateOnEdit.year &&
+      !birthDateVisibilityRestriction.monthAndDay &&
+      !birthDateVisibilityRestriction.year
+    ) {
+      user.birthDateVisibility = {
+        monthAndDay: "Only you",
+        year: "Only you",
+      };
+    } else {
       user.birthDateVisibility = {
         monthAndDay: birthDateVisibilityRestriction.monthAndDay,
         year: birthDateVisibilityRestriction.year,
       };
+    }
 
-    // Değişiklikleri kaydet
     await user.save();
 
-    res.json({ message: "Profil başarıyla güncellendi.", user });
+    await Post.updateMany(
+      { userId: userId },
+      { $set: { authorFullName: fullName } }
+    );
+
+    await Comment.updateMany(
+      { userId: userId },
+      { $set: { authorFullName: fullName } }
+    );
+
+    res.json({ message: "Profile updated successfully.", user });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ errorMessage: "An error occurred." });
+  }
+};
+
+const removeBirthDate = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    user.birthDate = {
+      month: null,
+      day: null,
+      year: null,
+    };
+    user.birthDateVisibility = {
+      monthAndDay: null,
+      year: null,
+    };
+
+    await user.save();
+
+    res.json({ message: "Profile updated successfully.", user });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ errorMessage: "An error occurred." });
@@ -406,6 +458,7 @@ const editProfile = async (req, res) => {
 module.exports = {
   handleProfile,
   editProfile,
+  removeBirthDate,
   handleShowSpesificProfile,
   handleProfilePicture,
   getFollowers,

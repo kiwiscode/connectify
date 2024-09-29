@@ -570,6 +570,7 @@ function SpesificUserProfile({ isNewPostShared }) {
         setFavoriteWindow("");
         setPostWindow("hide");
         setFavorites(response.data.favorites);
+
         setProfileInfo(response.data);
       })
       .catch((err) => {
@@ -672,8 +673,126 @@ function SpesificUserProfile({ isNewPostShared }) {
     }
   };
 
+  console.log("profile info:", profileInfo);
+
+  // profile info visibility scenario
+  // only you?
+  // eğer only you ise userId profileInfo._id eşit ise göster
+
+  const [monthAndDayBDVisibilityOption, setMonthAndDayBDVisibilityOption] =
+    useState(null);
+  const [yearBDVisibilityOption, setBDYearVisibilityOption] = useState(null);
+
+  const optionsMonthAndDay = [
+    // "Only you", +
+    "You follow each other",
+    "People you follow",
+    // "Your followers", +
+    // "Public", +
+  ];
+
+  const optionsYear = [
+    "Only you",
+    "You follow each other",
+    "People you follow",
+    "Your followers",
+    "Public",
+  ];
+
+  const [showBigPP, setshowBigPP] = useState(false);
+
+  const outsideBigPPRef = useRef(null);
+
   return (
     <>
+      {/* contexHolder */}
+      {contextHolder}
+
+      {/* custom profile image opened */}
+      <>
+        <div
+          onClick={() => setshowBigPP(null)}
+          ref={outsideBigPPRef}
+          className="profile-img-opened-wrapper"
+          style={{
+            position: "fixed",
+            left: 0,
+            bottom: 0,
+            right: 0,
+            bottom: 0,
+            minHeight: "100dvh",
+            minWidth: "100%",
+            width: "100%",
+            height: "100%",
+            zIndex: 99999,
+            backgroundColor: "rgba(0, 0, 0, 0.9)",
+            opacity: 1,
+            display: showBigPP ? "block" : "none",
+          }}
+        >
+          <div
+            onClick={() => setshowBigPP(null)}
+            className="arrow-pp-exit"
+            style={{
+              width: "50px",
+              height: "50px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: "50%",
+              margin: "32px 16px",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+            }}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              fill="rgb(255, 255, 255)"
+              width={20}
+              height={20}
+            >
+              <g>
+                <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+              </g>
+            </svg>
+          </div>
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            style={{
+              color: "black",
+              position: "absolute",
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%,-50%)",
+            }}
+          >
+            {profileInfo?.imageUrl?.slice(0, 3) !== "../" ? (
+              <img
+                src={profileInfo.imageUrl}
+                width={300}
+                height={300}
+                style={{
+                  borderRadius: "50%",
+                }}
+                alt=""
+              />
+            ) : (
+              <img
+                style={{
+                  borderRadius: "50%",
+                }}
+                width={300}
+                height={300}
+                src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                alt=""
+              />
+            )}
+          </div>
+        </div>
+      </>
+
       {/* cancel follow request modal start to check */}
       <Modal
         backdropClassName={
@@ -767,7 +886,6 @@ function SpesificUserProfile({ isNewPostShared }) {
         </Modal.Body>
       </Modal>
       {/* cancel follow request modal finish to check */}
-      {contextHolder}
       {!isPostModalVisible && !dataFromCommentModal && (
         <ResponsiveNavigationBarBottom
           refreshPosts={() => handleShowSpesificUserProfilePagePosts()}
@@ -815,7 +933,6 @@ function SpesificUserProfile({ isNewPostShared }) {
           handleClose={handleClose}
         />
         {/* unfollow modal finish to check  */}
-
         <Stack
           style={{
             padding: "0px 16px",
@@ -829,7 +946,7 @@ function SpesificUserProfile({ isNewPostShared }) {
             backgroundColor:
               width > 500 && themeName === "dark-theme"
                 ? "rgba(0, 0, 0, 0.65)"
-                : width > 500 && themeName === "light-theme"
+                : width > 500 && themeName === "dark-theme"
                 ? "rgba(255, 255, 255, 0.85)"
                 : null,
             backdropFilter: width > 500 && "blur(12px)",
@@ -840,8 +957,7 @@ function SpesificUserProfile({ isNewPostShared }) {
         >
           <div
             onClick={handleGoBack}
-            // className="p-2 arrow"
-            className={`arrow arrow-${themeName}`}
+            className={`p-2 arrow arrow-${themeName}`}
             style={{
               width: "36px",
               height: " 36px",
@@ -875,6 +991,11 @@ function SpesificUserProfile({ isNewPostShared }) {
             style={{
               fontSize: font20.fontSize,
               lineHeight: font20.lineHeight,
+              width: "100%",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              display: "block",
             }}
           >
             <div
@@ -887,8 +1008,11 @@ function SpesificUserProfile({ isNewPostShared }) {
               <div
                 className="chirp-bold-font"
                 style={{
-                  lineHeight: width <= 500 ? "20px" : "24px",
-                  fontSize: width <= 500 ? "17px" : "20px",
+                  width: "fit-content",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  display: "block",
                 }}
               >
                 {profileInfo.fullname}
@@ -896,7 +1020,6 @@ function SpesificUserProfile({ isNewPostShared }) {
               {profileInfo?.isPrivate && (
                 <div
                   style={{
-                    marginLeft: "5px",
                     display: "flex",
                   }}
                 >
@@ -969,7 +1092,7 @@ function SpesificUserProfile({ isNewPostShared }) {
               </div>
             )}
           </div>
-        </Stack>
+        </Stack>{" "}
         {/* start to check stack on the way  */}
         <div
           style={{
@@ -996,11 +1119,13 @@ function SpesificUserProfile({ isNewPostShared }) {
                 {profileInfo.imageUrl.slice(0, 3) !== "../" ? (
                   <div>
                     <img
+                      onClick={() => setshowBigPP(true)}
                       width={133}
                       height={133}
                       src={profileInfo.imageUrl}
                       alt=""
                       style={{
+                        cursor: "pointer",
                         borderRadius: "50%",
                         border:
                           themeName === "dark-theme"
@@ -1012,6 +1137,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                 ) : (
                   <div>
                     <img
+                      onClick={() => setshowBigPP(true)}
                       style={{
                         cursor: "pointer",
                         borderRadius: "50%",
@@ -1019,7 +1145,6 @@ function SpesificUserProfile({ isNewPostShared }) {
                           themeName === "dark-theme"
                             ? "4px solid black"
                             : "4px solid white",
-                        cursor: "pointer",
                       }}
                       width="133"
                       height="133"
@@ -1258,7 +1383,6 @@ function SpesificUserProfile({ isNewPostShared }) {
             </div>
           ) : null}
         </div>
-
         <div
           style={{
             lineHeight: "30px",
@@ -1277,6 +1401,12 @@ function SpesificUserProfile({ isNewPostShared }) {
             <div
               style={{
                 fontSize: font20.fontSize,
+                lineHeight: font20.lineHeight,
+                width: "fit-content",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                display: "block",
               }}
               className={
                 themeName === "dark-theme"
@@ -1289,7 +1419,6 @@ function SpesificUserProfile({ isNewPostShared }) {
             {profileInfo?.isPrivate && (
               <div
                 style={{
-                  marginLeft: "5px",
                   display: "flex",
                 }}
               >
@@ -1355,8 +1484,6 @@ function SpesificUserProfile({ isNewPostShared }) {
             }
           >
             @{profileInfo.username}
-            {""}
-            {""}
             {profileInfo._id !== userInfo._id ? (
               <>
                 {getFollowingIds(profileInfo?.following)?.includes(
@@ -1399,14 +1526,504 @@ function SpesificUserProfile({ isNewPostShared }) {
               </>
             ) : null}
           </div>
-          <div>
+
+          {profileInfo?.automated_account ? (
             <div
-              className="mt-2"
               style={{
+                marginBottom: "20px",
+                marginTop: "10px",
+              }}
+            >
+              <div
+                className="chirp-regular-font"
+                style={{
+                  color:
+                    themeName === "dark-theme"
+                      ? "#71767A"
+                      : "rgb(83, 100, 113)",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px",
+                }}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  color={
+                    themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)"
+                  }
+                  fill="currentColor"
+                  width={`${1.25}em`}
+                  height={`${1.25}em`}
+                >
+                  <g>
+                    <path d="M.998 15V9h2v6h-2zm22 0V9h-2v6h2zM12 2c-4.418 0-8 3.58-8 8v7c0 2.76 2.239 5 5 5h6c2.761 0 5-2.24 5-5v-7c0-4.42-3.582-8-8-8zM8.998 14c-1.105 0-2-.9-2-2s.895-2 2-2 2 .9 2 2-.895 2-2 2zm6 0c-1.104 0-2-.9-2-2s.895-2 2-2 2 .9 2 2-.896 2-2 2z"></path>
+                  </g>
+                </svg>
+
+                <div
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
+                >
+                  <span>Automated by</span>{" "}
+                  <span
+                    onClick={() =>
+                      navigate(`/profile/${profileInfo.automated_account._id}`)
+                    }
+                    className="edit-profile-edit-btn"
+                  >
+                    @{profileInfo.automated_account.username}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {profileInfo?.bio ? (
+            <div
+              className="unica-regular-font"
+              style={{ marginTop: "10px", marginBottom: "10px" }}
+            >
+              <div
+                id="target-text-to-translate"
+                style={{
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
+                }}
+              >
+                {profileInfo.bio}
+              </div>
+
+              <div
+                id="translate-btn"
+                style={{
+                  fontSize: font13.fontSize,
+                  lineHeight: font13.lineHeight,
+                  display: "inline",
+                  padding: 0,
+                  margin: 0,
+
+                  // no api for right now
+                  opacity: 0.5,
+                  cursor: "default",
+                  pointerEvents: "none",
+                }}
+                className="edit-profile-edit-btn"
+              >
+                Translate bio
+              </div>
+            </div>
+          ) : null}
+
+          <div
+            className="mt-2 chirp-regular-font"
+            style={{
+              display: "flex",
+              gap: "12px",
+              flexWrap: "wrap",
+            }}
+          >
+            {profileInfo?.location ? (
+              <div
+                className="chirp-regular-font"
+                style={{
+                  color:
+                    themeName === "dark-theme"
+                      ? "#71767A"
+                      : "rgb(83, 100, 113)",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px",
+                }}
+              >
+                <svg
+                  color={
+                    themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)"
+                  }
+                  fill="currentColor"
+                  width={`${1.25}em`}
+                  height={`${1.25}em`}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <g>
+                    <path d="M12 7c-1.93 0-3.5 1.57-3.5 3.5S10.07 14 12 14s3.5-1.57 3.5-3.5S13.93 7 12 7zm0 5c-.827 0-1.5-.673-1.5-1.5S11.173 9 12 9s1.5.673 1.5 1.5S12.827 12 12 12zm0-10c-4.687 0-8.5 3.813-8.5 8.5 0 5.967 7.621 11.116 7.945 11.332l.555.37.555-.37c.324-.216 7.945-5.365 7.945-11.332C20.5 5.813 16.687 2 12 2zm0 17.77c-1.665-1.241-6.5-5.196-6.5-9.27C5.5 6.916 8.416 4 12 4s6.5 2.916 6.5 6.5c0 4.073-4.835 8.028-6.5 9.27z"></path>
+                  </g>
+                </svg>
+
+                <span
+                  style={{
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
+                >
+                  {profileInfo.location}
+                </span>
+              </div>
+            ) : null}
+            {profileInfo?.webSite ? (
+              <div
+                className="chirp-regular-font"
+                style={{
+                  color:
+                    themeName === "dark-theme"
+                      ? "#71767A"
+                      : "rgb(83, 100, 113)",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px",
+                }}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  color={
+                    themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)"
+                  }
+                  fill="currentColor"
+                  width={`${1.25}em`}
+                  height={`${1.25}em`}
+                >
+                  <g>
+                    <path d="M18.36 5.64c-1.95-1.96-5.11-1.96-7.07 0L9.88 7.05 8.46 5.64l1.42-1.42c2.73-2.73 7.16-2.73 9.9 0 2.73 2.74 2.73 7.17 0 9.9l-1.42 1.42-1.41-1.42 1.41-1.41c1.96-1.96 1.96-5.12 0-7.07zm-2.12 3.53l-7.07 7.07-1.41-1.41 7.07-7.07 1.41 1.41zm-12.02.71l1.42-1.42 1.41 1.42-1.41 1.41c-1.96 1.96-1.96 5.12 0 7.07 1.95 1.96 5.11 1.96 7.07 0l1.41-1.41 1.42 1.41-1.42 1.42c-2.73 2.73-7.16 2.73-9.9 0-2.73-2.74-2.73-7.17 0-9.9z"></path>
+                  </g>
+                </svg>
+
+                <a
+                  style={{
+                    textDecoration: "none",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                  }}
+                  href={profileInfo.webSite}
+                  target="_blank"
+                  className="edit-profile-edit-btn"
+                >
+                  {profileInfo.webSite}
+                </a>
+              </div>
+            ) : null}
+
+            {profileInfo?.birthDate?.month &&
+            profileInfo?.birthDate?.day &&
+            profileInfo?.birthDate?.year ? (
+              <>
+                <div
+                  className="chirp-regular-font"
+                  style={{
+                    color:
+                      themeName === "dark-theme"
+                        ? "#71767A"
+                        : "rgb(83, 100, 113)",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px",
+                  }}
+                >
+                  {profileInfo._id === userInfo._id ? (
+                    <>
+                      <svg
+                        color={
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)"
+                        }
+                        fill="currentColor"
+                        width={`${1.25}em`}
+                        height={`${1.25}em`}
+                        viewBox="0 0 24 24"
+                      >
+                        <g>
+                          <path d="M8 10c0-2.21 1.79-4 4-4v2c-1.1 0-2 .9-2 2H8zm12 1c0 4.27-2.69 8.01-6.44 8.83L15 22H9l1.45-2.17C6.7 19.01 4 15.27 4 11c0-4.84 3.46-9 8-9s8 4.16 8 9zm-8 7c3.19 0 6-3 6-7s-2.81-7-6-7-6 3-6 7 2.81 7 6 7z"></path>
+                        </g>
+                      </svg>
+                    </>
+                  ) : (profileInfo?.birthDateVisibility?.monthAndDay ===
+                      "Only you" ||
+                      profileInfo?.birthDateVisibility?.year === "Only you") &&
+                    userInfo._id === profileInfo._id ? (
+                    <>
+                      <svg
+                        color={
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)"
+                        }
+                        fill="currentColor"
+                        width={`${1.25}em`}
+                        height={`${1.25}em`}
+                        viewBox="0 0 24 24"
+                      >
+                        <g>
+                          <path d="M8 10c0-2.21 1.79-4 4-4v2c-1.1 0-2 .9-2 2H8zm12 1c0 4.27-2.69 8.01-6.44 8.83L15 22H9l1.45-2.17C6.7 19.01 4 15.27 4 11c0-4.84 3.46-9 8-9s8 4.16 8 9zm-8 7c3.19 0 6-3 6-7s-2.81-7-6-7-6 3-6 7 2.81 7 6 7z"></path>
+                        </g>
+                      </svg>
+                    </>
+                  ) : profileInfo?.birthDateVisibility?.monthAndDay ===
+                      "Public" ||
+                    profileInfo?.birthDateVisibility?.year === "Public" ? (
+                    <>
+                      <svg
+                        color={
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)"
+                        }
+                        fill="currentColor"
+                        width={`${1.25}em`}
+                        height={`${1.25}em`}
+                        viewBox="0 0 24 24"
+                      >
+                        <g>
+                          <path d="M8 10c0-2.21 1.79-4 4-4v2c-1.1 0-2 .9-2 2H8zm12 1c0 4.27-2.69 8.01-6.44 8.83L15 22H9l1.45-2.17C6.7 19.01 4 15.27 4 11c0-4.84 3.46-9 8-9s8 4.16 8 9zm-8 7c3.19 0 6-3 6-7s-2.81-7-6-7-6 3-6 7 2.81 7 6 7z"></path>
+                        </g>
+                      </svg>
+                    </>
+                  ) : (profileInfo?.birthDateVisibility?.monthAndDay ===
+                      "Your followers" ||
+                      profileInfo?.birthDateVisibility?.year ===
+                        "Your followers") &&
+                    isFollowing ? (
+                    <>
+                      <svg
+                        color={
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)"
+                        }
+                        fill="currentColor"
+                        width={`${1.25}em`}
+                        height={`${1.25}em`}
+                        viewBox="0 0 24 24"
+                      >
+                        <g>
+                          <path d="M8 10c0-2.21 1.79-4 4-4v2c-1.1 0-2 .9-2 2H8zm12 1c0 4.27-2.69 8.01-6.44 8.83L15 22H9l1.45-2.17C6.7 19.01 4 15.27 4 11c0-4.84 3.46-9 8-9s8 4.16 8 9zm-8 7c3.19 0 6-3 6-7s-2.81-7-6-7-6 3-6 7 2.81 7 6 7z"></path>
+                        </g>
+                      </svg>
+                    </>
+                  ) : (profileInfo?.birthDateVisibility?.monthAndDay ===
+                      "People you follow" ||
+                      profileInfo?.birthDateVisibility?.year ===
+                        "People you follow") &&
+                    getFollowingIds(profileInfo?.following)?.includes(
+                      userInfo._id
+                    ) ? (
+                    <>
+                      <svg
+                        color={
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)"
+                        }
+                        fill="currentColor"
+                        width={`${1.25}em`}
+                        height={`${1.25}em`}
+                        viewBox="0 0 24 24"
+                      >
+                        <g>
+                          <path d="M8 10c0-2.21 1.79-4 4-4v2c-1.1 0-2 .9-2 2H8zm12 1c0 4.27-2.69 8.01-6.44 8.83L15 22H9l1.45-2.17C6.7 19.01 4 15.27 4 11c0-4.84 3.46-9 8-9s8 4.16 8 9zm-8 7c3.19 0 6-3 6-7s-2.81-7-6-7-6 3-6 7 2.81 7 6 7z"></path>
+                        </g>
+                      </svg>
+                    </>
+                  ) : (profileInfo?.birthDateVisibility?.monthAndDay ===
+                      "You follow each other" ||
+                      profileInfo?.birthDateVisibility?.year ===
+                        "You follow each other") &&
+                    getFollowingIds(profileInfo?.following)?.includes(
+                      userInfo._id
+                    ) &&
+                    isFollowing ? (
+                    <>
+                      <svg
+                        color={
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)"
+                        }
+                        fill="currentColor"
+                        width={`${1.25}em`}
+                        height={`${1.25}em`}
+                        viewBox="0 0 24 24"
+                      >
+                        <g>
+                          <path d="M8 10c0-2.21 1.79-4 4-4v2c-1.1 0-2 .9-2 2H8zm12 1c0 4.27-2.69 8.01-6.44 8.83L15 22H9l1.45-2.17C6.7 19.01 4 15.27 4 11c0-4.84 3.46-9 8-9s8 4.16 8 9zm-8 7c3.19 0 6-3 6-7s-2.81-7-6-7-6 3-6 7 2.81 7 6 7z"></path>
+                        </g>
+                      </svg>
+                    </>
+                  ) : (
+                    ""
+                  )}
+
+                  <div
+                    style={{
+                      textDecoration: "none",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
+                      display: "flex",
+                      gap: "5px",
+                      padding: 0,
+                      margin: 0,
+                    }}
+                  >
+                    {profileInfo._id === userInfo._id ? (
+                      <>
+                        <div>Born</div>
+                      </>
+                    ) : (profileInfo?.birthDateVisibility?.monthAndDay ===
+                        "Only you" ||
+                        profileInfo?.birthDateVisibility?.year ===
+                          "Only you") &&
+                      userInfo._id === profileInfo._id ? (
+                      <>
+                        <div>Born</div>
+                      </>
+                    ) : profileInfo?.birthDateVisibility?.monthAndDay ===
+                        "Public" ||
+                      profileInfo?.birthDateVisibility?.year === "Public" ? (
+                      <>
+                        <div>Born</div>
+                      </>
+                    ) : (profileInfo?.birthDateVisibility?.monthAndDay ===
+                        "Your followers" ||
+                        profileInfo?.birthDateVisibility?.year ===
+                          "Your followers") &&
+                      isFollowing ? (
+                      <>
+                        <div>Born</div>
+                      </>
+                    ) : (profileInfo?.birthDateVisibility?.monthAndDay ===
+                        "People you follow" ||
+                        profileInfo?.birthDateVisibility?.year ===
+                          "People you follow") &&
+                      getFollowingIds(profileInfo?.following)?.includes(
+                        userInfo._id
+                      ) ? (
+                      <>
+                        <div>Born</div>
+                      </>
+                    ) : (profileInfo?.birthDateVisibility?.monthAndDay ===
+                        "You follow each other" ||
+                        profileInfo?.birthDateVisibility?.year ===
+                          "You follow each other") &&
+                      getFollowingIds(profileInfo?.following)?.includes(
+                        userInfo._id
+                      ) &&
+                      isFollowing ? (
+                      <>
+                        <div>Born</div>
+                      </>
+                    ) : (
+                      ""
+                    )}
+
+                    {profileInfo._id === userInfo._id ? (
+                      <>
+                        <div>{profileInfo.birthDate.month}</div>
+                        <div>{profileInfo.birthDate.day},</div>
+                      </>
+                    ) : profileInfo?.birthDateVisibility?.monthAndDay ===
+                        "Only you" && userInfo._id === profileInfo._id ? (
+                      <>
+                        <div>{profileInfo.birthDate.month}</div>
+                        <div>{profileInfo.birthDate.day},</div>
+                      </>
+                    ) : profileInfo?.birthDateVisibility?.monthAndDay ===
+                      "Public" ? (
+                      <>
+                        <div>{profileInfo.birthDate.month}</div>
+                        <div>{profileInfo.birthDate.day},</div>
+                      </>
+                    ) : profileInfo?.birthDateVisibility?.monthAndDay ===
+                        "Your followers" && isFollowing ? (
+                      <>
+                        <div>{profileInfo.birthDate.month}</div>
+                        <div>{profileInfo.birthDate.day},</div>
+                      </>
+                    ) : profileInfo?.birthDateVisibility?.monthAndDay ===
+                        "People you follow" &&
+                      getFollowingIds(profileInfo?.following)?.includes(
+                        userInfo._id
+                      ) ? (
+                      <>
+                        <div>{profileInfo.birthDate.month}</div>
+                        <div>{profileInfo.birthDate.day},</div>
+                      </>
+                    ) : profileInfo?.birthDateVisibility?.monthAndDay ===
+                        "You follow each other" &&
+                      getFollowingIds(profileInfo?.following)?.includes(
+                        userInfo._id
+                      ) &&
+                      isFollowing ? (
+                      <>
+                        <div>{profileInfo.birthDate.month}</div>
+                        <div>{profileInfo.birthDate.day},</div>
+                      </>
+                    ) : (
+                      ""
+                    )}
+
+                    {profileInfo._id === userInfo._id ? (
+                      <>
+                        <div>{profileInfo.birthDate.year}</div>
+                      </>
+                    ) : profileInfo?.birthDateVisibility?.year === "Only you" &&
+                      userInfo._id === profileInfo._id ? (
+                      <>
+                        <div>{profileInfo.birthDate.year}</div>
+                      </>
+                    ) : profileInfo?.birthDateVisibility?.year === "Public" ? (
+                      <>
+                        <div>{profileInfo.birthDate.year}</div>
+                      </>
+                    ) : profileInfo?.birthDateVisibility?.year ===
+                        "Your followers" && isFollowing ? (
+                      <>
+                        <div>{profileInfo.birthDate.year}</div>
+                      </>
+                    ) : profileInfo?.birthDateVisibility?.year ===
+                        "People you follow" &&
+                      getFollowingIds(profileInfo?.following)?.includes(
+                        userInfo._id
+                      ) ? (
+                      <>
+                        <div>{profileInfo.birthDate.year}</div>
+                      </>
+                    ) : profileInfo?.birthDateVisibility?.year ===
+                        "You follow each other" &&
+                      getFollowingIds(profileInfo?.following)?.includes(
+                        userInfo._id
+                      ) &&
+                      isFollowing ? (
+                      <>
+                        <div>{profileInfo.birthDate.year}</div>
+                      </>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                </div>
+              </>
+            ) : null}
+            <div
+              className="chirp-regular-font"
+              style={{
+                color:
+                  themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
+                fontSize: font15.fontSize,
+                lineHeight: font15.lineHeight,
                 display: "flex",
-                justifyContent: "left",
                 alignItems: "center",
-                gap: "0.5%",
+                gap: "5px",
               }}
             >
               <svg
@@ -1424,17 +2041,8 @@ function SpesificUserProfile({ isNewPostShared }) {
                   <path d="M7 4V3h2v1h6V3h2v1h1.5C19.89 4 21 5.12 21 6.5v12c0 1.38-1.11 2.5-2.5 2.5h-13C4.12 21 3 19.88 3 18.5v-12C3 5.12 4.12 4 5.5 4H7zm0 2H5.5c-.27 0-.5.22-.5.5v12c0 .28.23.5.5.5h13c.28 0 .5-.22.5-.5v-12c0-.28-.22-.5-.5-.5H17v1h-2V6H9v1H7V6zm0 6h2v-2H7v2zm0 4h2v-2H7v2zm4-4h2v-2h-2v2zm0 4h2v-2h-2v2zm4-4h2v-2h-2v2z"></path>
                 </g>
               </svg>
-              <span
-                className="chirp-regular-font"
-                style={{
-                  color:
-                    themeName === "dark-theme"
-                      ? "#71767A"
-                      : "rgb(83, 100, 113)",
-                  fontSize: font15.fontSize,
-                  lineHeight: font15.lineHeight,
-                }}
-              >
+
+              <span>
                 Joined{" "}
                 {getCreatedYearForSpesificUserProfilePage(
                   profileInfo.createdAt
@@ -1442,10 +2050,12 @@ function SpesificUserProfile({ isNewPostShared }) {
               </span>
             </div>
           </div>
+
           <div
             style={{
               display: "flex",
               gap: "3%",
+              marginTop: "5px",
             }}
           >
             <Link
@@ -1472,10 +2082,12 @@ function SpesificUserProfile({ isNewPostShared }) {
                 profileInfo._id !== userInfo._id
                   ? ""
                   : "following-followers-link"
-              } chirp-bold-font`}
+              } `}
             >
               <span
+                className="chirp-bold-font"
                 style={{
+                  cursor: "pointer",
                   fontSize: font14.fontSize,
                   lineHeight: font14.lineHeight,
                 }}
@@ -1522,7 +2134,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                 profileInfo._id !== userInfo._id
                   ? ""
                   : "following-followers-link"
-              } chirp-bold-font`}
+              } `}
             >
               <span
                 className="chirp-bold-font"
@@ -1560,9 +2172,7 @@ function SpesificUserProfile({ isNewPostShared }) {
             </Link>
           </div>
         </div>
-
         {/* finish to check responsive error container  */}
-
         {profileInfo.deactivatedOwner ||
         (profileInfo.isPrivate &&
           !checkIfFollowing(profileInfo._id) &&
@@ -1826,7 +2436,6 @@ function SpesificUserProfile({ isNewPostShared }) {
                                       height={16}
                                       viewBox="0 0 24 24"
                                       aria-hidden="true"
-                                      className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                                       fill={
                                         themeName === "dark-theme"
                                           ? "#71767A"
@@ -1988,7 +2597,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                                 {/* post owner full name + verified account svg + post owner user name + post created date start to check  */}
                                 <div className="p-1">
                                   {post.userId ? (
-                                    <>
+                                    <div>
                                       <Link
                                         className="post-circle-postowner-fullname"
                                         to={`/profile/${post.userId._id}`}
@@ -2011,13 +2620,12 @@ function SpesificUserProfile({ isNewPostShared }) {
                                           {post.authorFullName}
                                         </span>
                                       </Link>
-                                      {post?.userId?.isPrivate && (
-                                        <span
-                                          style={{
-                                            marginLeft: "5px",
-                                          }}
-                                        >
+                                      {post?.userId.isPrivate && (
+                                        <span>
                                           <svg
+                                            style={{
+                                              margin: "0px 2px",
+                                            }}
                                             fill={
                                               themeName === "dark-theme"
                                                 ? "#E6E9EA"
@@ -2048,14 +2656,13 @@ function SpesificUserProfile({ isNewPostShared }) {
                                       ) ? (
                                         <span>
                                           {/* start to check  */}{" "}
-                                          <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
+                                          <span>
                                             <svg
                                               width={`${1.25}em`}
                                               height={`${1.25}em`}
                                               viewBox="0 0 22 22"
                                               aria-label="Verified account"
                                               role="img"
-                                              className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
                                               data-testid="verified-icon"
                                               color="rgba(29,155,240,1.00)"
                                               fill="currentColor"
@@ -2066,9 +2673,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                                             </svg>
                                           </span>{" "}
                                         </span>
-                                      ) : (
-                                        <span> </span>
-                                      )}
+                                      ) : null}
                                       <Link
                                         className="chirp-regular-font"
                                         to={`/profile/${post.userId._id}`}
@@ -2130,7 +2735,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                                         </span>
                                       </Link>
                                       {/* finish to check  */}
-                                    </>
+                                    </div>
                                   ) : null}
                                 </div>
                                 {/* post owner full name + verified account svg + post owner user name + post created date  fi
@@ -2565,7 +3170,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                                     {/* post owner full name + verified account svg + post owner user name + post created date start to check  */}
                                     <div className="p-1">
                                       {favorite.userId ? (
-                                        <>
+                                        <div>
                                           <Link
                                             className="post-circle-postowner-fullname"
                                             to={`/profile/${favorite.userId._id}`}
@@ -2587,10 +3192,13 @@ function SpesificUserProfile({ isNewPostShared }) {
                                             >
                                               {favorite.authorFullName}
                                             </span>
-                                          </Link>{" "}
+                                          </Link>
                                           {favorite?.userId.isPrivate && (
                                             <span>
                                               <svg
+                                                style={{
+                                                  margin: "0px 2px",
+                                                }}
                                                 fill={
                                                   themeName === "dark-theme"
                                                     ? "#E6E9EA"
@@ -2621,14 +3229,13 @@ function SpesificUserProfile({ isNewPostShared }) {
                                           ) ? (
                                             <span>
                                               {/* start to check  */}{" "}
-                                              <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
+                                              <span>
                                                 <svg
                                                   width={`${1.25}em`}
                                                   height={`${1.25}em`}
                                                   viewBox="0 0 22 22"
                                                   aria-label="Verified account"
                                                   role="img"
-                                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
                                                   data-testid="verified-icon"
                                                   color="rgba(29,155,240,1.00)"
                                                   fill="currentColor"
@@ -2639,9 +3246,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                                                 </svg>
                                               </span>{" "}
                                             </span>
-                                          ) : (
-                                            <span> </span>
-                                          )}
+                                          ) : null}
                                           <Link
                                             className="chirp-regular-font"
                                             to={`/profile/${favorite.userId._id}`}
@@ -2707,7 +3312,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                                             </span>
                                           </Link>
                                           {/* finish to check  */}
-                                        </>
+                                        </div>
                                       ) : null}
                                     </div>
                                     {/* post owner full name + verified account svg + post owner user name + post created date  finish to check  */}

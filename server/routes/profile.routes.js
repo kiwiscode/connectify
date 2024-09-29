@@ -7,6 +7,12 @@ router.get("/", authenticateToken, profileController.handleProfile);
 
 router.patch("/:userId/edit", authenticateToken, profileController.editProfile);
 
+router.patch(
+  "/:userId/birth-date/edit",
+  authenticateToken,
+  profileController.removeBirthDate
+);
+
 router.get(
   "/:userId/followers",
   authenticateToken,

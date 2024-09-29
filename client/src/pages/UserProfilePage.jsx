@@ -28,7 +28,6 @@ import BookmarkAction from "../components/ui/BookmarkAction";
 import { SubcsriptionStatusContext } from "../context/SubscriptionStatusContext";
 import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 import { InputLabel, TextField } from "@mui/material";
-import { lineHeight } from "@mui/system";
 
 function UserProfile({ isNewPostShared }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
@@ -134,38 +133,6 @@ function UserProfile({ isNewPostShared }) {
     setOpenEditModal(true);
   };
 
-  const saveEdit = async () => {
-    try {
-      await axios.patch(
-        `${API_URL}/profile/${userInfo._id}/edit`,
-        {
-          fullName,
-          bioOnEdit,
-          locationOnEdit,
-          websiteOnEdit,
-          birthDateOnEdit,
-          birthDateVisibilityRestriction: restrictions,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      );
-
-      updateUser({
-        fullname: fullName,
-        bio: bioOnEdit,
-        location: locationOnEdit,
-        webSite: websiteOnEdit,
-        birthDate: birthDateOnEdit,
-        birthDateVisibility: restrictions,
-      });
-    } catch (error) {
-      console.error("error:", error);
-    }
-  };
-
   const handleGetFavorites = () => {
     setActiveTab("likes");
     setFavoriteWindow("");
@@ -199,7 +166,6 @@ function UserProfile({ isNewPostShared }) {
     console.log("Go one page back !");
     navigate(-1);
   };
-  const [profile, setProfile] = useState([]);
   const [pinnedPost, setPinnedPost] = useState(null);
 
   const handleShowPostsProfilePage = () => {
@@ -215,7 +181,7 @@ function UserProfile({ isNewPostShared }) {
       .then((response) => {
         const { posts } = response.data;
         const { user } = response.data;
-        setProfile(user);
+        updateUser(user);
         setPinnedPost(user.pinnedPosts[0]);
         setUserprofiledata(posts);
         console.log("Response updated with populate for profile =>", response);
@@ -279,11 +245,13 @@ function UserProfile({ isNewPostShared }) {
   const getCreatedDateForProfile = (date) => {
     const createdAt = new Date(date);
     const getMonth = createdAt.getMonth();
-    return `${monthsProfile[getMonth]} ${createdAt.getDate()}`;
+    return `${monthsProfile[getMonth]} ${createdAt.getFullYear()}`;
   };
 
   const [profileImageChangingLoadingBar, setprofileImageChangingLoadingBar] =
     useState(false);
+
+  const [showBigPP, setshowBigPP] = useState(false);
 
   const handleChangeProfileImage = (e) => {
     const file = e.target.files[0];
@@ -501,16 +469,41 @@ function UserProfile({ isNewPostShared }) {
     useState(false);
   const [onFocusedToWebsiteField, setonFocusedToWebsiteField] = useState(false);
   const [fullName, setFullName] = useState(userInfo.fullname);
-  const [bioOnEdit, setBioOnEdit] = useState("");
-  const [locationOnEdit, setLocationOnEdit] = useState("");
-  const [websiteOnEdit, setWebsiteOnEdit] = useState("");
+  const [bioOnEdit, setBioOnEdit] = useState(userInfo.bio);
+  const [locationOnEdit, setLocationOnEdit] = useState(userInfo.location);
+  const [websiteOnEdit, setWebsiteOnEdit] = useState(userInfo.webSite);
   const [birthDateOnEdit, setBirthDateOnEdit] = useState({
     month: "",
     day: "",
     year: "",
   });
-  const [fullnameFilled, setfullnameFilled] = useState("");
   const [firstAppearence, setFirstAppearance] = useState("");
+
+  useEffect(() => {
+    if (
+      userInfo?.birthDate?.month &&
+      userInfo?.birthDate?.day &&
+      userInfo?.birthDate?.year
+    ) {
+      setBirthDateOnEdit((prevState) => ({
+        ...prevState,
+        month: userInfo.birthDate.month,
+        day: userInfo.birthDate.day,
+        year: userInfo.birthDate.year,
+      }));
+    }
+
+    if (
+      userInfo?.birthDateVisibility?.monthAndDay ||
+      userInfo?.birthDateVisibility?.year
+    ) {
+      setRestrictions((prevState) => ({
+        ...prevState,
+        monthAndDay: userInfo?.birthDateVisibility?.monthAndDay,
+        year: userInfo?.birthDateVisibility?.year,
+      }));
+    }
+  }, [userInfo]);
 
   useEffect(() => {
     console.log("birthdate, month:", birthDateOnEdit.month);
@@ -521,7 +514,6 @@ function UserProfile({ isNewPostShared }) {
   const handleChangeFullName = (e) => {
     if (e.target.value.length <= 50) {
       setFullName(e.target.value);
-      setfullnameFilled(false);
       setFirstAppearance(false);
       setcheckFields((prevState) => ({
         ...prevState,
@@ -559,6 +551,12 @@ function UserProfile({ isNewPostShared }) {
 
   const [showWarningAgeEditingModal, setshowWarningAgeEditingModal] =
     useState(false);
+
+  const [showRemoveAgeModal, setshowRemoveAgeModal] = useState(false);
+  const closeRemoveAgeModal = () => {
+    setshowRemoveAgeModal(false);
+  };
+
   const showWarningForEditAge = () => {
     setshowWarningAgeEditingModal(true);
   };
@@ -1139,13 +1137,10 @@ function UserProfile({ isNewPostShared }) {
     websiteOnEdit,
     birthDateOnEdit,
     restrictions,
+    userInfo,
   ]);
 
   const closeEditModal = () => {
-    setWebsiteOnEdit("");
-    setLocationOnEdit("");
-    setBioOnEdit("");
-    setFullName(userInfo.fullname);
     setonFocusedToWebsiteField(false);
     setonFocusedToLocationField(false);
     setonFocusedToBioField(false);
@@ -1175,16 +1170,275 @@ function UserProfile({ isNewPostShared }) {
     });
   };
 
+  const removeDateOfBirth = async () => {
+    try {
+      await axios.patch(
+        `${API_URL}/profile/${userInfo._id}/birth-date/edit`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      closeRemoveAgeModal();
+      setshowBirthDateChangeScenario(false);
+    } catch (error) {
+      console.error("error:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (userInfo) {
+      setFullName(userInfo.fullname);
+    }
+  }, [userInfo]);
+
+  const saveEdit = async () => {
+    try {
+      await axios.patch(
+        `${API_URL}/profile/${userInfo._id}/edit`,
+        {
+          fullName,
+          bioOnEdit,
+          locationOnEdit,
+          websiteOnEdit,
+          birthDateOnEdit,
+          birthDateVisibilityRestriction: restrictions,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      setTimeout(() => {
+        updateUser({
+          fullname: fullName,
+          bio: bioOnEdit,
+          location: locationOnEdit,
+          webSite: websiteOnEdit,
+          birthDate: birthDateOnEdit,
+          birthDateVisibility: restrictions,
+        });
+      }, 200);
+
+      setTimeout(() => {
+        handleShowPostsProfilePage();
+        closeEditModal();
+      }, 300);
+    } catch (error) {
+      console.error("error:", error);
+    }
+  };
+
+  const outsideBigPPRef = useRef(null);
+
   return (
     <>
       {/* {contextHolder} */}
       {contextHolder}
 
+      {/* custom profile image opened */}
+      <>
+        <div
+          onClick={() => setshowBigPP(null)}
+          ref={outsideBigPPRef}
+          className="profile-img-opened-wrapper"
+          style={{
+            position: "fixed",
+            left: 0,
+            bottom: 0,
+            right: 0,
+            bottom: 0,
+            minHeight: "100dvh",
+            minWidth: "100%",
+            width: "100%",
+            height: "100%",
+            zIndex: 99999,
+            backgroundColor: "rgba(0, 0, 0, 0.9)",
+            opacity: 1,
+            display: showBigPP ? "block" : "none",
+          }}
+        >
+          <div
+            onClick={() => setshowBigPP(null)}
+            className="arrow-pp-exit"
+            style={{
+              width: "50px",
+              height: "50px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: "50%",
+              margin: "32px 16px",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+            }}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              fill="rgb(255, 255, 255)"
+              width={20}
+              height={20}
+            >
+              <g>
+                <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+              </g>
+            </svg>
+          </div>
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            style={{
+              color: "black",
+              position: "absolute",
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%,-50%)",
+            }}
+          >
+            {userInfo?.imageUrl?.slice(0, 3) !== "../" ? (
+              <img
+                src={userInfo.imageUrl}
+                width={300}
+                height={300}
+                style={{
+                  borderRadius: "50%",
+                }}
+                alt=""
+              />
+            ) : (
+              <img
+                style={{
+                  borderRadius: "50%",
+                }}
+                width={300}
+                height={300}
+                src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                alt=""
+              />
+            )}
+          </div>
+        </div>
+      </>
+
+      {/* remove birth date modal */}
+      <>
+        <Modal
+          backdropClassName={
+            themeName === "dark-theme"
+              ? `back-drop-${themeName} ${
+                  showEditModal && "nested-child-back-drop"
+                }`
+              : `${showEditModal && "nested-child-back-drop"}`
+          }
+          centered={true}
+          show={showRemoveAgeModal}
+          onHide={closeRemoveAgeModal}
+          className="leave-conversation"
+          contentClassName={
+            themeName === "dark-theme"
+              ? "leave-conversation-modal-dark-theme"
+              : "leave-conversation-modal"
+          }
+          style={{
+            zIndex: 9999,
+          }}
+        >
+          <Modal.Body>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                paddingBottom: "16px",
+                paddingTop: "16px",
+                maxWidth: "256px",
+              }}
+            >
+              <div
+                className={
+                  themeName === "dark-theme"
+                    ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                    : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                }
+                style={{
+                  color: themeName === "dark-theme" ? "white" : "",
+                  fontSize: font20.fontSize,
+                  lineHeight: font20.lineHeight,
+                }}
+              >
+                Remove birth date?
+              </div>
+              <div
+                className={
+                  themeName === "dark-theme"
+                    ? "mt-2 soft-grey-dark-theme-text-variant-2 chirp-regular-font"
+                    : "mt-2 very-dark-gray-light-theme-text-variant-2 chirp-regular-font"
+                }
+                style={{
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
+                }}
+              >
+                This will remove it from your profile.
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                padding: "12px",
+              }}
+            >
+              <Button
+                onClick={removeDateOfBirth}
+                className={
+                  themeName === "light-theme"
+                    ? `save-edited-profile-light-theme chirp-bold-font`
+                    : `save-edited-profile-dark-theme`
+                }
+                style={{
+                  maxWidth: "256px",
+                  minHeight: "44px",
+                  color: "white",
+                  border: "none",
+                  color: themeName === "dark-theme" ? "black" : "white",
+                }}
+              >
+                Remove
+              </Button>
+              <Button
+                variant="light"
+                onClick={closeRemoveAgeModal}
+                style={{
+                  color: themeName === "dark-theme" ? "white" : "black",
+                  maxWidth: "256px",
+                  minHeight: "44px",
+                }}
+                className={`mt-2 forgot-password-btn ${themeName}-black-btn chirp-bold-font`}
+              >
+                Cancel
+              </Button>
+            </div>
+          </Modal.Body>
+        </Modal>
+      </>
+
       {/* edit age warning modal */}
       <>
         <Modal
           backdropClassName={
-            themeName === "dark-theme" ? `back-drop-${themeName}` : ""
+            themeName === "dark-theme"
+              ? `back-drop-${themeName} ${
+                  showEditModal && "nested-child-back-drop"
+                }`
+              : `${showEditModal && "nested-child-back-drop"}`
           }
           centered={true}
           show={showWarningAgeEditingModal}
@@ -1294,8 +1548,11 @@ function UserProfile({ isNewPostShared }) {
           style={{
             margin: width <= 768 && "0px",
             padding: width <= 768 && "0px",
+            zIndex: showWarningAgeEditingModal && 9999,
           }}
-          dialogClassName={width <= 700 ? "modal-fullscreen" : ""}
+          dialogClassName={
+            width <= 700 ? "modal-fullscreen" : "modal_center_with_width"
+          }
           className={
             width <= 700 && themeName !== "dark-theme"
               ? "smaller-edit-modal"
@@ -1381,7 +1638,11 @@ function UserProfile({ isNewPostShared }) {
                 </div>
               </div>
               <div
-                onClick={saveEdit}
+                onClick={() => {
+                  if (fullName.length !== 0 && !firstAppearence) {
+                    saveEdit();
+                  }
+                }}
                 className="chirp-bold-font"
                 style={{
                   padding: "12px 12px",
@@ -1412,20 +1673,11 @@ function UserProfile({ isNewPostShared }) {
                     fontSize: font15.fontSize,
                     lineHeight: font15.lineHeight,
                     opacity:
-                      !fullnameFilled &&
-                      fullName.length === 0 &&
-                      !firstAppearence &&
-                      "0.5",
+                      fullName?.length === 0 && !firstAppearence && "0.5",
                     cursor:
-                      !fullnameFilled &&
-                      fullName.length === 0 &&
-                      !firstAppearence &&
-                      "default",
+                      fullName?.length === 0 && !firstAppearence && "default",
                     pointerEvents:
-                      !fullnameFilled &&
-                      fullName.length === 0 &&
-                      !firstAppearence &&
-                      "none",
+                      fullName?.length === 0 && !firstAppearence && "none",
                   }}
                 >
                   <span
@@ -1479,6 +1731,9 @@ function UserProfile({ isNewPostShared }) {
                     <path d="M9.697 3H11v2h-.697l-3 2H5c-.276 0-.5.224-.5.5v11c0 .276.224.5.5.5h14c.276 0 .5-.224.5-.5V10h2v8.5c0 1.381-1.119 2.5-2.5 2.5H5c-1.381 0-2.5-1.119-2.5-2.5v-11C2.5 6.119 3.619 5 5 5h1.697l3-2zM12 10.5c-1.105 0-2 .895-2 2s.895 2 2 2 2-.895 2-2-.895-2-2-2zm-4 2c0-2.209 1.791-4 4-4s4 1.791 4 4-1.791 4-4 4-4-1.791-4-4zM17 2c0 1.657-1.343 3-3 3v1c1.657 0 3 1.343 3 3h1c0-1.657 1.343-3 3-3V5c-1.657 0-3-1.343-3-3h-1z"></path>
                   </g>
                 </svg>
+                {/* <LoadingSpinner
+                  strokeColor={"rgb(29, 155, 240)"}
+                ></LoadingSpinner> */}
               </div>
             </div>
             <div
@@ -1497,36 +1752,40 @@ function UserProfile({ isNewPostShared }) {
                   borderRadius: "50%",
                 }}
               >
-                {profile?.imageUrl?.slice(0, 3) !== "../" ? (
-                  <img
-                    width={112}
-                    height={112}
-                    src={profile?.imageUrl}
-                    alt=""
-                    style={{
-                      borderRadius: "50%",
-                      opacity: 0.75,
-                      border:
-                        themeName === "dark-theme"
-                          ? "4px solid black"
-                          : "4px solid white",
-                    }}
-                  />
+                {userInfo?.imageUrl?.slice(0, 3) !== "../" ? (
+                  <>
+                    <img
+                      width={112}
+                      height={112}
+                      src={userInfo?.imageUrl}
+                      alt=""
+                      style={{
+                        borderRadius: "50%",
+                        opacity: 0.75,
+                        border:
+                          themeName === "dark-theme"
+                            ? "4px solid black"
+                            : "4px solid white",
+                      }}
+                    />
+                  </>
                 ) : (
-                  <img
-                    style={{
-                      borderRadius: "50%",
-                      opacity: 0.75,
-                      border:
-                        themeName === "dark-theme"
-                          ? "4px solid black"
-                          : "4px solid white",
-                    }}
-                    width="112"
-                    height="112"
-                    src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
-                    alt=""
-                  />
+                  <>
+                    <img
+                      style={{
+                        borderRadius: "50%",
+                        opacity: 0.75,
+                        border:
+                          themeName === "dark-theme"
+                            ? "4px solid black"
+                            : "4px solid white",
+                      }}
+                      width="112"
+                      height="112"
+                      src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                      alt=""
+                    />
+                  </>
                 )}
 
                 <div
@@ -1549,18 +1808,41 @@ function UserProfile({ isNewPostShared }) {
                     backgroundColor: "rgba(15, 20, 25, 0.75)",
                     opacity: 0.75,
                   }}
+                  onClick={() =>
+                    document
+                      .getElementById("formuploadModal-profile-image")
+                      .click()
+                  }
                 >
-                  <svg
-                    width={24}
-                    height={24}
-                    fill="rgb(255, 255, 255)"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <g>
-                      <path d="M9.697 3H11v2h-.697l-3 2H5c-.276 0-.5.224-.5.5v11c0 .276.224.5.5.5h14c.276 0 .5-.224.5-.5V10h2v8.5c0 1.381-1.119 2.5-2.5 2.5H5c-1.381 0-2.5-1.119-2.5-2.5v-11C2.5 6.119 3.619 5 5 5h1.697l3-2zM12 10.5c-1.105 0-2 .895-2 2s.895 2 2 2 2-.895 2-2-.895-2-2-2zm-4 2c0-2.209 1.791-4 4-4s4 1.791 4 4-1.791 4-4 4-4-1.791-4-4zM17 2c0 1.657-1.343 3-3 3v1c1.657 0 3 1.343 3 3h1c0-1.657 1.343-3 3-3V5c-1.657 0-3-1.343-3-3h-1z"></path>
-                    </g>
-                  </svg>
+                  {profileImageChangingLoadingBar ? (
+                    <>
+                      <LoadingSpinner
+                        strokeColor={"rgb(29, 155, 240)"}
+                      ></LoadingSpinner>
+                    </>
+                  ) : (
+                    <>
+                      <input
+                        onChange={handleChangeProfileImage}
+                        type="file"
+                        id="formuploadModal-profile-image"
+                        name="modalImage"
+                        className="form-control"
+                        style={{ display: "none" }}
+                      />
+                      <svg
+                        width={24}
+                        height={24}
+                        fill="rgb(255, 255, 255)"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                      >
+                        <g>
+                          <path d="M9.697 3H11v2h-.697l-3 2H5c-.276 0-.5.224-.5.5v11c0 .276.224.5.5.5h14c.276 0 .5-.224.5-.5V10h2v8.5c0 1.381-1.119 2.5-2.5 2.5H5c-1.381 0-2.5-1.119-2.5-2.5v-11C2.5 6.119 3.619 5 5 5h1.697l3-2zM12 10.5c-1.105 0-2 .895-2 2s.895 2 2 2 2-.895 2-2-.895-2-2-2zm-4 2c0-2.209 1.791-4 4-4s4 1.791 4 4-1.791 4-4 4-4-1.791-4-4zM17 2c0 1.657-1.343 3-3 3v1c1.657 0 3 1.343 3 3h1c0-1.657 1.343-3 3-3V5c-1.657 0-3-1.343-3-3h-1z"></path>
+                        </g>
+                      </svg>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -1592,7 +1874,7 @@ function UserProfile({ isNewPostShared }) {
                     visibility: onFocusedToFullNameField ? "visible" : "hidden",
                   }}
                 >
-                  {fullName.length} / 50
+                  {fullName?.length} / 50
                 </div>
               </InputLabel>
               <TextField
@@ -1624,17 +1906,13 @@ function UserProfile({ isNewPostShared }) {
                 sx={{
                   "& .Mui-focused input + fieldset": {
                     border:
-                      !fullnameFilled &&
-                      fullName.length === 0 &&
-                      !firstAppearence
+                      fullName?.length === 0 && !firstAppearence
                         ? "2px solid rgb(244, 33, 46)!important"
                         : "2px solid #1d9bf0 !important",
                   },
                   "& .MuiOutlinedInput-notchedOutline": {
                     borderColor:
-                      !fullnameFilled &&
-                      fullName.length === 0 &&
-                      !firstAppearence
+                      fullName?.length === 0 && !firstAppearence
                         ? "rgb(244, 33, 46)!important"
                         : themeName === "dark-theme"
                         ? "rgb(70, 70, 70) !important"
@@ -1642,15 +1920,13 @@ function UserProfile({ isNewPostShared }) {
                   },
                   "& .MuiInputLabel-shrink": {
                     color:
-                      !fullnameFilled &&
-                      fullName.length === 0 &&
-                      !firstAppearence
+                      fullName?.length === 0 && !firstAppearence
                         ? "rgb(244, 33, 46)!important"
                         : "#1f9cf0 !important",
                   },
                 }}
               />
-              {!fullnameFilled && fullName.length === 0 && !firstAppearence ? (
+              {fullName?.length === 0 && !firstAppearence ? (
                 <div
                   className="chirp-regular-font"
                   style={{
@@ -1689,7 +1965,7 @@ function UserProfile({ isNewPostShared }) {
                     visibility: onFocusedToBioField ? "visible" : "hidden",
                   }}
                 >
-                  {fullName.length} / 160
+                  {fullName?.length} / 160
                 </div>
               </InputLabel>
               <TextField
@@ -1764,7 +2040,7 @@ function UserProfile({ isNewPostShared }) {
                     visibility: onFocusedToLocationField ? "visible" : "hidden",
                   }}
                 >
-                  {locationOnEdit.length} / 30
+                  {locationOnEdit?.length} / 30
                 </div>
               </InputLabel>
               <TextField
@@ -1832,7 +2108,7 @@ function UserProfile({ isNewPostShared }) {
                     visibility: onFocusedToWebsiteField ? "visible" : "hidden",
                   }}
                 >
-                  {websiteOnEdit.length} / 100
+                  {websiteOnEdit?.length} / 100
                 </div>
               </InputLabel>
               <TextField
@@ -2019,7 +2295,7 @@ function UserProfile({ isNewPostShared }) {
                               themeName === "dark-theme" ? "white" : "black",
                           }}
                         >
-                          {selectedMonth || profile?.birthDate?.month}
+                          {selectedMonth || userInfo?.birthDate?.month}
                         </div>
                       </div>
                       <div
@@ -2097,7 +2373,7 @@ function UserProfile({ isNewPostShared }) {
                               themeName === "dark-theme" ? "white" : "black",
                           }}
                         >
-                          {selectedDay || profile?.birthDate?.day}
+                          {selectedDay || userInfo?.birthDate?.day}
                         </div>
                       </div>
                       <div
@@ -2173,7 +2449,7 @@ function UserProfile({ isNewPostShared }) {
                               themeName === "dark-theme" ? "white" : "black",
                           }}
                         >
-                          {displayedYear || profile?.birthDate?.year}
+                          {displayedYear || userInfo?.birthDate?.year}
                         </div>
                       </div>
                       <div
@@ -2452,9 +2728,9 @@ function UserProfile({ isNewPostShared }) {
                 ></div>
                 {/* remove birthday start to check */}
                 <div
-                  // onClick={() => {
-                  //   openSecondTabDeactivate();
-                  // }}
+                  onClick={() => {
+                    setshowRemoveAgeModal(true);
+                  }}
                   className={
                     themeName === "dark-theme"
                       ? "mt-1 chirp-regular-font deactivate-btn-dark-theme"
@@ -2498,7 +2774,15 @@ function UserProfile({ isNewPostShared }) {
                   className="chirp-regular-font"
                 >
                   {" "}
-                  Birth date &middot;{" "}
+                  <span
+                    className={
+                      themeName === "dark-theme"
+                        ? "soft-grey-dark-theme-text-variant-2"
+                        : "very-dark-gray-light-theme-text-variant-2"
+                    }
+                  >
+                    Birth date &middot;{" "}
+                  </span>
                   <span
                     className="edit-profile-edit-btn"
                     onClick={showWarningForEditAge}
@@ -2506,17 +2790,32 @@ function UserProfile({ isNewPostShared }) {
                     Edit
                   </span>
                 </span>
-                <span
-                  style={{
-                    fontSize: font20.fontSize,
-                    lineHeight: font20.lineHeight,
-                    fontWeight: "900",
-                  }}
-                  className="chirp-regular-font"
-                >
-                  {profile?.birthDate?.month} {profile?.birthDate?.day},{" "}
-                  {profile?.birthDate?.year}
-                </span>
+                {userInfo?.birthDate?.month &&
+                userInfo?.birthDate?.day &&
+                userInfo?.birthDate?.year ? (
+                  <span
+                    style={{
+                      fontSize: font20.fontSize,
+                      lineHeight: font20.lineHeight,
+                      fontWeight: "900",
+                    }}
+                    className="chirp-regular-font"
+                  >
+                    {userInfo?.birthDate?.month} {userInfo?.birthDate?.day},{" "}
+                    {userInfo?.birthDate?.year}
+                  </span>
+                ) : (
+                  <span
+                    style={{
+                      fontSize: font20.fontSize,
+                      lineHeight: font20.lineHeight,
+                      fontWeight: "900",
+                    }}
+                    className="chirp-regular-font"
+                  >
+                    Add your date of birth
+                  </span>
+                )}
               </div>
             )}
           </div>
@@ -2587,7 +2886,6 @@ function UserProfile({ isNewPostShared }) {
 
           <div
             onClick={handleGoBack}
-            // className="p-2 arrow"
             className={`p-2 arrow arrow-${themeName}`}
             style={{
               width: "36px",
@@ -2623,6 +2921,11 @@ function UserProfile({ isNewPostShared }) {
             style={{
               fontSize: font20.fontSize,
               lineHeight: font20.lineHeight,
+              width: "100%",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              display: "block",
             }}
           >
             <div
@@ -2635,12 +2938,37 @@ function UserProfile({ isNewPostShared }) {
               <div
                 className="chirp-bold-font"
                 style={{
-                  lineHeight: width <= 500 ? "20px" : "24px",
-                  fontSize: width <= 500 ? "17px" : "20px",
+                  width: "fit-content",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  display: "block",
                 }}
               >
                 {userInfo.fullname}
               </div>
+              {userInfo?.isPrivate && (
+                <div
+                  style={{
+                    display: "flex",
+                  }}
+                >
+                  <svg
+                    fill={themeName === "dark-theme" ? "#E6E9EA" : "#0F141A"}
+                    width={`${1}em`}
+                    height={`${1}em`}
+                    viewBox="0 0 24 24"
+                    aria-label="Protected account"
+                    role="img"
+                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-lrvibr r-m6rgpd r-3t4u6i r-18jsvk2 r-f9ja8p r-og9te1"
+                    data-testid="icon-lock"
+                  >
+                    <g>
+                      <path d="M17.5 7H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.39 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.89 7 17.5 7zM13 14.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2 0 .74-.4 1.39-1 1.73zM15 7H9v-.25c0-1.66 1.35-3 3-3 1.66 0 3 1.34 3 3V7z"></path>
+                    </g>
+                  </svg>
+                </div>
+              )}
 
               <div>
                 {" "}
@@ -2686,7 +3014,7 @@ function UserProfile({ isNewPostShared }) {
                 }}
                 className="profile-paragraph chirp-regular-font"
               >
-                {userInfo.posts.length} posts
+                {userInfo?.posts?.length} posts
               </div>
             )}
           </div>
@@ -2716,78 +3044,27 @@ function UserProfile({ isNewPostShared }) {
             }}
           >
             {userInfo.imageUrl?.slice(0, 3) !== "../" ? (
-              <>
-                {profileImageChangingLoadingBar ? (
-                  <>
-                    <div
-                      style={{
-                        position: "relative",
-                      }}
-                    >
-                      <div
-                        style={{
-                          position: "absolute",
-                          bottom: "0px",
-                          width: "100%",
-                          height: "100%",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <LoadingSpinner
-                          strokeColor={"rgb(29, 155, 240)"}
-                        ></LoadingSpinner>
-                      </div>
-                      <img
-                        style={{
-                          visibility: "hidden",
-                        }}
-                        src={userInfo.imageUrl}
-                        alt=""
-                      />
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div>
-                      <img
-                        width={133}
-                        height={133}
-                        style={{
-                          cursor: "pointer",
-                          borderRadius: "50%",
-                          border:
-                            themeName === "dark-theme"
-                              ? "4px solid black"
-                              : "4px solid white",
-                        }}
-                        src={userInfo.imageUrl}
-                        alt=""
-                        onClick={() =>
-                          document
-                            .getElementById("formuploadModal-profile-image")
-                            .click()
-                        }
-                      />
-                      <input
-                        onChange={handleChangeProfileImage}
-                        type="file"
-                        id="formuploadModal-profile-image"
-                        name="modalImage"
-                        className="form-control"
-                        style={{ display: "none" }}
-                      />
-                    </div>
-                  </>
-                )}
-              </>
+              <div>
+                <img
+                  onClick={() => setshowBigPP(true)}
+                  width={133}
+                  height={133}
+                  style={{
+                    cursor: "pointer",
+                    borderRadius: "50%",
+                    border:
+                      themeName === "dark-theme"
+                        ? "4px solid black"
+                        : "4px solid white",
+                  }}
+                  src={userInfo.imageUrl}
+                  alt=""
+                />
+              </div>
             ) : (
               <div>
                 <img
-                  onClick={() =>
-                    document.getElementById("formuploadModal").click()
-                  }
+                  onClick={() => setshowBigPP(true)}
                   style={{
                     cursor: "pointer",
                     borderRadius: "50%",
@@ -2801,14 +3078,6 @@ function UserProfile({ isNewPostShared }) {
                   height="133"
                   src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
                   alt=""
-                />
-                <input
-                  onChange={handleChangeProfileImage}
-                  type="file"
-                  id="formuploadModal"
-                  name="modalImage"
-                  className="form-control"
-                  style={{ display: "none" }}
                 />
               </div>
             )}
@@ -2875,15 +3144,42 @@ function UserProfile({ isNewPostShared }) {
               style={{
                 fontSize: font20.fontSize,
                 lineHeight: font20.lineHeight,
+                width: "fit-content",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                display: "block",
               }}
               className={
                 themeName === "dark-theme"
-                  ? "soft-grey-dark-theme-text-variant-1 chirp-heavy-font"
-                  : "very-dark-gray-light-theme-text-variant-1 chirp-heavy-font"
+                  ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                  : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
               }
             >
               {userInfo.fullname}
             </div>
+            {userInfo?.isPrivate && (
+              <div
+                style={{
+                  display: "flex",
+                }}
+              >
+                <svg
+                  fill={themeName === "dark-theme" ? "#E6E9EA" : "#0F141A"}
+                  width={`${1.25}em`}
+                  height={`${1.25}em`}
+                  viewBox="0 0 24 24"
+                  aria-label="Protected account"
+                  role="img"
+                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-lrvibr r-m6rgpd r-3t4u6i r-18jsvk2 r-f9ja8p r-og9te1"
+                  data-testid="icon-lock"
+                >
+                  <g>
+                    <path d="M17.5 7H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.39 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.89 7 17.5 7zM13 14.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2 0 .74-.4 1.39-1 1.73zM15 7H9v-.25c0-1.66 1.35-3 3-3 1.66 0 3 1.34 3 3V7z"></path>
+                  </g>
+                </svg>
+              </div>
+            )}
 
             <div>
               {" "}
@@ -2930,7 +3226,7 @@ function UserProfile({ isNewPostShared }) {
             @{userInfo.username}
           </div>
 
-          {profile?.automated_account ? (
+          {userInfo?.automated_account ? (
             <div
               style={{
                 marginBottom: "20px",
@@ -2975,37 +3271,45 @@ function UserProfile({ isNewPostShared }) {
                   <span>Automated by</span>{" "}
                   <span
                     onClick={() =>
-                      navigate(`/profile/${profile.automated_account._id}`)
+                      navigate(`/profile/${userInfo.automated_account._id}`)
                     }
                     className="edit-profile-edit-btn"
                   >
-                    @{profile.automated_account.username}
+                    @{userInfo.automated_account.username}
                   </span>
                 </div>
               </div>
             </div>
           ) : null}
 
-          {profile?.bio ? (
+          {userInfo?.bio ? (
             <div
               className="unica-regular-font"
               style={{ marginTop: "10px", marginBottom: "10px" }}
             >
               <div
+                id="target-text-to-translate"
                 style={{
                   fontSize: font15.fontSize,
                   lineHeight: font15.lineHeight,
                 }}
               >
-                {profile.bio}
+                {userInfo.bio}
               </div>
+
               <div
+                id="translate-btn"
                 style={{
                   fontSize: font13.fontSize,
                   lineHeight: font13.lineHeight,
                   display: "inline",
                   padding: 0,
                   margin: 0,
+
+                  // no api for right now
+                  opacity: 0.5,
+                  cursor: "default",
+                  pointerEvents: "none",
                 }}
                 className="edit-profile-edit-btn"
               >
@@ -3022,7 +3326,7 @@ function UserProfile({ isNewPostShared }) {
               flexWrap: "wrap",
             }}
           >
-            {profile?.location ? (
+            {userInfo?.location ? (
               <div
                 className="chirp-regular-font"
                 style={{
@@ -3058,11 +3362,11 @@ function UserProfile({ isNewPostShared }) {
                     lineHeight: font15.lineHeight,
                   }}
                 >
-                  {profile.location}
+                  {userInfo.location}
                 </span>
               </div>
             ) : null}
-            {profile?.webSite ? (
+            {userInfo?.webSite ? (
               <div
                 className="chirp-regular-font"
                 style={{
@@ -3098,15 +3402,17 @@ function UserProfile({ isNewPostShared }) {
                     fontSize: font15.fontSize,
                     lineHeight: font15.lineHeight,
                   }}
-                  href={profile.webSite}
+                  href={userInfo.webSite}
                   target="_blank"
                   className="edit-profile-edit-btn"
                 >
-                  {profile.webSite}
+                  {userInfo.webSite}
                 </a>
               </div>
             ) : null}
-            {profile?.birthDate ? (
+            {userInfo?.birthDate?.month &&
+            userInfo?.birthDate?.day &&
+            userInfo?.birthDate?.year ? (
               <>
                 <div
                   className="chirp-regular-font"
@@ -3150,13 +3456,14 @@ function UserProfile({ isNewPostShared }) {
                     }}
                   >
                     <div>Born</div>
-                    <div>{profile.birthDate.month}</div>
-                    <div>{profile.birthDate.day},</div>
-                    <div>{profile.birthDate.year}</div>
+                    <div>{userInfo.birthDate.month}</div>
+                    <div>{userInfo.birthDate.day},</div>
+                    <div>{userInfo.birthDate.year}</div>
                   </div>
                 </div>
               </>
             ) : null}
+
             <div
               className="chirp-regular-font"
               style={{
@@ -3206,7 +3513,7 @@ function UserProfile({ isNewPostShared }) {
               className="following-followers-link"
             >
               <span>
-                {profile?.following?.length ? (
+                {userInfo?.following?.length ? (
                   <span
                     className="chirp-bold-font"
                     style={{
@@ -3215,7 +3522,7 @@ function UserProfile({ isNewPostShared }) {
                       lineHeight: font14.lineHeight,
                     }}
                   >
-                    {profile?.following?.length}
+                    {userInfo?.following?.length}
                   </span>
                 ) : (
                   <span
@@ -3254,7 +3561,7 @@ function UserProfile({ isNewPostShared }) {
               }}
             >
               <span>
-                {profile?.followers?.length ? (
+                {userInfo?.followers?.length ? (
                   <span
                     className="chirp-bold-font"
                     style={{
@@ -3263,7 +3570,7 @@ function UserProfile({ isNewPostShared }) {
                       lineHeight: font14.lineHeight,
                     }}
                   >
-                    {profile?.followers?.length}
+                    {userInfo?.followers?.length}
                   </span>
                 ) : (
                   <span
@@ -3971,7 +4278,7 @@ function UserProfile({ isNewPostShared }) {
               ></div>
             </div>
           ) : null}
-          {userprofiledata.length ? (
+          {userprofiledata?.length ? (
             <>
               {userprofiledata.slice(0, visibleTweets).map((post, index) => (
                 <div
@@ -4022,7 +4329,6 @@ function UserProfile({ isNewPostShared }) {
                                 height={16}
                                 viewBox="0 0 24 24"
                                 aria-hidden="true"
-                                className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                                 fill={
                                   themeName === "dark-theme"
                                     ? "#71767A"
@@ -4141,10 +4447,13 @@ function UserProfile({ isNewPostShared }) {
                                   >
                                     {post.authorFullName}
                                   </span>
-                                </Link>{" "}
+                                </Link>
                                 {post?.userId.isPrivate && (
                                   <span>
                                     <svg
+                                      style={{
+                                        margin: "0px 2px",
+                                      }}
                                       fill={
                                         themeName === "dark-theme"
                                           ? "#E6E9EA"
@@ -4174,14 +4483,13 @@ function UserProfile({ isNewPostShared }) {
                                 ) ? (
                                   <span>
                                     {/* start to check  */}{" "}
-                                    <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
+                                    <span>
                                       <svg
                                         width={`${1.25}em`}
                                         height={`${1.25}em`}
                                         viewBox="0 0 22 22"
                                         aria-label="Verified account"
                                         role="img"
-                                        className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
                                         data-testid="verified-icon"
                                         color="rgba(29,155,240,1.00)"
                                         fill="currentColor"
@@ -4192,9 +4500,7 @@ function UserProfile({ isNewPostShared }) {
                                       </svg>
                                     </span>{" "}
                                   </span>
-                                ) : (
-                                  <span> </span>
-                                )}
+                                ) : null}
                                 <Link
                                   className="chirp-regular-font"
                                   to={`/profile/${post.userId._id}`}
@@ -4224,7 +4530,7 @@ function UserProfile({ isNewPostShared }) {
                                   }`}
                                 >
                                   <span
-                                    className="post-circle-date-post-detail chirp-regular-font"
+                                    className="chirp-regular-font"
                                     style={{
                                       color:
                                         themeName === "dark-theme"
@@ -4647,7 +4953,7 @@ function UserProfile({ isNewPostShared }) {
                             {/* post owner full name + verified account svg + post owner user name + post created date start to check  */}
                             <div className="p-1">
                               {favorite.userId ? (
-                                <>
+                                <div>
                                   <Link
                                     className="post-circle-postowner-fullname"
                                     to={`/profile/${favorite.userId._id}`}
@@ -4671,12 +4977,11 @@ function UserProfile({ isNewPostShared }) {
                                     </span>
                                   </Link>
                                   {favorite?.userId.isPrivate && (
-                                    <span
-                                      style={{
-                                        marginLeft: "5px",
-                                      }}
-                                    >
+                                    <span>
                                       <svg
+                                        style={{
+                                          margin: "0px 2px",
+                                        }}
                                         fill={
                                           themeName === "dark-theme"
                                             ? "#E6E9EA"
@@ -4725,9 +5030,7 @@ function UserProfile({ isNewPostShared }) {
                                         </svg>
                                       </span>{" "}
                                     </span>
-                                  ) : (
-                                    <span> </span>
-                                  )}
+                                  ) : null}
                                   <Link
                                     className="chirp-regular-font"
                                     to={`/profile/${favorite.userId._id}`}
@@ -4787,7 +5090,7 @@ function UserProfile({ isNewPostShared }) {
                                     </span>
                                   </Link>
                                   {/* finish to check  */}
-                                </>
+                                </div>
                               ) : null}
                             </div>
                             {/* post owner full name + verified account svg + post owner user name + post created date  finish to check  */}
