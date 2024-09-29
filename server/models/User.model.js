@@ -75,6 +75,7 @@ const userSchema = new Schema(
     },
     active: { type: Boolean, default: false },
     imageUrl: String,
+    profileCoverImage: String,
     posts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
     favorites: [{ type: Schema.Types.ObjectId, ref: "Post" }],
     bookmarks: [{ type: Schema.Types.ObjectId, ref: "Bookmark" }],

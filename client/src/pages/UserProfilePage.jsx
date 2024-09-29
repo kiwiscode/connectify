@@ -3023,67 +3023,91 @@ function UserProfile({ isNewPostShared }) {
 
         {/* start to check */}
 
+        {/* cover image test start to check */}
         <div
           style={{
-            backgroundColor:
-              themeName === "light-theme" ? "rgb(207, 217, 222)" : "",
-            height: "200px",
+            cursor: "pointer",
             position: "relative",
-            backgroundImage: `url("https://marketplace.canva.com/EAE91Kz0wsI/1/0/1600w/canva-blue-yellow-retro-quotes-twitter-header-xTB_BZnqeew.jpg")`,
+            zIndex: 0,
+            maxHeight: "200px",
+            height: "100dvh",
+            maxWidth: "100%",
+            width: "100%",
+            backgroundColor: "yellow",
+            // background: `url("https://marketplace.canva.com/EAE91Kz0wsI/1/0/1600w/canva-blue-yellow-retro-quotes-twitter-header-xTB_BZnqeew.jpg")`,
+            background: `url("https://static1.colliderimages.com/wordpress/wp-content/uploads/2021/07/quentin-tarantino-ranked.jpg")`,
+
+            // need to check
             backgroundRepeat: "no-repeat",
             backgroundPosition: "center",
             backgroundSize: "cover",
-            backgroundAttachment: "fixed",
+            // problematic
+            // backgroundAttachment: "fixed",
+          }}
+        ></div>
+        {/* cover image test finish to check */}
+
+        {/* profile image */}
+        <div
+          style={{
+            position: "relative",
+            maxWidth: "",
+            borderRadius: "50%",
           }}
         >
-          <div
-            style={{
-              padding: "12px 16px",
-              position: "absolute",
-              bottom: -80,
-            }}
-          >
-            {userInfo.imageUrl?.slice(0, 3) !== "../" ? (
-              <div>
-                <img
-                  onClick={() => setshowBigPP(true)}
-                  width={133}
-                  height={133}
-                  style={{
-                    cursor: "pointer",
-                    borderRadius: "50%",
-                    border:
-                      themeName === "dark-theme"
-                        ? "4px solid black"
-                        : "4px solid white",
-                  }}
-                  src={userInfo.imageUrl}
-                  alt=""
-                />
-              </div>
-            ) : (
-              <div>
-                <img
-                  onClick={() => setshowBigPP(true)}
-                  style={{
-                    cursor: "pointer",
-                    borderRadius: "50%",
-                    border:
-                      themeName === "dark-theme"
-                        ? "4px solid black"
-                        : "4px solid white",
-                    cursor: "pointer",
-                  }}
-                  width="133"
-                  height="133"
-                  src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
-                  alt=""
-                />
-              </div>
-            )}
-          </div>
+          {userInfo.imageUrl?.slice(0, 3) !== "../" ? (
+            <div
+              style={{
+                padding: "12px 16px",
+                position: "absolute",
+                bottom: -80,
+                borderRadius: "50%",
+              }}
+            >
+              <img
+                onClick={() => setshowBigPP(true)}
+                width={133}
+                height={133}
+                style={{
+                  cursor: "pointer",
+                  borderRadius: "50%",
+                  border:
+                    themeName === "dark-theme"
+                      ? "4px solid black"
+                      : "4px solid white",
+                }}
+                src={userInfo.imageUrl}
+                alt=""
+              />
+            </div>
+          ) : (
+            <div
+              style={{
+                padding: "12px 16px",
+                position: "absolute",
+                bottom: -80,
+                borderRadius: "50%",
+              }}
+            >
+              <img
+                onClick={() => setshowBigPP(true)}
+                style={{
+                  cursor: "pointer",
+                  borderRadius: "50%",
+                  border:
+                    themeName === "dark-theme"
+                      ? "4px solid black"
+                      : "4px solid white",
+                  cursor: "pointer",
+                }}
+                width="133"
+                height="133"
+                src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                alt=""
+              />
+            </div>
+          )}
         </div>
-
         {/* edit profile btn */}
         <div
           className="chirp-bold-font"
