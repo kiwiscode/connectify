@@ -33,6 +33,9 @@ import BookmarkAction from "../components/ui/BookmarkAction";
 import { SubcsriptionStatusContext } from "../context/SubscriptionStatusContext";
 import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 
+import lightThemeCoverBG from "../assets/cover-backgrounds/ligh-theme-no-cover.png";
+import darkThemeCoverBG from "../assets/cover-backgrounds/dark-theme-no-cover.png";
+
 function SpesificUserProfile({ isNewPostShared }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
   console.log(
@@ -700,13 +703,85 @@ function SpesificUserProfile({ isNewPostShared }) {
   ];
 
   const [showBigPP, setshowBigPP] = useState(false);
-
+  const [showBigProfileCoverImage, setShowBigProfileCoverImage] =
+    useState(false);
   const outsideBigPPRef = useRef(null);
+  const outsideBigProfileCoverImage = useRef(null);
 
   return (
     <>
       {/* contexHolder */}
       {contextHolder}
+
+      {/* custom profile cover image opened */}
+      <>
+        <div
+          onClick={() => setShowBigProfileCoverImage(null)}
+          ref={outsideBigProfileCoverImage}
+          className="profile-img-opened-wrapper"
+          style={{
+            position: "fixed",
+            left: 0,
+            bottom: 0,
+            right: 0,
+            bottom: 0,
+            minHeight: "100dvh",
+            minWidth: "100%",
+            width: "100%",
+            height: "100%",
+            zIndex: 99999,
+            backgroundColor: "rgba(0, 0, 0, 0.9)",
+            opacity: 1,
+            display: showBigProfileCoverImage ? "block" : "none",
+          }}
+        >
+          <div
+            onClick={() => setShowBigProfileCoverImage(null)}
+            className="arrow-pp-exit"
+            style={{
+              width: "50px",
+              height: "50px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: "50%",
+              margin: "32px 16px",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+            }}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              fill="rgb(255, 255, 255)"
+              width={20}
+              height={20}
+            >
+              <g>
+                <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+              </g>
+            </svg>
+          </div>
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            style={{
+              color: "black",
+              position: "absolute",
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%,-50%)",
+            }}
+          >
+            <img
+              src={profileInfo?.profileCoverImage}
+              width={"100%"}
+              height={"100%"}
+              alt=""
+            />
+          </div>
+        </div>
+      </>
 
       {/* custom profile image opened */}
       <>
@@ -1093,20 +1168,29 @@ function SpesificUserProfile({ isNewPostShared }) {
             )}
           </div>
         </Stack>{" "}
+        {/* start to check */}
         {/* cover image test start to check */}
         <div
+          onClick={() => {
+            setShowBigProfileCoverImage(true);
+          }}
           style={{
-            cursor: "pointer",
+            cursor: profileInfo?.profileCoverImage ? "pointer" : "default",
+            pointerEvents: profileInfo?.profileCoverImage ? "auto" : "none",
             position: "relative",
             zIndex: 0,
             maxHeight: "200px",
             height: "100dvh",
             maxWidth: "100%",
             width: "100%",
-            backgroundColor: "yellow",
-            // background: `url("https://marketplace.canva.com/EAE91Kz0wsI/1/0/1600w/canva-blue-yellow-retro-quotes-twitter-header-xTB_BZnqeew.jpg")`,
-            background: `url("https://static1.colliderimages.com/wordpress/wp-content/uploads/2021/07/quentin-tarantino-ranked.jpg")`,
 
+            backgroundImage: `url(${
+              profileInfo?.profileCoverImage
+                ? profileInfo.profileCoverImage
+                : themeName === "light-theme"
+                ? lightThemeCoverBG
+                : darkThemeCoverBG
+            })`,
             // need to check
             backgroundRepeat: "no-repeat",
             backgroundPosition: "center",
@@ -1116,69 +1200,6 @@ function SpesificUserProfile({ isNewPostShared }) {
           }}
         ></div>
         {/* cover image test finish to check */}
-        {/* <div
-          style={{
-            backgroundColor:
-              themeName === "light-theme" ? "rgb(207, 217, 222)" : "",
-            height: "200px",
-            position: "relative",
-            backgroundImage: `url("https://marketplace.canva.com/EAE91Kz0wsI/1/0/1600w/canva-blue-yellow-retro-quotes-twitter-header-xTB_BZnqeew.jpg")`,
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "center",
-            backgroundSize: "cover",
-            backgroundAttachment: "fixed",
-          }}
-        >
-          <div
-            style={{
-              padding: "12px 16px",
-              position: "absolute",
-              bottom: -80,
-            }}
-          >
-            {profileInfo.imageUrl && (
-              <div>
-                {profileInfo.imageUrl.slice(0, 3) !== "../" ? (
-                  <div>
-                    <img
-                      onClick={() => setshowBigPP(true)}
-                      width={133}
-                      height={133}
-                      src={profileInfo.imageUrl}
-                      alt=""
-                      style={{
-                        cursor: "pointer",
-                        borderRadius: "50%",
-                        border:
-                          themeName === "dark-theme"
-                            ? "4px solid black"
-                            : "4px solid white",
-                      }}
-                    />
-                  </div>
-                ) : (
-                  <div>
-                    <img
-                      onClick={() => setshowBigPP(true)}
-                      style={{
-                        cursor: "pointer",
-                        borderRadius: "50%",
-                        border:
-                          themeName === "dark-theme"
-                            ? "4px solid black"
-                            : "4px solid white",
-                      }}
-                      width="133"
-                      height="133"
-                      src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
-                      alt=""
-                    />
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div> */}
         {/* profile image */}
         <div
           style={{
@@ -1187,7 +1208,7 @@ function SpesificUserProfile({ isNewPostShared }) {
             borderRadius: "50%",
           }}
         >
-          {profileInfo?.imageUrl?.slice(0, 3) !== "../" ? (
+          {profileInfo.imageUrl?.slice(0, 3) !== "../" ? (
             <div
               style={{
                 padding: "12px 16px",
@@ -1240,15 +1261,15 @@ function SpesificUserProfile({ isNewPostShared }) {
             </div>
           )}
         </div>
-        {/* somethings */}
+        {/* following more message btn */}
         <div
           style={{
             width: "100%",
             display: "flex",
             justifyContent: "flex-end",
             alignItems: "flex-end",
-            padding: "0px 12px",
-            marginTop: "60px",
+            padding: "8px 12px",
+            maxHeight: "53px",
           }}
         >
           {profileInfo._id !== userInfo._id ? (
@@ -1272,8 +1293,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                   border:
                     themeName !== "dark-theme"
                       ? "1px solid rgb(185, 202, 211)"
-                      : // : "0.1px solid rgb(70, 70, 70)",
-                        "1px solid rgb(70, 70, 70)",
+                      : "1px solid rgb(70, 70, 70)",
                 }}
                 className={`spesific-profile-svg-three-dots spesific-profile-svg-three-dots-${themeName}`}
               >
@@ -1302,7 +1322,6 @@ function SpesificUserProfile({ isNewPostShared }) {
                   </svg>{" "}
                 </BootstrapTooltip>
               </div>
-              {/* start to check redirect to the messages  */}
               <div
                 onClick={() => selectedUser(profileInfo)}
                 style={{
@@ -1315,8 +1334,7 @@ function SpesificUserProfile({ isNewPostShared }) {
                   border:
                     themeName !== "dark-theme"
                       ? "1px solid rgb(185, 202, 211)"
-                      : // : "0.1px solid rgb(70, 70, 70)",
-                        "1px solid rgb(70, 70, 70)",
+                      : "1px solid rgb(70, 70, 70)",
                 }}
                 className={`spesific-profile-svg-dm spesific-profile-svg-dm-${themeName}`}
               >
@@ -1341,7 +1359,6 @@ function SpesificUserProfile({ isNewPostShared }) {
                   </svg>
                 </BootstrapTooltip>
               </div>
-              {/* finish to check redirect to the messages  */}
               {profileInfo.isPrivate && !checkIfFollowing(profileInfo._id) ? (
                 <Button
                   className="chirp-bold-font"
@@ -1465,8 +1482,224 @@ function SpesificUserProfile({ isNewPostShared }) {
                 </Button>
               )}
             </div>
-          ) : null}
+          ) : (
+            // place holder
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                width: "100%",
+                gap: "10px",
+                visibility: "hidden",
+                opacity: 0,
+                pointerEvents: "none",
+                cursor: "default",
+              }}
+              className="ms-auto"
+            >
+              <div
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  border:
+                    themeName !== "dark-theme"
+                      ? "1px solid rgb(185, 202, 211)"
+                      : "1px solid rgb(70, 70, 70)",
+                }}
+                className={`spesific-profile-svg-three-dots spesific-profile-svg-three-dots-${themeName}`}
+              >
+                {" "}
+                <BootstrapTooltip
+                  title="More"
+                  themeName={
+                    themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                  }
+                >
+                  <svg
+                    style={{
+                      display: "flex",
+                    }}
+                    color={themeName === "dark-theme" ? "white" : ""}
+                    fill="currentColor"
+                    width={20}
+                    height={20}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                  >
+                    <g>
+                      <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                    </g>
+                  </svg>{" "}
+                </BootstrapTooltip>
+              </div>
+              <div
+                onClick={() => selectedUser(profileInfo)}
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  border:
+                    themeName !== "dark-theme"
+                      ? "1px solid rgb(185, 202, 211)"
+                      : "1px solid rgb(70, 70, 70)",
+                }}
+                className={`spesific-profile-svg-dm spesific-profile-svg-dm-${themeName}`}
+              >
+                <BootstrapTooltip
+                  title="Message"
+                  themeName={
+                    themeName === "dark-theme" ? "dark-theme" : "light-theme"
+                  }
+                >
+                  <svg
+                    width={20}
+                    height={20}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                    color="color: rgb(15, 20, 25)"
+                    fill="currentColor"
+                  >
+                    <g>
+                      <path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v2.764l8 3.638 8-3.636V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 5.463l-8 3.636-8-3.638V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-8.037z"></path>
+                    </g>
+                  </svg>
+                </BootstrapTooltip>
+              </div>
+              {profileInfo.isPrivate && !checkIfFollowing(profileInfo._id) ? (
+                <Button
+                  className="chirp-bold-font"
+                  onClick={() => {
+                    if (recipient && isHovered) {
+                      setShowCancelFollowRequestModal(true);
+                    } else {
+                      sendFollowRequest(profileInfo);
+                    }
+                  }}
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                  variant="dark"
+                  style={{
+                    transitionDuration: "0.2s",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                    display: "inline",
+                    maxWidth: "107px",
+                    border:
+                      themeName !== "dark-theme"
+                        ? recipient && !isHovered
+                          ? "1px solid rgba(231,231,231)"
+                          : recipient && isHovered
+                          ? "1px solid rgba(231,231,231)"
+                          : "white"
+                        : "1px solid rgb(70, 70, 70)",
+                    backgroundColor:
+                      themeName !== "dark-theme"
+                        ? recipient && !isHovered
+                          ? "white"
+                          : recipient && isHovered
+                          ? "#e7e7e8"
+                          : "black"
+                        : recipient && !isHovered
+                        ? "transparent"
+                        : recipient && isHovered
+                        ? "#181818"
+                        : "white",
+                    color:
+                      themeName !== "dark-theme"
+                        ? recipient && !isHovered
+                          ? "black"
+                          : recipient && isHovered
+                          ? "black"
+                          : "white"
+                        : recipient && !isHovered
+                        ? "white"
+                        : recipient && isHovered
+                        ? "white"
+                        : "black",
+                  }}
+                >
+                  {recipient && !isHovered
+                    ? "Pending"
+                    : recipient && isHovered
+                    ? "Cancel"
+                    : "Follow"}
+                </Button>
+              ) : (
+                <Button
+                  className="chirp-bold-font"
+                  onClick={() => handleFollow(profileInfo)}
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                  style={{
+                    transitionDuration: "0.2s",
+                    fontSize: font15.fontSize,
+                    lineHeight: font15.lineHeight,
+                    display: "inline",
+                    maxWidth: "107px",
+
+                    border:
+                      isHovered && isFollowing && themeName !== "dark-theme"
+                        ? "1px solid rgba(253,201,206,255)"
+                        : isHovered && isFollowing && themeName === "dark-theme"
+                        ? "1px solid #e71f2c"
+                        : isFollowing && themeName !== "dark-theme"
+                        ? "1px solid rgba(0, 0, 0, 0.1)"
+                        : "1px solid rgb(70, 70, 70)",
+                    backgroundColor:
+                      !isFollowing && themeName === "dark-theme" && !isHovered
+                        ? "white"
+                        : !isFollowing &&
+                          themeName === "dark-theme" &&
+                          isHovered
+                        ? "#d7dbdc"
+                        : isHovered && isFollowing && themeName !== "dark-theme"
+                        ? "rgba(255,234,235,255)"
+                        : isHovered && isFollowing && themeName === "dark-theme"
+                        ? "#230608"
+                        : isFollowing && themeName === "dark-theme"
+                        ? "black"
+                        : isFollowing && themeName !== "dark-theme"
+                        ? "white"
+                        : !isFollowing &&
+                          themeName !== "dark-theme" &&
+                          isHovered
+                        ? "#272c30"
+                        : "black",
+                    color:
+                      !isFollowing && themeName === "dark-theme"
+                        ? "black"
+                        : isHovered && isFollowing
+                        ? "rgba(244,34,45,255)"
+                        : isFollowing && themeName !== "dark-theme"
+                        ? "black"
+                        : "white",
+                  }}
+                  variant="dark"
+                >
+                  {profileInfo.followers
+                    ? getFollowerIds(profileInfo.followers).includes(
+                        userInfo._id
+                      )
+                      ? isHovered
+                        ? "Unfollow"
+                        : "Following"
+                      : "Follow"
+                    : null}
+                </Button>
+              )}
+            </div>
+          )}
         </div>
+        {/* finish to check */}
         <div
           style={{
             lineHeight: "30px",
@@ -2098,41 +2331,40 @@ function SpesificUserProfile({ isNewPostShared }) {
                 </div>
               </>
             ) : null}
-            <div
-              className="chirp-regular-font"
-              style={{
-                color:
-                  themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
-                fontSize: font15.fontSize,
-                lineHeight: font15.lineHeight,
-                display: "flex",
-                alignItems: "center",
-                gap: "5px",
-              }}
+          </div>
+          <div
+            className="chirp-regular-font"
+            style={{
+              color:
+                themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+              marginTop: "4px",
+            }}
+          >
+            <svg
+              color={
+                themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)"
+              }
+              fill="currentColor"
+              width={`${1.25}em`}
+              height={`${1.25}em`}
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1d4mawv"
             >
-              <svg
-                color={
-                  themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)"
-                }
-                fill="currentColor"
-                width={`${1.25}em`}
-                height={`${1.25}em`}
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1d4mawv"
-              >
-                <g>
-                  <path d="M7 4V3h2v1h6V3h2v1h1.5C19.89 4 21 5.12 21 6.5v12c0 1.38-1.11 2.5-2.5 2.5h-13C4.12 21 3 19.88 3 18.5v-12C3 5.12 4.12 4 5.5 4H7zm0 2H5.5c-.27 0-.5.22-.5.5v12c0 .28.23.5.5.5h13c.28 0 .5-.22.5-.5v-12c0-.28-.22-.5-.5-.5H17v1h-2V6H9v1H7V6zm0 6h2v-2H7v2zm0 4h2v-2H7v2zm4-4h2v-2h-2v2zm0 4h2v-2h-2v2zm4-4h2v-2h-2v2z"></path>
-                </g>
-              </svg>
+              <g>
+                <path d="M7 4V3h2v1h6V3h2v1h1.5C19.89 4 21 5.12 21 6.5v12c0 1.38-1.11 2.5-2.5 2.5h-13C4.12 21 3 19.88 3 18.5v-12C3 5.12 4.12 4 5.5 4H7zm0 2H5.5c-.27 0-.5.22-.5.5v12c0 .28.23.5.5.5h13c.28 0 .5-.22.5-.5v-12c0-.28-.22-.5-.5-.5H17v1h-2V6H9v1H7V6zm0 6h2v-2H7v2zm0 4h2v-2H7v2zm4-4h2v-2h-2v2zm0 4h2v-2h-2v2zm4-4h2v-2h-2v2z"></path>
+              </g>
+            </svg>
 
-              <span>
-                Joined{" "}
-                {getCreatedYearForSpesificUserProfilePage(
-                  profileInfo.createdAt
-                )}
-              </span>
-            </div>
+            <span>
+              Joined{" "}
+              {getCreatedYearForSpesificUserProfilePage(profileInfo.createdAt)}
+            </span>
           </div>
 
           <div

@@ -18,6 +18,9 @@ import "react-toastify/dist/ReactToastify.css";
 const MessagesPage = lazy(() => import("./pages/MessagesPage"));
 const ChatDetailsPage = lazy(() => import("./pages/ChatDetailsPage"));
 const PostDetailPage = lazy(() => import("./pages/PostDetailPage"));
+const PostDetailPageWithPicture = lazy(() =>
+  import("./pages/PostDetailPageWithPicture")
+);
 const FollowingRequestsDetailPage = lazy(() =>
   import("./pages/FollowingRequests")
 );
@@ -512,7 +515,8 @@ function App() {
                 path !== "/jobs" &&
                 path !== "/help/connectify" &&
                 path !== `/${userInfo.username}/lists` &&
-                path !== "/i/spaces/start" && (
+                path !== "/i/spaces/start" &&
+                !path.endsWith(1) && (
                   <LeftSideNavBar
                     refreshPosts={handleShareNewPost}
                     setIsPostShared={handlePostSharingIsDone}
@@ -556,6 +560,10 @@ function App() {
                   <Route
                     path="/:postOwner/status/:postId"
                     element={<PostDetailPage />}
+                  ></Route>
+                  <Route
+                    path="/:postOwner/status/:postId/photo/1"
+                    element={<PostDetailPageWithPicture />}
                   ></Route>
                   <Route
                     path="/messages/:chatRoomId"
@@ -775,7 +783,8 @@ function App() {
                 path !== "/jobs" &&
                 path !== "/help/connectify" &&
                 path !== `/${userInfo.username}/lists` &&
-                path !== "/i/spaces/start" && (
+                path !== "/i/spaces/start" &&
+                !path.endsWith(1) && (
                   <RightSideColumn
                     isVerifiedOrgsSignUpRoute={
                       openVerifiedOrganizationSubscriptionTypedModal

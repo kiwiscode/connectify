@@ -174,7 +174,7 @@ const handleProfilePicture = (req, res) => {
       if (profileImage) {
         cloudinary.uploader
           .upload(profileImage, {
-            folder: "connectify",
+            folder: process.env.CLOUDINARY_FOLDER_NAME,
             allowed_formats: [
               "mp4",
               "ogv",
@@ -185,10 +185,13 @@ const handleProfilePicture = (req, res) => {
               "webp",
             ],
             gravity: "face",
-            width: 133,
-            height: 133,
+            // width: 133,
+            // height: 133,
             radius: "max",
             crop: "fill",
+            quality: "auto:good",
+            fetch_format: "jpg",
+            format: "jpg",
           })
           .then((imageInfo) => {
             console.log("AFTER UPLOADING THE IMAGE =>", imageInfo);
@@ -198,6 +201,47 @@ const handleProfilePicture = (req, res) => {
             res.status(200).json({ imageInfo: imageInfo });
           })
           .catch((error) => {
+            res.status(501).json({ errorMessage: "Error occured!" });
+          });
+      } else {
+        res.status(501).json({ errorMessage: "Error occured!" });
+      }
+    })
+    .catch(() => {
+      res.status(404).json({ errorMessage: "USER NOT FOUND!" });
+    });
+};
+const handleProfileCoverImage = (req, res) => {
+  const { userId } = req.user;
+  const { profileCoverImage } = req.body;
+
+  console.log("profile cover img:", profileCoverImage.slice(0, 25));
+  User.findById(userId)
+    .populate()
+    .then((user) => {
+      if (profileCoverImage) {
+        cloudinary.uploader
+          .upload(profileCoverImage, {
+            folder: process.env.CLOUDINARY_FOLDER_NAME,
+            allowed_formats: ["jpg", "png", "webp"],
+            width: 1920, // For large screens, ensure the image width is sufficient
+            // height: 200, // Match your CSS maxHeight
+            height: 1920, // Match your CSS maxHeight
+            crop: "fill", // To fill the space and ensure no white space
+            gravity: "auto", // To let Cloudinary auto-crop based on content
+            quality: "auto:good", // Adjust the quality for performance optimization
+            fetch_format: "jpg",
+            format: "jpg",
+          })
+          .then((imageInfo) => {
+            console.log("AFTER UPLOADING THE IMAGE =>", imageInfo);
+            user.profileCoverImage = imageInfo.url;
+            user.save();
+
+            res.status(200).json({ imageInfo: imageInfo });
+          })
+          .catch((error) => {
+            console.error("error:", error);
             res.status(501).json({ errorMessage: "Error occured!" });
           });
       } else {
@@ -461,6 +505,7 @@ module.exports = {
   removeBirthDate,
   handleShowSpesificProfile,
   handleProfilePicture,
+  handleProfileCoverImage,
   getFollowers,
   getFollowing,
   handlecreateChatSpesificUserInformations,

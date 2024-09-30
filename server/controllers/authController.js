@@ -184,6 +184,7 @@ const handleLogin = (req, res, next) => {
     .populate("following")
     .populate("favorites")
     .populate("messages")
+    .populate("automated_account")
     .then((user) => {
       bcrypt
         .compare(password, user.password)
@@ -238,6 +239,9 @@ const handleLogin = (req, res, next) => {
                   webSite,
                   birthDate,
                   birthDateVisibility,
+                  profileCoverImage,
+                  automated_account_connected_message_show,
+                  automated_account,
                 } = user;
 
                 const token = jwt.sign(
@@ -275,6 +279,9 @@ const handleLogin = (req, res, next) => {
                     webSite,
                     birthDate,
                     birthDateVisibility,
+                    profileCoverImage,
+                    automated_account_connected_message_show,
+                    automated_account,
                   },
                   message:
                     "Show 2 modal, first => profile image customization modal, second => username customization modal",
@@ -315,6 +322,9 @@ const handleLogin = (req, res, next) => {
                     webSite,
                     birthDate,
                     birthDateVisibility,
+                    profileCoverImage,
+                    automated_account_connected_message_show,
+                    automated_account,
                   } = user;
 
                   const token = jwt.sign(
@@ -353,6 +363,9 @@ const handleLogin = (req, res, next) => {
                       webSite,
                       birthDate,
                       birthDateVisibility,
+                      profileCoverImage,
+                      automated_account_connected_message_show,
+                      automated_account,
                     },
                   });
                 });
@@ -399,6 +412,7 @@ const handleDeactivatedUserLoginBack = (req, res) => {
     .populate("following")
     .populate("favorites")
     .populate("messages")
+    .populate("automated_account")
     .then((userRequestingReactivation) => {
       console.log(
         "User ready to come back :) =>",
@@ -480,6 +494,9 @@ const handleDeactivatedUserLoginBack = (req, res) => {
                   webSite,
                   birthDate,
                   birthDateVisibility,
+                  profileCoverImage,
+                  automated_account_connected_message_show,
+                  automated_account,
                 } = reactivatedUser;
 
                 const token = jwt.sign(
@@ -516,6 +533,9 @@ const handleDeactivatedUserLoginBack = (req, res) => {
                     webSite,
                     birthDate,
                     birthDateVisibility,
+                    profileCoverImage,
+                    automated_account_connected_message_show,
+                    automated_account,
                   },
                 });
               });

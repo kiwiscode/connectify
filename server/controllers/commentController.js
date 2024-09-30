@@ -11,11 +11,6 @@ let createdCommentPostId;
 const addComment = (req, res) => {
   const { userId, postId, commentPost, modalImage } = req.body;
 
-  console.log("User id =>", userId);
-  console.log("Post id =>", postId);
-  console.log("commentPost  =>", commentPost);
-  console.log("modalImage  =>", modalImage);
-
   User.findById(userId)
     .then((user) => {
       Post.findById(postId)
@@ -78,18 +73,22 @@ const addComment = (req, res) => {
               if (modalImage !== "") {
                 cloudinary.uploader
                   .upload(modalImage, {
-                    folder: "connectify",
+                    folder: process.env.CLOUDINARY_FOLDER_NAME,
                     allowed_formats: [
+                      "jpg",
                       "mp4",
                       "ogv",
-                      "jpg",
                       "png",
                       "pdf",
                       "webm",
                       "webp",
                     ],
-                    height: 1000,
-                    crop: "limit",
+                    quality: "auto:good",
+                    width: 1200,
+                    crop: "fill",
+                    gravity: "auto",
+                    fetch_format: "jpg",
+                    format: "jpg",
                   })
                   .then((result) => {
                     globalImageId = result.public_id;
@@ -223,18 +222,22 @@ const addComment = (req, res) => {
               if (modalImage !== "") {
                 cloudinary.uploader
                   .upload(modalImage, {
-                    folder: "connectify",
+                    folder: process.env.CLOUDINARY_FOLDER_NAME,
                     allowed_formats: [
+                      "jpg",
                       "mp4",
                       "ogv",
-                      "jpg",
                       "png",
                       "pdf",
                       "webm",
                       "webp",
                     ],
-                    height: 1000,
-                    crop: "limit",
+                    quality: "auto:good",
+                    width: 1200,
+                    crop: "fill",
+                    gravity: "auto",
+                    fetch_format: "jpg",
+                    format: "jpg",
                   })
                   .then((result) => {
                     globalImageId = result.public_id;
@@ -459,18 +462,22 @@ const addComment = (req, res) => {
               if (modalImage !== "") {
                 cloudinary.uploader
                   .upload(modalImage, {
-                    folder: "connectify",
+                    folder: process.env.CLOUDINARY_FOLDER_NAME,
                     allowed_formats: [
+                      "jpg",
                       "mp4",
                       "ogv",
-                      "jpg",
                       "png",
                       "pdf",
                       "webm",
                       "webp",
                     ],
-                    height: 1000,
-                    crop: "limit",
+                    quality: "auto:good",
+                    width: 1200,
+                    crop: "fill",
+                    gravity: "auto",
+                    fetch_format: "jpg",
+                    format: "jpg",
                   })
                   .then((result) => {
                     globalImageId = result.public_id;
@@ -608,18 +615,22 @@ const addComment = (req, res) => {
               if (modalImage !== "") {
                 cloudinary.uploader
                   .upload(modalImage, {
-                    folder: "connectify",
+                    folder: process.env.CLOUDINARY_FOLDER_NAME,
                     allowed_formats: [
+                      "jpg",
                       "mp4",
                       "ogv",
-                      "jpg",
                       "png",
                       "pdf",
                       "webm",
                       "webp",
                     ],
-                    height: 1000,
-                    crop: "limit",
+                    quality: "auto:good",
+                    width: 1200,
+                    crop: "fill",
+                    gravity: "auto",
+                    fetch_format: "jpg",
+                    format: "jpg",
                   })
                   .then((result) => {
                     globalImageId = result.public_id;
@@ -854,18 +865,22 @@ const addComment = (req, res) => {
 
                         cloudinary.uploader
                           .upload(modalImage, {
-                            folder: "connectify",
+                            folder: process.env.CLOUDINARY_FOLDER_NAME,
                             allowed_formats: [
+                              "jpg",
                               "mp4",
                               "ogv",
-                              "jpg",
                               "png",
                               "pdf",
                               "webm",
                               "webp",
                             ],
-                            height: 1000,
-                            crop: "limit",
+                            quality: "auto:good",
+                            width: 1200,
+                            crop: "fill",
+                            gravity: "auto",
+                            fetch_format: "jpg",
+                            format: "jpg",
                           })
                           .then((result) => {
                             globalImageId = result.public_id;
@@ -1040,18 +1055,22 @@ const addComment = (req, res) => {
                         if (modalImage !== "") {
                           cloudinary.uploader
                             .upload(modalImage, {
-                              folder: "connectify",
+                              folder: process.env.CLOUDINARY_FOLDER_NAME,
                               allowed_formats: [
+                                "jpg",
                                 "mp4",
                                 "ogv",
-                                "jpg",
                                 "png",
                                 "pdf",
                                 "webm",
                                 "webp",
                               ],
-                              height: 1000,
-                              crop: "limit",
+                              quality: "auto:good",
+                              width: 1200,
+                              crop: "fill",
+                              gravity: "auto",
+                              fetch_format: "jpg",
+                              format: "jpg",
                             })
                             .then((result) => {
                               globalImageId = result.public_id;

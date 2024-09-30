@@ -29,6 +29,11 @@ import { SubcsriptionStatusContext } from "../context/SubscriptionStatusContext"
 import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 import { InputLabel, TextField } from "@mui/material";
 
+import lightThemeCoverBG from "../assets/cover-backgrounds/ligh-theme-no-cover.png";
+import darkThemeCoverBG from "../assets/cover-backgrounds/dark-theme-no-cover.png";
+import lightThemeCoverBGEditMODALin from "../assets/cover-backgrounds/light-theme-opened-edit-modal-cover-bg.png";
+import darkThemeCoverBGEditMODALin from "../assets/cover-backgrounds/dark-theme-opened-edit-modal-cover-bg.png";
+
 function UserProfile({ isNewPostShared }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
   const {
@@ -125,8 +130,7 @@ function UserProfile({ isNewPostShared }) {
   const [error, setError] = useState("");
   const [postId, setpostId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [profileImage, setprofileImage] = useState("");
-  const [completedProfileImage, setcompletedProfileImage] = useState(false);
+  const [profileImage, setprofileImage] = useState(null);
   const [openEditModal, setOpenEditModal] = useState(false);
 
   const showEditModal = () => {
@@ -270,7 +274,7 @@ function UserProfile({ isNewPostShared }) {
 
   const changeProfileImage = () => {
     axios
-      .post(
+      .patch(
         `${API_URL}/profile/add-profile-image`,
         { profileImage },
         {
@@ -280,12 +284,22 @@ function UserProfile({ isNewPostShared }) {
         }
       )
       .then((response) => {
-        setcompletedProfileImage(true);
         updateUser({ imageUrl: response.data.imageInfo.url });
         setprofileImageChangingLoadingBar(false);
+
+        setprofileImage(null);
+
+        // neccessary for seeing the profile img changes in the listed posts
+
+        if (postsWindow === "hide") {
+          handleGetFavorites();
+        } else if (favoriteWindow === "hide") {
+          handleShowPostsProfilePage();
+        }
       })
       .catch((error) => {
         console.log(error);
+        setprofileImageChangingLoadingBar(false);
       });
   };
 
@@ -303,19 +317,20 @@ function UserProfile({ isNewPostShared }) {
     });
   };
 
+  // handleShowPostsProfilePage();
+  useEffect(() => {
+    if (profileImage) {
+      changeProfileImage();
+    }
+  }, [profileImage, postsWindow, favoriteWindow, userInfo]);
+
   useEffect(() => {
     if (postsWindow === "hide") {
-      if (profileImage) {
-        changeProfileImage();
-      }
       handleGetFavorites();
     } else if (favoriteWindow === "hide") {
-      if (profileImage) {
-        changeProfileImage();
-      }
       handleShowPostsProfilePage();
     }
-  }, [profileImage, postsWindow, favoriteWindow]);
+  }, []);
 
   // const [activeUserFollowing, setactiveUserFollowing] = useState([]);
   // const [activeUserFollowers, setactiveUserFollowers] = useState([]);
@@ -1235,13 +1250,150 @@ function UserProfile({ isNewPostShared }) {
   };
 
   const outsideBigPPRef = useRef(null);
+  const [showBigProfileCoverImage, setShowBigProfileCoverImage] =
+    useState(false);
+  const outsideBigProfileCoverImage = useRef(null);
+
+  console.log("user info:", userInfo);
+
+  console.log("user profile data:", userprofiledata);
+
+  // cover bg profile img scenario
+  const [coverImage, setCoverImage] = useState(null);
+  const [
+    profileCoverImageChangingLoadingBar,
+    setprofileCoverImageChangingLoadingBar,
+  ] = useState(null);
+
+  const handleChangeProfileCoverImage = (e) => {
+    const file = e.target.files[0];
+    handleChangeProfileCoverImageSetFileToBase(file);
+    setprofileCoverImageChangingLoadingBar(true);
+  };
+
+  const handleChangeProfileCoverImageSetFileToBase = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setprofileCoverImageChangingLoadingBar(true);
+      setCoverImage(reader.result);
+    };
+  };
+
+  const changeProfileCoverImage = () => {
+    axios
+      .patch(
+        `${API_URL}/profile/add-profile-cover-image`,
+        { profileCoverImage: coverImage },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      .then((response) => {
+        updateUser({ profileCoverImage: response.data.imageInfo.url });
+        setprofileCoverImageChangingLoadingBar(false);
+
+        setCoverImage(null);
+
+        // neccessary for seeing the profile cover img
+
+        if (postsWindow === "hide") {
+          handleGetFavorites();
+        } else if (favoriteWindow === "hide") {
+          handleShowPostsProfilePage();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setCoverImage(null);
+        setprofileCoverImageChangingLoadingBar(false);
+      });
+  };
+
+  useEffect(() => {
+    if (coverImage) {
+      changeProfileCoverImage();
+    }
+  }, [coverImage, postsWindow, favoriteWindow, userInfo]);
 
   return (
     <>
       {/* {contextHolder} */}
       {contextHolder}
 
+      {/* custom profile cover image opened */}
+      <>
+        <div
+          onClick={() => setShowBigProfileCoverImage(null)}
+          ref={outsideBigProfileCoverImage}
+          className="profile-img-opened-wrapper"
+          style={{
+            position: "fixed",
+            left: 0,
+            bottom: 0,
+            right: 0,
+            bottom: 0,
+            minHeight: "100dvh",
+            minWidth: "100%",
+            width: "100%",
+            height: "100%",
+            zIndex: 99999,
+            backgroundColor: "rgba(0, 0, 0, 0.9)",
+            opacity: 1,
+            display: showBigProfileCoverImage ? "block" : "none",
+          }}
+        >
+          <div
+            onClick={() => setShowBigProfileCoverImage(null)}
+            className="arrow-pp-exit"
+            style={{
+              width: "50px",
+              height: "50px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: "50%",
+              margin: "32px 16px",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+            }}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              fill="rgb(255, 255, 255)"
+              width={20}
+              height={20}
+            >
+              <g>
+                <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+              </g>
+            </svg>
+          </div>
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            style={{
+              color: "black",
+              position: "absolute",
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%,-50%)",
+            }}
+          >
+            <img
+              src={userInfo?.profileCoverImage}
+              width={"100%"}
+              height={"100%"}
+              alt=""
+            />
+          </div>
+        </div>
+      </>
       {/* custom profile image opened */}
+
       <>
         <div
           onClick={() => setshowBigPP(null)}
@@ -1691,18 +1843,39 @@ function UserProfile({ isNewPostShared }) {
               </div>
             </div>
 
+            {/* cover img inside edit modal */}
+            {/* cover image test start to check */}
             <div
               style={{
-                height: "200px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: themeName === "light-theme" && "#B2B2B2",
-                opacity: "0.75",
+                cursor: userInfo?.profileCoverImage ? "pointer" : "default",
+                pointerEvents: userInfo?.profileCoverImage ? "auto" : "none",
+                maxHeight: "200px",
+                height: "100dvh",
+                maxWidth: "100%",
+                width: "100%",
+                backgroundImage: `url(${
+                  userInfo?.profileCoverImage
+                    ? userInfo.profileCoverImage
+                    : themeName === "light-theme"
+                    ? lightThemeCoverBGEditMODALin
+                    : darkThemeCoverBGEditMODALin
+                })`,
+                // need to check
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+                backgroundSize: "cover",
+                // problematic
+                // backgroundAttachment: "fixed",
                 position: "relative",
+                zIndex: 0,
               }}
             >
               <div
+                onClick={() =>
+                  document
+                    .getElementById("formuploadModal-profile-cover-image")
+                    .click()
+                }
                 className="edit-photo-machine-img"
                 style={{
                   width: "50px",
@@ -1718,24 +1891,50 @@ function UserProfile({ isNewPostShared }) {
                       : "#56595B",
                   cursor: "pointer",
                   position: "relative",
+                  left: "50%",
+                  top: "50%",
+                  transform: "translate(-50%,-50%)",
+                  cursor: "pointer",
+                  zIndex: 1,
+                  pointerEvents: "auto",
+                  backdropFilter: "blur(12px)",
+                  backgroundColor: "rgba(15, 20, 25, 0.75)",
+                  opacity: 0.75,
                 }}
               >
-                <svg
-                  width={24}
-                  height={24}
-                  fill="rgb(255, 255, 255)"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <g>
-                    <path d="M9.697 3H11v2h-.697l-3 2H5c-.276 0-.5.224-.5.5v11c0 .276.224.5.5.5h14c.276 0 .5-.224.5-.5V10h2v8.5c0 1.381-1.119 2.5-2.5 2.5H5c-1.381 0-2.5-1.119-2.5-2.5v-11C2.5 6.119 3.619 5 5 5h1.697l3-2zM12 10.5c-1.105 0-2 .895-2 2s.895 2 2 2 2-.895 2-2-.895-2-2-2zm-4 2c0-2.209 1.791-4 4-4s4 1.791 4 4-1.791 4-4 4-4-1.791-4-4zM17 2c0 1.657-1.343 3-3 3v1c1.657 0 3 1.343 3 3h1c0-1.657 1.343-3 3-3V5c-1.657 0-3-1.343-3-3h-1z"></path>
-                  </g>
-                </svg>
-                {/* <LoadingSpinner
-                  strokeColor={"rgb(29, 155, 240)"}
-                ></LoadingSpinner> */}
+                {profileCoverImageChangingLoadingBar ? (
+                  <>
+                    <LoadingSpinner
+                      strokeColor={"rgb(29, 155, 240)"}
+                    ></LoadingSpinner>
+                  </>
+                ) : (
+                  <>
+                    <input
+                      onChange={handleChangeProfileCoverImage}
+                      type="file"
+                      id="formuploadModal-profile-cover-image"
+                      name="modalImage"
+                      className="form-control"
+                      style={{ display: "none" }}
+                    />
+                    <svg
+                      width={24}
+                      height={24}
+                      fill="rgb(255, 255, 255)"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <g>
+                        <path d="M9.697 3H11v2h-.697l-3 2H5c-.276 0-.5.224-.5.5v11c0 .276.224.5.5.5h14c.276 0 .5-.224.5-.5V10h2v8.5c0 1.381-1.119 2.5-2.5 2.5H5c-1.381 0-2.5-1.119-2.5-2.5v-11C2.5 6.119 3.619 5 5 5h1.697l3-2zM12 10.5c-1.105 0-2 .895-2 2s.895 2 2 2 2-.895 2-2-.895-2-2-2zm-4 2c0-2.209 1.791-4 4-4s4 1.791 4 4-1.791 4-4 4-4-1.791-4-4zM17 2c0 1.657-1.343 3-3 3v1c1.657 0 3 1.343 3 3h1c0-1.657 1.343-3 3-3V5c-1.657 0-3-1.343-3-3h-1z"></path>
+                      </g>
+                    </svg>
+                  </>
+                )}
               </div>
             </div>
+            {/* cover image test finish to check */}
+
             <div
               style={{
                 position: "relative",
@@ -1750,6 +1949,7 @@ function UserProfile({ isNewPostShared }) {
                   justifyContent: "center",
                   alignItems: "center",
                   borderRadius: "50%",
+                  backgroundColor: "white",
                 }}
               >
                 {userInfo?.imageUrl?.slice(0, 3) !== "../" ? (
@@ -1761,7 +1961,7 @@ function UserProfile({ isNewPostShared }) {
                       alt=""
                       style={{
                         borderRadius: "50%",
-                        opacity: 0.75,
+                        opacity: 0.9,
                         border:
                           themeName === "dark-theme"
                             ? "4px solid black"
@@ -3020,23 +3220,29 @@ function UserProfile({ isNewPostShared }) {
           </div>
           {/* finish to check  */}
         </Stack>
-
         {/* start to check */}
-
         {/* cover image test start to check */}
         <div
+          onClick={() => {
+            setShowBigProfileCoverImage(true);
+          }}
           style={{
-            cursor: "pointer",
+            cursor: userInfo?.profileCoverImage ? "pointer" : "default",
+            pointerEvents: userInfo?.profileCoverImage ? "auto" : "none",
             position: "relative",
             zIndex: 0,
             maxHeight: "200px",
             height: "100dvh",
             maxWidth: "100%",
             width: "100%",
-            backgroundColor: "yellow",
-            // background: `url("https://marketplace.canva.com/EAE91Kz0wsI/1/0/1600w/canva-blue-yellow-retro-quotes-twitter-header-xTB_BZnqeew.jpg")`,
-            background: `url("https://static1.colliderimages.com/wordpress/wp-content/uploads/2021/07/quentin-tarantino-ranked.jpg")`,
 
+            backgroundImage: `url(${
+              userInfo?.profileCoverImage
+                ? userInfo.profileCoverImage
+                : themeName === "light-theme"
+                ? lightThemeCoverBG
+                : darkThemeCoverBG
+            })`,
             // need to check
             backgroundRepeat: "no-repeat",
             backgroundPosition: "center",
@@ -3046,7 +3252,6 @@ function UserProfile({ isNewPostShared }) {
           }}
         ></div>
         {/* cover image test finish to check */}
-
         {/* profile image */}
         <div
           style={{
@@ -3112,10 +3317,12 @@ function UserProfile({ isNewPostShared }) {
         <div
           className="chirp-bold-font"
           style={{
-            padding: "12px 12px",
-            textAlign: "right",
+            width: "100%",
             display: "flex",
             justifyContent: "flex-end",
+            alignItems: "flex-end",
+            maxHeight: "53px",
+            padding: "12px 12px",
           }}
         >
           <button
@@ -3487,37 +3694,37 @@ function UserProfile({ isNewPostShared }) {
                 </div>
               </>
             ) : null}
-
-            <div
-              className="chirp-regular-font"
-              style={{
-                color:
-                  themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
-                fontSize: font15.fontSize,
-                lineHeight: font15.lineHeight,
-                display: "flex",
-                alignItems: "center",
-                gap: "5px",
-              }}
+          </div>
+          <div
+            className="chirp-regular-font"
+            style={{
+              color:
+                themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)",
+              fontSize: font15.fontSize,
+              lineHeight: font15.lineHeight,
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+              marginTop: "4px",
+            }}
+          >
+            <svg
+              color={
+                themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)"
+              }
+              fill="currentColor"
+              width={`${1.25}em`}
+              height={`${1.25}em`}
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1d4mawv"
             >
-              <svg
-                color={
-                  themeName === "dark-theme" ? "#71767A" : "rgb(83, 100, 113)"
-                }
-                fill="currentColor"
-                width={`${1.25}em`}
-                height={`${1.25}em`}
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv r-1d4mawv"
-              >
-                <g>
-                  <path d="M7 4V3h2v1h6V3h2v1h1.5C19.89 4 21 5.12 21 6.5v12c0 1.38-1.11 2.5-2.5 2.5h-13C4.12 21 3 19.88 3 18.5v-12C3 5.12 4.12 4 5.5 4H7zm0 2H5.5c-.27 0-.5.22-.5.5v12c0 .28.23.5.5.5h13c.28 0 .5-.22.5-.5v-12c0-.28-.22-.5-.5-.5H17v1h-2V6H9v1H7V6zm0 6h2v-2H7v2zm0 4h2v-2H7v2zm4-4h2v-2h-2v2zm0 4h2v-2h-2v2zm4-4h2v-2h-2v2z"></path>
-                </g>
-              </svg>
+              <g>
+                <path d="M7 4V3h2v1h6V3h2v1h1.5C19.89 4 21 5.12 21 6.5v12c0 1.38-1.11 2.5-2.5 2.5h-13C4.12 21 3 19.88 3 18.5v-12C3 5.12 4.12 4 5.5 4H7zm0 2H5.5c-.27 0-.5.22-.5.5v12c0 .28.23.5.5.5h13c.28 0 .5-.22.5-.5v-12c0-.28-.22-.5-.5-.5H17v1h-2V6H9v1H7V6zm0 6h2v-2H7v2zm0 4h2v-2H7v2zm4-4h2v-2h-2v2zm0 4h2v-2h-2v2zm4-4h2v-2h-2v2z"></path>
+              </g>
+            </svg>
 
-              <span>Joined {getCreatedDateForProfile(userInfo.createdAt)}</span>
-            </div>
+            <span>Joined {getCreatedDateForProfile(userInfo.createdAt)}</span>
           </div>
 
           <div
@@ -4429,7 +4636,9 @@ function UserProfile({ isNewPostShared }) {
                                 to={`/profile/${
                                   post.userId ? post.userId._id : null
                                 }`}
-                                style={{ cursor: "pointer" }}
+                                style={{
+                                  cursor: "pointer",
+                                }}
                               >
                                 {" "}
                                 <img
@@ -4948,7 +5157,9 @@ function UserProfile({ isNewPostShared }) {
                                     height={40}
                                     src={favorite.userId.imageUrl}
                                     alt="??"
-                                    style={{ borderRadius: "50%" }}
+                                    style={{
+                                      borderRadius: "50%",
+                                    }}
                                   />
                                 </Link>
                               ) : (
@@ -4957,7 +5168,9 @@ function UserProfile({ isNewPostShared }) {
                                   to={`/profile/${
                                     favorite.userId ? favorite.userId._id : null
                                   }`}
-                                  style={{ cursor: "pointer" }}
+                                  style={{
+                                    cursor: "pointer",
+                                  }}
                                 >
                                   {" "}
                                   <img

@@ -25,6 +25,7 @@ function RepostAction({
   detailedPostComment,
   postIndex,
   isCutePopoverOnRightSide,
+  photoDetailedPost,
 }) {
   const { userInfo, getToken } = useContext(UserContext);
   const [
@@ -91,7 +92,7 @@ function RepostAction({
   };
 
   const getRepostedIds = (array) => {
-    return array?.reposted.map((eachRepost) => {
+    return array?.reposted?.map((eachRepost) => {
       return eachRepost._id || eachRepost;
     });
   };
@@ -109,7 +110,7 @@ function RepostAction({
       <PopupState variant="popover" popupId="demo-popup-popover">
         {(popupState) => (
           <div>
-            {post?.reposted.length > 0 &&
+            {post?.reposted?.length > 0 &&
             getRepostedIds(post).includes(userInfo._id) ? (
               <div>
                 {" "}
@@ -125,27 +126,52 @@ function RepostAction({
                     onMouseLeave={() => setRepostIconHovered(false)}
                     style={{
                       cursor: "pointer",
-                      minWidth: "34px",
-                      minHeight: "34px",
+                      minWidth: photoDetailedPost ? "40px" : "34px",
+                      minHeight: photoDetailedPost ? "40px" : "34px",
                       display: "inline-flex",
                       justifyContent: "center",
                       alignItems: "center",
                       borderRadius: "50%",
                       backgroundColor:
-                        repostIconHovered && themeName !== "dark-theme"
+                        repostIconHovered &&
+                        themeName !== "dark-theme" &&
+                        !photoDetailedPost
                           ? "#e3f1eb"
-                          : repostIconHovered && themeName === "dark-theme"
+                          : repostIconHovered &&
+                            themeName === "dark-theme" &&
+                            !photoDetailedPost
                           ? "#0c4b34"
-                          : null,
+                          : (themeName === "dark-theme" ||
+                              themeName === "light-theme") &&
+                            repostIconHovered &&
+                            photoDetailedPost
+                          ? "rgba(0,186,124,0.1)"
+                          : "",
                     }}
                   >
                     <svg
-                      width={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
-                      height={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
+                      width={
+                        isCutePopoverOnRightSide && !photoDetailedPost
+                          ? "1em"
+                          : !photoDetailedPost
+                          ? `${1.25}em`
+                          : `${1.5}em`
+                      }
+                      height={
+                        isCutePopoverOnRightSide && !photoDetailedPost
+                          ? "1em"
+                          : !photoDetailedPost
+                          ? `${1.25}em`
+                          : `${1.5}em`
+                      }
                       viewBox="0 0 24 24"
                       aria-hidden="true"
                       className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                      fill="rgb(0, 186, 124)"
+                      fill={
+                        photoDetailedPost
+                          ? "rgb(0, 186, 124)"
+                          : "rgb(0, 186, 124)"
+                      }
                     >
                       <g>
                         <path
@@ -159,7 +185,9 @@ function RepostAction({
                   <span
                     style={{
                       cursor: "pointer",
-                      color: "rgb(0, 186, 124)",
+                      color: photoDetailedPost
+                        ? "rgb(0, 186, 124)"
+                        : "rgb(0, 186, 124)",
                       position: "relative",
                       bottom: isCutePopoverOnRightSide ? "4px" : "5px",
                       fontSize: isCutePopoverOnRightSide
@@ -196,40 +224,76 @@ function RepostAction({
                     onMouseLeave={() => setRepostIconHovered(false)}
                     style={{
                       cursor: "pointer",
-
-                      minWidth: "34px",
-                      minHeight: "34px",
+                      minWidth: photoDetailedPost ? "40px" : "34px",
+                      minHeight: photoDetailedPost ? "40px" : "34px",
                       display: "inline-flex",
                       justifyContent: "center",
                       alignItems: "center",
                       borderRadius: "50%",
                       backgroundColor:
-                        repostIconHovered && themeName !== "dark-theme"
+                        repostIconHovered &&
+                        themeName !== "dark-theme" &&
+                        !photoDetailedPost
                           ? "#e3f1eb"
-                          : repostIconHovered && themeName === "dark-theme"
+                          : repostIconHovered &&
+                            themeName === "dark-theme" &&
+                            !photoDetailedPost
                           ? "#0c4b34"
-                          : null,
+                          : repostIconHovered &&
+                            (themeName === "dark-theme" ||
+                              themeName === "light-theme") &&
+                            photoDetailedPost
+                          ? "rgba(0,186,124,0.1)"
+                          : "",
                     }}
                   >
                     <svg
                       style={{
                         cursor: "pointer",
                       }}
-                      width={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
-                      height={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
+                      width={
+                        isCutePopoverOnRightSide && !photoDetailedPost
+                          ? "1em"
+                          : !photoDetailedPost
+                          ? `${1.25}em`
+                          : `${1.5}em`
+                      }
+                      height={
+                        isCutePopoverOnRightSide && !photoDetailedPost
+                          ? "1em"
+                          : !photoDetailedPost
+                          ? `${1.25}em`
+                          : `${1.5}em`
+                      }
                       viewBox="0 0 24 24"
                       aria-hidden="true"
                       className="svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                       fill={
-                        themeName === "dark-theme" && !repostIconHovered
+                        themeName === "dark-theme" &&
+                        !repostIconHovered &&
+                        !photoDetailedPost
                           ? "#71767A"
-                          : themeName !== "dark-theme" && !repostIconHovered
+                          : themeName !== "dark-theme" &&
+                            !repostIconHovered &&
+                            !photoDetailedPost
                           ? "rgb(83, 100, 113)"
-                          : themeName === "dark-theme" && repostIconHovered
+                          : themeName === "dark-theme" &&
+                            repostIconHovered &&
+                            !photoDetailedPost
                           ? "rgb(0, 186, 124)"
-                          : themeName !== "dark-theme" && repostIconHovered
+                          : themeName !== "dark-theme" &&
+                            repostIconHovered &&
+                            !photoDetailedPost
                           ? "rgb(0, 186, 124)"
-                          : null
+                          : (themeName === "dark-theme" ||
+                              themeName === "light-theme") &&
+                            !repostIconHovered
+                          ? "white"
+                          : (themeName === "dark-theme" ||
+                              themeName === "light-theme") &&
+                            repostIconHovered
+                          ? "rgb(0, 186, 124)"
+                          : ""
                       }
                     >
                       <g>
@@ -245,15 +309,33 @@ function RepostAction({
                     className="post-description chirp-regular-font"
                     style={{
                       color:
-                        themeName === "dark-theme" && !repostIconHovered
+                        themeName === "dark-theme" &&
+                        !repostIconHovered &&
+                        !photoDetailedPost
                           ? "#71767A"
-                          : themeName !== "dark-theme" && !repostIconHovered
+                          : themeName !== "dark-theme" &&
+                            !repostIconHovered &&
+                            !photoDetailedPost
                           ? "rgb(83, 100, 113)"
-                          : themeName === "dark-theme" && repostIconHovered
+                          : themeName === "dark-theme" &&
+                            repostIconHovered &&
+                            !photoDetailedPost
                           ? "rgb(0, 186, 124)"
-                          : themeName !== "dark-theme" && repostIconHovered
+                          : themeName !== "dark-theme" &&
+                            repostIconHovered &&
+                            !photoDetailedPost
                           ? "rgb(0, 186, 124)"
-                          : null,
+                          : (themeName === "dark-theme" ||
+                              themeName === "light-theme") &&
+                            !repostIconHovered &&
+                            photoDetailedPost
+                          ? "white"
+                          : (themeName === "dark-theme" ||
+                              themeName === "light-theme") &&
+                            repostIconHovered &&
+                            photoDetailedPost
+                          ? "rgb(0, 186, 124)"
+                          : "",
                       position: "relative",
                       cursor: "pointer",
                       bottom: isCutePopoverOnRightSide ? "4px" : "5px",
@@ -265,7 +347,7 @@ function RepostAction({
                         : font13.lineHeight,
                     }}
                   >
-                    {post?.reposted.length ? (
+                    {post?.reposted?.length ? (
                       <span>{post.reposted.length}</span>
                     ) : null}
                   </span>

@@ -5064,6 +5064,7 @@ function CommentModal({
   postSharedMessage,
   sendDataToParent,
   isCutePopoverOnRightSide,
+  photoDetailedPost,
 }) {
   const { getToken, userInfo } = useContext(UserContext);
   const {
@@ -5281,38 +5282,75 @@ function CommentModal({
             onClick={() => handleShow(true)}
             style={{
               cursor: "pointer",
-              minWidth: "34px",
-              minHeight: "34px",
+              minWidth: photoDetailedPost ? "40px" : "34px",
+              minHeight: photoDetailedPost ? "40px" : "34px",
               display: "inline-flex",
               justifyContent: "center",
               alignItems: "center",
               borderRadius: "50%",
               backgroundColor:
-                commentIconHovered && themeName !== "dark-theme"
+                commentIconHovered &&
+                themeName !== "dark-theme" &&
+                !photoDetailedPost
                   ? "#e4eef7"
-                  : commentIconHovered && themeName === "dark-theme"
+                  : commentIconHovered &&
+                    themeName === "dark-theme" &&
+                    !photoDetailedPost
                   ? "#1e3140"
-                  : null,
+                  : commentIconHovered &&
+                    (themeName === "dark-theme" ||
+                      themeName === "light-theme") &&
+                    photoDetailedPost
+                  ? "rgba(255,255,255,0.1)"
+                  : "",
             }}
             onMouseEnter={() => setCommentIconHovered(true)}
             onMouseLeave={() => setCommentIconHovered(false)}
           >
             <svg
-              width={isCutePopoverOnRightSide ? "1em" : width}
-              height={isCutePopoverOnRightSide ? "1em" : width}
+              width={
+                isCutePopoverOnRightSide && !photoDetailedPost
+                  ? "1em"
+                  : !photoDetailedPost
+                  ? width
+                  : photoDetailedPost
+                  ? `${1.5}em`
+                  : ""
+              }
+              height={
+                isCutePopoverOnRightSide && !photoDetailedPost
+                  ? "1em"
+                  : !photoDetailedPost
+                  ? width
+                  : photoDetailedPost
+                  ? `${1.5}em`
+                  : ""
+              }
               viewBox="0 0 24 24"
               aria-hidden="true"
               className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
               fill={
-                themeName === "dark-theme" && !commentIconHovered
+                themeName === "dark-theme" &&
+                !commentIconHovered &&
+                !photoDetailedPost
                   ? "#71767A"
-                  : themeName !== "dark-theme" && !commentIconHovered
+                  : themeName !== "dark-theme" &&
+                    !commentIconHovered &&
+                    !photoDetailedPost
                   ? "rgb(83, 100, 113)"
-                  : themeName === "dark-theme" && commentIconHovered
+                  : themeName === "dark-theme" &&
+                    commentIconHovered &&
+                    !photoDetailedPost
                   ? "#1d9aee"
-                  : themeName !== "dark-theme" && commentIconHovered
+                  : themeName !== "dark-theme" &&
+                    commentIconHovered &&
+                    !photoDetailedPost
                   ? "#1c94e4"
-                  : null
+                  : (themeName === "dark-theme" ||
+                      themeName === "light-theme") &&
+                    (!commentIconHovered || commentIconHovered)
+                  ? "white"
+                  : ""
               }
             >
               <g>
@@ -5335,15 +5373,27 @@ function CommentModal({
             style={{
               color: isImagePostDetail
                 ? "white"
-                : themeName === "dark-theme" && !commentIconHovered
+                : themeName === "dark-theme" &&
+                  !commentIconHovered &&
+                  !photoDetailedPost
                 ? "#71767A"
-                : themeName !== "dark-theme" && !commentIconHovered
+                : themeName !== "dark-theme" &&
+                  !commentIconHovered &&
+                  !photoDetailedPost
                 ? "rgb(83, 100, 113)"
-                : themeName === "dark-theme" && commentIconHovered
+                : themeName === "dark-theme" &&
+                  commentIconHovered &&
+                  !photoDetailedPost
                 ? "#1d9aee"
-                : themeName !== "dark-theme" && commentIconHovered
+                : themeName !== "dark-theme" &&
+                  commentIconHovered &&
+                  !photoDetailedPost
                 ? "#1c94e4"
-                : null,
+                : (themeName === "dark-theme" || themeName === "light-theme") &&
+                  (commentIconHovered || !commentIconHovered) &&
+                  photoDetailedPost
+                ? "white"
+                : "",
               position: "relative",
               bottom: isCutePopoverOnRightSide ? "4px" : "5px",
               fontSize: isCutePopoverOnRightSide ? "12px" : font13.fontSize,

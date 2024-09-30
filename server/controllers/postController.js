@@ -20,14 +20,12 @@ const handlePost = (req, res) => {
         return res.status(404).json({ error: "User not found" });
       }
 
-      console.log("Image:", image);
-      console.log("Modal image:", modalImage);
       // start to check
 
       if (image || modalImage) {
         cloudinary.uploader
           .upload(image || modalImage, {
-            folder: "connectify",
+            folder: process.env.CLOUDINARY_FOLDER_NAME,
             allowed_formats: [
               "jpg",
               "mp4",
@@ -37,8 +35,11 @@ const handlePost = (req, res) => {
               "webm",
               "webp",
             ],
-            height: 1000,
-            crop: "limit",
+            quality: "auto:good",
+            width: 1200,
+            crop: "fill",
+            gravity: "auto",
+            format: "jpg",
           })
           .then((result) => {
             return Post.create({

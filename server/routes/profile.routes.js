@@ -31,10 +31,16 @@ router.get(
   profileController.handleShowSpesificProfile
 );
 
-router.post(
+router.patch(
   "/add-profile-image",
   authenticateToken,
   profileController.handleProfilePicture
+);
+
+router.patch(
+  "/add-profile-cover-image",
+  authenticateToken,
+  profileController.handleProfileCoverImage
 );
 
 router.get(

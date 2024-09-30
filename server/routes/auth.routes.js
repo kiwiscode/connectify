@@ -66,6 +66,7 @@ router.post("/login-variant-one-result", (req, res) => {
     .populate("favorites")
     .populate("subscriptions")
     .populate("messages")
+    .populate("automated_account")
     .then((user) => {
       console.log("User =>", user.username);
       console.log("User password =>", passwordFromReqBody);
@@ -109,6 +110,9 @@ router.post("/login-variant-one-result", (req, res) => {
                   webSite,
                   birthDate,
                   birthDateVisibility,
+                  profileCoverImage,
+                  automated_account_connected_message_show,
+                  automated_account,
                 } = user;
 
                 const token = jwt.sign(
@@ -146,6 +150,9 @@ router.post("/login-variant-one-result", (req, res) => {
                     webSite,
                     birthDate,
                     birthDateVisibility,
+                    profileCoverImage,
+                    automated_account_connected_message_show,
+                    automated_account,
                   },
                   message:
                     "Show 2 modal, first => profile image customization modal, second => username customization modal",

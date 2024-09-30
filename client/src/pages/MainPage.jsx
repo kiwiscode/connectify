@@ -348,7 +348,7 @@ function MainPage({ isNewPostShared }) {
     useState(false);
   const changeProfileImage = () => {
     axios
-      .post(
+      .patch(
         `${API_URL}/profile/add-profile-image`,
         { profileImage },
         {
@@ -2064,7 +2064,7 @@ function MainPage({ isNewPostShared }) {
                         borderRadius: "50%",
                         cursor: "pointer",
                         position: "absolute",
-                        right: "20px",
+                        right: "30px",
                         top: "15px",
                       }}
                       onClick={closeImage}

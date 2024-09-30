@@ -23,6 +23,7 @@ const LikeAction = ({
   postIndex,
   buttonId,
   isCutePopoverOnRightSide,
+  photoDetailedPost,
 }) => {
   const [{ theme, themeName }] = useContext(ThemeContext);
   const { getFontSizeAndLineHeight13 } = useFontSizeHandler();
@@ -41,7 +42,7 @@ const LikeAction = ({
   };
 
   const getLikerIds = (array) => {
-    return array?.likes.map((eachLiker) => {
+    return array?.likes?.map((eachLiker) => {
       return eachLiker._id;
     });
   };
@@ -122,29 +123,50 @@ const LikeAction = ({
               onClick={() => handleDeleteLike(post.postId || post._id)}
               style={{
                 cursor: "pointer",
-                minWidth: "34px",
-                minHeight: "34px",
+                minWidth: photoDetailedPost ? "40px" : "34px",
+                minHeight: photoDetailedPost ? "40px" : "34px",
                 display: "inline-flex",
                 justifyContent: "center",
                 alignItems: "center",
                 borderRadius: "50%",
                 backgroundColor:
-                  likeIconHovered && themeName !== "dark-theme"
+                  likeIconHovered &&
+                  themeName !== "dark-theme" &&
+                  !photoDetailedPost
                     ? "#f9e3eb"
-                    : likeIconHovered && themeName === "dark-theme"
+                    : likeIconHovered &&
+                      themeName === "dark-theme" &&
+                      !photoDetailedPost
                     ? "#4f102b"
-                    : null,
+                    : (themeName === "dark-theme" ||
+                        themeName === "light-theme") &&
+                      likeIconHovered &&
+                      photoDetailedPost
+                    ? "rgba(255,255,255,0.1)"
+                    : "",
               }}
               onMouseEnter={() => setLikeIconHovered(true)}
               onMouseLeave={() => setLikeIconHovered(false)}
               className={shouldAnimate ? `animated-heart-beat` : null}
             >
               <svg
-                width={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
-                height={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
+                width={
+                  isCutePopoverOnRightSide && !photoDetailedPost
+                    ? "1em"
+                    : !photoDetailedPost
+                    ? `${1.25}em`
+                    : `${1.5}em`
+                }
+                height={
+                  isCutePopoverOnRightSide && !photoDetailedPost
+                    ? "1em"
+                    : !photoDetailedPost
+                    ? `${1.25}em`
+                    : `${1.5}em`
+                }
                 viewBox="0 0 24 24"
                 aria-hidden="true"
-                fill="rgb(249, 24, 128)"
+                fill={photoDetailedPost ? "white" : "rgb(249, 24, 128)"}
               >
                 <g>
                   <path
@@ -168,7 +190,7 @@ const LikeAction = ({
                 <>
                   <span
                     style={{
-                      color: "rgb(249, 24, 128)",
+                      color: photoDetailedPost ? "white" : "rgb(249, 24, 128)",
                       position: "relative",
                       bottom: isCutePopoverOnRightSide ? "4px" : "5px",
                       fontSize: isCutePopoverOnRightSide ? "12px" : null,
@@ -193,38 +215,71 @@ const LikeAction = ({
               onClick={() => handlePostLike(post.postId || post._id, post)}
               style={{
                 cursor: "pointer",
-                minWidth: "34px",
-                minHeight: "34px",
+                minWidth: photoDetailedPost ? "40px" : "34px",
+                minHeight: photoDetailedPost ? "40px" : "34px",
                 display: "inline-flex",
                 justifyContent: "center",
                 alignItems: "center",
                 borderRadius: "50%",
                 backgroundColor:
-                  likeIconHovered && themeName !== "dark-theme"
+                  likeIconHovered &&
+                  themeName !== "dark-theme" &&
+                  !photoDetailedPost
                     ? "#f9e3eb"
-                    : likeIconHovered && themeName === "dark-theme"
+                    : likeIconHovered &&
+                      themeName === "dark-theme" &&
+                      !photoDetailedPost
                     ? "#4f102b"
-                    : null,
+                    : likeIconHovered &&
+                      (themeName === "dark-theme" ||
+                        themeName === "light-theme") &&
+                      photoDetailedPost
+                    ? "rgba(255,255,255,0.1)"
+                    : "",
               }}
               onMouseEnter={() => setLikeIconHovered(true)}
               onMouseLeave={() => setLikeIconHovered(false)}
             >
               <svg
-                width={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
-                height={isCutePopoverOnRightSide ? "1em" : `${1.25}em`}
+                width={
+                  isCutePopoverOnRightSide && !photoDetailedPost
+                    ? "1em"
+                    : !photoDetailedPost
+                    ? `${1.25}em`
+                    : `${1.5}em`
+                }
+                height={
+                  isCutePopoverOnRightSide && !photoDetailedPost
+                    ? "1em"
+                    : !photoDetailedPost
+                    ? `${1.25}em`
+                    : `${1.5}em`
+                }
                 viewBox="0 0 24 24"
                 aria-hidden="true"
                 className="svg-heart r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                 fill={
-                  themeName === "dark-theme" && !likeIconHovered
+                  themeName === "dark-theme" &&
+                  !likeIconHovered &&
+                  !photoDetailedPost
                     ? "#71767A"
-                    : themeName !== "dark-theme" && !likeIconHovered
+                    : themeName !== "dark-theme" &&
+                      !likeIconHovered &&
+                      !photoDetailedPost
                     ? "rgb(83, 100, 113)"
-                    : themeName === "dark-theme" && likeIconHovered
+                    : themeName === "dark-theme" &&
+                      likeIconHovered &&
+                      !photoDetailedPost
                     ? "rgb(249, 24, 128)"
-                    : themeName !== "dark-theme" && likeIconHovered
+                    : themeName !== "dark-theme" &&
+                      likeIconHovered &&
+                      !photoDetailedPost
                     ? "rgb(249, 24, 128)"
-                    : null
+                    : (themeName === "dark-theme" ||
+                        themeName === "light-theme") &&
+                      (!likeIconHovered || likeIconHovered)
+                    ? "white"
+                    : ""
                 }
               >
                 <g>
@@ -241,20 +296,33 @@ const LikeAction = ({
                 lineHeight: font13.lineHeight,
               }}
             >
-              {post?.likes.length ? (
+              {post?.likes?.length ? (
                 <>
                   <span
                     style={{
                       color:
-                        themeName === "dark-theme" && !likeIconHovered
+                        themeName === "dark-theme" &&
+                        !likeIconHovered &&
+                        !photoDetailedPost
                           ? "#71767A"
-                          : themeName !== "dark-theme" && !likeIconHovered
+                          : themeName !== "dark-theme" &&
+                            !likeIconHovered &&
+                            !photoDetailedPost
                           ? "rgb(83, 100, 113)"
-                          : themeName === "dark-theme" && likeIconHovered
+                          : themeName === "dark-theme" &&
+                            likeIconHovered &&
+                            !photoDetailedPost
                           ? "rgb(249, 24, 128)"
-                          : themeName !== "dark-theme" && likeIconHovered
+                          : themeName !== "dark-theme" &&
+                            likeIconHovered &&
+                            !photoDetailedPost
                           ? "rgb(249, 24, 128)"
-                          : null,
+                          : (themeName === "dark-theme" ||
+                              themeName === "light-theme") &&
+                            (likeIconHovered || !likeIconHovered) &&
+                            photoDetailedPost
+                          ? "white"
+                          : "",
                       position: "relative",
                       bottom: isCutePopoverOnRightSide ? "4px" : "5px",
                       fontSize: isCutePopoverOnRightSide ? "12px" : null,
