@@ -9,10 +9,8 @@ import useWindowDimensions from "../../hooks/getWindowDimensions";
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
-import io from "socket.io-client";
 import { SubcsriptionStatusContext } from "../../context/SubscriptionStatusContext";
 import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
-const socket = io.connect(`${API_URL}`);
 
 function PostEngagements({
   detailedPost,
@@ -155,18 +153,6 @@ function PostEngagements({
   };
 
   const handleCloseUnfollowModal = () => setshowUnfollowModal(false);
-
-  const handleFollowingNotification = (selectedUser, userInfo, type) => {
-    console.log("Sending notification to => ", selectedUser.username);
-
-    socket.emit("sendNotification", {
-      senderName: userInfo.username,
-      receiverName: selectedUser.username,
-      type: type,
-      contactHasBeenMade: userInfo,
-      senderInfo: userInfo,
-    });
-  };
 
   const handleUnfollow = (unfollowedUser) => {
     console.log("Clicked user =>", unfollowedUser);
@@ -410,11 +396,7 @@ function PostEngagements({
                         .then(() => {
                           // getActiveUser();
                           setClicked(!clicked);
-                          handleFollowingNotification(
-                            clickedUser,
-                            userInfo,
-                            "followed"
-                          );
+
                           console.log("sELECTED uSer =>", selectedUser);
 
                           setIsHovered(false);
@@ -762,11 +744,7 @@ function PostEngagements({
                         .then(() => {
                           // getActiveUser();
                           setClicked(!clicked);
-                          handleFollowingNotification(
-                            clickedUser,
-                            userInfo,
-                            "followed"
-                          );
+
                           console.log("sELECTED uSer =>", selectedUser);
 
                           setIsHovered(false);

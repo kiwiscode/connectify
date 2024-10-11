@@ -7,8 +7,6 @@ import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNaviga
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
-import io from "socket.io-client";
-const socket = io.connect(`${API_URL}`);
 import { ThemeContext } from "../context/ThemeContext";
 import UnfollowModal from "../components/unfollow-modal/UnfollowModal";
 import useWindowDimensions from "../hooks/getWindowDimensions";

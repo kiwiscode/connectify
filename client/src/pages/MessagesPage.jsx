@@ -53,6 +53,7 @@ function MessagesPage() {
         },
       })
       .then((responseForMessages) => {
+        console.log("response for messages:", responseForMessages);
         setfilteredRooms(responseForMessages.data.messages);
         setmessageRooms(responseForMessages.data.messages);
       })
@@ -248,8 +249,6 @@ function MessagesPage() {
   const navigate = useNavigate();
 
   const redirectToChatDetailPage = (chatRoomId) => {
-    // window.location.href = `http://localhost:5173/messages/${chatRoomId}`;
-
     navigate(`/messages/${chatRoomId}`);
   };
 
@@ -309,23 +308,11 @@ function MessagesPage() {
       });
   };
 
-  const setLoadingTrue = () => {
-    setIsLoading(true);
-    setContent("");
-  };
-
-  const setLoadingFalse = () => {
-    setIsLoading(false);
-  };
-
   const getCreatedRoomDate = (chatFirstMessageTimeStamp) => {
-    const timestamp = new Date(chatFirstMessageTimeStamp);
+    const date = new Date(Number(chatFirstMessageTimeStamp));
 
-    // Tarih bilgisini belirli bir formatta gösterme
     const options = { month: "short", day: "numeric" };
-    const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
-      timestamp
-    );
+    const formattedDate = date.toLocaleDateString("en-US", options);
 
     return formattedDate;
   };
@@ -655,8 +642,8 @@ function MessagesPage() {
                                 isHovered !== index &&
                                 !showMessageDeletePopover
                               ) {
-                                redirectToChatDetailPage(eachMessageRoom._id);
-                                handleReadMessage(eachMessageRoom._id);
+                                redirectToChatDetailPage(eachMessageRoom.room);
+                                handleReadMessage(eachMessageRoom.room);
                               }
                             }}
                           >
@@ -800,12 +787,9 @@ function MessagesPage() {
                                         >
                                           {" "}
                                           ·{" "}
-                                          {eachMessageRoom.chat[0]
-                                            ? getCreatedRoomDate(
-                                                eachMessageRoom.chat[0]
-                                                  .messages[0].timestamp
-                                              )
-                                            : ""}
+                                          {getCreatedRoomDate(
+                                            eachMessageRoom?.timestamp
+                                          )}
                                         </span>
                                         <div
                                           style={{
@@ -815,7 +799,7 @@ function MessagesPage() {
                                             maxWidth:
                                               eachMessageRoom.chat[
                                                 eachMessageRoom.chat.length - 1
-                                              ].messages[0].text.length > 50
+                                              ].text.length > 50
                                                 ? "450px"
                                                 : null,
                                           }}
@@ -833,7 +817,7 @@ function MessagesPage() {
                                             {
                                               eachMessageRoom.chat[
                                                 eachMessageRoom.chat.length - 1
-                                              ].messages[0].text
+                                              ].text
                                             }
                                           </span>
                                         </div>

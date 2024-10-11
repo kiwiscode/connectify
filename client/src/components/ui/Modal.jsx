@@ -4,8 +4,8 @@ import { Button, Modal, Container, Row, Col, Stack } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 {
 }
-import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "../../index.css";
 
 import dataEmojiMartPicker from "@emoji-mart/data";
@@ -26,13 +26,11 @@ import { ThemeContext } from "../../context/ThemeContext";
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
-import io from "socket.io-client";
 import PopupState, { bindPopover, bindTrigger } from "material-ui-popup-state";
 import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
 import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
 import { SubcsriptionStatusContext } from "../../context/SubscriptionStatusContext";
 import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
-const socket = io.connect(`${API_URL}`);
 function SigninModal({ deactivatedScreen, widthSmaller700 }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
 
@@ -5166,15 +5164,6 @@ function CommentModal({
     return `${months[getMonth]} ${createdAt.getDate()}`;
   };
 
-  const handleNotification = (post, userInfo, type) => {
-    socket.emit("sendNotification", {
-      senderName: userInfo.username,
-      receiverName: post.userId.username,
-      type: type,
-      contactHasBeenMade: post,
-      senderInfo: userInfo,
-    });
-  };
   const [
     postSharingStartedActivateAnimate,
     setPostSharingStartedActivateAnimate,
@@ -5213,7 +5202,6 @@ function CommentModal({
           if (refreshPosts) {
             refreshPosts();
           }
-          handleNotification(post, userInfo, "comment");
           setModalImage("");
           setContent("");
           handleClose();

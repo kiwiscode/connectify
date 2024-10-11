@@ -315,6 +315,8 @@ function PostDetailPageWithPicture() {
 
   const [hideDetails, setHideDetails] = useState(false);
 
+  const detailedImgRef = useRef(null);
+
   return (
     <>
       {contextHolder}
@@ -333,7 +335,7 @@ function PostDetailPageWithPicture() {
               width <= 768 || hideDetails
                 ? "span 12"
                 : (width <= 910) & (width > 768)
-                ? "span 6"
+                ? "span 7"
                 : "span 9",
             position: "relative",
             backgroundColor: "rgba(0, 0, 0, 0.9)",
@@ -486,6 +488,9 @@ function PostDetailPageWithPicture() {
           </div>
 
           <div
+            onClick={() => {
+              navigate(-1);
+            }}
             style={{
               display: "flex",
               justifyContent: "center",
@@ -493,9 +498,16 @@ function PostDetailPageWithPicture() {
               width: "100%",
               height: "90vh",
               overflow: "hidden",
+              margin: "0 auto",
             }}
           >
-            <div>
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+              style={{}}
+              ref={detailedImgRef}
+            >
               <img
                 src={detailedPost?.image?.url}
                 alt="Description"
@@ -509,108 +521,121 @@ function PostDetailPageWithPicture() {
           </div>
 
           <div
+            onClick={() => {
+              navigate(-1);
+            }}
             style={{
-              display: "flex",
               color: "white",
               width: "100%",
+              display: "flex",
               justifyContent: "center",
-              alignItems: "center",
+              position: "absolute",
+              bottom: 0,
             }}
           >
             <div
-              style={{
-                width: "100px",
+              onClick={(e) => {
+                e.stopPropagation();
               }}
-              className="p-2"
-            >
-              <CommentModal
-                refreshPosts={refreshPostDetailPage}
-                post={detailedPost}
-                width={`${1.25}em`}
-                height={`${1.25}em`}
-                sendDataToParent={handleDataFromCommentModal}
-                postSharedMessage={postSharedMessage}
-                photoDetailedPost={true}
-              />
-            </div>
-            <div
-              style={{
-                width: "100px",
-              }}
-              className="p-2"
-            >
-              <RepostAction
-                refreshPosts={refreshPostDetailPage}
-                post={detailedPost}
-                photoDetailedPost={true}
-              />
-            </div>
-            <div
-              style={{
-                width: "100px",
-              }}
-              className="p-2"
-            >
-              <LikeAction
-                refreshPosts={refreshPostDetailPage}
-                post={detailedPost}
-                photoDetailedPost={true}
-              />
-            </div>
-            <div
               style={{
                 display: "flex",
-                alignItems: "center",
+                width: width <= 910 && width > 768 && "100%",
                 justifyContent: "center",
-                width: "100px",
               }}
-              //   className="p-2"
             >
-              <div>
+              <div
+                style={{
+                  width: "100px",
+                }}
+                className="p-2"
+              >
+                <CommentModal
+                  refreshPosts={refreshPostDetailPage}
+                  post={detailedPost}
+                  width={`${1.25}em`}
+                  height={`${1.25}em`}
+                  sendDataToParent={handleDataFromCommentModal}
+                  postSharedMessage={postSharedMessage}
+                  photoDetailedPost={true}
+                />
+              </div>
+              <div
+                style={{
+                  width: "100px",
+                }}
+                className="p-2"
+              >
+                <RepostAction
+                  refreshPosts={refreshPostDetailPage}
+                  post={detailedPost}
+                  photoDetailedPost={true}
+                />
+              </div>
+              <div
+                style={{
+                  width: "100px",
+                }}
+                className="p-2"
+              >
+                <LikeAction
+                  refreshPosts={refreshPostDetailPage}
+                  post={detailedPost}
+                  photoDetailedPost={true}
+                />
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100px",
+                }}
+              >
+                <div>
+                  <svg
+                    width={`${1.5}em`}
+                    height={`${1.5}em`}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    fill="white"
+                  >
+                    <g>
+                      <path d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"></path>
+                    </g>
+                  </svg>
+                </div>
+                <div
+                  style={{
+                    fontSize: font13.fontSize,
+                    lineHeight: font13.lineHeight,
+                    marginLeft: "3px",
+                    position: "relative",
+                    bottom: -4,
+                  }}
+                >
+                  6
+                </div>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100px",
+                }}
+              >
                 <svg
+                  fill="white"
                   width={`${1.5}em`}
                   height={`${1.5}em`}
                   viewBox="0 0 24 24"
                   aria-hidden="true"
-                  fill="white"
                 >
                   <g>
-                    <path d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"></path>
+                    <path d="M12 2.59l5.7 5.7-1.41 1.42L13 6.41V16h-2V6.41l-3.3 3.3-1.41-1.42L12 2.59zM21 15l-.02 3.51c0 1.38-1.12 2.49-2.5 2.49H5.5C4.11 21 3 19.88 3 18.5V15h2v3.5c0 .28.22.5.5.5h12.98c.28 0 .5-.22.5-.5L19 15h2z"></path>
                   </g>
                 </svg>
               </div>
-              <div
-                style={{
-                  fontSize: font13.fontSize,
-                  lineHeight: font13.lineHeight,
-                  marginLeft: "3px",
-                  position: "relative",
-                  bottom: -4,
-                }}
-              >
-                6
-              </div>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "100px",
-              }}
-              className="p-2"
-            >
-              <svg
-                fill="white"
-                width={`${1.5}em`}
-                height={`${1.5}em`}
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <g>
-                  <path d="M12 2.59l5.7 5.7-1.41 1.42L13 6.41V16h-2V6.41l-3.3 3.3-1.41-1.42L12 2.59zM21 15l-.02 3.51c0 1.38-1.12 2.49-2.5 2.49H5.5C4.11 21 3 19.88 3 18.5V15h2v3.5c0 .28.22.5.5.5h12.98c.28 0 .5-.22.5-.5L19 15h2z"></path>
-                </g>
-              </svg>
             </div>
           </div>
         </div>
@@ -629,7 +654,7 @@ function PostDetailPageWithPicture() {
                   ? "1px solid rgba(0, 0, 0, 0.1)"
                   : // : "0.1px solid rgb(70, 70, 70)",
                     "1px solid rgb(70, 70, 70)",
-              gridColumn: width <= 910 ? "span 6" : "span 3",
+              gridColumn: width <= 910 ? "span 5" : "span 3",
               transition: "all 0.15s",
             }}
           >

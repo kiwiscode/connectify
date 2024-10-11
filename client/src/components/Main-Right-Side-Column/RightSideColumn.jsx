@@ -34,7 +34,6 @@ import UnfollowModal from "../unfollow-modal/UnfollowModal";
 const API_URL = import.meta.env.VITE_APP_API_URL;
 const TWILIO_NUMBER = import.meta.env.VITE_APP_TWILIO_ACCOUNT_NUMBER;
 
-import io from "socket.io-client";
 import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
 import RepostAction from "../ui/RepostAction";
 import LikeAction from "../ui/LikeAction";
@@ -43,7 +42,6 @@ import PostPopover from "../three-dots-popover/Popover";
 import BookmarkAction from "../ui/BookmarkAction";
 import { SubcsriptionStatusContext } from "../../context/SubscriptionStatusContext";
 import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
-const socket = io.connect(`${API_URL}`);
 
 function RightSideColumn({
   premium_sign_up_page_active,
@@ -130,18 +128,6 @@ function RightSideColumn({
   const [{ theme, themeName }, toggleThemeBetweenLightDarkMode] =
     useContext(ThemeContext);
   const [hoveredThemeName, setHoveredThemeName] = useState(null);
-
-  const handleFollowingNotification = (selectedUser, userInfo, type) => {
-    console.log("Sending notification to => ", selectedUser.username);
-
-    socket.emit("sendNotification", {
-      senderName: userInfo.username,
-      receiverName: selectedUser.username,
-      type: type,
-      contactHasBeenMade: userInfo,
-      senderInfo: userInfo,
-    });
-  };
 
   const [onFocus, setOnFocus] = useState(false);
   const [user, setUser] = useState([]);
@@ -310,7 +296,6 @@ function RightSideColumn({
         }
       )
       .then(() => {
-        handleFollowingNotification(selectedUser, userInfo, "followed");
         refreshActiveUser();
       })
       .catch((error) => {

@@ -58,7 +58,7 @@
     "react-toastify": "^10.0.4",
     "react-transition-group": "^4.4.5",
     "slick-carousel": "^1.8.1",
-    "socket.io-client": "^4.7.2",
+    "socket.io-client": "^4.8.0",
     "twitter-api-v2": "^1.16.4"
   },
   "devDependencies": {
@@ -68,7 +68,7 @@
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",
     "autoprefixer": "^10.4.18",
-    "eslint": "^9.2.0",
+    "eslint": "^9.11.1",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",

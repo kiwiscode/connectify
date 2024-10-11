@@ -7,6 +7,7 @@ import axios from "axios";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import "react-toastify/dist/ReactToastify.css";
+import defaultProfileImage from "../assets/default_profile_400x400.png";
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
@@ -369,6 +370,10 @@ function MainPage({ isNewPostShared }) {
           },
         });
 
+        setTimeout(() => {
+          setprofileImage(" ");
+          setcompletedProfileImage(false);
+        }, 500);
         setprofileImageChangingLoadingBar(false);
       })
       .catch((error) => {
@@ -464,6 +469,7 @@ function MainPage({ isNewPostShared }) {
         setTabLoading(true);
         setLoading(true);
         setTimeout(() => {
+          setLoading(false);
           setTabLoading(false);
           setshowPickProfilePictureModal(false);
           setshowWhatShouldWeCallYouModal(false);
@@ -478,9 +484,6 @@ function MainPage({ isNewPostShared }) {
             },
           });
         }, 350);
-        setTimeout(() => {
-          window.location.reload();
-        }, 300);
       })
       .catch((error) => {
         console.log("Error =>", error);
@@ -1023,6 +1026,8 @@ function MainPage({ isNewPostShared }) {
                               style={{
                                 cursor: "pointer",
                                 borderRadius: "50%",
+                                width: "133px",
+                                height: "133px",
                               }}
                               src={userInfo.imageUrl}
                               alt=""
@@ -1079,7 +1084,7 @@ function MainPage({ isNewPostShared }) {
                               style={{ cursor: "pointer", borderRadius: "50%" }}
                               width="133"
                               height="133"
-                              src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                              src={defaultProfileImage}
                               alt=""
                             />
 
@@ -1384,6 +1389,8 @@ function MainPage({ isNewPostShared }) {
                                 style={{
                                   cursor: "pointer",
                                   borderRadius: "50%",
+                                  width: "133px",
+                                  height: "133px",
                                 }}
                                 src={userInfo.imageUrl}
                                 alt=""
@@ -1443,7 +1450,7 @@ function MainPage({ isNewPostShared }) {
                                 }}
                                 width="133"
                                 height="133"
-                                src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                                src={defaultProfileImage}
                                 alt=""
                               />
 
@@ -1992,7 +1999,7 @@ function MainPage({ isNewPostShared }) {
                         style={{ borderRadius: "50%" }}
                         width="40"
                         height="40"
-                        src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                        src={defaultProfileImage}
                         alt=""
                       />
                     </div>
@@ -2540,7 +2547,7 @@ function MainPage({ isNewPostShared }) {
                                         style={{ borderRadius: "50%" }}
                                         width="40"
                                         height="40"
-                                        src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                                        src={defaultProfileImage}
                                         alt=""
                                       />
                                     </Link>
@@ -3242,7 +3249,7 @@ function MainPage({ isNewPostShared }) {
                                       style={{ borderRadius: "50%" }}
                                       width={40}
                                       height={40}
-                                      src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                                      src={defaultProfileImage}
                                       alt=""
                                     />
                                   </Link>

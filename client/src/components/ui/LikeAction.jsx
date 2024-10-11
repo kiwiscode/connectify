@@ -4,11 +4,9 @@ import axios from "axios";
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
-import io from "socket.io-client";
 import { ThemeContext } from "../../context/ThemeContext";
 import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
 import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
-const socket = io.connect(`${API_URL}`);
 
 const LikeAction = ({
   post,
@@ -29,18 +27,6 @@ const LikeAction = ({
   const { getFontSizeAndLineHeight13 } = useFontSizeHandler();
   const font13 = getFontSizeAndLineHeight13();
   const { userInfo, getToken } = useContext(UserContext);
-
-  const handleNotification = (post, userInfo, type) => {
-    console.log("Post =>", post);
-    socket.emit("sendNotification", {
-      senderName: userInfo.username,
-      receiverName: post.userId.username,
-      type: type,
-      contactHasBeenMade: post,
-      senderInfo: userInfo,
-    });
-  };
-
   const getLikerIds = (array) => {
     return array?.likes?.map((eachLiker) => {
       return eachLiker._id;
@@ -57,7 +43,8 @@ const LikeAction = ({
       setShouldAnimate(false);
     }
   }, []);
-  const handlePostLike = (postId, findedPost) => {
+
+  const handlePostLike = (postId, postOwnerId) => {
     console.log("Post id =>", postId);
     setShouldAnimate(!shouldAnimate);
     axios
@@ -71,7 +58,6 @@ const LikeAction = ({
         }
       )
       .then(() => {
-        handleNotification(findedPost, userInfo, "liked");
         if (setLoadingTrue) {
           setLoadingTrue();
         }
@@ -212,7 +198,9 @@ const LikeAction = ({
             }
           >
             <span
-              onClick={() => handlePostLike(post.postId || post._id, post)}
+              onClick={() =>
+                handlePostLike(post.postId || post._id, post.userId._id)
+              }
               style={{
                 cursor: "pointer",
                 minWidth: photoDetailedPost ? "40px" : "34px",

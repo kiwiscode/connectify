@@ -8,10 +8,10 @@ import { NavigationHistoryProvider } from "./context/NavigationHistoryContext.js
 import { FontSizeProvider } from "./context/FontSizeContext.jsx";
 import { ColorContextProvider } from "./context/ColorContext.jsx";
 import { UserProvider } from "./context/UserContext.jsx";
-
+import "./index.css";
+import "react-toastify/dist/ReactToastify.css";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  // <React.StrictMode>
   <BrowserRouter>
     <UserProvider>
       <NavigationHistoryProvider>
@@ -27,5 +27,4 @@ root.render(
       </NavigationHistoryProvider>
     </UserProvider>
   </BrowserRouter>
-  // </React.StrictMode>
 );

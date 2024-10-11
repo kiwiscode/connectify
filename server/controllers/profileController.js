@@ -56,6 +56,8 @@ const handleProfile = (req, res) => {
 const handleShowSpesificProfile = (req, res) => {
   const profileId = req.params.id;
 
+  console.log("profile id:", profileId);
+
   User.findById(profileId)
     // start to check
     .populate({

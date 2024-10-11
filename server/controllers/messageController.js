@@ -1,12 +1,9 @@
+const Chat = require("../models/Chat.model");
 const User = require("../models/User.model");
 
 const handleDeleteMessage = (req, res) => {
   const { receivedMessageRoom } = req.body;
   const { userId } = req.user;
-
-  console.log("req.body =>", req.body);
-
-  console.log(`User id ${userId} waiting for response ...`);
 
   User.findById(userId)
     .populate("messages")
@@ -36,16 +33,7 @@ const handleDeleteMessage = (req, res) => {
 
       //   userMessages.splice(findIndexOfFindedMessageRoom, 1);
 
-      console.log(
-        "Old message room chat =>",
-        userMessages[findIndexOfFindedMessageRoom].chat
-      );
       userMessages[findIndexOfFindedMessageRoom].chat = [];
-
-      console.log(
-        "Current message room chat =>",
-        userMessages[findIndexOfFindedMessageRoom].chat
-      );
 
       user.messages[findIndexOfFindedMessageRoom].chat = [];
 
@@ -68,94 +56,199 @@ const handleDeleteMessage = (req, res) => {
     });
 };
 
-const handleMarkAsReadMessage = (req, res) => {
-  const { messageRoomId } = req.body;
-  const { userId } = req.user;
+const handleMarkAsReadMessage = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { messageRoomId } = req.body;
+    const [userId1, userId2] = messageRoomId.split("-");
 
-  console.log("Message room id =>", messageRoomId);
+    const userIdToSearch = userId === userId1 ? userId1 : userId2;
 
-  User.findById(userId)
-    .then((findedUser) => {
-      const findedRoom = findedUser.messages.find((eachMessageRoom) => {
-        return eachMessageRoom._id.toString() === messageRoomId;
-      });
+    const user = await User.findById(userIdToSearch);
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
 
-      const roomIndex = findedUser.messages.indexOf(findedRoom);
+    const message = user.messages.find((msg) => msg.room === messageRoomId);
+    if (!message) {
+      return res.status(404).send("Message not found in user's messages");
+    }
 
-      const updateQuery = {
-        $set: {
-          [`messages.${roomIndex}.readed`]: true,
-        },
-      };
+    message.readed = true;
 
-      User.updateOne({ _id: userId }, updateQuery)
-        .then(() => {
-          res.status(200).json({ message: "Messages readed" });
-        })
-        .catch((error) => {
-          console.error("Error occurred:", error);
-          res.status(500).json({ error: "An error occurred" });
-        });
-    })
-    .catch((error) => {
-      console.error("Error occurred:", error);
-      res.status(500).json({ error: "An error occurred" });
-    });
+    await user.save();
+
+    res.status(200).send("Message marked as read");
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Server Error");
+  }
 };
 
-const handleMarkAsUnReadMessage = (req, res) => {
-  const { messageRoom } = req.body;
-  const { userId } = req.user;
+const handleCreateChatRoom = async (req, res) => {
+  const { roomId } = req.body;
+  const [userId1, userId2] = roomId.split("-");
 
-  User.find({ "messages.room": messageRoom })
-    .then((users) => {
-      if (!users.length) {
-        console.log("User not found.");
-        return res.status(404).json({ error: "User not found." });
-      }
+  const roomIdArray = [userId1, userId2];
 
-      const findedSender = users.find((eachUser) => {
-        return eachUser._id.toString() === userId;
-      });
-      const findedReceiver = users.find((eachUser) => {
-        return eachUser._id.toString() !== userId;
-      });
+  try {
+    const user1 = await User.findById(userId1);
+    const user2 = await User.findById(userId2);
 
-      const senderRoom = findedSender.messages.find(
-        (message) => message.room === messageRoom
-      );
-      const receiverRoom = findedReceiver.messages.find(
-        (message) => message.room === messageRoom
-      );
+    if (!user1 || !user2) {
+      return res.status(404).send("One or both users not found");
+    }
 
-      senderRoom.readed = true;
-      receiverRoom.readed = false;
+    const user1RoomExists = user1.messages.some(
+      (message) =>
+        message.room === roomIdArray.join("-") ||
+        roomIdArray.reverse().join("-")
+    );
+    const user2RoomExists = user2.messages.some(
+      (message) =>
+        message.room === roomIdArray.join("-") ||
+        roomIdArray.reverse().join("-")
+    );
 
-      const senderUpdatePromise = User.updateOne(
-        { _id: findedSender._id, "messages.room": messageRoom },
-        { $set: { "messages.$.readed": true } }
-      );
+    if (user1RoomExists || user2RoomExists) {
+      return res.status(400).send("Chat room already exists");
+    }
 
-      const receiverUpdatePromise = User.updateOne(
-        { _id: findedReceiver._id, "messages.room": messageRoom },
-        { $set: { "messages.$.readed": false } }
-      );
-
-      return Promise.all([senderUpdatePromise, receiverUpdatePromise]);
-    })
-    .then(() => {
-      res
-        .status(200)
-        .json({ success: true, message: "Messages marked as unread." });
-    })
-    .catch((err) => {
-      console.error("Error marking messages as unread:", err);
-      res.status(500).json({ error: "Internal server error" });
+    // Oda yoksa, her iki kullanıcının messages dizisine ekle
+    user1.messages.push({
+      room: roomId,
+      members: [user1._id, user2._id],
+      readed: false,
+      deactivatedMember: false,
     });
+
+    user2.messages.push({
+      room: roomId,
+      members: [user1._id, user2._id],
+      readed: false,
+      deactivatedMember: false,
+    });
+
+    // Değişiklikleri kaydet
+    await user1.save();
+    await user2.save();
+
+    // Başarılı yanıt döndür
+    res.status(201).json(`Chat room created: ${roomId}`);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Server Error");
+  }
+};
+
+const handleAddMessageToRoom = async (req, res) => {
+  try {
+    const { messageData } = req.body;
+    const { chatRoomId } = req.params;
+    const [userId1, userId2] = chatRoomId.split("-");
+    const roomIdArray = [userId1, userId2];
+
+    const user1 = await User.findById(userId1);
+    const user2 = await User.findById(userId2);
+
+    if (!user1 || !user2) {
+      return res.status(404).send("One or both users not found.");
+    }
+
+    const chatRoomIndexForUser1 = user1.messages.findIndex(
+      (room) =>
+        room.room === roomIdArray.join("-") || roomIdArray.reverse().join("-")
+    );
+    const chatRoomIndexForUser2 = user2.messages.findIndex(
+      (room) =>
+        room.room === roomIdArray.join("-") || roomIdArray.reverse().join("-")
+    );
+
+    if (chatRoomIndexForUser1 === -1 || chatRoomIndexForUser2 === -1) {
+      return res.status(404).send("Chat room not found for one or both users.");
+    }
+
+    await Chat.create({
+      messages: [
+        {
+          sender: messageData.sender,
+          text: messageData.text,
+          timestamp: messageData.time,
+        },
+      ],
+      membersOfChat: [userId1, userId2],
+    });
+
+    user1.messages[chatRoomIndexForUser1].chat.push({
+      sender: messageData.sender,
+      text: messageData.text,
+      timestamp: messageData.time,
+    });
+
+    user2.messages[chatRoomIndexForUser2].chat.push({
+      sender: messageData.sender,
+      text: messageData.text,
+      timestamp: messageData.time,
+    });
+
+    await user1.save();
+    await user2.save();
+
+    res.status(200).json({ chats: user1.messages[chatRoomIndexForUser1].chat });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Server Error");
+  }
+};
+
+const handleGetChat = async (req, res) => {
+  const { chatRoomId } = req.params;
+  const [userId1, userId2] = chatRoomId.split("-");
+
+  const roomIdArray = [userId1, userId2];
+
+  try {
+    const user1 = await User.findById(userId1);
+    const user2 = await User.findById(userId2);
+
+    if (!user1 || !user2) {
+      return res.status(404).send("One or both users not found");
+    }
+
+    const user1RoomExists = user1.messages.some(
+      (message) =>
+        message.room === roomIdArray.join("-") ||
+        roomIdArray.reverse().join("-")
+    );
+    const user2RoomExists = user2.messages.some(
+      (message) =>
+        message.room === roomIdArray.join("-") ||
+        roomIdArray.reverse().join("-")
+    );
+
+    if (!user1RoomExists || !user2RoomExists) {
+      return res.status(404).send("One or both users does not have this room");
+    }
+
+    // Kullanıcının messages'ını filtrele ve odayı bul
+    const user1Messages = user1.messages.filter(
+      (message) =>
+        message.room === roomIdArray.join("-") ||
+        message.room === roomIdArray.reverse().join("-")
+    )[0];
+
+    // Odaya ait mesajları JSON olarak döndür
+    res.status(200).json({ chatRoomId, messages: user1Messages });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Server Error");
+  }
 };
 
 module.exports = {
   handleDeleteMessage,
   handleMarkAsReadMessage,
-  handleMarkAsUnReadMessage,
+  handleCreateChatRoom,
+  handleAddMessageToRoom,
+  handleGetChat,
 };

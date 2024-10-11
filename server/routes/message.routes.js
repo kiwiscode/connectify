@@ -16,9 +16,21 @@ router.post(
 );
 
 router.post(
-  "/mark-as-un-read-message",
+  "/chatrooms/create",
   authenticateToken,
-  messageController.handleMarkAsUnReadMessage
+  messageController.handleCreateChatRoom
+);
+
+router.post(
+  "/messages/:chatRoomId",
+  authenticateToken,
+  messageController.handleAddMessageToRoom
+);
+
+router.get(
+  "/messages/:chatRoomId",
+  authenticateToken,
+  messageController.handleGetChat
 );
 
 router.get("/all-users", authenticateToken, (req, res) => {
@@ -46,12 +58,12 @@ router.get("/all-messages", authenticateToken, (req, res) => {
     .populate({
       path: "messages",
       populate: {
-        path: "chat",
-        model: "Chat",
+        path: "chat.sender",
+        model: "User",
       },
     })
     .then((user) => {
-      res.status(200).json(user);
+      res.status(200).json({ messages: user.messages });
     })
     .catch((error) => {
       console.log("Error =>", error);

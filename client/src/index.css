@@ -698,6 +698,15 @@ body {
   word-wrap: break-word;
 }
 
+.kiwisc0de-- {
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.kiwisc0de--:hover {
+  color: #1c9bef !important;
+}
+
 .footer-container-dark-theme a > span {
   color: #71767a;
 }
@@ -4557,4 +4566,83 @@ themeName === "dark-theme"
 
 .nested-child-back-drop {
   z-index: 9999;
+}
+
+/* custom notification component style */
+.custom-notification-box-wrapper {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  max-width: 400px;
+  min-width: 250px;
+  width: 30vw;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, color 0.3s ease, opacity 0.3s ease;
+  z-index: 1000;
+  word-wrap: break-word;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Light theme */
+.custom-notification-box-wrapper.light,
+.close-notifications.light-theme {
+  background-color: #f9f9f9;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.custom-notification-box-wrapper.light:hover,
+.close-notifications.light-theme:hover {
+  background-color: #f1f1f1;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Dark theme */
+.custom-notification-box-wrapper.dark,
+.close-notifications.dark-theme {
+  background-color: #2b2b2b;
+  color: #f9f9f9;
+  border: 1px solid #444;
+}
+
+.custom-notification-box-wrapper.dark:hover,
+.close-notifications.dark-theme:hover {
+  background-color: #383838;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive breakpoints */
+@media (max-width: 768px) {
+  .custom-notification-box-wrapper {
+    width: 60vw; /* Orta boy ekranlar için %60 genişlik */
+    max-width: 300px; /* Maksimum genişlik ayarlaması */
+  }
+}
+
+@media (max-width: 480px) {
+  .custom-notification-box-wrapper {
+    width: 80vw; /* Küçük ekranlar için %80 genişlik */
+    max-width: none; /* Maksimum genişlik sınırlamasını kaldır */
+  }
+}
+
+/* Animation for smooth appearance */
+.custom-notification-box-wrapper {
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

@@ -1,8 +1,6 @@
 import axios from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Button, Col, Modal, Popover, OverlayTrigger } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "../index.css";
 import { Divider } from "antd";
 import LogInPage from "./LogInPage";
 

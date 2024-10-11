@@ -85,7 +85,6 @@ const userSchema = new Schema(
     messages: [
       {
         room: String,
-        chat: [{ type: Schema.Types.ObjectId, ref: "Chat" }],
         members: [{ type: Schema.Types.ObjectId, ref: "User" }],
         readed: {
           type: Boolean,
@@ -95,6 +94,14 @@ const userSchema = new Schema(
           type: Boolean,
           default: false,
         },
+        chat: [
+          {
+            sender: { type: Schema.Types.ObjectId, ref: "User" },
+            text: { type: String },
+            timestamp: { type: String, default: Date.now },
+          },
+        ],
+        timestamp: { type: String, default: Date.now },
       },
     ],
     isDeactivated: {
@@ -104,6 +111,15 @@ const userSchema = new Schema(
     deactivatedDate: {
       type: Date,
       default: null,
+    },
+    notificationsEnabled: {
+      type: String,
+      enum: [
+        "Following each other",
+        "Only Following",
+        "Only Follower",
+        "No follow scenario",
+      ],
     },
     notifications: [notificationSchema],
     isPhoneVerified: {

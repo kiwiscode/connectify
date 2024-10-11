@@ -15,198 +15,90 @@ function IndexFooter() {
           width: "100%",
           minHeight: "72px",
           padding: "12px 16px",
+          fontSize: font13.fontSize,
         }}
         className={`footer-container chirp-regular-font mt-3 footer-container-${themeName}`}
       >
         <a href="">
-          <span
-            style={{
-              fontSize: font13.fontSize,
-            }}
-          >
-            About
-          </span>
+          <span>About</span>
         </a>
         <a href="">
-          <span
-            style={{
-              fontSize: font13.fontSize,
-            }}
-          >
-            Download the C app
-          </span>
+          <span>Download the C app</span>
         </a>
         <a href="">
-          <span
-            style={{
-              fontSize: font13.fontSize,
-            }}
-          >
-            Help Center
-          </span>
+          <span>Help Center</span>
         </a>
         <a href="">
-          <span
-            style={{
-              fontSize: font13.fontSize,
-            }}
-          >
-            Terms of Service
-          </span>
+          <span>Terms of Service</span>
         </a>
         <a href="">
-          <span
-            style={{
-              fontSize: font13.fontSize,
-            }}
-          >
-            Privacy Policy
-          </span>
+          <span>Privacy Policy</span>
         </a>
         <a href="">
-          <span
-            style={{
-              fontSize: font13.fontSize,
-            }}
-          >
-            Cookie Policy
-          </span>
+          <span>Cookie Policy</span>
         </a>
         <a href="">
-          <span
-            style={{
-              fontSize: font13.fontSize,
-            }}
-          >
-            MStV Transparenzangaben
-          </span>
+          <span>MStV Transparenzangaben</span>
         </a>
         <a href="">
-          <span
-            style={{
-              fontSize: font13.fontSize,
-            }}
-          >
-            Imprint
-          </span>
+          <span>Imprint</span>
         </a>
         <a href="">
-          <span
-            style={{
-              fontSize: font13.fontSize,
-            }}
-          >
-            Accessibility
-          </span>
+          <span>Accessibility</span>
         </a>
         <a href="">
-          <span
-            style={{
-              fontSize: font13.fontSize,
-            }}
-          >
-            Ads info
-          </span>
+          <span>Ads info</span>
         </a>
         <a href="">
-          <span
-            style={{
-              fontSize: font13.fontSize,
-            }}
-          >
-            Blog
-          </span>
+          <span>Blog</span>
         </a>
         <a href="">
-          <span
-            style={{
-              fontSize: font13.fontSize,
-            }}
-          >
-            Status
-          </span>
+          <span>Status</span>
         </a>
         <a href="">
-          <span
-            style={{
-              fontSize: font13.fontSize,
-            }}
-          >
-            Careers
-          </span>
+          <span>Careers</span>
         </a>{" "}
         <a href="">
-          <span
-            style={{
-              fontSize: font13.fontSize,
-            }}
-          >
-            Brand Resources
-          </span>
+          <span>Brand Resources</span>
         </a>
         <a href="">
-          <span
-            style={{
-              fontSize: font13.fontSize,
-            }}
-          >
-            Advertising
-          </span>
+          <span>Advertising</span>
         </a>
         <div></div>
         <a href="">
-          <span
-            style={{
-              fontSize: font13.fontSize,
-            }}
-          >
-            Marketing
-          </span>
+          <span>Marketing</span>
         </a>
         <a href="">
-          <span
-            style={{
-              fontSize: font13.fontSize,
-            }}
-          >
-            C for Business
-          </span>
+          <span>C for Business</span>
         </a>
         <a href="https://www.linkedin.com/in/kavaykut/">
-          <span
-            style={{
-              fontSize: font13.fontSize,
-            }}
-          >
-            Developers
-          </span>
+          <span>Developers</span>
         </a>
         <a href="">
-          <span
-            style={{
-              fontSize: font13.fontSize,
-            }}
-          >
-            Directory
-          </span>
+          <span>Directory</span>
         </a>
         <a href="">
-          <span
-            style={{
-              fontSize: font13.fontSize,
-            }}
-          >
-            Settings
-          </span>
+          <span>Settings</span>
         </a>
-        <a href="https://github.com/kiwiscode">
-          <span
-            style={{
-              fontSize: font13.fontSize,
-            }}
-          >
-            © 2024 C kiwiscode
-          </span>
+        <span
+          style={{
+            color: "rgb(83, 100, 113)",
+          }}
+        >
+          © 2024 C
+        </span>{" "}
+        <a
+          style={{
+            textDecoration: "none",
+            color: "inherit",
+            color: "rgb(83, 100, 113)",
+          }}
+          rel="noreferrer"
+          className="kiwisc0de--"
+          target="_blank"
+          href="https://www.aykutkav.com"
+        >
+          kiwisc0de
         </a>
       </div>
     </>

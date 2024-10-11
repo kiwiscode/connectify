@@ -3,10 +3,8 @@ import { UserContext } from "../../context/UserContext";
 import { Button, Modal, Stack } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-import "bootstrap/dist/css/bootstrap.min.css";
 // import Picker from "emoji-picker-react";
 import axios from "axios";
-import "../../index.css";
 
 import Popover from "@mui/material/Popover";
 import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
@@ -18,11 +16,9 @@ import { TextField } from "@mui/material";
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
-import io from "socket.io-client";
 import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
 import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
 
-const socket = io.connect(API_URL);
 function LogoutModal({
   isResponsiveNavigationBarTop,
   isMobileNavigationBarTop,
@@ -398,17 +394,6 @@ function LogoutModal({
       ),
     },
   ];
-  const [current, setCurrent] = useState(0);
-  const next = () => {
-    setCurrent(current + 1);
-  };
-  const prev = () => {
-    setCurrent(current - 1);
-  };
-  const items = steps.map((item) => ({
-    key: item.title,
-    title: item.title,
-  }));
 
   const [showDetailAccountInfo, setShowDetailAccountInfo] = useState(false);
   const [showDetailChangePasswordInfo, setShowDetailChangePasswordInfo] =
@@ -445,7 +430,6 @@ function LogoutModal({
   const [showLogoutSpinner, setshowLogoutSpinner] = useState(false);
   const handleLogout = () => {
     setshowLogoutSpinner(true);
-    socket.emit("logout", localStorage.getItem("socketId"));
 
     axios
       .post(`${API_URL}/auth/logout`, null, {
@@ -1103,7 +1087,6 @@ function LogoutModal({
               accounts, you can do that by adding an existing account.
             </div>
             <Button
-              // className="login-button mt-4 next-btn"
               className={`login-button mt-4 next-btn ${themeName}-white-btn chirp-bold-font`}
               variant="dark"
               style={{

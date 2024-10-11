@@ -1,29 +1,25 @@
 import { useContext, useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { UserContext } from "../../context/UserContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Stack } from "react-bootstrap";
 import { ThemeContext } from "../../context/ThemeContext";
 import useWindowDimensions from "../../hooks/getWindowDimensions";
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
-import io from "socket.io-client";
 import axios from "axios";
 import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
-const socket = io.connect(API_URL);
 
 function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
   const [show, setShow] = useState(false);
   const [show2, setShow2] = useState(false);
-  const [room, setRoom] = useState("");
 
   const [searchString, setSearchString] = useState("");
   const [searchString2, setSearchString2] = useState("");
   const { userInfo, getToken } = useContext(UserContext);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [activeUsers, setActiveUsers] = useState([]);
-  const [messageRoomId, setmessageRoomId] = useState("");
 
   useEffect(() => {
     axios
@@ -63,40 +59,6 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
   };
   console.log("Search string =>", searchString);
   console.log("Search string 2 =>", searchString2);
-  useEffect(() => {
-    const handleGetMessageRoomId = (roomId) => {
-      setmessageRoomId(roomId);
-    };
-
-    socket.on("getmessageRoomId", handleGetMessageRoomId);
-
-    socket.emit("get_specific_user", userInfo);
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
-
-  const selectedUser = (user) => {
-    console.log("Profile info =>", user);
-    const room = [userInfo.username, user.username].sort().join("_");
-
-    setRoom(room);
-    // Emit an event to join the room with the selected user
-    socket.emit("join_user_room", { activeUser: userInfo, selectedUser: user });
-  };
-
-  // problem buradan kaynaklanıyor olabilir start to check
-  // messageRoomId state'i değiştiğinde yönlendirme yap
-  useEffect(() => {
-    console.log("Message room id =>", messageRoomId);
-    if (messageRoomId) {
-      window.location.href = `http://localhost:5173/messages/${messageRoomId}`;
-    }
-  }, [messageRoomId]);
-  // problem buradan kaynaklanıyor olabilir finish to check
 
   const [{ theme, themeName }] = useContext(ThemeContext);
 
@@ -142,7 +104,7 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
   console.log("Filtered users =>", filteredUsers);
 
   const { width } = useWindowDimensions();
-
+  const navigate = useNavigate();
   const {
     getFontSizeAndLineHeight31,
     getFontSizeAndLineHeight20,
@@ -153,6 +115,25 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
   const font20 = getFontSizeAndLineHeight20();
   const font15 = getFontSizeAndLineHeight15();
   const font14 = getFontSizeAndLineHeight14();
+
+  const createChatRoom = async (roomId) => {
+    try {
+      await axios.post(
+        `${API_URL}/chatrooms/create`,
+        { roomId },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+      navigate(`/messages/${roomId}`);
+    } catch (error) {
+      navigate(`/messages/${roomId}`);
+      console.error("error:", error);
+    }
+  };
+
   return (
     <>
       {messagesPageWriteAmESSAGEoPTION ? (
@@ -361,96 +342,87 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
               </div>
             </div>
             {filteredUsers.map((user, index) => (
-              <div
+              <Link
+                onClick={() => createChatRoom(`${user._id}-${userInfo._id}`)}
                 key={user._id}
                 className={`selected-user-for-dm selected-user-for-dm-${themeName}`}
+                style={{
+                  cursor: "pointer",
+                  textDecoration: "none",
+                }}
               >
-                <Link
-                  onClick={() => selectedUser(user)}
+                <Stack
                   style={{
-                    cursor: "pointer",
-                    textDecoration: "none",
+                    margin: "5px",
+                    padding: "5px",
                   }}
-                  // to={`/messages/${messageRoomId}`}
+                  direction="horizontal"
                 >
-                  <Stack
-                    style={{
-                      margin: "5px",
-                      padding: "5px",
-                    }}
-                    direction="horizontal"
-                  >
-                    <div className="p-0">
-                      {" "}
-                      {user.imageUrl.slice(0, 3) !== "../" ? (
+                  <div className="p-0">
+                    {" "}
+                    {user.imageUrl.slice(0, 3) !== "../" ? (
+                      <img
+                        style={{
+                          borderRadius: "50%",
+                        }}
+                        width={40}
+                        height={40}
+                        src={user.imageUrl}
+                        alt=""
+                      />
+                    ) : (
+                      <div>
                         <img
-                          style={{
-                            borderRadius: "50%",
-                          }}
-                          width={40}
-                          height={40}
-                          src={user.imageUrl}
+                          style={{ borderRadius: "50%" }}
+                          width="40"
+                          height="40"
+                          src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
                           alt=""
                         />
-                      ) : (
-                        <div>
-                          <img
-                            style={{ borderRadius: "50%" }}
-                            width="40"
-                            height="40"
-                            src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
-                            alt=""
-                          />
-                        </div>
-                      )}
+                      </div>
+                    )}
+                  </div>
+                  <div
+                    style={{
+                      marginLeft: "10px",
+                    }}
+                    className="p-0"
+                  >
+                    {" "}
+                    <div
+                      className="chirp-bold-font"
+                      style={{
+                        color:
+                          themeName === "dark-theme"
+                            ? "white"
+                            : "rgb(15, 20, 25)",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
+                        textAlign: "left",
+                      }}
+                    >
+                      {user.fullname}
                     </div>
                     <div
+                      className="chirp-regular-font"
                       style={{
-                        marginLeft: "10px",
+                        marginRight:
+                          user.imageUrl.slice(0, 3) !== "../" ? "" : "32px",
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
                       }}
-                      className="p-0"
                     >
-                      {" "}
-                      <div
-                        className="chirp-bold-font"
-                        style={{
-                          color:
-                            themeName === "dark-theme"
-                              ? "white"
-                              : "rgb(15, 20, 25)",
-                          fontSize: font15.fontSize,
-                          lineHeight: font15.lineHeight,
-                          textAlign: "left",
-                        }}
-                      >
-                        {user.fullname}
-                      </div>
-                      <div
-                        className="chirp-regular-font"
-                        style={{
-                          marginRight:
-                            user.imageUrl.slice(0, 3) !== "../" ? "" : "32px",
-                          color:
-                            themeName === "dark-theme"
-                              ? "#71767A"
-                              : "rgb(83, 100, 113)",
-                          fontSize: font15.fontSize,
-                          lineHeight: font15.lineHeight,
-                        }}
-                      >
-                        @{user.username}
-                      </div>
+                      @{user.username}
                     </div>
-                  </Stack>
-                </Link>
-              </div>
+                  </div>
+                </Stack>
+              </Link>
             ))}
           </div>
-          <Modal.Body>
-            {/* start to check  search create message search bar*/}
-
-            {/* finish to check  */}
-          </Modal.Body>
         </Modal>
       )}
 
@@ -580,90 +552,86 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
             </div>
           </div>
           {filteredUsers.map((user, index) => (
-            <div
+            <Link
+              onClick={() => createChatRoom(`${user._id}-${userInfo._id}`)}
               key={user._id}
               className={`selected-user-for-dm selected-user-for-dm-${themeName}`}
+              style={{
+                cursor: "pointer",
+                textDecoration: "none",
+              }}
             >
-              <Link
-                onClick={() => selectedUser(user)}
+              <Stack
                 style={{
-                  cursor: "pointer",
-                  textDecoration: "none",
+                  margin: "5px",
+                  padding: "5px",
                 }}
-                // to={`/messages/${messageRoomId}`}
+                direction="horizontal"
               >
-                <Stack
-                  style={{
-                    margin: "5px",
-                    padding: "5px",
-                  }}
-                  direction="horizontal"
-                >
-                  <div className="p-0">
-                    {" "}
-                    {user.imageUrl.slice(0, 3) !== "../" ? (
+                <div className="p-0">
+                  {" "}
+                  {user.imageUrl.slice(0, 3) !== "../" ? (
+                    <img
+                      style={{
+                        borderRadius: "50%",
+                      }}
+                      width={40}
+                      height={40}
+                      src={user.imageUrl}
+                      alt=""
+                    />
+                  ) : (
+                    <div className="p-0">
                       <img
-                        style={{
-                          borderRadius: "50%",
-                        }}
-                        width={40}
-                        height={40}
-                        src={user.imageUrl}
+                        style={{ borderRadius: "50%" }}
+                        width="40"
+                        height="40"
+                        src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
                         alt=""
                       />
-                    ) : (
-                      <div className="p-0">
-                        <img
-                          style={{ borderRadius: "50%" }}
-                          width="40"
-                          height="40"
-                          src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
-                          alt=""
-                        />
-                      </div>
-                    )}
+                    </div>
+                  )}
+                </div>
+                <div
+                  style={{
+                    marginLeft: "10px",
+                  }}
+                  className="p-0"
+                >
+                  {" "}
+                  <div
+                    className="chirp-bold-font"
+                    style={{
+                      color:
+                        themeName === "dark-theme"
+                          ? "white"
+                          : "rgb(15, 20, 25)",
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
+                      textAlign: "left",
+                    }}
+                  >
+                    {user.fullname}
                   </div>
                   <div
+                    className="chirp-regular-font"
                     style={{
-                      marginLeft: "10px",
-                    }}
-                    className="p-0"
-                  >
-                    {" "}
-                    <div
-                      className="chirp-bold-font"
-                      style={{
-                        color:
-                          themeName === "dark-theme"
-                            ? "white"
-                            : "rgb(15, 20, 25)",
-                        fontSize: font15.fontSize,
-                        lineHeight: font15.lineHeight,
-                        textAlign: "left",
-                      }}
-                    >
-                      {user.fullname}
-                    </div>
-                    <div
-                      className="chirp-regular-font"
-                      style={{
-                        marginRight:
-                          user.imageUrl.slice(0, 3) !== "../" ? "" : "32px",
-                        color:
-                          themeName === "dark-theme"
-                            ? "#71767A"
-                            : "rgb(83, 100, 113)",
+                      marginRight:
+                        user.imageUrl.slice(0, 3) !== "../" ? "" : "32px",
+                      color:
+                        themeName === "dark-theme"
+                          ? "#71767A"
+                          : "rgb(83, 100, 113)",
 
-                        fontSize: font15.fontSize,
-                        lineHeight: font15.lineHeight,
-                      }}
-                    >
-                      @{user.username}
-                    </div>
+                      fontSize: font15.fontSize,
+                      lineHeight: font15.lineHeight,
+                    }}
+                  >
+                    @{user.username}
                   </div>
-                </Stack>
-              </Link>
-            </div>
+                </div>
+              </Stack>
+            </Link>
           ))}
         </div>
         <Modal.Body>

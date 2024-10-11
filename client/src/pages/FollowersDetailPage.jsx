@@ -6,8 +6,6 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
-import io from "socket.io-client";
-const socket = io.connect(`${API_URL}`);
 import { ThemeContext } from "../context/ThemeContext";
 import UnfollowModal from "../components/unfollow-modal/UnfollowModal";
 import useWindowDimensions from "../hooks/getWindowDimensions";
@@ -126,17 +124,6 @@ function FollowerDetailPage() {
   const [{ theme, themeName }] = useContext(ThemeContext);
   const { width } = useWindowDimensions();
 
-  const handleFollowingNotification = (selectedUser, userInfo, type) => {
-    console.log("Sending notification to => ", selectedUser.username);
-
-    socket.emit("sendNotification", {
-      senderName: userInfo.username,
-      receiverName: selectedUser.username,
-      type: type,
-      contactHasBeenMade: userInfo,
-      senderInfo: userInfo,
-    });
-  };
   const { isPostModalVisible } = useContext(ModalVisibilityContext);
 
   const [hoveredTab, setHoveredTab] = useState(null);
@@ -972,11 +959,6 @@ function FollowerDetailPage() {
                   .then(() => {
                     setClicked(!clicked);
 
-                    handleFollowingNotification(
-                      selectedUser,
-                      userInfo,
-                      "followed"
-                    );
                     getFollowers();
                   })
                   .catch((error) => {

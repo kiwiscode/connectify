@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import {
   Col,
@@ -11,26 +11,56 @@ import {
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { ThemeContext } from "../context/ThemeContext";
+import axios from "axios";
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
-import io from "socket.io-client";
 import useWindowDimensions from "../hooks/getWindowDimensions";
 import PopupState, { bindPopover, bindTrigger } from "material-ui-popup-state";
 import { Popover } from "@mui/material";
 import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
 import { useFontSizeHandler } from "../utils/useFontSizeHandler";
-const socket = io.connect(API_URL);
+
+import io from "socket.io-client";
+const socket = io(import.meta.env.VITE_APP_API_URL);
+
+import defaultImageUrl from "../assets/default_profile_400x400.png";
 
 function ChatDetailsPage() {
   const scrollRef = useRef();
   const { chatRoomId } = useParams();
   const { userInfo, getToken } = useContext(UserContext);
-
-  const [spesificRoom, setspesificRoom] = useState([]);
   const [selectedUser, setselectedUser] = useState([]);
+  const roomIds = chatRoomId.split("-");
+  const otherUserId = roomIds.find((id) => id !== userInfo._id);
+  const location = useLocation();
+  const path = location.pathname;
+
+  const getSelectedUser = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/profile/${otherUserId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        },
+        {}
+      );
+      setselectedUser(response.data);
+    } catch (error) {
+      console.error("error:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (otherUserId) {
+      getSelectedUser();
+    }
+  }, [otherUserId]);
+
+  const [spesificRoomChat, setspesificRoomChat] = useState([]);
   const [currentMessage, setCurrentMessage] = useState("");
-  const [room, setRoom] = useState("");
   const [disabled, setDisabled] = useState(true);
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const {
@@ -43,53 +73,48 @@ function ChatDetailsPage() {
   const font13 = getFontSizeAndLineHeight13();
   const navigate = useNavigate();
 
-  // finish to check shared post view message
+  // mesajların render edildiği kısım finish to check
 
   useEffect(() => {
-    // start to check refactoring from messages page
-    socket.emit("send_spesific_chatRoomId", chatRoomId);
-    socket.emit("send_spesific_userId", userInfo._id);
+    if (chatRoomId) {
+      joinRoom(chatRoomId, userInfo.username);
 
-    socket.on("receive_selectedUser", (data) => {
-      setselectedUser(data);
-    });
+      const userJoinedListener = (announcement) => {
+        console.log(announcement);
+        // Kullanıcı katılma bildirimini görsel olarak gösterebilirsiniz
+      };
 
-    // Emit an event to join the room with the selected user
-    socket.emit("join_spesific_message_room", {
-      activeUser: userInfo,
-      selectedUser: selectedUser[0],
-    });
-    // finish to check refactoring from messages page
+      socket.on("userJoined", userJoinedListener);
 
-    // start to check Mesajlar karşılıklı olarak receive ediliyor başarılı şekilde tek gereken render etmek kaldı !
-    socket.on("receive_spesific_room_message", (data) => {
-      setspesificRoom((list) => [...list, data]);
-    });
-    // finish to check Mesajlar karşılıklı olarak receive ediliyor başarılı şekilde tek gereken render etmek kaldı !
+      return () => {
+        socket.off("userJoined", userJoinedListener); // Dinleyiciyi temizle
+      };
+    }
+  }, [chatRoomId]);
 
-    return () => {
-      // Clean up event listeners
-      socket.off("receive_selectedUser");
-      socket.off("receive_spesific_room_message");
-    };
-  }, [socket, room, chatRoomId, userInfo._id]);
-
-  // mesajların render edildiği kısım start to check
-  socket.on("send_spesific_chat_details", (data) => {
-    const { room, messages } = data;
-    setRoom(room);
-    setspesificRoom(messages);
-  });
-
-  const [typeIndicatorResult, setShowTypingIndicator] = useState(null);
-
-  // mesajların render edildiği kısım finish to check
+  const handleAddMessageToDB = async (messageData) => {
+    try {
+      const result = await axios.post(
+        `${API_URL}/messages/${chatRoomId}`,
+        { messageData },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+      setspesificRoomChat(result.data.chats);
+      setCurrentMessage("");
+    } catch (error) {
+      console.error("error:", error);
+    }
+  };
 
   const sendMessage = async () => {
     if (currentMessage !== "" && chosenEmoji !== "") {
       const messageData = {
-        room: room,
-        sender: userInfo.username,
+        room: chatRoomId,
+        sender: userInfo._id,
         text: currentMessage,
         time: new Date().toLocaleString("en-US", {
           weekday: "short",
@@ -99,28 +124,10 @@ function ChatDetailsPage() {
         }),
       };
 
-      // socket io 5 client start to check
-      const handleNotification = (
-        messageReceiver,
-        messageSender,
-        notificationType,
-        messageContent
-      ) => {
-        socket.emit("sendNotification", {
-          receiverName: messageReceiver.username,
-          senderName: messageSender.username,
-          type: notificationType,
-          contactHasBeenMade: messageSender,
-          text: messageContent,
-          senderInfo: userInfo,
-        });
-      };
-      // socket io 5 client finish to check
-
-      await socket.emit("send_spesific_room_message", messageData);
-      setspesificRoom((list) => [...list, messageData]);
-      setCurrentMessage("");
-      handleNotification(selectedUser[0], userInfo, "message", currentMessage);
+      // Mesaj gönderme işlemi
+      sendMessageToRoom(chatRoomId, messageData);
+      // Mesaj gönderme işlemi data base içerisine
+      handleAddMessageToDB(messageData);
     } else {
       setDisabled(true);
     }
@@ -180,100 +187,9 @@ function ChatDetailsPage() {
 
   const { width } = useWindowDimensions();
 
-  // socket test real time typing indicator room in start to check
-  const [sameTimeSameRoom, setSameTimeSameRoom] = useState(null);
-
   useEffect(() => {
-    socket.on("same_time_same_room", (data) => {
-      setSameTimeSameRoom(true);
-    });
-  }, [socket, chatRoomId, userInfo._id]);
-
-  const [activeUsersInRoom, setActiveUsersInRoom] = useState(null);
-
-  const [youCanShowTypingIndicator, setYouCanShowTypingIndicator] =
-    useState(null);
-
-  useEffect(() => {
-    socket.on("interactedChatRooms", (data) => {
-      setActiveUsersInRoom(data);
-
-      const findTheCorrectRoom = data?.interactedChatRooms.find((eachRoom) => {
-        return eachRoom.room.roomName === data?.room;
-      });
-
-      const userActiveStatusFirstUser =
-        findTheCorrectRoom.room.activeUsers[0].user1.isActiveInRoom;
-      const userActiveStatusSecondUser =
-        findTheCorrectRoom.room.activeUsers[0].user2.isActiveInRoom;
-
-      console.log(
-        "Active user status inside finded room =>",
-        userActiveStatusFirstUser,
-        userActiveStatusSecondUser
-      );
-      if (userActiveStatusFirstUser && userActiveStatusSecondUser) {
-        setYouCanShowTypingIndicator(true);
-      }
-    });
-  }, []);
-
-  const handleChangeCurrentMessage = (event) => {
-    setCurrentMessage(event.target.value);
-    setDisabled(event.target.value || chosenEmoji ? false : true);
-
-    if (youCanShowTypingIndicator && currentMessage.length >= 4) {
-      socket.emit("typing_indicator", {
-        typingStatus: true,
-        whoIsTypingImage: userInfo.imageUrl,
-        whoIsTypingUserName: userInfo.username,
-        whoIsTypingFullName: userInfo.fullname,
-      });
-    } else if (youCanShowTypingIndicator && currentMessage.length <= 4) {
-      socket.emit("typing_indicator", {
-        typingStatus: false,
-        whoIsTypingImage: userInfo.imageUrl,
-        whoIsTypingUserName: userInfo.username,
-        whoIsTypingFullName: userInfo.fullname,
-      });
-      scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-
-      setShowTypingIndicator(null);
-    }
-  };
-
-  useEffect(() => {
-    socket.on("typing_result", (data) => {
-      if (data) {
-        if (
-          data.data.whoIsTypingUserName !== userInfo.username &&
-          currentMessage.length >= 4 &&
-          data.data.typingStatus
-        ) {
-          console.log(data.data, " ", "typing...");
-
-          scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-          setShowTypingIndicator(data.data);
-        } else if (
-          data.data.whoIsTypingUserName !== userInfo.username &&
-          currentMessage.length <= 4 &&
-          !data.data.typingStatus
-        ) {
-          console.log(
-            "Length smaller than or equal 4 do not show any typing indicator..."
-          );
-          scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-          setShowTypingIndicator(null);
-        }
-      }
-    });
-  }, [socket, currentMessage]);
-
-  // socket test real time typing indicator room in finish to check
-  useEffect(() => {
-    setShowTypingIndicator(null);
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [spesificRoom]);
+  }, [spesificRoomChat]);
 
   const [isVisible, setIsVisible] = useState(false);
   const header_ref = useRef(null);
@@ -295,6 +211,135 @@ function ChatDetailsPage() {
       if (header_ref.current) observer.unobserve(header_ref.current);
     };
   }, [header_ref]);
+
+  // type indicator state
+  const [typingIndicatorShown, settypingIndicatorShown] = useState(null);
+  let typingTimeout;
+  // Odaya katılma işlemi
+  function joinRoom(roomName, userName) {
+    socket.emit("joinRoom", roomName, userName);
+  }
+  // Odadan ayrılma işlemi
+  function leftRoom(roomName, userName) {
+    socket.emit("userLeft", roomName, userName);
+  }
+
+  const [arrivalMessage, setArrivalMessage] = useState(null);
+
+  // Mesaj gönderme işlemi
+  function sendMessageToRoom(roomName, message) {
+    socket.emit("chatMessage", roomName, message);
+  }
+
+  const handleCurrentMessageChange = (e) => {
+    setCurrentMessage(e.target.value);
+  };
+
+  // Yazıyor durumunu başlatma
+  function startTyping(roomName, user) {
+    if (!typingIndicatorShown) {
+      // Eğer 5 saniye geçerse ve kullanıcı yazmaya devam ediyorsa göstergesi gösterilsin
+      typingTimeout = setTimeout(() => {
+        socket.emit("typing", roomName, user.username);
+        console.log("typing:", user);
+        settypingIndicatorShown(user); // Göstergenin gösterildiğini işaretle
+      }, 5000); // 5 saniye bekle
+    }
+  }
+
+  // Yazmayı durdurma
+  function stopTyping(roomName, userName) {
+    clearTimeout(typingTimeout); // 5 saniyelik timeout'u iptal et
+    if (typingIndicatorShown) {
+      socket.emit("stopTyping", roomName, userName);
+      settypingIndicatorShown(null); // Göstergenin kapatıldığını işaretle
+    }
+  }
+
+  useEffect(() => {
+    if (chatRoomId) {
+      joinRoom(chatRoomId, userInfo.username);
+
+      // Server tarafından odaya katılma bildirimlerini dinleme
+      socket.on("userJoined", (announcement) => {
+        console.log(announcement);
+        // Kullanıcı katılma bildirimini görsel olarak gösterebilirsiniz
+      });
+    }
+    return () => {
+      socket.off("userJoined"); // Dinleyiciyi temizle
+    };
+  }, [chatRoomId]);
+
+  useEffect(() => {
+    if (chatRoomId) {
+      joinRoom(chatRoomId, userInfo.username);
+
+      // Server tarafından odaya katılma bildirimlerini dinleme
+      socket.on("userJoined", (announcement) => {
+        console.log(announcement);
+        // Kullanıcı katılma bildirimini görsel olarak gösterebilirsiniz
+      });
+    }
+    return () => {
+      socket.off("userJoined"); // Dinleyiciyi temizle
+    };
+  }, [chatRoomId]);
+
+  useEffect(() => {
+    socket.on("message", (data) => {
+      console.log("you received one message:", data);
+      setArrivalMessage({
+        // room: data.room,
+        sender: data.sender,
+        text: data.text,
+        timeStamp: data.time,
+      });
+    });
+  }, []);
+
+  useEffect(() => {
+    console.log("arrival message comes 2 times");
+    arrivalMessage &&
+      // currentChat?.members.includes(arrivalMessage.sender) &&
+      setspesificRoomChat((prev) => [...prev, arrivalMessage]);
+  }, [
+    arrivalMessage,
+    // currentChat
+  ]);
+
+  useEffect(() => {
+    const getChats = async () => {
+      try {
+        const result = await axios.get(`${API_URL}/messages/${chatRoomId}`, {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        });
+
+        setspesificRoomChat(result.data.messages.chat);
+      } catch (error) {
+        console.error("error:", error);
+      }
+    };
+    getChats();
+  }, [chatRoomId]);
+
+  // find the last message user sent
+  const senderIds = spesificRoomChat?.map((eachMessage) => {
+    return eachMessage.sender?.toString();
+  });
+
+  const lastSendIndexMe = senderIds.lastIndexOf(userInfo._id);
+  console.log(senderIds.lastIndexOf(userInfo._id));
+
+  const lastSendIndexOtherUser = senderIds.lastIndexOf(otherUserId);
+  console.log(senderIds.lastIndexOf(otherUserId));
+
+  console.log(
+    "spesific room chat my last message:",
+    spesificRoomChat[lastSendIndexMe]
+  );
 
   return (
     <>
@@ -332,21 +377,13 @@ function ChatDetailsPage() {
         {" "}
         <div
           style={{
-            width: "100%",
-            maxWidth: "600px",
-            position: "fixed",
-            top: "0px",
-            width: "inherit",
-            maxWidth: "inherit",
-            minWidth: "inherit",
-            // for sharp backdrop filter with transparent backgroundcolor start to check
-            // backgroundColor: "transparent",
-            // for sharp backdrop filter with transparent backgroundcolor finish to check
+            // width: "100%",
             backgroundColor:
               themeName === "dark-theme"
                 ? "rgba(0, 0, 0, 0.65)"
                 : "rgba(255, 255, 255, 0.85)",
             backdropFilter: "blur(12px)",
+            padding: "0px 12px",
           }}
         >
           <Stack
@@ -417,12 +454,12 @@ function ChatDetailsPage() {
                       borderRadius: "50%",
                     }}
                     onClick={() => {
-                      navigate(`/profile/${selectedUser[0]?._id}`);
+                      navigate(`/profile/${selectedUser?._id}`);
                     }}
                   >
                     {
                       <>
-                        {selectedUser[0]?.imageUrl.slice(0, 3) !== "../" ? (
+                        {selectedUser?.imageUrl?.slice(0, 3) !== "../" ? (
                           <>
                             <img
                               width={32}
@@ -430,7 +467,7 @@ function ChatDetailsPage() {
                               style={{
                                 borderRadius: "50%",
                               }}
-                              src={selectedUser[0]?.imageUrl}
+                              src={selectedUser?.imageUrl}
                               alt=""
                             />
                           </>
@@ -457,7 +494,7 @@ function ChatDetailsPage() {
                   color: themeName === "dark-theme" ? "white" : "black",
                 }}
               >
-                {selectedUser[0]?.fullname}
+                {selectedUser?.fullname}
               </span>
             </div>
             <div
@@ -525,7 +562,6 @@ function ChatDetailsPage() {
             {" "}
             <div
               style={{
-                marginTop: "125px",
                 borderBottom:
                   themeName === "dark-theme"
                     ? "1px solid rgb(47, 51, 54)"
@@ -537,10 +573,10 @@ function ChatDetailsPage() {
                   : `message-detail-container message-detail-user-card `
               }
             >
-              {selectedUser.length ? (
+              {selectedUser ? (
                 <div
                   style={{
-                    padding: "16px 16px 80px 16px",
+                    padding: "60px 16px 80px 16px",
                     cursor: "pointer",
                   }}
                 >
@@ -549,7 +585,7 @@ function ChatDetailsPage() {
                       textDecoration: "none",
                       color: "black",
                     }}
-                    to={`/profile/${selectedUser[0]._id}`}
+                    to={`/profile/${selectedUser._id}`}
                   >
                     <div
                       style={{
@@ -559,15 +595,15 @@ function ChatDetailsPage() {
                         alignItems: "center",
                       }}
                     >
-                      {selectedUser[0].imageUrl.slice(0, 3) !== "../" ? (
+                      {selectedUser.imageUrl?.slice(0, 3) !== "../" ? (
                         <>
                           <img
                             style={{ borderRadius: "50%" }}
                             width={64}
                             height={64}
                             src={
-                              selectedUser[0].imageUrl.slice(0, 3) !== "../"
-                                ? selectedUser[0].imageUrl
+                              selectedUser.imageUrl?.slice(0, 3) !== "../"
+                                ? selectedUser.imageUrl
                                 : ""
                             }
                             alt=""
@@ -597,7 +633,7 @@ function ChatDetailsPage() {
                           lineHeight: font15.lineHeight,
                         }}
                       >
-                        {selectedUser[0]?.fullname}
+                        {selectedUser?.fullname}
                       </div>
                       <div
                         className={
@@ -610,7 +646,7 @@ function ChatDetailsPage() {
                           lineHeight: font15.lineHeight,
                         }}
                       >
-                        @{selectedUser[0]?.username}
+                        @{selectedUser?.username}
                       </div>
                       <div
                         className={
@@ -626,10 +662,10 @@ function ChatDetailsPage() {
                       >
                         Joined{" "}
                         {getCreatedYearForSpesificUserProfilePage(
-                          selectedUser[0].createdAt
+                          selectedUser.createdAt
                         )}
                         <span>
-                          {selectedUser[0].followers.length ? (
+                          {selectedUser.followers?.length ? (
                             <>
                               <span
                                 className={
@@ -656,13 +692,13 @@ function ChatDetailsPage() {
                                   lineHeight: font14.lineHeight,
                                 }}
                               >
-                                {selectedUser[0].followers.length} follower
+                                {selectedUser.followers.length} follower
                               </span>
                             </>
                           ) : null}
                         </span>
                       </div>
-                      <div
+                      {/* <div
                         className={
                           themeName === "dark-theme"
                             ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font"
@@ -675,7 +711,7 @@ function ChatDetailsPage() {
                       >
                         Not followed by anyone you&apos;re following =&gt; ??
                         Check this part
-                      </div>
+                      </div> */}
                     </div>
                   </Link>
                 </div>
@@ -683,28 +719,27 @@ function ChatDetailsPage() {
             </div>{" "}
             <div className="ref_helper" ref={header_ref}></div>
             <div>
-              {spesificRoom.map((eachMessage, index) => (
-                <div ref={scrollRef} key={eachMessage._id}>
+              {spesificRoomChat?.map((eachChat, index) => (
+                <div ref={scrollRef} key={eachChat._id}>
                   <div>
                     <div
                       style={{
                         display: "flex",
                         justifyContent:
-                          userInfo.username === eachMessage.sender
+                          userInfo._id === eachChat.sender
                             ? "flex-end"
                             : "flex-start",
                       }}
                       className="spesific-room-message-main-container"
                     >
                       <div
-                        style={{}}
                         className={
-                          userInfo.username === eachMessage.sender
+                          userInfo._id === eachChat.sender
                             ? `spesific-room-message-you soft-grey-dark-theme-text-variant-1 `
-                            : userInfo.username !== eachMessage.sender &&
+                            : userInfo._id !== eachChat.sender &&
                               themeName === "dark-theme"
                             ? `soft-grey-dark-theme-text-variant-1   spesific-room-message-other spesific-room-message-other-${themeName}`
-                            : userInfo.username !== eachMessage.sender &&
+                            : userInfo._id !== eachChat.sender &&
                               themeName !== "dark-theme"
                             ? `very-dark-gray-light-theme-text-variant-1 spesific-room-message-other spesific-room-message-other-${themeName}`
                             : null
@@ -725,7 +760,7 @@ function ChatDetailsPage() {
                                   : "chirp-regular-font spesific-room-message-text"
                               }
                             >
-                              {eachMessage.text}
+                              {eachChat.text}
                             </span>
                           </div>
                         </div>
@@ -733,64 +768,52 @@ function ChatDetailsPage() {
                     </div>
                     <div
                       className={
-                        userInfo.username === eachMessage.sender
+                        userInfo._id === eachChat.sender
                           ? "spesific-room-message-you-time spesific-room-message-message-meta"
                           : "spesific-room-message-other-time spesific-room-message-meta"
                       }
                     >
                       <p id="time">
-                        {eachMessage.timestamp ? (
-                          <>
-                            <span
-                              style={{
-                                fontSize: font13.fontSize,
-                                lineHeight: font13.lineHeight,
-                              }}
-                              className={
+                        <>
+                          <span
+                            style={{
+                              color:
                                 themeName === "dark-theme"
-                                  ? "soft-grey-dark-theme-text-variant-2 chirp-regular-font spesific-room-message-text"
-                                  : "very-dark-gray-light-theme-text-variant-2 chirp-regular-font spesific-room-message-text"
-                              }
-                            >
-                              {new Date(eachMessage.timestamp).toLocaleString(
-                                "en-US",
-                                {
-                                  year: "numeric",
-                                  month: "short",
-                                  day: "2-digit",
-                                  hour: "numeric",
-                                  minute: "numeric",
-                                  hour12: true,
-                                }
+                                  ? "#71767A"
+                                  : "rgb(83, 100, 113)",
+                              fontSize: font13.fontSize,
+                              lineHeight: font13.lineHeight,
+                            }}
+                          >
+                            <>
+                              {" "}
+                              {(lastSendIndexOtherUser === index ||
+                                lastSendIndexMe === index ||
+                                index === spesificRoomChat.length - 1) && (
+                                <>
+                                  <span className="time-stamp-message-detail">
+                                    {eachChat.timestamp}
+                                  </span>
+                                  {lastSendIndexMe === index && (
+                                    <>
+                                      {" "}
+                                      <span>·</span>{" "}
+                                      <span className="time-stamp-message-sent-status">
+                                        Sent
+                                      </span>
+                                    </>
+                                  )}
+                                </>
                               )}
-                            </span>
-                          </>
-                        ) : (
-                          <>
-                            <span
-                              style={{
-                                color:
-                                  themeName === "dark-theme"
-                                    ? "#71767A"
-                                    : "rgb(83, 100, 113)",
-                              }}
-                            >
-                              <span className="time-stamp-message-detail">
-                                {eachMessage.time}
-                              </span>
-                              ·
-                              <span className="time-stamp-message-sent-status">
-                                Sent
-                              </span>
-                            </span>
-                          </>
-                        )}
+                            </>
+                          </span>
+                        </>
                       </p>
                     </div>
                   </div>
                 </div>
               ))}{" "}
-              {typeIndicatorResult && (
+              {typingIndicatorShown && (
                 <div
                   className="mb-2"
                   style={{
@@ -805,35 +828,26 @@ function ChatDetailsPage() {
                       alignItems: "center",
                     }}
                   >
-                    {typeIndicatorResult.whoIsTypingImage?.slice(0, 3) !==
-                    "../" ? (
+                    {typingIndicatorShown.imageUrl?.slice(0, 3) !== "../" ? (
                       <img
                         style={{
                           borderRadius: "50%",
                         }}
-                        src={typeIndicatorResult.whoIsTypingImage}
+                        src={typingIndicatorShown.imageUrl}
                         alt=""
                         width={40}
                         height={40}
                       />
                     ) : (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="40"
-                        height="40"
-                        color={
-                          themeName === "dark-theme"
-                            ? "#71767A"
-                            : "rgb(83, 100, 113)"
-                        }
-                        fill="currentColor"
-                        className="bi bi-person-circle"
-                        viewBox="0 0 16 16"
-                        style={{ cursor: "pointer", borderRadius: "50%" }}
-                      >
-                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                        <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                      </svg>
+                      <img
+                        style={{
+                          borderRadius: "50%",
+                        }}
+                        src={defaultImageUrl}
+                        alt=""
+                        width={40}
+                        height={40}
+                      />
                     )}
                     <div
                       className={
@@ -1046,11 +1060,10 @@ function ChatDetailsPage() {
                 }}
                 className={`message-input message-input-${themeName}`}
                 type="text"
+                // onChange={(e) => setCurrentMessage(e.target.value)}
+                onChange={handleCurrentMessageChange}
                 value={currentMessage}
                 placeholder="Start a new message"
-                onChange={(event) => {
-                  handleChangeCurrentMessage(event);
-                }}
                 onKeyPress={(event) => {
                   if (event.key === "Enter") {
                     sendMessage();

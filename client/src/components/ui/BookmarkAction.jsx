@@ -4,12 +4,10 @@ import axios from "axios";
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
-import io from "socket.io-client";
 import { ThemeContext } from "../../context/ThemeContext";
 import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
 import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
 import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
-const socket = io.connect(`${API_URL}`);
 
 const BookmarkAction = ({
   post,

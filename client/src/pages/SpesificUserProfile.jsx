@@ -16,9 +16,6 @@ import LoadingSpinner from "../components/ui/LoadingSpinner";
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
-import io from "socket.io-client";
-const socket = io.connect(`${API_URL}`);
-
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import { ThemeContext } from "../context/ThemeContext";
 import UnfollowModal from "../components/unfollow-modal/UnfollowModal";
@@ -225,18 +222,6 @@ function SpesificUserProfile({ isNewPostShared }) {
     setIsHovered(false);
   };
 
-  const handleFollowingNotification = (selectedUser, userInfo, type) => {
-    console.log("Sending notification to => ", selectedUser.username);
-
-    socket.emit("sendNotification", {
-      senderName: userInfo.username,
-      receiverName: selectedUser.username,
-      type: type,
-      contactHasBeenMade: userInfo,
-      senderInfo: userInfo,
-    });
-  };
-
   const handleFollow = (selectedUser) => {
     console.log("Button clicked !");
     if (getFollowerIds(profileInfo.followers).includes(userInfo._id)) {
@@ -257,7 +242,6 @@ function SpesificUserProfile({ isNewPostShared }) {
         )
         .then(() => {
           getFollowingArray();
-          handleFollowingNotification(selectedUser, userInfo, "followed"); // start to check animation basic
           if (postsWindow === "hide") {
             setShow("");
             handleShowSpesificUserProfilePageFavorites();
@@ -479,29 +463,6 @@ function SpesificUserProfile({ isNewPostShared }) {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
-  const [room, setRoom] = useState("");
-  const [messageRoomId, setmessageRoomId] = useState("");
-
-  const selectedUser = (user) => {
-    const room = [userInfo.username, user.username].sort().join("_");
-    console.log("message room =>", room);
-    setRoom(room);
-    // Emit an event to join the room with the selected user
-    socket.emit("join_user_room", { activeUser: userInfo, selectedUser: user });
-    const handleGetMessageRoomId = (roomId) => {
-      setmessageRoomId(roomId);
-    };
-    console.log("Message room id =>", messageRoomId);
-    socket.on("getmessageRoomId", handleGetMessageRoomId);
-  };
-
-  useEffect(() => {
-    console.log("This line is working !!!");
-    if (messageRoomId) {
-      window.location.href = `http://localhost:5173/messages/${messageRoomId}`;
-    }
-  }, [messageRoomId]);
 
   const checkSpesificUserFollowers = () => {
     return profileInfo?.followers?.map((eachFollowerUser) => {
@@ -1183,7 +1144,6 @@ function SpesificUserProfile({ isNewPostShared }) {
             height: "100dvh",
             maxWidth: "100%",
             width: "100%",
-
             backgroundImage: `url(${
               profileInfo?.profileCoverImage
                 ? profileInfo.profileCoverImage
@@ -1323,7 +1283,6 @@ function SpesificUserProfile({ isNewPostShared }) {
                 </BootstrapTooltip>
               </div>
               <div
-                onClick={() => selectedUser(profileInfo)}
                 style={{
                   width: "40px",
                   height: "40px",
@@ -1538,7 +1497,6 @@ function SpesificUserProfile({ isNewPostShared }) {
                 </BootstrapTooltip>
               </div>
               <div
-                onClick={() => selectedUser(profileInfo)}
                 style={{
                   width: "40px",
                   height: "40px",

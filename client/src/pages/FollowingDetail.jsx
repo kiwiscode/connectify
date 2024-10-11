@@ -7,8 +7,6 @@ import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNaviga
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
-import io from "socket.io-client";
-const socket = io.connect(`${API_URL}`);
 import { ThemeContext } from "../context/ThemeContext";
 import UnfollowModal from "../components/unfollow-modal/UnfollowModal";
 import useWindowDimensions from "../hooks/getWindowDimensions";
@@ -134,17 +132,7 @@ function FollowingDetailPage() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-  const handleFollowingNotification = (selectedUser, userInfo, type) => {
-    console.log("Sending notification to => ", selectedUser.username);
 
-    socket.emit("sendNotification", {
-      senderName: userInfo.username,
-      receiverName: selectedUser.username,
-      type: type,
-      contactHasBeenMade: userInfo,
-      senderInfo: userInfo,
-    });
-  };
   const [
     { theme, themeName },
     lightModeActive,
@@ -996,11 +984,7 @@ function FollowingDetailPage() {
                   )
                   .then(() => {
                     setClicked(!clicked);
-                    handleFollowingNotification(
-                      selectedUser,
-                      userInfo,
-                      "followed"
-                    );
+
                     setIsHovered(false);
                     getFollowing();
                   })

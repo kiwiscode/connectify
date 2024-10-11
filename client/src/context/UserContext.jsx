@@ -21,7 +21,6 @@ const UserProvider = ({ children }) => {
         followers: [],
         following: [],
         favorites: [],
-        socketId: "",
         imageuRL: "",
       }
     );
@@ -50,13 +49,11 @@ const UserProvider = ({ children }) => {
       followers: [],
       following: [],
       favorites: [],
-      socketId: "",
       imageuRL: "",
     });
     userInfo.active = false;
     localStorage.removeItem("userInfo");
     localStorage.removeItem("token");
-    localStorage.removeItem("socketId");
   };
 
   const setToken = (token) => {

@@ -1,20 +1,10 @@
-import {
-  Suspense,
-  lazy,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from "react";
-import HomePage from "./pages/HomePage";
-// const HomePage = lazy(() => import("./pages/HomePage"));
+import { Suspense, lazy, useContext, useEffect, useState } from "react";
+const HomePage = lazy(() => import("./pages/HomePage"));
 const MainPage = lazy(() => import("./pages/MainPage"));
 const UserProfile = lazy(() => import("./pages/UserProfilePage"));
 const SpesificUserProfile = lazy(() => import("./pages/SpesificUserProfile"));
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
-import "./index.css";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "react-toastify/dist/ReactToastify.css";
+
 const MessagesPage = lazy(() => import("./pages/MessagesPage"));
 const ChatDetailsPage = lazy(() => import("./pages/ChatDetailsPage"));
 const PostDetailPage = lazy(() => import("./pages/PostDetailPage"));
@@ -236,24 +226,12 @@ const RightSideColumn = lazy(() =>
 import { ThemeContext } from "./context/ThemeContext";
 
 import LoadingSpinner from "./components/ui/LoadingSpinner";
-import { Bounce, ToastContainer, toast } from "react-toastify";
-import CustomNotification from "./components/Notifications/CustomNotification";
 
-const API_URL = import.meta.env.VITE_APP_API_URL;
-
-import io from "socket.io-client";
-const socket = io.connect(`${API_URL}`);
 import { Container, Row } from "react-bootstrap";
 
 import { SubscriptionStatusProvider } from "./context/SubscriptionStatusContext";
 
-// smoothscroll effect gsap
-import gsap from "gsap";
-import ScrollSmoother from "gsap-trial/ScrollSmoother";
-import ScrollTrigger from "gsap-trial/ScrollTrigger";
-import { UserContext } from "./context/UserContext";
-
-gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   const location = useLocation();
@@ -261,62 +239,6 @@ function App() {
 
   const [{ theme, themeName }] = useContext(ThemeContext);
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-
-  useEffect(() => {
-    socket.emit(
-      "current_url_for_checking_if_user_inside_chat_details_page",
-      path
-    );
-    socket.emit("socket_userInfo", userInfo);
-  }, [path]);
-
-  useEffect(() => {
-    socket.on("socket_id_for_user", (socketId) => {
-      localStorage.setItem("socketId", socketId);
-    });
-    socket.emit("setUsername", userInfo?.username);
-  }, []);
-
-  const [notificationType, setNotificationType] = useState(null);
-  useEffect(() => {
-    console.log("Custom notification test !!!");
-    socket.on("getNotification", (data) => {
-      console.log("Data =>", data);
-    });
-
-    socket.on("getText", (data) => {
-      console.log("Data get text =>", data);
-      console.log("User info =>", userInfo);
-
-      setNotificationType(data ? data.type : null);
-
-      if (data.senderName !== userInfo?.username) {
-        // Path "/messages" veya "/messages/:chatRoomId" ise ve notification type "message" değilse toast göster ???
-
-        toast(
-          <CustomNotification
-            senderName={data.senderName}
-            type={data.type}
-            contactHasBeenMade={data.contactHasBeenMade}
-            senderInfo={data.senderInfo}
-            text={data.text ? data.text : null}
-          />,
-          {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            transition: Bounce,
-          }
-        );
-      } else {
-        console.log("You cannot send a notification to yourself.");
-      }
-    });
-  }, [socket]);
 
   const [isPostShared, setIsPostShared] = useState(false);
   const handleShareNewPost = () => {
@@ -377,71 +299,6 @@ function App() {
   };
   console.log("Active theme =>", themeName);
 
-  // for smooth scroll effect for the whole app
-  // useLayoutEffect(() => {
-  //   ScrollSmoother.create({
-  //     // smooth: 0.8,
-  //     smooth: !0,
-  //     effects: true,
-  //     smoothTouch: 0.1,
-  //   });
-  // }, []);
-
-  const allowedPaths = [
-    "/home",
-    "/notifications",
-    "/messages",
-    "/i/bookmarks",
-    "/profile",
-    "/profile/:id",
-    "/:postOwner/status/:postId",
-    "/messages/:chatRoomId",
-    "/profile/:userId/requests",
-    "/profile/:userId/following",
-    "/profile/:userId/followers",
-    "/settings",
-    "/settings/account",
-    "/settings/your_twitter_data/account",
-    "/settings/password",
-    "/account/send_password_reset",
-    "/account/confirm_pin_reset",
-    "/account/reset_password",
-    "/account/password_reset_survey",
-    "/account/password_reset_complete",
-    "/settings/deactivate",
-    "/i/flow/verify_account_ownership",
-    "/settings/download-your-data",
-    "/settings/screen_name",
-    "/settings/phone",
-    "/i/flow/add_phone",
-    "/settings/email",
-    "/settings/languages",
-    "/settings/your_twitter_data/language",
-    "/i/flow/language_selector",
-    "/settings/language",
-    "/i/flow/add_email",
-    "/settings/your_twitter_data/age",
-    "/settings/account/automation",
-    "/i/flow/enable_automated_account",
-    "/settings/your_twitter_data/gender",
-    "/settings/country",
-    "/settings/audience_and_tagging",
-    "/settings/tagging",
-    "/settings/monetization",
-    "/settings/superfollows/application/eligibility",
-    "/settings/ad_rev_share_eligibility",
-    "/i/verified-choose",
-    "/settings/manage_subscriptions",
-    "/billing/stripe/subscription",
-    "/settings/security_and_account_access",
-    "/settings/security",
-    "/settings/privacy_and_safety",
-    "/settings/notifications",
-    "/settings/accessibility_display_and_languages",
-    "/settings/display",
-    "/settings/about",
-    "/help_connectify",
-  ];
   return (
     <>
       <div
@@ -460,16 +317,6 @@ function App() {
         }}
       ></div>
       <SubscriptionStatusProvider>
-        {((path.startsWith("/notifications") &&
-          notificationType === "message") ||
-          (path.startsWith("/messages") && notificationType !== "message") ||
-          (!path.startsWith("/messages") &&
-            !path.startsWith("/notifications"))) && (
-          <ToastContainer
-            theme={themeName === "dark-theme" ? "dark" : "light"}
-          />
-        )}
-
         <div
           // id="smooth-content"
           className={

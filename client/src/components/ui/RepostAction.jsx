@@ -4,15 +4,12 @@ import { UserContext } from "../../context/UserContext";
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
-import io from "socket.io-client";
 import { ThemeContext } from "../../context/ThemeContext";
 import { Popover } from "@mui/material";
 import PopupState, { bindPopover, bindTrigger } from "material-ui-popup-state";
 import { Button } from "react-bootstrap";
 import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
 import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
-
-const socket = io.connect(`${API_URL}`);
 
 function RepostAction({
   post,
@@ -36,13 +33,6 @@ function RepostAction({
   ] = useContext(ThemeContext);
   const handleNotification = (post, userInfo, type) => {
     console.log("Post =>", post);
-    socket.emit("sendNotification", {
-      senderName: userInfo.username,
-      receiverName: post.userId.username,
-      type: type,
-      contactHasBeenMade: post,
-      senderInfo: userInfo,
-    });
   };
 
   const handleRepost = (postId, findedPost) => {
