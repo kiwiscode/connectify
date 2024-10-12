@@ -72,7 +72,7 @@ function emailProcess() {
 
   sendConfirmationCodeToEmail = (user, verificationCode) => {
     // when working on local version
-    const accountSettingsLink = "http://localhost:5173/";
+    const accountSettingsLink = process.env.FRONTEND_URL;
 
     // when working on deployment version
     // ??
@@ -206,7 +206,7 @@ function emailProcessAfterChanginPassword() {
   });
 
   sendEmailAfterChanginPassword = (user) => {
-    const accountSettingsLink = "http://localhost:5173/";
+    const accountSettingsLink = process.env.FRONTEND_URL;
 
     return new Promise((resolve, reject) => {
       const mailOptions = {

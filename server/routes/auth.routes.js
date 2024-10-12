@@ -223,7 +223,7 @@ router.get(
   "/google/callback",
   passport.authenticate("google", {
     scope: ["profile", "email"],
-    successRedirect: "http://localhost:5173/home",
+    successRedirect: `${process.env.FRONTEND_URL}/home`,
     failureRedirect: "/auth/google-login/failed",
   })
 );
@@ -232,7 +232,6 @@ const handleLoginSuccess = (req, res, next) => {
   if (!isVariantOneResultRouteSuccess) {
     if (req.user) {
       // when working on local version
-      // res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
       res.setHeader("Access-Control-Allow-Origin", "*");
 
       // when working on deployment version

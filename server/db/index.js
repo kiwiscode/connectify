@@ -1,10 +1,8 @@
 const mongoose = require("mongoose");
 //
 const MONGO_URI =
-  // when working on deployment version
-  // process.env.MONGODB_URI;
-  // when working on locally
-  "mongodb://127.0.0.1:27017/connectify";
+  // process.env.MONGO_URI;
+  "mongodb+srv://ayktkav:JZfvvRc3SYPvL0FW@connectify-cluster.sh8g6.mongodb.net/connectify";
 
 mongoose
   .connect(MONGO_URI)

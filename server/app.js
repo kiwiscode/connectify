@@ -17,7 +17,7 @@ app.set("trust proxy", 1);
 const socketIo = require("socket.io");
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
     methods: ["GET", "POST", "DELETE", "PUT", "PATCH"],
     credentials: true,
   },
@@ -27,7 +27,7 @@ require("./socket/socket.js")(io);
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
     methods: ["GET", "POST", "DELETE", "PUT", "PATCH"],
     credentials: true,
   })

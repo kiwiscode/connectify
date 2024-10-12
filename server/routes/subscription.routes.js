@@ -253,8 +253,8 @@ router.post(
           },
         },
         // when working on locally
-        success_url: "http://localhost:5173/home",
-        cancel_url: "http://localhost:5173/i/premium_sign_up",
+        success_url: `${process.env.FRONTEND_URL}/home`,
+        cancel_url: `${process.env.FRONTEND_URL}/i/premium_sign_up`,
 
         // when working on deployment version
         // success_url: "?",
@@ -824,8 +824,8 @@ router.post(
       },
 
       // when working on locally
-      success_url: "http://localhost:5173/home",
-      cancel_url: "http://localhost:5173/i/verified-orgs-signup",
+      success_url: `${process.env.FRONTEND_URL}/home`,
+      cancel_url: `${process.env.FRONTEND_URL}/i/verified-orgs-signup`,
 
       // when working on deployment version
       // success_url: "?",
@@ -924,8 +924,8 @@ router.post(
       },
 
       // when working on locally
-      success_url: "http://localhost:5173/home",
-      cancel_url: "http://localhost:5173/i/verified-orgs-signup",
+      success_url: `${process.env.FRONTEND_URL}/home`,
+      cancel_url: `${process.env.FRONTEND_URL}/i/verified-orgs-signup`,
 
       // when working on deployment version
       // success_url: "?",
