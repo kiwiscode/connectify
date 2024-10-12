@@ -990,9 +990,7 @@ function LogoutModal({
             </Modal.Body>
           </Modal>
         </>
-      ) : (
-        <></>
-      )}
+      ) : null}
 
       <Modal
         className={
@@ -1133,162 +1131,151 @@ function LogoutModal({
         <PopupState variant="popover" popupId="demo-popup-popover">
           {(popupState) => (
             <div>
-              <Button
-                className={width <= 1440 ? "mt-5" : ""}
+              <Stack
                 {...bindTrigger(popupState)}
+                className={`${
+                  width <= 1440 && "mt-5"
+                } stack-logout-navigation-parent stack-logout-navigation-parent-${themeName}`}
                 style={{
-                  border: "none",
-                  backgroundColor: "transparent",
+                  borderRadius: "9999px",
+                  cursor: "pointer",
+                  width: "250px",
+                  position: "relative",
                 }}
-                variant="text"
+                direction="horizontal"
               >
-                <Stack
-                  className={`stack-logout-navigation-parent stack-logout-navigation-parent-${themeName}`}
-                  style={{
-                    borderRadius: "9999px",
-                    cursor: "pointer",
-                    // padding: "3px",
-                    width: "250px",
+                <div
+                  style={{ position: "relative", left: "10px" }}
+                  className="profile-img-and-svg"
+                >
+                  {/* start to check */}
+                  {userInfo?.imageUrl?.slice(0, 3) !== "../" ? (
+                    <div>
+                      <img
+                        className="profile-img logout-profile-img"
+                        src={userInfo?.imageUrl}
+                        width={40}
+                        height={40}
+                        alt=""
+                        style={{
+                          borderRadius: "50%",
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <img
+                        style={{
+                          borderRadius: "50%",
+                        }}
+                        width="40"
+                        height="40"
+                        src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                        alt=""
+                      />
+                    </div>
+                  )}
+                </div>
+                {/* finish to check */}
 
+                <div
+                  className="p-2 responsive-logout"
+                  style={{ position: "relative", left: "10px" }}
+                >
+                  <div>
+                    <div
+                      className="chirp-bold-font"
+                      style={{
+                        color: themeName === "dark-theme" ? "white" : "black",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
+                        textAlign: "left",
+                        display: "flex",
+                        alignItems: "center",
+                        width: "120px",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        display: "block",
+                      }}
+                    >
+                      <span
+                        className={
+                          themeName === "dark-theme"
+                            ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
+                            : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
+                        }
+                      >
+                        {userInfo?.fullname}
+                      </span>
+                      {userInfo?.isPrivate && (
+                        <span
+                          style={{
+                            marginLeft: "5px",
+                          }}
+                        >
+                          <svg
+                            fill={
+                              themeName === "dark-theme" ? "#E6E9EA" : "#0F141A"
+                            }
+                            width={`${1.25}em`}
+                            height={`${1.25}em`}
+                            viewBox="0 0 24 24"
+                            aria-label="Protected account"
+                            role="img"
+                            className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-lrvibr r-m6rgpd r-3t4u6i r-18jsvk2 r-f9ja8p r-og9te1"
+                            data-testid="icon-lock"
+                          >
+                            <g>
+                              <path d="M17.5 7H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.39 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.89 7 17.5 7zM13 14.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2 0 .74-.4 1.39-1 1.73zM15 7H9v-.25c0-1.66 1.35-3 3-3 1.66 0 3 1.34 3 3V7z"></path>
+                            </g>
+                          </svg>
+                        </span>
+                      )}
+                    </div>
+                    <div
+                      className="chirp-regular-font"
+                      style={{
+                        color:
+                          themeName === "dark-theme"
+                            ? "#71767A"
+                            : "rgb(83, 100, 113)",
+                        fontSize: font15.fontSize,
+                        lineHeight: font15.lineHeight,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        width: "120px",
+                        textAlign: "left",
+                      }}
+                    >
+                      @{userInfo?.username}
+                    </div>
+                  </div>
+                </div>
+                <div
+                  style={{
                     position: "relative",
                     right: "12px",
                   }}
-                  direction="horizontal"
+                  className="ms-auto responsive-logout"
                 >
-                  <div
-                    style={{ position: "relative", left: "10px" }}
-                    className="profile-img-and-svg"
+                  <svg
+                    color={themeName === "dark-theme" ? "white" : ""}
+                    fill="currentColor"
+                    width={`${1.25}em`}
+                    height={`${1.25}em`}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="bi bi-three-dots none-backgroundColor logout-three-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
                   >
-                    {/* start to check */}
-                    {userInfo?.imageUrl?.slice(0, 3) !== "../" ? (
-                      <div>
-                        <img
-                          className="profile-img logout-profile-img"
-                          src={userInfo?.imageUrl}
-                          width={40}
-                          height={40}
-                          alt=""
-                          style={{
-                            borderRadius: "50%",
-                          }}
-                        />
-                      </div>
-                    ) : (
-                      <div>
-                        <img
-                          style={{
-                            borderRadius: "50%",
-                          }}
-                          width="40"
-                          height="40"
-                          src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
-                          alt=""
-                        />
-                      </div>
-                    )}
-                  </div>
-                  {/* finish to check */}
-
-                  <div
-                    className="p-2 responsive-logout"
-                    style={{ position: "relative", left: "10px" }}
-                  >
-                    <div>
-                      <div
-                        className="chirp-bold-font"
-                        style={{
-                          color: themeName === "dark-theme" ? "white" : "black",
-                          fontSize: font15.fontSize,
-                          lineHeight: font15.lineHeight,
-                          textAlign: "left",
-                          display: "flex",
-                          alignItems: "center",
-                          width: "120px",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                          display: "block",
-                        }}
-                      >
-                        <span
-                          className={
-                            themeName === "dark-theme"
-                              ? "soft-grey-dark-theme-text-variant-1 chirp-bold-font"
-                              : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
-                          }
-                        >
-                          {userInfo?.fullname}
-                        </span>
-                        {userInfo?.isPrivate && (
-                          <span
-                            style={{
-                              marginLeft: "5px",
-                            }}
-                          >
-                            <svg
-                              fill={
-                                themeName === "dark-theme"
-                                  ? "#E6E9EA"
-                                  : "#0F141A"
-                              }
-                              width={`${1.25}em`}
-                              height={`${1.25}em`}
-                              viewBox="0 0 24 24"
-                              aria-label="Protected account"
-                              role="img"
-                              className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-lrvibr r-m6rgpd r-3t4u6i r-18jsvk2 r-f9ja8p r-og9te1"
-                              data-testid="icon-lock"
-                            >
-                              <g>
-                                <path d="M17.5 7H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.39 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.89 7 17.5 7zM13 14.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2 0 .74-.4 1.39-1 1.73zM15 7H9v-.25c0-1.66 1.35-3 3-3 1.66 0 3 1.34 3 3V7z"></path>
-                              </g>
-                            </svg>
-                          </span>
-                        )}
-                      </div>
-                      <div
-                        className="chirp-regular-font"
-                        style={{
-                          color:
-                            themeName === "dark-theme"
-                              ? "#71767A"
-                              : "rgb(83, 100, 113)",
-                          fontSize: font15.fontSize,
-                          lineHeight: font15.lineHeight,
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                          width: "120px",
-                          textAlign: "left",
-                        }}
-                      >
-                        @{userInfo?.username}
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      position: "relative",
-                      right: "12px",
-                    }}
-                    className="ms-auto responsive-logout"
-                  >
-                    <svg
-                      color={themeName === "dark-theme" ? "white" : ""}
-                      fill="currentColor"
-                      width={`${1.25}em`}
-                      height={`${1.25}em`}
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className="bi bi-three-dots none-backgroundColor logout-three-dots r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                    >
-                      <g>
-                        <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                      </g>
-                    </svg>
-                  </div>
-                </Stack>
-              </Button>{" "}
+                    <g>
+                      <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                    </g>
+                  </svg>
+                </div>
+              </Stack>
+              {/* </Button>{" "} */}
               <Popover
                 style={{
                   display: rightSideColumSubscriptionModalStatus ? "none" : "",

@@ -1451,6 +1451,7 @@ function UserProfile({ isNewPostShared }) {
               left: "50%",
               top: "50%",
               transform: "translate(-50%,-50%)",
+              borderRadius: "50%",
             }}
           >
             {userInfo?.imageUrl?.slice(0, 3) !== "../" ? (

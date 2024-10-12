@@ -138,7 +138,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
           setTimeout(() => {
             navigate("/home");
             setTabLoading(false);
-            window.location.href = "http://localhost:5173/home";
+            // window.location.href = "http://localhost:5173/home";
           }, 600);
         }
       })
@@ -207,7 +207,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
         setIsLoading(true);
         setTimeout(() => {
           navigate("/home");
-          window.location.href = "http://localhost:5173/home";
+          // window.location.href = "http://localhost:5173/home";
         }, 500);
       })
       .catch((error) => {
@@ -488,7 +488,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
 
         setTimeout(() => {
           navigate("/home");
-          window.location.href = "http://localhost:5173/home";
+          // window.location.href = "http://localhost:5173/home";
         }, 500);
       })
       .catch((error) => {

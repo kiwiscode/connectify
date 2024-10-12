@@ -92,57 +92,63 @@ router.post(
   }
 );
 
-router.post("/sms", (req, res) => {
-  const twiml = new MessagingResponse();
-  const userMessageContent = req.body.Body;
-  const userPhoneNumber = req.body.From;
+// twilio webhook sms verification sırasında qr code ile smsin gönderildiğini anlamak adına
+router.post("/sms", async (req, res) => {
+  try {
+    const twiml = new MessagingResponse();
+    const userMessageContent = req.body.Body;
+    const userPhoneNumber = req.body.From;
 
-  console.log("User verify phone number code input =>", userMessageContent);
+    console.log("User verify phone number code input =>", userMessageContent);
 
-  console.log("Received number from user =>", req.body.From);
-  console.log(
-    "Received number from verify phone number input by user with plus sign and without plus sign =>",
-    resultPhoneNumberGlobal ? resultPhoneNumberGlobal : null
-  );
-
-  console.log(
-    "After sms ! =>",
-    premiumInfoGlobal,
-    premiumRoleGlobal,
-    verifyPhoneCodeGlobal,
-    countryShortCutGlobal,
-    countryPhoneCodeGlobal,
-    selectedCountryGlobal,
-    phoneNumberGlobal
-  );
-  console.log(
-    "After sms ! =>",
-    resultPhoneNumberGlobal ? resultPhoneNumberGlobal : null
-  );
-
-  console.log("User send this code =>", userMessageContent);
-  console.log("Result phone number global =>", resultPhoneNumberGlobal);
-  if (
-    userMessageContent === verifyPhoneCodeGlobal &&
-    (userPhoneNumber === resultPhoneNumberGlobal.withPlusSign ||
-      userPhoneNumber === resultPhoneNumberGlobal.withoutPlusSign)
-  ) {
-    isVerifyCodeCorrect = true;
-    isPhoneNumberMatch = true;
+    console.log("Received number from user =>", req.body.From);
     console.log(
-      "User send a correct verification code => ",
-      isVerifyCodeCorrect
+      "Received number from verify phone number input by user with plus sign and without plus sign =>",
+      resultPhoneNumberGlobal ? resultPhoneNumberGlobal : null
     );
-  } else {
-    isVerifyCodeCorrect = false;
-    isPhoneNumberMatch = false;
+
     console.log(
-      "User send a correct verification code => ",
-      isVerifyCodeCorrect
+      "After sms ! =>",
+      premiumInfoGlobal,
+      premiumRoleGlobal,
+      verifyPhoneCodeGlobal,
+      countryShortCutGlobal,
+      countryPhoneCodeGlobal,
+      selectedCountryGlobal,
+      phoneNumberGlobal
     );
+    console.log(
+      "After sms ! =>",
+      resultPhoneNumberGlobal ? resultPhoneNumberGlobal : null
+    );
+
+    console.log("User send this code =>", userMessageContent);
+    console.log("Result phone number global =>", resultPhoneNumberGlobal);
+    if (
+      userMessageContent === verifyPhoneCodeGlobal &&
+      (userPhoneNumber === resultPhoneNumberGlobal.withPlusSign ||
+        userPhoneNumber === resultPhoneNumberGlobal.withoutPlusSign)
+    ) {
+      isVerifyCodeCorrect = true;
+      isPhoneNumberMatch = true;
+      console.log(
+        "User send a correct verification code => ",
+        isVerifyCodeCorrect
+      );
+    } else {
+      isVerifyCodeCorrect = false;
+      isPhoneNumberMatch = false;
+      console.log(
+        "User send a correct verification code => ",
+        isVerifyCodeCorrect
+      );
+    }
+
+    return res.type("text/xml").send(twiml.toString());
+  } catch (error) {
+    console.error("Error processing Twilio webhook:", error);
+    return res.sendStatus(500);
   }
-
-  res.type("text/xml").send(twiml.toString());
 });
 
 router.post("/verify-phone-for-individual-subscription", async (req, res) => {
@@ -260,132 +266,66 @@ router.post(
   }
 );
 
-router.post("/stripe-webhook", express.json(), async (request, response) => {
-  try {
-    const event = request.body;
-    console.log("User info =>", userInfoGlobal, premiumInfoGlobal);
-    const userId = premiumInfoGlobal?.user._id || userInfoGlobal?._id;
-    const findedUser = await User.findById(userId);
-    console.log("Got payload ", JSON.stringify(event, null, 2));
+// stripe webhook ödemelerin başarıyla gerçekleştiğini anlamak adına
+router.post(
+  "/subscription/stripe-webhook",
+  express.json(),
+  async (request, response) => {
+    try {
+      const event = request.body;
+      console.log("User info =>", userInfoGlobal, premiumInfoGlobal);
+      const userId = premiumInfoGlobal?.user._id || userInfoGlobal?._id;
+      const findedUser = await User.findById(userId);
+      console.log("Got payload ", JSON.stringify(event, null, 2));
 
-    console.log(
-      "Premium role for individual in general =>",
-      premiumInfoGlobal?.premiumRole
-    );
-    console.log(
-      "Premium role organization basic =>",
-      organizationSubPremiumRoleGlobal,
-      organizationSubPremiumTypeGlobal
-    );
-    console.log(
-      "Premium role organization full access =>",
-      organizationSubPremiumRoleGlobal,
-      organizationSubPremiumTypeGlobal
-    );
+      console.log(
+        "Premium role for individual in general =>",
+        premiumInfoGlobal?.premiumRole
+      );
+      console.log(
+        "Premium role organization basic =>",
+        organizationSubPremiumRoleGlobal,
+        organizationSubPremiumTypeGlobal
+      );
+      console.log(
+        "Premium role organization full access =>",
+        organizationSubPremiumRoleGlobal,
+        organizationSubPremiumTypeGlobal
+      );
 
-    const premiumRole = premiumInfoGlobal?.premiumRole;
+      const premiumRole = premiumInfoGlobal?.premiumRole;
 
-    const activeSubscription = await Subscription.find({
-      owner: userId,
-      isActive: true,
-    });
+      const activeSubscription = await Subscription.find({
+        owner: userId,
+        isActive: true,
+      });
 
-    const pastSubscription = await Subscription.find({
-      owner: userId,
-      isActive: false,
-      remainingTimeSubscription: { $ne: null },
-    });
+      const pastSubscription = await Subscription.find({
+        owner: userId,
+        isActive: false,
+        remainingTimeSubscription: { $ne: null },
+      });
 
-    if (pastSubscription.length) {
-      pastSubscription[0].remainingTimeSubscription = null;
-      await pastSubscription[0].save();
-    }
+      if (pastSubscription.length) {
+        pastSubscription[0].remainingTimeSubscription = null;
+        await pastSubscription[0].save();
+      }
 
-    console.log("Has past subscription =>", pastSubscription);
+      console.log("Has past subscription =>", pastSubscription);
 
-    // Handle the event
-    switch (event.type) {
-      case "payment_intent.succeeded":
-        findedUser.successSubscriptionModalShown = false;
-        paymentCreatedSuccessfully = true;
+      // Handle the event
+      switch (event.type) {
+        case "payment_intent.succeeded":
+          findedUser.successSubscriptionModalShown = false;
+          paymentCreatedSuccessfully = true;
 
-        if (!subscriptionProcessError) {
-          if (premiumRole === "Individual") {
-            console.log("Individual subscription processing !");
-            if (!findedUser.hasSubscription) {
-              console.log("Buradaki condition çalışıyor şu anda !");
-              findedUser.isPhoneVerified = true;
-              findedUser.phoneNumber.unshift(resultPhoneNumberGlobal);
-              findedUser.verifiedPhoneNumberDetail = {
-                user: userId,
-                countryCode: countryShortCutGlobal,
-                countryPhoneCode: `+${countryPhoneCodeGlobal}`,
-                phoneNumberIssuedBy: selectedCountryGlobal,
-                qrCodeCreatedDate: Date.now(),
-                qrCodeTextValueForVerification: verifyPhoneCodeGlobal,
-              };
-              findedUser.hasSubscription = true;
-              const createdSubscription = await Subscription.create({
-                owner: findedUser._id.toString(),
-                role: premiumRoleGlobal,
-                subscriptionDetails: {
-                  premiumType: premiumInfoGlobal.premiumType,
-                  billingCycle: premiumInfoGlobal.planType,
-                  subscriptionPrice: premiumInfoGlobal.planPrice,
-                },
-                isActive: true,
-              });
-              findedUser.subscriptions.unshift(
-                createdSubscription._id.toString()
-              );
-              await findedUser.save();
-              isVerifyCodeCorrect = undefined;
-              isPhoneNumberMatch = undefined;
-
-              // clean all global variables for every checkout success process start to check
-              resultPhoneNumberGlobal = undefined;
-              countryShortCutGlobal = undefined;
-              countryPhoneCodeGlobal = undefined;
-              selectedCountryGlobal = undefined;
-              verifyPhoneCodeGlobal = undefined;
-              premiumRoleGlobal = undefined;
-              premiumInfoGlobal = undefined;
-              paymentCreatedSuccessfully = undefined;
-              // clean all global variables for every checkout success process finish to check
-
-              response.status(200).json({
-                message: {
-                  success: true,
-                  message:
-                    "Subscription process completed successfully. Thank you!",
-                },
-              });
-            } else {
-              console.log("Buradaki condition çalışıyor şu anda 2 !");
-              console.log(
-                resultPhoneNumberGlobal,
-                countryShortCutGlobal,
-                countryPhoneCodeGlobal,
-                selectedCountryGlobal,
-                verifyPhoneCodeGlobal,
-                premiumRoleGlobal,
-                premiumInfoGlobal.premiumType,
-                premiumInfoGlobal.planType,
-                premiumInfoGlobal.planPrice
-              );
-              if (
-                resultPhoneNumberGlobal &&
-                countryShortCutGlobal &&
-                countryPhoneCodeGlobal &&
-                selectedCountryGlobal &&
-                verifyPhoneCodeGlobal &&
-                premiumRoleGlobal &&
-                premiumInfoGlobal.premiumType &&
-                premiumInfoGlobal.planType &&
-                premiumInfoGlobal.planPrice
-              ) {
-                console.log("And now we are here after condition !!!");
-                findedUser.phoneNumber[0] = resultPhoneNumberGlobal;
+          if (!subscriptionProcessError) {
+            if (premiumRole === "Individual") {
+              console.log("Individual subscription processing !");
+              if (!findedUser.hasSubscription) {
+                console.log("Buradaki condition çalışıyor şu anda !");
+                findedUser.isPhoneVerified = true;
+                findedUser.phoneNumber.unshift(resultPhoneNumberGlobal);
                 findedUser.verifiedPhoneNumberDetail = {
                   user: userId,
                   countryCode: countryShortCutGlobal,
@@ -394,15 +334,7 @@ router.post("/stripe-webhook", express.json(), async (request, response) => {
                   qrCodeCreatedDate: Date.now(),
                   qrCodeTextValueForVerification: verifyPhoneCodeGlobal,
                 };
-                findedUser.successSubscriptionModalShown = false;
-                if (activeSubscription[0]) {
-                  activeSubscription[0].isActive = false;
-                  activeSubscription[0].cancelledDate = new Date();
-                  await activeSubscription[0].save();
-                } else {
-                  return;
-                }
-
+                findedUser.hasSubscription = true;
                 const createdSubscription = await Subscription.create({
                   owner: findedUser._id.toString(),
                   role: premiumRoleGlobal,
@@ -419,6 +351,7 @@ router.post("/stripe-webhook", express.json(), async (request, response) => {
                 await findedUser.save();
                 isVerifyCodeCorrect = undefined;
                 isPhoneNumberMatch = undefined;
+
                 // clean all global variables for every checkout success process start to check
                 resultPhoneNumberGlobal = undefined;
                 countryShortCutGlobal = undefined;
@@ -429,88 +362,108 @@ router.post("/stripe-webhook", express.json(), async (request, response) => {
                 premiumInfoGlobal = undefined;
                 paymentCreatedSuccessfully = undefined;
                 // clean all global variables for every checkout success process finish to check
+
                 response.status(200).json({
                   message: {
                     success: true,
                     message:
-                      "Your subscription has been successfully renewed. Thank you for continuing to use our service.",
+                      "Subscription process completed successfully. Thank you!",
                   },
                 });
               } else {
-                response.status(500).json({
-                  errorMessage:
-                    "An error occurred. Subscription process could not be completed. 1",
-                });
-              }
-            }
-          } else if (
-            organizationSubPremiumRoleGlobal === "Organization" &&
-            organizationSubPremiumTypeGlobal === "Basic"
-          ) {
-            console.log(
-              "Organization basic type subscription ready to process"
-            );
-            if (!findedUser.hasSubscription) {
-              findedUser.hasSubscription = true;
-              console.log("We are here right now first if condition !!!");
-
-              const createdSubscription = await Subscription.create({
-                owner: findedUser._id.toString(),
-                role: organizationSubPremiumRoleGlobal,
-                subscriptionDetails: {
-                  premiumType: organizationSubPremiumTypeGlobal,
-                  billingCycle: organizationSubPlanTypeBasicGlobal,
-                  subscriptionPrice: organizationSubPlanPriceBasicGlobal,
-                },
-                isActive: true,
-              });
-              findedUser.subscriptions.unshift(
-                createdSubscription._id.toString()
-              );
-              await findedUser.save();
-
-              // clean all global variables for every checkout success process start to check
-              userInfoGlobal = undefined;
-              organizationSubPremiumRoleGlobal = undefined;
-              organizationSubPremiumTypeGlobal = undefined;
-              organizationSubPlanTypeBasicGlobal = undefined;
-              organizationSubPlanPriceBasicGlobal = undefined;
-              paymentCreatedSuccessfully = undefined;
-              // clean all global variables for every checkout success process finish to check
-              response.status(200).json({
-                message: {
-                  success: true,
-                  message:
-                    "Subscription process completed successfully. Thank you!",
-                },
-              });
-            } else {
-              if (
-                userInfoGlobal &&
-                organizationSubPremiumRoleGlobal &&
-                organizationSubPremiumTypeGlobal &&
-                organizationSubPlanTypeBasicGlobal &&
-                organizationSubPlanPriceBasicGlobal
-              ) {
-                findedUser.successSubscriptionModalShown = false;
+                console.log("Buradaki condition çalışıyor şu anda 2 !");
                 console.log(
-                  "We are here right now if condition from else condition for parent if statement !!!"
+                  resultPhoneNumberGlobal,
+                  countryShortCutGlobal,
+                  countryPhoneCodeGlobal,
+                  selectedCountryGlobal,
+                  verifyPhoneCodeGlobal,
+                  premiumRoleGlobal,
+                  premiumInfoGlobal.premiumType,
+                  premiumInfoGlobal.planType,
+                  premiumInfoGlobal.planPrice
                 );
+                if (
+                  resultPhoneNumberGlobal &&
+                  countryShortCutGlobal &&
+                  countryPhoneCodeGlobal &&
+                  selectedCountryGlobal &&
+                  verifyPhoneCodeGlobal &&
+                  premiumRoleGlobal &&
+                  premiumInfoGlobal.premiumType &&
+                  premiumInfoGlobal.planType &&
+                  premiumInfoGlobal.planPrice
+                ) {
+                  console.log("And now we are here after condition !!!");
+                  findedUser.phoneNumber[0] = resultPhoneNumberGlobal;
+                  findedUser.verifiedPhoneNumberDetail = {
+                    user: userId,
+                    countryCode: countryShortCutGlobal,
+                    countryPhoneCode: `+${countryPhoneCodeGlobal}`,
+                    phoneNumberIssuedBy: selectedCountryGlobal,
+                    qrCodeCreatedDate: Date.now(),
+                    qrCodeTextValueForVerification: verifyPhoneCodeGlobal,
+                  };
+                  findedUser.successSubscriptionModalShown = false;
+                  if (activeSubscription[0]) {
+                    activeSubscription[0].isActive = false;
+                    activeSubscription[0].cancelledDate = new Date();
+                    await activeSubscription[0].save();
+                  } else {
+                    return;
+                  }
 
-                console.log(
-                  "Info for creating subscription =>",
-                  organizationSubPremiumRoleGlobal,
-                  organizationSubPremiumTypeGlobal,
-                  organizationSubPlanTypeBasicGlobal,
-                  organizationSubPlanPriceBasicGlobal
-                );
-                if (activeSubscription[0]) {
-                  activeSubscription[0].isActive = false;
-                  activeSubscription[0].cancelledDate = new Date();
-                  await activeSubscription[0].save();
+                  const createdSubscription = await Subscription.create({
+                    owner: findedUser._id.toString(),
+                    role: premiumRoleGlobal,
+                    subscriptionDetails: {
+                      premiumType: premiumInfoGlobal.premiumType,
+                      billingCycle: premiumInfoGlobal.planType,
+                      subscriptionPrice: premiumInfoGlobal.planPrice,
+                    },
+                    isActive: true,
+                  });
+                  findedUser.subscriptions.unshift(
+                    createdSubscription._id.toString()
+                  );
+                  await findedUser.save();
+                  isVerifyCodeCorrect = undefined;
+                  isPhoneNumberMatch = undefined;
+                  // clean all global variables for every checkout success process start to check
+                  resultPhoneNumberGlobal = undefined;
+                  countryShortCutGlobal = undefined;
+                  countryPhoneCodeGlobal = undefined;
+                  selectedCountryGlobal = undefined;
+                  verifyPhoneCodeGlobal = undefined;
+                  premiumRoleGlobal = undefined;
+                  premiumInfoGlobal = undefined;
+                  paymentCreatedSuccessfully = undefined;
+                  // clean all global variables for every checkout success process finish to check
+                  response.status(200).json({
+                    message: {
+                      success: true,
+                      message:
+                        "Your subscription has been successfully renewed. Thank you for continuing to use our service.",
+                    },
+                  });
                 } else {
-                  return;
+                  response.status(500).json({
+                    errorMessage:
+                      "An error occurred. Subscription process could not be completed. 1",
+                  });
                 }
+              }
+            } else if (
+              organizationSubPremiumRoleGlobal === "Organization" &&
+              organizationSubPremiumTypeGlobal === "Basic"
+            ) {
+              console.log(
+                "Organization basic type subscription ready to process"
+              );
+              if (!findedUser.hasSubscription) {
+                findedUser.hasSubscription = true;
+                console.log("We are here right now first if condition !!!");
+
                 const createdSubscription = await Subscription.create({
                   owner: findedUser._id.toString(),
                   role: organizationSubPremiumRoleGlobal,
@@ -521,11 +474,6 @@ router.post("/stripe-webhook", express.json(), async (request, response) => {
                   },
                   isActive: true,
                 });
-
-                console.log(
-                  "Created subscription collection =>",
-                  createdSubscription
-                );
                 findedUser.subscriptions.unshift(
                   createdSubscription._id.toString()
                 );
@@ -543,102 +491,89 @@ router.post("/stripe-webhook", express.json(), async (request, response) => {
                   message: {
                     success: true,
                     message:
-                      "Your subscription has been successfully renewed. Thank you for continuing to use our service.",
+                      "Subscription process completed successfully. Thank you!",
                   },
                 });
               } else {
-                response.status(500).json({
-                  errorMessage:
-                    "An error occurred. Subscription process could not be completed.",
-                });
+                if (
+                  userInfoGlobal &&
+                  organizationSubPremiumRoleGlobal &&
+                  organizationSubPremiumTypeGlobal &&
+                  organizationSubPlanTypeBasicGlobal &&
+                  organizationSubPlanPriceBasicGlobal
+                ) {
+                  findedUser.successSubscriptionModalShown = false;
+                  console.log(
+                    "We are here right now if condition from else condition for parent if statement !!!"
+                  );
+
+                  console.log(
+                    "Info for creating subscription =>",
+                    organizationSubPremiumRoleGlobal,
+                    organizationSubPremiumTypeGlobal,
+                    organizationSubPlanTypeBasicGlobal,
+                    organizationSubPlanPriceBasicGlobal
+                  );
+                  if (activeSubscription[0]) {
+                    activeSubscription[0].isActive = false;
+                    activeSubscription[0].cancelledDate = new Date();
+                    await activeSubscription[0].save();
+                  } else {
+                    return;
+                  }
+                  const createdSubscription = await Subscription.create({
+                    owner: findedUser._id.toString(),
+                    role: organizationSubPremiumRoleGlobal,
+                    subscriptionDetails: {
+                      premiumType: organizationSubPremiumTypeGlobal,
+                      billingCycle: organizationSubPlanTypeBasicGlobal,
+                      subscriptionPrice: organizationSubPlanPriceBasicGlobal,
+                    },
+                    isActive: true,
+                  });
+
+                  console.log(
+                    "Created subscription collection =>",
+                    createdSubscription
+                  );
+                  findedUser.subscriptions.unshift(
+                    createdSubscription._id.toString()
+                  );
+                  await findedUser.save();
+
+                  // clean all global variables for every checkout success process start to check
+                  userInfoGlobal = undefined;
+                  organizationSubPremiumRoleGlobal = undefined;
+                  organizationSubPremiumTypeGlobal = undefined;
+                  organizationSubPlanTypeBasicGlobal = undefined;
+                  organizationSubPlanPriceBasicGlobal = undefined;
+                  paymentCreatedSuccessfully = undefined;
+                  // clean all global variables for every checkout success process finish to check
+                  response.status(200).json({
+                    message: {
+                      success: true,
+                      message:
+                        "Your subscription has been successfully renewed. Thank you for continuing to use our service.",
+                    },
+                  });
+                } else {
+                  response.status(500).json({
+                    errorMessage:
+                      "An error occurred. Subscription process could not be completed.",
+                  });
+                }
               }
-            }
-          } else if (
-            organizationSubPremiumRoleGlobal === "Organization" &&
-            organizationSubPremiumTypeGlobal === "Full Access"
-          ) {
-            console.log(
-              "Organization full access type subscription ready to process"
-            );
-            if (!findedUser.hasSubscription) {
-              findedUser.hasSubscription = true;
+            } else if (
+              organizationSubPremiumRoleGlobal === "Organization" &&
+              organizationSubPremiumTypeGlobal === "Full Access"
+            ) {
               console.log(
-                "Global variable values inside organization full access subscription first condition =>",
-                userInfoGlobal.username,
-                organizationSubPremiumRoleGlobal,
-                organizationSubPremiumTypeGlobal,
-                organizationSubPlanTypeFullAccessGlobal,
-                organizationSubPlanPriceFullAccessGlobal,
-                organizationNameGlobal,
-                yourFullNameGlobal,
-                organizationEmailAdressGlobal,
-                organizationWebSiteGlobal,
-                displayedOrganizationTypeGlobal
+                "Organization full access type subscription ready to process"
               );
-              const createdSubscription = await Subscription.create({
-                owner: findedUser._id.toString(),
-                role: organizationSubPremiumRoleGlobal,
-                subscriptionDetails: {
-                  premiumType: organizationSubPremiumTypeGlobal,
-                  billingCycle: organizationSubPlanTypeFullAccessGlobal,
-                  subscriptionPrice: organizationSubPlanPriceFullAccessGlobal,
-                },
-                isActive: true,
-                organizationDetails: {
-                  organizationName: organizationNameGlobal,
-                  organizationHandle: findedUser.username,
-                  organizationFullName: yourFullNameGlobal,
-                  organizationEmailAddress: organizationEmailAdressGlobal,
-                  organizationWebSite: organizationWebSiteGlobal,
-                  organizationType: displayedOrganizationTypeGlobal,
-                },
-              });
-
-              console.log(
-                "Created subscription with organization info =>",
-                createdSubscription
-              );
-              findedUser.subscriptions.unshift(
-                createdSubscription._id.toString()
-              );
-              await findedUser.save();
-
-              // clean all global variables for every checkout success process start to check
-              userInfoGlobal = undefined;
-              organizationSubPremiumRoleGlobal = undefined;
-              organizationSubPremiumTypeGlobal = undefined;
-              organizationSubPlanTypeBasicGlobal = undefined;
-              organizationSubPlanPriceBasicGlobal = undefined;
-              organizationNameGlobal = undefined;
-              yourFullNameGlobal = undefined;
-              organizationEmailAdressGlobal = undefined;
-              organizationWebSiteGlobal = undefined;
-              displayedOrganizationTypeGlobal = undefined;
-              paymentCreatedSuccessfully = undefined;
-              // clean all global variables for every checkout success process finish to check
-
-              response.status(200).json({
-                message: {
-                  success: true,
-                  message:
-                    "Subscription process completed successfully. Thank you!",
-                },
-              });
-            } else {
-              if (
-                userInfoGlobal &&
-                organizationSubPremiumRoleGlobal &&
-                organizationSubPremiumTypeGlobal &&
-                organizationSubPlanTypeFullAccessGlobal &&
-                organizationSubPlanPriceFullAccessGlobal &&
-                organizationNameGlobal &&
-                yourFullNameGlobal &&
-                organizationEmailAdressGlobal &&
-                organizationWebSiteGlobal &&
-                displayedOrganizationTypeGlobal
-              ) {
+              if (!findedUser.hasSubscription) {
+                findedUser.hasSubscription = true;
                 console.log(
-                  "Global variable values inside organization full access subscription second condition =>",
+                  "Global variable values inside organization full access subscription first condition =>",
                   userInfoGlobal.username,
                   organizationSubPremiumRoleGlobal,
                   organizationSubPremiumTypeGlobal,
@@ -650,14 +585,6 @@ router.post("/stripe-webhook", express.json(), async (request, response) => {
                   organizationWebSiteGlobal,
                   displayedOrganizationTypeGlobal
                 );
-                findedUser.successSubscriptionModalShown = false;
-                if (activeSubscription[0]) {
-                  activeSubscription[0].isActive = false;
-                  activeSubscription[0].cancelledDate = new Date();
-                  await activeSubscription[0].save();
-                } else {
-                  return;
-                }
                 const createdSubscription = await Subscription.create({
                   owner: findedUser._id.toString(),
                   role: organizationSubPremiumRoleGlobal,
@@ -676,14 +603,16 @@ router.post("/stripe-webhook", express.json(), async (request, response) => {
                     organizationType: displayedOrganizationTypeGlobal,
                   },
                 });
-                findedUser.subscriptions.unshift(
-                  createdSubscription._id.toString()
-                );
+
                 console.log(
                   "Created subscription with organization info =>",
                   createdSubscription
                 );
+                findedUser.subscriptions.unshift(
+                  createdSubscription._id.toString()
+                );
                 await findedUser.save();
+
                 // clean all global variables for every checkout success process start to check
                 userInfoGlobal = undefined;
                 organizationSubPremiumRoleGlobal = undefined;
@@ -702,34 +631,117 @@ router.post("/stripe-webhook", express.json(), async (request, response) => {
                   message: {
                     success: true,
                     message:
-                      "Your subscription has been successfully renewed. Thank you for continuing to use our service.",
+                      "Subscription process completed successfully. Thank you!",
                   },
                 });
               } else {
-                response.status(500).json({
-                  errorMessage:
-                    "An error occurred. Subscription process could not be completed.",
-                });
+                if (
+                  userInfoGlobal &&
+                  organizationSubPremiumRoleGlobal &&
+                  organizationSubPremiumTypeGlobal &&
+                  organizationSubPlanTypeFullAccessGlobal &&
+                  organizationSubPlanPriceFullAccessGlobal &&
+                  organizationNameGlobal &&
+                  yourFullNameGlobal &&
+                  organizationEmailAdressGlobal &&
+                  organizationWebSiteGlobal &&
+                  displayedOrganizationTypeGlobal
+                ) {
+                  console.log(
+                    "Global variable values inside organization full access subscription second condition =>",
+                    userInfoGlobal.username,
+                    organizationSubPremiumRoleGlobal,
+                    organizationSubPremiumTypeGlobal,
+                    organizationSubPlanTypeFullAccessGlobal,
+                    organizationSubPlanPriceFullAccessGlobal,
+                    organizationNameGlobal,
+                    yourFullNameGlobal,
+                    organizationEmailAdressGlobal,
+                    organizationWebSiteGlobal,
+                    displayedOrganizationTypeGlobal
+                  );
+                  findedUser.successSubscriptionModalShown = false;
+                  if (activeSubscription[0]) {
+                    activeSubscription[0].isActive = false;
+                    activeSubscription[0].cancelledDate = new Date();
+                    await activeSubscription[0].save();
+                  } else {
+                    return;
+                  }
+                  const createdSubscription = await Subscription.create({
+                    owner: findedUser._id.toString(),
+                    role: organizationSubPremiumRoleGlobal,
+                    subscriptionDetails: {
+                      premiumType: organizationSubPremiumTypeGlobal,
+                      billingCycle: organizationSubPlanTypeFullAccessGlobal,
+                      subscriptionPrice:
+                        organizationSubPlanPriceFullAccessGlobal,
+                    },
+                    isActive: true,
+                    organizationDetails: {
+                      organizationName: organizationNameGlobal,
+                      organizationHandle: findedUser.username,
+                      organizationFullName: yourFullNameGlobal,
+                      organizationEmailAddress: organizationEmailAdressGlobal,
+                      organizationWebSite: organizationWebSiteGlobal,
+                      organizationType: displayedOrganizationTypeGlobal,
+                    },
+                  });
+                  findedUser.subscriptions.unshift(
+                    createdSubscription._id.toString()
+                  );
+                  console.log(
+                    "Created subscription with organization info =>",
+                    createdSubscription
+                  );
+                  await findedUser.save();
+                  // clean all global variables for every checkout success process start to check
+                  userInfoGlobal = undefined;
+                  organizationSubPremiumRoleGlobal = undefined;
+                  organizationSubPremiumTypeGlobal = undefined;
+                  organizationSubPlanTypeBasicGlobal = undefined;
+                  organizationSubPlanPriceBasicGlobal = undefined;
+                  organizationNameGlobal = undefined;
+                  yourFullNameGlobal = undefined;
+                  organizationEmailAdressGlobal = undefined;
+                  organizationWebSiteGlobal = undefined;
+                  displayedOrganizationTypeGlobal = undefined;
+                  paymentCreatedSuccessfully = undefined;
+                  // clean all global variables for every checkout success process finish to check
+
+                  response.status(200).json({
+                    message: {
+                      success: true,
+                      message:
+                        "Your subscription has been successfully renewed. Thank you for continuing to use our service.",
+                    },
+                  });
+                } else {
+                  response.status(500).json({
+                    errorMessage:
+                      "An error occurred. Subscription process could not be completed.",
+                  });
+                }
               }
             }
+          } else {
+            console.log("Buradaki condition çalışıyor şu anda 3 !");
           }
-        } else {
-          console.log("Buradaki condition çalışıyor şu anda 3 !");
-        }
 
-        break;
-      default:
-        console.log(`Unhandled event type ${event.type}`);
+          break;
+        default:
+          console.log(`Unhandled event type ${event.type}`);
+      }
+      response.status(200).end();
+    } catch (error) {
+      console.log("Buradaki durum çalışıyor şu anda stripe-webhook içerisi !");
+      response.status(500).json({
+        errorMessage:
+          "An error occurred. Subscription process could not be completed. -1",
+      });
     }
-    response.status(200).end();
-  } catch (error) {
-    console.log("Buradaki durum çalışıyor şu anda stripe-webhook içerisi !");
-    response.status(500).json({
-      errorMessage:
-        "An error occurred. Subscription process could not be completed. -1",
-    });
   }
-});
+);
 
 // organizational subscriptions start to check
 

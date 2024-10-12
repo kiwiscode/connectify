@@ -145,8 +145,8 @@ function generateRandomCode() {
   return code;
 }
 
-let randomCode;
 let countryCodeFromUser;
+let randomCode;
 randomCode = generateRandomCode();
 
 router.post("/phone_verification_code", authenticateToken, async (req, res) => {
@@ -159,11 +159,11 @@ router.post("/phone_verification_code", authenticateToken, async (req, res) => {
     console.log("User id =>", userId);
     console.log("To number =>", toNumber + countryCode);
 
+    randomCode = randomCode === undefined ? generateRandomCode() : randomCode;
+
     console.log("Random code =>", randomCode);
     const message = await client.messages.create({
-      body: `Your C confirmation code is ${
-        randomCode === undefined ? generateRandomCode() : randomCode
-      }`,
+      body: `Your Connectify confirmation code is ${randomCode}`,
       from: process.env.TWILIO_ACCOUNT_NUMBER,
       to: `+${countryCode + toNumber}`,
     });
@@ -182,6 +182,16 @@ router.post("/verify_code", authenticateToken, async (req, res) => {
   try {
     const { verificationCodeInput, phoneNumberInput } = req.body;
     const { userId } = req.user;
+
+    function removeLeadingZero(phoneNumber) {
+      if (phoneNumber.startsWith("0")) {
+        return phoneNumber.slice(1);
+      }
+      return phoneNumber;
+    }
+
+    const cleanedPhoneNumber = removeLeadingZero(phoneNumberInput);
+
     console.log("Verification code input =>", verificationCodeInput);
     console.log("Country code =>", countryCodeFromUser);
     console.log(
@@ -191,9 +201,9 @@ router.post("/verify_code", authenticateToken, async (req, res) => {
     console.log("Phone number input =>", phoneNumberInput);
     if (verificationCodeInput === randomCode) {
       resultPhoneNumberGlobal = {
-        phone_number: phoneNumberInput,
-        withoutPlusSign: `${countryCodeFromUser + phoneNumberInput}`,
-        withPlusSign: `+${countryCodeFromUser + phoneNumberInput}`,
+        phone_number: cleanedPhoneNumber,
+        withoutPlusSign: `${countryCodeFromUser + cleanedPhoneNumber}`,
+        withPlusSign: `+${countryCodeFromUser + cleanedPhoneNumber}`,
       };
 
       const updatedUser = await User.findByIdAndUpdate(

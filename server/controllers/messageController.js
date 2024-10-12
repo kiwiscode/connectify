@@ -78,6 +78,8 @@ const handleMarkAsReadMessage = async (req, res) => {
 
     await user.save();
 
+    console.log("mark as read the message", messageRoomId);
+
     res.status(200).send("Message marked as read");
   } catch (error) {
     console.error("Error:", error);
@@ -95,6 +97,8 @@ const handleCreateChatRoom = async (req, res) => {
     const user1 = await User.findById(userId1);
     const user2 = await User.findById(userId2);
 
+    console.log("room id:", roomId);
+
     if (!user1 || !user2) {
       return res.status(404).send("One or both users not found");
     }
@@ -102,15 +106,17 @@ const handleCreateChatRoom = async (req, res) => {
     const user1RoomExists = user1.messages.some(
       (message) =>
         message.room === roomIdArray.join("-") ||
-        roomIdArray.reverse().join("-")
+        message.room === roomIdArray.reverse().join("-")
     );
     const user2RoomExists = user2.messages.some(
       (message) =>
         message.room === roomIdArray.join("-") ||
-        roomIdArray.reverse().join("-")
+        message.room === roomIdArray.reverse().join("-")
     );
 
     if (user1RoomExists || user2RoomExists) {
+      console.log("user 1:", user1.username);
+      console.log("user 2:", user2.username);
       return res.status(400).send("Chat room already exists");
     }
 
@@ -125,7 +131,7 @@ const handleCreateChatRoom = async (req, res) => {
     user2.messages.push({
       room: roomId,
       members: [user1._id, user2._id],
-      readed: false,
+      readed: true,
       deactivatedMember: false,
     });
 
@@ -143,7 +149,7 @@ const handleCreateChatRoom = async (req, res) => {
 
 const handleAddMessageToRoom = async (req, res) => {
   try {
-    const { messageData } = req.body;
+    const { messageData, currentUserId } = req.body;
     const { chatRoomId } = req.params;
     const [userId1, userId2] = chatRoomId.split("-");
     const roomIdArray = [userId1, userId2];
@@ -157,11 +163,13 @@ const handleAddMessageToRoom = async (req, res) => {
 
     const chatRoomIndexForUser1 = user1.messages.findIndex(
       (room) =>
-        room.room === roomIdArray.join("-") || roomIdArray.reverse().join("-")
+        room.room === roomIdArray.join("-") ||
+        room.room === roomIdArray.reverse().join("-")
     );
     const chatRoomIndexForUser2 = user2.messages.findIndex(
       (room) =>
-        room.room === roomIdArray.join("-") || roomIdArray.reverse().join("-")
+        room.room === roomIdArray.join("-") ||
+        room.room === roomIdArray.reverse().join("-")
     );
 
     if (chatRoomIndexForUser1 === -1 || chatRoomIndexForUser2 === -1) {
@@ -179,6 +187,16 @@ const handleAddMessageToRoom = async (req, res) => {
       membersOfChat: [userId1, userId2],
     });
 
+    // burası problem çıkarıyor olabilir, silinebilir socket.js deki update ile çakışıyor gibiler
+    // if (currentUserId === user1._id.toString()) {
+    //   user1.messages[chatRoomIndexForUser1].readed = true;
+    //   user2.messages[chatRoomIndexForUser2].readed = false;
+    // }
+    // if (currentUserId === user2._id.toString()) {
+    //   user2.messages[chatRoomIndexForUser2].readed = true;
+    //   user1.messages[chatRoomIndexForUser1].readed = false;
+    // }
+
     user1.messages[chatRoomIndexForUser1].chat.push({
       sender: messageData.sender,
       text: messageData.text,
@@ -190,6 +208,28 @@ const handleAddMessageToRoom = async (req, res) => {
       text: messageData.text,
       timestamp: messageData.time,
     });
+
+    // user1 için kontrol yapıyoruz
+    if (chatRoomIndexForUser1 !== 0) {
+      const currentMessageForUser1 = user1.messages[chatRoomIndexForUser1]; // Geçerli mesajı kaydet
+
+      // current mesajı olduğu yerden siş
+      user1.messages.splice(chatRoomIndexForUser1, 1);
+
+      // current mesaj odasını unshift ile ilk sıraya at
+      user1.messages.unshift(currentMessageForUser1);
+    }
+
+    // user2 için kontrol yapıyoruz
+    if (chatRoomIndexForUser2 !== 0) {
+      const currentMessageForUser2 = user2.messages[chatRoomIndexForUser2]; // Geçerli mesajı kaydet
+
+      // current mesajı olduğu yerden siş
+      user2.messages.splice(chatRoomIndexForUser2, 1);
+
+      // current mesaj odasını unshift ile ilk sıraya at
+      user2.messages.unshift(currentMessageForUser2);
+    }
 
     await user1.save();
     await user2.save();
@@ -218,12 +258,12 @@ const handleGetChat = async (req, res) => {
     const user1RoomExists = user1.messages.some(
       (message) =>
         message.room === roomIdArray.join("-") ||
-        roomIdArray.reverse().join("-")
+        message.room === roomIdArray.reverse().join("-")
     );
     const user2RoomExists = user2.messages.some(
       (message) =>
         message.room === roomIdArray.join("-") ||
-        roomIdArray.reverse().join("-")
+        message.room === roomIdArray.reverse().join("-")
     );
 
     if (!user1RoomExists || !user2RoomExists) {
@@ -245,10 +285,31 @@ const handleGetChat = async (req, res) => {
   }
 };
 
+const getUnreadMessages = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      res.status(404).json({ errorMessage: "User not found" });
+    }
+
+    const unReadMessages = user.messages.filter((eachMessageRoom) => {
+      return eachMessageRoom.readed === false;
+    });
+
+    res.status(200).json(unReadMessages);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Server Error");
+  }
+};
+
 module.exports = {
   handleDeleteMessage,
   handleMarkAsReadMessage,
   handleCreateChatRoom,
   handleAddMessageToRoom,
   handleGetChat,
+  getUnreadMessages,
 };

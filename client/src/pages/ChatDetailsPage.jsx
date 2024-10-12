@@ -75,28 +75,11 @@ function ChatDetailsPage() {
 
   // mesajların render edildiği kısım finish to check
 
-  useEffect(() => {
-    if (chatRoomId) {
-      joinRoom(chatRoomId, userInfo.username);
-
-      const userJoinedListener = (announcement) => {
-        console.log(announcement);
-        // Kullanıcı katılma bildirimini görsel olarak gösterebilirsiniz
-      };
-
-      socket.on("userJoined", userJoinedListener);
-
-      return () => {
-        socket.off("userJoined", userJoinedListener); // Dinleyiciyi temizle
-      };
-    }
-  }, [chatRoomId]);
-
   const handleAddMessageToDB = async (messageData) => {
     try {
       const result = await axios.post(
         `${API_URL}/messages/${chatRoomId}`,
-        { messageData },
+        { messageData, currentUserId: userInfo._id },
         {
           headers: {
             Authorization: `Bearer ${getToken()}`,
@@ -260,30 +243,17 @@ function ChatDetailsPage() {
     if (chatRoomId) {
       joinRoom(chatRoomId, userInfo.username);
 
-      // Server tarafından odaya katılma bildirimlerini dinleme
-      socket.on("userJoined", (announcement) => {
+      const userJoinedListener = (announcement) => {
         console.log(announcement);
         // Kullanıcı katılma bildirimini görsel olarak gösterebilirsiniz
-      });
-    }
-    return () => {
-      socket.off("userJoined"); // Dinleyiciyi temizle
-    };
-  }, [chatRoomId]);
+      };
 
-  useEffect(() => {
-    if (chatRoomId) {
-      joinRoom(chatRoomId, userInfo.username);
+      socket.on("userJoined", userJoinedListener);
 
-      // Server tarafından odaya katılma bildirimlerini dinleme
-      socket.on("userJoined", (announcement) => {
-        console.log(announcement);
-        // Kullanıcı katılma bildirimini görsel olarak gösterebilirsiniz
-      });
+      return () => {
+        socket.off("userJoined", userJoinedListener); // Dinleyiciyi temizle
+      };
     }
-    return () => {
-      socket.off("userJoined"); // Dinleyiciyi temizle
-    };
   }, [chatRoomId]);
 
   useEffect(() => {

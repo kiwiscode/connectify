@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext, useRef } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
 import LogoutModal from "./LogoutModal";
 import axios from "axios";
@@ -19,6 +19,7 @@ import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
 import { FontSizeContext } from "../../context/FontSizeContext";
 import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
+
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
 function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
@@ -34,7 +35,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
   const font15 = getFontSizeAndLineHeight15();
   const font11 = getFontSizeAndLineHeight11();
   const { fontSize, setFontSize } = useContext(FontSizeContext);
-
+  const location = useLocation();
+  const path = location.pathname;
   const navigate = useNavigate();
 
   const [show, setShow] = useState(false);
@@ -209,20 +211,32 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
       });
   }, []);
 
-  const checkHowManyUnReadMessages = () => {
-    const allUnReadedMessages = userMessageDetails?.filter((allMessages) => {
-      if (
-        allMessages.chat &&
-        allMessages.chat.length > 0 &&
-        !allMessages.readed
-      ) {
-        return true;
-      }
-      return false;
-    });
+  const [numberOfUnreadMessages, setNumberOfUnreadMessages] = useState(null);
 
-    return allUnReadedMessages;
+  const getUnreadMessages = async () => {
+    try {
+      const result = await axios.get(
+        `${API_URL}/users/${userInfo._id}/messages/unread`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      setNumberOfUnreadMessages(result.data.length);
+      console.log("result for unread messages:", result);
+    } catch (error) {
+      console.error("error:", error);
+    }
   };
+
+  useEffect(() => {
+    getUnreadMessages();
+  }, [path]);
+
+  console.log("unread messages:", getUnreadMessages());
+
   const { togglePostModalVisibility } = useContext(ModalVisibilityContext);
 
   const handleClose = () => {
@@ -990,7 +1004,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       >
                         {width <= 1201 && (
                           <>
-                            {checkHowManyUnReadMessages()?.length !== 0 && (
+                            {numberOfUnreadMessages ? (
                               <div
                                 style={{
                                   cursor: "pointer",
@@ -1016,10 +1030,11 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                     lineHeight: font11.lineHeight,
                                   }}
                                 >
-                                  {checkHowManyUnReadMessages()?.length}
+                                  {/* bunu sil ve direkt olarak okunmayan mesaj sayısını backendden al route kurup */}
+                                  {numberOfUnreadMessages}
                                 </span>
                               </div>
-                            )}
+                            ) : null}
                           </>
                         )}{" "}
                         <BootstrapTooltip
@@ -2322,612 +2337,585 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                   </div>
                 </span>
               </NavLink>
-              {/* Second */}
-              <NavLink
-                to={"/home"}
+              {/* first */}
+              <div
                 className={`home-nav-link home-nav-link-${themeName}`}
+                style={{
+                  cursor: "default",
+                }}
               >
-                <span
+                <div
+                  className={`home-parent-of-span-svg home-parent-of-span-svg-${themeName}`}
                   style={{
-                    cursor: "pointer",
+                    display: "inline-block",
+                    padding: "12px",
                   }}
-                  className="home-nav-link-parent-div"
+                  onClick={() => {
+                    navigate("/home");
+                  }}
                 >
-                  {" "}
-                  <div
-                    className={`home-parent-of-span-svg home-parent-of-span-svg-${themeName}`}
+                  <svg
+                    color={themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"}
+                    fill="currentColor"
+                    style={{}}
+                    width={`${1.25}rem`}
+                    height={`${1.25}rem`}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="home-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
+                  >
+                    <g className="home-svg-group">
+                      {window.location.href === "http://localhost:5173/home" ? (
+                        <path d="M21.591 7.146L12.52 1.157c-.316-.21-.724-.21-1.04 0l-9.071 5.99c-.26.173-.409.456-.409.757v13.183c0 .502.418.913.929.913H9.14c.51 0 .929-.41.929-.913v-7.075h3.909v7.075c0 .502.417.913.928.913h6.165c.511 0 .929-.41.929-.913V7.904c0-.301-.158-.584-.408-.758z"></path>
+                      ) : (
+                        <path d="M21.591 7.146L12.52 1.157c-.316-.21-.724-.21-1.04 0l-9.071 5.99c-.26.173-.409.456-.409.757v13.183c0 .502.418.913.929.913h6.638c.511 0 .929-.41.929-.913v-7.075h3.008v7.075c0 .502.418.913.929.913h6.639c.51 0 .928-.41.928-.913V7.904c0-.301-.158-.584-.408-.758zM20 20l-4.5.01.011-7.097c0-.502-.418-.913-.928-.913H9.44c-.511 0-.929.41-.929.913L8.5 20H4V8.773l8.011-5.342L20 8.764z"></path>
+                      )}
+                    </g>
+                  </svg>
+                  <span
+                    className={
+                      window.location.href === "http://localhost:5173/home"
+                        ? `chirp-bold-font`
+                        : `chirp-regular-font`
+                    }
                     style={{
-                      display: "inline-block",
-                      padding: "12px",
+                      marginLeft: "20px",
+                      position: "relative",
+                      top: "3px",
+                      fontSize: font20.fontSize,
+                      lineHeight: font20.lineHeight,
                     }}
                   >
-                    <svg
-                      color={themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"}
-                      fill="currentColor"
-                      style={{}}
-                      width={`${1.25}rem`}
-                      height={`${1.25}rem`}
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className="home-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
-                    >
-                      <g className="home-svg-group">
-                        {window.location.href ===
-                        "http://localhost:5173/home" ? (
-                          <path d="M21.591 7.146L12.52 1.157c-.316-.21-.724-.21-1.04 0l-9.071 5.99c-.26.173-.409.456-.409.757v13.183c0 .502.418.913.929.913H9.14c.51 0 .929-.41.929-.913v-7.075h3.909v7.075c0 .502.417.913.928.913h6.165c.511 0 .929-.41.929-.913V7.904c0-.301-.158-.584-.408-.758z"></path>
-                        ) : (
-                          <path d="M21.591 7.146L12.52 1.157c-.316-.21-.724-.21-1.04 0l-9.071 5.99c-.26.173-.409.456-.409.757v13.183c0 .502.418.913.929.913h6.638c.511 0 .929-.41.929-.913v-7.075h3.008v7.075c0 .502.418.913.929.913h6.639c.51 0 .928-.41.928-.913V7.904c0-.301-.158-.584-.408-.758zM20 20l-4.5.01.011-7.097c0-.502-.418-.913-.928-.913H9.44c-.511 0-.929.41-.929.913L8.5 20H4V8.773l8.011-5.342L20 8.764z"></path>
-                        )}
-                      </g>
-                    </svg>
-                    <span
-                      className={
-                        window.location.href === "http://localhost:5173/home"
-                          ? `chirp-bold-font`
-                          : `chirp-regular-font`
-                      }
-                      style={{
-                        marginLeft: "20px",
-                        position: "relative",
-                        top: "3px",
-                        fontSize: font20.fontSize,
-                        lineHeight: font20.lineHeight,
-                      }}
-                    >
-                      Home
-                    </span>
-                  </div>
-                </span>
-              </NavLink>
-              <NavLink
-                to={"/explore"}
+                    Home
+                  </span>
+                </div>
+              </div>
+              {/* second */}
+              <div
                 className={`home-nav-link home-nav-link-${themeName}`}
+                style={{
+                  cursor: "default",
+                }}
               >
-                <span
+                <div
+                  className={`home-parent-of-span-svg home-parent-of-span-svg-${themeName}`}
                   style={{
-                    cursor: "pointer",
+                    display: "inline-block",
+                    padding: "12px",
                   }}
-                  className="home-nav-link-parent-div"
+                  onClick={() => {
+                    navigate("/explore");
+                  }}
                 >
-                  {" "}
-                  <div
-                    className={`home-parent-of-span-svg home-parent-of-span-svg-${themeName}`}
+                  <svg
+                    color={themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"}
+                    fill="currentColor"
+                    style={{}}
+                    width={`${1.25}rem`}
+                    height={`${1.25}rem`}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="home-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
+                  >
+                    <g className="home-svg-group">
+                      {window.location.href ===
+                      "http://localhost:5173/explore" ? (
+                        <path d="M10.25 4.25c-3.314 0-6 2.686-6 6s2.686 6 6 6c1.657 0 3.155-.67 4.243-1.757 1.087-1.088 1.757-2.586 1.757-4.243 0-3.314-2.686-6-6-6zm-9 6c0-4.971 4.029-9 9-9s9 4.029 9 9c0 1.943-.617 3.744-1.664 5.215l4.475 4.474-2.122 2.122-4.474-4.475c-1.471 1.047-3.272 1.664-5.215 1.664-4.971 0-9-4.029-9-9z"></path>
+                      ) : (
+                        <path d="M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781c-1.447 1.142-3.276 1.824-5.262 1.824-4.694 0-8.5-3.806-8.5-8.5z"></path>
+                      )}
+                    </g>
+                  </svg>
+                  <span
+                    className={
+                      window.location.href === "http://localhost:5173/explore"
+                        ? `chirp-bold-font`
+                        : `chirp-regular-font`
+                    }
                     style={{
-                      display: "inline-block",
-                      padding: "12px",
+                      marginLeft: "20px",
+                      position: "relative",
+                      top: "3px",
+                      fontSize: font20.fontSize,
+                      lineHeight: font20.lineHeight,
                     }}
                   >
-                    <svg
-                      color={themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"}
-                      fill="currentColor"
-                      style={{}}
-                      width={`${1.25}rem`}
-                      height={`${1.25}rem`}
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className="home-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
-                    >
-                      <g className="home-svg-group">
-                        {window.location.href ===
-                        "http://localhost:5173/explore" ? (
-                          <path d="M10.25 4.25c-3.314 0-6 2.686-6 6s2.686 6 6 6c1.657 0 3.155-.67 4.243-1.757 1.087-1.088 1.757-2.586 1.757-4.243 0-3.314-2.686-6-6-6zm-9 6c0-4.971 4.029-9 9-9s9 4.029 9 9c0 1.943-.617 3.744-1.664 5.215l4.475 4.474-2.122 2.122-4.474-4.475c-1.471 1.047-3.272 1.664-5.215 1.664-4.971 0-9-4.029-9-9z"></path>
-                        ) : (
-                          <path d="M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781c-1.447 1.142-3.276 1.824-5.262 1.824-4.694 0-8.5-3.806-8.5-8.5z"></path>
-                        )}
-                      </g>
-                    </svg>
-                    <span
-                      className={
-                        window.location.href === "http://localhost:5173/explore"
-                          ? `chirp-bold-font`
-                          : `chirp-regular-font`
-                      }
-                      style={{
-                        marginLeft: "20px",
-                        position: "relative",
-                        top: "3px",
-                        fontSize: font20.fontSize,
-                        lineHeight: font20.lineHeight,
-                      }}
-                    >
-                      Explore
-                    </span>
-                  </div>
-                </span>
-              </NavLink>
-              {/* Third */}
-              <NavLink
-                onClick={changeNotificationReadedStatus}
+                    Explore
+                  </span>
+                </div>
+              </div>
+              {/* third */}
+              <div
                 style={{
                   position: "relative",
+                  cursor: "default",
                 }}
-                to={"/notifications"}
                 className={`notifications-nav-link notifications-nav-link-${themeName}`}
               >
-                <span
+                <div
+                  className={`notifications-parent-of-span-svg notifications-parent-of-span-svg-${themeName}`}
                   style={{
-                    cursor: "pointer",
+                    display: "inline-block",
+                    padding: "12px",
+                    position: "relative",
                   }}
-                  className="notifications-nav-link-parent-div"
+                  onClick={() => {
+                    changeNotificationReadedStatus();
+                    navigate("/notifications");
+                  }}
                 >
-                  <div
-                    className={`notifications-parent-of-span-svg notifications-parent-of-span-svg-${themeName}`}
-                    style={{
-                      display: "inline-block",
-                      padding: "12px",
-                      position: "relative",
-                    }}
-                  >
-                    {width < 1200 ? null : (
-                      <>
-                        {unReadNotifications?.length === 0 ? null : (
-                          <div
+                  {width < 1200 ? null : (
+                    <>
+                      {unReadNotifications?.length === 0 ? null : (
+                        <div
+                          style={{
+                            cursor: "pointer",
+                            position: "absolute",
+                            backgroundColor: "rgb(29, 155, 240)",
+                            boxSizing: "content-box",
+                            top: "4px",
+                            left: "24px",
+                            minWidth: "18px",
+                            minHeight: "18px",
+                            borderRadius: "50%",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            border: "1px solid white",
+                          }}
+                        >
+                          {" "}
+                          <span
+                            className="chirp-regular-font"
                             style={{
-                              cursor: "pointer",
-                              position: "absolute",
-                              backgroundColor: "rgb(29, 155, 240)",
-                              boxSizing: "content-box",
-                              top: "4px",
-                              left: "24px",
-                              minWidth: "18px",
-                              minHeight: "18px",
-                              borderRadius: "50%",
-                              display: "flex",
-                              justifyContent: "center",
-                              alignItems: "center",
-                              border: "1px solid white",
+                              color: "white",
+                              fontSize: font11.fontSize,
+                              lineHeight: font11.lineHeight,
                             }}
                           >
-                            {" "}
-                            <span
-                              className="chirp-regular-font"
-                              style={{
-                                color: "white",
-                                fontSize: font11.fontSize,
-                                lineHeight: font11.lineHeight,
-                              }}
-                            >
-                              {unReadNotifications?.length}
-                            </span>
-                          </div>
-                        )}
-                      </>
-                    )}
-                    <svg
-                      style={{}}
-                      color={themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"}
-                      fill="currentColor"
-                      width={`${1.25}rem`}
-                      height={`${1.25}rem`}
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className="notifications-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
-                    >
-                      <g className="notifications-svg-group">
-                        {window.location.href ===
-                        "http://localhost:5173/notifications" ? (
-                          <path d="M11.996 2c-4.062 0-7.49 3.021-7.999 7.051L2.866 18H7.1c.463 2.282 2.481 4 4.9 4s4.437-1.718 4.9-4h4.236l-1.143-8.958C19.48 5.017 16.054 2 11.996 2zM9.171 18h5.658c-.412 1.165-1.523 2-2.829 2s-2.417-.835-2.829-2z"></path>
-                        ) : (
-                          <path d="M19.993 9.042C19.48 5.017 16.054 2 11.996 2s-7.49 3.021-7.999 7.051L2.866 18H7.1c.463 2.282 2.481 4 4.9 4s4.437-1.718 4.9-4h4.236l-1.143-8.958zM12 20c-1.306 0-2.417-.835-2.829-2h5.658c-.412 1.165-1.523 2-2.829 2zm-6.866-4l.847-6.698C6.364 6.272 8.941 4 11.996 4s5.627 2.268 6.013 5.295L18.864 16H5.134z"></path>
-                        )}
-                      </g>
-                    </svg>
+                            {unReadNotifications?.length}
+                          </span>
+                        </div>
+                      )}
+                    </>
+                  )}
+                  <svg
+                    style={{}}
+                    color={themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"}
+                    fill="currentColor"
+                    width={`${1.25}rem`}
+                    height={`${1.25}rem`}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="notifications-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
+                  >
+                    <g className="notifications-svg-group">
+                      {window.location.href ===
+                      "http://localhost:5173/notifications" ? (
+                        <path d="M11.996 2c-4.062 0-7.49 3.021-7.999 7.051L2.866 18H7.1c.463 2.282 2.481 4 4.9 4s4.437-1.718 4.9-4h4.236l-1.143-8.958C19.48 5.017 16.054 2 11.996 2zM9.171 18h5.658c-.412 1.165-1.523 2-2.829 2s-2.417-.835-2.829-2z"></path>
+                      ) : (
+                        <path d="M19.993 9.042C19.48 5.017 16.054 2 11.996 2s-7.49 3.021-7.999 7.051L2.866 18H7.1c.463 2.282 2.481 4 4.9 4s4.437-1.718 4.9-4h4.236l-1.143-8.958zM12 20c-1.306 0-2.417-.835-2.829-2h5.658c-.412 1.165-1.523 2-2.829 2zm-6.866-4l.847-6.698C6.364 6.272 8.941 4 11.996 4s5.627 2.268 6.013 5.295L18.864 16H5.134z"></path>
+                      )}
+                    </g>
+                  </svg>
 
-                    <span
-                      className={
-                        window.location.href ===
-                        "http://localhost:5173/notifications"
-                          ? `chirp-bold-font`
-                          : `chirp-regular-font`
-                      }
-                      style={{
-                        marginLeft: "20px",
-                        position: "relative",
-                        top: "3px",
-                        fontSize: font20.fontSize,
-                        lineHeight: font20.lineHeight,
-                      }}
-                    >
-                      Notifications{" "}
-                    </span>
-                  </div>
-                </span>
-              </NavLink>
-              {/* Fourth  */}
-              <NavLink
-                to={"/messages"}
-                // onClick={locateMessagesPage}
+                  <span
+                    className={
+                      window.location.href ===
+                      "http://localhost:5173/notifications"
+                        ? `chirp-bold-font`
+                        : `chirp-regular-font`
+                    }
+                    style={{
+                      marginLeft: "20px",
+                      position: "relative",
+                      top: "3px",
+                      fontSize: font20.fontSize,
+                      lineHeight: font20.lineHeight,
+                    }}
+                  >
+                    Notifications{" "}
+                  </span>
+                </div>
+              </div>
+              {/* fourth  */}
+              <div
                 className={`messages-nav-link messages-nav-link-${themeName}`}
+                style={{
+                  cursor: "default",
+                }}
               >
-                <span
+                <div
+                  className={`messages-parent-of-span-svg messages-parent-of-span-svg-${themeName}`}
                   style={{
-                    cursor: "pointer",
+                    display: "inline-block",
+                    padding: "12px",
+                    position: "relative",
                   }}
-                  className="messages-nav-link-parent-div"
+                  onClick={() => {
+                    navigate("/messages");
+                  }}
                 >
-                  <div
-                    className={`messages-parent-of-span-svg messages-parent-of-span-svg-${themeName}`}
-                    style={{
-                      display: "inline-block",
-                      padding: "12px",
-                      position: "relative",
-                    }}
-                  >
-                    {width < 1200 ? null : (
-                      <>
-                        {!checkHowManyUnReadMessages()?.length ? null : (
-                          <div
+                  {width < 1200 ? null : (
+                    <>
+                      {numberOfUnreadMessages ? (
+                        <div
+                          style={{
+                            cursor: "pointer",
+                            position: "absolute",
+                            backgroundColor: "rgb(29, 155, 240)",
+                            boxSizing: "content-box",
+                            top: "4px",
+                            left: "24px",
+                            minWidth: "18px",
+                            minHeight: "18px",
+                            borderRadius: "50%",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            border: "1px solid white",
+                          }}
+                        >
+                          {" "}
+                          <span
+                            className="chirp-regular-font"
                             style={{
-                              cursor: "pointer",
-                              position: "absolute",
-                              backgroundColor: "rgb(29, 155, 240)",
-                              boxSizing: "content-box",
-                              top: "4px",
-                              left: "24px",
-                              minWidth: "18px",
-                              minHeight: "18px",
-                              borderRadius: "50%",
-                              display: "flex",
-                              justifyContent: "center",
-                              alignItems: "center",
-                              border: "1px solid white",
+                              color: "white",
+                              fontSize: font11.fontSize,
+                              lineHeight: font11.lineHeight,
                             }}
                           >
-                            {" "}
-                            <span
-                              className="chirp-regular-font"
-                              style={{
-                                color: "white",
-                                fontSize: font11.fontSize,
-                                lineHeight: font11.lineHeight,
-                              }}
-                            >
-                              {checkHowManyUnReadMessages()?.length}
-                            </span>
-                          </div>
-                        )}
-                      </>
-                    )}
-                    <svg
-                      color={themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"}
-                      fill="currentColor"
-                      width={`${1.25}rem`}
-                      height={`${1.25}rem`}
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className="messages-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
-                    >
-                      <g className="messages-svg-group">
-                        {window.location.href ===
-                        "http://localhost:5173/messages" ? (
-                          <path d="M1.998 4.499c0-.828.671-1.499 1.5-1.499h17c.828 0 1.5.671 1.5 1.499v2.858l-10 4.545-10-4.547V4.499zm0 5.053V19.5c0 .828.671 1.5 1.5 1.5h17c.828 0 1.5-.672 1.5-1.5V9.554l-10 4.545-10-4.547z"></path>
-                        ) : (
-                          <path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v2.764l8 3.638 8-3.636V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 5.463l-8 3.636-8-3.638V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-8.037z"></path>
-                        )}
-                      </g>
-                    </svg>
+                            {/* bunu sil ve direkt olarak okunmayan mesaj sayısını backendden al route kurup */}
+                            {numberOfUnreadMessages}
+                          </span>
+                        </div>
+                      ) : null}
+                    </>
+                  )}
+                  <svg
+                    color={themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"}
+                    fill="currentColor"
+                    width={`${1.25}rem`}
+                    height={`${1.25}rem`}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="messages-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
+                  >
+                    <g className="messages-svg-group">
+                      {window.location.href ===
+                      "http://localhost:5173/messages" ? (
+                        <path d="M1.998 4.499c0-.828.671-1.499 1.5-1.499h17c.828 0 1.5.671 1.5 1.499v2.858l-10 4.545-10-4.547V4.499zm0 5.053V19.5c0 .828.671 1.5 1.5 1.5h17c.828 0 1.5-.672 1.5-1.5V9.554l-10 4.545-10-4.547z"></path>
+                      ) : (
+                        <path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v2.764l8 3.638 8-3.636V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 5.463l-8 3.636-8-3.638V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-8.037z"></path>
+                      )}
+                    </g>
+                  </svg>
 
-                    <span
-                      className={
-                        window.location.href ===
-                        "http://localhost:5173/messages"
-                          ? `chirp-bold-font`
-                          : `chirp-regular-font`
-                      }
-                      style={{
-                        marginLeft: "20px",
-                        position: "relative",
-                        top: "3px",
-                        fontSize: font20.fontSize,
-                        lineHeight: font20.lineHeight,
-                      }}
-                    >
-                      Messages{" "}
-                    </span>
-                  </div>
-                </span>
-              </NavLink>{" "}
-              <NavLink
-                to={`/${userInfo.username}/lists`}
-                // onClick={locateMessagesPage}
+                  <span
+                    className={
+                      window.location.href === "http://localhost:5173/messages"
+                        ? `chirp-bold-font`
+                        : `chirp-regular-font`
+                    }
+                    style={{
+                      marginLeft: "20px",
+                      position: "relative",
+                      top: "3px",
+                      fontSize: font20.fontSize,
+                      lineHeight: font20.lineHeight,
+                    }}
+                  >
+                    Messages{" "}
+                  </span>
+                </div>
+              </div>{" "}
+              {/* fifth */}
+              <div
                 className={`messages-nav-link messages-nav-link-${themeName}`}
                 style={{
                   display: width > 1440 ? "" : "none",
+                  cursor: "default",
                 }}
               >
-                <span
+                <div
+                  className={`messages-parent-of-span-svg messages-parent-of-span-svg-${themeName}`}
                   style={{
-                    cursor: "pointer",
+                    display: "inline-block",
+                    padding: "12px",
+                    position: "relative",
                   }}
-                  className="messages-nav-link-parent-div"
+                  onClick={() => {
+                    navigate(`/${userInfo.username}/lists`);
+                  }}
                 >
-                  <div
-                    className={`messages-parent-of-span-svg messages-parent-of-span-svg-${themeName}`}
+                  <svg
+                    color={themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"}
+                    fill="currentColor"
+                    width={`${1.25}rem`}
+                    height={`${1.25}rem`}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="messages-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
+                  >
+                    <g className="messages-svg-group">
+                      {window.location.href ===
+                      `http://localhost:5173/${userInfo.username}/lists` ? (
+                        <path d="M18.5 2h-13C4.12 2 3 3.12 3 4.5v15C3 20.88 4.12 22 5.5 22h13c1.38 0 2.5-1.12 2.5-2.5v-15C21 3.12 19.88 2 18.5 2zM16 14H8v-2h8v2zm0-4H8V8h8v2z"></path>
+                      ) : (
+                        <path d="M3 4.5C3 3.12 4.12 2 5.5 2h13C19.88 2 21 3.12 21 4.5v15c0 1.38-1.12 2.5-2.5 2.5h-13C4.12 22 3 20.88 3 19.5v-15zM5.5 4c-.28 0-.5.22-.5.5v15c0 .28.22.5.5.5h13c.28 0 .5-.22.5-.5v-15c0-.28-.22-.5-.5-.5h-13zM16 10H8V8h8v2zm-8 2h8v2H8v-2z"></path>
+                      )}
+                    </g>
+                  </svg>
+
+                  <span
+                    className={
+                      window.location.href ===
+                      `http://localhost:5173/${userInfo.username}/lists`
+                        ? `chirp-bold-font`
+                        : `chirp-regular-font`
+                    }
                     style={{
-                      display: "inline-block",
-                      padding: "12px",
+                      marginLeft: "20px",
+                      fontSize: font20.fontSize,
+                      lineHeight: font20.lineHeight,
                       position: "relative",
+                      top: "3px",
                     }}
                   >
-                    <svg
-                      color={themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"}
-                      fill="currentColor"
-                      width={`${1.25}rem`}
-                      height={`${1.25}rem`}
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className="messages-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
-                    >
-                      <g className="messages-svg-group">
-                        {window.location.href ===
-                        `http://localhost:5173/${userInfo.username}/lists` ? (
-                          <path d="M18.5 2h-13C4.12 2 3 3.12 3 4.5v15C3 20.88 4.12 22 5.5 22h13c1.38 0 2.5-1.12 2.5-2.5v-15C21 3.12 19.88 2 18.5 2zM16 14H8v-2h8v2zm0-4H8V8h8v2z"></path>
-                        ) : (
-                          <path d="M3 4.5C3 3.12 4.12 2 5.5 2h13C19.88 2 21 3.12 21 4.5v15c0 1.38-1.12 2.5-2.5 2.5h-13C4.12 22 3 20.88 3 19.5v-15zM5.5 4c-.28 0-.5.22-.5.5v15c0 .28.22.5.5.5h13c.28 0 .5-.22.5-.5v-15c0-.28-.22-.5-.5-.5h-13zM16 10H8V8h8v2zm-8 2h8v2H8v-2z"></path>
-                        )}
-                      </g>
-                    </svg>
-
-                    <span
-                      className={
-                        window.location.href ===
-                        `http://localhost:5173/${userInfo.username}/lists`
-                          ? `chirp-bold-font`
-                          : `chirp-regular-font`
-                      }
-                      style={{
-                        marginLeft: "20px",
-                        fontSize: font20.fontSize,
-                        lineHeight: font20.lineHeight,
-                        position: "relative",
-                        top: "3px",
-                      }}
-                    >
-                      Lists{" "}
-                    </span>
-                  </div>
-                </span>
-              </NavLink>
-              <NavLink
-                to={"/i/bookmarks"}
-                // onClick={locateProfilePage}
+                    Lists{" "}
+                  </span>
+                </div>
+              </div>
+              {/* sixth */}
+              <div
                 className={`profile-nav-link profile-nav-link-${themeName}`}
+                style={{
+                  cursor: "default",
+                }}
               >
-                <span
+                <div
+                  className={`profile-parent-of-span-svg home-parent-of-span-svg-${themeName}`}
                   style={{
-                    cursor: "pointer",
+                    display: "inline-block",
+                    padding: "12px",
                   }}
-                  className="profile-nav-link-parent-div"
+                  onClick={() => {
+                    navigate("/i/bookmarks");
+                  }}
                 >
-                  <div
-                    className={`profile-parent-of-span-svg home-parent-of-span-svg-${themeName}`}
+                  <svg
+                    color={themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"}
+                    fill="currentColor"
+                    width={`${1.75}rem`}
+                    height={`${1.75}rem`}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18jsvk2 r-lwhw9o r-cnnz9e"
+                  >
+                    <g>
+                      {window.location.href ===
+                      "http://localhost:5173/i/bookmarks" ? (
+                        <path d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5z"></path>
+                      ) : (
+                        <path d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V4.5c0-.28-.224-.5-.5-.5h-11z"></path>
+                      )}
+                    </g>
+                  </svg>
+
+                  <span
+                    className={
+                      window.location.href ===
+                      "http://localhost:5173/i/bookmarks"
+                        ? `chirp-bold-font`
+                        : `chirp-regular-font`
+                    }
                     style={{
-                      display: "inline-block",
-                      padding: "12px",
+                      marginLeft: "20px",
+                      position: "relative",
+                      top: "3px",
+                      fontSize: font20.fontSize,
+                      lineHeight: font20.lineHeight,
                     }}
                   >
-                    <svg
-                      color={themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"}
-                      fill="currentColor"
-                      width={`${1.75}rem`}
-                      height={`${1.75}rem`}
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18jsvk2 r-lwhw9o r-cnnz9e"
-                    >
-                      <g>
-                        {window.location.href ===
-                        "http://localhost:5173/i/bookmarks" ? (
-                          <path d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5z"></path>
-                        ) : (
-                          <path d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V4.5c0-.28-.224-.5-.5-.5h-11z"></path>
-                        )}
-                      </g>
-                    </svg>
-
-                    <span
-                      className={
-                        window.location.href ===
-                        "http://localhost:5173/i/bookmarks"
-                          ? `chirp-bold-font`
-                          : `chirp-regular-font`
-                      }
-                      style={{
-                        marginLeft: "20px",
-                        position: "relative",
-                        top: "3px",
-                        fontSize: font20.fontSize,
-                        lineHeight: font20.lineHeight,
-                      }}
-                    >
-                      Bookmarks
-                    </span>
-                  </div>
-                </span>
-              </NavLink>{" "}
-              <NavLink
-                to={`${userInfo.username}/communities/explore`}
-                // onClick={locateProfilePage}
+                    Bookmarks
+                  </span>
+                </div>
+              </div>{" "}
+              {/* seventh */}
+              <div
                 className={`profile-nav-link profile-nav-link-${themeName}`}
+                style={{
+                  cursor: "default",
+                }}
               >
-                <span
+                <div
+                  className={`profile-parent-of-span-svg home-parent-of-span-svg-${themeName}`}
                   style={{
-                    cursor: "pointer",
+                    display: "inline-block",
+                    padding: "12px",
                   }}
-                  className="profile-nav-link-parent-div"
+                  onClick={() => {
+                    navigate(`${userInfo.username}/communities/explore`);
+                  }}
                 >
-                  <div
-                    className={`profile-parent-of-span-svg home-parent-of-span-svg-${themeName}`}
+                  <svg
+                    color={themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"}
+                    fill="currentColor"
+                    width={`${1.75}rem`}
+                    height={`${1.75}rem`}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18jsvk2 r-lwhw9o r-cnnz9e"
+                  >
+                    <g>
+                      {window.location.href ===
+                      `http://localhost:5173/${userInfo.username}/communities/explore` ? (
+                        <path d="M7.471 21H.472l.029-1.027c.184-6.618 3.736-8.977 7-8.977.963 0 1.95.212 2.87.672-1.608 1.732-2.762 4.389-2.869 8.248l-.03 1.083zM9.616 9.27C10.452 8.63 11 7.632 11 6.5 11 4.57 9.433 3 7.5 3S4 4.57 4 6.5c0 1.132.548 2.13 1.384 2.77.589.451 1.317.73 2.116.73s1.527-.279 2.116-.73zm6.884 1.726c-3.264 0-6.816 2.358-7 8.977L9.471 21h14.057l-.029-1.027c-.184-6.618-3.736-8.977-7-8.977zm2.116-1.726C19.452 8.63 20 7.632 20 6.5 20 4.57 18.433 3 16.5 3S13 4.57 13 6.5c0 1.132.548 2.13 1.384 2.77.589.451 1.317.73 2.116.73s1.527-.279 2.116-.73z"></path>
+                      ) : (
+                        <path d="M7.501 19.917L7.471 21H.472l.029-1.027c.184-6.618 3.736-8.977 7-8.977.963 0 1.95.212 2.87.672-.444.478-.851 1.03-1.212 1.656-.507-.204-1.054-.329-1.658-.329-2.767 0-4.57 2.223-4.938 6.004H7.56c-.023.302-.05.599-.059.917zm15.998.056L23.528 21H9.472l.029-1.027c.184-6.618 3.736-8.977 7-8.977s6.816 2.358 7 8.977zM21.437 19c-.367-3.781-2.17-6.004-4.938-6.004s-4.57 2.223-4.938 6.004h9.875zm-4.938-9c-.799 0-1.527-.279-2.116-.73-.836-.64-1.384-1.638-1.384-2.77 0-1.93 1.567-3.5 3.5-3.5s3.5 1.57 3.5 3.5c0 1.132-.548 2.13-1.384 2.77-.589.451-1.317.73-2.116.73zm-1.5-3.5c0 .827.673 1.5 1.5 1.5s1.5-.673 1.5-1.5-.673-1.5-1.5-1.5-1.5.673-1.5 1.5zM7.5 3C9.433 3 11 4.57 11 6.5S9.433 10 7.5 10 4 8.43 4 6.5 5.567 3 7.5 3zm0 2C6.673 5 6 5.673 6 6.5S6.673 8 7.5 8 9 7.327 9 6.5 8.327 5 7.5 5z"></path>
+                      )}
+                    </g>
+                  </svg>
+
+                  <span
+                    className={
+                      window.location.href ===
+                      `http://localhost:5173/${userInfo.username}/communities/explore`
+                        ? `chirp-bold-font`
+                        : `chirp-regular-font`
+                    }
                     style={{
-                      display: "inline-block",
-                      padding: "12px",
+                      marginLeft: "20px",
+                      position: "relative",
+                      top: "3px",
+                      fontSize: font20.fontSize,
+                      lineHeight: font20.lineHeight,
                     }}
                   >
-                    <svg
-                      color={themeName === "dark-theme" ? "#E7E9EA" : "#0F1419"}
-                      fill="currentColor"
-                      width={`${1.75}rem`}
-                      height={`${1.75}rem`}
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18jsvk2 r-lwhw9o r-cnnz9e"
-                    >
-                      <g>
-                        {window.location.href ===
-                        `http://localhost:5173/${userInfo.username}/communities/explore` ? (
-                          <path d="M7.471 21H.472l.029-1.027c.184-6.618 3.736-8.977 7-8.977.963 0 1.95.212 2.87.672-1.608 1.732-2.762 4.389-2.869 8.248l-.03 1.083zM9.616 9.27C10.452 8.63 11 7.632 11 6.5 11 4.57 9.433 3 7.5 3S4 4.57 4 6.5c0 1.132.548 2.13 1.384 2.77.589.451 1.317.73 2.116.73s1.527-.279 2.116-.73zm6.884 1.726c-3.264 0-6.816 2.358-7 8.977L9.471 21h14.057l-.029-1.027c-.184-6.618-3.736-8.977-7-8.977zm2.116-1.726C19.452 8.63 20 7.632 20 6.5 20 4.57 18.433 3 16.5 3S13 4.57 13 6.5c0 1.132.548 2.13 1.384 2.77.589.451 1.317.73 2.116.73s1.527-.279 2.116-.73z"></path>
-                        ) : (
-                          <path d="M7.501 19.917L7.471 21H.472l.029-1.027c.184-6.618 3.736-8.977 7-8.977.963 0 1.95.212 2.87.672-.444.478-.851 1.03-1.212 1.656-.507-.204-1.054-.329-1.658-.329-2.767 0-4.57 2.223-4.938 6.004H7.56c-.023.302-.05.599-.059.917zm15.998.056L23.528 21H9.472l.029-1.027c.184-6.618 3.736-8.977 7-8.977s6.816 2.358 7 8.977zM21.437 19c-.367-3.781-2.17-6.004-4.938-6.004s-4.57 2.223-4.938 6.004h9.875zm-4.938-9c-.799 0-1.527-.279-2.116-.73-.836-.64-1.384-1.638-1.384-2.77 0-1.93 1.567-3.5 3.5-3.5s3.5 1.57 3.5 3.5c0 1.132-.548 2.13-1.384 2.77-.589.451-1.317.73-2.116.73zm-1.5-3.5c0 .827.673 1.5 1.5 1.5s1.5-.673 1.5-1.5-.673-1.5-1.5-1.5-1.5.673-1.5 1.5zM7.5 3C9.433 3 11 4.57 11 6.5S9.433 10 7.5 10 4 8.43 4 6.5 5.567 3 7.5 3zm0 2C6.673 5 6 5.673 6 6.5S6.673 8 7.5 8 9 7.327 9 6.5 8.327 5 7.5 5z"></path>
-                        )}
-                      </g>
-                    </svg>
-
-                    <span
-                      className={
-                        window.location.href ===
-                        `http://localhost:5173/${userInfo.username}/communities/explore`
-                          ? `chirp-bold-font`
-                          : `chirp-regular-font`
-                      }
-                      style={{
-                        marginLeft: "20px",
-                        position: "relative",
-                        top: "3px",
-                        fontSize: font20.fontSize,
-                        lineHeight: font20.lineHeight,
-                      }}
-                    >
-                      Communities
-                    </span>
-                  </div>
-                </span>
-              </NavLink>{" "}
-              <NavLink
-                to={"/i/premium_sign_up"}
-                // onClick={locateProfilePage}
+                    Communities
+                  </span>
+                </div>
+              </div>{" "}
+              {/* eighth */}
+              <div
                 className={`profile-nav-link profile-nav-link-${themeName}`}
+                style={{
+                  cursor: "default",
+                }}
               >
-                <span
+                <div
+                  className={`profile-parent-of-span-svg home-parent-of-span-svg-${themeName}`}
                   style={{
-                    cursor: "pointer",
+                    display: "inline-block",
+                    padding: "12px 12px 12px 0px",
                   }}
-                  className="profile-nav-link-parent-div"
+                  onClick={() => navigate("/i/premium_sign_up")}
                 >
-                  <div
-                    className={`profile-parent-of-span-svg home-parent-of-span-svg-${themeName}`}
+                  {" "}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={50}
+                    height={30}
+                    viewBox="0 0 100 100"
+                  >
+                    <rect
+                      x="5"
+                      y="5"
+                      width="90"
+                      height="90"
+                      fill="#1C9BEF"
+                      rx="5"
+                      ry="5"
+                      style={{
+                        filter: "drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))",
+                      }}
+                    />
+
+                    <text
+                      x="27.5"
+                      y="70"
+                      fontFamily="Arial"
+                      fontSize="60"
+                      fill="#FFF"
+                      stroke="#FFF"
+                      strokeWidth="2"
+                    >
+                      C
+                    </text>
+                  </svg>
+                  <span
+                    className={
+                      window.location.href === "http://localhost:5173/premium"
+                        ? `chirp-bold-font`
+                        : `chirp-regular-font`
+                    }
                     style={{
-                      display: "inline-block",
-                      padding: "12px 12px 12px 0px",
+                      marginLeft: "8.5px",
+                      fontSize: font20.fontSize,
+                      lineHeight: font20.lineHeight,
+                      position: "relative",
+                      top: "3px",
                     }}
                   >
-                    {" "}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={50}
-                      height={30}
-                      viewBox="0 0 100 100"
-                    >
-                      <rect
-                        x="5"
-                        y="5"
-                        width="90"
-                        height="90"
-                        fill="#1C9BEF"
-                        rx="5"
-                        ry="5"
-                        style={{
-                          filter: "drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))",
-                        }}
-                      />
-
-                      <text
-                        x="27.5"
-                        y="70"
-                        fontFamily="Arial"
-                        fontSize="60"
-                        fill="#FFF"
-                        stroke="#FFF"
-                        strokeWidth="2"
-                      >
-                        C
-                      </text>
-                    </svg>
-                    <span
-                      className={
-                        window.location.href === "http://localhost:5173/premium"
-                          ? `chirp-bold-font`
-                          : `chirp-regular-font`
-                      }
-                      style={{
-                        marginLeft: "12px",
-                        fontSize: font20.fontSize,
-                        lineHeight: font20.lineHeight,
-                        position: "relative",
-                        top: "3px",
-                      }}
-                    >
-                      Premium{" "}
-                    </span>
-                  </div>
-                </span>
-              </NavLink>{" "}
-              {/* Fifth  */}
-              <NavLink
-                to={"/profile"}
-                // onClick={locateProfilePage}
+                    Premium{" "}
+                  </span>
+                </div>
+              </div>{" "}
+              {/* nineth  */}
+              <div
                 className={`profile-nav-link profile-nav-link-${themeName}`}
+                style={{
+                  cursor: "default",
+                }}
               >
-                <span
-                  style={{
-                    cursor: "pointer",
+                <div
+                  onClick={() => {
+                    navigate("/profile");
                   }}
-                  className="profile-nav-link-parent-div"
+                  className={`profile-parent-of-span-svg home-parent-of-span-svg-${themeName}`}
+                  style={{
+                    display: "inline-block",
+                    padding: "12px",
+                  }}
                 >
-                  <div
-                    className={`profile-parent-of-span-svg home-parent-of-span-svg-${themeName}`}
+                  <svg
+                    color={themeName === "dark-theme" ? "white" : ""}
+                    fill="currentColor"
+                    width={`${1.25}rem`}
+                    height={`${1.25}rem`}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="profile-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
+                  >
+                    <g className="profile-svg-group">
+                      {window.location.href ===
+                      "http://localhost:5173/profile" ? (
+                        <path d="M17.863 13.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H3.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46C7.627 11.85 9.648 11 12 11s4.373.85 5.863 2.44zM12 2C9.791 2 8 3.79 8 6s1.791 4 4 4 4-1.79 4-4-1.791-4-4-4z"></path>
+                      ) : (
+                        <path d="M5.651 19h12.698c-.337-1.8-1.023-3.21-1.945-4.19C15.318 13.65 13.838 13 12 13s-3.317.65-4.404 1.81c-.922.98-1.608 2.39-1.945 4.19zm.486-5.56C7.627 11.85 9.648 11 12 11s4.373.85 5.863 2.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H3.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46zM12 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM8 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4z"></path>
+                      )}
+                    </g>
+                  </svg>
+
+                  <span
+                    className={
+                      window.location.href === "http://localhost:5173/profile"
+                        ? `chirp-bold-font`
+                        : `chirp-regular-font`
+                    }
                     style={{
-                      display: "inline-block",
-                      padding: "12px",
+                      marginLeft: "20px",
+                      position: "relative",
+                      top: "3px",
+                      fontSize: font20.fontSize,
+                      lineHeight: font20.lineHeight,
                     }}
                   >
-                    <svg
-                      color={themeName === "dark-theme" ? "white" : ""}
-                      fill="currentColor"
-                      width={`${1.25}rem`}
-                      height={`${1.25}rem`}
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className="profile-svg r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-18jsvk2 r-lwhw9o r-cnnz9e"
-                    >
-                      <g className="profile-svg-group">
-                        {window.location.href ===
-                        "http://localhost:5173/profile" ? (
-                          <path d="M17.863 13.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H3.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46C7.627 11.85 9.648 11 12 11s4.373.85 5.863 2.44zM12 2C9.791 2 8 3.79 8 6s1.791 4 4 4 4-1.79 4-4-1.791-4-4-4z"></path>
-                        ) : (
-                          <path d="M5.651 19h12.698c-.337-1.8-1.023-3.21-1.945-4.19C15.318 13.65 13.838 13 12 13s-3.317.65-4.404 1.81c-.922.98-1.608 2.39-1.945 4.19zm.486-5.56C7.627 11.85 9.648 11 12 11s4.373.85 5.863 2.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H3.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46zM12 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM8 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4z"></path>
-                        )}
-                      </g>
-                    </svg>
-
-                    <span
-                      className={
-                        window.location.href === "http://localhost:5173/profile"
-                          ? `chirp-bold-font`
-                          : `chirp-regular-font`
-                      }
-                      style={{
-                        marginLeft: "20px",
-                        position: "relative",
-                        top: "3px",
-                        fontSize: font20.fontSize,
-                        lineHeight: font20.lineHeight,
-                      }}
-                    >
-                      Profile{" "}
-                    </span>
-                  </div>
-                </span>
-              </NavLink>
+                    Profile{" "}
+                  </span>
+                </div>
+              </div>
+              {/* tenth */}
               <PopupState variant="popover" popupId="demo-popup-popover">
                 {(popupState) => (
                   <div>
@@ -3777,7 +3765,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                   </div>
                 )}
               </PopupState>
-              {/* sixth post modal btn test start to check  */}
+              {/* eleventh post modal btn test start to check  */}
               <div
                 className="mt-1"
                 style={{
@@ -3808,12 +3796,12 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                   </span>
                 </Button>
               </div>
-              {/* sixth post modal btn test finish to check  */}
-              {/* seventh logout modal test start to check  */}
+              {/* eleventh post modal btn test finish to check  */}
+              {/* twelveth logout modal test start to check  */}
               <div>
                 <LogoutModal />
               </div>
-              {/* seventh logout modal test finish to check  */}
+              {/* twelveth logout modal test finish to check  */}
             </Stack>
           </div>
         </Col>

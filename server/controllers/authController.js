@@ -936,7 +936,7 @@ const handlePhoneNumberCheck = async (req, res) => {
     });
 
     let countSpaces = 0;
-    for (let i = 0; i < phone_number_input.length; i++) {
+    for (let i = 0; i < phone_number_input?.length; i++) {
       if (phone_number_input[i] === " ") {
         countSpaces++;
       }

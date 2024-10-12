@@ -1,4 +1,4 @@
-import { Suspense, lazy, useContext, useEffect, useState } from "react";
+import { Suspense, lazy, useContext, useEffect, useState, useRef } from "react";
 const HomePage = lazy(() => import("./pages/HomePage"));
 const MainPage = lazy(() => import("./pages/MainPage"));
 const UserProfile = lazy(() => import("./pages/UserProfilePage"));
@@ -231,14 +231,83 @@ import { Container, Row } from "react-bootstrap";
 
 import { SubscriptionStatusProvider } from "./context/SubscriptionStatusContext";
 
+import io from "socket.io-client";
+const socket = io(import.meta.env.VITE_APP_API_URL);
+const API_URL = import.meta.env.VITE_APP_API_URL;
+
+import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { UserContext } from "./context/UserContext";
+import { NavigationHistoryContext } from "./context/NavigationHistoryContext";
 
 function App() {
+  const { userInfo, getToken } = useContext(UserContext);
+  const [{ theme, themeName }] = useContext(ThemeContext);
   const location = useLocation();
   const path = location.pathname;
+  const { navigationHistoryArray } = useContext(NavigationHistoryContext);
 
-  const [{ theme, themeName }] = useContext(ThemeContext);
-  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  // bir rota öncesi işlemleri
+  const oneRouteBefore =
+    navigationHistoryArray?.length > 0 && navigationHistoryArray[1]
+      ? navigationHistoryArray[1]
+      : null;
+  const chatRoomIdArray = oneRouteBefore?.startsWith("/messages/")
+    ? oneRouteBefore?.split("/messages/")[1].split("-")
+    : [];
+
+  const chatRoomId = chatRoomIdArray.join("-");
+
+  // Odayı terketme işlemi
+  function userLeft(roomName, userName) {
+    socket.emit("userLeft", roomName, userName);
+  }
+
+  // Odayı terk etme işlemleri
+  useEffect(() => {
+    if (oneRouteBefore && chatRoomIdArray && chatRoomId) {
+      if (
+        chatRoomIdArray.includes(userInfo._id) &&
+        !path.startsWith("/messages/")
+      ) {
+        userLeft(chatRoomId, userInfo.username);
+      }
+    }
+  }, [
+    path,
+    userInfo,
+    navigationHistoryArray,
+    oneRouteBefore,
+    chatRoomIdArray,
+    chatRoomId,
+  ]);
+
+  // useEffect(() => {
+  //   if (userInfo && userInfo._id && userInfo.username) {
+
+  //       leftRoom(userInfo.username);
+
+  //   }
+  // }, [userInfo, path]);
+
+  useEffect(() => {
+    if (userInfo && userInfo._id) {
+      const getUser = async () => {
+        try {
+          const result = await axios.get(`${API_URL}/profile/${userInfo._id}`, {
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
+          });
+          console.log("user profile:", result.data);
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+        }
+      };
+
+      getUser();
+    }
+  }, [userInfo]);
 
   const [isPostShared, setIsPostShared] = useState(false);
   const handleShareNewPost = () => {
@@ -361,7 +430,7 @@ function App() {
                 path !== "/settings/delegate" &&
                 path !== "/jobs" &&
                 path !== "/help/connectify" &&
-                path !== `/${userInfo.username}/lists` &&
+                path !== `/${userInfo?.username}/lists` &&
                 path !== "/i/spaces/start" &&
                 !path.endsWith(1) && (
                   <LeftSideNavBar
@@ -629,7 +698,7 @@ function App() {
                 !path.endsWith("/communities/explore") &&
                 path !== "/jobs" &&
                 path !== "/help/connectify" &&
-                path !== `/${userInfo.username}/lists` &&
+                path !== `/${userInfo?.username}/lists` &&
                 path !== "/i/spaces/start" &&
                 !path.endsWith(1) && (
                   <RightSideColumn

@@ -33,6 +33,12 @@ router.get(
   messageController.handleGetChat
 );
 
+router.get(
+  "/users/:userId/messages/unread",
+  authenticateToken,
+  messageController.getUnreadMessages
+);
+
 router.get("/all-users", authenticateToken, (req, res) => {
   User.find()
     .then((allUsersFromDB) => {

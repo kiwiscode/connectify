@@ -669,6 +669,24 @@ function SpesificUserProfile({ isNewPostShared }) {
   const outsideBigPPRef = useRef(null);
   const outsideBigProfileCoverImage = useRef(null);
 
+  const createChatRoom = async (roomId) => {
+    try {
+      await axios.post(
+        `${API_URL}/chatrooms/create`,
+        { roomId },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+      navigate(`/messages/${roomId}`);
+    } catch (error) {
+      navigate(`/messages/${roomId}`);
+      console.error("error:", error);
+    }
+  };
+
   return (
     <>
       {/* contexHolder */}
@@ -802,6 +820,7 @@ function SpesificUserProfile({ isNewPostShared }) {
               left: "50%",
               top: "50%",
               transform: "translate(-50%,-50%)",
+              borderRadius: "50%",
             }}
           >
             {profileInfo?.imageUrl?.slice(0, 3) !== "../" ? (
@@ -1283,6 +1302,9 @@ function SpesificUserProfile({ isNewPostShared }) {
                 </BootstrapTooltip>
               </div>
               <div
+                onClick={() =>
+                  createChatRoom(`${profileInfo._id}-${userInfo._id}`)
+                }
                 style={{
                   width: "40px",
                   height: "40px",
