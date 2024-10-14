@@ -93,7 +93,6 @@ function IndexFooter() {
         <a
           style={{
             textDecoration: "none",
-            color: "inherit",
             color: "rgb(83, 100, 113)",
             marginLeft: "5px",
           }}
