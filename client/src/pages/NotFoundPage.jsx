@@ -48,13 +48,15 @@ function NotFoundPage() {
             </g>
           </svg>
         </div>
-        <Lottie
-          style={{
-            width: "100%",
-            height: "100%",
-          }}
-          animationData={NotFoundAnimation}
-        />{" "}
+        {Lottie && (
+          <Lottie
+            style={{
+              width: "100%",
+              height: "100%",
+            }}
+            animationData={NotFoundAnimation}
+          />
+        )}
       </div>
     </>
   );

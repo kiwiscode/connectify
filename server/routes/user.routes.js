@@ -3,6 +3,15 @@ const router = express.Router();
 const authenticateToken = require("../middleware/jwtMiddleware");
 const User = require("../models/User.model");
 
+// test route for deployment test
+router.get("/hi", async (req, res) => {
+  try {
+    res.send("Hi user !");
+  } catch (error) {
+    console.error("Internal server error.", error);
+  }
+});
+
 router.get("/:userId/following", authenticateToken, async (req, res) => {
   try {
     const { userId } = req.params;
