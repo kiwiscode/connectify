@@ -1,5 +1,7 @@
 require("./db");
 require("dotenv").config();
+require("./utils/pasaport.js");
+
 const logger = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -7,12 +9,17 @@ const express = require("express");
 const app = express();
 const http = require("http");
 const server = http.createServer(app);
+const passport = require("passport");
+const session = require("express-session");
+const getUserIp = require("./middleware/getUserIp.js");
+
 app.use(logger("dev"));
 app.use(express.json({ limit: "15mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: true, limit: "15mb" }));
 app.use(bodyParser.json({ type: "application/vnd.api+json" }));
 app.set("trust proxy", 1);
+app.use(getUserIp);
 
 const socketIo = require("socket.io");
 const io = socketIo(server, {
@@ -33,61 +40,56 @@ app.use(
   })
 );
 
+// google auth
+app.use(
+  session({
+    secret: process.env.COOKIE_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 24 * 60 * 60 * 1000 }, // 24 hours
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+
 const authRoutes = require("./routes/auth.routes");
-app.use("/auth", authRoutes);
-
 const userRoutes = require("./routes/user.routes.js");
-app.use("/users", userRoutes);
-
 const postRoutes = require("./routes/post.routes.js");
-app.use("/posts", postRoutes);
-
 const profileRoutes = require("./routes/profile.routes");
-app.use("/profile", profileRoutes);
-
 const commentRoutes = require("./routes/comment.routes");
-app.use("/comment", commentRoutes);
-
 const postRepost = require("./routes/repost.routes");
-app.use("/repost", postRepost);
-
 const favoriteRoutes = require("./routes/favorite.routes");
-app.use("/favorite", favoriteRoutes);
-
 const notificationRoutes = require("./routes/notification.routes");
-app.use("/notifications", notificationRoutes);
-
 const postDetailRoutes = require("./routes/postDetail.routes");
-app.use("/", postDetailRoutes);
-
 const followRoutes = require("./routes/followRoutes.js");
-app.use("/follow", followRoutes);
-
 const unfollowRoutes = require("./routes/unfollowRoutes.js");
-app.use("/unfollow", unfollowRoutes);
-
 const followingPosts = require("./routes/followingPosts");
-app.use("/followingPosts", followingPosts);
-
 const messageRoutes = require("./routes/message.routes.js");
-app.use("/", messageRoutes);
-
 const rightSideBarRoutes = require("./routes/right-side-bar.route");
-app.use("/", rightSideBarRoutes);
-
 const forgotPasswordRoutes = require("./routes/forgotPassword.routes.js");
-app.use("/", forgotPasswordRoutes);
-
 const subscriptionRoutes = require("./routes/subscription.routes.js");
-app.use("/", subscriptionRoutes);
-
 const lastActivitiesRoutes = require("./routes/lastActivitiesRoutes.js");
-app.use("/", lastActivitiesRoutes);
-
 const bookmarkRoutes = require("./routes/bookmark.routes.js");
-app.use("/", bookmarkRoutes);
-
 const settingRoutes = require("./routes/setting.routes");
+
+app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
+app.use("/posts", postRoutes);
+app.use("/profile", profileRoutes);
+app.use("/comment", commentRoutes);
+app.use("/repost", postRepost);
+app.use("/favorite", favoriteRoutes);
+app.use("/notifications", notificationRoutes);
+app.use("/", postDetailRoutes);
+app.use("/follow", followRoutes);
+app.use("/unfollow", unfollowRoutes);
+app.use("/followingPosts", followingPosts);
+app.use("/", messageRoutes);
+app.use("/", rightSideBarRoutes);
+app.use("/", forgotPasswordRoutes);
+app.use("/", subscriptionRoutes);
+app.use("/", lastActivitiesRoutes);
+app.use("/", bookmarkRoutes);
 app.use("/", settingRoutes);
 
 module.exports = { app, server };

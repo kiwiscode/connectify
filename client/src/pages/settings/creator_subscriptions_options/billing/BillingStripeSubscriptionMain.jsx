@@ -75,6 +75,7 @@ function BillingStripeSubscriptionMain() {
     getFontSizeAndLineHeight11,
   } = useFontSizeHandler();
   const font31 = getFontSizeAndLineHeight31();
+  const font18 = getFontSizeAndLineHeight18();
   const font15 = getFontSizeAndLineHeight15();
   const font14 = getFontSizeAndLineHeight14();
   const font13 = getFontSizeAndLineHeight13();

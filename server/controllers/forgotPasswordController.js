@@ -71,11 +71,7 @@ function emailProcess() {
   });
 
   sendConfirmationCodeToEmail = (user, verificationCode) => {
-    // when working on local version
     const accountSettingsLink = process.env.FRONTEND_URL;
-
-    // when working on deployment version
-    // ??
 
     return new Promise((resolve, reject) => {
       const mailOptions = {
@@ -140,9 +136,7 @@ const handleSendForgotPasswordProcessCodeToEmail = (req, res) => {
   User.findById(forgotPasswordInProcessUser._id)
     .then((user) => {
       console.log("User found =>", user.username);
-      const verificationCode = generateRandomCode();
-      console.log(verificationCode);
-      sendConfirmationCodeToEmail(user, verificationCode)
+      sendConfirmationCodeToEmail(user, generateRandomCode())
         .then((result) => {
           console.log("Result after email send =>", result);
 

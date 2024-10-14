@@ -102,7 +102,8 @@ const handleShowPosts = (req, res) => {
     .then((postsFromDataBase) => {
       res.json(postsFromDataBase);
     })
-    .catch(() => {
+    .catch((error) => {
+      console.error("error:", error);
       res
         .status(500)
         .json({ errorMessage: "An error occurred while fetching posts" });
@@ -134,17 +135,26 @@ const handleDeletePost = (req, res) => {
           } else if (post.reposted.length) {
             console.log("else if block is working 2");
             Post.find({ repostedFromThisOriginalPost: post._id })
-              .then((originalPost) => {
+              .then((referencePost) => {
                 Post.deleteMany({
                   _id: {
-                    $in: [post._id.toString(), originalPost[0]?._id.toString()],
+                    $in: [
+                      post._id.toString(),
+                      referencePost[0]?._id.toString(),
+                    ],
                   },
                 })
                   .then((result) => {
-                    console.log("Delete conditions =>", [
+                    console.log("Delete conditions here =>", [
                       post._id.toString(),
-                      originalPost[0]?._id.toString(),
+                      referencePost[0]?._id.toString(),
                     ]);
+
+                    deleteConditions.push(
+                      post._id.toString(),
+                      referencePost[0]?._id.toString()
+                    );
+
                     console.log("Posts deleted successfully result =>", result);
                   })
                   .catch((error) => {
@@ -164,16 +174,47 @@ const handleDeletePost = (req, res) => {
           // If the post is a comment
           if (post.isComment) {
             // Use findOne to find the specific comment
-            Comment.findOne({ postId: postId })
+            Comment.findOne({
+              postId: post.isReposted
+                ? post.repostedFromThisOriginalPost[0]?._id
+                : post._id,
+            })
               .then((foundComment) => {
                 if (foundComment) {
                   const commentId = foundComment._id;
-                  console.log("Found comment ID:", commentId);
+
+                  const commentedForThisUsersPost =
+                    post.commentedForThisUsersPost._id.toString();
+
+                  User.findByIdAndUpdate(
+                    commentedForThisUsersPost, // Kullanıcının ID'si
+                    {
+                      $pull: {
+                        notifications: {
+                          "isComment.value": true, // isComment.value'nin true olduğu durum
+                          "isComment.commentPostId": post.isReposted
+                            ? post.repostedFromThisOriginalPost[0]?._id
+                            : post._id, // isComment.postId'ye eşit olan notification
+                        },
+                      },
+                    },
+                    { new: true } // Güncellenmiş dökümana erişmek için
+                  )
+                    .then((updatedUser) => {
+                      console.log("Updated user:", updatedUser);
+                    })
+                    .catch((error) => {
+                      console.error("Error updating user:", error);
+                    });
 
                   // Remove this comment from the comments array in other posts
                   Post.updateMany(
                     { comments: commentId }, // Find all posts that have this commentId in their comments array
-                    { $pull: { comments: commentId } } // Remove the commentId from the comments array
+                    {
+                      $pull: {
+                        comments: commentId,
+                      },
+                    } // Remove the commentId from the comments array
                   )
                     .then(() => {
                       console.log(
@@ -212,6 +253,7 @@ const handleDeletePost = (req, res) => {
             });
 
           setTimeout(() => {
+            console.log("now here is working update all the users");
             User.updateMany(
               {
                 $or: [
@@ -267,16 +309,21 @@ const handleDeletePost = (req, res) => {
               console.error("Error deleting favorites:", error);
             });
 
-          Comment.deleteMany({
-            postId: deleteConditions,
-          })
-            .then((result) => {
-              console.log("Delete conditions =>", deleteConditions);
-              console.log("Comments deleted successfully result =>", result);
+          setTimeout(() => {
+            Comment.deleteMany({
+              postId: deleteConditions,
             })
-            .catch((error) => {
-              console.error("Error deleting favorites:", error);
-            });
+              .then((result) => {
+                console.log(
+                  "Delete conditions after comment deletion =>",
+                  deleteConditions
+                );
+                console.log("Comments deleted successfully result =>", result);
+              })
+              .catch((error) => {
+                console.error("Error deleting favorites:", error);
+              });
+          }, 1250);
 
           setTimeout(() => {
             Bookmark.deleteMany({

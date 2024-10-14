@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
-//
-const MONGO_URI =
-  // process.env.MONGO_URI;
-  "mongodb+srv://ayktkav:JZfvvRc3SYPvL0FW@connectify-cluster.sh8g6.mongodb.net/connectify";
+require("dotenv").config();
+
+const MONGO_URI = process.env.MONGO_URI;
+
+console.log("mongo db uri:", MONGO_URI);
 
 mongoose
   .connect(MONGO_URI)

@@ -1096,11 +1096,7 @@ function LogoutModal({
                 fontSize: font15.fontSize,
                 lineHeight: font15.lineHeight,
               }}
-              onClick={() =>
-                userInfo.signedUpWithGoogle?.isSignedUpWithGoogle
-                  ? handleLogoutFromGoogleAccount()
-                  : handleLogout()
-              }
+              onClick={() => handleLogout()}
             >
               Log out
             </Button>

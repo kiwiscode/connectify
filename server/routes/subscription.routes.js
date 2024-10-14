@@ -73,8 +73,14 @@ router.post(
     phoneNumberGlobal = phoneNumber;
     resultPhoneNumberGlobal = {
       phone_number: phoneNumberGlobal,
-      withoutPlusSign: `${countryPhoneCodeGlobal}${phoneNumberGlobal}`,
-      withPlusSign: `+${countryPhoneCodeGlobal}${phoneNumberGlobal}`,
+      withoutPlusSign: `${countryPhoneCodeGlobal}${phoneNumberGlobal}`.replace(
+        /\s+/g,
+        ""
+      ),
+      withPlusSign: `+${countryPhoneCodeGlobal}${phoneNumberGlobal}`.replace(
+        /\s+/g,
+        ""
+      ),
     };
 
     console.log(
@@ -122,8 +128,31 @@ router.post("/sms", async (req, res) => {
       resultPhoneNumberGlobal ? resultPhoneNumberGlobal : null
     );
 
+    console.log(
+      "Verify phone code from global variable =>",
+      verifyPhoneCodeGlobal
+    );
     console.log("User send this code =>", userMessageContent);
-    console.log("Result phone number global =>", resultPhoneNumberGlobal);
+    console.log("User phone number:", userPhoneNumber);
+    console.log(
+      "Result phone number global with plus sign =>",
+      resultPhoneNumberGlobal.withPlusSign
+    );
+    console.log(
+      "Result phone number global without plus sign =>",
+      resultPhoneNumberGlobal.withoutPlusSign
+    );
+    console.log(
+      "First condition =>",
+      userMessageContent === verifyPhoneCodeGlobal
+    );
+
+    console.log(
+      "Second condition =>",
+      userPhoneNumber === resultPhoneNumberGlobal.withPlusSign ||
+        userPhoneNumber === resultPhoneNumberGlobal.withoutPlusSign
+    );
+
     if (
       userMessageContent === verifyPhoneCodeGlobal &&
       (userPhoneNumber === resultPhoneNumberGlobal.withPlusSign ||

@@ -640,7 +640,11 @@ const handleChangeModalStatusVariantOne = (req, res) => {
 
   User.findById(userId)
     .then((user) => {
-      user.signedUpWithVariantOne.isProfileImageCustomizationModalShown = true;
+      if (user.signedUpWithVariantOne.isSignedUpWithVariantOne) {
+        user.signedUpWithVariantOne.isProfileImageCustomizationModalShown = true;
+      } else if (user.signedUpWithGoogle.isSignedUpWithGoogle) {
+        user.signedUpWithGoogle.isProfileImageCustomizationModalShown = true;
+      }
 
       user
         .save()
@@ -663,8 +667,12 @@ const handleChangeModalStatusVariantOneModal2 = (req, res) => {
 
   User.findById(userId)
     .then((user) => {
-      user.signedUpWithVariantOne.isUsernameCustomizationModalShown = true;
-      user.signedUpWithGoogle.isUsernameCustomizationModalShown = true;
+      if (user.signedUpWithVariantOne.isSignedUpWithVariantOne) {
+        user.signedUpWithVariantOne.isUsernameCustomizationModalShown = true;
+      } else if (user.signedUpWithGoogle.isSignedUpWithGoogle) {
+        user.signedUpWithGoogle.isUsernameCustomizationModalShown = true;
+      }
+
       user
         .save()
         .then(() => {
@@ -905,6 +913,157 @@ const handleLoginVariantOne = (req, res) => {
     });
 };
 
+const handleLoginVariantOneResult = (req, res) => {
+  const { authentication } = req.body;
+  isVariantOneResultRouteSuccess = true;
+  console.log("Authentication login variant one result =>", authentication);
+  console.log(
+    "Variant one route akıbeti result route içerisi =>",
+    isVariantOneResultRouteSuccess
+  );
+
+  const userFirstInfoFromStepOne = authentication.multi_factor_authentication;
+
+  const passwordFromReqBody = authentication.password;
+  User.findOne({
+    $or: [
+      { email: userFirstInfoFromStepOne },
+      { username: userFirstInfoFromStepOne },
+      {
+        phoneNumber: {
+          $elemMatch: {
+            phone_number: userFirstInfoFromStepOne,
+          },
+        },
+      },
+      {
+        phoneNumber: {
+          $elemMatch: {
+            withoutPlusSign: userFirstInfoFromStepOne,
+          },
+        },
+      },
+      {
+        phoneNumber: {
+          $elemMatch: {
+            withPlusSign: userFirstInfoFromStepOne,
+          },
+        },
+      },
+    ],
+  })
+    // today changed 13 nov
+    .populate("posts")
+    // today changed 13 nov
+    .populate("followers")
+    .populate("following")
+    .populate("favorites")
+    .populate("subscriptions")
+    .populate("messages")
+    .populate("automated_account")
+    .then((user) => {
+      console.log("User =>", user.username);
+      console.log("User password =>", passwordFromReqBody);
+      bcrypt
+        .compare(passwordFromReqBody, user.password)
+        .then((result) => {
+          console.log("Result =>", result);
+          if (!result) {
+            res.status(501).json({ errorMessage: "Wrong password!" });
+          } else {
+            if (user.isDeactivated) {
+              console.log("Deactivated user is here !");
+              res.status(400).json({
+                errorMessage: "Deactivated user!",
+                user: user,
+              });
+            } else {
+              user.active = true;
+              user.save().then((user) => {
+                const {
+                  _id,
+                  username,
+                  email,
+                  fullname,
+                  verified,
+                  active,
+                  posts,
+                  followers,
+                  following,
+                  messages,
+                  createdAt,
+                  updatedAt,
+                  favorites,
+                  imageUrl,
+                  notifications,
+                  signedUpWithGoogle,
+                  signedUpWithVariantOne,
+                  isPrivate,
+                  bio,
+                  location,
+                  webSite,
+                  birthDate,
+                  birthDateVisibility,
+                  profileCoverImage,
+                  automated_account_connected_message_show,
+                  automated_account,
+                } = user;
+
+                const token = jwt.sign(
+                  { userId: _id },
+                  process.env.JWT_SECRET,
+                  {
+                    expiresIn: "7d",
+                  }
+                );
+
+                console.log("Logged in user username =>", username);
+                res.status(201).json({
+                  token,
+                  user: {
+                    _id,
+                    username,
+                    email,
+                    fullname,
+                    verified,
+                    active,
+                    posts,
+                    followers,
+                    following,
+                    messages,
+                    createdAt,
+                    updatedAt,
+                    favorites,
+                    imageUrl,
+                    notifications,
+                    signedUpWithGoogle,
+                    signedUpWithVariantOne,
+                    isPrivate,
+                    bio,
+                    location,
+                    webSite,
+                    birthDate,
+                    birthDateVisibility,
+                    profileCoverImage,
+                    automated_account_connected_message_show,
+                    automated_account,
+                  },
+                  message:
+                    "Show 2 modal, first => profile image customization modal, second => username customization modal",
+                });
+              });
+            }
+          }
+        })
+        .catch((error) => {
+          console.log("Error =>", error);
+        });
+    })
+    .catch((error) => {
+      console.log("Error =>", error);
+    });
+};
+
 const handlePhoneNumberCheck = async (req, res) => {
   try {
     const { phone_number_input } = req.body;
@@ -967,6 +1126,7 @@ const handlePhoneNumberCheck = async (req, res) => {
       .json({ errorMessage: "An error occurred during phone number check." });
   }
 };
+
 module.exports = {
   handleSignup,
   handleLogin,
@@ -979,5 +1139,6 @@ module.exports = {
   handleChangeModalStatusVariantOne,
   handleChangeModalStatusVariantOneModal2,
   handleLoginVariantOne,
+  handleLoginVariantOneResult,
   handlePhoneNumberCheck,
 };

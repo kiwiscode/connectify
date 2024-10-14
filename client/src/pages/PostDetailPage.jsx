@@ -6,6 +6,7 @@ import { CommentModal } from "../components/ui/Modal";
 import { UserContext } from "../context/UserContext";
 import PostEngagements from "../components/ui/PostEngagementsModal";
 const API_URL = import.meta.env.VITE_APP_API_URL;
+const FRONTEND_URL = import.meta.env.VITE_APP_FRONTEND_URL;
 
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import { ThemeContext } from "../context/ThemeContext";
@@ -1314,7 +1315,7 @@ function PostDetailPage() {
                 Hmm...this page doesn’t exist. Try searching for something else.
               </div>
               <a
-                href="http://localhost:5173/explore"
+                href={`${FRONTEND_URL}/explore`}
                 className="mt-3 hover-blue-btn chirp-bold-font"
                 style={{
                   textDecoration: "none",

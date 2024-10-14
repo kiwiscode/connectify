@@ -24,7 +24,6 @@ export const SubscriptionStatusProvider = ({ children }) => {
           Authorization: `Bearer ${getToken()}`,
         },
       });
-
       setSubscription(
         response.data.activeSubscription[0]
           ? response.data.activeSubscription[0]
@@ -57,9 +56,11 @@ export const SubscriptionStatusProvider = ({ children }) => {
     }
   };
   useEffect(() => {
-    getSubscription();
-    getRemainingTimeSubscriptions();
-  }, []);
+    if (getToken()) {
+      getSubscription();
+      getRemainingTimeSubscriptions();
+    }
+  }, [getToken()]);
   return (
     <SubcsriptionStatusContext.Provider
       value={{

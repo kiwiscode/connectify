@@ -34,9 +34,14 @@ import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
 function SigninModal({ deactivatedScreen, widthSmaller700 }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
 
-  const googleAuth = () => {
-    window.open(`${API_URL}/auth/google/callback`, "_self");
+  // google auth
+  const handleGoogleSignUp = () => {
+    window.open(
+      `${import.meta.env.VITE_APP_API_URL}/auth/google/callback`,
+      "_self"
+    );
   };
+
   const navigate = useNavigate();
 
   const [password, setPassword] = useState("");
@@ -138,7 +143,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
           setTimeout(() => {
             navigate("/home");
             setTabLoading(false);
-            // window.location.href = "http://localhost:5173/home";
           }, 600);
         }
       })
@@ -207,7 +211,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
         setIsLoading(true);
         setTimeout(() => {
           navigate("/home");
-          // window.location.href = "http://localhost:5173/home";
         }, 500);
       })
       .catch((error) => {
@@ -407,8 +410,8 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
     if (
       confirmPassword !== newPassword ||
       newPassword !== confirmPassword ||
-      (!regex.test(confirmPassword) && confirmPassword.length) ||
-      (!regex.test(newPassword) && newPassword.length)
+      !regex.test(confirmPassword) ||
+      !regex.test(newPassword)
     ) {
       setValidPassword(false);
     } else {
@@ -488,7 +491,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
 
         setTimeout(() => {
           navigate("/home");
-          // window.location.href = "http://localhost:5173/home";
         }, 500);
       })
       .catch((error) => {
@@ -897,6 +899,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                         style={{
                           borderRadius: "50%",
                           cursor: "pointer",
+                          visibility: tabLoading ? "hidden" : "initial",
                         }}
                       >
                         <div>
@@ -975,7 +978,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   Sign in to C
                                 </div>
                                 <Button
-                                  // onClick={googleAuth}
+                                  onClick={handleGoogleSignUp}
                                   style={{
                                     backgroundColor:
                                       themeName === "dark-theme"
@@ -1304,6 +1307,12 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   opacity: findConnectifyAccount.length
                                     ? "1"
                                     : "0.5",
+                                  pointerEvents: findConnectifyAccount.length
+                                    ? "auto"
+                                    : "none",
+                                  cursor: findConnectifyAccount.length
+                                    ? "pointer"
+                                    : "default",
                                 }}
                                 onClick={() => handleFindConnectifyAccount()}
                                 className={`login-button mt-5 ${themeName}-white-btn`}
@@ -1428,6 +1437,12 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   width: "81.5%",
                                   height: "52px",
                                   opacity: confirmUsername.length ? "1" : "0.5",
+                                  pointerEvents: confirmUsername.length
+                                    ? "auto"
+                                    : "none",
+                                  cursor: confirmUsername.length
+                                    ? "pointer"
+                                    : "default",
                                 }}
                                 onClick={() => checkUsername()}
                                 className={`login-button mt-5 ${themeName}-white-btn`}
@@ -2125,7 +2140,24 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   height: "52px",
                                   position: "absolute",
                                   bottom: "20px",
-                                  opacity: validPassword ? "1" : "0.5",
+                                  opacity:
+                                    confirmPassword.length &&
+                                    newPassword.length &&
+                                    validPassword
+                                      ? "1"
+                                      : "0.5",
+                                  cursor:
+                                    confirmPassword.length &&
+                                    newPassword.length &&
+                                    validPassword
+                                      ? "pointer"
+                                      : "default",
+                                  pointerEvents:
+                                    confirmPassword.length &&
+                                    newPassword.length &&
+                                    validPassword
+                                      ? "auto"
+                                      : "none",
                                 }}
                                 onClick={
                                   validPassword
@@ -2494,6 +2526,8 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 position: "absolute",
                                 bottom: "20px",
                                 opacity: checkedValue ? "" : 0.5,
+                                pointerEvents: checkedValue ? "auto" : "none",
+                                cursor: checkedValue ? "pointer" : "default",
                               }}
                               onClick={() => {
                                 setTabLoading(true);
@@ -3043,7 +3077,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               Sign in to C
                             </div>
                             <Button
-                              // onClick={googleAuth}
+                              onClick={handleGoogleSignUp}
                               style={{
                                 backgroundColor:
                                   themeName === "dark-theme"
@@ -3370,6 +3404,12 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 opacity: findConnectifyAccount.length
                                   ? "1"
                                   : "0.5",
+                                pointerEvents: findConnectifyAccount.length
+                                  ? "auto"
+                                  : "none",
+                                cursor: findConnectifyAccount.length
+                                  ? "pointer"
+                                  : "default",
                               }}
                               onClick={() => handleFindConnectifyAccount()}
                               className={`login-button mt-5 ${themeName}-white-btn`}
@@ -3491,6 +3531,12 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 width: "81.5%",
                                 height: "52px",
                                 opacity: confirmUsername.length ? "1" : "0.5",
+                                pointerEvents: confirmUsername.length
+                                  ? "auto"
+                                  : "none",
+                                cursor: confirmUsername.length
+                                  ? "pointer"
+                                  : "default",
                               }}
                               onClick={() => checkUsername()}
                               className={`login-button mt-5 ${themeName}-white-btn`}
@@ -4164,9 +4210,23 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 position: "absolute",
                                 bottom: "20px",
                                 opacity:
-                                  confirmPassword.length && newPassword.length
+                                  confirmPassword.length &&
+                                  newPassword.length &&
+                                  validPassword
                                     ? "1"
                                     : "0.5",
+                                cursor:
+                                  confirmPassword.length &&
+                                  newPassword.length &&
+                                  validPassword
+                                    ? "pointer"
+                                    : "default",
+                                pointerEvents:
+                                  confirmPassword.length &&
+                                  newPassword.length &&
+                                  validPassword
+                                    ? "auto"
+                                    : "none",
                               }}
                               onClick={
                                 validPassword
@@ -4530,6 +4590,8 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               position: "absolute",
                               bottom: "20px",
                               opacity: checkedValue ? "" : 0.5,
+                              pointerEvents: checkedValue ? "auto" : "none",
+                              cursor: checkedValue ? "pointer" : "default",
                             }}
                             onClick={() => {
                               if (checkedValue) {

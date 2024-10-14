@@ -74,6 +74,7 @@ function MainPage({ isNewPostShared }) {
   // start to check
 
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
   // finish to check
 
@@ -360,15 +361,27 @@ function MainPage({ isNewPostShared }) {
       )
       .then((response) => {
         setcompletedProfileImage(true);
-        updateUser({
-          imageUrl: response.data.imageInfo.url,
-          signedUpWithVariantOne: {
-            isSignedUpWithVariantOne: true,
-            isProfileImageCustomizationModalShown: true,
-            isUsernameCustomizationModalShown: false,
-            isUsernameCustomized: false,
-          },
-        });
+        if (userInfo?.signedUpWithVariantOne?.isSignedUpWithVariantOne) {
+          updateUser({
+            imageUrl: response.data.imageInfo.url,
+            signedUpWithVariantOne: {
+              isSignedUpWithVariantOne: true,
+              isProfileImageCustomizationModalShown: true,
+              isUsernameCustomizationModalShown: false,
+              isUsernameCustomized: false,
+            },
+          });
+        } else if (userInfo?.signedUpWithGoogle?.isSignedUpWithGoogle) {
+          updateUser({
+            imageUrl: response.data.imageInfo.url,
+            signedUpWithGoogle: {
+              isSignedUpWithGoogle: true,
+              isProfileImageCustomizationModalShown: true,
+              isUsernameCustomizationModalShown: false,
+              isUsernameCustomized: false,
+            },
+          });
+        }
 
         setTimeout(() => {
           setprofileImage(" ");
@@ -474,15 +487,28 @@ function MainPage({ isNewPostShared }) {
           setshowPickProfilePictureModal(false);
           setshowWhatShouldWeCallYouModal(false);
           setshowModalForProfilePictureOrUsernameOrBoth(false);
-          updateUser({
-            username: username,
-            signedUpWithVariantOne: {
-              isSignedUpWithVariantOne: true,
-              isProfileImageCustomizationModalShown: true,
-              isUsernameCustomizationModalShown: false,
-              isUsernameCustomized: false,
-            },
-          });
+
+          if (userInfo?.signedUpWithVariantOne?.isSignedUpWithVariantOne) {
+            updateUser({
+              username: username,
+              signedUpWithVariantOne: {
+                isSignedUpWithVariantOne: true,
+                isProfileImageCustomizationModalShown: true,
+                isUsernameCustomizationModalShown: true,
+                isUsernameCustomized: true,
+              },
+            });
+          } else if (userInfo?.signedUpWithGoogle?.isSignedUpWithGoogle) {
+            updateUser({
+              username: username,
+              signedUpWithGoogle: {
+                isSignedUpWithGoogle: true,
+                isProfileImageCustomizationModalShown: true,
+                isUsernameCustomizationModalShown: true,
+                isUsernameCustomized: true,
+              },
+            });
+          }
         }, 350);
       })
       .catch((error) => {
@@ -515,14 +541,25 @@ function MainPage({ isNewPostShared }) {
         userId: userInfo._id,
       })
       .then(() => {
-        updateUser({
-          signedUpWithVariantOne: {
-            isSignedUpWithVariantOne: true,
-            isProfileImageCustomizationModalShown: true,
-            isUsernameCustomizationModalShown: false,
-            isUsernameCustomized: false,
-          },
-        });
+        if (userInfo?.signedUpWithVariantOne?.isSignedUpWithVariantOne) {
+          updateUser({
+            signedUpWithVariantOne: {
+              isSignedUpWithVariantOne: true,
+              isProfileImageCustomizationModalShown: true,
+              isUsernameCustomizationModalShown: false,
+              isUsernameCustomized: false,
+            },
+          });
+        } else if (userInfo?.signedUpWithGoogle?.isSignedUpWithGoogle) {
+          updateUser({
+            signedUpWithGoogle: {
+              isSignedUpWithGoogle: true,
+              isProfileImageCustomizationModalShown: true,
+              isUsernameCustomizationModalShown: false,
+              isUsernameCustomized: false,
+            },
+          });
+        }
       })
       .catch((error) => {
         console.log("Error =>", error);
@@ -604,10 +641,13 @@ function MainPage({ isNewPostShared }) {
 
   useEffect(() => {
     console.log(userInfo?.signedUpWithVariantOne);
-
+    console.log(userInfo?.signedUpWithGoogle);
     if (
-      userInfo?.signedUpWithVariantOne?.isSignedUpWithVariantOne &&
-      !userInfo?.signedUpWithVariantOne?.isProfileImageCustomizationModalShown
+      (userInfo?.signedUpWithVariantOne?.isSignedUpWithVariantOne &&
+        !userInfo?.signedUpWithVariantOne
+          ?.isProfileImageCustomizationModalShown) ||
+      (userInfo?.signedUpWithGoogle?.isSignedUpWithGoogle &&
+        !userInfo.signedUpWithGoogle?.isProfileImageCustomizationModalShown)
     ) {
       console.log("We are here right now !");
       console.log(
@@ -641,8 +681,10 @@ function MainPage({ isNewPostShared }) {
   }, [username]);
 
   useEffect(() => {
-    handleShowPostsHomePage();
-  }, []);
+    if (getToken()) {
+      handleShowPostsHomePage();
+    }
+  }, [getToken()]);
 
   // useEffects finish to check
 
@@ -726,6 +768,22 @@ function MainPage({ isNewPostShared }) {
       getFollowingArray();
     }
   }, []);
+
+  // google callback request test
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const token = params.get("token");
+    const user = JSON.parse(params.get("user"));
+
+    if (token && user) {
+      localStorage.setItem("token", token);
+      localStorage.setItem("userInfo", JSON.stringify(user));
+      updateUser(user);
+      setTimeout(() => {
+        navigate("/home");
+      }, 1000);
+    }
+  }, [location.search, navigate, token, location, userInfo, location.pathname]);
 
   return (
     <>
@@ -976,7 +1034,7 @@ function MainPage({ isNewPostShared }) {
                     style={{
                       overflowY: "auto",
                     }}
-                    className={`scrollbar-add signin-modal-body-child-non-reactivate create-account-first-tab scrollbar-add-${themeName}`}
+                    className={`scrollbar-add signin-modal-body-child-non-reactivate create-account-first-tab scrollbar-add-${themeName} `}
                   >
                     <div
                       className="mt-5 chirp-bold-font"

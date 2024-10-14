@@ -139,6 +139,11 @@ const Email = lazy(() =>
     "./pages/settings/your_account_options/account_information/sections/email/main/Email"
   )
 );
+const Flow_Password_Reset = lazy(() =>
+  import(
+    "./pages/settings/your_account_options/account_information/sections/flow_password_reset/flow_password_reset"
+  )
+);
 const ChangeYourEmail = lazy(() =>
   import(
     "./pages/settings/your_account_options/account_information/sections/email/sections/change_your_email/ChangeYourEmail"
@@ -432,6 +437,7 @@ function App() {
                 path !== "/help/connectify" &&
                 path !== `/${userInfo?.username}/lists` &&
                 path !== "/i/spaces/start" &&
+                path !== "/i/flow/password_reset" &&
                 !path.endsWith(1) && (
                   <LeftSideNavBar
                     refreshPosts={handleShareNewPost}
@@ -583,6 +589,10 @@ function App() {
                   ></Route>
                   <Route path="/settings/email" element={<Email />}></Route>
                   <Route
+                    path="/i/flow/password_reset"
+                    element={<Flow_Password_Reset />}
+                  ></Route>
+                  <Route
                     path="/settings/languages"
                     element={<Languages />}
                   ></Route>
@@ -700,6 +710,7 @@ function App() {
                 path !== "/help/connectify" &&
                 path !== `/${userInfo?.username}/lists` &&
                 path !== "/i/spaces/start" &&
+                path !== "/i/flow/password_reset" &&
                 !path.endsWith(1) && (
                   <RightSideColumn
                     isVerifiedOrgsSignUpRoute={

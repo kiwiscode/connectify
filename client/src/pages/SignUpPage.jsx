@@ -57,8 +57,12 @@ function SignUpPage() {
   const [signedUpWithGoogle, setsignedUpWithGoogle] = useState(false);
   const [signedUpWithVariantOne, setsignedUpWithVariantOne] = useState(false);
 
-  const googleAuth = () => {
-    window.open(`${API_URL}/auth/google/callback`, "_self");
+  // google auth
+  const handleGoogleSignUp = () => {
+    window.open(
+      `${import.meta.env.VITE_APP_API_URL}/auth/google/callback`,
+      "_self"
+    );
   };
 
   const { showCustomMessage, contextHolder } = useAntdMessageHandler();
@@ -374,45 +378,47 @@ function SignUpPage() {
   const [emailTypeError, setemailTypeError] = useState("");
 
   useEffect(() => {
-    const checkEmail = async () => {
-      try {
-        const response = await axios.post(
-          `${API_URL}/auth/email-check`,
-          { email },
-          {
-            headers: {
-              Authorization: `Bearer ${getToken()}`,
-            },
+    if (email) {
+      const checkEmail = async () => {
+        try {
+          const response = await axios.post(
+            `${API_URL}/auth/email-check`,
+            { email },
+            {
+              headers: {
+                Authorization: `Bearer ${getToken()}`,
+              },
+            }
+          );
+
+          if (response.status === 201) {
+            setemailTypeError(null);
+            setcheckFields((prevState) => ({
+              ...prevState,
+              emailInput: true,
+            }));
           }
-        );
 
-        if (response.status === 201) {
-          setemailTypeError(null);
-          setcheckFields((prevState) => ({
-            ...prevState,
-            emailInput: true,
-          }));
+          if (response.status === 200) {
+            setemailTypeError(200);
+            setcheckFields((prevState) => ({
+              ...prevState,
+              emailInput: false,
+            }));
+          }
+        } catch (error) {
+          if (error.response.status === 304) {
+            setemailTypeError(304);
+            setcheckFields((prevState) => ({
+              ...prevState,
+              emailInput: false,
+            }));
+          }
         }
+      };
 
-        if (response.status === 200) {
-          setemailTypeError(200);
-          setcheckFields((prevState) => ({
-            ...prevState,
-            emailInput: false,
-          }));
-        }
-      } catch (error) {
-        if (error.response.status === 304) {
-          setemailTypeError(304);
-          setcheckFields((prevState) => ({
-            ...prevState,
-            emailInput: false,
-          }));
-        }
-      }
-    };
-
-    checkEmail();
+      checkEmail();
+    }
   }, [email]);
 
   useEffect(() => {
@@ -3885,7 +3891,7 @@ function SignUpPage() {
           <div className="responsive-input-group">
             <div>
               <Button
-                // onClick={googleAuth}
+                onClick={handleGoogleSignUp}
                 style={{
                   backgroundColor: "transparent",
                   borderWidth: "1px",

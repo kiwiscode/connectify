@@ -192,7 +192,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
   };
   useEffect(() => {
     getActiveUserInfo();
-  }, []);
+  }, [path]);
   const { width } = useWindowDimensions();
 
   const [userMessageDetails, setUserMessageDetails] = useState([]);
@@ -235,8 +235,6 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
   useEffect(() => {
     getUnreadMessages();
   }, [path]);
-
-  console.log("unread messages:", getUnreadMessages());
 
   const { togglePostModalVisibility } = useContext(ModalVisibilityContext);
 
@@ -908,7 +906,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       >
                         {width <= 1201 && (
                           <>
-                            {unReadNotifications?.length !== 0 && (
+                            {unReadNotifications?.length === 0 ? null : (
                               <div
                                 style={{
                                   cursor: "pointer",
