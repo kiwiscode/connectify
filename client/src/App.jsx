@@ -1,9 +1,17 @@
 import { Suspense, lazy, useContext, useEffect, useState, useRef } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { ThemeContext } from "./context/ThemeContext";
+import LoadingSpinner from "./components/ui/LoadingSpinner";
+import { Container, Row } from "react-bootstrap";
+import { SubscriptionStatusProvider } from "./context/SubscriptionStatusContext";
+import io from "socket.io-client";
+import { NavigationHistoryContext } from "./context/NavigationHistoryContext";
+import { UserContext } from "./context/UserContext";
+
 const HomePage = lazy(() => import("./pages/HomePage"));
 const MainPage = lazy(() => import("./pages/MainPage"));
 const UserProfile = lazy(() => import("./pages/UserProfilePage"));
 const SpesificUserProfile = lazy(() => import("./pages/SpesificUserProfile"));
-import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 
 const MessagesPage = lazy(() => import("./pages/MessagesPage"));
 const ChatDetailsPage = lazy(() => import("./pages/ChatDetailsPage"));
@@ -19,6 +27,7 @@ const FollowerDetailPage = lazy(() => import("./pages/FollowersDetailPage"));
 const DeactivatedPage = lazy(() => import("./pages/DeactivatedPage"));
 const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
+
 const BookmarksPage = lazy(() => import("./pages/BookmarksPage"));
 const PremiumSignupPage = lazy(() => import("./pages/PremiumSignupPage"));
 const Settings = lazy(() => import("./pages/Settings"));
@@ -228,22 +237,10 @@ const RightSideColumn = lazy(() =>
   import("./components/Main-Right-Side-Column/RightSideColumn")
 );
 
-import { ThemeContext } from "./context/ThemeContext";
-
-import LoadingSpinner from "./components/ui/LoadingSpinner";
-
-import { Container, Row } from "react-bootstrap";
-
-import { SubscriptionStatusProvider } from "./context/SubscriptionStatusContext";
-
-import io from "socket.io-client";
 const socket = io(import.meta.env.VITE_APP_API_URL);
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
-import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { UserContext } from "./context/UserContext";
-import { NavigationHistoryContext } from "./context/NavigationHistoryContext";
 
 function App() {
   const { userInfo, getToken } = useContext(UserContext);
