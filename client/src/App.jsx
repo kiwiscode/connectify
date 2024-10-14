@@ -287,33 +287,6 @@ function App() {
     chatRoomId,
   ]);
 
-  // useEffect(() => {
-  //   if (userInfo && userInfo._id && userInfo.username) {
-
-  //       leftRoom(userInfo.username);
-
-  //   }
-  // }, [userInfo, path]);
-
-  useEffect(() => {
-    if (userInfo && userInfo._id) {
-      const getUser = async () => {
-        try {
-          const result = await axios.get(`${API_URL}/profile/${userInfo._id}`, {
-            headers: {
-              Authorization: `Bearer ${getToken()}`,
-            },
-          });
-          console.log("user profile:", result.data);
-        } catch (error) {
-          console.error("Error fetching user profile:", error);
-        }
-      };
-
-      getUser();
-    }
-  }, [userInfo]);
-
   const [isPostShared, setIsPostShared] = useState(false);
   const handleShareNewPost = () => {
     console.log("Post shared =>", isPostShared);

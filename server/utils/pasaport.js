@@ -37,7 +37,10 @@ passport.use(
         });
 
         if (!existingUser) {
-          console.log("google profile during log in:", profile);
+          console.log(
+            "google profile during log in when user not exist :",
+            profile
+          );
 
           const fullname = profile.displayName;
           let username =
@@ -50,8 +53,8 @@ passport.use(
           const verified = profile._json.email_verified;
 
           const salt = await bcrypt.genSalt(saltRounds);
-          const hashedPassword = await bcrypt.hash(password, salt);
 
+          const hashedPassword = await bcrypt.hash(password, salt);
           const hashedGoogleId = await bcrypt.hash(googleId, salt);
 
           if (username) {
@@ -82,9 +85,15 @@ passport.use(
           console.log("google profile during log in when user exist:", profile);
 
           if (!existingUser.googleId) {
-            return callback(new Error("Google ID not found"), null);
+            const googleId = profile.id;
+
+            const salt = await bcrypt.genSalt(saltRounds);
+            const hashedGoogleId = await bcrypt.hash(googleId, salt);
+
+            existingUser.active = true;
+            existingUser.googleId = hashedGoogleId;
           }
-          existingUser.active = true;
+
           await existingUser.save();
 
           // Mevcut kullanıcının Google ID'sini de gönder

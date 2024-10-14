@@ -823,6 +823,7 @@ function LogoutModal({
 
   return (
     <>
+      {contextHolder}
       {isMobileNavigationBarTop && (
         <div
           onClick={() => setShowLogoutModal(true)}
@@ -945,8 +946,6 @@ function LogoutModal({
           </div>
         </div>
       )}
-
-      {contextHolder}
       {showLogoutSpinner ? (
         <>
           <Modal
@@ -1137,6 +1136,7 @@ function LogoutModal({
                   cursor: "pointer",
                   width: "250px",
                   position: "relative",
+                  marginTop: width > 1400 && "60px",
                 }}
                 direction="horizontal"
               >

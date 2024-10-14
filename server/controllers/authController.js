@@ -135,6 +135,7 @@ const handleSignup = async (req, res, next) => {
             fullname,
             username: username + generate5DifferentNumbers().join(""),
             email,
+            googleId: "",
             password: hashedPassword,
             verified: true,
             imageUrl: "../assets/resume-pic.png",

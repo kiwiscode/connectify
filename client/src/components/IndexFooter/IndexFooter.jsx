@@ -13,9 +13,12 @@ function IndexFooter() {
         style={{
           textAlign: "center",
           width: "100%",
-          minHeight: "72px",
-          padding: "12px 16px",
+          padding: "0px 16px",
           fontSize: font13.fontSize,
+          flexWrap: "wrap",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
         className={`footer-container chirp-regular-font mt-3 footer-container-${themeName}`}
       >
@@ -92,6 +95,7 @@ function IndexFooter() {
             textDecoration: "none",
             color: "inherit",
             color: "rgb(83, 100, 113)",
+            marginLeft: "5px",
           }}
           rel="noreferrer"
           className="kiwisc0de--"

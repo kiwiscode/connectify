@@ -567,28 +567,30 @@ function MainPage({ isNewPostShared }) {
   };
 
   useEffect(() => {
-    axios
-      .post(
-        `${API_URL}/change-subscription-success-modal-status`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then((response) => {
-        console.log("Response show modal =>", response);
-        if (response.status === 200) {
-          setshowSubscriptionCompletedModal(true);
-        }
-      })
-      .catch((error) => {
-        updateUser({ hasSubscription: true });
-        return error;
-        // console.log("Error do not show modal =>", error);
-      });
-  }, []);
+    if (getToken()) {
+      axios
+        .post(
+          `${API_URL}/change-subscription-success-modal-status`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
+          }
+        )
+        .then((response) => {
+          console.log("Response show modal =>", response);
+          if (response.status === 200) {
+            setshowSubscriptionCompletedModal(true);
+          }
+        })
+        .catch((error) => {
+          updateUser({ hasSubscription: true });
+          return error;
+          // console.log("Error do not show modal =>", error);
+        });
+    }
+  }, [getToken()]);
 
   useEffect(() => {
     const getClickLocation = (e) => {
