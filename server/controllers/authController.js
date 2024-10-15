@@ -558,7 +558,7 @@ const handleEmailCheck = async (req, res) => {
     if (!email) {
       return res.status(400).json({
         success: false,
-        message: "Please enter a valid email.        ",
+        message: "Please enter a valid email.",
       });
     }
 
@@ -590,6 +590,7 @@ const handleEmailCheck = async (req, res) => {
         .json({ success: false, message: "Please enter a valid email." });
     }
   } catch (error) {
+    console.error("error:", error);
     return res
       .status(500)
       .json({ success: false, message: "Internal Server Error" });
