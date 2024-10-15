@@ -1,4 +1,4 @@
-import { Suspense, lazy, useContext, useEffect, useState, useRef } from "react";
+import { Suspense, lazy, useContext, useEffect, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { ThemeContext } from "./context/ThemeContext";
 import LoadingSpinner from "./components/ui/LoadingSpinner";

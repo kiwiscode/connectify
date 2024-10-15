@@ -777,7 +777,6 @@ function BillingStripeSubscriptionMain() {
                   }
                   style={{
                     backgroundColor: "transparent",
-                    border: "none",
                     fontSize: font15.fontSize,
                     lineHeight: "18px",
                     width: "100%",

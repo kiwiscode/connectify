@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext, useRef } from "react";
+import { useEffect, useState, useContext } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
 import LogoutModal from "./LogoutModal";
@@ -18,7 +18,6 @@ import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
 import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
 import { FontSizeContext } from "../../context/FontSizeContext";
 import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
-import ClickAwayListener from "@mui/material/ClickAwayListener";
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
 const FRONTEND_URL = import.meta.env.VITE_APP_FRONTEND_URL;
@@ -35,17 +34,15 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
   const font17 = getFontSizeAndLineHeight17();
   const font15 = getFontSizeAndLineHeight15();
   const font11 = getFontSizeAndLineHeight11();
-  const { fontSize, setFontSize } = useContext(FontSizeContext);
+  const { fontSize } = useContext(FontSizeContext);
   const location = useLocation();
   const path = location.pathname;
   const navigate = useNavigate();
 
   const [show, setShow] = useState(false);
   const [content, setContent] = useState("");
-  const [error, setError] = useState("");
   const { getToken, userInfo } = useContext(UserContext);
   const [chosenEmoji, setChosenEmoji] = useState(null);
-  const [showEmojisBar, setshowEmojisBar] = useState("hide");
   const maxCharacters = 140;
 
   const [modalImage, setModalImage] = useState("");
@@ -68,8 +65,6 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
     const inputText = event.target.value;
     if (inputText.length <= maxCharacters) {
       setContent(inputText);
-    } else {
-      setError("Tweet length to 140 characters");
     }
   };
 
@@ -207,23 +202,6 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
     getActiveUserInfo();
   }, [path]);
   const { width } = useWindowDimensions();
-
-  const [userMessageDetails, setUserMessageDetails] = useState([]);
-
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/all-messages`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((responseForMessages) => {
-        setUserMessageDetails(responseForMessages.data.messages);
-      })
-      .catch((error) => {
-        console.log("Error =>", error);
-      });
-  }, []);
 
   const [numberOfUnreadMessages, setNumberOfUnreadMessages] = useState(null);
 
@@ -556,7 +534,6 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                           {...bindTrigger(popupState)}
                           style={{
                             border: "none",
-                            // backgroundColor: "transparent",
                             padding: "0px",
                             margin: "0px",
                             cursor: "pointer",

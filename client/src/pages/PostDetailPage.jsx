@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-import { Container, Row, Col, Stack, Accordion, Button } from "react-bootstrap";
+import { Container, Row, Col, Stack, Accordion } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { CommentModal } from "../components/ui/Modal";
 import { UserContext } from "../context/UserContext";
@@ -320,7 +320,6 @@ function PostDetailPage() {
           borderTop: "none ",
           borderBottom: "none",
           padding: "0px",
-          minHeight: width <= 700 ? "100vh" : "",
           minHeight: width <= 700 ? "100dvh" : "",
         }}
       >

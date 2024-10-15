@@ -2,8 +2,6 @@ import { useState, useContext, useEffect } from "react";
 import { UserContext } from "../../context/UserContext";
 import { Button, Modal, Container, Row, Col, Stack } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-{
-}
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../index.css";
@@ -47,13 +45,11 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const { updateUser } = useContext(UserContext);
-  const [show, setShow] = useState(false);
 
   const { showCustomMessage, contextHolder } = useAntdMessageHandler();
 
   const handleClose = () => {
     setTabIndex(0);
-    setShow(false);
   };
 
   // option 1 enter a new password start to check
@@ -84,11 +80,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
     setOpenDeactivateLoginModal(false);
   };
 
-  const [userdeactivateddatenomutation, setuserdeactivateddatenomutation] =
-    useState(null);
   const [userdeactivateddate, setUserDeactivatedDate] = useState(null);
-
-  const [deadLinefordeleteuser, setdeadLinefordeleteuser] = useState(null);
 
   const [userdeletiondate, setUserdeletiondate] = useState(null);
 
@@ -111,7 +103,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
           setTabLoading(true);
           setTimeout(() => {
             setTabIndex(8);
-            setShow(true);
             setTabLoading(false);
           }, 500);
         }
@@ -157,9 +148,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
             setOpenDeactivateLoginModal(true);
           }, 300);
           handleShowReactivatedLoginScreen();
-          setuserdeactivateddatenomutation(
-            error.response.data.user.deactivatedDate
-          );
+
           console.log("Open deactivated modal 2 =>", openDeactivateLoginModal);
 
           // 1 month later start to check
@@ -374,8 +363,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
   const [validPassword, setValidPassword] = useState(null);
 
   useEffect(() => {
-    console.log("First input active mode =>", firstInputActive);
-    console.log("Second input active mode =>", secondInputActive);
     if (!regex.test(newPassword) && newPassword.length) {
       seterrorMessageForFirstInput(
         "Password needs to have at least 8 chars and must contain at least one number, one lowercase and one uppercase letter."
@@ -1149,7 +1136,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   setTimeout(() => {
                                     setStartForgotPasswordProcess(true);
                                     setTabIndex(tabIndex + 1);
-                                    setShow(true);
                                     setTabLoading(false);
                                   }, 500);
                                 }}
@@ -2895,7 +2881,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                     setTimeout(() => {
                                       setStartForgotPasswordProcess(true);
                                       setTabIndex(1);
-                                      setShow(true);
                                       setTabLoading(false);
                                     }, 500);
                                   }}
@@ -3220,15 +3205,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             }}
                             className={`login-button mt-4 next-btn chirp-bold-font ${themeName}-white-btn`}
                             variant="dark"
-                            // onClick={() => {
-                            //   setTabLoading(true);
-                            //   setTimeout(() => {
-                            //     setStartForgotPasswordProcess(true);
-                            //     setTabIndex(tabIndex + 1);
-                            //     setShow(true);
-                            //     setTabLoading(false);
-                            //   }, 300);
-                            // }}
                             onClick={handleLoginVariantOneStartProcess}
                           >
                             Next
@@ -3250,7 +3226,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               setTimeout(() => {
                                 setStartForgotPasswordProcess(true);
                                 setTabIndex(tabIndex + 1);
-                                setShow(true);
                                 setTabLoading(false);
                               }, 500);
                             }}
@@ -4958,7 +4933,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   setTimeout(() => {
                                     setStartForgotPasswordProcess(true);
                                     setTabIndex(1);
-                                    setShow(true);
                                     setTabLoading(false);
                                   }, 500);
                                 }}
@@ -5134,16 +5108,9 @@ function CommentModal({
   } = useContext(SubcsriptionStatusContext);
   const [show, setShow] = useState(false);
   const [content, setContent] = useState("");
-  const [error, setError] = useState("");
 
-  const { getFontSizeAndLineHeight26, getFontSizeAndLineHeight15 } =
-    useFontSizeHandler();
+  const { getFontSizeAndLineHeight15 } = useFontSizeHandler();
   const font15 = getFontSizeAndLineHeight15();
-  const font26 = getFontSizeAndLineHeight26();
-
-  const [chosenEmoji, setChosenEmoji] = useState(null);
-  const [showEmojisBar, setshowEmojisBar] = useState("hide");
-  const [showSecondModal, setShowSecondModal] = useState(false);
 
   const maxCharacters = 140;
 
@@ -5171,38 +5138,19 @@ function CommentModal({
     const inputText = event.target.value;
     if (inputText.length <= maxCharacters) {
       setContent(inputText);
-    } else {
-      setError("Tweet length to 140 characters");
     }
   };
 
   const handleClose = () => {
     setShow(false);
-    setShowSecondModal(false);
   };
-  const [data, setData] = useState("");
 
   const handleShow = (isModalOpened) => {
-    setData(isModalOpened);
     sendDataToParent(isModalOpened);
     setShow(true);
   };
   const closeImage = () => {
     setModalImage("");
-  };
-
-  const handleMouseOver = (e) => {
-    const shallowCopy = e.target.classList[0];
-    if (shallowCopy === "target") {
-      e.target.style.background = "#595b5b";
-    }
-  };
-
-  const handleMouseOut = (e) => {
-    const shallowCopy = e.target.classList[0];
-    if (shallowCopy === "target") {
-      e.target.style.background = "#47494a";
-    }
   };
 
   const months = [
@@ -5280,13 +5228,6 @@ function CommentModal({
       })
       .catch((error) => {
         console.log("Error message =>", error);
-
-        if (error.response.data) {
-          const { errorMessage } = error.response.data;
-          setError(errorMessage);
-        } else {
-          setError(error);
-        }
       });
   };
 
@@ -5297,7 +5238,6 @@ function CommentModal({
     sym.forEach((el) => codeArray.push("0x" + el));
     let emoji = String.fromCodePoint(...codeArray);
 
-    setChosenEmoji(emoji);
     setContent((prevText) => prevText + emoji);
   };
 
@@ -6186,7 +6126,6 @@ function CommentModal({
                         {...bindTrigger(popupState)}
                         style={{
                           border: "none",
-                          // backgroundColor: "transparent",
                           padding: "0px",
                           margin: "0px",
                           cursor: "pointer",

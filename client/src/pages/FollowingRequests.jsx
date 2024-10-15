@@ -8,7 +8,6 @@ import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNaviga
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
 import { ThemeContext } from "../context/ThemeContext";
-import UnfollowModal from "../components/unfollow-modal/UnfollowModal";
 import useWindowDimensions from "../hooks/getWindowDimensions";
 import { SubcsriptionStatusContext } from "../context/SubscriptionStatusContext";
 import { useFontSizeHandler } from "../utils/useFontSizeHandler";
@@ -184,7 +183,6 @@ function FollowingRequests() {
           borderBottom: "none",
           padding: "0px",
           position: "relative",
-          minHeight: width <= 700 ? "100vh" : "",
           minHeight: width <= 700 ? "100dvh" : "",
         }}
       >
@@ -1120,7 +1118,6 @@ function FollowingRequests() {
                             onMouseEnter={handleMouseEnter}
                             onMouseLeave={handleMouseLeave}
                             style={{
-                              display: "inline-flex",
                               justifyContent: "center",
                               alignItems: "center",
                               cursor: "pointer",
