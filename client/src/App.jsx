@@ -148,9 +148,9 @@ const Email = lazy(() =>
     "./pages/settings/your_account_options/account_information/sections/email/main/Email"
   )
 );
-const Flow_Password_Reset = lazy(() =>
+const FlowPasswordReset = lazy(() =>
   import(
-    "./pages/settings/your_account_options/account_information/sections/flow_password_reset/flow_password_reset"
+    "./pages/settings/your_account_options/account_information/sections/flow_password_reset/Flow_Password_Reset"
   )
 );
 const ChangeYourEmail = lazy(() =>
@@ -238,12 +238,11 @@ const RightSideColumn = lazy(() =>
 );
 
 const socket = io(import.meta.env.VITE_APP_API_URL);
-const API_URL = import.meta.env.VITE_APP_API_URL;
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
-  const { userInfo, getToken } = useContext(UserContext);
+  const { userInfo } = useContext(UserContext);
   const [{ theme, themeName }] = useContext(ThemeContext);
   const location = useLocation();
   const path = location.pathname;
@@ -560,7 +559,7 @@ function App() {
                   <Route path="/settings/email" element={<Email />}></Route>
                   <Route
                     path="/i/flow/password_reset"
-                    element={<Flow_Password_Reset />}
+                    element={<FlowPasswordReset />}
                   ></Route>
                   <Route
                     path="/settings/languages"
