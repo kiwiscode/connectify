@@ -1332,7 +1332,6 @@ function UserProfile({ isNewPostShared }) {
           style={{
             position: "fixed",
             left: 0,
-            bottom: 0,
             right: 0,
             bottom: 0,
             minHeight: "100dvh",
@@ -1402,7 +1401,6 @@ function UserProfile({ isNewPostShared }) {
           style={{
             position: "fixed",
             left: 0,
-            bottom: 0,
             right: 0,
             bottom: 0,
             minHeight: "100dvh",
@@ -1559,7 +1557,6 @@ function UserProfile({ isNewPostShared }) {
                 style={{
                   maxWidth: "256px",
                   minHeight: "44px",
-                  color: "white",
                   border: "none",
                   color: themeName === "dark-theme" ? "black" : "white",
                 }}
@@ -1667,7 +1664,6 @@ function UserProfile({ isNewPostShared }) {
                 style={{
                   maxWidth: "256px",
                   minHeight: "44px",
-                  color: "white",
                   border: "none",
                   color: themeName === "dark-theme" ? "black" : "white",
                 }}
@@ -1821,7 +1817,6 @@ function UserProfile({ isNewPostShared }) {
                     minHeight: "32px",
                     minWidth: "32px",
                     outlineStyle: "none",
-                    cursor: "pointer",
                     transitionDuration: "0.2s",
                     fontSize: font15.fontSize,
                     lineHeight: font15.lineHeight,
@@ -1884,13 +1879,7 @@ function UserProfile({ isNewPostShared }) {
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  backgroundColor: "gray",
                   borderRadius: "50%",
-                  backgroundColor:
-                    themeName === "dark-theme"
-                      ? "rgba(15, 20, 25, 0.75)"
-                      : "#56595B",
-                  cursor: "pointer",
                   position: "relative",
                   left: "50%",
                   top: "50%",
@@ -1997,12 +1986,7 @@ function UserProfile({ isNewPostShared }) {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    backgroundColor: "gray",
                     borderRadius: "50%",
-                    backgroundColor:
-                      themeName === "dark-theme"
-                        ? "rgba(15, 20, 25, 0.75)"
-                        : "#56595B",
                     cursor: "pointer",
                     position: "absolute",
                     backdropFilter: "blur(12px)",
@@ -3298,7 +3282,6 @@ function UserProfile({ isNewPostShared }) {
               <img
                 onClick={() => setshowBigPP(true)}
                 style={{
-                  cursor: "pointer",
                   borderRadius: "50%",
                   border:
                     themeName === "dark-theme"
